@@ -20,7 +20,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.apiKey': apiKeyDomain,
-    'core.domain.record': recordDomain
+    'core.domain.record': recordDomain,
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -89,9 +89,9 @@ export default function ({
                         apiKeys(_, {filters, pagination, sort}: IApiKeysArgs, ctx: IQueryInfos) {
                             return apiKeyDomain.getApiKeys({
                                 params: {filters, withCount: true, pagination, sort},
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         saveApiKey(_, {apiKey}: ISaveApiKeyArgs, ctx: IQueryInfos) {
@@ -99,16 +99,16 @@ export default function ({
                         },
                         deleteApiKey(_, {id}: IDeleteApiKeyArgs, ctx: IQueryInfos) {
                             return apiKeyDomain.deleteApiKey({id, ctx});
-                        }
+                        },
                     },
                     ApiKey: {
                         async user(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
                             const result = await recordDomain.find({
                                 params: {
                                     library: USERS_LIBRARY,
-                                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.userId}]
+                                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.userId}],
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return result.list?.[0] ?? null;
@@ -118,10 +118,10 @@ export default function ({
                                 params: {
                                     library: USERS_LIBRARY,
                                     filters: [
-                                        {field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.createdBy}
-                                    ]
+                                        {field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.createdBy},
+                                    ],
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return result.list?.[0] ?? null;
@@ -131,21 +131,21 @@ export default function ({
                                 params: {
                                     library: USERS_LIBRARY,
                                     filters: [
-                                        {field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.modifiedBy}
-                                    ]
+                                        {field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.modifiedBy},
+                                    ],
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return result.list?.[0] ?? null;
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

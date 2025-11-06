@@ -19,7 +19,7 @@ interface IDeps {
 export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.infra.library': libraryRepo = null,
-    'core.infra.db.dbService': dbService = null
+    'core.infra.db.dbService': dbService = null,
 }: IDeps = {}): IMigration {
     return {
         async run(ctx) {
@@ -35,11 +35,11 @@ export default function ({
                         {
                             id: 'validateFormat',
                             name: 'Validate Format',
-                            is_system: true
-                        }
+                            is_system: true,
+                        },
                     ],
-                    [ActionsListEvents.DELETE_VALUE]: []
-                }
+                    [ActionsListEvents.DELETE_VALUE]: [],
+                },
             };
 
             const attributesToCreate = [
@@ -50,11 +50,11 @@ export default function ({
                     format: AttributeFormats.NUMERIC,
                     label: {
                         fr: 'Taille du fichier',
-                        en: 'File size'
+                        en: 'File size',
                     },
                     description: {
                         fr: 'Taille en octets',
-                        en: 'Size in bytes'
+                        en: 'Size in bytes',
                     },
                     actions_list: {
                         ...commonAttributeData.actions_list,
@@ -62,13 +62,13 @@ export default function ({
                             {
                                 id: 'toNumber',
                                 name: 'To Number',
-                                is_system: true
+                                is_system: true,
                             },
                             {
                                 id: 'validateFormat',
                                 name: 'Validate Format',
-                                is_system: true
-                            }
+                                is_system: true,
+                            },
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             ...commonAttributeData.actions_list[ActionsListEvents.GET_VALUE],
@@ -78,28 +78,28 @@ export default function ({
                                 params: [
                                     {
                                         name: 'decimals',
-                                        value: '0'
+                                        value: '0',
                                     },
                                     {
                                         name: 'thousandsSeparator',
-                                        value: ' '
+                                        value: ' ',
                                     },
                                     {
                                         name: 'decimalsSeparator',
-                                        value: ','
+                                        value: ',',
                                     },
                                     {
                                         name: 'prefix',
-                                        value: ''
+                                        value: '',
                                     },
                                     {
                                         name: 'suffix',
-                                        value: ''
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                                        value: '',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -108,8 +108,8 @@ export default function ({
                     format: AttributeFormats.TEXT,
                     label: {
                         fr: 'Type MIME 1',
-                        en: 'MIME type 1'
-                    }
+                        en: 'MIME type 1',
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -118,8 +118,8 @@ export default function ({
                     format: AttributeFormats.TEXT,
                     label: {
                         fr: 'Type MIME 2',
-                        en: 'MIME type 2'
-                    }
+                        en: 'MIME type 2',
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -128,8 +128,8 @@ export default function ({
                     format: AttributeFormats.BOOLEAN,
                     label: {
                         fr: 'Masque de détourage détecté',
-                        en: 'Clipping path detected'
-                    }
+                        en: 'Clipping path detected',
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -138,8 +138,8 @@ export default function ({
                     format: AttributeFormats.TEXT,
                     label: {
                         fr: 'Espace colorimétrique',
-                        en: 'Color space'
-                    }
+                        en: 'Color space',
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -148,8 +148,8 @@ export default function ({
                     format: AttributeFormats.TEXT,
                     label: {
                         fr: 'Profil colorimétrique',
-                        en: 'Color profile'
-                    }
+                        en: 'Color profile',
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -158,7 +158,7 @@ export default function ({
                     format: AttributeFormats.NUMERIC,
                     label: {
                         fr: 'Largeur',
-                        en: 'Width'
+                        en: 'Width',
                     },
                     actions_list: {
                         ...commonAttributeData.actions_list,
@@ -166,13 +166,13 @@ export default function ({
                             {
                                 id: 'toNumber',
                                 name: 'To Number',
-                                is_system: true
+                                is_system: true,
                             },
                             {
                                 id: 'validateFormat',
                                 name: 'Validate Format',
-                                is_system: true
-                            }
+                                is_system: true,
+                            },
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             ...commonAttributeData.actions_list[ActionsListEvents.GET_VALUE],
@@ -182,28 +182,28 @@ export default function ({
                                 params: [
                                     {
                                         name: 'decimals',
-                                        value: '0'
+                                        value: '0',
                                     },
                                     {
                                         name: 'thousandsSeparator',
-                                        value: ' '
+                                        value: ' ',
                                     },
                                     {
                                         name: 'decimalsSeparator',
-                                        value: ','
+                                        value: ',',
                                     },
                                     {
                                         name: 'prefix',
-                                        value: ''
+                                        value: '',
                                     },
                                     {
                                         name: 'suffix',
-                                        value: ' px'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                                        value: ' px',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -212,7 +212,7 @@ export default function ({
                     format: AttributeFormats.NUMERIC,
                     label: {
                         fr: 'Hauteur',
-                        en: 'Height'
+                        en: 'Height',
                     },
                     actions_list: {
                         ...commonAttributeData.actions_list,
@@ -220,13 +220,13 @@ export default function ({
                             {
                                 id: 'toNumber',
                                 name: 'To Number',
-                                is_system: true
+                                is_system: true,
                             },
                             {
                                 id: 'validateFormat',
                                 name: 'Validate Format',
-                                is_system: true
-                            }
+                                is_system: true,
+                            },
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             ...commonAttributeData.actions_list[ActionsListEvents.GET_VALUE],
@@ -236,28 +236,28 @@ export default function ({
                                 params: [
                                     {
                                         name: 'decimals',
-                                        value: '0'
+                                        value: '0',
                                     },
                                     {
                                         name: 'thousandsSeparator',
-                                        value: ' '
+                                        value: ' ',
                                     },
                                     {
                                         name: 'decimalsSeparator',
-                                        value: ','
+                                        value: ',',
                                     },
                                     {
                                         name: 'prefix',
-                                        value: ''
+                                        value: '',
                                     },
                                     {
                                         name: 'suffix',
-                                        value: ' px'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                                        value: ' px',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -266,7 +266,7 @@ export default function ({
                     format: AttributeFormats.NUMERIC,
                     label: {
                         fr: "Largeur d'impression",
-                        en: 'Print width'
+                        en: 'Print width',
                     },
                     actions_list: {
                         ...commonAttributeData.actions_list,
@@ -274,13 +274,13 @@ export default function ({
                             {
                                 id: 'toNumber',
                                 name: 'To Number',
-                                is_system: true
+                                is_system: true,
                             },
                             {
                                 id: 'validateFormat',
                                 name: 'Validate Format',
-                                is_system: true
-                            }
+                                is_system: true,
+                            },
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             ...commonAttributeData.actions_list[ActionsListEvents.GET_VALUE],
@@ -290,28 +290,28 @@ export default function ({
                                 params: [
                                     {
                                         name: 'decimals',
-                                        value: '0'
+                                        value: '0',
                                     },
                                     {
                                         name: 'thousandsSeparator',
-                                        value: ' '
+                                        value: ' ',
                                     },
                                     {
                                         name: 'decimalsSeparator',
-                                        value: ','
+                                        value: ',',
                                     },
                                     {
                                         name: 'prefix',
-                                        value: ''
+                                        value: '',
                                     },
                                     {
                                         name: 'suffix',
-                                        value: ' mm'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                                        value: ' mm',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -320,7 +320,7 @@ export default function ({
                     format: AttributeFormats.NUMERIC,
                     label: {
                         fr: "Hauteur d'impression",
-                        en: 'Print height'
+                        en: 'Print height',
                     },
                     actions_list: {
                         ...commonAttributeData.actions_list,
@@ -328,13 +328,13 @@ export default function ({
                             {
                                 id: 'toNumber',
                                 name: 'To Number',
-                                is_system: true
+                                is_system: true,
                             },
                             {
                                 id: 'validateFormat',
                                 name: 'Validate Format',
-                                is_system: true
-                            }
+                                is_system: true,
+                            },
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             ...commonAttributeData.actions_list[ActionsListEvents.GET_VALUE],
@@ -344,28 +344,28 @@ export default function ({
                                 params: [
                                     {
                                         name: 'decimals',
-                                        value: '0'
+                                        value: '0',
                                     },
                                     {
                                         name: 'thousandsSeparator',
-                                        value: ' '
+                                        value: ' ',
                                     },
                                     {
                                         name: 'decimalsSeparator',
-                                        value: ','
+                                        value: ',',
                                     },
                                     {
                                         name: 'prefix',
-                                        value: ''
+                                        value: '',
                                     },
                                     {
                                         name: 'suffix',
-                                        value: ' mm'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                                        value: ' mm',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                 },
                 {
                     ...commonAttributeData,
@@ -374,7 +374,7 @@ export default function ({
                     format: AttributeFormats.NUMERIC,
                     label: {
                         fr: 'Résolution',
-                        en: 'Resolution'
+                        en: 'Resolution',
                     },
                     actions_list: {
                         ...commonAttributeData.actions_list,
@@ -382,13 +382,13 @@ export default function ({
                             {
                                 id: 'toNumber',
                                 name: 'To Number',
-                                is_system: true
+                                is_system: true,
                             },
                             {
                                 id: 'validateFormat',
                                 name: 'Validate Format',
-                                is_system: true
-                            }
+                                is_system: true,
+                            },
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             ...commonAttributeData.actions_list[ActionsListEvents.GET_VALUE],
@@ -398,29 +398,29 @@ export default function ({
                                 params: [
                                     {
                                         name: 'decimals',
-                                        value: '0'
+                                        value: '0',
                                     },
                                     {
                                         name: 'thousandsSeparator',
-                                        value: ' '
+                                        value: ' ',
                                     },
                                     {
                                         name: 'decimalsSeparator',
-                                        value: ','
+                                        value: ',',
                                     },
                                     {
                                         name: 'prefix',
-                                        value: ''
+                                        value: '',
                                     },
                                     {
                                         name: 'suffix',
-                                        value: ' dpi'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
+                                        value: ' dpi',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
             ];
 
             /** Create attributes */
@@ -429,18 +429,18 @@ export default function ({
                 attributesToCreate.map(async attribute => {
                     const existingAttribute = await attributeRepo.getAttributes({
                         params: {
-                            filters: {id: attribute.id}
+                            filters: {id: attribute.id},
                         },
-                        ctx
+                        ctx,
                     });
 
                     if (!existingAttribute.list.length) {
                         await attributeRepo.createAttribute({
                             attrData: attribute,
-                            ctx
+                            ctx,
                         });
                     }
-                })
+                }),
             );
 
             // Add attributes to all files libraries
@@ -450,7 +450,7 @@ export default function ({
                         FILTER library.behavior == ${LibraryBehavior.FILES}
                         RETURN library
                 `,
-                ctx
+                ctx,
             });
 
             const attributesToAdd = attributesToCreate.map(attribute => attribute.id);
@@ -460,10 +460,10 @@ export default function ({
                         attributes: attributesToAdd,
                         libId: library._key,
                         insertOnly: true,
-                        ctx
-                    })
-                )
+                        ctx,
+                    }),
+                ),
             );
-        }
+        },
     };
 }

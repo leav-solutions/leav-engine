@@ -26,38 +26,38 @@ describe('EditRecordContent', () => {
             request: {
                 query: gqlTypes.RecordUpdateDocument,
                 variables: {
-                    filters: {records: ['123456'], ignoreOwnEvents: true}
-                }
+                    filters: {records: ['123456'], ignoreOwnEvents: true},
+                },
             },
             result: {
                 data: {
                     recordUpdate: {
                         record: {
                             whoAmI: {
-                                ...mockRecord
+                                ...mockRecord,
                             },
-                            modified_by: [{value: mockRecord}]
+                            modified_by: [{value: mockRecord}],
                         },
-                        updatedValues: []
-                    }
-                }
-            }
+                        updatedValues: [],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: gqlTypes.GetUserDataDocument,
                 variables: {
-                    keys: ['records_consultation_record_lib']
-                }
+                    keys: ['records_consultation_record_lib'],
+                },
             },
             result: {
                 data: {
                     userData: {
                         global: false,
-                        data: []
-                    }
-                }
-            }
+                        data: [],
+                    },
+                },
+            },
         },
         {
             request: {
@@ -65,18 +65,18 @@ describe('EditRecordContent', () => {
                 variables: {
                     key: 'records_consultation_record_lib',
                     value: ['123456'],
-                    global: false
-                }
+                    global: false,
+                },
             },
             result: {
                 data: {
                     userData: {
                         global: false,
-                        data: ['123465']
-                    }
-                }
-            }
-        }
+                        data: ['123465'],
+                    },
+                },
+            },
+        },
     ];
 
     afterAll(() => {
@@ -88,7 +88,7 @@ describe('EditRecordContent', () => {
             loading: true,
             error: null,
             recordForm: null,
-            refetch: jest.fn()
+            refetch: jest.fn(),
         }));
 
         render(
@@ -103,8 +103,8 @@ describe('EditRecordContent', () => {
                 readonly={false}
             />,
             {
-                mocks
-            }
+                mocks,
+            },
         );
 
         expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
@@ -121,9 +121,9 @@ describe('EditRecordContent', () => {
                 library: mockRecordForm.library,
                 system: false,
                 elements: mockRecordForm.elements,
-                sidePanel: mockRecordForm.sidePanel
+                sidePanel: mockRecordForm.sidePanel,
             },
-            refetch: jest.fn()
+            refetch: jest.fn(),
         }));
 
         render(
@@ -138,8 +138,8 @@ describe('EditRecordContent', () => {
                 readonly={false}
             />,
             {
-                mocks
-            }
+                mocks,
+            },
         );
 
         expect(await screen.findByTestId('container-child-element')).toBeInTheDocument();
@@ -151,7 +151,7 @@ describe('EditRecordContent', () => {
             loading: true,
             error: null,
             recordForm: null,
-            refetch: jest.fn()
+            refetch: jest.fn(),
         }));
 
         render(
@@ -167,15 +167,15 @@ describe('EditRecordContent', () => {
                 readonly={false}
             />,
             {
-                mocks
-            }
+                mocks,
+            },
         );
 
         expect(spy).toHaveBeenCalledWith({
             libraryId: mockRecord.library.id,
             recordId: mockRecord.id,
             formId: 'test',
-            version: null
+            version: null,
         });
     });
 });

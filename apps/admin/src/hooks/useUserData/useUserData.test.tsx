@@ -17,7 +17,7 @@ describe('useUserData', () => {
         const comp = mount(
             <MockedUserContextProvider>
                 <CompWithUserData />
-            </MockedUserContextProvider>
+            </MockedUserContextProvider>,
         );
 
         expect(comp.find('div.userId').text()).toBe('1');

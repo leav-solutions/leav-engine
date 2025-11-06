@@ -13,7 +13,7 @@ describe('TreeNodeItem', () => {
     const label = 'Node Label';
     const ancestors = [
         {record: {whoAmI: {label: 'Ancestor 1'}}},
-        {record: {whoAmI: {label: 'Ancestor 2'}}}
+        {record: {whoAmI: {label: 'Ancestor 2'}}},
     ] as RecordFormElementsValueTreeValue['treeValue']['ancestors'];
     const canDelete = true;
 

@@ -11,7 +11,7 @@ describe('SearchItems', () => {
             render(
                 <MockSearchContextProvider>
                     <SearchItems />
-                </MockSearchContextProvider>
+                </MockSearchContextProvider>,
             );
         });
 

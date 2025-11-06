@@ -8,7 +8,7 @@ import {Loading} from '_ui/components';
 import {SearchContext} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchContext';
 import searchReducer, {
     initialSearchState,
-    SearchActionTypes
+    SearchActionTypes,
 } from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {type ISearchRecord} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/_types';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
@@ -19,7 +19,7 @@ import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDeta
 import {
     getRecordsFromLibraryQuery,
     type IGetRecordsFromLibraryQuery,
-    type IGetRecordsFromLibraryQueryVariables
+    type IGetRecordsFromLibraryQueryVariables,
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {objectValueVersionToArray} from '_ui/_utils';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
@@ -90,7 +90,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
     defaultView,
     showTransparency,
     onSelectChange,
-    style
+    style,
 }) => {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
@@ -118,12 +118,12 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         view: {
             current: defaultView,
             reload: false,
-            sync: true
+            sync: true,
         },
         lang,
         valuesVersions: defaultView.valuesVersions,
         showTransparency,
-        mode: selectionMode ? SearchMode.SELECT : SearchMode.SEARCH
+        mode: selectionMode ? SearchMode.SELECT : SearchMode.SEARCH,
     });
 
     useGetRecordUpdatesSubscription({libraries: [library.id]});
@@ -136,14 +136,14 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
 
         const newRecords: ISearchRecord[] = manageItems({
             items: itemsFromQuery,
-            fields: searchState.fields
+            fields: searchState.fields,
         });
 
         searchDispatch({
             type: SearchActionTypes.UPDATE_RESULT,
             records: newRecords,
             errors: result?.errors,
-            totalCount: result?.data?.records?.totalCount ?? searchState.totalCount
+            totalCount: result?.data?.records?.totalCount ?? searchState.totalCount,
         });
     };
 
@@ -163,9 +163,9 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             filters: getRequestFromFilters(searchState.filters),
             sort: searchState.sort?.[0] ?? null,
             fullText: searchState.fullText,
-            version: _getVersionForRequest()
+            version: _getVersionForRequest(),
         }),
-        []
+        [],
     );
 
     const getRecordsQueryResult = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
@@ -173,15 +173,15 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         {
             fetchPolicy: 'network-only',
             errorPolicy: 'all',
-            variables
-        }
+            variables,
+        },
     );
     const {
         loading: getRecordsLoading,
         data: searchData,
         error: searchError,
         called: searchCalled,
-        fetchMore: getRecordsFetchMore
+        fetchMore: getRecordsFetchMore,
     } = getRecordsQueryResult;
 
     const _fetchRecords = async () => {
@@ -194,7 +194,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             filters: queryFilters,
             sort: searchState.sort?.[0] ?? null,
             fullText: searchState.fullText,
-            version: _getVersionForRequest()
+            version: _getVersionForRequest(),
         };
 
         // Records have already been fetched, we use fetchMore to make sure
@@ -203,7 +203,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             query: getRecordsFromLibraryQuery(searchState.fields, !searchState.offset),
             variables: currentVariables,
             //@ts-expect-error errorPolicy is applied at runtime even though it's not in the types
-            errorPolicy: 'all'
+            errorPolicy: 'all',
         });
 
         // We have to call applyResults here because onCompleted is not called when fetchMore is used
@@ -238,8 +238,8 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             variables: {
                 key: selectedViewKey,
                 value: searchState.view.current.id,
-                global: false
-            }
+                global: false,
+            },
         });
         searchDispatch({type: SearchActionTypes.SET_VIEW_RELOAD, reload: false});
     }, [selectedViewKey, updateSelectedViewMutation, searchState.view, searchState.fields, searchDispatch, library]);
@@ -263,7 +263,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         _reload();
         kitNotification.success({
             message: t('items_list.created_in_success.message'),
-            description: ''
+            description: '',
         });
     };
 

@@ -11,7 +11,7 @@ describe('ActionsMenu', () => {
         render(
             <MockSearchContextProvider>
                 <ActionsMenu />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByRole('button')).toBeInTheDocument();

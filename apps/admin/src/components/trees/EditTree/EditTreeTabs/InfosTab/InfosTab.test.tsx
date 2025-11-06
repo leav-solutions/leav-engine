@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function TreeInfosForm() {
             return <div>TreeInfosForm</div>;
-        }
+        },
 );
 
 describe('InfosTab', () => {

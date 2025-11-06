@@ -21,7 +21,7 @@ type OverridableExplorerPropsByUser =
     | 'defaultActionsForItem';
 
 export const mapToCommonExplorerProps = ({
-    explorerProps
+    explorerProps,
 }: {
     explorerProps: ExplorerProps | undefined;
 }): Pick<ComponentProps<typeof Explorer>, OverridableExplorerPropsByUser> => {
@@ -34,13 +34,13 @@ export const mapToCommonExplorerProps = ({
         showSorts: explorerProps.showSorts,
         ignoreViewByDefault: isBoolean(explorerProps.freezeView) ? explorerProps.freezeView : undefined,
         defaultViewSettings: {
-            enableConfigureView: isBoolean(explorerProps.freezeView) ? !explorerProps.freezeView : false
+            enableConfigureView: isBoolean(explorerProps.freezeView) ? !explorerProps.freezeView : false,
         },
         hideTableHeader: isBoolean(explorerProps.showAttributeLabels) ? !explorerProps.showAttributeLabels : undefined,
         creationFormId: explorerProps.creationFormId,
         noPagination: explorerProps.noPagination ?? undefined,
         defaultPrimaryActions: explorerProps.defaultPrimaryActions,
         defaultMassActions: explorerProps.defaultMassActions,
-        defaultActionsForItem: explorerProps.defaultActionsForItem
+        defaultActionsForItem: explorerProps.defaultActionsForItem,
     };
 };

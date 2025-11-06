@@ -25,12 +25,12 @@ describe('useApplicationLibraries', () => {
                     sizes: [
                         {
                             name: 'PreviewSettings1ChildName',
-                            size: 'PreviewSettings1ChildSize'
-                        }
-                    ]
-                }
-            }
-        ]
+                            size: 'PreviewSettings1ChildSize',
+                        },
+                    ],
+                },
+            },
+        ],
     };
 
     test('If app is configured on "all libs", retrieve all libs', async () => {
@@ -38,10 +38,10 @@ describe('useApplicationLibraries', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    libraries: 'all'
-                }
+                    libraries: 'all',
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -49,8 +49,8 @@ describe('useApplicationLibraries', () => {
                 request: {
                     query: getLibrariesListQuery,
                     variables: {
-                        filters: {id: []}
-                    }
+                        filters: {id: []},
+                    },
                 },
                 result: {
                     data: {
@@ -58,17 +58,17 @@ describe('useApplicationLibraries', () => {
                             list: [
                                 {
                                     ...mockLibBase,
-                                    id: 'libA'
+                                    id: 'libA',
                                 },
                                 {
                                     ...mockLibBase,
-                                    id: 'libB'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'libB',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationLibraries(), {
@@ -78,7 +78,7 @@ describe('useApplicationLibraries', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({error: null, loading: true, libraries: []});
@@ -91,13 +91,13 @@ describe('useApplicationLibraries', () => {
             libraries: [
                 {
                     ...mockLibBase,
-                    id: 'libA'
+                    id: 'libA',
                 },
                 {
                     ...mockLibBase,
-                    id: 'libB'
-                }
-            ]
+                    id: 'libB',
+                },
+            ],
         });
     });
 
@@ -106,10 +106,10 @@ describe('useApplicationLibraries', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    libraries: ['libA']
-                }
+                    libraries: ['libA'],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -117,8 +117,8 @@ describe('useApplicationLibraries', () => {
                 request: {
                     query: getLibrariesListQuery,
                     variables: {
-                        filters: {id: ['libA']}
-                    }
+                        filters: {id: ['libA']},
+                    },
                 },
                 result: {
                     data: {
@@ -126,13 +126,13 @@ describe('useApplicationLibraries', () => {
                             list: [
                                 {
                                     ...mockLibBase,
-                                    id: 'libA'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'libA',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationLibraries(), {
@@ -142,7 +142,7 @@ describe('useApplicationLibraries', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({error: null, loading: true, libraries: []});
@@ -155,9 +155,9 @@ describe('useApplicationLibraries', () => {
             libraries: [
                 {
                     ...mockLibBase,
-                    id: 'libA'
-                }
-            ]
+                    id: 'libA',
+                },
+            ],
         });
     });
 
@@ -166,10 +166,10 @@ describe('useApplicationLibraries', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    libraries: []
-                }
+                    libraries: [],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const {result} = renderHook(() => useApplicationLibraries(), {
@@ -179,13 +179,13 @@ describe('useApplicationLibraries', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({
             error: null,
             loading: false,
-            libraries: []
+            libraries: [],
         });
     });
 
@@ -194,10 +194,10 @@ describe('useApplicationLibraries', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    libraries: 'none'
-                }
+                    libraries: 'none',
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const {result} = renderHook(() => useApplicationLibraries(), {
@@ -207,13 +207,13 @@ describe('useApplicationLibraries', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({
             error: null,
             loading: false,
-            libraries: []
+            libraries: [],
         });
     });
 
@@ -223,10 +223,10 @@ describe('useApplicationLibraries', () => {
                 ...mockApplicationDetails,
                 settings: {
                     libraries: ['libA', 'libB', 'libC'],
-                    librariesOrder: ['libC', 'libA', 'libB']
-                }
+                    librariesOrder: ['libC', 'libA', 'libB'],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -234,8 +234,8 @@ describe('useApplicationLibraries', () => {
                 request: {
                     query: getLibrariesListQuery,
                     variables: {
-                        filters: {id: ['libA', 'libB', 'libC']}
-                    }
+                        filters: {id: ['libA', 'libB', 'libC']},
+                    },
                 },
                 result: {
                     data: {
@@ -243,21 +243,21 @@ describe('useApplicationLibraries', () => {
                             list: [
                                 {
                                     ...mockLibBase,
-                                    id: 'libA'
+                                    id: 'libA',
                                 },
                                 {
                                     ...mockLibBase,
-                                    id: 'libB'
+                                    id: 'libB',
                                 },
                                 {
                                     ...mockLibBase,
-                                    id: 'libC'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'libC',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationLibraries(), {
@@ -267,7 +267,7 @@ describe('useApplicationLibraries', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -278,17 +278,17 @@ describe('useApplicationLibraries', () => {
             libraries: [
                 {
                     ...mockLibBase,
-                    id: 'libC'
+                    id: 'libC',
                 },
                 {
                     ...mockLibBase,
-                    id: 'libA'
+                    id: 'libA',
                 },
                 {
                     ...mockLibBase,
-                    id: 'libB'
-                }
-            ]
+                    id: 'libB',
+                },
+            ],
         });
     });
 
@@ -298,10 +298,10 @@ describe('useApplicationLibraries', () => {
                 ...mockApplicationDetails,
                 settings: {
                     libraries: ['libA', 'libB', 'libC'],
-                    librariesOrder: ['libB', 'libC']
-                }
+                    librariesOrder: ['libB', 'libC'],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -309,8 +309,8 @@ describe('useApplicationLibraries', () => {
                 request: {
                     query: getLibrariesListQuery,
                     variables: {
-                        filters: {id: ['libA', 'libB', 'libC']}
-                    }
+                        filters: {id: ['libA', 'libB', 'libC']},
+                    },
                 },
                 result: {
                     data: {
@@ -318,21 +318,21 @@ describe('useApplicationLibraries', () => {
                             list: [
                                 {
                                     ...mockLibBase,
-                                    id: 'libA'
+                                    id: 'libA',
                                 },
                                 {
                                     ...mockLibBase,
-                                    id: 'libB'
+                                    id: 'libB',
                                 },
                                 {
                                     ...mockLibBase,
-                                    id: 'libC'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'libC',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationLibraries(), {
@@ -342,7 +342,7 @@ describe('useApplicationLibraries', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -353,17 +353,17 @@ describe('useApplicationLibraries', () => {
             libraries: [
                 {
                     ...mockLibBase,
-                    id: 'libB'
+                    id: 'libB',
                 },
                 {
                     ...mockLibBase,
-                    id: 'libC'
+                    id: 'libC',
                 },
                 {
                     ...mockLibBase,
-                    id: 'libA'
-                }
-            ]
+                    id: 'libA',
+                },
+            ],
         });
     });
 });

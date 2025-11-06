@@ -11,7 +11,7 @@ import {
     type RecordFilterOperator,
     type SortOrder,
     type ViewSizes,
-    type ViewTypes
+    type ViewTypes,
 } from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';

@@ -9,7 +9,7 @@ import simplePermissionHelper from './simplePermission';
 describe('getSimplePermission', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'permissionDomainTest'
+        queryId: 'permissionDomainTest',
     };
 
     test('Should return a permission', async () => {
@@ -17,13 +17,13 @@ describe('getSimplePermission', () => {
             getPermissionsByActions: global.__mockPromise({
                 [RecordPermissionsActions.ACCESS_RECORD]: true,
                 [RecordPermissionsActions.EDIT_RECORD]: false,
-                [RecordPermissionsActions.DELETE_RECORD]: null
-            })
+                [RecordPermissionsActions.DELETE_RECORD]: null,
+            }),
         };
 
         const simplePermHelper = simplePermissionHelper({
             'core.domain.permission.helpers.permissionsByActions':
-                mockPermsByActionsHelper as IPermissionsByActionsHelper
+                mockPermsByActionsHelper as IPermissionsByActionsHelper,
         });
 
         const permAccess = await simplePermHelper.getSimplePermission({
@@ -33,9 +33,9 @@ describe('getSimplePermission', () => {
             usersGroupNodeId: '12345',
             permissionTreeTarget: {
                 nodeId: '123',
-                tree: 'categories'
+                tree: 'categories',
             },
-            ctx
+            ctx,
         });
 
         const permEdit = await simplePermHelper.getSimplePermission({
@@ -45,9 +45,9 @@ describe('getSimplePermission', () => {
             usersGroupNodeId: '12345',
             permissionTreeTarget: {
                 nodeId: '123',
-                tree: 'categories'
+                tree: 'categories',
             },
-            ctx
+            ctx,
         });
 
         const permDelete = await simplePermHelper.getSimplePermission({
@@ -57,9 +57,9 @@ describe('getSimplePermission', () => {
             usersGroupNodeId: '12345',
             permissionTreeTarget: {
                 nodeId: '123',
-                tree: 'categories'
+                tree: 'categories',
             },
-            ctx
+            ctx,
         });
 
         expect(permAccess).toBe(true);

@@ -37,12 +37,12 @@ export default function ({
     'core.domain.record': recordDomain,
     'core.utils.logger': logger,
     'core.utils': utils,
-    config
+    config,
 }: IDeps): ICoreApp {
     const _getFileRecord = async (
         settings: IGlobalSettings,
         field: keyof Pick<IGlobalSettings, 'icon' | 'favicon'>,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) => {
         if (!settings[field]) {
             return null;
@@ -55,11 +55,11 @@ export default function ({
                     {
                         field: 'id',
                         value: settings[field].recordId,
-                        condition: AttributeCondition.EQUAL
-                    }
-                ]
+                        condition: AttributeCondition.EQUAL,
+                    },
+                ],
             },
-            ctx
+            ctx,
         });
 
         return record.list.length ? record.list[0] : null;
@@ -117,16 +117,16 @@ export default function ({
                         icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
                             _getFileRecord(settings, 'icon', ctx),
                         favicon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
-                            _getFileRecord(settings, 'favicon', ctx)
+                            _getFileRecord(settings, 'favicon', ctx),
                     },
                     Query: {
-                        globalSettings: (_, args, ctx: IQueryInfos) => globalSettingsDomain.getSettings(ctx)
+                        globalSettings: (_, args, ctx: IQueryInfos) => globalSettingsDomain.getSettings(ctx),
                     },
                     Mutation: {
                         saveGlobalSettings: (_, {settings}: {settings: IGlobalSettings}, ctx: IQueryInfos) =>
-                            globalSettingsDomain.saveSettings({settings, ctx})
-                    }
-                }
+                            globalSettingsDomain.saveSettings({settings, ctx}),
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -171,7 +171,7 @@ export default function ({
                         return next(err);
                     }
                 },
-                _handleError
+                _handleError,
             );
 
             app.get(
@@ -184,7 +184,7 @@ export default function ({
                         return next(err);
                     }
                 },
-                _handleError
+                _handleError,
             );
 
             app.get(
@@ -207,11 +207,11 @@ export default function ({
                                         {
                                             field: 'id',
                                             value: settings.icon.recordId,
-                                            condition: AttributeCondition.EQUAL
-                                        }
-                                    ]
+                                            condition: AttributeCondition.EQUAL,
+                                        },
+                                    ],
                                 },
-                                ctx: req.ctx
+                                ctx: req.ctx,
                             })
                         ).list[0];
 
@@ -241,7 +241,7 @@ export default function ({
                         return next(err);
                     }
                 },
-                _handleError
+                _handleError,
             );
 
             app.get(
@@ -264,11 +264,11 @@ export default function ({
                                         {
                                             field: 'id',
                                             value: settings.favicon.recordId,
-                                            condition: AttributeCondition.EQUAL
-                                        }
-                                    ]
+                                            condition: AttributeCondition.EQUAL,
+                                        },
+                                    ],
                                 },
-                                ctx: req.ctx
+                                ctx: req.ctx,
                             })
                         ).list[0];
 
@@ -298,8 +298,8 @@ export default function ({
                         return next(err);
                     }
                 },
-                _handleError
+                _handleError,
             );
-        }
+        },
     };
 }

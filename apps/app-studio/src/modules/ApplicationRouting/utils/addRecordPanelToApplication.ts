@@ -14,7 +14,7 @@ import {type Application} from '../types';
 export const addRecordPanelToApplication = (
     panel: Panel,
     prevApplication: Application,
-    destination: {libraryId: LibraryId}
+    destination: {libraryId: LibraryId},
 ): Application => {
     /**
      * Cannot use destructuring due to a deep object.
@@ -27,7 +27,7 @@ export const addRecordPanelToApplication = (
     if (!library) {
         newApplication.libraries[destination.libraryId] = {
             recordPanels: [panel],
-            libraryPanels: []
+            libraryPanels: [],
         };
         return newApplication;
     }

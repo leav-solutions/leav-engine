@@ -13,7 +13,7 @@ export const isRecordWithId = (record: IRecord): record is RequiredOnField<IReco
 export type SendRecordUpdateEventHelper = (
     record: IRecord,
     updatedValues: IRecordUpdateEvent['updatedValues'],
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => void;
 
 interface IDeps {
@@ -25,9 +25,9 @@ export default function ({'core.domain.eventsManager': eventsManagerDomain}: IDe
         await eventsManagerDomain.sendPubSubEvent(
             {
                 triggerName: TriggerNames.RECORD_UPDATE,
-                data: {recordUpdate: {record, updatedValues}}
+                data: {recordUpdate: {record, updatedValues}},
             },
-            ctx
+            ctx,
         );
     };
 }

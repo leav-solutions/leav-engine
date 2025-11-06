@@ -26,16 +26,16 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
     const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
         (searchState?.fields ?? []).map(col => {
             const currentAttribute = searchState.attributes.find(
-                attribute => attribute.id === col.id && attribute.library === col.library
+                attribute => attribute.id === col.id && attribute.library === col.library,
             );
 
             return {
                 ...col,
                 path: col.key,
                 label: currentAttribute?.label ?? null,
-                multiple_values: !!col.multipleValues
+                multiple_values: !!col.multipleValues,
             };
-        })
+        }),
     );
 
     const handleSubmit = () => {
@@ -44,14 +44,14 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
                 selectedAttribute =>
                     !searchState.attributes.some(
                         attribute =>
-                            attribute.id === selectedAttribute.id && attribute.library === selectedAttribute.library
-                    )
+                            attribute.id === selectedAttribute.id && attribute.library === selectedAttribute.library,
+                    ),
             )
             .map(a => ({
                 ...a,
                 isLink: a.type === AttributeType.tree,
                 isMultiple: a.multiple_values,
-                format: a.format ?? undefined
+                format: a.format ?? undefined,
             }));
 
         const allAttributes = [...(searchState?.attributes ?? []), ...noDuplicateNewAttribute];
@@ -61,7 +61,7 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
         const newFields: IField[] = selectedAttributes.reduce((acc, selectedAttribute) => {
             const attribute = allAttributes.find(
                 currentAttr =>
-                    currentAttr.id === selectedAttribute.id && currentAttr.library === selectedAttribute.library
+                    currentAttr.id === selectedAttribute.id && currentAttr.library === selectedAttribute.library,
             );
 
             if (!attribute) {
@@ -75,7 +75,7 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
 
             const embeddedData = selectedAttribute.embeddedFieldData && {
                 format: selectedAttribute.embeddedFieldData?.format ?? AttributeFormat.text,
-                path: selectedAttribute.path
+                path: selectedAttribute.path,
             };
 
             const field: IField = {
@@ -91,7 +91,7 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
                 recordLibrary:
                     selectedAttribute?.parentAttributeData?.type === AttributeType.tree
                         ? selectedAttribute.path.split('.')[1]
-                        : null
+                        : null,
             };
 
             return [...acc, field];
@@ -99,7 +99,7 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
 
         searchDispatch({
             type: SearchActionTypes.SET_FIELDS,
-            fields: newFields
+            fields: newFields,
         });
 
         onClose();
@@ -129,7 +129,7 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
                 </Button>,
                 <Button type="primary" key="Submit" onClick={handleSubmit}>
                     {t('table-columns-selection.submit')}
-                </Button>
+                </Button>,
             ]}
         >
             <AttributesSelectionList

@@ -25,7 +25,7 @@ function ApiKeysList({
     loading,
     onFiltersUpdate,
     onRowClick,
-    actions
+    actions,
 }: IApiKeysListProps): JSX.Element {
     const {t} = useTranslation();
 
@@ -94,7 +94,7 @@ function ApiKeysList({
                                 </Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
                                     {actions.map((child, i) =>
-                                        React.cloneElement(child as React.ReactElement<any>, {key: i, apiKey: key})
+                                        React.cloneElement(child as React.ReactElement<any>, {key: i, apiKey: key}),
                                     )}
                                 </Table.Cell>
                             </Table.Row>

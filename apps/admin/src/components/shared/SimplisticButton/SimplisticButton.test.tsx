@@ -12,7 +12,7 @@ describe('SimplisticButton', () => {
         render(
             <SimplisticButton onClick={_handleClick}>
                 <div>Some child</div>
-            </SimplisticButton>
+            </SimplisticButton>,
         );
 
         expect(screen.getByRole('button')).toBeInTheDocument();

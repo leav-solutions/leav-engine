@@ -24,7 +24,7 @@ import {
     AdminPermissionsActions,
     PermissionTypes,
     TreeNodePermissionsActions,
-    TreePermissionsActions
+    TreePermissionsActions,
 } from '../../_types/permissions';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {
@@ -35,7 +35,7 @@ import {
     type ITreeNodeLight,
     TreeBehavior,
     TreeEventTypes,
-    type TreePath
+    type TreePath,
 } from '../../_types/tree';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
@@ -147,7 +147,7 @@ export interface ITreeDomain {
 const treeEventActionByEventType = {
     [TreeEventTypes.ADD]: EventAction.TREE_ADD_ELEMENT,
     [TreeEventTypes.REMOVE]: EventAction.TREE_DELETE_ELEMENT,
-    [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT
+    [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT,
 } as const;
 
 export interface ITreeDomainDeps {
@@ -185,7 +185,7 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.versionProfile': versionProfileRepo,
     'core.utils': utils,
-    'core.infra.cache.cacheService': cacheService
+    'core.infra.cache.cacheService': cacheService,
 }: ITreeDomainDeps): ITreeDomain {
     async function _isExistingTree(treeId: string, ctx: IQueryInfos): Promise<boolean> {
         const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
@@ -198,9 +198,9 @@ export default function ({
             params: {
                 library: element.library,
                 filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: `${element.id}`}],
-                retrieveInactive: true
+                retrieveInactive: true,
             },
-            ctx
+            ctx,
         });
 
         return !!record.list.length;
@@ -219,12 +219,12 @@ export default function ({
             keys.push(
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.LIBRARY,
-                    applyTo: libId
+                    applyTo: libId,
                 }),
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.RECORD,
-                    applyTo: libId
-                })
+                    applyTo: libId,
+                }),
             );
         }
 
@@ -238,16 +238,16 @@ export default function ({
             keys.push(
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.TREE,
-                    applyTo: treeId
+                    applyTo: treeId,
                 }),
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.TREE_LIBRARY,
-                    applyTo: treeId
+                    applyTo: treeId,
                 }),
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.TREE_NODE,
-                    applyTo: treeId
-                })
+                    applyTo: treeId,
+                }),
             );
         }
 
@@ -261,12 +261,12 @@ export default function ({
             keys.push(
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.ATTRIBUTE,
-                    applyTo: attributeId
+                    applyTo: attributeId,
                 }),
                 getPermissionCachePatternKey({
                     permissionType: PermissionTypes.RECORD_ATTRIBUTE,
-                    applyTo: attributeId
-                })
+                    applyTo: attributeId,
+                }),
             );
         }
 
@@ -335,7 +335,7 @@ export default function ({
             parentNodeBefore?: string;
             order: number;
         },
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void> => {
         const {treeId, type, record, element, parentNode, parentNodeBefore, order} = params;
 
@@ -348,12 +348,12 @@ export default function ({
                         element: {...element, treeId},
                         parentNode: parentNode ? {id: parentNode, treeId} : null,
                         parentNodeBefore: parentNodeBefore ? {id: parentNodeBefore, treeId} : null,
-                        order
-                    }
+                        order,
+                    },
                 },
-                triggerName: TriggerNames.TREE_EVENT
+                triggerName: TriggerNames.TREE_EVENT,
             },
-            ctx
+            ctx,
         );
 
         await eventsManagerDomain.sendDatabaseEvent<(typeof treeEventActionByEventType)[typeof type]>(
@@ -363,13 +363,13 @@ export default function ({
                     tree: treeId,
                     record: {
                         id: record.id,
-                        libraryId: record.library
-                    }
+                        libraryId: record.library,
+                    },
                 },
                 before: parentNodeBefore ?? null,
-                after: parentNode ?? null
+                after: parentNode ?? null,
             },
-            ctx
+            ctx,
         );
     };
 
@@ -397,7 +397,7 @@ export default function ({
                 ? {
                       ...defaultParams,
                       ...treeProps,
-                      ...omit(treeData, uneditableFields)
+                      ...omit(treeData, uneditableFields),
                   }
                 : {...defaultParams, ...treeData};
 
@@ -421,12 +421,12 @@ export default function ({
                 {
                     action: EventAction.TREE_SAVE,
                     topic: {
-                        tree: savedTree.id
+                        tree: savedTree.id,
                     },
                     after: savedTree,
-                    before: isExistingTree ? treeProps : null
+                    before: isExistingTree ? treeProps : null,
                 },
-                ctx
+                ctx,
             );
 
             if (isExistingTree) {
@@ -464,7 +464,7 @@ export default function ({
             // Remove tree from versions profile using it
             const versionProfiles = await versionProfileRepo.getVersionProfiles({
                 params: {filters: {trees: treeProps.id}},
-                ctx
+                ctx,
             });
             if (versionProfiles.list.length) {
                 await Promise.all(
@@ -472,9 +472,9 @@ export default function ({
                         const trees = versionProfile.trees.filter(t => t !== treeProps.id);
                         await versionProfileRepo.updateVersionProfile({
                             profileData: {...versionProfile, trees},
-                            ctx
+                            ctx,
                         });
-                    })
+                    }),
                 );
             }
 
@@ -484,11 +484,11 @@ export default function ({
                 {
                     action: EventAction.TREE_DELETE,
                     topic: {
-                        tree: id
+                        tree: id,
                     },
-                    before: treeProps
+                    before: treeProps,
                 },
-                ctx
+                ctx,
             );
 
             const cacheKey = utils.getCoreEntityCacheKey('tree', id);
@@ -511,7 +511,7 @@ export default function ({
                 throw utils.generateExplicitValidationError(
                     'id',
                     {msg: Errors.UNKNOWN_TREE, vars: {tree: treeId}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -572,12 +572,12 @@ export default function ({
                 element,
                 parent,
                 order,
-                ctx
+                ctx,
             });
 
             await _sendTreeEvent(
                 {type: TreeEventTypes.ADD, treeId, record: element, element: addedElement, parentNode: parent, order},
-                ctx
+                ctx,
             );
 
             return addedElement;
@@ -588,7 +588,7 @@ export default function ({
             parentTo = null,
             order = 0,
             ctx,
-            skipChecks = false
+            skipChecks = false,
         }): Promise<ITreeNodeLight> {
             const parents = await this.getElementAncestors({treeId, nodeId, ctx});
             const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
@@ -632,14 +632,14 @@ export default function ({
                         action: TreeNodePermissionsActions.EDIT_CHILDREN,
                         nodeId: parentBefore.id,
                         userId: ctx.userId,
-                        ctx
+                        ctx,
                     });
                 } else {
                     canEditSourceChildren = await treePermissionDomain.getTreePermission({
                         treeId,
                         action: TreePermissionsActions.EDIT_CHILDREN,
                         userId: ctx.userId,
-                        ctx
+                        ctx,
                     });
                 }
 
@@ -650,13 +650,13 @@ export default function ({
                           action: TreeNodePermissionsActions.EDIT_CHILDREN,
                           nodeId: parentTo,
                           userId: ctx.userId,
-                          ctx
+                          ctx,
                       })
                     : await treePermissionDomain.getTreePermission({
                           treeId,
                           action: TreePermissionsActions.EDIT_CHILDREN,
                           userId: ctx.userId,
-                          ctx
+                          ctx,
                       });
 
                 if (!canEditSourceChildren || !canEditDestinationChildren) {
@@ -673,7 +673,7 @@ export default function ({
                     nodeExists &&
                     parentTo &&
                     (await this.getElementAncestors({treeId, nodeId: parentTo, ctx})).some(
-                        a => a.record.id === nodeRecord.id && a.record.library === nodeRecord.library
+                        a => a.record.id === nodeRecord.id && a.record.library === nodeRecord.library,
                     )
                 ) {
                     errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
@@ -696,9 +696,9 @@ export default function ({
                     element: movedElement,
                     parentNode: parentTo ?? null,
                     parentNodeBefore: parentBefore?.id ?? null,
-                    order
+                    order,
                 },
-                ctx
+                ctx,
             );
 
             return movedElement;
@@ -723,7 +723,7 @@ export default function ({
                 action: TreeNodePermissionsActions.DETACH,
                 nodeId,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!canDetach) {
@@ -745,9 +745,9 @@ export default function ({
                     element: deletedElement,
                     parentNode: null,
                     parentNodeBefore: parentBefore?.id ?? null,
-                    order: null
+                    order: null,
                 },
-                ctx
+                ctx,
             );
 
             return deletedElement;
@@ -762,7 +762,7 @@ export default function ({
                 treeId,
                 action: TreePermissionsActions.ACCESS_TREE,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!isTreeAccessible) {
@@ -781,7 +781,7 @@ export default function ({
             childrenCount,
             withTotalCount,
             pagination,
-            ctx
+            ctx,
         }): Promise<IList<ITreeNode>> {
             if (!(await _isExistingTree(treeId, ctx))) {
                 throw new ValidationError({treeId: Errors.UNKNOWN_TREE});
@@ -830,6 +830,6 @@ export default function ({
         },
         async getDefaultElement({treeId, ctx}) {
             return getDefaultElementHelper.getDefaultElement({treeId, ctx});
-        }
+        },
     };
 }

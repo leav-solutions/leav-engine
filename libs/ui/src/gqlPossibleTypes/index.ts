@@ -24,5 +24,5 @@ import {type PossibleTypesMap} from '@apollo/client';
 export const gqlPossibleTypes: PossibleTypesMap = {
     Attribute: ['StandardAttribute', 'LinkAttribute', 'TreeAttribute'],
     StandardValuesListConf: ['StandardStringValuesListConf', 'StandardDateRangeValuesListConf'],
-    GenericValue: ['Value', 'LinkValue', 'TreeValue']
+    GenericValue: ['Value', 'LinkValue', 'TreeValue'],
 };

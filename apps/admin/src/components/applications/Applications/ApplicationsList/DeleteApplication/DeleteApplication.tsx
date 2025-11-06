@@ -24,12 +24,12 @@ const DeleteApplication = ({application}: IDeleteApplicationProps): JSX.Element 
         onError: () => undefined,
         update: (cache, {data: {deleteApplication}}) => {
             deleteFromCache(cache, deleteApplication as unknown as StoreObject);
-        }
+        },
     });
 
     const onDelete = async () =>
         deleteAttr({
-            variables: {appId: application.id}
+            variables: {appId: application.id},
         });
 
     const appLabel = localizedTranslation(application?.label, lang);

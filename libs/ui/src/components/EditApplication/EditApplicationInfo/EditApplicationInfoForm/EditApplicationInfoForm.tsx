@@ -32,7 +32,7 @@ function EditApplicationInfoForm({
     application,
     onSubmitField,
     onCheckApplicationUniqueness,
-    loading
+    loading,
 }: IEditApplicationInfoFormProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
@@ -48,7 +48,7 @@ function EditApplicationInfoForm({
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
             interpolation: {escapeValue: false},
-            fieldName: t(`applications.${field}`)
+            fieldName: t(`applications.${field}`),
         });
 
     const _handleLabelChange = (lang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,7 +132,7 @@ function EditApplicationInfoForm({
               ...availableLangs.reduce((acc, lang) => {
                   acc[`label_${lang}`] = application.label[lang] ?? '';
                   return acc;
-              }, {})
+              }, {}),
           }
         : {};
 
@@ -141,7 +141,7 @@ function EditApplicationInfoForm({
               ...availableLangs.reduce((acc, lang) => {
                   acc[`description_${lang}`] = application.description[lang] ?? '';
                   return acc;
-              }, {})
+              }, {}),
           }
         : {};
 
@@ -149,7 +149,7 @@ function EditApplicationInfoForm({
         type: ApplicationType.internal,
         ...application,
         ...label,
-        ...description
+        ...description,
     };
 
     const _getFieldState = (field: string) => {
@@ -168,7 +168,7 @@ function EditApplicationInfoForm({
 
     const typeSelectOptions = Object.values(ApplicationType).map(type => ({
         label: t(`applications.type_${type}`),
-        value: type
+        value: type,
     }));
 
     return (
@@ -236,8 +236,8 @@ function EditApplicationInfoForm({
                     {
                         validateTrigger: ['onBlur', 'onSubmit'],
                         validator: _handleAppUniquenessValidation('id'),
-                        message: t('errors.id_already_exists')
-                    }
+                        message: t('errors.id_already_exists'),
+                    },
                 ]}
                 hasFeedback
             >
@@ -271,21 +271,21 @@ function EditApplicationInfoForm({
                 rules={[
                     {
                         required: true,
-                        message: _getRequiredMessage(isInternalApp ? 'endpoint' : 'url')
+                        message: _getRequiredMessage(isInternalApp ? 'endpoint' : 'url'),
                     },
                     {
                         pattern: isInternalApp ? endpointFormatRegex : null,
-                        message: t('errors.invalid_endpoint_format')
+                        message: t('errors.invalid_endpoint_format'),
                     },
                     {
                         validateTrigger: ['onBlur', 'onSubmit'],
                         validator: isInternalApp ? _handleAppUniquenessValidation('endpoint') : null,
-                        message: t('errors.endpoint_already_used')
+                        message: t('errors.endpoint_already_used'),
                     },
                     {
                         type: isInternalApp ? 'string' : 'url',
-                        message: t('errors.invalid_url_format')
-                    }
+                        message: t('errors.invalid_url_format'),
+                    },
                 ]}
                 hasFeedback
             >

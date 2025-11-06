@@ -8,7 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 export enum MessagesTypes {
     SUCCESS = 'SUCCESS',
     ERROR = 'ERROR',
-    WARNING = 'WARNING'
+    WARNING = 'WARNING',
 }
 
 export interface IMessage {
@@ -24,7 +24,7 @@ export interface IMessagesReducerState {
 }
 
 export const initialState: IMessagesReducerState = {
-    messages: []
+    messages: [],
 };
 
 export const messagesSlice = createSlice({
@@ -34,7 +34,7 @@ export const messagesSlice = createSlice({
         addMessage: (state, action: PayloadAction<Omit<IMessage, 'id'>>) => {
             state.messages.push({
                 ...action.payload,
-                id: uuidv4()
+                id: uuidv4(),
             });
         },
         removeMessage: (state, action: PayloadAction<string>) => {
@@ -46,8 +46,8 @@ export const messagesSlice = createSlice({
             }
 
             state.messages = [...state.messages.slice(0, index), ...state.messages.slice(index + 1)];
-        }
-    }
+        },
+    },
 });
 
 // Action creators are generated for each case reducer function

@@ -22,7 +22,7 @@ export interface IGetDefaultElementHelper {
 export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.cache.cacheService': cacheService,
-    'core.utils': utils
+    'core.utils': utils,
 }: IDeps): IGetDefaultElementHelper {
     const _getCacheKey = treeId => `${utils.getCoreEntityCacheKey('tree', treeId)}:defaultElement`;
 
@@ -41,6 +41,6 @@ export default function ({
             const cacheKey = _getCacheKey(treeId);
             const cache = cacheService.getCache(ECacheType.RAM);
             cache.deleteData([cacheKey]);
-        }
+        },
     };
 }

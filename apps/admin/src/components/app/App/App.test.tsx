@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function Home() {
             return <div>Home</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -29,11 +29,11 @@ jest.mock(
     () =>
         function MessagesDisplay() {
             return <div>MessagesDisplay</div>;
-        }
+        },
 );
 
 jest.mock('../../../constants', () => ({
-    APP_ENDPOINT: 'admin'
+    APP_ENDPOINT: 'admin',
 }));
 
 test('Renders app', async () => {
@@ -41,7 +41,7 @@ test('Renders app', async () => {
         {
             request: {
                 query: getMe,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
@@ -53,78 +53,78 @@ test('Renders app', async () => {
                                 id: 'users',
                                 label: {
                                     en: 'Users',
-                                    fr: 'Utilisateurs'
+                                    fr: 'Utilisateurs',
                                 },
-                                __typename: 'Library'
+                                __typename: 'Library',
                             },
                             label: 'admin',
                             color: null,
                             preview: null,
-                            __typename: 'RecordIdentity'
+                            __typename: 'RecordIdentity',
                         },
-                        __typename: 'User'
-                    }
-                }
-            }
+                        __typename: 'User',
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getLangs,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
-                    langs: ['fr']
-                }
-            }
+                    langs: ['fr'],
+                },
+            },
         },
         {
             request: {
                 query: isAllowedQuery,
                 variables: {
                     type: PermissionTypes.admin,
-                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
-                }
+                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/)),
+                },
             },
             result: {
                 data: {
                     isAllowed: Object.values(PermissionsActions)
                         .filter(a => !!a.match(/^admin_/))
-                        .map(action => ({name: action, allowed: true, __typename: 'PermissionAction'}))
-                }
-            }
+                        .map(action => ({name: action, allowed: true, __typename: 'PermissionAction'})),
+                },
+            },
         },
         {
             request: {
                 query: getApplicationByEndpointQuery,
                 variables: {
-                    endpoint: 'admin'
-                }
+                    endpoint: 'admin',
+                },
             },
             result: {
                 data: {
                     applications: {
                         __typename: 'ApplicationsList',
-                        list: [mockApplicationDetails]
-                    }
-                }
-            }
+                        list: [mockApplicationDetails],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getGlobalSettingsQuery,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
                     globalSettings: {
                         __typename: 'GlobalSettings',
                         name: 'my app',
-                        icon: null
-                    }
-                }
-            }
-        }
+                        icon: null,
+                    },
+                },
+            },
+        },
     ];
 
     render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}});

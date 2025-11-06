@@ -39,7 +39,7 @@ const getAttributesFromField = async (params: {
     const {
         'core.domain.attribute': attributeDomain,
         'core.infra.library': libraryRepo,
-        'core.infra.tree': treeRepo
+        'core.infra.tree': treeRepo,
     } = deps;
 
     const _getLabelOrIdAttribute = async (library: string): Promise<string> => {
@@ -51,7 +51,7 @@ const getAttributesFromField = async (params: {
 
         const linkedLibraryProps = await libraryRepo.getLibraries({
             params: {filters: {id: library}},
-            ctx
+            ctx,
         });
 
         return linkedLibraryProps.list.length && linkedLibraryProps.list[0].recordIdentityConf?.label
@@ -79,7 +79,7 @@ const getAttributesFromField = async (params: {
                     attributes.push({
                         id: extendedField,
                         type: AttributeTypes.SIMPLE,
-                        format: AttributeFormats.EXTENDED
+                        format: AttributeFormats.EXTENDED,
                     });
                 }
             }
@@ -97,7 +97,7 @@ const getAttributesFromField = async (params: {
             // Check if child attribute is really linked to library
             const attrLinkedLibraryAttributes = await attributeDomain.getLibraryAttributes(
                 mainAttribute.linked_library,
-                ctx
+                ctx,
             );
 
             if (!attrLinkedLibraryAttributes.find(a => a.id === childAttribute)) {
@@ -113,7 +113,7 @@ const getAttributesFromField = async (params: {
                           visitedLibraries,
                           condition,
                           deps,
-                          ctx
+                          ctx,
                       })
                     : [];
             attributes = [...attributes, ...subChildAttributes];
@@ -127,12 +127,12 @@ const getAttributesFromField = async (params: {
                 // Get libraries linked to tree
                 const linkedTree = await treeRepo.getTrees({
                     params: {filters: {id: mainAttribute.linked_tree}},
-                    ctx
+                    ctx,
                 });
 
                 if (!linkedTree.list.length) {
                     throw new ValidationError({
-                        id: {msg: Errors.UNKNOWN_TREES, vars: {trees: [mainAttribute.linked_tree]}}
+                        id: {msg: Errors.UNKNOWN_TREES, vars: {trees: [mainAttribute.linked_tree]}},
                     });
                 }
 
@@ -142,7 +142,7 @@ const getAttributesFromField = async (params: {
                     const libProps = (
                         await libraryRepo.getLibraries({
                             params: {filters: {id: treeLinkedLibrary}},
-                            ctx
+                            ctx,
                         })
                     )?.list?.[0];
 
@@ -154,7 +154,7 @@ const getAttributesFromField = async (params: {
                     try {
                         const libLabelAttributeProps = await attributeDomain.getAttributeProperties({
                             id: await _getLabelOrIdAttribute(libProps.id),
-                            ctx
+                            ctx,
                         });
                         attributes.push(libLabelAttributeProps);
                     } catch (err) {
@@ -165,7 +165,7 @@ const getAttributesFromField = async (params: {
                 const libProps = (
                     await libraryRepo.getLibraries({
                         params: {filters: {id: treeLibrary}},
-                        ctx
+                        ctx,
                     })
                 )?.list?.[0];
 
@@ -177,7 +177,7 @@ const getAttributesFromField = async (params: {
                 try {
                     const libLabelAttributeProps = await attributeDomain.getAttributeProperties({
                         id: libProps.recordIdentityConf.label,
-                        ctx
+                        ctx,
                     });
                     attributes.push(libLabelAttributeProps);
                 } catch (err) {

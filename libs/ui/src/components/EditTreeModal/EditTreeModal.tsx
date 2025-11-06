@@ -13,7 +13,7 @@ import {
     PermissionTypes,
     type TreeDetailsFragment,
     useDeleteTreeMutation,
-    useIsAllowedQuery
+    useIsAllowedQuery,
 } from '_ui/_gqlTypes';
 import {useLang} from '../../hooks';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
@@ -47,12 +47,12 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
             type: PermissionTypes.admin,
             actions: isEditing
                 ? [PermissionsActions.admin_edit_tree, PermissionsActions.admin_delete_tree]
-                : [PermissionsActions.admin_create_tree]
-        }
+                : [PermissionsActions.admin_create_tree],
+        },
     });
     const isReadOnly = !extractPermissionFromQuery(
         permissionsQueryResult,
-        isEditing ? PermissionsActions.admin_edit_tree : PermissionsActions.admin_create_tree
+        isEditing ? PermissionsActions.admin_edit_tree : PermissionsActions.admin_create_tree,
     );
     const canDelete = extractPermissionFromQuery(permissionsQueryResult, PermissionsActions.admin_delete_tree);
 
@@ -81,13 +81,13 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
 
         const deleteRes = await deleteTree({
             variables: {
-                id: treeId
-            }
+                id: treeId,
+            },
         });
 
         // Remove library from apollo cache
         apolloClient.cache.evict({
-            id: apolloClient.cache.identify(deleteRes.data.deleteTree)
+            id: apolloClient.cache.identify(deleteRes.data.deleteTree),
         });
 
         onClose();
@@ -132,7 +132,7 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
               ) : null,
               <Button key="close" onClick={onClose}>
                   {t('global.close')}
-              </Button>
+              </Button>,
           ]
         : [
               <Button key="cancel" onClick={onClose}>
@@ -140,7 +140,7 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
               </Button>,
               <Button key="submit" type="primary" onClick={_handleSubmit} loading={submitLoading}>
                   {t('global.submit')}
-              </Button>
+              </Button>,
           ];
 
     return (

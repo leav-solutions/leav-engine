@@ -15,9 +15,9 @@ describe('EmbeddedFieldsForm', () => {
             id: 'test',
             label: {
                 fr: 'test fr',
-                en: 'test en'
+                en: 'test en',
             },
-            format: 'text'
+            format: 'text',
         };
 
         const mockValues = [];
@@ -28,7 +28,7 @@ describe('EmbeddedFieldsForm', () => {
                 formValues={mockValues}
                 setFormValues={jest.fn}
                 save={jest.fn()}
-            />
+            />,
         );
 
         test('should return something', () => {
@@ -57,7 +57,7 @@ describe('EmbeddedFieldsForm', () => {
             id: 'test',
             label: {
                 fr: 'test fr',
-                en: 'test en'
+                en: 'test en',
             },
             format: 'extended',
             validation_regex: 'test',
@@ -66,12 +66,12 @@ describe('EmbeddedFieldsForm', () => {
                     id: 'testChild',
                     label: {
                         fr: 'testChild fr',
-                        en: 'testChild en'
+                        en: 'testChild en',
                     },
                     format: 'text',
-                    validation_regex: 'testChild'
-                }
-            ]
+                    validation_regex: 'testChild',
+                },
+            ],
         };
 
         const mockValues = [];
@@ -82,7 +82,7 @@ describe('EmbeddedFieldsForm', () => {
                 formValues={mockValues}
                 setFormValues={jest.fn}
                 save={jest.fn()}
-            />
+            />,
         );
 
         test("shouldn't display validation_regex input", () => {

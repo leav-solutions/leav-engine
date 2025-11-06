@@ -15,7 +15,7 @@ describe('Cell', () => {
                 id: 'id',
                 value: [{value: 'test_value'}],
                 type: AttributeType.simple,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -28,10 +28,10 @@ describe('Cell', () => {
                 id: 'id',
                 value: [
                     {value: null, isInherited: null},
-                    {value: 'valueInherited', isInherited: true}
+                    {value: 'valueInherited', isInherited: true},
                 ],
                 type: AttributeType.simple,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -44,10 +44,10 @@ describe('Cell', () => {
                 id: 'id',
                 value: [
                     {value: 'valueInherited', isInherited: true},
-                    {value: 'valueOverride', isInherited: false}
+                    {value: 'valueOverride', isInherited: false},
                 ],
                 type: AttributeType.simple,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -63,7 +63,7 @@ describe('Cell', () => {
                 id: 'id',
                 value: [{value: 'valueA'}, {value: 'valueB'}],
                 type: AttributeType.advanced,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -77,10 +77,10 @@ describe('Cell', () => {
                 value: [
                     {value: null, isInherited: null},
                     {value: 'valueInheritedA', isInherited: true},
-                    {value: 'valueInheritedB', isInherited: true}
+                    {value: 'valueInheritedB', isInherited: true},
                 ],
                 type: AttributeType.advanced,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -95,10 +95,10 @@ describe('Cell', () => {
                     {value: 'valueOverrideA', isInherited: false},
                     {value: 'valueOverrideB', isInherited: false},
                     {value: 'valueInheritedA', isInherited: true},
-                    {value: 'valueInheritedB', isInherited: true}
+                    {value: 'valueInheritedB', isInherited: true},
                 ],
                 type: AttributeType.advanced,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -114,7 +114,7 @@ describe('Cell', () => {
                 id: 'id',
                 value: [{linkValue: {id: mockRecord.id, whoAmI: mockRecord}}],
                 type: AttributeType.simple_link,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -127,10 +127,10 @@ describe('Cell', () => {
                 id: 'id',
                 value: [
                     {linkValue: null, isInherited: null},
-                    {linkValue: {id: mockRecord.id, whoAmI: mockRecord}, isInherited: true}
+                    {linkValue: {id: mockRecord.id, whoAmI: mockRecord}, isInherited: true},
                 ],
                 type: AttributeType.simple_link,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -144,10 +144,10 @@ describe('Cell', () => {
                 id: 'id',
                 value: [
                     {linkValue: {id: mockRecord.id, whoAmI: {...mockRecord, label: overrideLabel}}, isInherited: false},
-                    {linkValue: {id: mockRecord.id, whoAmI: mockRecord}, isInherited: true}
+                    {linkValue: {id: mockRecord.id, whoAmI: mockRecord}, isInherited: true},
                 ],
                 type: AttributeType.simple_link,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -163,10 +163,10 @@ describe('Cell', () => {
                 value: [
                     {linkValue: {id: mockRecord.id, whoAmI: mockRecord}},
                     {linkValue: {id: 'record2', whoAmI: {...mockRecord, id: 'record2', label: 'record2'}}},
-                    {linkValue: {id: 'record3', whoAmI: {...mockRecord, id: 'record3', label: 'record3'}}}
+                    {linkValue: {id: 'record3', whoAmI: {...mockRecord, id: 'record3', label: 'record3'}}},
                 ],
                 type: AttributeType.simple_link,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -193,15 +193,15 @@ describe('Cell', () => {
                     {linkValue: null, isInherited: null},
                     {
                         linkValue: {id: 'record2', whoAmI: {...mockRecord, id: 'record2', label: 'record2'}},
-                        isInherited: true
+                        isInherited: true,
                     },
                     {
                         linkValue: {id: 'record3', whoAmI: {...mockRecord, id: 'record3', label: 'record3'}},
-                        isInherited: true
-                    }
+                        isInherited: true,
+                    },
                 ],
                 type: AttributeType.simple_link,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);
@@ -227,23 +227,23 @@ describe('Cell', () => {
                     {linkValue: null, isInherited: null},
                     {
                         linkValue: {id: 'record2', whoAmI: {...mockRecord, id: 'record2', label: 'record2'}},
-                        isInherited: false
+                        isInherited: false,
                     },
                     {
                         linkValue: {id: 'record3', whoAmI: {...mockRecord, id: 'record3', label: 'record3'}},
-                        isInherited: false
+                        isInherited: false,
                     },
                     {
                         linkValue: {id: 'record4', whoAmI: {...mockRecord, id: 'record4', label: 'record4'}},
-                        isInherited: true
+                        isInherited: true,
                     },
                     {
                         linkValue: {id: 'record5', whoAmI: {...mockRecord, id: 'record5', label: 'record5'}},
-                        isInherited: true
-                    }
+                        isInherited: true,
+                    },
                 ],
                 type: AttributeType.simple_link,
-                format: AttributeFormat.text
+                format: AttributeFormat.text,
             };
 
             render(<Cell columnName="test" data={mockData as unknown as ITableCell} />);

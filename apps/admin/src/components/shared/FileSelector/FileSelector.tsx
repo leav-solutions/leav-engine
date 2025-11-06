@@ -24,8 +24,8 @@ function FileSelector({label, value, onChange, disabled}: IFileSelectorProps): J
 
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
         variables: {
-            behavior: [LibraryBehavior.files]
-        }
+            behavior: [LibraryBehavior.files],
+        },
     });
 
     if (loading) {

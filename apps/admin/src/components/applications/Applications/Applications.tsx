@@ -22,7 +22,7 @@ const Applications = (): JSX.Element => {
     const history = useHistory();
 
     const {loading, error, data} = useQuery<GET_APPLICATIONS, GET_APPLICATIONSVariables>(getApplicationsQuery, {
-        variables: {filters: {...addWildcardToFilters(filters, ['label', 'id', 'endpoint'])}}
+        variables: {filters: {...addWildcardToFilters(filters, ['label', 'id', 'endpoint'])}},
     });
 
     const _onFiltersUpdate = (filterElem: any) => {
@@ -35,7 +35,7 @@ const Applications = (): JSX.Element => {
 
         setFilters({
             ...filters,
-            [filterElem.name]: newElemState
+            [filterElem.name]: newElemState,
         });
     };
 

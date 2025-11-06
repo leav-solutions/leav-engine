@@ -13,6 +13,6 @@ interface IDeps {
 
 export default function ({'core.app.core.filesManager': filesManager}: IDeps): IFilesManagerInterface {
     return {
-        init: () => filesManager.init()
+        init: () => filesManager.init(),
     };
 }

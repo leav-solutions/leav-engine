@@ -99,7 +99,7 @@ module.exports = {
         '@typescript-eslint/return-await': 'error',
         '@typescript-eslint/semi': ['error', 'always'],
         '@typescript-eslint/triple-slash-reference': 'error',
-        'comma-dangle': 'error',
+        'comma-dangle': ['error', 'always-multiline'],
         complexity: 'off',
         'constructor-super': 'error',
         curly: 'error',

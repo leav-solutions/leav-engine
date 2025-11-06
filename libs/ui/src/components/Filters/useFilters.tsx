@@ -18,17 +18,17 @@ export const useFilters = (pinFilters = false) => {
                               ...filter,
                               attribute: {
                                   ...filtersData.attributesDataById[filter?.attribute?.id],
-                                  ...filter.attribute
-                              }
+                                  ...filter.attribute,
+                              },
                           },
-                          isPinned: pinFilters
+                          isPinned: pinFilters,
                       }))
                 : [],
-        [filtersData]
+        [filtersData],
     );
 
     return {
         filtersProps: filtersToDisplay,
-        filtersData: filtersData.filters
+        filtersData: filtersData.filters,
     };
 };

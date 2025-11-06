@@ -15,15 +15,15 @@ describe('TreesSettings', () => {
         ...mockTree,
         permissions: {
             access_tree: true,
-            edit_children: true
-        }
+            edit_children: true,
+        },
     };
 
     const currentApp = {
         ...mockApplicationDetails,
         settings: {
-            trees: 'all'
-        }
+            trees: 'all',
+        },
     };
 
     const mocks = [
@@ -31,8 +31,8 @@ describe('TreesSettings', () => {
             request: {
                 query: getTreeListQuery,
                 variables: {
-                    filters: {id: []}
-                }
+                    filters: {id: []},
+                },
             },
             result: {
                 data: {
@@ -41,18 +41,18 @@ describe('TreesSettings', () => {
                             {
                                 ...mockTreeBase,
                                 id: 'treeA',
-                                label: {fr: 'Tree A'}
+                                label: {fr: 'Tree A'},
                             },
                             {
                                 ...mockTreeBase,
                                 id: 'treeB',
-                                label: {fr: 'Tree B'}
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                label: {fr: 'Tree B'},
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     const mocksCustomSelection = [
@@ -60,8 +60,8 @@ describe('TreesSettings', () => {
             request: {
                 query: getTreeListQuery,
                 variables: {
-                    filters: {id: ['treeA', 'treeB']}
-                }
+                    filters: {id: ['treeA', 'treeB']},
+                },
             },
             result: {
                 data: {
@@ -70,18 +70,18 @@ describe('TreesSettings', () => {
                             {
                                 ...mockTreeBase,
                                 id: 'treeA',
-                                label: {fr: 'Tree A'}
+                                label: {fr: 'Tree A'},
                             },
                             {
                                 ...mockTreeBase,
                                 id: 'treeB',
-                                label: {fr: 'Tree B'}
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                label: {fr: 'Tree B'},
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     test('Display list of trees', async () => {
@@ -100,13 +100,13 @@ describe('TreesSettings', () => {
                 error: null,
                 called: false,
                 reset: jest.fn(),
-                client: null
-            }
+                client: null,
+            },
         ]);
 
         render(<TreesSettings />, {
             apolloMocks: mocksCustomSelection,
-            current: {...currentApp, settings: {...currentApp.settings, trees: 'custom'}}
+            current: {...currentApp, settings: {...currentApp.settings, trees: 'custom'}},
         });
 
         expect(await screen.findByDisplayValue('all')).toBeInTheDocument();
@@ -133,8 +133,8 @@ describe('TreesSettings', () => {
                 error: null,
                 called: false,
                 reset: jest.fn(),
-                client: null
-            }
+                client: null,
+            },
         ]);
 
         const {container} = render(<TreesSettings />, {apolloMocks: mocks, currentApp});
@@ -153,9 +153,9 @@ describe('TreesSettings', () => {
                 ...currentApp,
                 permissions: {
                     ...currentApp.permissions,
-                    admin_application: false
-                }
-            }
+                    admin_application: false,
+                },
+            },
         });
 
         await waitFor(() => screen.getByText('Tree A'));
@@ -171,13 +171,13 @@ describe('TreesSettings', () => {
                 error: null,
                 called: false,
                 reset: jest.fn(),
-                client: null
-            }
+                client: null,
+            },
         ]);
 
         render(<TreesSettings />, {
             apolloMocks: mocksCustomSelection,
-            current: {...currentApp, settings: {...currentApp.settings, trees: ['treeA', 'treeB']}}
+            current: {...currentApp, settings: {...currentApp.settings, trees: ['treeA', 'treeB']}},
         });
 
         await waitFor(() => screen.getByText('Tree A'));
@@ -206,8 +206,8 @@ describe('TreesSettings', () => {
             ...currentApp,
             settings: {
                 ...currentApp.settings,
-                trees: []
-            }
+                trees: [],
+            },
         };
 
         test('Display a message if nothing selected', async () => {
@@ -220,7 +220,7 @@ describe('TreesSettings', () => {
         test('Can add tree to list', async () => {
             render(<TreesSettings />, {
                 apolloMocks: mocksCustomSelection,
-                currentApp: {...currentApp, settings: {trees: ['treeA', 'treeB']}}
+                currentApp: {...currentApp, settings: {trees: ['treeA', 'treeB']}},
             });
 
             expect(await screen.findByRole('button', {name: /add/})).toBeInTheDocument();
@@ -235,13 +235,13 @@ describe('TreesSettings', () => {
                     error: null,
                     called: false,
                     reset: jest.fn(),
-                    client: null
-                }
+                    client: null,
+                },
             ]);
 
             render(<TreesSettings />, {
                 apolloMocks: mocksCustomSelection,
-                currentApp: {...currentApp, settings: {trees: ['treeA', 'treeB']}}
+                currentApp: {...currentApp, settings: {trees: ['treeA', 'treeB']}},
             });
 
             userEvent.click(await screen.findByRole('button', {name: /clear/}));

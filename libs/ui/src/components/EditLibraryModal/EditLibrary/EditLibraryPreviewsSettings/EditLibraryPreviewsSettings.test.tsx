@@ -10,7 +10,7 @@ import EditLibraryPreviewsSettings from './EditLibraryPreviewsSettings';
 jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 
 jest.mock('./EditPreviewsSettingsModal', () => ({
-    EditPreviewsSettingsModal: () => <div>EditPreviewsSettingsModal</div>
+    EditPreviewsSettingsModal: () => <div>EditPreviewsSettingsModal</div>,
 }));
 
 describe('EditLibraryPreviewsSettings', () => {
@@ -57,14 +57,14 @@ describe('EditLibraryPreviewsSettings', () => {
             data: {
                 saveLibrary: {
                     ...mockLibraryWithPreviewsSettings,
-                    previewsSettings: [mockLibraryWithPreviewsSettings.previewsSettings[0]]
-                }
-            }
+                    previewsSettings: [mockLibraryWithPreviewsSettings.previewsSettings[0]],
+                },
+            },
         });
 
         jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
             mockSaveLibraryMutation,
-            {loading: false, called: true, client: null, reset: null, error: null}
+            {loading: false, called: true, client: null, reset: null, error: null},
         ]);
 
         render(<EditLibraryPreviewsSettings library={mockLibraryWithPreviewsSettings} />);

@@ -11,13 +11,13 @@ import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDo
 
 describe('logDomain', () => {
     const mockLogRepo: Mockify<ILogRepo> = {
-        getLogs: jest.fn()
+        getLogs: jest.fn(),
     };
     const mockPermissionDomain: Mockify<IPermissionDomain> = {
-        isAdminOrSystemUser: jest.fn()
+        isAdminOrSystemUser: jest.fn(),
     };
     const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
-        getRecordPermission: jest.fn()
+        getRecordPermission: jest.fn(),
     };
 
     beforeEach(() => {
@@ -28,7 +28,7 @@ describe('logDomain', () => {
     const _logDomain = logDomain({
         'core.infra.log': mockLogRepo as ILogRepo,
         'core.domain.permission': mockPermissionDomain as IPermissionDomain,
-        'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain
+        'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
     });
 
     describe('getLogs', () => {
@@ -38,8 +38,8 @@ describe('logDomain', () => {
                 {},
                 {
                     ...mockCtx,
-                    userId: adminUserId
-                }
+                    userId: adminUserId,
+                },
             );
 
             expect(logs).toEqual([mockLog]);
@@ -54,9 +54,9 @@ describe('logDomain', () => {
                     {},
                     {
                         ...mockCtx,
-                        userId: '99999' // Non-admin user
-                    }
-                )
+                        userId: '99999', // Non-admin user
+                    },
+                ),
             ).rejects.toThrow('Action forbidden');
 
             expect(mockLogRepo.getLogs).not.toHaveBeenCalled();
@@ -72,15 +72,15 @@ describe('logDomain', () => {
                         topic: {
                             record: {
                                 id: 'recordId',
-                                libraryId: 'libraryId'
-                            }
-                        }
-                    }
+                                libraryId: 'libraryId',
+                            },
+                        },
+                    },
                 },
                 {
                     ...mockCtx,
-                    userId: '99999' // Non-admin user
-                }
+                    userId: '99999', // Non-admin user
+                },
             );
 
             expect(logs).toEqual([mockLog]);

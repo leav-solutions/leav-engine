@@ -14,7 +14,7 @@ describe('DeleteLibrary', () => {
         const library: Mockify<GET_LIBRARIES_libraries_list> = {
             id: 'test',
             label: {fr: 'Test', en: null},
-            system: true
+            system: true,
         };
         await act(async () => {
             render(<DeleteLibrary library={library as GET_LIBRARIES_libraries_list} />);

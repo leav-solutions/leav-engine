@@ -6,7 +6,7 @@ import {useCallback} from 'react';
 import {
     getActiveTree,
     type IActiveTree,
-    type IGetActiveTree
+    type IGetActiveTree,
 } from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 
 export const useActiveTree = (): [IActiveTree | undefined, (newActiveTree: IActiveTree) => void] => {
@@ -19,11 +19,11 @@ export const useActiveTree = (): [IActiveTree | undefined, (newActiveTree: IActi
             client.writeQuery<IGetActiveTree>({
                 query: getActiveTree,
                 data: {
-                    activeTree: newActiveTree
-                }
+                    activeTree: newActiveTree,
+                },
             });
         },
-        [client]
+        [client],
     );
 
     return [activeTree, updateActiveTree];

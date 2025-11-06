@@ -72,7 +72,7 @@ export enum LibraryBehavior {
     STANDARD = 'standard',
     DIRECTORIES = 'directories',
     FILES = 'files',
-    JOIN = 'join'
+    JOIN = 'join',
 }
 
 export const USERS_LIBRARY = 'users';

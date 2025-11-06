@@ -60,7 +60,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
             label: values.label,
             description: !Object.values(values.description).every(x => x === '') ? values.description : null,
             filters: getRequestFromFilters(view.filters),
-            sort: view.sort
+            sort: view.sort,
         };
 
         try {
@@ -78,7 +78,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
             await updateViewsOrder({
                 key: PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id,
                 value: userViewsOrder,
-                global: false
+                global: false,
             });
 
             const sharedViewsOrder = !values.shared
@@ -88,7 +88,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
             await updateViewsOrder({
                 key: PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id,
                 value: sharedViewsOrder,
-                global: false
+                global: false,
             });
         }
 
@@ -100,8 +100,8 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
                     label: values.label,
                     description: !Object.values(values.description).every(x => x === '') ? values.description : null,
                     display: {type: values.type, size: view.display.size},
-                    shared: values.shared
-                }
+                    shared: values.shared,
+                },
             });
         }
 

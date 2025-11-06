@@ -34,7 +34,7 @@ function RootSelectorContainer({restrictToRoots, onSelect, lang}: IRootSelectorC
             : data.libraries.list
     ).map(lib => ({
         id: lib.id,
-        label: lib.label[lang[0]]
+        label: lib.label[lang[0]],
     }));
 
     return (

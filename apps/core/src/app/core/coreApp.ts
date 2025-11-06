@@ -61,7 +61,7 @@ export default function ({
     // eslint-disable-next-line @typescript-eslint/naming-convention
     'core.app.graphql.customScalars.any': Any,
     config,
-    translator
+    translator,
 }: ICoreAppDeps): ICoreApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -96,7 +96,7 @@ export default function ({
                 resolvers: {
                     Query: {
                         version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion(),
-                        langs: (parent, args, ctx: IQueryInfos) => config.lang.available
+                        langs: (parent, args, ctx: IQueryInfos) => config.lang.available,
                     } as any,
                     Mutation: {} as any,
                     Upload: GraphQLUpload,
@@ -105,8 +105,8 @@ export default function ({
                     Any,
                     SystemTranslation: systemTranslation.getScalarType(),
                     SystemTranslationOptional: systemTranslation.getScalarType(true),
-                    DateTime
-                }
+                    DateTime,
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -160,7 +160,7 @@ export default function ({
                         translator.addResourceBundle(lngFolder, ns, fileContent, true);
                     }
                 }
-            }
-        }
+            },
+        },
     };
 }

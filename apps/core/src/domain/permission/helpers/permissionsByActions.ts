@@ -20,14 +20,14 @@ export default function ({'core.infra.permission': permissionRepo}: IDeps): IPer
             actions,
             usersGroupNodeId,
             permissionTreeTarget,
-            ctx
+            ctx,
         }: IGetPermissionsByActionsParams): Promise<{[name: string]: boolean | null}> {
             const perms = await permissionRepo.getPermissions({
                 type,
                 applyTo,
                 usersGroupNodeId,
                 permissionTreeTarget,
-                ctx
+                ctx,
             });
 
             return actions.reduce((actionsPerms, action) => {
@@ -35,6 +35,6 @@ export default function ({'core.infra.permission': permissionRepo}: IDeps): IPer
 
                 return actionsPerms;
             }, {});
-        }
+        },
     };
 }

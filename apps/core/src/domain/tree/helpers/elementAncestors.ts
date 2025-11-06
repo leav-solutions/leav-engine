@@ -17,7 +17,7 @@ export interface IElementAncestorsHelper {
 
 export default function ({
     'core.infra.tree': treeRepo,
-    'core.infra.cache.cacheService': cacheService
+    'core.infra.cache.cacheService': cacheService,
 }: IDeps): IElementAncestorsHelper {
     const _getCacheKey = (treeId: string, nodeId?: string): string => `elementAncestors:${treeId}:${nodeId ?? '*'}`;
 
@@ -32,6 +32,6 @@ export default function ({
             const cacheKey = _getCacheKey(treeId);
             const cache = cacheService.getCache(ECacheType.RAM);
             cache.deleteData([cacheKey]);
-        }
+        },
     };
 }

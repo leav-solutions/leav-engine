@@ -45,7 +45,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         }
     }, [
         refDivToInsertSidePanel,
-        match.pathname /* `match.pathname` is used to detect changes in the URL to re-open the side panel */
+        match.pathname /* `match.pathname` is used to detect changes in the URL to re-open the side panel */,
     ]);
 
     if (!isLastLevelRecordPanel) {
@@ -59,7 +59,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         return (
             <KitModal
                 className={cn({
-                    [popupFormPanel]: isFormPanel
+                    [popupFormPanel]: isFormPanel,
                 })}
                 isOpen
                 height="80vh" // TODO: We might need to change the height and width later (eg: form case). Need to be discussed with PO's and UX's.
@@ -107,7 +107,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                   ) : (
                       <KitSidePanel
                           className={cn({
-                              [sliderFormPanel]: isFormPanel
+                              [sliderFormPanel]: isFormPanel,
                           })}
                           ref={refPanel}
                           size="l"
@@ -121,7 +121,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                           {children}
                       </KitSidePanel>
                   ),
-                  refDivToInsertSidePanel
+                  refDivToInsertSidePanel,
               )
             : null;
     }

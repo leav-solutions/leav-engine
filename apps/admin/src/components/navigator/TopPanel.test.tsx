@@ -15,7 +15,7 @@ describe('<TopPanel />', () => {
         const state = {
             ...initialState,
             selectedRoot: 'test',
-            lang
+            lang,
         };
         let wrapper;
         await act(async () => {
@@ -40,7 +40,7 @@ describe('<TopPanel />', () => {
         const state = {
             ...initialState,
             selectedRoot: 'test',
-            lang
+            lang,
         };
         let wrapper;
         await act(async () => {

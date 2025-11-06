@@ -10,7 +10,7 @@ import UserPanel from './UserPanel';
 
 const mockLogout = jest.fn();
 jest.mock('hooks/useAuth', () => () => ({
-    logout: mockLogout
+    logout: mockLogout,
 }));
 
 describe('UserPanel', () => {
@@ -21,7 +21,7 @@ describe('UserPanel', () => {
             render(
                 <BrowserRouter>
                     <UserPanel visible onHide={jest.fn()} />
-                </BrowserRouter>
+                </BrowserRouter>,
             );
         });
 
@@ -33,7 +33,7 @@ describe('UserPanel', () => {
             render(
                 <BrowserRouter>
                     <UserPanel visible onHide={jest.fn()} />
-                </BrowserRouter>
+                </BrowserRouter>,
             );
         });
 
@@ -52,14 +52,14 @@ describe('UserPanel', () => {
             lang: [AvailableLanguage.en],
             availableLangs: [AvailableLanguage.fr, AvailableLanguage.en],
             defaultLang: AvailableLanguage.en,
-            setLang: mockUpdateLang
+            setLang: mockUpdateLang,
         }));
 
         await act(async () => {
             render(
                 <BrowserRouter>
                     <UserPanel visible onHide={jest.fn()} />
-                </BrowserRouter>
+                </BrowserRouter>,
             );
         });
 

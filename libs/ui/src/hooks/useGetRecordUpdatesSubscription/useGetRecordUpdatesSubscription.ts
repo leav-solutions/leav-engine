@@ -14,8 +14,8 @@ export const useGetRecordUpdatesSubscription = (filters: RecordUpdateFilterInput
             const {record, updatedValues} = data.data.recordUpdate;
             updateValuesCache(
                 record.whoAmI,
-                updatedValues.map(val => val.value)
+                updatedValues.map(val => val.value),
             );
-        }
+        },
     });
 };

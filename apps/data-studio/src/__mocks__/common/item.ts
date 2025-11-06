@@ -17,9 +17,9 @@ export const itemMock: IItem = {
             behavior: LibraryBehavior.standard,
             label: {
                 fr: 'library',
-                en: 'library'
-            }
-        }
+                en: 'library',
+            },
+        },
     },
-    index: 0
+    index: 0,
 };

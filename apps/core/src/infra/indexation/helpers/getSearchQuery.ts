@@ -9,7 +9,7 @@ export type GetSearchQuery = (
     libraryId: string,
     fields: string[],
     search: string,
-    sort?: IRecordSort
+    sort?: IRecordSort,
 ) => GeneratedAqlQuery;
 
 export default function (): GetSearchQuery {
@@ -22,7 +22,7 @@ export default function (): GetSearchQuery {
 
         for (const [i, field] of fields.entries()) {
             queryParts.push(
-                aql`ANALYZER(TOKENS(${search}, ${CORE_INDEX_INPUT_ANALYZER}) ALL IN doc.${CORE_INDEX_FIELD}.${field}, ${CORE_INDEX_ANALYZER})`
+                aql`ANALYZER(TOKENS(${search}, ${CORE_INDEX_INPUT_ANALYZER}) ALL IN doc.${CORE_INDEX_FIELD}.${field}, ${CORE_INDEX_ANALYZER})`,
             );
 
             if (i < fields.length - 1) {

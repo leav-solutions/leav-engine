@@ -29,7 +29,7 @@ export const useLinkPrimaryAction = ({
     canAddLinkValue,
     joinLibraryContext,
     isMultivalue,
-    onLink
+    onLink,
 }: FeatureHook<{
     linkId?: string;
     maxItemsLeft: number | null;
@@ -52,7 +52,7 @@ export const useLinkPrimaryAction = ({
         },
         icon: <FaPlus />,
         disabled: disableAddItemAction,
-        label: replacementMode ? t('record_edition.replace-by-existing-item') : t('explorer.add-existing-item')
+        label: replacementMode ? t('record_edition.replace-by-existing-item') : t('explorer.add-existing-item'),
     };
 
     return {
@@ -68,6 +68,6 @@ export const useLinkPrimaryAction = ({
                     setIsLinkModalVisible(false);
                 }}
             />
-        ) : null
+        ) : null,
     };
 };

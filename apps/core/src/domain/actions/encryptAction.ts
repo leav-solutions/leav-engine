@@ -33,7 +33,7 @@ export default function (): IActionsListFunction {
 
                     return acc;
                 },
-                Promise.resolve({values: [], errors: []})
-            )
+                Promise.resolve({values: [], errors: []}),
+            ),
     };
 }

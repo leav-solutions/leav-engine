@@ -15,7 +15,7 @@ export interface IUseLibraryVersionProfilesHook {
 
 export default (libraryId: string): IUseLibraryVersionProfilesHook => {
     const {loading, error, data} = useGetVersionableAttributesByLibraryQuery({
-        variables: {libraryId}
+        variables: {libraryId},
     });
     let trees: ProfileTree[] = [];
 

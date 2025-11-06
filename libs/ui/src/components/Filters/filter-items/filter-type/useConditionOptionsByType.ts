@@ -11,7 +11,7 @@ import {
     isUIFilterThrough,
     isUIFilterTree,
     isUIFilterValueList,
-    type UIFilter
+    type UIFilter,
 } from '../../_types';
 
 export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]> = {
@@ -23,13 +23,13 @@ export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]
         AttributeConditionFilter.BEGIN_WITH,
         AttributeConditionFilter.END_WITH,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.rich_text]: [
         AttributeConditionFilter.CONTAINS,
         AttributeConditionFilter.NOT_CONTAINS,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.boolean]: [],
     [AttributeFormat.date]: [
@@ -44,7 +44,7 @@ export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]
         AttributeConditionFilter.YESTERDAY,
         AttributeConditionFilter.LAST_MONTH,
         AttributeConditionFilter.NEXT_MONTH,
-        AttributeConditionFilter.BETWEEN
+        AttributeConditionFilter.BETWEEN,
     ],
     [AttributeFormat.date_range]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
     [AttributeFormat.encrypted]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
@@ -56,24 +56,24 @@ export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]
         AttributeConditionFilter.IS_EMPTY,
         AttributeConditionFilter.IS_NOT_EMPTY,
         AttributeConditionFilter.LESS_THAN,
-        AttributeConditionFilter.GREATER_THAN
-    ]
+        AttributeConditionFilter.GREATER_THAN,
+    ],
 };
 
 export const linkFilterConditions: Array<RecordFilterCondition | ThroughConditionFilter> = [
     // disable NOT_EQUAL for now because of backend condition filter issue
     ...conditionsByFormat[AttributeFormat.text].filter(f => f !== AttributeConditionFilter.NOT_EQUAL),
-    AttributeConditionFilter.THROUGH
+    AttributeConditionFilter.THROUGH,
 ];
 export const treeFilterConditions: RecordFilterCondition[] = [
     AttributeConditionFilter.EQUAL,
     AttributeConditionFilter.IS_EMPTY,
-    AttributeConditionFilter.IS_NOT_EMPTY
+    AttributeConditionFilter.IS_NOT_EMPTY,
     // disable NOT_EQUAL for now because of backend condition filter issue
     // AttributeConditionFilter.NOT_EQUAL
 ];
 export const valueListTextConditions: RecordFilterCondition[] = [
-    AttributeConditionFilter.EQUAL
+    AttributeConditionFilter.EQUAL,
     // disable NOT_EQUAL for now because of backend condition filter issue
     // AttributeConditionFilter.NOT_EQUAL
 ];
@@ -94,12 +94,12 @@ export const getAttributeConditionOptions = (t: TFunction): Array<IUIFilterCondi
     {
         label: t('filters.less-than'),
         textByFormat: {[AttributeFormat.date]: String(t('filters.before'))},
-        value: AttributeConditionFilter.LESS_THAN
+        value: AttributeConditionFilter.LESS_THAN,
     },
     {
         label: t('filters.greater-than'),
         textByFormat: {[AttributeFormat.date]: String(t('filters.after'))},
-        value: AttributeConditionFilter.GREATER_THAN
+        value: AttributeConditionFilter.GREATER_THAN,
     },
     {label: t('filters.today'), value: AttributeConditionFilter.TODAY},
     {label: t('filters.tomorrow'), value: AttributeConditionFilter.TOMORROW},
@@ -118,11 +118,11 @@ export const getAttributeConditionOptions = (t: TFunction): Array<IUIFilterCondi
     {label: t('filters.values-count-equal'), value: AttributeConditionFilter.VALUES_COUNT_EQUAL},
     {label: t('filters.values-count-greater-than'), value: AttributeConditionFilter.VALUES_COUNT_GREATER_THAN},
     {label: t('filters.values-count-lower-than'), value: AttributeConditionFilter.VALUES_COUNT_LOWER_THAN},
-    {label: t('filters.through'), value: AttributeConditionFilter.THROUGH}
+    {label: t('filters.through'), value: AttributeConditionFilter.THROUGH},
 ];
 
 export const getFirstConditionByFilterType = (
-    filter: UIFilter
+    filter: UIFilter,
 ): Array<RecordFilterCondition | ThroughConditionFilter> => {
     if (isUIFilterValueList(filter)) {
         return valueListTextConditions;
@@ -167,7 +167,7 @@ export const useConditionsOptionsByType = (filter: UIFilter) => {
                 label:
                     isUIFilterStandard(filter) && option.textByFormat?.[filter.attribute.format]
                         ? option.textByFormat?.[filter.attribute.format]
-                        : option.label
-            }))
+                        : option.label,
+            })),
     };
 };

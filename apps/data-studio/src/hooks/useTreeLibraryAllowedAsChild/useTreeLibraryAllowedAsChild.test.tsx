@@ -14,13 +14,13 @@ describe('useTreeLibraryAllowedAsChild', () => {
             id: 'library_2',
             behavior: LibraryBehavior.standard,
             system: false,
-            label: {fr: 'Library 2'}
+            label: {fr: 'Library 2'},
         },
         settings: {
             allowMultiplePositions: false,
             allowedAtRoot: false,
-            allowedChildren: []
-        }
+            allowedChildren: [],
+        },
     };
 
     const mockLib3 = {
@@ -28,13 +28,13 @@ describe('useTreeLibraryAllowedAsChild', () => {
             id: 'library_3',
             behavior: LibraryBehavior.standard,
             system: false,
-            label: {fr: 'Library 3'}
+            label: {fr: 'Library 3'},
         },
         settings: {
             allowMultiplePositions: false,
             allowedAtRoot: false,
-            allowedChildren: []
-        }
+            allowedChildren: [],
+        },
     };
 
     const mockLib1 = {
@@ -42,13 +42,13 @@ describe('useTreeLibraryAllowedAsChild', () => {
             id: 'library_1',
             behavior: LibraryBehavior.standard,
             system: false,
-            label: {fr: 'Library 1'}
+            label: {fr: 'Library 1'},
         },
         settings: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: [mockLib2.library.id, mockLib3.library.id]
-        }
+            allowedChildren: [mockLib2.library.id, mockLib3.library.id],
+        },
     };
 
     const mocks = [
@@ -56,8 +56,8 @@ describe('useTreeLibraryAllowedAsChild', () => {
             request: {
                 query: getTreeLibraries,
                 variables: {
-                    treeId: ['my_tree']
-                }
+                    treeId: ['my_tree'],
+                },
             },
             result: {
                 data: {
@@ -68,20 +68,20 @@ describe('useTreeLibraryAllowedAsChild', () => {
                                 id: 'my_tree',
                                 behavior: TreeBehavior.standard,
                                 system: false,
-                                libraries: [mockLib1, mockLib2, mockLib3]
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                libraries: [mockLib1, mockLib2, mockLib3],
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     test('At root, return libraries allowed at root', async () => {
         const {result} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree'), {
             wrapper: ({children}) => (
                 <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current.loading).toBe(true);
@@ -103,18 +103,18 @@ describe('useTreeLibraryAllowedAsChild', () => {
                     ...mockRecord,
                     library: {
                         ...mockRecord.library,
-                        id: mockLib1.library.id
-                    }
+                        id: mockLib1.library.id,
+                    },
                 },
-                active: true
+                active: true,
             },
-            permissions: null
+            permissions: null,
         };
 
         const {result} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree', parentNode), {
             wrapper: ({children}) => (
                 <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current.loading).toBe(true);
@@ -132,17 +132,17 @@ describe('useTreeLibraryAllowedAsChild', () => {
                 request: {
                     query: getTreeLibraries,
                     variables: {
-                        treeId: ['my_tree']
-                    }
+                        treeId: ['my_tree'],
+                    },
                 },
-                error: new Error()
-            }
+                error: new Error(),
+            },
         ];
 
         const {result} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree'), {
             wrapper: ({children}) => (
                 <MockedProviderWithFragments mocks={mockError}>{children as JSX.Element}</MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current.loading).toBe(true);

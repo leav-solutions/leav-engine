@@ -80,7 +80,7 @@ function List({
                 </ListItem>
             );
         },
-        ...listProps
+        ...listProps,
     };
 
     const wrapperMaxHeight = typeof maxHeight === 'number' ? `${maxHeight}px` : String(maxHeight);

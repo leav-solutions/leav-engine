@@ -19,7 +19,7 @@ const getLanguageOptions = (availableLangages: string[]): ComponentProps<typeof 
     availableLangages.map(lang => ({
         value: lang.toLowerCase(),
         label: lang,
-        icon: <FlagIcon code={getFlagCode(lang)} size={flagWidth} className={flagIcon} />
+        icon: <FlagIcon code={getFlagCode(lang)} size={flagWidth} className={flagIcon} />,
     }));
 
 export const LanguageSelector: FunctionComponent = () => {

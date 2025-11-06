@@ -16,8 +16,8 @@ describe('taskManagerDomain', () => {
         getCoreContainer().register(
             'core.test.fakeWorker',
             asValue({
-                execWorker: fakeWorkerFn
-            })
+                execWorker: fakeWorkerFn,
+            }),
         );
     });
 
@@ -56,7 +56,7 @@ describe('taskManagerDomain', () => {
         expect(failedTask.status).toBe(TaskStatus.FAILED);
         expect(failedTask.progress).toEqual({
             percent: 0,
-            description: {fr: 'Fake worker error', en: 'Fake worker error'}
+            description: {fr: 'Fake worker error', en: 'Fake worker error'},
         });
         expect(failedTask.workerId).toBeNull();
 
@@ -69,7 +69,7 @@ describe('taskManagerDomain', () => {
                 // Simulate long task
                 new Promise(resolve => {
                     setTimeout(resolve, 60_000);
-                })
+                }),
         );
         const taskToCancel = await createAndGetTask('Long task cancel', {});
 
@@ -102,17 +102,17 @@ describe('taskManagerDomain', () => {
         const taskId = await taskManagerDomain.createTask(
             {
                 label: {
-                    en: taskName
+                    en: taskName,
                 },
                 func: {
                     moduleName: 'test',
                     subModuleName: 'fakeWorker',
                     name: 'execWorker',
-                    args: {hello: 'world'}
+                    args: {hello: 'world'},
                 },
-                priority: TaskPriority.MEDIUM
+                priority: TaskPriority.MEDIUM,
             },
-            ctx
+            ctx,
         );
         return getTask(taskId);
     }

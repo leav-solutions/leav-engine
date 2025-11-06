@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
 import {
     type GET_VERSION_PROFILE_BY_ID,
-    type GET_VERSION_PROFILE_BY_IDVariables
+    type GET_VERSION_PROFILE_BY_IDVariables,
 } from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 import {PermissionsActions, type VersionProfileInput} from '_gqlTypes/globalTypes';
 import {type SAVE_VERSION_PROFILE, type SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
@@ -51,8 +51,8 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
         getVersionProfileByIdQuery,
         {
             variables: {id: profileId},
-            skip: isNewProfile
-        }
+            skip: isNewProfile,
+        },
     );
 
     const [saveVersionProfile, {loading: saveLoading, error: saveError}] = useMutation<
@@ -71,7 +71,7 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
             if (isNewProfile) {
                 cache.evict({fieldName: 'versionProfiles'});
             }
-        }
+        },
     });
 
     const _handleSubmit = async (profileData: VersionProfileInput) => {
@@ -82,9 +82,9 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
                         id: profileData.id,
                         description: profileData.description,
                         label: profileData.label,
-                        trees: profileData.trees
-                    }
-                }
+                        trees: profileData.trees,
+                    },
+                },
             });
         } catch (err) {
             console.error(err);
@@ -101,7 +101,7 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
             const res = await apolloClient.query<GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables>({
                 query: getVersionProfilesQuery,
                 variables: {filters: {id: value}},
-                errorPolicy: 'all'
+                errorPolicy: 'all',
             });
 
             // No result means id is unique

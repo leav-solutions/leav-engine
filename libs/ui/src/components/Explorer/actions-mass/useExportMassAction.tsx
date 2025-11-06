@@ -19,7 +19,7 @@ export const useExportMassAction = ({
     isEnabled,
     store: {view, dispatch},
     totalCount,
-    onExport
+    onExport,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
@@ -44,11 +44,11 @@ export const useExportMassAction = ({
                     type: 'confirm',
                     title:
                         t('explorer.export_item', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
                         }) ?? undefined,
                     content:
                         t('explorer.export_item_description', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
                         }) +
                         BREAK_TWO_LINES +
                         t('global.are_you_sure'),
@@ -60,8 +60,8 @@ export const useExportMassAction = ({
                                 variables: {
                                     library: view.libraryId,
                                     filters: massSelectionFilter,
-                                    profile: 'default' // Set 'default' by default, it'll change when we can select a profile from the UI
-                                }
+                                    profile: 'default', // Set 'default' by default, it'll change when we can select a profile from the UI
+                                },
                             });
                             if (error) {
                                 // Preserve the extensions property which contains the error code
@@ -78,9 +78,9 @@ export const useExportMassAction = ({
                                 message: t('explorer.massAction.export_message'),
                                 description: t('explorer.massAction.export_description', {
                                     count: data?.export.length,
-                                    total
+                                    total,
                                 }),
-                                closable: true
+                                closable: true,
                             });
                             onExport?.(massSelectionFilter, view.massSelection);
                             // Reset selection when export is done
@@ -92,9 +92,9 @@ export const useExportMassAction = ({
                                     duration: ERROR_ALERT_DURATION,
                                     message: t('error.error_occurred'),
                                     description: t('explorer.massAction.export_config_error_description', {
-                                        library: view.libraryId
+                                        library: view.libraryId,
                                     }),
-                                    closable: true
+                                    closable: true,
                                 });
                             } else {
                                 KitAlert.error({
@@ -102,18 +102,18 @@ export const useExportMassAction = ({
                                     duration: ERROR_ALERT_DURATION,
                                     message: t('error.error_occurred'),
                                     description: t('explorer.massAction.export_error_description'),
-                                    closable: true
+                                    closable: true,
                                 });
                             }
                         }
-                    }
+                    },
                 });
-            }
+            },
         }),
-        [t, exportQuery, view.massSelection, dispatch, view.libraryId]
+        [t, exportQuery, view.massSelection, dispatch, view.libraryId],
     );
 
     return {
-        exportMassAction: isEnabled ? _exportMassAction : null
+        exportMassAction: isEnabled ? _exportMassAction : null,
     };
 };

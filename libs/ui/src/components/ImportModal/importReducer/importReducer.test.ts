@@ -11,7 +11,7 @@ describe('importReducer', () => {
         test('Set sheets data', async () => {
             const newState = importReducer(initialState, {
                 type: ImportReducerActionTypes.SET_SHEETS,
-                sheets: [mockSheet]
+                sheets: [mockSheet],
             });
             expect(newState).toEqual({...initialState, okBtn: true, sheets: [mockSheet]});
         });
@@ -19,17 +19,17 @@ describe('importReducer', () => {
         test('Check errors on sheets data', async () => {
             const mockSheetNoType = {
                 ...mockSheet,
-                type: null
+                type: null,
             };
 
             const newStateNoType = importReducer(initialState, {
                 type: ImportReducerActionTypes.SET_SHEETS,
-                sheets: [mockSheetNoType]
+                sheets: [mockSheetNoType],
             });
 
             expect(newStateNoType.okBtn).toBe(false);
             expect(newStateNoType.settingsError[mockSheet.name]).toEqual(
-                expect.arrayContaining([SheetSettingsError.TYPE])
+                expect.arrayContaining([SheetSettingsError.TYPE]),
             );
 
             const mockSheetWithErrors = {
@@ -38,17 +38,21 @@ describe('importReducer', () => {
                 mode: ImportMode.update,
                 mapping: null,
                 keyColumnIndex: null,
-                library: null
+                library: null,
             };
 
             const newStateStandardSheet = importReducer(initialState, {
                 type: ImportReducerActionTypes.SET_SHEETS,
-                sheets: [mockSheetWithErrors]
+                sheets: [mockSheetWithErrors],
             });
 
             expect(newStateStandardSheet.okBtn).toBe(false);
             expect(newStateStandardSheet.settingsError[mockSheet.name]).toEqual(
-                expect.arrayContaining([SheetSettingsError.MAPPING, SheetSettingsError.LIBRARY, SheetSettingsError.KEY])
+                expect.arrayContaining([
+                    SheetSettingsError.MAPPING,
+                    SheetSettingsError.LIBRARY,
+                    SheetSettingsError.KEY,
+                ]),
             );
 
             const mockLinkSheetWithErrors = {
@@ -58,11 +62,11 @@ describe('importReducer', () => {
                 mapping: null,
                 keyColumnIndex: null,
                 keyToColumnIndex: null,
-                library: null
+                library: null,
             };
             const newStateLinkSheet = importReducer(initialState, {
                 type: ImportReducerActionTypes.SET_SHEETS,
-                sheets: [mockLinkSheetWithErrors]
+                sheets: [mockLinkSheetWithErrors],
             });
 
             expect(newStateLinkSheet.okBtn).toBe(false);
@@ -71,8 +75,8 @@ describe('importReducer', () => {
                     SheetSettingsError.MODE,
                     SheetSettingsError.KEY_TO,
                     SheetSettingsError.LIBRARY,
-                    SheetSettingsError.LINK_ATTRIBUTE
-                ])
+                    SheetSettingsError.LINK_ATTRIBUTE,
+                ]),
             );
         });
 
@@ -80,12 +84,12 @@ describe('importReducer', () => {
             const mockSheetIgnored = {
                 ...mockSheet,
                 type: ImportType.IGNORE,
-                library: null
+                library: null,
             };
 
             const newStateIgnored = importReducer(initialState, {
                 type: ImportReducerActionTypes.SET_SHEETS,
-                sheets: [mockSheetIgnored]
+                sheets: [mockSheetIgnored],
             });
 
             expect(newStateIgnored.okBtn).toBe(true);
@@ -104,8 +108,8 @@ describe('importReducer', () => {
             {...initialState, sheets: [mockSheet]},
             {
                 type: ImportReducerActionTypes.SET_CURRENT_STEP,
-                currentStep: ImportSteps.CONFIG
-            }
+                currentStep: ImportSteps.CONFIG,
+            },
         );
         expect(newState.currentStep).toBe(ImportSteps.CONFIG);
     });
@@ -118,7 +122,7 @@ describe('importReducer', () => {
     test('SET_IMPORT_ERROR', async () => {
         const newState = importReducer(initialState, {
             type: ImportReducerActionTypes.SET_IMPORT_ERROR,
-            importError: 'test'
+            importError: 'test',
         });
         expect(newState).toEqual({...initialState, importError: 'test'});
     });

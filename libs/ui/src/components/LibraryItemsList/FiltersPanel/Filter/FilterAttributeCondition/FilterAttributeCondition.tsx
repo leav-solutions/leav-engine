@@ -15,7 +15,7 @@ import {
     type AttributeConditionType,
     FilterType,
     type IFilterAttribute,
-    type IFilterLibrary
+    type IFilterLibrary,
 } from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import FilterDropdownButton from '../../FilterDropdownButton';
@@ -68,7 +68,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
                 return {
                     ...filter,
                     value: newValue,
-                    condition: AttributeConditionFilter[condition]
+                    condition: AttributeConditionFilter[condition],
                 };
             }
 
@@ -81,7 +81,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
     const showStandardCondition = !formatNotUsingCondition.find(
         format =>
             (filter.type === FilterType.LIBRARY && format === AttributeFormat.text) ||
-            (filter.type === FilterType.ATTRIBUTE && format === (filter as IFilterAttribute).attribute.format)
+            (filter.type === FilterType.ATTRIBUTE && format === (filter as IFilterAttribute).attribute.format),
     );
 
     const menuItems: ItemType[] = conditionOptionsByType
@@ -90,14 +90,14 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             if (condition.value === AttributeConditionFilter.THROUGH) {
                 items.push({
                     key: 'through-divider',
-                    type: 'divider'
+                    type: 'divider',
                 });
             }
 
             items.push({
                 key: condition.value,
                 label: condition.textByFormat?.[(filter as IFilterAttribute)?.attribute?.format] ?? condition?.text,
-                onClick: () => _handleConditionChange(condition.value)
+                onClick: () => _handleConditionChange(condition.value),
             });
 
             return items;

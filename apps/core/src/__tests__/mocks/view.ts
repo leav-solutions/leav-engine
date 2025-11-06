@@ -12,17 +12,17 @@ export const mockViewBeforeCreation: IView = {
     filters: [
         {
             field: 'id',
-            value: 'fake_id_filter'
-        }
+            value: 'fake_id_filter',
+        },
     ],
     sort: [
         {
             field: 'id',
-            order: 'asc'
-        }
+            order: 'asc',
+        },
     ],
     shared: true,
-    attributes: ['id', 'label']
+    attributes: ['id', 'label'],
 };
 
 export const mockView: MandatoryId<IView> = {
@@ -30,5 +30,5 @@ export const mockView: MandatoryId<IView> = {
     id: 'test_view',
     created_by: '1',
     created_at: 1234567890,
-    modified_at: 1234567890
+    modified_at: 1234567890,
 };

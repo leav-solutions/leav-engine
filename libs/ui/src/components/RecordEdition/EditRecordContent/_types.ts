@@ -8,7 +8,7 @@ import {
     type FormUIElementTypes,
     type IRequiredFieldsSettings,
     type IKeyValue,
-    type Override
+    type Override,
 } from '@leav/utils';
 import {type RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {type IRecordIdentity, type IRecordIdentityWhoAmI} from '_ui/types/records';
@@ -21,7 +21,7 @@ import {
     type RecordFormElementFragment,
     type RecordIdentityFragment,
     type ValueDetailsFragment,
-    type ValueInput
+    type ValueInput,
 } from '_ui/_gqlTypes';
 import {type RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {type FormInstance} from 'antd/lib/form/Form';
@@ -37,14 +37,14 @@ export interface IValueToSubmit {
 export enum APICallStatus {
     SUCCESS = 'SUCCESS',
     ERROR = 'ERROR',
-    PARTIAL = 'PARTIAL'
+    PARTIAL = 'PARTIAL',
 }
 
 export type FieldSubmitMultipleFunc = (
     record: IRecordIdentityWhoAmI,
     values: IValueToSubmit[],
     version?: IValueVersion,
-    deleteEmpty?: boolean
+    deleteEmpty?: boolean,
 ) => Promise<ISubmitMultipleResult>;
 
 export interface ISubmitMultipleResult {
@@ -95,13 +95,13 @@ export type CreateEmptyRecordFunc = (library: string) => Promise<ICreateRecordRe
 export type DeleteMultipleValuesFunc = (
     attribute: string,
     values: RecordProperty[],
-    version: IValueVersion
+    version: IValueVersion,
 ) => Promise<ISubmitMultipleResult>;
 
 export type MetadataSubmitValueFunc = (
     value: RecordProperty,
     attribute: RecordFormAttributeFragment,
-    metadata: IKeyValue<AnyPrimitive>
+    metadata: IKeyValue<AnyPrimitive>,
 ) => Promise<ISubmitMultipleResult>;
 
 export interface ISubmittedValueBase {
@@ -140,7 +140,7 @@ export type StandardValueTypes = AnyPrimitive;
 
 export enum VersionFieldScope {
     INHERITED = 'INHERITED', // inherited values
-    CURRENT = 'CURRENT' // values of "current" version, eg. the version selected in the form
+    CURRENT = 'CURRENT', // values of "current" version, eg. the version selected in the form
 }
 
 export interface ICommonFieldsReducerState<ValuesType, RecordFormAttributeFragmentType = RecordFormAttributeFragment> {
@@ -159,7 +159,7 @@ export interface ICommonFieldsReducerState<ValuesType, RecordFormAttributeFragme
 
 export interface IProvidedByAntFormItem<
     InputFieldProps extends {value?: unknown; onChange?: unknown},
-    AntNotifier extends {onChange?: unknown} = InputFieldProps
+    AntNotifier extends {onChange?: unknown} = InputFieldProps,
 > {
     value?: InputFieldProps['value'];
     onChange?: AntNotifier['onChange'];

@@ -15,33 +15,33 @@ interface IDeps {
 }
 
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper
+    'core.domain.permission.helpers.globalPermission': globalPermHelper,
 }: IDeps): IAdminPermissionDomain {
     const getAdminPermission = async ({action, userId, ctx}: IGetAdminPermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.ADMIN,
-                action
+                action,
             },
-            ctx
+            ctx,
         );
 
     const getInheritedAdminPermission = async ({
         action,
         userGroupId,
-        ctx
+        ctx,
     }: IGetInheritedAdminPermissionParams): Promise<boolean> =>
         globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.ADMIN,
                 action,
-                userGroupNodeId: userGroupId
+                userGroupNodeId: userGroupId,
             },
-            ctx
+            ctx,
         );
 
     return {
         getAdminPermission,
-        getInheritedAdminPermission
+        getInheritedAdminPermission,
     };
 }

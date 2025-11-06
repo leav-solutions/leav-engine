@@ -14,7 +14,7 @@ describe('FilterTreeCondition', () => {
                 state={{attributes: [{...mockAttributeSimple, isLink: false, isMultiple: false, library: 'test'}]}}
             >
                 <FilterTreeCondition filter={mockFilterTree} />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
         const selectElement = screen.getByTestId('filter-condition-dropdown');
 

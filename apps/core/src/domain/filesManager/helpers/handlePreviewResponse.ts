@@ -16,7 +16,7 @@ import {
     type IFileMetadata,
     type IPreviewResponse,
     type IPreviews,
-    type IPreviewsStatus
+    type IPreviewsStatus,
 } from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
 import {type ILogger} from '@leav/logger';
@@ -38,7 +38,7 @@ const _onMessage = async (
     msg: amqp.ConsumeMessage,
     logger: ILogger,
     ctx: IQueryInfos,
-    deps: IHandlePreviewResponseDeps
+    deps: IHandlePreviewResponseDeps,
 ) => {
     deps.amqpService.consumer.channel.ack(msg);
 
@@ -64,7 +64,7 @@ const _onMessage = async (
             const name = previewResult.params.name;
             previewsStatus[name] = {
                 status: previewResult.error,
-                message: previewResult.error_detail
+                message: previewResult.error_detail,
             };
 
             previews[name] = previewResult.params.output;
@@ -74,7 +74,7 @@ const _onMessage = async (
                 if (previewResponse[version]) {
                     previewsStatus[version] = {
                         status: previewResult.error,
-                        message: previewResult.error_detail
+                        message: previewResult.error_detail,
                     };
                 }
             }
@@ -83,7 +83,7 @@ const _onMessage = async (
 
     const recordData: IFileMetadata = {
         [deps.utils.getPreviewsStatusAttributeName(library)]: previewsStatus,
-        [deps.utils.getPreviewsAttributeName(library)]: previews
+        [deps.utils.getPreviewsAttributeName(library)]: previews,
     };
 
     await updateRecordFile(
@@ -96,9 +96,9 @@ const _onMessage = async (
             updateRecordLastModif: deps.updateRecordLastModif,
             sendRecordUpdateEvent: deps.sendRecordUpdateEvent,
             config: deps.config,
-            logger: deps.logger
+            logger: deps.logger,
         },
-        ctx
+        ctx,
     );
 };
 
@@ -106,18 +106,18 @@ export const initPreviewResponseHandler = async (
     config: Config.IConfig,
     logger: ILogger,
     ctx: IQueryInfos,
-    deps: IHandlePreviewResponseDeps
+    deps: IHandlePreviewResponseDeps,
 ) => {
     await deps.amqpService.consumer.channel.assertQueue(config.filesManager.queues.previewResponse);
     await deps.amqpService.consumer.channel.bindQueue(
         config.filesManager.queues.previewResponse,
         config.amqp.exchange,
-        config.filesManager.routingKeys.previewResponse
+        config.filesManager.routingKeys.previewResponse,
     );
 
     await deps.amqpService.consume(
         config.filesManager.queues.previewResponse,
         config.filesManager.routingKeys.previewResponse,
-        (msg: amqp.ConsumeMessage) => _onMessage(msg, logger, ctx, deps)
+        (msg: amqp.ConsumeMessage) => _onMessage(msg, logger, ctx, deps),
     );
 };

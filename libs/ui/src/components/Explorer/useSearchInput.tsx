@@ -9,7 +9,7 @@ import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {
     type IViewSettingsAction,
     type IViewSettingsState,
-    ViewSettingsActionTypes
+    ViewSettingsActionTypes,
 } from './manage-view-settings/store-view-settings/viewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
 import {type SetNewPage} from './_types';
@@ -25,7 +25,7 @@ import {type SetNewPage} from './_types';
 export const useSearchInput = ({
     view,
     dispatch,
-    setNewPage
+    setNewPage,
 }: {
     view: IViewSettingsState;
     dispatch: Dispatch<IViewSettingsAction>;
@@ -65,6 +65,6 @@ export const useSearchInput = ({
                         size="middle"
                     />
                 </form>
-            ) : null
+            ) : null,
     };
 };

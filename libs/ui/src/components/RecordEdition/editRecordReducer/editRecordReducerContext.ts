@@ -11,5 +11,5 @@ export interface IEditRecordReducerContext {
 
 export const EditRecordReducerContext = React.createContext<IEditRecordReducerContext>({
     state: initialState,
-    dispatch: () => initialState
+    dispatch: () => initialState,
 });

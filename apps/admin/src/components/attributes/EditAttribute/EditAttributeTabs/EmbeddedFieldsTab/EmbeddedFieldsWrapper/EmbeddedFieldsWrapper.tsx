@@ -21,7 +21,7 @@ function EmbeddedFieldsWrapper({
     formValues,
     setFormValues,
     isRoot,
-    save
+    save,
 }: IEmbeddedFieldsWrapperProps) {
     if (displayForm) {
         return (

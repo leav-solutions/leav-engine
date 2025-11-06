@@ -40,7 +40,7 @@ function LinkedLibraryForm({onChange, isReadOnly, extra, selected}: ILinkedLibra
               subLabel: linkedLibrary.id,
               label: localizedTranslation(linkedLibrary.label, lang),
               color: null,
-              preview: null
+              preview: null,
           }
         : null;
 

@@ -10,7 +10,7 @@ import {
     type IFormBuilderState,
     defaultContainerId,
     defaultDepAttribute,
-    defaultDepValue
+    defaultDepValue,
 } from './formBuilderReducer';
 import sortByOrder from './helpers/sortByOrder';
 
@@ -49,13 +49,13 @@ export default function computeInitialState(library: string, form: GET_FORM_form
 
                             return {
                                 ...allSettings,
-                                [curSettings.key]: value
+                                [curSettings.key]: value,
                             };
                         },
                         {
-                            useAttributeLabel: !!useAttributeLabel
-                        }
-                    )
+                            useAttributeLabel: !!useAttributeLabel,
+                        },
+                    ),
                 };
 
                 if (typeof groupedFields[containerId] === 'undefined') {
@@ -84,7 +84,7 @@ export default function computeInitialState(library: string, form: GET_FORM_form
 
             return acc;
         },
-        {[defaultDepAttribute]: {[defaultDepValue]: {}}}
+        {[defaultDepAttribute]: {[defaultDepValue]: {}}},
     );
 
     // Set default fields as active fields. Add herited flag to false on these fields
@@ -100,6 +100,6 @@ export default function computeInitialState(library: string, form: GET_FORM_form
         openSettings: false,
         elementInSettings: null,
         elements: fieldsByDeps,
-        activeElements: activeFields
+        activeElements: activeFields,
     };
 }

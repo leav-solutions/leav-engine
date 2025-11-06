@@ -8,7 +8,7 @@ import {
     defaultDepAttribute,
     defaultDepValue,
     type IFormBuilderActionRemoveTab,
-    type IFormBuilderState
+    type IFormBuilderState,
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import removeElementById from '../removeElementById';
@@ -24,19 +24,19 @@ export default function removeTab(state: IFormBuilderState, action: IFormBuilder
 
     // Update tabs element settings
     const indexInElems = tmpState.elements[depAttributeKey][depValueKey][containerId].findIndex(
-        el => el.id === action.parentElement.id
+        el => el.id === action.parentElement.id,
     );
     const indexInActiveElems = tmpState.activeElements[containerId].findIndex(el => el.id === action.parentElement.id);
 
     if (indexInElems >= 0 && indexInActiveElems >= 0) {
         const newSettings = {
             ...action.parentElement.settings,
-            tabs: [...(action.parentElement.settings?.tabs as ITabSettings[])].filter(t => t.id !== action.tabId)
+            tabs: [...(action.parentElement.settings?.tabs as ITabSettings[])].filter(t => t.id !== action.tabId),
         };
 
         const newElement: IFormElement = {
             ...action.parentElement,
-            settings: newSettings
+            settings: newSettings,
         };
 
         tmpState.elements[depAttributeKey][depValueKey][containerId][indexInElems] = newElement;

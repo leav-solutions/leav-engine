@@ -10,7 +10,7 @@ import {
     type PropertyValueLinkValueFragment,
     type PropertyValueTreeValueFragment,
     type PropertyValueValueFragment,
-    MultiDisplayOption
+    MultiDisplayOption,
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
@@ -24,30 +24,30 @@ import {AggregationColor} from 'antd/es/color-picker/color';
 
 const isStandardValue = (
     v: PropertyValueFragment,
-    attribute: AttributePropertiesFragment
+    attribute: AttributePropertiesFragment,
 ): v is PropertyValueValueFragment => [AttributeType.simple, AttributeType.advanced].includes(attribute.type);
 const isStandardValues = (
     values: PropertyValueFragment[],
-    attribute: AttributePropertiesFragment
+    attribute: AttributePropertiesFragment,
 ): values is PropertyValueValueFragment[] => values.every(value => isStandardValue(value, attribute));
 
 const isLinkValue = (
     v: PropertyValueFragment,
-    attribute: AttributePropertiesFragment
+    attribute: AttributePropertiesFragment,
 ): v is PropertyValueLinkValueFragment =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type);
 const isLinkValues = (
     values: PropertyValueFragment[],
-    attribute: AttributePropertiesFragment
+    attribute: AttributePropertiesFragment,
 ): values is PropertyValueLinkValueFragment[] => values.every(value => isLinkValue(value, attribute));
 
 const isTreeValue = (
     v: PropertyValueFragment,
-    attribute: AttributePropertiesFragment
+    attribute: AttributePropertiesFragment,
 ): v is PropertyValueTreeValueFragment => [AttributeType.tree].includes(attribute.type);
 const isTreeValues = (
     values: PropertyValueFragment[],
-    attribute: AttributePropertiesFragment
+    attribute: AttributePropertiesFragment,
 ): values is PropertyValueTreeValueFragment[] => values.every(value => isTreeValue(value, attribute));
 
 const isDateRangeValue = (v: PropertyValueValueFragment['valuePayload']): v is {from: string; to: string} =>
@@ -104,7 +104,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             }
             return value;
         },
-        []
+        [],
     );
 
     if (attributeProperties.multiple_values) {
@@ -114,9 +114,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     case AttributeFormat.boolean:
                         return {
                             idCardProps: {
-                                description: value.valuePayload ? String(t('global.yes')) : String(t('global.no'))
+                                description: value.valuePayload ? String(t('global.yes')) : String(t('global.no')),
                             },
-                            type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type'])
+                            type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type']),
                         };
                     case AttributeFormat.color:
                         const color = new AggregationColor(value.valueRawPayload);
@@ -126,16 +126,16 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 avatarProps: {
                                     color: color.toHexString(),
                                     shape: 'square',
-                                    className: multiColorTagAvatarClassName
-                                }
-                            }
+                                    className: multiColorTagAvatarClassName,
+                                },
+                            },
                         };
                     case AttributeFormat.date_range:
                         return {
                             idCardProps: {
-                                description: _getDateRangeValueContent(value.valuePayload)
+                                description: _getDateRangeValueContent(value.valuePayload),
                             },
-                            type: 'primary'
+                            type: 'primary',
                         };
                     default:
                         const valueContent =
@@ -144,7 +144,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 : value.valuePayload;
                         return {
                             idCardProps: {description: valueContent},
-                            type: 'primary'
+                            type: 'primary',
                         };
                 }
             });
@@ -156,7 +156,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         <TableTagGroup
                             tags={values.map(value => ({
                                 type: 'primary',
-                                idCardProps: {description: value.linkPayload?.whoAmI.label ?? undefined}
+                                idCardProps: {description: value.linkPayload?.whoAmI.label ?? undefined},
                             }))}
                         />
                     );
@@ -193,7 +193,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         <TableTagGroup
                             tags={values.map(value => ({
                                 type: 'primary',
-                                idCardProps: {description: value.treePayload?.record.whoAmI.label ?? undefined}
+                                idCardProps: {description: value.treePayload?.record.whoAmI.label ?? undefined},
                             }))}
                         />
                     );

@@ -24,7 +24,7 @@ const _getRedisKey = (path: string): string => {
 export const createClient = (host: string, port: number) => {
     client = new Tedis({
         host,
-        port
+        port,
     });
 
     client.on('connect', () => undefined);

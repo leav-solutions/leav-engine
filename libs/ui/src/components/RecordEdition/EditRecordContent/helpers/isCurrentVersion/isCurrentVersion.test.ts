@@ -9,67 +9,67 @@ describe('isCurrentVersion', () => {
         const refVersion: IValueVersion = {
             tree1: {
                 id: '123456',
-                label: 'Some tree node'
+                label: 'Some tree node',
             },
             tree2: {
                 id: '987654',
-                label: 'Some tree node'
-            }
+                label: 'Some tree node',
+            },
         };
 
         const otherVersionWithOneDifference: IValueVersion = {
             tree1: {
                 id: '123457',
-                label: 'Some tree node'
+                label: 'Some tree node',
             },
             tree2: {
                 id: '987654',
-                label: 'Some tree node'
-            }
+                label: 'Some tree node',
+            },
         };
 
         const otherVersionWithTwoDifferences: IValueVersion = {
             tree1: {
                 id: '111111',
-                label: 'Some tree node'
+                label: 'Some tree node',
             },
             tree2: {
                 id: '222222',
-                label: 'Some tree node'
-            }
+                label: 'Some tree node',
+            },
         };
 
         const otherVersionWithMoreKeys: IValueVersion = {
             tree1: {
                 id: '123456',
-                label: 'Some tree node'
+                label: 'Some tree node',
             },
             tree2: {
                 id: '987654',
-                label: 'Some tree node'
+                label: 'Some tree node',
             },
             tree3: {
                 id: '456123',
-                label: 'Some tree node'
-            }
+                label: 'Some tree node',
+            },
         };
 
         const otherVersionWithDifferentKeys: IValueVersion = {
             tree1: {
                 id: '123456',
-                label: 'Some tree node'
+                label: 'Some tree node',
             },
             tree42: {
                 id: '987654',
-                label: 'Some tree node'
-            }
+                label: 'Some tree node',
+            },
         };
 
         const otherVersionWithOneKey: IValueVersion = {
             tree1: {
                 id: '123456',
-                label: 'Some tree node'
-            }
+                label: 'Some tree node',
+            },
         };
 
         expect(isCurrentVersion(refVersion, refVersion)).toBe(true);

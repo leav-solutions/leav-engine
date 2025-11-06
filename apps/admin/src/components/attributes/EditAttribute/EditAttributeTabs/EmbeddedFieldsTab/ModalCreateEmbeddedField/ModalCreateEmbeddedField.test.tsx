@@ -12,10 +12,10 @@ describe('ModalCreateNewEmbeddedField', () => {
         id: 'test',
         label: {
             fr: 'test fr',
-            en: 'test en'
+            en: 'test en',
         },
         format: 'text',
-        validation_regex: ''
+        validation_regex: '',
     };
 
     const mockAdd = jest.fn();

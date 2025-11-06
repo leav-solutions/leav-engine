@@ -30,13 +30,13 @@ const depsBase: ToAny<IAuthAppDeps> = {
     'core.infra.session': jest.fn(),
     'core.utils.logger': {
         info: jest.fn(),
-        error: jest.fn()
+        error: jest.fn(),
     },
     'core.infra.oidc.oidcClientService': jest.fn(),
     'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
     'core.app.helpers.convertOIDCIdentifier': jest.fn(),
     'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
-    config: {}
+    config: {},
 };
 
 describe('authApp', () => {
@@ -47,18 +47,18 @@ describe('authApp', () => {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
-                    list: [{id: 'id'}]
-                })
+                    list: [{id: 'id'}],
+                }),
             };
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
                 getData: global.__mockPromise(['id']),
                 storeData: global.__mockPromise(),
-                deleteData: global.__mockPromise()
+                deleteData: global.__mockPromise(),
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromiseMultiple([[{raw_payload: 'admin'}], [{payload: {id: 'id'}}]])
+                getValues: global.__mockPromiseMultiple([[{raw_payload: 'admin'}], [{payload: {id: 'id'}}]]),
             };
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -66,13 +66,13 @@ describe('authApp', () => {
                     key: 'key',
                     cookie: {
                         sameSite: 'lax',
-                        secure: false
+                        secure: false,
                     },
                     oidc: {enable: false},
                     algorithm: 'HS256',
                     tokenExpiration: '15m',
-                    refreshTokenExpiration: '2h'
-                }
+                    refreshTokenExpiration: '2h',
+                },
             };
 
             const authApp = createAuthApp({
@@ -80,16 +80,16 @@ describe('authApp', () => {
                 'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const response = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             const expressMock = {
                 get: jest.fn(),
-                post: jest.fn()
+                post: jest.fn(),
             } satisfies Mockify<Express>;
 
             const nextMock = jest.fn();
@@ -99,7 +99,7 @@ describe('authApp', () => {
             mockedVerify.mockImplementation(() => ({
                 userId: '1',
                 ip: '1',
-                agent: 'test'
+                agent: 'test',
             }));
 
             const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
@@ -112,20 +112,20 @@ describe('authApp', () => {
 
             const request = {
                 cookies: {
-                    refreshToken: 'refreshToken'
+                    refreshToken: 'refreshToken',
                 },
                 query: {
-                    lang: 'lang'
+                    lang: 'lang',
                 },
                 body: {
                     login: 'admin',
-                    password: 'admin'
+                    password: 'admin',
                 },
                 headers: {
                     host: 'host',
                     'user-agent': 'test',
-                    'x-forwarded-for': '1'
-                }
+                    'x-forwarded-for': '1',
+                },
             };
 
             authApp.registerRoute(expressMock as unknown as Express);
@@ -141,7 +141,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
 
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
@@ -149,7 +149,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
         });
     });
@@ -158,17 +158,17 @@ describe('authApp', () => {
         it('Should return 401 if oidc not configured', async () => {
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
-                    oidc: {enable: false}
-                }
+                    oidc: {enable: false},
+                },
             };
 
             const authApp = createAuthApp({
                 ...depsBase,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const request: any = {};
             const response: any = {
-                status: jest.fn(() => 'statusReturn')
+                status: jest.fn(() => 'statusReturn'),
             };
 
             const result = await authApp.authenticateWithOIDCService(request, response);
@@ -181,33 +181,33 @@ describe('authApp', () => {
         it('Should redirect to auth url with payload', async () => {
             const oidcClientServiceMock = {
                 getAuthorizationUrl: jest.fn(),
-                saveOriginalUrl: jest.fn()
+                saveOriginalUrl: jest.fn(),
             } satisfies Mockify<IOIDCClientService>;
 
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
-                    oidc: {enable: true}
+                    oidc: {enable: true},
                 },
                 server: {
-                    publicUrl: 'test://publicUrl'
-                }
+                    publicUrl: 'test://publicUrl',
+                },
             };
 
             const authApp = createAuthApp({
                 ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as any,
                 'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier(),
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             oidcClientServiceMock.getAuthorizationUrl.mockResolvedValueOnce('oidcLoginUrl');
             const request: any = {
                 originalUrl: 'originalUrl',
                 ctx: {
-                    queryId: 'queryId'
-                }
+                    queryId: 'queryId',
+                },
             };
             const response: any = {
-                redirect: jest.fn(() => 'redirectReturn')
+                redirect: jest.fn(() => 'redirectReturn'),
             };
 
             const result = await authApp.authenticateWithOIDCService(request, response);
@@ -215,12 +215,12 @@ describe('authApp', () => {
             expect(oidcClientServiceMock.saveOriginalUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.saveOriginalUrl).toHaveBeenCalledWith({
                 queryId: 'queryId',
-                originalUrl: 'originalUrl'
+                originalUrl: 'originalUrl',
             });
             expect(oidcClientServiceMock.getAuthorizationUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.getAuthorizationUrl).toHaveBeenCalledWith({
                 queryId: 'queryId',
-                redirectUri: 'test://publicUrl/auth/oidc/verify/cXVlcnlJZA'
+                redirectUri: 'test://publicUrl/auth/oidc/verify/cXVlcnlJZA',
             });
             expect(response.redirect).toHaveBeenCalledTimes(1);
             expect(response.redirect).toHaveBeenCalledWith('oidcLoginUrl');
@@ -231,41 +231,41 @@ describe('authApp', () => {
     describe('auth/logout', () => {
         it('Should clear access cookie and return empty json when no oidc service configure', async () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {
-                getLogoutUrl: jest.fn()
+                getLogoutUrl: jest.fn(),
             };
 
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
                     cookie: {
                         sameSite: 'lax',
-                        secure: false
+                        secure: false,
                     },
-                    oidc: {enable: false}
-                }
+                    oidc: {enable: false},
+                },
             };
 
             const authApp = createAuthApp({
                 ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const expressMock = {
                 get: jest.fn(),
-                post: jest.fn()
+                post: jest.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
-                    host: 'host'
+                    host: 'host',
                 },
-                cookies: jest.fn().mockReturnValue({access_token: 'access_token'})
+                cookies: jest.fn().mockReturnValue({access_token: 'access_token'}),
             };
             const response = {
                 cookie: jest.fn(),
                 status: jest.fn().mockReturnValueOnce({
-                    json: identity
-                })
+                    json: identity,
+                }),
             };
 
             const result = await logoutHandler(request, response);
@@ -280,54 +280,54 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
                 expires: expect.any(Date),
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
         });
 
         it('Should clear access cookie and return logoutUrl inside redirectUrl when oidc service configure', async () => {
             const oidcClientServiceMock = {
-                getLogoutUrl: jest.fn()
+                getLogoutUrl: jest.fn(),
             } satisfies Mockify<IOIDCClientService>;
 
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
                     cookie: {
                         sameSite: 'lax',
-                        secure: false
+                        secure: false,
                     },
-                    oidc: {enable: true}
-                }
+                    oidc: {enable: true},
+                },
             };
 
             const authApp = createAuthApp({
                 ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const expressMock = {
                 get: jest.fn(),
-                post: jest.fn()
+                post: jest.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
-                    host: 'host'
+                    host: 'host',
                 },
-                cookies: jest.fn().mockReturnValue({access_token: 'access_token'})
+                cookies: jest.fn().mockReturnValue({access_token: 'access_token'}),
             };
             const response = {
                 cookie: jest.fn(),
                 status: jest.fn().mockReturnValueOnce({
-                    json: identity
-                })
+                    json: identity,
+                }),
             };
             oidcClientServiceMock.getLogoutUrl.mockReturnValueOnce('redirectUrl');
 
@@ -336,7 +336,7 @@ describe('authApp', () => {
             expect(response.status).toHaveBeenCalledTimes(1);
             expect(response.status).toHaveBeenCalledWith(200);
             expect(result).toEqual({
-                redirectUrl: 'redirectUrl'
+                redirectUrl: 'redirectUrl',
             });
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledWith({userId: '1'});
@@ -346,14 +346,14 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
                 expires: expect.any(Date),
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
         });
     });
@@ -365,34 +365,34 @@ describe('authApp', () => {
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
                     cookie: {},
-                    oidc: {enable: true}
-                }
+                    oidc: {enable: true},
+                },
             };
 
             const authApp = createAuthApp({
                 ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const expressMock = {
                 get: jest.fn(),
-                post: jest.fn()
+                post: jest.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
             const request = {
                 cookies: {
-                    refreshToken: undefined
+                    refreshToken: undefined,
                 },
                 query: {
-                    lang: 'lang'
+                    lang: 'lang',
                 },
-                body: {}
+                body: {},
             };
             const response = {
                 status: jest.fn().mockReturnValueOnce({
-                    send: identity
-                })
+                    send: identity,
+                }),
             };
             const nextMock = jest.fn();
 
@@ -410,18 +410,18 @@ describe('authApp', () => {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
-                    list: [{id: 'id'}]
-                })
+                    list: [{id: 'id'}],
+                }),
             };
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
                 getData: global.__mockPromise(['id']),
                 storeData: global.__mockPromise(),
-                deleteData: global.__mockPromise()
+                deleteData: global.__mockPromise(),
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([{payload: {id: 'id'}}])
+                getValues: global.__mockPromise([{payload: {id: 'id'}}]),
             };
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -429,13 +429,13 @@ describe('authApp', () => {
                     key: 'key',
                     cookie: {
                         sameSite: 'lax',
-                        secure: false
+                        secure: false,
                     },
                     oidc: {enable: false},
                     algorithm: 'HS256',
                     tokenExpiration: '15m',
-                    refreshTokenExpiration: '2h'
-                }
+                    refreshTokenExpiration: '2h',
+                },
             };
 
             const authApp = createAuthApp({
@@ -443,16 +443,16 @@ describe('authApp', () => {
                 'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const response = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             const expressMock = {
                 get: jest.fn(),
-                post: jest.fn()
+                post: jest.fn(),
             } satisfies Mockify<Express>;
 
             const nextMock = jest.fn();
@@ -461,7 +461,7 @@ describe('authApp', () => {
             mockedVerify.mockImplementation(() => ({
                 userId: '1',
                 ip: '1',
-                agent: 'test'
+                agent: 'test',
             }));
 
             const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
@@ -472,17 +472,17 @@ describe('authApp', () => {
 
             const request = {
                 cookies: {
-                    refreshToken: 'refreshToken'
+                    refreshToken: 'refreshToken',
                 },
                 query: {
-                    lang: 'lang'
+                    lang: 'lang',
                 },
                 body: {},
                 headers: {
                     host: 'host',
                     'user-agent': 'test',
-                    'x-forwarded-for': '1'
-                }
+                    'x-forwarded-for': '1',
+                },
             };
 
             authApp.registerRoute(expressMock as unknown as Express);
@@ -498,7 +498,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
 
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
@@ -506,7 +506,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
         });
     });
@@ -515,25 +515,25 @@ describe('authApp', () => {
         it('Should respond 401 when oidc not enable', async () => {
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
-                    oidc: {enable: false}
-                }
+                    oidc: {enable: false},
+                },
             };
 
             const authApp = createAuthApp({
                 ...depsBase,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const expressMock = {
                 get: jest.fn(),
-                post: jest.fn()
+                post: jest.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
-                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
             const request = {};
             const response = {
-                status: jest.fn(identity)
+                status: jest.fn(identity),
             };
 
             const result = await verifyHandler(request, response);
@@ -550,32 +550,32 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
-                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'}
-                }
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'},
+                },
             };
 
             const mockRecordDomain = {
                 find: jest.fn().mockResolvedValue({
                     list: [{id: 'existing-user-id', email: 'user@example.com'}],
                     cursor: {},
-                    totalCount: 1
+                    totalCount: 1,
                 }),
-                createRecord: jest.fn()
+                createRecord: jest.fn(),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
-                storeData: global.__mockPromise()
+                storeData: global.__mockPromise(),
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
                 saveValue: jest.fn(),
-                getValues: jest.fn().mockResolvedValue([])
+                getValues: jest.fn().mockResolvedValue([]),
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
                 getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
                 saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
             };
 
             const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
@@ -587,13 +587,13 @@ describe('authApp', () => {
                 'core.infra.session': mockSessionRepo as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
-                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
 
             // Mock jwt.decode calls for id_token then access_token
@@ -606,11 +606,11 @@ describe('authApp', () => {
                 params: {identifierBase64Url: 'whatever'},
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
-                headers: {host: 'host', 'user-agent': 'jest'}
+                headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
                 cookie: jest.fn(),
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
 
             // Act
@@ -630,18 +630,18 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
-                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: false}
-                }
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: false},
+                },
             };
 
             const mockRecordDomain = {
-                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0})
+                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockOidcService: Mockify<IOIDCClientService> = {
                 getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
                 saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
             };
 
             const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
@@ -651,7 +651,7 @@ describe('authApp', () => {
                 'core.domain.record': mockRecordDomain as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             // Mock jwt.decode calls for id_token then access_token
@@ -663,19 +663,19 @@ describe('authApp', () => {
             const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
-                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
-                headers: {host: 'host', 'user-agent': 'jest'}
+                headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
                 cookie: jest.fn(),
                 redirect: jest.fn(),
-                status: jest.fn(identity)
+                status: jest.fn(identity),
             };
 
             // Act
@@ -692,28 +692,28 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
-                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true}
-                }
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true},
+                },
             };
 
             const mockRecordDomain = {
                 find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
-                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}})
+                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}}),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockValueDomain: Mockify<IValueDomain> = {
                 saveValue: jest.fn(),
-                getValues: jest.fn().mockResolvedValue([])
+                getValues: jest.fn().mockResolvedValue([]),
             };
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
-                storeData: global.__mockPromise()
+                storeData: global.__mockPromise(),
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
                 getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
                 saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
             };
 
             const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
@@ -725,13 +725,13 @@ describe('authApp', () => {
                 'core.infra.session': mockSessionRepo as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
-                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
 
             // Mock jwt.decode calls for id_token then access_token
@@ -744,11 +744,11 @@ describe('authApp', () => {
                 params: {identifierBase64Url: 'whatever'},
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
-                headers: {host: 'host', 'user-agent': 'jest'}
+                headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
                 cookie: jest.fn(),
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
 
             // Act
@@ -760,9 +760,9 @@ describe('authApp', () => {
                 library: 'users',
                 values: [
                     {payload: 'user@example.com', attribute: 'email'},
-                    {payload: 'john.doe', attribute: 'login'}
+                    {payload: 'john.doe', attribute: 'login'},
                 ],
-                ctx: expect.any(Object)
+                ctx: expect.any(Object),
             });
             expect((mockValueDomain as any).saveValue).not.toHaveBeenCalled();
             expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
@@ -778,28 +778,28 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
-                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true}
-                }
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true},
+                },
             };
 
             const mockRecordDomain = {
                 find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
-                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}})
+                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}}),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockValueDomain = {
                 saveValue: jest.fn(),
-                getValues: jest.fn().mockResolvedValue([])
+                getValues: jest.fn().mockResolvedValue([]),
             } as unknown as Mockify<IValueDomain>;
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
-                storeData: global.__mockPromise()
+                storeData: global.__mockPromise(),
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
                 getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
                 saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
             };
 
             const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
@@ -811,13 +811,13 @@ describe('authApp', () => {
                 'core.infra.session': mockSessionRepo as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
-                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
 
             // Mock jwt.decode calls for id_token then access_token with admin role
@@ -830,11 +830,11 @@ describe('authApp', () => {
                 params: {identifierBase64Url: 'whatever'},
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
-                headers: {host: 'host', 'user-agent': 'jest'}
+                headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
                 cookie: jest.fn(),
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
 
             // Act
@@ -846,8 +846,8 @@ describe('authApp', () => {
                     library: 'users',
                     recordId: 'new-user-id',
                     attribute: 'user_groups',
-                    value: {payload: adminsGroupId}
-                })
+                    value: {payload: adminsGroupId},
+                }),
             );
             expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
         });

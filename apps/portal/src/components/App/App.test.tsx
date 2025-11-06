@@ -19,7 +19,7 @@ jest.mock(
     () =>
         function UserMenu() {
             return <div>UserMenu</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -27,15 +27,15 @@ jest.mock(
     () =>
         function Applications() {
             return <div>Applications</div>;
-        }
+        },
 );
 
 jest.mock('../../constants', () => ({
-    APP_ENDPOINT: 'portal'
+    APP_ENDPOINT: 'portal',
 }));
 
 jest.mock('hooks/useApplicationEventsSubscription', () => ({
-    useApplicationEventsSubscription: jest.fn()
+    useApplicationEventsSubscription: jest.fn(),
 }));
 
 describe('App', () => {
@@ -44,31 +44,31 @@ describe('App', () => {
             {
                 request: {
                     query: getMe,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        me: mockUser
-                    }
-                }
+                        me: mockUser,
+                    },
+                },
             },
             {
                 request: {
                     query: getLangs,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        langs: ['fr']
-                    }
-                }
+                        langs: ['fr'],
+                    },
+                },
             },
             {
                 request: {
                     query: getApplicationsQuery,
                     variables: {
-                        filters: {endpoint: 'portal'}
-                    }
+                        filters: {endpoint: 'portal'},
+                    },
                 },
                 result: {
                     data: {
@@ -79,39 +79,39 @@ describe('App', () => {
                                     id: 'portal',
                                     label: {fr: 'Portal'},
                                     description: {fr: 'Portal'},
-                                    endpoint: '/portal'
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    endpoint: '/portal',
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getGlobalSettingsQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         globalSettings: {
                             __typename: 'GlobalSettings',
                             name: 'My App',
-                            icon: null
-                        }
-                    }
-                }
+                            icon: null,
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getApplicationsEventsSubscription,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        applicationsEvents: null
-                    }
-                }
-            }
+                        applicationsEvents: null,
+                    },
+                },
+            },
         ];
 
         render(<App />, {apolloMocks: mocks});

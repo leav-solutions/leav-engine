@@ -31,7 +31,7 @@ import {
     type IApplication,
     type IApplicationEvent,
     type IApplicationEventFilters,
-    type IApplicationModule
+    type IApplicationModule,
 } from '../../_types/application';
 import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
@@ -73,7 +73,7 @@ export default function ({
     'core.domain.globalSettings': globalSettings,
     'core.utils.logger': logger,
     'core.utils': utils,
-    config
+    config,
 }: IApplicationAppDeps): IApplicationApp {
     const _doesFileExist = async (folder: string, filePath: string): Promise<boolean> => {
         try {
@@ -204,28 +204,28 @@ export default function ({
                         async applications(
                             parent,
                             {filters, pagination, sort}: IGetCoreAttributesParams,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IList<IApplication>> {
                             return applicationDomain.getApplications({
                                 params: {filters, withCount: true, pagination, sort},
-                                ctx
+                                ctx,
                             });
                         },
                         async applicationsModules(_, args: {}, ctx: IQueryInfos): Promise<IApplicationModule[]> {
                             return applicationDomain.getAvailableModules({ctx});
-                        }
+                        },
                     },
                     Mutation: {
                         async saveApplication(
                             _,
                             {application}: {application: IApplication},
-                            ctx
+                            ctx,
                         ): Promise<IApplication> {
                             return applicationDomain.saveApplication({applicationData: application, ctx});
                         },
                         async deleteApplication(_, {id}, ctx): Promise<IApplication> {
                             return applicationDomain.deleteApplication({id, ctx});
-                        }
+                        },
                     },
                     Subscription: {
                         applicationEvent: {
@@ -234,7 +234,7 @@ export default function ({
                                 (
                                     event: PublishedEvent<{applicationEvent: IApplicationEvent}>,
                                     {filters}: {filters: ICommonSubscriptionFilters & IApplicationEventFilters},
-                                    ctx: IQueryInfos
+                                    ctx: IQueryInfos,
                                 ) => {
                                     if (filters?.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
                                         return false;
@@ -251,16 +251,16 @@ export default function ({
                                     }
 
                                     return mustReturn;
-                                }
-                            )
-                        }
+                                },
+                            ),
+                        },
                     },
                     Application: {
                         permissions: (
                             appData: IApplication,
                             _,
                             ctx: IQueryInfos,
-                            infos: GraphQLResolveInfo
+                            infos: GraphQLResolveInfo,
                         ): Promise<IKeyValue<boolean>> => {
                             const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
                             return requestedActions.reduce(async (allPermsProm, action) => {
@@ -271,7 +271,7 @@ export default function ({
                                     applyTo: appData.id,
                                     action: action as ApplicationPermissionsActions,
                                     userId: ctx.userId,
-                                    ctx
+                                    ctx,
                                 });
 
                                 return {...allPerms, [action]: isAllowed};
@@ -282,7 +282,7 @@ export default function ({
                         icon: async (
                             appData: Override<IApplication, {icon: {libraryId: string; recordId: string}}>,
                             _,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IRecord | null> => {
                             if (!appData.icon) {
                                 return null;
@@ -291,16 +291,20 @@ export default function ({
                                 params: {
                                     library: appData.icon.libraryId,
                                     filters: [
-                                        {field: 'id', value: appData.icon.recordId, condition: AttributeCondition.EQUAL}
-                                    ]
+                                        {
+                                            field: 'id',
+                                            value: appData.icon.recordId,
+                                            condition: AttributeCondition.EQUAL,
+                                        },
+                                    ],
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return record.list.length ? record.list[0] : null;
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -330,10 +334,10 @@ export default function ({
                         const applications = await applicationDomain.getApplications({
                             params: {
                                 filters: {
-                                    endpoint
-                                }
+                                    endpoint,
+                                },
                             },
-                            ctx: req.ctx
+                            ctx: req.ctx,
                         });
 
                         if (!applications.list.length) {
@@ -377,7 +381,7 @@ export default function ({
                             action: ApplicationPermissionsActions.ACCESS_APPLICATION,
                             applyTo: application.id,
                             userId: payload.userId,
-                            ctx: req.ctx
+                            ctx: req.ctx,
                         });
 
                         if (!canAccess) {
@@ -390,7 +394,7 @@ export default function ({
                             return authApp.authenticateWithOIDCService(req, res);
                         } else {
                             return res.redirect(
-                                `${config.server.basePath}/${APPS_URL_PREFIX}/login/?dest=${encodeURIComponent(req.originalUrl)}`
+                                `${config.server.basePath}/${APPS_URL_PREFIX}/login/?dest=${encodeURIComponent(req.originalUrl)}`,
                             );
                         }
                     }
@@ -401,27 +405,27 @@ export default function ({
                         if (req.path === '/' || req.path === '/index.html') {
                             const applicationBaseUrl = `${config.server.basePath}/${utils.getFullApplicationEndpoint(req.params.endpoint)}`;
                             const indexContent = await fs.promises.readFile(`${req.ctx.appFolder}/index.html`, {
-                                encoding: 'utf-8'
+                                encoding: 'utf-8',
                             });
                             const modifiedIndex = indexContent
                                 .replaceAll(/{{APPLICATION_BASE_URL}}/g, applicationBaseUrl)
                                 .replaceAll(/{{GLOBAL_BASE_URL}}/g, config.server.basePath)
                                 .replaceAll(
                                     /{{BUGSNAG_API_KEY}}/g,
-                                    (config.bugsnag.enable && config.bugsnag.apiKey) || ''
+                                    (config.bugsnag.enable && config.bugsnag.apiKey) || '',
                                 )
                                 .replaceAll(
                                     /{{BUGSNAG_APP_VERSION}}/g,
-                                    (config.bugsnag.enable && config.bugsnag.appVersion) || ''
+                                    (config.bugsnag.enable && config.bugsnag.appVersion) || '',
                                 )
                                 .replaceAll(
                                     /{{BUGSNAG_RELEASE_STAGE}}/g,
-                                    (config.bugsnag.enable && config.bugsnag.releaseStage) || ''
+                                    (config.bugsnag.enable && config.bugsnag.releaseStage) || '',
                                 )
                                 .replaceAll(/{{MATOMO_URL}}/g, (config.matomo.enable && config.matomo.url) || '')
                                 .replaceAll(
                                     /{{MATOMO_SITE_ID}}/g,
-                                    (config.matomo.enable && config.matomo.siteId) || ''
+                                    (config.matomo.enable && config.matomo.siteId) || '',
                                 );
                             res.send(modifiedIndex);
                             return next(); // needed to update consultation history
@@ -429,7 +433,7 @@ export default function ({
 
                         express.static(req.ctx.appFolder, {
                             extensions: ['html'],
-                            fallthrough: false
+                            fallthrough: false,
                         })(req, res, next);
 
                         return next();
@@ -441,7 +445,7 @@ export default function ({
                     try {
                         await applicationDomain.updateConsultationHistory({
                             applicationId: req.ctx.applicationId,
-                            ctx: req.ctx
+                            ctx: req.ctx,
                         });
                     } catch (err) {
                         logger.error(`Cannot update applications consultation history: ${err}`);
@@ -451,24 +455,24 @@ export default function ({
                     err: undefined | ApplicationError | Error,
                     req: IRequestWithContext<unknown>,
                     res: Response<unknown>,
-                    next: NextFunction
+                    next: NextFunction,
                 ) => {
                     const {defaultApp} = await globalSettings.getSettings({userId: config.defaultUserId});
 
                     if (err instanceof ApplicationError && err.appEndpoint !== defaultApp) {
                         res.redirect(
-                            `${config.server.basePath}/${APPS_URL_PREFIX}/${defaultApp}/?err=${err.type}&app=${err.appEndpoint}`
+                            `${config.server.basePath}/${APPS_URL_PREFIX}/${defaultApp}/?err=${err.type}&app=${err.appEndpoint}`,
                         );
                     } else {
                         return next(err);
                     }
-                }
+                },
             );
 
             app.get('/', async (req, res) => {
                 const {defaultApp} = await globalSettings.getSettings({userId: config.defaultUserId});
                 res.redirect(`${config.server.basePath}/${APPS_URL_PREFIX}/${defaultApp}/`);
             });
-        }
+        },
     };
 }

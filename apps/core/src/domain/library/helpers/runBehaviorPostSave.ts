@@ -47,15 +47,15 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.EXTENDED,
         multiple_values: false,
-        embedded_fields: attributesSettings[previewsAttributeId]
+        embedded_fields: attributesSettings[previewsAttributeId],
     };
 
     await deps.attributeRepo.createAttribute({
         attrData: {
             ...previewsAttributeData,
-            actions_list: deps.utils.getDefaultActionsList(previewsAttributeData)
+            actions_list: deps.utils.getDefaultActionsList(previewsAttributeData),
         },
-        ctx
+        ctx,
     });
 
     // Previews status attribute
@@ -72,15 +72,15 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.EXTENDED,
         multiple_values: false,
-        embedded_fields: attributesSettings[previewsStatusAttributeId]
+        embedded_fields: attributesSettings[previewsStatusAttributeId],
     };
 
     await deps.attributeRepo.createAttribute({
         attrData: {
             ...previewsStatusAttributeData,
-            actions_list: deps.utils.getDefaultActionsList(previewsStatusAttributeData)
+            actions_list: deps.utils.getDefaultActionsList(previewsStatusAttributeData),
         },
-        ctx
+        ctx,
     });
 
     // Associate attributes to library
@@ -89,9 +89,9 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
         attributes: [
             ...getLibraryDefaultAttributes(LibraryBehavior.FILES, library.id),
             previewsAttributeId,
-            previewsStatusAttributeId
+            previewsStatusAttributeId,
         ],
-        ctx
+        ctx,
     });
 
     // Create directories libraries
@@ -107,16 +107,16 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
                 return labels;
             }, {}),
             recordIdentityConf: {
-                label: FilesAttributes.FILE_NAME
-            }
+                label: FilesAttributes.FILE_NAME,
+            },
         },
-        ctx
+        ctx,
     });
 
     await deps.libraryRepo.saveLibraryAttributes({
         libId: directoriesLibraryId,
         attributes: getLibraryDefaultAttributes(LibraryBehavior.DIRECTORIES, directoriesLibraryId),
-        ctx
+        ctx,
     });
 
     // Create tree
@@ -130,22 +130,22 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
                 [directoriesLibraryId]: {
                     allowMultiplePositions: false,
                     allowedAtRoot: true,
-                    allowedChildren: [directoriesLibraryId, library.id]
+                    allowedChildren: [directoriesLibraryId, library.id],
                 },
                 [library.id]: {
                     allowMultiplePositions: false,
                     allowedAtRoot: true,
-                    allowedChildren: []
-                }
-            }
+                    allowedChildren: [],
+                },
+            },
         },
-        ctx
+        ctx,
     });
 };
 
 export default (library: ILibrary, isNewLib: boolean, deps: IDeps, ctx: IQueryInfos): Promise<void> => {
     const actionByBehavior = {
-        [LibraryBehavior.FILES]: () => _filesBehavior(library, isNewLib, deps, ctx)
+        [LibraryBehavior.FILES]: () => _filesBehavior(library, isNewLib, deps, ctx),
     };
 
     return actionByBehavior[library.behavior] ? actionByBehavior[library.behavior]() : null;

@@ -20,11 +20,11 @@ function SettingsAttribute({
     library,
     filters,
     disabled,
-    multiple = false
+    multiple = false,
 }: ISettingsAttributeProps): JSX.Element {
     const {t} = useTranslation();
     const {
-        state: {elementInSettings}
+        state: {elementInSettings},
     } = useFormBuilderReducer();
 
     const _handleChange = (_, data) => onChange(data.name, data.value);
@@ -40,7 +40,7 @@ function SettingsAttribute({
             onChange={_handleChange}
             filters={{
                 ...filters,
-                libraries: [library]
+                libraries: [library],
             }}
             fluid
             value={fieldValue}

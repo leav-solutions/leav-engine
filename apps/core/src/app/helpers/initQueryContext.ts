@@ -18,6 +18,6 @@ export default function ({config = null}: IDeps): InitQueryContextFunc {
         lang: (req?.query.lang as string) ?? config.lang.default,
         queryId: req?.body.requestId || uuidv4(),
         groupsId: [],
-        errors: []
+        errors: [],
     });
 }

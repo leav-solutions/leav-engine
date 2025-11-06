@@ -29,7 +29,7 @@ const MockFiltersContextProvider: FunctionComponent<{viewMock: IUIFiltersState}>
 
 const CommonFilterItemContainer: FunctionComponent = () => {
     const {
-        filtersData: {filters}
+        filtersData: {filters},
     } = useFiltersContext();
     return <CommonFilterItem filter={filters[0]} />;
 };
@@ -43,11 +43,11 @@ describe('CommonFilterItem', () => {
                     label: 'numeric filter',
                     id: 'numeric filter',
                     format: gqlTypes.AttributeFormat.numeric,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: '1',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -64,17 +64,17 @@ describe('CommonFilterItem', () => {
                     label: 'numeric filter',
                     id: 'numeric filter',
                     format: gqlTypes.AttributeFormat.numeric,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: '1',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /numeric/}));
             expect(screen.queryByRole('spinbutton')).toBeInTheDocument();
@@ -97,11 +97,11 @@ describe('CommonFilterItem', () => {
                     label: 'text filter',
                     id: 'text filter',
                     format: gqlTypes.AttributeFormat.text,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: 'test value',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             const {baseElement} = render(<CommonFilterItem filter={filter} />);
@@ -123,17 +123,17 @@ describe('CommonFilterItem', () => {
                     label: 'text filter',
                     id: 'text filter',
                     format: gqlTypes.AttributeFormat.text,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: 'test value',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /text/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
@@ -155,11 +155,11 @@ describe('CommonFilterItem', () => {
                     label: 'rich text filter',
                     id: 'rich text filter',
                     format: gqlTypes.AttributeFormat.rich_text,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: 'test value',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             const {baseElement} = render(<CommonFilterItem filter={filter} />);
@@ -181,17 +181,17 @@ describe('CommonFilterItem', () => {
                     label: 'rich text filter',
                     id: 'rich text filter',
                     format: gqlTypes.AttributeFormat.rich_text,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: 'test value',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /rich text/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
@@ -213,11 +213,11 @@ describe('CommonFilterItem', () => {
                     label: 'boolean filter',
                     id: 'boolean filter',
                     format: gqlTypes.AttributeFormat.boolean,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: 'true',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -236,11 +236,11 @@ describe('CommonFilterItem', () => {
                     label: 'date filter',
                     id: 'date filter',
                     format: gqlTypes.AttributeFormat.date,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: date.unix,
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -257,17 +257,17 @@ describe('CommonFilterItem', () => {
                     label: 'date filter',
                     id: 'date filter',
                     format: gqlTypes.AttributeFormat.date,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: date.unix,
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /date/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
@@ -290,11 +290,11 @@ describe('CommonFilterItem', () => {
                     label: 'color filter',
                     id: 'color filter',
                     format: gqlTypes.AttributeFormat.color,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: null,
-                condition: null
+                condition: null,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -311,11 +311,11 @@ describe('CommonFilterItem', () => {
                     label: 'encrypted filter',
                     id: 'encrypted filter',
                     format: gqlTypes.AttributeFormat.encrypted,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: null,
-                condition: null
+                condition: null,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -332,11 +332,11 @@ describe('CommonFilterItem', () => {
                     label: 'extended filter',
                     id: 'extended filter',
                     format: gqlTypes.AttributeFormat.extended,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: null,
-                condition: null
+                condition: null,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -353,11 +353,11 @@ describe('CommonFilterItem', () => {
                     label: 'period filter',
                     id: 'period filter',
                     format: gqlTypes.AttributeFormat.date_range,
-                    type: AttributeType.simple
+                    type: AttributeType.simple,
                 },
                 field: 'test',
                 value: null,
-                condition: null
+                condition: null,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -373,11 +373,11 @@ describe('CommonFilterItem', () => {
                 attribute: {
                     label: 'link filter',
                     id: 'link filter',
-                    type: AttributeType.advanced_link
+                    type: AttributeType.advanced_link,
                 },
                 field: 'test',
                 value: 'test value',
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             const {baseElement} = render(<CommonFilterItem filter={filter} />);
@@ -391,7 +391,7 @@ describe('CommonFilterItem', () => {
             const options = getAllConditionOptions(baseElement);
             expect(options).toHaveLength(
                 conditionsByFormat[gqlTypes.AttributeFormat.text].filter(f => f !== AttributeConditionFilter.NOT_EQUAL) // disable NOT_EQUAL for now because of backend condition filter issue
-                    .length + 1
+                    .length + 1,
             ); // + 1 for "through" condition
         });
 
@@ -401,7 +401,7 @@ describe('CommonFilterItem', () => {
                 id: 'linked_attribute',
                 label: {fr: 'Linked Attribute'},
                 type: AttributeType.simple,
-                format: gqlTypes.AttributeFormat.text
+                format: gqlTypes.AttributeFormat.text,
             };
 
             const mockUseGetLibraryAttributesLazyQuery = [
@@ -413,16 +413,16 @@ describe('CommonFilterItem', () => {
                             list: [
                                 {
                                     id: 'link_library',
-                                    attributes: [mockLinkedAttribute]
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    attributes: [mockLinkedAttribute],
+                                },
+                            ],
+                        },
+                    },
+                },
             ];
 
             jest.spyOn(gqlTypes, 'useGetLibraryAttributesLazyQuery').mockReturnValue(
-                mockUseGetLibraryAttributesLazyQuery as gqlTypes.GetLibraryAttributesLazyQueryHookResult
+                mockUseGetLibraryAttributesLazyQuery as gqlTypes.GetLibraryAttributesLazyQueryHookResult,
             );
 
             const filter: UIFilter = {
@@ -432,21 +432,21 @@ describe('CommonFilterItem', () => {
                     id: 'link filter',
                     type: AttributeType.advanced_link,
                     linkedLibrary: {
-                        id: 'link_library'
-                    }
+                        id: 'link_library',
+                    },
                 },
                 field: 'test',
                 value: 'test value',
                 condition: AttributeConditionFilter.THROUGH,
                 subCondition: null,
-                subField: null
+                subField: null,
             };
 
             // WHEN the filter dropdown is displayed
             const {baseElement} = render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItem filter={filter} />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
@@ -494,16 +494,16 @@ describe('CommonFilterItem', () => {
                                 id: 'tree_library',
                                 label: {
                                     fr: 'Mon arbre',
-                                    en: 'My tree'
-                                }
-                            }
-                        ]
-                    }
-                }
+                                    en: 'My tree',
+                                },
+                            },
+                        ],
+                    },
+                },
             };
 
             jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue(
-                mockUseTreeDataQueryQuery as TreeDataQueryQueryHookResult
+                mockUseTreeDataQueryQuery as TreeDataQueryQueryHookResult,
             );
 
             const mockResultFromChild = {
@@ -515,31 +515,31 @@ describe('CommonFilterItem', () => {
                             record: {
                                 id: 'my_first_child',
                                 whoAmI: {
-                                    label: 'Emile'
-                                }
-                            }
+                                    label: 'Emile',
+                                },
+                            },
                         },
                         {
                             id: 'my_second_child',
                             record: {
                                 id: 'my_second_child',
                                 whoAmI: {
-                                    label: 'Jules'
-                                }
-                            }
-                        }
-                    ]
-                }
+                                    label: 'Jules',
+                                },
+                            },
+                        },
+                    ],
+                },
             };
 
             const mockResult: Mockify<gqlTypes.TreeNodeChildrenQueryResult> = {
                 called: true,
-                loading: false
+                loading: false,
             };
 
             jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
                 jest.fn().mockImplementation(() => ({data: mockResultFromChild})),
-                mockResult as gqlTypes.TreeNodeChildrenQueryResult
+                mockResult as gqlTypes.TreeNodeChildrenQueryResult,
             ]);
 
             const filter: UIFilter = {
@@ -549,12 +549,12 @@ describe('CommonFilterItem', () => {
                     id: 'tree_filter',
                     type: AttributeType.tree,
                     linkedTree: {
-                        id: 'tree_library'
-                    }
+                        id: 'tree_library',
+                    },
                 },
                 field: ['test'],
                 value: [],
-                condition: AttributeConditionFilter.EQUAL
+                condition: AttributeConditionFilter.EQUAL,
             };
 
             render(<CommonFilterItem filter={filter} />);
@@ -577,18 +577,18 @@ describe('CommonFilterItem', () => {
                     type: AttributeType.simple,
                     valuesList: {
                         enable: true,
-                        values: ['Red', 'Blue']
-                    }
+                        values: ['Red', 'Blue'],
+                    },
                 },
                 field: 'my_text_attr',
                 value: [],
-                condition: RecordFilterCondition.EQUAL
+                condition: RecordFilterCondition.EQUAL,
             };
 
             const {baseElement} = render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /text/}));
 
@@ -631,9 +631,9 @@ describe('CommonFilterItem', () => {
                                     id: '1',
                                     label: 'Alpha',
                                     library: {
-                                        id: 'link_library'
-                                    }
-                                }
+                                        id: 'link_library',
+                                    },
+                                },
                             },
                             {
                                 id: '2',
@@ -641,22 +641,22 @@ describe('CommonFilterItem', () => {
                                     id: '2',
                                     label: 'Beta',
                                     library: {
-                                        id: 'link_library'
-                                    }
-                                }
-                            }
-                        ]
-                    }
+                                        id: 'link_library',
+                                    },
+                                },
+                            },
+                        ],
+                    },
                 },
                 field: 'link_attr',
                 value: [],
-                condition: 'EQUAL' as RecordFilterCondition.EQUAL
+                condition: 'EQUAL' as RecordFilterCondition.EQUAL,
             };
 
             const {baseElement} = render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockFiltersContextProvider>
+                </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 

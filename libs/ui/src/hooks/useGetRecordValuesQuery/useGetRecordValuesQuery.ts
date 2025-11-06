@@ -10,7 +10,7 @@ import {
     getRecordColumnsValues,
     type GetRecordColumnsValuesRecord,
     type IGetRecordColumnsValues,
-    type IGetRecordColumnsValuesVariables
+    type IGetRecordColumnsValuesVariables,
 } from '../../_queries/records/getRecordColumnsValues';
 
 export interface IColumnsValuesByRecord {
@@ -37,7 +37,7 @@ export const useGetRecordValuesQuery = (
     libraryId: string,
     columns: string[],
     recordIds: string[],
-    skip?: boolean
+    skip?: boolean,
 ): IUseGetRecordColumnsValuesQueryHook => {
     const [queryData, setQueryData] = useState<IColumnsValuesByRecord>();
 
@@ -51,18 +51,18 @@ export const useGetRecordValuesQuery = (
         variables: {
             library: libraryId,
             // Turn records ids into filters with OR operators
-            filters: _recordIdsToQueryFilters(recordIds)
+            filters: _recordIdsToQueryFilters(recordIds),
         },
         skip: skip || !libraryId || !columns.length || !recordIds.length,
         onCompleted: data => {
             const cleanData: IColumnsValuesByRecord = _convertQueryResult(data);
             setQueryData(cleanData);
-        }
+        },
     });
 
     const customRefetch = async (refetchRecordIds: string[]) => {
         const customVariables = {
-            filters: _recordIdsToQueryFilters(refetchRecordIds ?? [])
+            filters: _recordIdsToQueryFilters(refetchRecordIds ?? []),
         };
 
         const refetchData = await query.refetch(customVariables);
@@ -78,6 +78,6 @@ export const useGetRecordValuesQuery = (
         ...query,
         loading: query.loading || typeof queryData === undefined,
         data: queryData,
-        refetch: customRefetch
+        refetch: customRefetch,
     };
 };

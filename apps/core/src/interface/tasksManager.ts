@@ -15,6 +15,6 @@ interface IDeps {
 export default function ({'core.app.core.tasksManager': tasksManager}: IDeps): ITasksManagerInterface {
     return {
         initMaster: tasksManager.initMaster,
-        initWorker: tasksManager.initWorker
+        initWorker: tasksManager.initWorker,
     };
 }

@@ -4,7 +4,7 @@
 import {type FunctionComponent, useCallback, useMemo, useState} from 'react';
 import {
     EditRecordModal,
-    type IEditRecordModalProps
+    type IEditRecordModalProps,
 } from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
 import {type IEditRecordContextType, EditRecordModalContext} from './EditRecordModalContext';
 
@@ -21,9 +21,9 @@ export const EditRecordModalProvider: FunctionComponent = ({children}) => {
         () => ({
             editRecord: recordProps => {
                 setEditRecordModalProps(recordProps);
-            }
+            },
         }),
-        [setEditRecordModalProps]
+        [setEditRecordModalProps],
     );
 
     return (

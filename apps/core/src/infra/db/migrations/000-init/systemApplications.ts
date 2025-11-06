@@ -18,8 +18,8 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         endpoint: 'admin',
         settings: {
             libraries: [],
-            trees: []
-        }
+            trees: [],
+        },
     },
     {
         _key: 'data_studio',
@@ -29,13 +29,13 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         label: {fr: 'Data Studio', en: 'Data Studio'},
         description: {
             fr: 'Application générique pour gérer et explorer vos données',
-            en: 'Generic app to manage and explore your data'
+            en: 'Generic app to manage and explore your data',
         },
         endpoint: 'data-studio',
         settings: {
             libraries: 'all',
-            trees: 'all'
-        }
+            trees: 'all',
+        },
     },
     {
         _key: 'login',
@@ -44,7 +44,7 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         module: 'login',
         label: {fr: 'Login', en: 'Login'},
         description: {fr: "Application d'authentification", en: 'Authentication app'},
-        endpoint: 'login'
+        endpoint: 'login',
     },
     {
         _key: 'portal',
@@ -53,6 +53,6 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         module: 'portal',
         label: {fr: 'Portail', en: 'Portal'},
         description: {fr: "Portail d'accès à toutes les applications", en: 'All applications portal'},
-        endpoint: 'portal'
-    }
+        endpoint: 'portal',
+    },
 ];

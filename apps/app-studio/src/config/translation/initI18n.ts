@@ -16,7 +16,7 @@ export const initI18n = (defaultLang: string) =>
                 } catch (e) {
                     console.error('Error while fetching translations files', e);
                 }
-            })
+            }),
         )
         .use(LanguageDetector)
         .init({
@@ -24,8 +24,8 @@ export const initI18n = (defaultLang: string) =>
             ns: ['translations'],
             defaultNS: 'translations',
             react: {
-                useSuspense: true
-            }
+                useSuspense: true,
+            },
         });
 
 /* i18n is a singleton, we can just export it and useit where we need */

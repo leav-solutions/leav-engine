@@ -21,7 +21,7 @@ function ProtectedRoute({component: Component, permissions, ...rest}: IProtected
         permissions.reduce(
             (isAuthorized: boolean, permName): boolean =>
                 isAuthorized && !!userData.permissions && userData.permissions[permName],
-            true
+            true,
         );
 
     const render = (props: RouteComponentProps): ReactNode =>

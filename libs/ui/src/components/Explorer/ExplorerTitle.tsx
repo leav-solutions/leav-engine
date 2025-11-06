@@ -20,12 +20,12 @@ export const ExplorerTitle: FunctionComponent<IExplorerTitleProps> = ({title, li
     const {
         data: attributeData,
         loading: attributeLoading,
-        error: attributeError
+        error: attributeError,
     } = useExplorerLinkAttributeQuery({
         skip: !!title || entrypoint.type !== 'link',
         variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
-        }
+            id: (entrypoint as IEntrypointLink).linkAttributeId,
+        },
     });
 
     const {lang} = useLang();

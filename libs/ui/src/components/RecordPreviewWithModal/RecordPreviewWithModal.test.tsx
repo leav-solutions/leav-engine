@@ -15,7 +15,7 @@ describe('RecordPreviewWithModal', () => {
     describe('With preview', () => {
         beforeEach(() => {
             const previewFile = {
-                ...mockRecord.preview.file
+                ...mockRecord.preview.file,
             };
 
             render(<RecordPreviewWithModal label="my file" image="/my_file.jpg" previewFile={previewFile} />);
@@ -60,7 +60,7 @@ describe('RecordPreviewWithModal', () => {
 
     test('Show checkerboard if app is in transparency mode', async () => {
         const previewFile = {
-            ...mockRecord.preview.file
+            ...mockRecord.preview.file,
         };
 
         render(
@@ -69,7 +69,7 @@ describe('RecordPreviewWithModal', () => {
                 image="/my_file.jpg"
                 previewFile={previewFile}
                 showTransparency={false}
-            />
+            />,
         );
 
         expect(screen.getByAltText('record preview')).toHaveStyle(`background: ${themeVars.checkerBoard}`);

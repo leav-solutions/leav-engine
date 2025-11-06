@@ -31,7 +31,7 @@ interface IDeps {
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.db.dbUtils': dbUtils = null,
 }: IDeps = {}): IVersionProfileRepo {
     return {
         async getVersionProfiles({params, ctx}) {
@@ -52,7 +52,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
 
             const initializedParams = {...defaultParams, ...params};
@@ -61,7 +61,7 @@ export default function ({
                 ...initializedParams,
                 collectionName: VERSION_PROFILE_COLLECTION_NAME,
                 customFilterConditions: {trees: _generateTreesFilterConds},
-                ctx
+                ctx,
             });
         },
         async createVersionProfile({profileData, ctx}) {
@@ -70,7 +70,7 @@ export default function ({
             const col = dbService.db.collection(VERSION_PROFILE_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -82,7 +82,7 @@ export default function ({
             const col = dbService.db.collection(VERSION_PROFILE_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`UPDATE ${docToUpdate} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -92,7 +92,7 @@ export default function ({
 
             const res = await dbService.execute({
                 query: aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             // Return deleted attribute
@@ -107,10 +107,10 @@ export default function ({
                         FILTER attrib.versions_conf.profile == ${id}
                         RETURN attrib
                 `,
-                ctx
+                ctx,
             });
 
             return res.map(attribute => dbUtils.cleanup(attribute));
-        }
+        },
     };
 }

@@ -39,14 +39,14 @@ import ramService from './infra/cache/ramService';
 
     if (conf.bugsnag.enable) {
         logger.info(
-            `Starting Bugsnag monitoring appVersion=${conf.bugsnag.appVersion} releaseStage=${conf.bugsnag.releaseStage}`
+            `Starting Bugsnag monitoring appVersion=${conf.bugsnag.appVersion} releaseStage=${conf.bugsnag.releaseStage}`,
         );
         Bugsnag.start({
             apiKey: conf.bugsnag.apiKey,
             appVersion: conf.bugsnag.appVersion,
             appType: conf.bugsnag.appType,
             releaseStage: conf.bugsnag.releaseStage,
-            logger
+            logger,
         });
     }
 
@@ -56,13 +56,13 @@ import ramService from './infra/cache/ramService';
         amqpService({
             config: {
                 ...conf.amqp,
-                ...(conf.coreMode === CoreMode.TASKS_MANAGER_WORKER && {prefetch: conf.tasksManager.workerPrefetch})
-            }
+                ...(conf.coreMode === CoreMode.TASKS_MANAGER_WORKER && {prefetch: conf.tasksManager.workerPrefetch}),
+            },
         }),
         initRedis({config: conf}),
         initMailer({config: conf}),
         conf.auth.oidc.enable ? initOIDCClient(conf) : undefined,
-        initDb(conf)
+        initDb(conf),
     ]);
 
     const {coreContainer, pluginsContainer} = await initDI({
@@ -70,7 +70,7 @@ import ramService from './infra/cache/ramService';
         'core.infra.amqpService': amqp,
         'core.infra.redis': redis,
         'core.infra.mailer': mailer,
-        'core.infra.oidcClient': oidcClient
+        'core.infra.oidcClient': oidcClient,
     });
 
     const monitoringServerInstance = monitoringServer();

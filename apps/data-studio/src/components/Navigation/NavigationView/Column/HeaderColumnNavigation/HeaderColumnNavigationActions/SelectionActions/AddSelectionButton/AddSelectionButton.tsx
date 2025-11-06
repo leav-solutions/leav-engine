@@ -28,7 +28,7 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
 
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
     const dispatch = useAppDispatch();
 
@@ -37,33 +37,33 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
     const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
 
     const canAddSelection = selectionState.selection.selected.some((selected: ISharedSelected) =>
-        allowedLibraries.includes(selected.library)
+        allowedLibraries.includes(selected.library),
     );
 
     const _handleAddElements = async () => {
         if (selectionState.selection.selected.length) {
             let messages: IMessages = {
                 countValid: 0,
-                errors: {}
+                errors: {},
             };
 
             const parentElement = parent?.id ?? null;
             const selectionToAdd = selectionState.selection.selected.filter((selected: ISharedSelected) =>
-                allowedLibraries.includes(selected.library)
+                allowedLibraries.includes(selected.library),
             );
 
             for (const elementSelected of selectionToAdd) {
                 const treeElement: TreeElementInput = {
                     id: elementSelected.id,
-                    library: elementSelected.library
+                    library: elementSelected.library,
                 };
                 try {
                     await addToTree({
                         variables: {
                             treeId: activeTree.id,
                             element: treeElement,
-                            parent: parentElement
-                        }
+                            parent: parentElement,
+                        },
                     });
                     messages = {...messages, countValid: messages.countValid + 1};
                 } catch (e) {
@@ -74,13 +74,13 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
                         if (errorMessageParent) {
                             messages.errors[errorMessageParent] = [
                                 ...(messages.errors[errorMessageParent] ?? []),
-                                elementSelected.id
+                                elementSelected.id,
                             ];
                         }
                         if (errorMessageElement) {
                             messages.errors[errorMessageElement] = [
                                 ...(messages.errors[errorMessageElement] ?? []),
-                                elementSelected.label || elementSelected.id
+                                elementSelected.label || elementSelected.id,
                             ];
                         }
                     }
@@ -93,7 +93,7 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
             const notification: IInfo = {
                 channel: InfoChannel.TRIGGER,
                 type: InfoType.WARNING,
-                content: t('navigation.infos.warning-add-no-selection')
+                content: t('navigation.infos.warning-add-no-selection'),
             };
 
             dispatch(addInfo(notification));

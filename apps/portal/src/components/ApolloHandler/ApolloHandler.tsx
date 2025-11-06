@@ -10,7 +10,7 @@ import {
     Observable,
     type Operation,
     type ServerError,
-    split
+    split,
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
@@ -33,10 +33,10 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                 createClient({
                     url: `${WS_URL}/${API_ENDPOINT}`,
                     retryAttempts: Infinity,
-                    shouldRetry: () => true
-                })
+                    shouldRetry: () => true,
+                }),
             ),
-        []
+        [],
     );
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
@@ -63,7 +63,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                         forward(operation).subscribe({
                             next: observer.next.bind(observer),
                             error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer)
+                            complete: observer.complete.bind(observer),
                         });
                     } catch (err) {
                         observer.error(err);
@@ -86,8 +86,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             splitLink,
             new HttpLink({
                 uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?&opName=${operation.operationName}`,
-                fetch
-            })
+                fetch,
+            }),
         ]),
         cache: new InMemoryCache({
             typePolicies: {
@@ -96,13 +96,13 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                         permissions: {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
-                            }
-                        }
-                    }
-                }
+                            },
+                        },
+                    },
+                },
             },
-            possibleTypes: gqlPossibleTypes
-        })
+            possibleTypes: gqlPossibleTypes,
+        }),
     });
 
     return <ApolloProvider client={gqlClient}>{children}</ApolloProvider>;

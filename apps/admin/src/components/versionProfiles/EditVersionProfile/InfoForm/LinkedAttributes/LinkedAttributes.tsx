@@ -17,7 +17,7 @@ import styled from 'styled-components';
 import {borderColorBase, borderRadiusBase, greyBackground} from 'themingVar';
 import {
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list,
-    type GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes
+    type GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes,
 } from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '_gqlTypes/SAVE_ATTRIBUTE';
@@ -84,7 +84,7 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
     const {t} = useTranslation();
 
     const [attributeModalDisplay, setAttributeModalDisplay] = useState<{visible: boolean; attribute?: string}>({
-        visible: false
+        visible: false,
     });
     const [saveAttribute] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery);
     const apolloClient = useApolloClient();
@@ -113,12 +113,12 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
                                 id: attributeId,
                                 versions_conf: {
                                     versionable: true,
-                                    profile: profile.id
-                                }
-                            }
-                        }
-                    })
-                )
+                                    profile: profile.id,
+                                },
+                            },
+                        },
+                    }),
+                ),
             );
 
             _handleCloseAddAttribute();
@@ -127,7 +127,7 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
             apolloClient.writeQuery({
                 query: getVersionProfileByIdQuery,
                 variables: {
-                    id: profile.id
+                    id: profile.id,
                 },
                 data: {
                     versionProfiles: {
@@ -137,12 +137,12 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
                                 ...profile,
                                 linkedAttributes: [
                                     ...profile.linkedAttributes,
-                                    ...savedAttributes.map(a => a.data.saveAttribute)
-                                ]
-                            }
-                        ]
-                    }
-                }
+                                    ...savedAttributes.map(a => a.data.saveAttribute),
+                                ],
+                            },
+                        ],
+                    },
+                },
             });
         } catch (e) {
             // Exception is handled in Apollo Client
@@ -156,17 +156,17 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
                     id: attributeId,
                     versions_conf: {
                         versionable: true,
-                        profile: null
-                    }
-                }
-            }
+                        profile: null,
+                    },
+                },
+            },
         });
 
         // Update apollo cache
         apolloClient.writeQuery({
             query: getVersionProfileByIdQuery,
             variables: {
-                id: profile.id
+                id: profile.id,
             },
             data: {
                 versionProfiles: {
@@ -174,11 +174,11 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
                     list: [
                         {
                             ...profile,
-                            linkedAttributes: [...profile.linkedAttributes.filter(a => a.id !== attributeId)]
-                        }
-                    ]
-                }
-            }
+                            linkedAttributes: [...profile.linkedAttributes.filter(a => a.id !== attributeId)],
+                        },
+                    ],
+                },
+            },
         });
     };
 
@@ -196,7 +196,7 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
         a =>
             !search ||
             a.id.match(new RegExp(`${search}`, 'i')) ||
-            Object.values(a.label).some(langLabel => langLabel.match(new RegExp(`${search}`, 'i')))
+            Object.values(a.label).some(langLabel => langLabel.match(new RegExp(`${search}`, 'i'))),
     );
 
     return (
@@ -227,7 +227,7 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
                                         <ConfirmedButton
                                             action={_handleUnlinkAttribute(attribute.id)}
                                             confirmMessage={t('version_profiles.unlink_attribute_confirm', {
-                                                attributeLabel
+                                                attributeLabel,
                                             })}
                                         >
                                             <SimplisticButton icon="cancel" name="unlink" aria-label="unlink" />

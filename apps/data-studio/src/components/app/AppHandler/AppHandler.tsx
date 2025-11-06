@@ -14,7 +14,7 @@ import {
     Loading,
     useAntdLocale,
     useAppLang,
-    UserContext
+    UserContext,
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, ConfigProvider, theme} from 'antd';
@@ -35,7 +35,7 @@ import {addTask} from 'reduxStore/tasks';
 import {ThemeProvider} from 'styled-components';
 import {
     type GET_APPLICATION_BY_ENDPOINT,
-    type GET_APPLICATION_BY_ENDPOINTVariables
+    type GET_APPLICATION_BY_ENDPOINTVariables,
 } from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
@@ -65,7 +65,7 @@ function AppHandler(): JSX.Element {
 
     const localeByLang = {
         fr: 'frFR',
-        en: 'enUS'
+        en: 'enUS',
     };
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
@@ -76,15 +76,15 @@ function AppHandler(): JSX.Element {
     const {
         data: applicationData,
         loading: applicationLoading,
-        error: applicationError
+        error: applicationError,
     } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
-        variables: {endpoint: APP_ENDPOINT}
+        variables: {endpoint: APP_ENDPOINT},
     });
 
     const {
         data: globalSettingsData,
         loading: globalSettingsLoading,
-        error: globalSettingsError
+        error: globalSettingsError,
     } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
 
     const currentApp = applicationData?.applications?.list?.[0];
@@ -94,15 +94,15 @@ function AppHandler(): JSX.Element {
         variables: {
             filters: {
                 created_by: userData?.me?.id,
-                archive: false
-            }
+                archive: false,
+            },
         },
         skip: !userData?.me?.id,
         onCompleted: data => {
             for (const task of data.tasks.list) {
                 dispatch(addTask(task));
             }
-        }
+        },
     });
 
     useSubscription(getTaskUpdates, {
@@ -111,7 +111,7 @@ function AppHandler(): JSX.Element {
         onData: subData => {
             const task = subData.data.data.task;
             dispatch(addTask(task));
-        }
+        },
     });
 
     // Triggered when active library change
@@ -156,7 +156,7 @@ function AppHandler(): JSX.Element {
         </Button>,
         <Button onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
             {t('global.go_back_home')}
-        </Button>
+        </Button>,
     ];
 
     if (meLoading || applicationLoading || globalSettingsLoading || langsLoading || appLangLoading) {
@@ -178,12 +178,12 @@ function AppHandler(): JSX.Element {
 
     const appContextData = {
         currentApp,
-        globalSettings
+        globalSettings,
     };
 
     const userContextData: IUserContext['userData'] = {
         userId: userData?.me?.id,
-        userWhoAmI: userData?.me?.whoAmI
+        userWhoAmI: userData?.me?.whoAmI,
     };
 
     return (
@@ -194,7 +194,7 @@ function AppHandler(): JSX.Element {
                         lang,
                         availableLangs: availableLangs.langs,
                         defaultLang: appLang,
-                        setLang: _handleLanguageChange
+                        setLang: _handleLanguageChange,
                     }}
                 >
                     <ErrorBoundary recoveryButtons={recoveryButtons}>
@@ -203,7 +203,7 @@ function AppHandler(): JSX.Element {
                                 locale={{
                                     locale: localeByLang[lang[0]],
                                     ItemList: null,
-                                    Image: null
+                                    Image: null,
                                 }}
                             >
                                 <ConfigProvider theme={customTheme} locale={locale}>

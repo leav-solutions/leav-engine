@@ -94,7 +94,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
             query,
             ctx,
             withTotalCount = false,
-            attempts = 0
+            attempts = 0,
         }: IExecute): Promise<T> {
             try {
                 let setQueryProfilerStats: ((cursorStats?: CursorStats) => void) | undefined;
@@ -102,7 +102,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                     const dbProfiler: IDbProfiler = ctx.dbProfiler ?? {
                         totalCount: 0,
                         uniqueQueriesCount: 0,
-                        queries: {}
+                        queries: {},
                     };
 
                     dbProfiler.totalCount = (dbProfiler.totalCount ?? 0) + 1;
@@ -118,7 +118,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                     const caller = callers[callKey] || {
                         count: 0,
                         stats: [],
-                        stack: callStackIndexClean
+                        stack: callStackIndexClean,
                     };
                     caller.count++;
                     callers[callKey] = caller;
@@ -127,7 +127,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                     dbProfiler.queries[queryKey] = {
                         count: (previousQueryProfile?.count ?? 0) + 1,
                         query,
-                        callers
+                        callers,
                     };
 
                     const startDate = process.hrtime.bigint();
@@ -136,7 +136,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                             executionTimeMs: cursorStats.executionTime
                                 ? _.round(cursorStats.executionTime * 1000, 3)
                                 : null,
-                            nodejsTimeMs: _.round(Number(process.hrtime.bigint() - startDate) / 1_000_000, 3)
+                            nodejsTimeMs: _.round(Number(process.hrtime.bigint() - startDate) / 1_000_000, 3),
                         });
                     };
 
@@ -150,7 +150,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                     ? {...query}
                     : {
                           query,
-                          bindVars: {}
+                          bindVars: {},
                       };
 
                 const queryOptions = withTotalCount ? {count: true, fullCount: true} : {};
@@ -215,6 +215,6 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
         async analyzers(): Promise<Analyzer[]> {
             return db.analyzers();
         },
-        collectionExists
+        collectionExists,
     };
 }

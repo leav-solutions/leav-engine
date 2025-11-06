@@ -13,7 +13,7 @@ export interface ISimplePermissionHelper {
 }
 
 export default function ({
-    'core.domain.permission.helpers.permissionsByActions': permsByActionsHelper
+    'core.domain.permission.helpers.permissionsByActions': permsByActionsHelper,
 }: IDeps): ISimplePermissionHelper {
     return {
         async getSimplePermission({type, applyTo, action, usersGroupNodeId, permissionTreeTarget = null, ctx}) {
@@ -23,10 +23,10 @@ export default function ({
                 actions: [action],
                 usersGroupNodeId,
                 permissionTreeTarget,
-                ctx
+                ctx,
             });
 
             return perms[action] ?? null;
-        }
+        },
     };
 }

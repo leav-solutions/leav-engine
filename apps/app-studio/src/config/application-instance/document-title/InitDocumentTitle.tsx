@@ -11,7 +11,7 @@ export const InitDocumentTitle: FunctionComponent = ({children}) => {
     const {lang} = useContext(LangContext);
 
     const {data: applicationData} = useGetApplicationDataByEndpointQuery({
-        variables: {endpoint: APP_ENDPOINT}
+        variables: {endpoint: APP_ENDPOINT},
     });
 
     const currentApp = applicationData?.applications?.list[0];

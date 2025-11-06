@@ -24,7 +24,7 @@ jest.mock('../EditRecord', () => ({
                 <button onClick={() => onCreate(mockRecord)}>simulate_create_record</button>
             </Form>
         );
-    }
+    },
 }));
 
 describe('EditRecordModal', () => {
@@ -42,28 +42,28 @@ describe('EditRecordModal', () => {
                         whoAmI: {
                             id: 'new_record_id',
                             label: 'New Record',
-                            library: {id: 'test_lib'}
-                        }
-                    }
-                }
-            }
+                            library: {id: 'test_lib'},
+                        },
+                    },
+                },
+            },
         });
         mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
             data: {
                 purgeRecord: {
                     record: {
-                        id: 'new_record_id'
-                    }
-                }
-            }
+                        id: 'new_record_id',
+                    },
+                },
+            },
         });
         jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
             mockUseCreateEmptyRecordMutation,
-            {loading: false, called: false, client: null, reset: null, error: null}
+            {loading: false, called: false, client: null, reset: null, error: null},
         ]);
         jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
             mockUsePurgeRecordMutation,
-            {loading: false, called: false, client: null, reset: null, error: null}
+            {loading: false, called: false, client: null, reset: null, error: null},
         ]);
     });
 
@@ -88,7 +88,7 @@ describe('EditRecordModal', () => {
                     onClose={jest.fn()}
                     record={null}
                     submitButtons={['create', 'createAndEdit']}
-                />
+                />,
             );
 
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe('EditRecordModal', () => {
                     onClose={jest.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
-                />
+                />,
             );
 
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
@@ -134,7 +134,7 @@ describe('EditRecordModal', () => {
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
 
             expect(
-                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
+                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'}),
             ).not.toBeInTheDocument();
             await userEvent.type(screen.getByDisplayValue('CreateRecord'), 'Something');
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
@@ -181,7 +181,7 @@ describe('EditRecordModal', () => {
                     submitButtons={['createAndEdit']}
                     onCreate={onCreate}
                     onCreateAndEdit={onCreateAndEdit}
-                />
+                />,
             );
 
             expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
@@ -196,7 +196,7 @@ describe('EditRecordModal', () => {
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={mockRecord} />);
 
             expect(
-                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
+                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'}),
             ).not.toBeInTheDocument();
             await userEvent.type(screen.getByDisplayValue('EditRecord'), 'Something');
             await userEvent.click(screen.getByRole('button', {name: /close/, hidden: true}));
@@ -217,13 +217,13 @@ describe('EditRecordModal', () => {
                     onClose={jest.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
-                />
+                />,
             );
 
             expect(editRecordFn).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    formId: 'creation-form'
-                })
+                    formId: 'creation-form',
+                }),
             );
         });
 
@@ -237,13 +237,13 @@ describe('EditRecordModal', () => {
                     onClose={jest.fn()}
                     record={{id: '123456', library: {id: 'test_lib'}}}
                     submitButtons={['createAndEdit']}
-                />
+                />,
             );
 
             expect(editRecordFn).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    formId: 'edition-form'
-                })
+                    formId: 'edition-form',
+                }),
             );
         });
     });

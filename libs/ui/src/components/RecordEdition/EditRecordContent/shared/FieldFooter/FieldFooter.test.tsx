@@ -9,7 +9,7 @@ describe('FieldFooter', () => {
         render(
             <FieldFooter>
                 <div>some child</div>
-            </FieldFooter>
+            </FieldFooter>,
         );
 
         expect(screen.getByText('some child')).toBeInTheDocument();

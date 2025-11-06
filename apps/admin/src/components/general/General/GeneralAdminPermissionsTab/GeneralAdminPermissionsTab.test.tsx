@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function DefinePermByUserGroupView() {
             return <div>DefinePermByUserGroupView</div>;
-        }
+        },
 );
 describe('GeneralAdminPermissionsTab', () => {
     test('Render test', async () => {

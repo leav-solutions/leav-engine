@@ -36,7 +36,7 @@ export async function setup() {
             'core.infra.amqpService': amqp,
             'core.infra.redis': redis,
             'core.infra.mailer': mailer,
-            'core.infra.oidcClient': oidcClient
+            'core.infra.oidcClient': oidcClient,
         });
 
         // Clear all caches (redis cache for example might persist between runs)

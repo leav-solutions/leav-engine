@@ -32,10 +32,10 @@ function Applications(): JSX.Element {
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery, {
         onCompleted: dataRes => {
             const apps = (dataRes?.applications.list ?? []).filter(
-                app => app.permissions.access_application && !hiddenApps.includes(app.id)
+                app => app.permissions.access_application && !hiddenApps.includes(app.id),
             );
             setApplications(apps);
-        }
+        },
     });
     const {loading: permissionsLoading, canCreate, error: permissionsError} = useApplicationsPermissions();
     const [showEditApplicationModal, setShowEditApplicationModal] = useState(false);

@@ -10,7 +10,7 @@ describe('parseJSONAction', () => {
     const ctx = {attribute: attrText, userId: 'test_user'};
     test('parseJSON', async () => {
         expect(
-            (await action([{payload: '{"test":"aaa","toto":{"tata":true}}'}], {}, ctx)).values[0].payload
+            (await action([{payload: '{"test":"aaa","toto":{"tata":true}}'}], {}, ctx)).values[0].payload,
         ).toMatchObject({test: 'aaa', toto: {tata: true}});
         expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
     });

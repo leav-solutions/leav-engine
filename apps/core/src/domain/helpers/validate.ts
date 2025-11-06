@@ -33,7 +33,7 @@ export default function ({
     'core.infra.record': recordRepo,
     'core.utils': utils,
     'core.infra.library': libraryRepo,
-    'core.infra.cache.cacheService': cacheService
+    'core.infra.cache.cacheService': cacheService,
 }: IDeps): IValidateHelper {
     return {
         async validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void> {
@@ -48,7 +48,7 @@ export default function ({
                 return recordRepo.getRecord({
                     libraryId: library,
                     recordId,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -59,7 +59,7 @@ export default function ({
                 throw utils.generateExplicitValidationError(
                     'recordId',
                     {msg: Errors.UNKNOWN_RECORD, vars: {library, recordId}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -98,6 +98,6 @@ export default function ({
             }
 
             return false;
-        }
+        },
     };
 }

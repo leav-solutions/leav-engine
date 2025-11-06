@@ -25,7 +25,7 @@ function InfosTab(): JSX.Element {
             if (!form) {
                 clearCacheForQuery(cache, 'forms', {filters: {library}});
             }
-        }
+        },
     });
 
     const history = useHistory();
@@ -34,8 +34,8 @@ function InfosTab(): JSX.Element {
     const _handleSubmit = async (formData: FormInput) => {
         const res = await saveForm({
             variables: {
-                formData: {...formData, id: formData.id, library}
-            }
+                formData: {...formData, id: formData.id, library},
+            },
         });
 
         setForm(res.data.saveForm);

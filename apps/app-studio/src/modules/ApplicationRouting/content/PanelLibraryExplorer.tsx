@@ -22,7 +22,7 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     libraryId,
     viewId,
     explorerProps,
-    actions
+    actions,
 }) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useLang();
@@ -37,11 +37,11 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
                 {...commonExplorerProps}
                 defaultViewSettings={{
                     viewId,
-                    ...commonExplorerProps.defaultViewSettings
+                    ...commonExplorerProps.defaultViewSettings,
                 }}
                 entrypoint={{
                     type: 'library',
-                    libraryId
+                    libraryId,
                 }}
                 itemActions={itemActions}
                 hideFirstActionLabel

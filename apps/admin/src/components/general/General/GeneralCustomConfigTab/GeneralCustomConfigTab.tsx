@@ -60,9 +60,9 @@ function GeneralCustomConfigTab(): JSX.Element {
     const {
         data,
         loading: getLoading,
-        error: getError
+        error: getError,
     } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery, {
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
     });
     const [saveGlobalSettings, {loading: saveLoading, error: saveError}] = useMutation<
         SAVE_GLOBAL_SETTINGS,
@@ -72,11 +72,11 @@ function GeneralCustomConfigTab(): JSX.Element {
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {
             settings: {
-                settings: value
-            }
+                settings: value,
+            },
         };
         saveGlobalSettings({
-            variables: dataToSave
+            variables: dataToSave,
         });
     };
 

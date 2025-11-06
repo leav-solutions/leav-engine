@@ -6,7 +6,7 @@ import {type Application} from '../types';
 export const retrievePanelDetails = ({
     application,
     recordPanelId,
-    panelId
+    panelId,
 }: {
     application: Application;
     panelId?: string;
@@ -19,17 +19,17 @@ export const retrievePanelDetails = ({
                     [
                         panel,
                         libId,
-                        'libraryPanels' // Keep origin to know the panel type, if needed downstream
-                    ] as const // Tells to TypeScript that is a tuple
+                        'libraryPanels', // Keep origin to know the panel type, if needed downstream
+                    ] as const, // Tells to TypeScript that is a tuple
             ),
             ...recordPanels.map(
                 panel =>
                     [
                         panel,
                         libId,
-                        'recordPanels' // Keep origin to know the panel type, if needed downstream
-                    ] as const // Tells to TypeScript that is a tuple
-            )
+                        'recordPanels', // Keep origin to know the panel type, if needed downstream
+                    ] as const, // Tells to TypeScript that is a tuple
+            ),
         ])
         .find(([panel]) => panel.id === (recordPanelId ?? panelId)) ?? [null, null, null];
 

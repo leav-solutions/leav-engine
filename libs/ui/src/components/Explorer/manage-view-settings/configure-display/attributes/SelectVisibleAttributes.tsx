@@ -12,7 +12,7 @@ import {
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors
+    useSensors,
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {FaGripLines} from 'react-icons/fa';
@@ -46,14 +46,14 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
-        })
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
     );
 
     // TODO: make naming great again
     const {
         view: {attributesIds: orderedVisibleColumns},
-        dispatch
+        dispatch,
     } = useViewSettingsContext();
 
     const {attributeDetailsById, searchFilteredColumnsIds, onSearchChanged} = useAttributeDetailsData(libraryId);

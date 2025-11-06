@@ -23,7 +23,7 @@ import {
     type IAttribute,
     type IGetCoreAttributesParams,
     type IGetCoreFormAttributesParams,
-    type IOAllowedTypes
+    type IOAllowedTypes,
 } from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {type IList, SortOrder} from '../../_types/list';
@@ -95,15 +95,15 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils,
-    config
+    config,
 }: IAttributeDomainDeps): IAttributeDomain {
     const _updateFormsUsingAttribute = async (attributeId: string, ctx: IQueryInfos): Promise<void> => {
         const formsList = await formRepo.getForms({ctx});
 
         const formsToUpdate = formsList.list.filter(form =>
             form.elements?.some(dependentElements =>
-                dependentElements.elements.some(element => element.settings?.attribute === attributeId)
-            )
+                dependentElements.elements.some(element => element.settings?.attribute === attributeId),
+            ),
         );
 
         // update form to remove attribute
@@ -111,14 +111,14 @@ export default function ({
             formsToUpdate.map(form => {
                 form.elements = form.elements.map(dependentElements => {
                     dependentElements.elements = dependentElements.elements.filter(
-                        element => element.settings.attribute !== attributeId
+                        element => element.settings.attribute !== attributeId,
                     );
 
                     return dependentElements;
                 });
 
                 return formRepo.updateForm({formData: form as IFormStrict, ctx});
-            })
+            }),
         );
     };
 
@@ -145,7 +145,7 @@ export default function ({
             const availableActions = actionsListDomain.getAvailableActions();
 
             return (attrData.actions_list?.[ActionsListEvents.GET_VALUE] ?? []).some(
-                action => availableActions.find(availableAction => availableAction.id === action.id)?.compute
+                action => availableActions.find(availableAction => availableAction.id === action.id)?.compute,
             );
         },
         getLibraryAttributes: _getLibraryAttributes,
@@ -153,7 +153,7 @@ export default function ({
             libraryId,
             formId,
             checkDependency,
-            ctx
+            ctx,
         }: IGetCoreFormAttributesParams): Promise<IAttribute[]> {
             const library = await getCoreEntityById('library', libraryId, ctx);
             if (!library) {
@@ -163,7 +163,7 @@ export default function ({
             const form = (
                 await formRepo.getForms({
                     params: {filters: {library: libraryId, id: formId}, strictFilters: true, withCount: false},
-                    ctx
+                    ctx,
                 })
             ).list[0];
             if (!form) {
@@ -177,7 +177,7 @@ export default function ({
                     return [];
                 } else {
                     return formDependentElement.elements.flatMap(element =>
-                        element.settings.attribute !== undefined ? [element.settings.attribute] : []
+                        element.settings.attribute !== undefined ? [element.settings.attribute] : [],
                     );
                 }
             });
@@ -209,7 +209,7 @@ export default function ({
         },
         async getAttributes({
             params,
-            ctx
+            ctx,
         }: {
             params?: IGetCoreAttributesParams;
             ctx: IQueryInfos;
@@ -234,15 +234,15 @@ export default function ({
                 required: false,
                 multiple_values: false,
                 values_list: {
-                    enable: false
-                }
+                    enable: false,
+                },
             };
 
             const attrToSave: IAttributeForRepo = isExistingAttr
                 ? {
                       ...defaultParams,
                       ...attrProps,
-                      ...attrData
+                      ...attrData,
                   }
                 : {...defaultParams, ...attrData};
 
@@ -268,9 +268,9 @@ export default function ({
                     config,
                     attributeRepo,
                     actionsListDomain,
-                    versionProfileDomain
+                    versionProfileDomain,
                 },
-                ctx
+                ctx,
             );
 
             if (Object.keys(validationErrors).length) {
@@ -285,7 +285,7 @@ export default function ({
                         // Extract the precise fields we need to make sure
                         // we don't have something else hanging out (eg. a __typename field)
                         return {from: Number(valuesObj.from), to: Number(valuesObj.to)};
-                    }
+                    },
                 );
             }
 
@@ -297,11 +297,11 @@ export default function ({
             ) {
                 const keyAttr = getPermissionCachePatternKey({
                     permissionType: PermissionTypes.ATTRIBUTE,
-                    applyTo: attrProps.id
+                    applyTo: attrProps.id,
                 });
                 const keyRecAttr = getPermissionCachePatternKey({
                     permissionType: PermissionTypes.RECORD_ATTRIBUTE,
-                    applyTo: attrProps.id
+                    applyTo: attrProps.id,
                 });
 
                 await cacheService.getCache(ECacheType.RAM).deleteData([keyAttr, keyRecAttr]);
@@ -315,12 +315,12 @@ export default function ({
                 {
                     action: EventAction.ATTRIBUTE_SAVE,
                     topic: {
-                        attribute: savedAttribute.id
+                        attribute: savedAttribute.id,
                     },
                     after: savedAttribute,
-                    before: isExistingAttr ? attrProps : null
+                    before: isExistingAttr ? attrProps : null,
                 },
-                ctx
+                ctx,
             );
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
@@ -332,7 +332,7 @@ export default function ({
                 librariesUsingSavedAttribute.map(async libraryId => {
                     const libraryAttributesCacheKey = `${utils.getCoreEntityCacheKey('library', libraryId)}:attributes`;
                     await cacheService.getCache(ECacheType.RAM).deleteData([libraryAttributesCacheKey]);
-                })
+                }),
             );
 
             return savedAttribute;
@@ -366,9 +366,9 @@ export default function ({
                     'id',
                     {
                         msg: Errors.ATTRIBUTE_USED_BY_LIBRARY,
-                        vars: {libraries: librariesUsingAttribute.map(l => l.id).join(', ')}
+                        vars: {libraries: librariesUsingAttribute.map(l => l.id).join(', ')},
                     },
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -376,10 +376,10 @@ export default function ({
             const attributesLinkedThroughMetadata = await attributeRepo.getAttributes({
                 params: {
                     filters: {
-                        metadata_fields: [id]
-                    }
+                        metadata_fields: [id],
+                    },
                 },
-                ctx
+                ctx,
             });
 
             if (attributesLinkedThroughMetadata.list.length) {
@@ -387,9 +387,9 @@ export default function ({
                     'id',
                     {
                         msg: Errors.ATTRIBUTE_USED_IN_METADATA,
-                        vars: {attributes: attributesLinkedThroughMetadata.list.map(a => a.id).join(', ')}
+                        vars: {attributes: attributesLinkedThroughMetadata.list.map(a => a.id).join(', ')},
                     },
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -399,11 +399,11 @@ export default function ({
                 {
                     action: EventAction.ATTRIBUTE_DELETE,
                     topic: {
-                        attribute: id
+                        attribute: id,
                     },
-                    before: deletedAttribute
+                    before: deletedAttribute,
                 },
-                ctx
+                ctx,
             );
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', id);
@@ -418,6 +418,6 @@ export default function ({
         },
         getOutputTypes({attrData}): IOAllowedTypes {
             return getAllowedOutputTypes(attrData);
-        }
+        },
     };
 }

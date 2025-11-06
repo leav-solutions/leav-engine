@@ -15,7 +15,7 @@ describe('EditPermissions', () => {
     const permParams: GET_PERMISSIONSVariables = {
         type: PermissionTypes.admin,
         actions: [PermissionsActions.admin_create_library, PermissionsActions.admin_edit_library],
-        usersGroup: '1234567'
+        usersGroup: '1234567',
     };
     test('Display and edit permissions', async () => {
         let saveCalled = false;
@@ -24,7 +24,7 @@ describe('EditPermissions', () => {
                 // Get actions by type
                 request: {
                     query: getPermissionsActionsQuery,
-                    variables: {type: permParams.type}
+                    variables: {type: permParams.type},
                 },
                 result: {
                     data: {
@@ -33,39 +33,39 @@ describe('EditPermissions', () => {
                                 __typename: 'LabeledPermissionsActions',
                                 name: PermissionsActions.admin_create_library,
                                 label: {
-                                    fr: 'Crea Lib'
-                                }
+                                    fr: 'Crea Lib',
+                                },
                             },
                             {
                                 __typename: 'LabeledPermissionsActions',
                                 name: PermissionsActions.admin_edit_library,
                                 label: {
-                                    fr: 'Edit Lib'
-                                }
+                                    fr: 'Edit Lib',
+                                },
                             },
                             {
                                 __typename: 'LabeledPermissionsActions',
                                 name: PermissionsActions.admin_access_libraries,
                                 label: {
-                                    fr: 'Access Lib'
-                                }
+                                    fr: 'Access Lib',
+                                },
                             },
                             {
                                 __typename: 'LabeledPermissionsActions',
                                 name: PermissionsActions.admin_delete_library,
                                 label: {
-                                    fr: 'Delete Lib'
-                                }
-                            }
-                        ]
-                    }
-                }
+                                    fr: 'Delete Lib',
+                                },
+                            },
+                        ],
+                    },
+                },
             },
             {
                 // Get defined permissions
                 request: {
                     query: getPermissionsQuery,
-                    variables: permParams
+                    variables: permParams,
                 },
                 result: {
                     data: {
@@ -73,28 +73,28 @@ describe('EditPermissions', () => {
                             {
                                 __typename: 'PermissionAction',
                                 name: PermissionsActions.admin_create_library,
-                                allowed: true
+                                allowed: true,
                             },
                             {
                                 __typename: 'PermissionAction',
                                 name: PermissionsActions.admin_edit_library,
-                                allowed: null
-                            }
+                                allowed: null,
+                            },
                         ],
                         inheritPerm: [
                             {
                                 __typename: 'HeritedPermissionAction',
                                 name: PermissionsActions.admin_create_library,
-                                allowed: true
+                                allowed: true,
                             },
                             {
                                 __typename: 'HeritedPermissionAction',
                                 name: PermissionsActions.admin_edit_library,
-                                allowed: true
-                            }
-                        ]
-                    }
-                }
+                                allowed: true,
+                            },
+                        ],
+                    },
+                },
             },
             {
                 // Save permissions
@@ -104,21 +104,21 @@ describe('EditPermissions', () => {
                         permData: {
                             type: 'admin',
                             actions: [{name: 'admin_create_library', allowed: false}],
-                            usersGroup: '1234567'
-                        }
-                    }
+                            usersGroup: '1234567',
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
 
                     return {};
-                }
+                },
             },
             {
                 // Refetch permissions after save
                 request: {
                     query: getPermissionsQuery,
-                    variables: permParams
+                    variables: permParams,
                 },
                 result: {
                     data: {
@@ -126,29 +126,29 @@ describe('EditPermissions', () => {
                             {
                                 __typename: 'PermissionAction',
                                 name: PermissionsActions.admin_create_library,
-                                allowed: false
+                                allowed: false,
                             },
                             {
                                 __typename: 'PermissionAction',
                                 name: PermissionsActions.admin_edit_library,
-                                allowed: null
-                            }
+                                allowed: null,
+                            },
                         ],
                         inheritPerm: [
                             {
                                 __typename: 'HeritedPermissionAction',
                                 name: PermissionsActions.admin_create_library,
-                                allowed: true
+                                allowed: true,
                             },
                             {
                                 __typename: 'HeritedPermissionAction',
                                 name: PermissionsActions.admin_edit_library,
-                                allowed: true
-                            }
-                        ]
-                    }
-                }
-            }
+                                allowed: true,
+                            },
+                        ],
+                    },
+                },
+            },
         ];
 
         render(<EditPermissions permParams={permParams} />, {apolloMocks: mocks});
@@ -179,10 +179,10 @@ describe('EditPermissions', () => {
             {
                 request: {
                     query: getPermissionsActionsQuery,
-                    variables: {type: permParams.type}
+                    variables: {type: permParams.type},
                 },
-                error: new Error('Boom!')
-            }
+                error: new Error('Boom!'),
+            },
         ];
 
         render(<EditPermissions permParams={permParams} />, {apolloMocks: mocks});

@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function BreadcrumbNavigatorView() {
             return <div>BreadcrumbNavigatorView</div>;
-        }
+        },
 );
 
 jest.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
@@ -22,11 +22,11 @@ jest.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
             activeDependency: {
                 attribute: 'category',
                 ancestors: [],
-                value: null
-            }
+                value: null,
+            },
         },
-        dispatch: jest.fn()
-    })
+        dispatch: jest.fn(),
+    }),
 }));
 
 describe('BreadcrumbNavigator', () => {
@@ -36,8 +36,8 @@ describe('BreadcrumbNavigator', () => {
                 request: {
                     query: getTreeByIdQuery,
                     variables: {
-                        id: ['categories']
-                    }
+                        id: ['categories'],
+                    },
                 },
                 result: {
                     data: {
@@ -51,7 +51,7 @@ describe('BreadcrumbNavigator', () => {
                                     system: false,
                                     label: {
                                         en: 'Categories',
-                                        fr: 'Categories'
+                                        fr: 'Categories',
                                     },
                                     behavior: TreeBehavior.standard,
                                     libraries: [
@@ -61,23 +61,23 @@ describe('BreadcrumbNavigator', () => {
                                                 id: 'test_lib',
                                                 label: {fr: 'My Lib'},
                                                 attributes: [],
-                                                __typename: 'Library'
+                                                __typename: 'Library',
                                             },
                                             settings: {
                                                 __typename: 'TreeLibrarySettings',
                                                 allowMultiplePositions: true,
                                                 allowedAtRoot: true,
-                                                allowedChildren: ['__all__']
-                                            }
-                                        }
+                                                allowedChildren: ['__all__'],
+                                            },
+                                        },
                                     ],
-                                    permissions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    permissions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<BreadcrumbNavigator />, {apolloMocks: mocks});

@@ -42,12 +42,12 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     canSelectRoot = false,
     loadRecursively = true,
     noPagination = false,
-    showSelectChildrenButton = false
+    showSelectChildrenButton = false,
 }) => {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
     const {loading, error, data} = useTreeDataQueryQuery({
-        variables: {treeId}
+        variables: {treeId},
     });
 
     if (loading) {

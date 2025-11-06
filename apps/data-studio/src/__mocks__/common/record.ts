@@ -22,9 +22,9 @@ export const mockPreviews: Preview = {
         library: {
             id: 'files',
             label: {fr: 'Fichiers'},
-            behavior: LibraryBehavior.files
-        }
-    }
+            behavior: LibraryBehavior.files,
+        },
+    },
 };
 
 export const mockRecord: RecordIdentity_whoAmI = {
@@ -34,8 +34,8 @@ export const mockRecord: RecordIdentity_whoAmI = {
     library: {
         id: 'record_lib',
         behavior: LibraryBehavior.standard,
-        label: {fr: 'Test Lib'}
+        label: {fr: 'Test Lib'},
     },
     preview: mockPreviews,
-    color: 'blue'
+    color: 'blue',
 };

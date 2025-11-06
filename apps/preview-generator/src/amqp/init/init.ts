@@ -11,8 +11,8 @@ export const initAmqp = async (
         exchange,
         queue,
         routingKey,
-        maxPriority
-    }: {exchange: string; queue: string; routingKey: string; maxPriority?: number}
+        maxPriority,
+    }: {exchange: string; queue: string; routingKey: string; maxPriority?: number},
 ) => {
     await assertExchange(channel, type, exchange);
     await assertQueue(channel, queue, maxPriority);

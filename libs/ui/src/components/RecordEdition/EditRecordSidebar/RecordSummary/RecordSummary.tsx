@@ -27,7 +27,7 @@ export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) 
     const {loading, error, data, refetch} = useGetRecordValuesQuery(
         record?.library?.id,
         ['created_at', 'created_by', 'modified_at', 'modified_by'],
-        [record?.id]
+        [record?.id],
     );
 
     if (loading) {
@@ -73,18 +73,18 @@ export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) 
                     {
                         key: 'informations',
                         label: t('record_summary.informations'),
-                        tabContent: <RecordInformations record={record} recordData={recordData} />
+                        tabContent: <RecordInformations record={record} recordData={recordData} />,
                     },
                     {
                         key: 'chat',
                         label: t('record_summary.chat'),
-                        disabled: true
+                        disabled: true,
                     },
                     {
                         key: 'history',
                         label: t('record_summary.history'),
-                        tabContent: <RecordHistory record={record} />
-                    }
+                        tabContent: <RecordHistory record={record} />,
+                    },
                 ]}
             />
         </StyledDivContentWrapper>

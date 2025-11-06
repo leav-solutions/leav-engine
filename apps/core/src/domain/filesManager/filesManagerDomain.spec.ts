@@ -32,29 +32,29 @@ const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
         connOpt: {},
         type: 'direct',
-        exchange: 'test_leav_core'
+        exchange: 'test_leav_core',
     },
     filesManager: {
         queues: {
             events: 'files_events',
             previewRequest: 'preview_request',
-            previewResponse: 'preview_response'
+            previewResponse: 'preview_response',
         },
         routingKeys: {
             events: 'files.event',
             previewRequest: 'files.previewRequest',
-            previewResponse: 'files.previewResponse'
+            previewResponse: 'files.previewResponse',
         },
         rootKeys: {
-            files1: 'files'
+            files1: 'files',
         },
         allowFilesList: '',
-        ignoreFilesList: ''
+        ignoreFilesList: '',
     },
     files: {
         rootPaths: 'files1:/files',
-        originalsPathPrefix: 'originals'
-    }
+        originalsPathPrefix: 'originals',
+    },
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
@@ -65,26 +65,26 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     consume: jest.fn(),
     publish: jest.fn(),
     waitForConfirms: jest.fn(),
-    prefetch: jest.fn()
+    prefetch: jest.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
 };
 
 jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection),
 }));
 
 const logger: Mockify<ILogger> = {
     info: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
+    warn: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
 };
 
 jest.mock('./helpers/handlePreview', () => ({
-    requestPreviewGeneration: jest.fn()
+    requestPreviewGeneration: jest.fn(),
 }));
 
 const depsBase: ToAny<IFilesManagerDomainDeps> = {
@@ -105,29 +105,29 @@ const depsBase: ToAny<IFilesManagerDomainDeps> = {
     'core.infra.record': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     translator: {},
-    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext)
+    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
 };
 
 describe('FilesManager', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'filesManagerTest'
+        queryId: 'filesManagerTest',
     };
 
     const mockLibraryDomain: Mockify<ILibraryDomain> = {
-        getLibraryProperties: global.__mockPromise(mockLibraryFiles)
+        getLibraryProperties: global.__mockPromise(mockLibraryFiles),
     };
 
     const mockAmqpService = {
         consume: jest.fn(),
         consumer: {
             connection: mockAmqpConnection as amqp.ChannelModel,
-            channel: mockAmqpChannel as amqp.ConfirmChannel
-        }
+            channel: mockAmqpChannel as amqp.ConfirmChannel,
+        },
     } satisfies Mockify<IAmqpService>;
 
     const mockTreeDomain: Mockify<ITreeDomain> = {
-        getNodesByRecord: jest.fn()
+        getNodesByRecord: jest.fn(),
     };
 
     afterEach(() => {
@@ -140,7 +140,7 @@ describe('FilesManager', () => {
             config: mockConfig,
             'core.utils.logger': logger,
             'core.infra.amqpService': mockAmqpService,
-            'core.domain.tree': mockTreeDomain
+            'core.domain.tree': mockTreeDomain,
         } as ToAny<IFilesManagerDomainDeps>);
 
         await files.init();
@@ -152,14 +152,14 @@ describe('FilesManager', () => {
 
     describe('forcePreviewsGeneration', () => {
         const mockRecordRepo: Mockify<IRecordRepo> = {
-            updateRecord: jest.fn()
+            updateRecord: jest.fn(),
         };
 
         const mockUtils: Mockify<IUtils> = {
             getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
             getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previews_status'),
             getPreviewAttributesSettings: jest.fn().mockReturnValue(systemPreviewsSettings),
-            previewsSettingsToVersions: jest.fn().mockReturnValue(systemPreviewsSettings)
+            previewsSettingsToVersions: jest.fn().mockReturnValue(systemPreviewsSettings),
         };
 
         const mockUpdateLastRecordModif = jest.fn();
@@ -170,8 +170,8 @@ describe('FilesManager', () => {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
-                    list: [{id: 'id', file_path: 'file_path', file_name: 'file_name', library: mockLibraryFiles.id}]
-                })
+                    list: [{id: 'id', file_path: 'file_path', file_name: 'file_name', library: mockLibraryFiles.id}],
+                }),
             } satisfies Mockify<IRecordDomain>;
 
             const files = filesManager({
@@ -184,13 +184,13 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
 
             expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
-                {field: 'id', value: 'id', condition: AttributeCondition.EQUAL}
+                {field: 'id', value: 'id', condition: AttributeCondition.EQUAL},
             ]);
             expect(requestPreviewGeneration).toBeCalledTimes(1);
 
@@ -200,7 +200,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
         });
 
@@ -212,9 +212,9 @@ describe('FilesManager', () => {
                     list: [
                         {id: 'id1', file_path: 'file_path', file_name: 'file_name1', library: mockLibraryFiles.id},
                         {id: 'id2', file_path: 'file_path', file_name: 'file_name2', library: mockLibraryFiles.id},
-                        {id: 'id3', file_path: 'file_path', file_name: 'file_name3', library: mockLibraryFiles.id}
-                    ]
-                })
+                        {id: 'id3', file_path: 'file_path', file_name: 'file_name3', library: mockLibraryFiles.id},
+                    ],
+                }),
             } satisfies Mockify<IRecordDomain>;
 
             const files = filesManager({
@@ -227,7 +227,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
@@ -237,7 +237,7 @@ describe('FilesManager', () => {
                 {operator: Operator.OR},
                 {field: 'id', value: 'id2', condition: AttributeCondition.EQUAL},
                 {operator: Operator.OR},
-                {field: 'id', value: 'id3', condition: AttributeCondition.EQUAL}
+                {field: 'id', value: 'id3', condition: AttributeCondition.EQUAL},
             ]);
             expect(requestPreviewGeneration).toBeCalledTimes(3);
         });
@@ -247,17 +247,17 @@ describe('FilesManager', () => {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
-                    list: [{id: 'id', file_path: 'dir_path', file_name: 'file_name'}]
-                })
+                    list: [{id: 'id', file_path: 'dir_path', file_name: 'file_name'}],
+                }),
             };
 
             const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
                 getTrees: global.__mockPromise({
                     list: [
                         {
-                            ...mockFilesTree
-                        }
-                    ]
+                            ...mockFilesTree,
+                        },
+                    ],
                 }),
                 getTreeContent: global.__mockPromise([
                     {
@@ -265,17 +265,17 @@ describe('FilesManager', () => {
                             id: 'file1',
                             file_path: 'file_path_1',
                             file_name: 'file_name_1',
-                            library: 'lib2'
-                        }
+                            library: 'lib2',
+                        },
                     },
                     {
                         record: {
                             id: 'file2',
                             file_path: 'file_path_2',
                             file_name: 'file_name_2',
-                            library: 'lib2'
-                        }
-                    }
+                            library: 'lib2',
+                        },
+                    },
                 ]),
                 getNodesByRecord: global.__mockPromise({
                     id: '12345',
@@ -283,17 +283,17 @@ describe('FilesManager', () => {
                         id: 'file1',
                         file_path: 'file_path_1',
                         file_name: 'file_name_1',
-                        library: mockLibraryFiles.id
-                    }
-                })
+                        library: mockLibraryFiles.id,
+                    },
+                }),
             };
 
             const mockLibraryDomainForDirectories: Mockify<ILibraryDomain> = {
                 getLibraryProperties: jest.fn(id =>
                     id === 'lib2'
                         ? {...mockLibraryFiles, id}
-                        : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES}
-                )
+                        : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES},
+                ),
             };
 
             const files = filesManager({
@@ -307,7 +307,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordIds: ['id']});
@@ -320,7 +320,7 @@ describe('FilesManager', () => {
                 libraryId: 'lib2',
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(2, {
@@ -329,7 +329,7 @@ describe('FilesManager', () => {
                 libraryId: 'lib2',
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
         });
 
@@ -340,9 +340,9 @@ describe('FilesManager', () => {
                     totalCount: 1,
                     list: [
                         {id: 'file1', file_path: 'file_path_1', file_name: 'file_name_1', library: mockLibraryFiles.id},
-                        {id: 'file2', file_path: 'file_path_2', file_name: 'file_name_2', library: mockLibraryFiles.id}
-                    ]
-                })
+                        {id: 'file2', file_path: 'file_path_2', file_name: 'file_name_2', library: mockLibraryFiles.id},
+                    ],
+                }),
             };
 
             const files = filesManager({
@@ -355,7 +355,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
@@ -368,7 +368,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(2, {
@@ -377,7 +377,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
         });
 
@@ -392,7 +392,7 @@ describe('FilesManager', () => {
                             file_path: 'file_path_1',
                             file_name: 'file_name_1',
                             library: mockLibraryFiles.id,
-                            previews_status: [{status: 0, message: 'msg'}]
+                            previews_status: [{status: 0, message: 'msg'}],
                         },
                         {
                             id: 'file2',
@@ -401,11 +401,11 @@ describe('FilesManager', () => {
                             library: mockLibraryFiles.id,
                             previews_status: [
                                 {status: -1, message: 'msg'},
-                                {status: 0, message: 'msg'}
-                            ]
-                        }
-                    ]
-                })
+                                {status: 0, message: 'msg'},
+                            ],
+                        },
+                    ],
+                }),
             };
 
             const files = filesManager({
@@ -418,7 +418,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
@@ -431,7 +431,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
         });
 
@@ -446,10 +446,10 @@ describe('FilesManager', () => {
                             file_path: 'file_path_1',
                             file_name: 'file_name_1',
                             library: mockLibraryFiles.id,
-                            previews_status: [{status: 0, message: 'msg'}]
-                        }
-                    ]
-                })
+                            previews_status: [{status: 0, message: 'msg'}],
+                        },
+                    ],
+                }),
             } satisfies Mockify<IRecordDomain>;
 
             const files = filesManager({
@@ -462,7 +462,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({
@@ -472,9 +472,9 @@ describe('FilesManager', () => {
                     {
                         field: 'file_name',
                         condition: AttributeCondition.EQUAL,
-                        value: 'file_name_1'
-                    }
-                ]
+                        value: 'file_name_1',
+                    },
+                ],
             });
 
             expect(mockRecordDomain.find).toBeCalledTimes(1);
@@ -482,8 +482,8 @@ describe('FilesManager', () => {
                 {
                     field: 'file_name',
                     condition: AttributeCondition.EQUAL,
-                    value: 'file_name_1'
-                }
+                    value: 'file_name_1',
+                },
             ]);
 
             expect(requestPreviewGeneration).toBeCalledTimes(1);
@@ -493,7 +493,7 @@ describe('FilesManager', () => {
                 priority: PreviewPriority.MEDIUM,
                 libraryId: mockLibraryFiles.id,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
             });
         });
     });
@@ -503,13 +503,13 @@ describe('FilesManager', () => {
             const mockConfigWithPaths = {
                 ...mockConfig,
                 files: {
-                    rootPaths: 'key1:path1, key2: path2 , key3 : path3 '
-                }
+                    rootPaths: 'key1:path1, key2: path2 , key3 : path3 ',
+                },
             };
 
             const files = filesManager({
                 ...depsBase,
-                config: mockConfigWithPaths as Config.IConfig
+                config: mockConfigWithPaths as Config.IConfig,
             });
 
             expect(files.getRootPathByKey('key1')).toBe('path1');
@@ -528,16 +528,16 @@ describe('FilesManager', () => {
                             ...mockRecord,
                             file_path: '/path/to/file',
                             file_name: 'myFile.mp4',
-                            rootKey: 'key1'
-                        }
-                    ]
-                })
+                            rootKey: 'key1',
+                        },
+                    ],
+                }),
             };
 
             const files = filesManager({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
-                'core.domain.record': mockRecordDomain as IRecordDomain
+                'core.domain.record': mockRecordDomain as IRecordDomain,
             });
             files.getRootPathByKey = jest.fn(() => '/rootPath');
 
@@ -549,20 +549,20 @@ describe('FilesManager', () => {
         test('Throws if file does not exist', async () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise({
-                    list: []
-                })
+                    list: [],
+                }),
             };
 
             const files = filesManager({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                translator: mockTranslator as i18n
+                translator: mockTranslator as i18n,
             });
             files.getRootPathByKey = jest.fn(() => '/rootPath');
 
             await expect(files.getOriginalPath({ctx, libraryId: 'libraryId', fileId: '123456'})).rejects.toThrow(
-                ValidationError
+                ValidationError,
             );
         });
     });
@@ -572,25 +572,25 @@ describe('FilesManager', () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise({
                     totalCount: 0,
-                    list: []
+                    list: [],
                 }),
                 createRecord: global.__mockPromise({record: mockRecord}),
-                updateRecord: global.__mockPromise(mockRecord)
+                updateRecord: global.__mockPromise(mockRecord),
             };
 
             const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
                 getLibraryTreeId: global.__mockPromise(mockTree.id),
-                getRecordByNodeId: global.__mockPromise(mockFileRecord)
+                getRecordByNodeId: global.__mockPromise(mockFileRecord),
             };
 
             const mockLibraryDirectoriesDomain: Mockify<ILibraryDomain> = {
-                getLibraryProperties: global.__mockPromise(mockLibraryDirectories)
+                getLibraryProperties: global.__mockPromise(mockLibraryDirectories),
             };
 
             const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
 
             const mockUtils: Mockify<IUtils> = {
-                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id),
             };
 
             const files = filesManager({
@@ -600,7 +600,7 @@ describe('FilesManager', () => {
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             await files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx);
@@ -618,19 +618,19 @@ describe('FilesManager', () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise({
                     totalCount: 0,
-                    list: []
+                    list: [],
                 }),
                 createRecord: global.__mockPromise({record: mockRecord}),
-                updateRecord: global.__mockPromise(mockRecord)
+                updateRecord: global.__mockPromise(mockRecord),
             };
 
             const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
                 getLibraryTreeId: global.__mockPromise(mockTree.id),
-                getRecordByNodeId: global.__mockPromise(mockFileRecord)
+                getRecordByNodeId: global.__mockPromise(mockFileRecord),
             };
 
             const mockLibraryDirectoriesDomain: Mockify<ILibraryDomain> = {
-                getLibraryProperties: global.__mockPromise(mockLibrary)
+                getLibraryProperties: global.__mockPromise(mockLibrary),
             };
 
             const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
@@ -639,7 +639,7 @@ describe('FilesManager', () => {
                 generateExplicitValidationError: jest.fn(() => {
                     throw new ValidationError({});
                 }),
-                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id),
             };
 
             const files = filesManager({
@@ -649,11 +649,11 @@ describe('FilesManager', () => {
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             await expect(
-                files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx)
+                files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx),
             ).rejects.toThrow(ValidationError);
         });
     });
@@ -662,28 +662,28 @@ describe('FilesManager', () => {
         const mockRecordDomain: Mockify<IRecordDomain> = {
             find: global.__mockPromise({
                 totalCount: 0,
-                list: []
+                list: [],
             }),
             createRecord: global.__mockPromise({record: mockRecord}),
-            updateRecord: global.__mockPromise(mockRecord)
+            updateRecord: global.__mockPromise(mockRecord),
         };
 
         const mockRecordDomainExists: Mockify<IRecordDomain> = {
             find: global.__mockPromise({
                 totalCount: 1,
-                list: [{...mockRecord, id: '987654321'}]
+                list: [{...mockRecord, id: '987654321'}],
             }),
             createRecord: global.__mockPromise({record: mockRecord}),
-            updateRecord: global.__mockPromise(mockRecord)
+            updateRecord: global.__mockPromise(mockRecord),
         };
 
         const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
             getLibraryTreeId: global.__mockPromise(mockTree.id),
-            getRecordByNodeId: global.__mockPromise(mockFileRecord)
+            getRecordByNodeId: global.__mockPromise(mockFileRecord),
         };
 
         const mockLibraryDomainDirectory: Mockify<ILibraryDomain> = {
-            getLibraryProperties: global.__mockPromise(mockLibraryDirectories)
+            getLibraryProperties: global.__mockPromise(mockLibraryDirectories),
         };
 
         const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
@@ -692,7 +692,7 @@ describe('FilesManager', () => {
             generateExplicitValidationError: jest.fn(() => {
                 throw new ValidationError({});
             }),
-            getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+            getFilesLibraryId: jest.fn(() => mockLibraryFiles.id),
         };
 
         const filesToUpload: IStoreFilesParams = {
@@ -704,17 +704,17 @@ describe('FilesManager', () => {
                         filename: 'my_file.jpg',
                         mimetype: 'image/jpeg',
                         encoding: '7bit',
-                        createReadStream: jest.fn()
+                        createReadStream: jest.fn(),
                     },
                     uid: '123456789',
                     size: 42,
-                    replace: false
-                }
-            ]
+                    replace: false,
+                },
+            ],
         };
 
         const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
-            getLibraryPermission: global.__mockPromise(true)
+            getLibraryPermission: global.__mockPromise(true),
         };
 
         const mockStoreUploadFile = jest.fn();
@@ -728,7 +728,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const storedFiles = await filesManagerDomain.storeFiles(filesToUpload, ctx);
@@ -736,8 +736,8 @@ describe('FilesManager', () => {
             expect(storedFiles).toEqual([
                 {
                     uid: '123456789',
-                    record: {...mockRecord}
-                }
+                    record: {...mockRecord},
+                },
             ]);
 
             expect(mockStoreUploadFile).toBeCalled();
@@ -754,19 +754,19 @@ describe('FilesManager', () => {
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const storedFiles = await filesManagerDomain.storeFiles(
                 {...filesToUpload, files: [{...filesToUpload.files[0], replace: true}]},
-                ctx
+                ctx,
             );
 
             expect(storedFiles).toEqual([
                 {
                     uid: '123456789',
-                    record: {...mockRecord, id: '987654321'}
-                }
+                    record: {...mockRecord, id: '987654321'},
+                },
             ]);
 
             expect(mockStoreUploadFile).toBeCalled();
@@ -786,19 +786,19 @@ describe('FilesManager', () => {
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const storedFiles = await filesManagerDomain.storeFiles(
                 {...filesToUpload, files: [{...filesToUpload.files[0], replace: false}]},
-                ctx
+                ctx,
             );
 
             expect(storedFiles).toEqual([
                 {
                     uid: '123456789',
-                    record: {...mockRecord}
-                }
+                    record: {...mockRecord},
+                },
             ]);
 
             expect(mockStoreUploadFile).toBeCalled();
@@ -817,7 +817,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(ValidationError);
@@ -832,14 +832,14 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             expect(async () =>
                 filesManagerDomain.storeFiles(
                     {...filesToUpload, files: [filesToUpload.files[0], filesToUpload.files[0]]},
-                    ctx
-                )
+                    ctx,
+                ),
             ).rejects.toThrow(ValidationError);
         });
 
@@ -849,8 +849,8 @@ describe('FilesManager', () => {
                 filesManager: {
                     ...mockConfig.filesManager,
                     allowFilesList: '',
-                    ignoreFilesList: '**/*.jpg'
-                }
+                    ignoreFilesList: '**/*.jpg',
+                },
             };
 
             const filesManagerDomain = filesManager({
@@ -861,7 +861,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(ValidationError);

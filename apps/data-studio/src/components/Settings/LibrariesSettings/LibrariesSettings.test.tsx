@@ -13,14 +13,14 @@ import LibrariesSettings from './LibrariesSettings';
 describe('LibrariesSettings', () => {
     const mockLibBase = {
         ...mockLibrary,
-        permissions: mockLibraryPermissions
+        permissions: mockLibraryPermissions,
     };
 
     const currentApp = {
         ...mockApplicationDetails,
         settings: {
-            libraries: 'all'
-        }
+            libraries: 'all',
+        },
     };
 
     const mocks = [
@@ -28,8 +28,8 @@ describe('LibrariesSettings', () => {
             request: {
                 query: getLibrariesListQuery,
                 variables: {
-                    filters: {id: []}
-                }
+                    filters: {id: []},
+                },
             },
             result: {
                 data: {
@@ -38,18 +38,18 @@ describe('LibrariesSettings', () => {
                             {
                                 ...mockLibBase,
                                 id: 'libA',
-                                label: {fr: 'Lib A'}
+                                label: {fr: 'Lib A'},
                             },
                             {
                                 ...mockLibBase,
                                 id: 'libB',
-                                label: {fr: 'Lib B'}
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                label: {fr: 'Lib B'},
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     const mocksCustomSelection = [
@@ -57,8 +57,8 @@ describe('LibrariesSettings', () => {
             request: {
                 query: getLibrariesListQuery,
                 variables: {
-                    filters: {id: ['libA', 'libB']}
-                }
+                    filters: {id: ['libA', 'libB']},
+                },
             },
             result: {
                 data: {
@@ -67,18 +67,18 @@ describe('LibrariesSettings', () => {
                             {
                                 ...mockLibBase,
                                 id: 'libA',
-                                label: {fr: 'Lib A'}
+                                label: {fr: 'Lib A'},
                             },
                             {
                                 ...mockLibBase,
                                 id: 'libB',
-                                label: {fr: 'Lib B'}
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                label: {fr: 'Lib B'},
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     test('Display list of libraries', async () => {
@@ -97,13 +97,13 @@ describe('LibrariesSettings', () => {
                 error: null,
                 called: false,
                 reset: jest.fn(),
-                client: null
-            }
+                client: null,
+            },
         ]);
 
         render(<LibrariesSettings />, {
             apolloMocks: mocksCustomSelection,
-            current: {...currentApp, settings: {...currentApp.settings, libraries: 'custom'}}
+            current: {...currentApp, settings: {...currentApp.settings, libraries: 'custom'}},
         });
 
         expect(await screen.findByDisplayValue('all')).toBeInTheDocument();
@@ -130,8 +130,8 @@ describe('LibrariesSettings', () => {
                 error: null,
                 called: false,
                 reset: jest.fn(),
-                client: null
-            }
+                client: null,
+            },
         ]);
 
         const {container} = render(<LibrariesSettings />, {apolloMocks: mocks, currentApp});
@@ -150,9 +150,9 @@ describe('LibrariesSettings', () => {
                 ...currentApp,
                 permissions: {
                     ...currentApp.permissions,
-                    admin_application: false
-                }
-            }
+                    admin_application: false,
+                },
+            },
         });
 
         await waitFor(() => screen.getByText('Lib A'));
@@ -168,13 +168,13 @@ describe('LibrariesSettings', () => {
                 error: null,
                 called: false,
                 reset: jest.fn(),
-                client: null
-            }
+                client: null,
+            },
         ]);
 
         render(<LibrariesSettings />, {
             apolloMocks: mocksCustomSelection,
-            current: {...currentApp, settings: {...currentApp.settings, libraries: ['libA', 'libB']}}
+            current: {...currentApp, settings: {...currentApp.settings, libraries: ['libA', 'libB']}},
         });
 
         await waitFor(() => screen.getByText('Lib A'));
@@ -203,8 +203,8 @@ describe('LibrariesSettings', () => {
             ...currentApp,
             settings: {
                 ...currentApp.settings,
-                libraries: []
-            }
+                libraries: [],
+            },
         };
 
         test('Display a message if nothing selected', async () => {
@@ -217,7 +217,7 @@ describe('LibrariesSettings', () => {
         test('Can add library to list', async () => {
             render(<LibrariesSettings />, {
                 apolloMocks: mocksCustomSelection,
-                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}}
+                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}},
             });
 
             expect(await screen.findByRole('button', {name: /add/})).toBeInTheDocument();
@@ -232,13 +232,13 @@ describe('LibrariesSettings', () => {
                     error: null,
                     called: false,
                     reset: jest.fn(),
-                    client: null
-                }
+                    client: null,
+                },
             ]);
 
             render(<LibrariesSettings />, {
                 apolloMocks: mocksCustomSelection,
-                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}}
+                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}},
             });
 
             userEvent.click(await screen.findByRole('button', {name: /clear/}));

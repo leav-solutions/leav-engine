@@ -39,7 +39,7 @@ import {
     ImportMode,
     ImportType,
     type ITree,
-    type IValue as IImportValue
+    type IValue as IImportValue,
 } from '../../_types/import';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, type IRecordFilterLight, Operator} from '../../_types/record';
@@ -105,7 +105,7 @@ interface ICachedData {
 enum ImportAction {
     CREATED = 'created',
     UPDATED = 'updated',
-    IGNORED = 'ignored'
+    IGNORED = 'ignored',
 }
 
 interface IStat {
@@ -162,7 +162,7 @@ export default function ({
     'core.utils': utils,
     'core.utils.logger': logger,
     config,
-    translator
+    translator,
 }: IImportDomainDeps): IImportDomain {
     const _addValue = async (
         library: string,
@@ -170,7 +170,7 @@ export default function ({
         recordId: string,
         value: IImportValue,
         ctx: IQueryInfos,
-        valueId?: string
+        valueId?: string,
     ): Promise<void> => {
         const isMatch = Array.isArray(value.payload);
 
@@ -178,9 +178,9 @@ export default function ({
             const recordsList = await recordDomain.find({
                 params: {
                     library: attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library,
-                    filters: _matchesToFilters(value.payload as IMatch[])
+                    filters: _matchesToFilters(value.payload as IMatch[]),
                 },
-                ctx
+                ctx,
             });
 
             value.payload = recordsList.list[0]?.id;
@@ -195,9 +195,9 @@ export default function ({
                     treeId: attribute.linked_tree,
                     record: {
                         id: value.payload,
-                        library: value.library
+                        library: value.library,
                     },
-                    ctx
+                    ctx,
                 });
 
                 value.payload = node[0];
@@ -217,9 +217,9 @@ export default function ({
             const recordsList = await recordDomain.find({
                 params: {
                     library: v.library,
-                    filters: _matchesToFilters(v.element as IMatch[])
+                    filters: _matchesToFilters(v.element as IMatch[]),
                 },
-                ctx
+                ctx,
             });
 
             const recordIdFound = recordsList.list[0]?.id;
@@ -233,9 +233,9 @@ export default function ({
                 treeId: v.treeId,
                 record: {
                     id: recordIdFound,
-                    library: v.library
+                    library: v.library,
                 },
-                ctx
+                ctx,
             });
 
             acc[v.treeId] = treeNode[0];
@@ -247,7 +247,7 @@ export default function ({
             recordId,
             attribute: attribute.id,
             value: {payload: value.payload as string, id_value: valueId, metadata: value.metadata, version},
-            ctx
+            ctx,
         });
     };
 
@@ -256,7 +256,7 @@ export default function ({
         recordIds: string[],
         cacheParams: ICacheParams,
         progress: IProgress,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void> => {
         const tmpData = [];
 
@@ -266,7 +266,7 @@ export default function ({
 
             if (typeof libraryAttribute === 'undefined') {
                 throw new ValidationError<IAttribute>({
-                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}}
+                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}},
                 });
             }
 
@@ -291,7 +291,7 @@ export default function ({
             await cacheService.getCache(ECacheType.DISK).storeData({
                 key: cacheParams.cacheKey.toString(),
                 data: JSON.stringify({element: {...element, data: tmpData}, recordIds}),
-                path: cacheParams.cacheDataPath
+                path: cacheParams.cacheDataPath,
             });
             progress.elementsCached += 1;
         }
@@ -302,7 +302,7 @@ export default function ({
         data: IData,
         recordIds: string[],
         ctx: IQueryInfos,
-        libraryAttribute: IAttribute
+        libraryAttribute: IAttribute,
     ): Promise<void> => {
         for (const recordId of recordIds) {
             let currentValues: IValue[];
@@ -312,7 +312,7 @@ export default function ({
                     library,
                     recordId,
                     attribute: libraryAttribute.id,
-                    ctx
+                    ctx,
                 });
 
                 // if replace && multiple values, delete all old values
@@ -323,7 +323,7 @@ export default function ({
                             recordId,
                             attribute: libraryAttribute.id,
                             value: {id_value: cv.id_value},
-                            ctx
+                            ctx,
                         });
                     }
                 }
@@ -340,7 +340,7 @@ export default function ({
                 } catch (err) {
                     if (!(err instanceof ValidationError) && !(err instanceof PermissionError)) {
                         logger.error(
-                            `Error adding value for attribute ${libraryAttribute.id} on record ${recordId}: ${err.stack}`
+                            `Error adding value for attribute ${libraryAttribute.id} on record ${recordId}: ${err.stack}`,
                         );
                         throw err;
                     }
@@ -350,8 +350,8 @@ export default function ({
                         translator.t('import.add_value_error', {
                             lng: ctx.lang || config.lang.default,
                             attributeId: libraryAttribute.id,
-                            value: v.payload
-                        })
+                            value: v.payload,
+                        }),
                     );
                 }
             }
@@ -362,7 +362,7 @@ export default function ({
         // add AND operator between matches
         const filters: Array<IMatch & {operator: Operator}> = matches.reduce(
             (acc, m) => acc.concat(m, {operator: Operator.AND}),
-            []
+            [],
         );
 
         // delete last AND operator
@@ -376,7 +376,7 @@ export default function ({
             return {
                 field: m.attribute,
                 condition: AttributeCondition.EQUAL,
-                value: m.value
+                value: m.value,
             };
         });
     };
@@ -388,9 +388,9 @@ export default function ({
             const recordsList = await recordDomain.find({
                 params: {
                     library,
-                    filters: _matchesToFilters(matches)
+                    filters: _matchesToFilters(matches),
                 },
-                ctx
+                ctx,
             });
 
             if (recordsList.list.length) {
@@ -408,7 +408,7 @@ export default function ({
         elements: string[],
         action: Action,
         ctx: IQueryInfos,
-        order?: number
+        order?: number,
     ) => {
         if (action === Action.UPDATE) {
             if (!elements.length) {
@@ -433,7 +433,7 @@ export default function ({
                         nodeId: elementNodes[0],
                         parentTo: destination,
                         order,
-                        ctx
+                        ctx,
                     });
                 } else {
                     await treeDomain.addElement({
@@ -441,7 +441,7 @@ export default function ({
                         element: {library, id: e},
                         parent: destination,
                         order,
-                        ctx
+                        ctx,
                     });
                 }
             }
@@ -464,7 +464,7 @@ export default function ({
                         treeId,
                         nodeId: child.id,
                         deleteChildren: true,
-                        ctx
+                        ctx,
                     });
                 }
             }
@@ -475,7 +475,7 @@ export default function ({
         filename: string,
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree, index: number) => Promise<void>,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<boolean> =>
         new Promise((resolve, reject) => {
             const parser = new JsonParser();
@@ -568,7 +568,7 @@ export default function ({
         reportFilePath: string,
         pos: string,
         err: ValidationError<any> | PermissionError<any>,
-        lang: string
+        lang: string,
     ): Promise<void> => {
         const errors = err.fields
             ? Object.values(err.fields)
@@ -579,7 +579,7 @@ export default function ({
         const message = err.message || '';
 
         await fs.promises.writeFile(reportFilePath, `${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`, {
-            flag: 'a'
+            flag: 'a',
         });
     };
 
@@ -587,7 +587,7 @@ export default function ({
         await fs.promises.writeFile(
             reportFilePath,
             `\n### ${translator.t('import.stats_title', {lng: lang}).toUpperCase()} ###\n`,
-            {flag: 'a'}
+            {flag: 'a'},
         );
 
         if (_isExcelMapped(stats)) {
@@ -600,9 +600,9 @@ export default function ({
                             sheet: Number(sheetIndex) + 1,
                             created: stats[sheetIndex].elements[ImportAction.CREATED] || 0,
                             updated: stats[sheetIndex].elements[ImportAction.UPDATED] || 0,
-                            ignored: stats[sheetIndex].elements[ImportAction.IGNORED] || 0
+                            ignored: stats[sheetIndex].elements[ImportAction.IGNORED] || 0,
                         })}\n`,
-                        {flag: 'a'}
+                        {flag: 'a'},
                     );
                 }
 
@@ -612,9 +612,9 @@ export default function ({
                         `${translator.t('import.stats_sheet_links', {
                             lng: lang,
                             sheet: Number(sheetIndex) + 1,
-                            links: stats[sheetIndex].links
+                            links: stats[sheetIndex].links,
                         })}\n`,
-                        {flag: 'a'}
+                        {flag: 'a'},
                     );
                 }
             }
@@ -625,18 +625,18 @@ export default function ({
                     lng: lang,
                     created: (stats as IStat).elements[ImportAction.CREATED],
                     updated: (stats as IStat).elements[ImportAction.UPDATED],
-                    ignored: (stats as IStat).elements[ImportAction.IGNORED]
+                    ignored: (stats as IStat).elements[ImportAction.IGNORED],
                 })}\n`,
-                {flag: 'a'}
+                {flag: 'a'},
             );
 
             await fs.promises.writeFile(
                 reportFilePath,
                 `${translator.t('import.stats_trees', {
                     lng: lang,
-                    trees: (stats as IStat).trees
+                    trees: (stats as IStat).trees,
                 })}\n`,
-                {flag: 'a'}
+                {flag: 'a'},
             );
         }
     };
@@ -648,15 +648,15 @@ export default function ({
         increasePosition: number,
         translationKey: string,
         taskId: string,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) => {
         progress.position += increasePosition;
         progress.percent = await updateTaskProgress(taskId, progress.percent, ctx, {
             position: {
                 index: progress.position,
-                total: progress.elements + progress.treesNb + progress.elementsCached
+                total: progress.elements + progress.treesNb + progress.elementsCached,
             },
-            ...(translationKey && {translationKey})
+            ...(translationKey && {translationKey}),
         });
     };
 
@@ -665,7 +665,7 @@ export default function ({
     const _delayJobToEnsureFileIsWrittenInNfsDueToAsync = async () => {
         if (config.import.delayTaskExecMs > 0) {
             logger.debug(
-                `Wait ${config.import.delayTaskExecMs}ms to ensure file is written in nfs due to async behavior`
+                `Wait ${config.import.delayTaskExecMs}ms to ensure file is written in nfs due to async behavior`,
             );
             await new Promise(resolve => setTimeout(resolve, config.import.delayTaskExecMs));
         }
@@ -689,7 +689,7 @@ export default function ({
                         label: config.lang.available.reduce((labels, lang) => {
                             labels[lang] = `${translator.t('tasks.import_config_label', {
                                 lng: lang,
-                                filename: path.parse(filepath).name
+                                filename: path.parse(filepath).name,
                             })}`;
                             return labels;
                         }, {}),
@@ -697,16 +697,16 @@ export default function ({
                             moduleName: 'domain',
                             subModuleName: 'import',
                             name: 'importConfig',
-                            args: params
+                            args: params,
                         },
                         role: {
-                            type: TaskType.IMPORT_CONFIG
+                            type: TaskType.IMPORT_CONFIG,
                         },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task?.callbacks && {callbacks: task.callbacks})
+                        ...(!!task?.callbacks && {callbacks: task.callbacks}),
                     },
-                    ctx
+                    ctx,
                 );
 
                 return newTaskId;
@@ -717,9 +717,9 @@ export default function ({
             await eventsManagerDomain.sendDatabaseEvent<EventAction.CONFIG_IMPORT_START>(
                 {
                     action: EventAction.CONFIG_IMPORT_START,
-                    topic: null
+                    topic: null,
                 },
-                ctx
+                ctx,
             );
 
             if (clearDatabase) {
@@ -752,7 +752,7 @@ export default function ({
                     await tasksManagerDomain.setLink(
                         task.id,
                         {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
-                        ctx
+                        ctx,
                     );
                 }
 
@@ -803,9 +803,9 @@ export default function ({
             await eventsManagerDomain.sendDatabaseEvent<EventAction.CONFIG_IMPORT_END>(
                 {
                     action: EventAction.CONFIG_IMPORT_END,
-                    topic: null
+                    topic: null,
                 },
-                ctx
+                ctx,
             );
 
             logger.info('Configuration import completed.');
@@ -833,16 +833,16 @@ export default function ({
                             moduleName: 'domain',
                             subModuleName: 'import',
                             name: 'importData',
-                            args: params
+                            args: params,
                         },
                         role: {
-                            type: TaskType.IMPORT_DATA
+                            type: TaskType.IMPORT_DATA,
                         },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task?.callbacks && {callbacks: task.callbacks})
+                        ...(!!task?.callbacks && {callbacks: task.callbacks}),
                     },
-                    ctx
+                    ctx,
                 );
 
                 return newTaskId;
@@ -854,9 +854,9 @@ export default function ({
             await eventsManagerDomain.sendDatabaseEvent<EventAction.DATA_IMPORT_START>(
                 {
                     action: EventAction.DATA_IMPORT_START,
-                    topic: {filename}
+                    topic: {filename},
                 },
-                ctx
+                ctx,
             );
 
             const reportFileName = nanoid() + '.data.report.txt';
@@ -886,7 +886,7 @@ export default function ({
                 await tasksManagerDomain.setLink(
                     task.id,
                     {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
-                    ctx
+                    ctx,
                 );
 
                 throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
@@ -897,7 +897,7 @@ export default function ({
                 elementsCached: 0,
                 treesNb: 0,
                 position: 0,
-                percent: 0
+                percent: 0,
             };
 
             // We call iterate on file a first time to estimate time of import
@@ -909,7 +909,7 @@ export default function ({
                 async (tree: ITree, index: number) => {
                     progress.treesNb += 1;
                 },
-                params.ctx
+                params.ctx,
             );
 
             const cacheDataPath = `${filename}-data`;
@@ -949,7 +949,7 @@ export default function ({
                         if (!recordIds.length) {
                             const {record, valuesErrors} = await recordDomain.createRecord({
                                 library: element.library,
-                                ctx
+                                ctx,
                             });
 
                             if (valuesErrors?.length) {
@@ -959,8 +959,8 @@ export default function ({
                                             acc[valueError.attribute] = valueError.message;
                                             return acc;
                                         },
-                                        {} as ErrorFieldDetail<unknown>
-                                    )
+                                        {} as ErrorFieldDetail<unknown>,
+                                    ),
                                 );
                             }
                             recordIds = [record.id];
@@ -971,7 +971,7 @@ export default function ({
                         const cacheParams: ICacheParams = {
                             cacheDataPath,
                             cacheKey: index,
-                            isCacheActive: true
+                            isCacheActive: true,
                         };
 
                         // update progress every 1% of progress.elements
@@ -981,7 +981,7 @@ export default function ({
                                 1,
                                 'tasks.import_description.elements_process',
                                 task.id,
-                                ctx
+                                ctx,
                             );
                         }
 
@@ -1004,7 +1004,7 @@ export default function ({
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                             logger.error(
-                                `Error importing element at index ${index} during task ${task.id}: ${e.stack}`
+                                `Error importing element at index ${index} during task ${task.id}: ${e.stack}`,
                             );
                             throw e;
                         }
@@ -1041,7 +1041,7 @@ export default function ({
                             1,
                             'tasks.import_description.tree_elements_process',
                             task.id,
-                            ctx
+                            ctx,
                         );
                         await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
 
@@ -1060,7 +1060,7 @@ export default function ({
                         await _writeReport(reportFilePath, pos, e, lang);
                     }
                 },
-                ctx
+                ctx,
             );
 
             // Treat cache (links and versionable values)
@@ -1076,7 +1076,7 @@ export default function ({
                         const cacheParams: ICacheParams = {
                             cacheDataPath,
                             cacheKey,
-                            isCacheActive: false
+                            isCacheActive: false,
                         };
 
                         await _treatElement(data.element, data.recordIds, cacheParams, progress, ctx);
@@ -1088,7 +1088,7 @@ export default function ({
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                             logger.error(
-                                `Error importing links/versions for element at index ${cacheKey} during task ${task.id}: ${e.stack}`
+                                `Error importing links/versions for element at index ${cacheKey} during task ${task.id}: ${e.stack}`,
                             );
                             throw e;
                         }
@@ -1105,7 +1105,7 @@ export default function ({
                             1,
                             'tasks.import_description.links_and_versions_process',
                             task.id,
-                            ctx
+                            ctx,
                         );
                     }
                 } catch (err) {
@@ -1122,16 +1122,16 @@ export default function ({
             await tasksManagerDomain.setLink(
                 task.id,
                 {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
-                ctx
+                ctx,
             );
 
             await eventsManagerDomain.sendDatabaseEvent<EventAction.DATA_IMPORT_END>(
                 {
                     action: EventAction.DATA_IMPORT_END,
                     topic: {filename},
-                    metadata: {stats}
+                    metadata: {stats},
                 },
-                ctx
+                ctx,
             );
 
             return task.id;
@@ -1142,7 +1142,7 @@ export default function ({
 
             const JSONFilename = filename.slice(0, filename.lastIndexOf('.')) + '.json';
             const writeStream = fs.createWriteStream(`${config.import.directory}/${JSONFilename}`, {
-                flags: 'a' // 'a' means appending (old data will be preserved)
+                flags: 'a', // 'a' means appending (old data will be preserved)
             });
 
             const writeLine = (line: string) => writeStream.write(line);
@@ -1165,7 +1165,7 @@ export default function ({
                     keyIndex,
                     linkAttribute,
                     keyToIndex,
-                    treeLinkLibrary
+                    treeLinkLibrary,
                 } = sheets?.[indexSheet] || {};
 
                 mapping = mapping ?? [];
@@ -1252,8 +1252,8 @@ export default function ({
                             matches = [
                                 {
                                     attribute: keyAttribute,
-                                    value: String(dataLine[keyIndex])
-                                }
+                                    value: String(dataLine[keyIndex]),
+                                },
                             ];
                         }
 
@@ -1263,7 +1263,7 @@ export default function ({
                                 .map((cellValue, cellIndex) => ({
                                     attribute: filteredMapping[cellIndex], // Retrieve attribute
                                     values: [{payload: String(cellValue)}],
-                                    action: Action.REPLACE
+                                    action: Action.REPLACE,
                                 }))
                                 .filter(cell => cell.attribute !== 'id' && cell.values[0].payload !== 'null');
                         }
@@ -1278,7 +1278,7 @@ export default function ({
 
                             const metadataValues = dataLine.filter(
                                 (_, cellIndex) =>
-                                    mapping[cellIndex] && cellIndex !== keyIndex && cellIndex !== keyToIndex
+                                    mapping[cellIndex] && cellIndex !== keyIndex && cellIndex !== keyToIndex,
                             );
 
                             elementLinks = [
@@ -1294,12 +1294,12 @@ export default function ({
 
                                                     return allMetadata;
                                                 },
-                                                {}
-                                            )
-                                        }
+                                                {},
+                                            ),
+                                        },
                                     ],
-                                    action: 'add'
-                                }
+                                    action: 'add',
+                                },
                             ];
                         }
 
@@ -1307,7 +1307,7 @@ export default function ({
                             library,
                             matches,
                             mode,
-                            data: [...elementData, ...elementLinks]
+                            data: [...elementData, ...elementLinks],
                         };
 
                         // Adding element to JSON file.
@@ -1338,11 +1338,15 @@ export default function ({
                             moduleName: 'utils',
                             name: 'deleteFile',
                             args: [`${config.import.directory}/${JSONFilename}`],
-                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
-                        }
-                    ]
-                }
+                            type: [
+                                TaskCallbackType.ON_SUCCESS,
+                                TaskCallbackType.ON_FAILURE,
+                                TaskCallbackType.ON_CANCEL,
+                            ],
+                        },
+                    ],
+                },
             );
-        }
+        },
     };
 }

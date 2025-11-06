@@ -65,11 +65,11 @@ function CustomConfigTab({tree}: ICustomConfigTabProps): JSX.Element {
         const dataToSave = {
             treeData: {
                 id: tree.id,
-                settings: value
-            }
+                settings: value,
+            },
         };
         saveTree({
-            variables: dataToSave
+            variables: dataToSave,
         });
     };
 

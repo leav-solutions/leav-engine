@@ -42,7 +42,7 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
                 <Tab.Pane key="infos" className="grow">
                     <TreeInfosTab tree={tree} readonly={readonly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'structure',
@@ -52,7 +52,7 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
                 <Tab.Pane key="structure" className="grow">
                     <TreeStructure tree={tree} readOnly={readonly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'explorer',
@@ -67,7 +67,7 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
                         readOnly={readonly}
                     />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'permissions',
@@ -77,7 +77,7 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
                 <Tab.Pane key="structure" className="grow">
                     <PermissionsTab tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'custom-config',
@@ -87,13 +87,13 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                     <CustomConfig tree={tree} />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ].filter(p => p.mustBeDisplayed);
 
     const tabName = location ? location.hash.replace('#', '') : undefined;
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
-        tabName ? panes.findIndex(p => tabName === p.key) : 0
+        tabName ? panes.findIndex(p => tabName === p.key) : 0,
     );
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {

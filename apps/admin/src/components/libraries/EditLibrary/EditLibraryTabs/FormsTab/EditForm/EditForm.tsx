@@ -21,10 +21,10 @@ function EditForm({formId, libraryId, readonly}: IEditFormProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_FORM, GET_FORMVariables>(getFormQuery, {
         variables: {
             library: libraryId,
-            id: formId || ''
+            id: formId || '',
         },
         fetchPolicy: 'no-cache',
-        skip: !formId
+        skip: !formId,
     });
 
     useEffect(() => {

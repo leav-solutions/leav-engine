@@ -34,9 +34,9 @@ export default function ({'core.domain.plugins': pluginsDomain}: IDeps): ICorePl
                     Query: {
                         plugins() {
                             return pluginsDomain.getRegisteredPlugins().map(p => p.infos);
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -45,6 +45,6 @@ export default function ({'core.domain.plugins': pluginsDomain}: IDeps): ICorePl
         },
         registerPlugin(path: string, plugin: IPluginInfos) {
             return pluginsDomain.registerPlugin(path, plugin);
-        }
+        },
     };
 }

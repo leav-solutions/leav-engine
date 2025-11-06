@@ -29,17 +29,17 @@ function PermissionsTab({tree, readonly}: IPermissionsTabProps): JSX.Element {
         const allPermsConf: TreeNodePermissionsConfInput[] = [
             {
                 libraryId,
-                permissionsConf
+                permissionsConf,
             },
             ...(tree.permissions_conf ?? []).map(
                 (c): TreeNodePermissionsConfInput => ({
                     libraryId: c.libraryId,
                     permissionsConf: {
                         permissionTreeAttributes: c.permissionsConf.permissionTreeAttributes.map(a => a.id),
-                        relation: c.permissionsConf.relation
-                    }
-                })
-            )
+                        relation: c.permissionsConf.relation,
+                    },
+                }),
+            ),
         ];
 
         // Dedup array to keep one conf per library
@@ -49,9 +49,9 @@ function PermissionsTab({tree, readonly}: IPermissionsTabProps): JSX.Element {
             variables: {
                 treeData: {
                     id: tree.id,
-                    permissions_conf: uniqPermsConf
-                }
-            }
+                    permissions_conf: uniqPermsConf,
+                },
+            },
         });
     };
 

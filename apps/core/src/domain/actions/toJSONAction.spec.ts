@@ -10,7 +10,7 @@ describe('toJSONAction', () => {
     const ctx = {attribute: attrText, userId: 'test_user'};
     test('toJSON', async () => {
         expect((await action([{payload: {test: 'aaa', toto: {tata: true}}}], {}, ctx)).values[0].payload).toBe(
-            '{"test":"aaa","toto":{"tata":true}}'
+            '{"test":"aaa","toto":{"tata":true}}',
         );
         expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
     });

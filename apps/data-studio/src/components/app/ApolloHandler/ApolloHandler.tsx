@@ -9,7 +9,7 @@ import {
     InMemoryCache,
     Observable,
     type ServerError,
-    split
+    split,
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
@@ -44,7 +44,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                         forward(operation).subscribe({
                             next: observer.next.bind(observer),
                             error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer)
+                            complete: observer.complete.bind(observer),
                         });
                     } catch (err) {
                         observer.error(err);
@@ -71,7 +71,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             const info: IInfo = {
                 content: errorContent,
                 type: InfoType.ERROR,
-                channel: InfoChannel.TRIGGER
+                channel: InfoChannel.TRIGGER,
             };
 
             dispatch(addInfo(info));
@@ -81,7 +81,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             const info: IInfo = {
                 content: t('error.error_occurred'),
                 type: InfoType.ERROR,
-                channel: InfoChannel.TRIGGER
+                channel: InfoChannel.TRIGGER,
             };
 
             dispatch(addInfo(info));
@@ -92,15 +92,15 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         createClient({
             url: `${WS_URL}/${API_ENDPOINT}`,
             retryAttempts: Infinity,
-            shouldRetry: () => true
-        })
+            shouldRetry: () => true,
+        }),
     );
 
     // set uri in operation context because it is the only way for createUploadLink to have custom url by operation
     const _setOperationUri = new ApolloLink((operation, forward) => {
         operation.setContext({
             ...operation.getContext(),
-            uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`
+            uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`,
         });
 
         return forward(operation);
@@ -118,9 +118,9 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             _setOperationUri,
             createUploadLink({
                 headers: {
-                    'Apollo-Require-Preflight': 'true' // Required to get upload working with Apollo Server v4+
-                }
-            })
+                    'Apollo-Require-Preflight': 'true', // Required to get upload working with Apollo Server v4+
+                },
+            }),
         ]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
@@ -137,10 +137,10 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             },
             typePolicies: {
                 EmbeddedAttribute: {
-                    keyFields: false
+                    keyFields: false,
                 },
                 Record: {
-                    keyFields: ['id', 'whoAmI', ['library', ['id']]]
+                    keyFields: ['id', 'whoAmI', ['library', ['id']]],
                 },
                 RecordIdentity: {
                     keyFields: ['id', 'library', ['id']],
@@ -148,35 +148,35 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                         preview: {
                             merge(existing, incoming) {
                                 return !incoming && !existing ? null : incoming;
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 Library: {
                     fields: {
                         permissions: {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
-                            }
+                            },
                         },
                         previewsSettings: {
                             merge(existing, incoming) {
                                 return incoming;
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 Query: {
                     fields: {
                         treeContent: {
                             merge(existing, incoming) {
                                 return [...incoming];
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 Form: {
-                    keyFields: ['id', 'library', ['id']]
+                    keyFields: ['id', 'library', ['id']],
                 },
                 UserData: {
                     keyFields: ['global'],
@@ -184,42 +184,42 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                         data: {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 Tree: {
                     fields: {
                         permissions: {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
-                            }
+                            },
                         },
                         libraries: {
                             merge(existing, incoming) {
                                 return incoming;
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 TreeNode: {
                     fields: {
                         children: {
                             merge(existing, incoming) {
                                 return incoming;
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 RecordForm: {
-                    keyFields: ['id', 'recordId', 'library', ['id']]
+                    keyFields: ['id', 'recordId', 'library', ['id']],
                 },
                 FormElementWithValues: {
-                    keyFields: false
-                }
+                    keyFields: false,
+                },
             },
-            possibleTypes: gqlPossibleTypes
-        })
+            possibleTypes: gqlPossibleTypes,
+        }),
     });
 
     return <ApolloProvider client={gqlClient}>{children}</ApolloProvider>;

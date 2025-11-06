@@ -21,7 +21,7 @@ export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.s
 export const filesystem = async ({
     filesystem: fsys,
     allowFilesList,
-    ignoreFilesList
+    ignoreFilesList,
 }: IConfig): Promise<FilesystemContent> => {
     await fs.promises.access(fsys.absolutePath, fs.constants.F_OK);
 
@@ -75,7 +75,7 @@ export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
 
     const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
         link: httpLink,
-        cache: new InMemoryCache()
+        cache: new InMemoryCache(),
     });
 
     // Get tree libraries settings to identify which library is directories and which is files
@@ -95,7 +95,7 @@ export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
     `;
     const treePropsResult: ApolloQueryResult<any> = await client.query({
         query: treePropsQuery,
-        variables: {treeId: [graphql.treeId]}
+        variables: {treeId: [graphql.treeId]},
     });
     const treeData = treePropsResult.data.trees.list[0];
     if (!treeData) {
@@ -114,12 +114,12 @@ export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
 
     const result: ApolloQueryResult<any> = await client.query({
         query: getFullTreeContent,
-        variables: {treeId: graphql.treeId}
+        variables: {treeId: graphql.treeId},
     });
 
     return {
         filesLibraryId,
         directoriesLibraryId,
-        treeContent: result.data.fullTreeContent
+        treeContent: result.data.fullTreeContent,
     };
 };

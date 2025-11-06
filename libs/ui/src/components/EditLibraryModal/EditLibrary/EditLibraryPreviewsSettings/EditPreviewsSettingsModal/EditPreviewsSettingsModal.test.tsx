@@ -18,7 +18,7 @@ describe('EditPreviewsSettingsModal', () => {
                 open
                 onClose={jest.fn()}
                 onSubmit={mockHandleSubmit}
-            />
+            />,
         );
 
         expect(screen.getByRole('textbox', {name: /label_en/i})).toHaveValue('My settings');
@@ -40,7 +40,7 @@ describe('EditPreviewsSettingsModal', () => {
                 open
                 onClose={jest.fn()}
                 onSubmit={jest.fn()}
-            />
+            />,
         );
 
         expect(screen.getAllByRole('textbox', {name: /size_name/i})).toHaveLength(2);
@@ -62,7 +62,7 @@ describe('EditPreviewsSettingsModal', () => {
                 open
                 onClose={jest.fn()}
                 onSubmit={jest.fn()}
-            />
+            />,
         );
 
         expect(screen.getByRole('textbox', {name: /label_en/i})).toBeDisabled();

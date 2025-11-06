@@ -27,11 +27,11 @@ function SelectCellsBtn({selectionType, record, size, text, ...btnProps}: ISelec
         if (selectionType === SelectCellsBtnType.ONLY) {
             dispatch({
                 type: SearchActionTypes.SET_SELECTION,
-                selected: [selectionData]
+                selected: [selectionData],
             });
         } else if (selectionType === SelectCellsBtnType.ALL) {
             dispatch({
-                type: SearchActionTypes.SELECT_ALL
+                type: SearchActionTypes.SELECT_ALL,
             });
         }
     };

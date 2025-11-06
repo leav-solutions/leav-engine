@@ -15,16 +15,16 @@ interface IMessageProps {
 const iconByType: {[type in MessagesTypes]: {iconName: SemanticICONS; iconColor: SemanticCOLORS}} = {
     [MessagesTypes.SUCCESS]: {
         iconName: 'checkmark',
-        iconColor: 'green'
+        iconColor: 'green',
     },
     [MessagesTypes.WARNING]: {
         iconName: 'warning',
-        iconColor: 'orange'
+        iconColor: 'orange',
     },
     [MessagesTypes.ERROR]: {
         iconName: 'delete',
-        iconColor: 'red'
-    }
+        iconColor: 'red',
+    },
 };
 
 const duration = 5000;

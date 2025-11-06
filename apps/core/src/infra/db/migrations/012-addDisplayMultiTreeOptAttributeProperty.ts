@@ -18,7 +18,7 @@ export default function ({'core.infra.db.dbService': dbService}: IDeps): IMigrat
                 FOR attribute IN core_attributes
                     RETURN attribute
             `,
-            ctx
+            ctx,
         });
 
         for (const attribute of attributes) {
@@ -29,13 +29,13 @@ export default function ({'core.infra.db.dbService': dbService}: IDeps): IMigrat
                     query: aql`
                         UPDATE ${attribute._key} WITH ${attribute} IN core_attributes
                     `,
-                    ctx
+                    ctx,
                 });
             }
         }
     };
 
     return {
-        run: _updateAttributes
+        run: _updateAttributes,
     };
 }

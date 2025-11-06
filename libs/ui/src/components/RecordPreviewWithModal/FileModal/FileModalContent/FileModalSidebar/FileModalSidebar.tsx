@@ -58,32 +58,32 @@ function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
     const summaryContent = [
         {
             title: t('record_summary.id'),
-            value: fileData.id
+            value: fileData.id,
         },
         {
             title: t('record_summary.label'),
-            value: fileData.whoAmI.label
+            value: fileData.whoAmI.label,
         },
         {
             title: t('record_summary.created_at'),
             value: t('record_summary.created_at_value', {
                 date: fileData.created_at?.[0]?.value,
                 user: fileData.created_by?.[0]?.value.whoAmI.label,
-                interpolation: {escapeValue: false}
-            })
+                interpolation: {escapeValue: false},
+            }),
         },
         {
             title: t('record_summary.modified_at'),
             value: t('record_summary.modified_at_value', {
                 date: fileData.modified_at?.[0]?.value,
                 user: fileData.modified_by?.[0]?.value.whoAmI.label,
-                interpolation: {escapeValue: false}
-            })
+                interpolation: {escapeValue: false},
+            }),
         },
         {
             title: t('file_data.path'),
-            value: <Path>{'/' + fileData.file_path?.[0]?.value}</Path>
-        }
+            value: <Path>{'/' + fileData.file_path?.[0]?.value}</Path>,
+        },
     ];
 
     return (

@@ -9,12 +9,12 @@ describe('InputField', () => {
     it('should display input with fr label', async () => {
         const label = {
             fr: 'tata',
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <InputField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.fr)).toBeVisible();
@@ -23,12 +23,12 @@ describe('InputField', () => {
 
     it('should display input with fallback language label', async () => {
         const label = {
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <InputField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.en)).toBeVisible();

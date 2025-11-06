@@ -9,20 +9,20 @@ import treeNodeLibraryPermissionDomain from './treeLibraryPermissionDomain';
 describe('TreeNodeLibraryPermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'permissionDomainTest'
+        queryId: 'permissionDomainTest',
     };
     const globalPerm = false;
     const inheritGlobalPerm = true;
 
     const mockGlobalPermHelper: Mockify<IGlobalPermissionHelper> = {
         getGlobalPermission: global.__mockPromise(globalPerm),
-        getInheritedGlobalPermission: global.__mockPromise(inheritGlobalPerm)
+        getInheritedGlobalPermission: global.__mockPromise(inheritGlobalPerm),
     };
 
     describe('getTreeLibraryPermission', () => {
         test('Return tree node library permission', async () => {
             const permDomain = treeNodeLibraryPermissionDomain({
-                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
+                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper,
             });
 
             const perm = await permDomain.getTreeLibraryPermission({
@@ -30,7 +30,7 @@ describe('TreeNodeLibraryPermissionDomain', () => {
                 treeId: 'test_tree',
                 libraryId: 'test_lib',
                 userId: '12345',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(globalPerm);
@@ -40,7 +40,7 @@ describe('TreeNodeLibraryPermissionDomain', () => {
     describe('getInheritedTreeNodeLibraryPermission', () => {
         test('Return herited permission', async () => {
             const permDomain = treeNodeLibraryPermissionDomain({
-                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
+                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper,
             });
 
             const perm = await permDomain.getInheritedTreeLibraryPermission({
@@ -48,7 +48,7 @@ describe('TreeNodeLibraryPermissionDomain', () => {
                 treeId: 'test_tree',
                 libraryId: 'test_lib',
                 userGroupId: '12345',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(inheritGlobalPerm);

@@ -20,7 +20,7 @@ import {
     isUIFilterThrough,
     isUIFilterTree,
     isUIFilterValueList,
-    type UIFilter
+    type UIFilter,
 } from '../../_types';
 
 export const FilterDropdownContent: FunctionComponent<{
@@ -43,7 +43,7 @@ export const FilterDropdownContent: FunctionComponent<{
         const commonDropDownProps = {
             filter,
             onFilterChange,
-            selectDropDownRef
+            selectDropDownRef,
         };
         const standardFormatDropdown: Record<AttributeFormat, JSX.Element> = {
             [AttributeFormat.text]: <TextAttributeDropDown {...commonDropDownProps} />,
@@ -54,7 +54,7 @@ export const FilterDropdownContent: FunctionComponent<{
             [AttributeFormat.encrypted]: <EncryptedAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.extended]: <ExtendedAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.color]: <ColorAttributeDropDown {...commonDropDownProps} />,
-            [AttributeFormat.date_range]: <DateRangeAttributeDropDown {...commonDropDownProps} />
+            [AttributeFormat.date_range]: <DateRangeAttributeDropDown {...commonDropDownProps} />,
         };
         return standardFormatDropdown[filter.attribute.format ?? AttributeFormat.text];
     }

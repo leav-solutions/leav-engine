@@ -66,22 +66,22 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
     const selectionModeOptions: CheckboxOptionType[] = [
         {
             label: t(`app_settings.${entityType}_settings.select_all`),
-            value: 'all'
+            value: 'all',
         },
         {
             label: t(`app_settings.${entityType}_settings.select_none`),
-            value: 'none'
+            value: 'none',
         },
         {
             label: t(`app_settings.${entityType}_settings.select_custom`),
-            value: 'custom'
-        }
+            value: 'custom',
+        },
     ];
 
     const helpText: {[key in SelectionMode]: string} = {
         all: t(`app_settings.${entityType}_settings.select_all_help`),
         none: t(`app_settings.${entityType}_settings.select_none_help`),
-        custom: t(`app_settings.${entityType}_settings.select_custom_help`)
+        custom: t(`app_settings.${entityType}_settings.select_custom_help`),
     };
 
     return (

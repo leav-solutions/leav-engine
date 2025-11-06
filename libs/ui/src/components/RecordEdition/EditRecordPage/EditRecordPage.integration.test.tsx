@@ -9,7 +9,7 @@ import {
     mockFormElementInput,
     mockFormElementMultipleInput,
     mockFormElementRequiredInput,
-    mockRecordForm
+    mockRecordForm,
 } from '_ui/__mocks__/common/form';
 import {mockAttributeSimple, mockFormAttributeCompute} from '_ui/__mocks__/common/attribute';
 import {APICallStatus} from '../EditRecordContent/_types';
@@ -24,43 +24,43 @@ const useGetRecordFormMock = jest.fn();
 jest.mock('_ui/hooks/useGetRecordForm', () => () => useGetRecordFormMock());
 
 jest.mock('_ui/hooks/useCanEditRecord', () => ({
-    useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false})
+    useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false}),
 }));
 
 const createEmptyRecordMock = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useCreateEmptyRecordMutation.ts', () => () => ({
-    createEmptyRecord: createEmptyRecordMock
+    createEmptyRecord: createEmptyRecordMock,
 }));
 
 const saveValuesMock = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation.ts', () => () => ({
-    saveValues: saveValuesMock
+    saveValues: saveValuesMock,
 }));
 
 const deleteValueMock = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteDeleteValueMutation.ts', () => () => ({
-    deleteValue: deleteValueMock
+    deleteValue: deleteValueMock,
 }));
 
 const useGetRecordValuesQueryMock = jest.fn();
 jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
-    useGetRecordValuesQuery: () => useGetRecordValuesQueryMock()
+    useGetRecordValuesQuery: () => useGetRecordValuesQueryMock(),
 }));
 
 const mocks = [
     {
         request: {
             query: getUserDataQuery,
-            variables: {keys: ['records_consultation_record_lib']}
+            variables: {keys: ['records_consultation_record_lib']},
         },
         result: {
             data: {
                 userData: {
                     global: false,
-                    data: []
-                }
-            }
-        }
+                    data: [],
+                },
+            },
+        },
     },
     {
         request: {
@@ -68,24 +68,24 @@ const mocks = [
             variables: {
                 key: 'records_consultation_record_lib',
                 value: ['123456'],
-                global: false
-            }
+                global: false,
+            },
         },
         result: {
             data: {
                 saveUserData: {
                     data: {
-                        records_consultation_record_lib: ['123456']
+                        records_consultation_record_lib: ['123456'],
                     },
-                    global: false
-                }
-            }
-        }
+                    global: false,
+                },
+            },
+        },
     },
     {
         request: {
             query: getLibraryByIdQuery,
-            variables: {id: [mockRecord.library.id]}
+            variables: {id: [mockRecord.library.id]},
         },
         result: {
             data: {
@@ -95,18 +95,18 @@ const mocks = [
                     list: [
                         {
                             ...mockLibraryWithDetails,
-                            id: mockRecord.library.id
-                        }
-                    ]
-                }
-            }
-        }
-    }
+                            id: mockRecord.library.id,
+                        },
+                    ],
+                },
+            },
+        },
+    },
 ];
 
 const useGetRecordUpdatesSubscriptionMock = jest.spyOn(
     useGetRecordUpdatesSubscription,
-    'useGetRecordUpdatesSubscription'
+    'useGetRecordUpdatesSubscription',
 );
 
 const calculatedValues = (value: string) => [
@@ -119,7 +119,7 @@ const calculatedValues = (value: string) => [
         id_value: null,
         attribute: mockAttributeSimple,
         metadata: null,
-        version: null
+        version: null,
     },
     {
         isCalculated: true,
@@ -130,8 +130,8 @@ const calculatedValues = (value: string) => [
         id_value: null,
         attribute: mockAttributeSimple,
         metadata: null,
-        version: null
-    }
+        version: null,
+    },
 ];
 
 describe('EditRecordPage', () => {
@@ -149,15 +149,15 @@ describe('EditRecordPage', () => {
                     id_value: 'id_value',
                     attribute: mockAttributeSimple,
                     metadata: null,
-                    version: null
-                }
-            ]
+                    version: null,
+                },
+            ],
         });
         deleteValueMock.mockClear();
         useGetRecordFormMock.mockClear();
         useGetRecordValuesQueryMock.mockClear();
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
-            loading: false
+            loading: false,
         });
     });
 
@@ -176,7 +176,7 @@ describe('EditRecordPage', () => {
     test('Should update calculated values on update of dependant field', async () => {
         const simpleElementInput = {
             ...mockFormElementInput,
-            settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+            settings: [{key: 'label', value: {fr: 'simple attribute'}}],
         };
 
         const calculatedElementInput = {
@@ -184,20 +184,20 @@ describe('EditRecordPage', () => {
             id: 'input_calculated_element',
             attribute: mockFormAttributeCompute,
             values: calculatedValues('calculated'),
-            settings: [{key: 'label', value: {fr: 'calculated attribute'}}]
+            settings: [{key: 'label', value: {fr: 'calculated attribute'}}],
         };
 
         useGetRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
-            refetch: jest.fn()
+            refetch: jest.fn(),
         });
 
         const refetchMock = jest.fn();
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: {[mockRecord.id]: {[mockFormAttributeCompute.id]: calculatedValues('updated calculated')}},
-            refetch: refetchMock
+            refetch: refetchMock,
         });
 
         render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
@@ -219,7 +219,7 @@ describe('EditRecordPage', () => {
     test('Should display error component if formula is in error and input when formula is working again', async () => {
         const simpleElementInput = {
             ...mockFormElementInput,
-            settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+            settings: [{key: 'label', value: {fr: 'simple attribute'}}],
         };
 
         const calculatedElementInput = {
@@ -228,20 +228,20 @@ describe('EditRecordPage', () => {
             attribute: mockFormAttributeCompute,
             values: calculatedValues('calculated'),
             settings: [{key: 'label', value: {fr: 'calculated attribute'}}],
-            valueError: true
+            valueError: true,
         };
 
         useGetRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
-            refetch: jest.fn()
+            refetch: jest.fn(),
         });
 
         const refetchMock = jest.fn();
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: null,
-            refetch: refetchMock
+            refetch: refetchMock,
         });
 
         render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
@@ -252,7 +252,7 @@ describe('EditRecordPage', () => {
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: {[mockRecord.id]: {[mockFormAttributeCompute.id]: calculatedValues('updated calculated')}},
-            refetch: refetchMock
+            refetch: refetchMock,
         });
 
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
@@ -269,23 +269,23 @@ describe('EditRecordPage', () => {
         test('Should update the field in error if the text input is required and empty', async () => {
             const simpleElementInput = {
                 ...mockFormElementRequiredInput,
-                settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+                settings: [{key: 'label', value: {fr: 'simple attribute'}}],
             };
 
             useGetRecordFormMock.mockReturnValue({
                 loading: false,
-                recordForm: {...mockRecordForm, elements: [simpleElementInput]}
+                recordForm: {...mockRecordForm, elements: [simpleElementInput]},
             });
 
             useGetRecordValuesQueryMock.mockReturnValue({
                 loading: false,
                 data: {},
-                refetch: jest.fn()
+                refetch: jest.fn(),
             });
 
             deleteValueMock.mockReturnValue({
                 status: 'ERROR',
-                error: 'Attribute is required'
+                error: 'Attribute is required',
             });
 
             render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
@@ -307,18 +307,18 @@ describe('EditRecordPage', () => {
         test.skip('Should update the field in error if the multiple text input is required and empty', async () => {
             const simpleElementMultipleInput = {
                 ...mockFormElementMultipleInput,
-                settings: [{key: 'label', value: {fr: 'multiple attribute'}}]
+                settings: [{key: 'label', value: {fr: 'multiple attribute'}}],
             };
 
             useGetRecordFormMock.mockReturnValue({
                 loading: false,
-                recordForm: {...mockRecordForm, elements: [simpleElementMultipleInput]}
+                recordForm: {...mockRecordForm, elements: [simpleElementMultipleInput]},
             });
 
             useGetRecordValuesQueryMock.mockReturnValue({
                 loading: false,
                 data: {},
-                refetch: jest.fn()
+                refetch: jest.fn(),
             });
 
             // createRecordMock.mockReturnValue({
@@ -340,7 +340,7 @@ describe('EditRecordPage', () => {
                     onClose={jest.fn()}
                     record={null}
                 />,
-                {mocks}
+                {mocks},
             );
 
             const multipleInput = screen.getByRole('textbox', {name: 'multiple attribute'});
@@ -355,18 +355,18 @@ describe('EditRecordPage', () => {
     test('Should update sidebar when focus on an input', async () => {
         const simpleElementInput = {
             ...mockFormElementRequiredInput,
-            settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+            settings: [{key: 'label', value: {fr: 'simple attribute'}}],
         };
 
         useGetRecordFormMock.mockReturnValue({
             loading: false,
-            recordForm: {...mockRecordForm, elements: [simpleElementInput]}
+            recordForm: {...mockRecordForm, elements: [simpleElementInput]},
         });
 
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: null,
-            refetch: jest.fn()
+            refetch: jest.fn(),
         });
 
         render(
@@ -378,8 +378,8 @@ describe('EditRecordPage', () => {
                 record={mockRecord}
             />,
             {
-                mocks
-            }
+                mocks,
+            },
         );
 
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});

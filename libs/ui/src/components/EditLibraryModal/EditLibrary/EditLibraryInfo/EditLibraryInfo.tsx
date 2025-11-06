@@ -8,7 +8,7 @@ import {
     type GetLibraryByIdQuery,
     type SaveLibraryMutation,
     useCheckLibraryExistenceLazyQuery,
-    useSaveLibraryMutation
+    useSaveLibraryMutation,
 } from '../../../../_gqlTypes';
 import {useLang} from '../../../../hooks';
 import {EditLibraryInfoForm} from './EditLibraryInfoForm';
@@ -29,7 +29,7 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
     const [checkLibraryExistence] = useCheckLibraryExistenceLazyQuery({
         fetchPolicy: 'no-cache',
         nextFetchPolicy: 'no-cache',
-        partialRefetch: false
+        partialRefetch: false,
     });
 
     const _submitForm = async () => {
@@ -49,9 +49,9 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
                     library: {
                         id: values.id,
                         label,
-                        behavior: values.behavior
-                    }
-                }
+                        behavior: values.behavior,
+                    },
+                },
             });
 
             return res.data.saveLibrary;
@@ -60,8 +60,8 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
             form.setFields(
                 Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
                     name: fieldName,
-                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                }))
+                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]],
+                })),
             );
 
             throw e;
@@ -82,7 +82,7 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
                 label: availableLangs.reduce((acc, lang) => {
                     acc[lang] = lang === modifiedLang ? value : form.getFieldValue(`label_${lang}`);
                     return acc;
-                }, {})
+                }, {}),
             };
         } else if (field.startsWith('recordIdentityConf')) {
             const {__typename, ...existingConf} = (library.recordIdentityConf as WithTypename<typeof library>) || {};
@@ -90,12 +90,12 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
             dataToSave = {
                 recordIdentityConf: {
                     ...existingConf,
-                    [field.replace('recordIdentityConf_', '')]: value ?? null
-                }
+                    [field.replace('recordIdentityConf_', '')]: value ?? null,
+                },
             };
         } else {
             dataToSave = {
-                [field]: value
+                [field]: value,
             };
         }
 
@@ -104,24 +104,24 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
                 variables: {
                     library: {
                         id: library.id,
-                        ...dataToSave
-                    }
-                }
+                        ...dataToSave,
+                    },
+                },
             });
 
             form.setFields([
                 {
                     name: field,
-                    touched: false
-                }
+                    touched: false,
+                },
             ]);
         } catch (err) {
             // Display errors in form
             form.setFields([
                 {
                     name: field,
-                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message]
-                }
+                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message],
+                },
             ]);
         }
     };
@@ -129,8 +129,8 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
     const _isLibraryUnique = async (value: any) => {
         const {data: libraryExistenceData} = await checkLibraryExistence({
             variables: {
-                id: value
-            }
+                id: value,
+            },
         });
 
         return !libraryExistenceData?.libraries?.totalCount;

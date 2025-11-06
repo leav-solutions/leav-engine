@@ -25,5 +25,5 @@ export const formComponents: {
     [FormUIElementTypes.TABS]: FormTabs,
     [FormUIElementTypes.TEXT_BLOCK]: TextBlock,
     [FormUIElementTypes.DIVIDER]: FormDivider,
-    [FormUIElementTypes.FRAME]: Frame
+    [FormUIElementTypes.FRAME]: Frame,
 };

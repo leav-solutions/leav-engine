@@ -20,7 +20,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
 import {
     type GetRecordColumnsValuesRecord,
-    type IRecordColumnValueStandard
+    type IRecordColumnValueStandard,
 } from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
@@ -93,7 +93,7 @@ const StandardField: FunctionComponent<
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
-    metadataEdit = false
+    metadataEdit = false,
 }) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -129,7 +129,7 @@ const StandardField: FunctionComponent<
         if (state.activeAttribute?.attribute.id === attribute.id) {
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                values: backendValues
+                values: backendValues,
             });
         }
     }, [backendValues]);
@@ -146,7 +146,7 @@ const StandardField: FunctionComponent<
         attributePrefix: STANDARD_FIELD_ID_PREFIX,
         dispatch,
         backendValues,
-        allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal']
+        allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal'],
     });
 
     const backendWithoutCalculatedOrInheritedValues = backendValues
@@ -158,7 +158,7 @@ const StandardField: FunctionComponent<
         values: backendWithoutCalculatedOrInheritedValues as unknown as ValueDetailsFragment[],
         format: attribute.format,
         calculatedValue: calculatedFlags.calculatedValue,
-        inheritedValue: inheritedFlags.inheritedValue
+        inheritedValue: inheritedFlags.inheritedValue,
     });
 
     const _handleSubmit =
@@ -170,8 +170,8 @@ const StandardField: FunctionComponent<
                 antdForm.setFields([
                     {
                         name,
-                        errors: null
-                    }
+                        errors: null,
+                    },
                 ]);
             }
 
@@ -190,7 +190,7 @@ const StandardField: FunctionComponent<
                                     o =>
                                         o.id_value === backendValue.id_value &&
                                         o.isCalculated === backendValue.isCalculated &&
-                                        o.isInherited === backendValue.isInherited
+                                        o.isInherited === backendValue.isInherited,
                                 );
 
                                 if (existingValue) {
@@ -201,7 +201,7 @@ const StandardField: FunctionComponent<
 
                                 return acc;
                             },
-                            []
+                            [],
                         );
 
                         return newBackendValues;
@@ -226,8 +226,8 @@ const StandardField: FunctionComponent<
                                 previousBackendValues.filter(
                                     value =>
                                         (value.isCalculated !== null && value.isCalculated !== undefined) ||
-                                        (value.isInherited !== null && value.isInherited !== undefined)
-                                )
+                                        (value.isInherited !== null && value.isInherited !== undefined),
+                                ),
                             );
                             return submitRes;
                         }
@@ -254,8 +254,8 @@ const StandardField: FunctionComponent<
                 antdForm.setFields([
                     {
                         name,
-                        errors: [submitRes.error]
-                    }
+                        errors: [submitRes.error],
+                    },
                 ]);
             }
 
@@ -267,7 +267,7 @@ const StandardField: FunctionComponent<
             await onValueDelete({id_value: idValue}, attribute.id);
 
             setBackendValues(previousBackendValues =>
-                previousBackendValues.filter(backendValue => backendValue.id_value !== idValue)
+                previousBackendValues.filter(backendValue => backendValue.id_value !== idValue),
             );
         }
         antdListFieldsRef.current.remove(deletedFieldIndex);
@@ -280,14 +280,14 @@ const StandardField: FunctionComponent<
         const deleteRes = await onDeleteMultipleValues(
             attribute.id,
             backendValues.filter(b => b.id_value),
-            null
+            null,
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
             antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
             setBackendValues(previousBackendValues =>
-                previousBackendValues.filter(backendValue => !backendValue.id_value)
+                previousBackendValues.filter(backendValue => !backendValue.id_value),
             );
 
             return;
@@ -370,7 +370,7 @@ const StandardField: FunctionComponent<
                                                         handleSubmit={_handleSubmit(
                                                             backendWithoutCalculatedOrInheritedValues[index]?.id_value,
                                                             field.name,
-                                                            index
+                                                            index,
                                                         )}
                                                         attribute={attribute}
                                                         label={label}
@@ -393,7 +393,7 @@ const StandardField: FunctionComponent<
                                                             _handleDeleteValue(
                                                                 backendWithoutCalculatedOrInheritedValues[index]
                                                                     ?.id_value,
-                                                                index
+                                                                index,
                                                             )
                                                         }
                                                     />

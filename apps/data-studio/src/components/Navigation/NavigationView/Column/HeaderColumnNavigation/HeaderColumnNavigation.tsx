@@ -48,12 +48,12 @@ function HeaderColumnNavigation({
     isDetail,
     isActive,
     treeElement,
-    children
+    children,
 }: IHeaderColumnNavigationProps): JSX.Element {
     const {t} = useTranslation();
     const {navigation, selectionState} = useAppSelector(state => ({
         navigation: state.navigation,
-        selectionState: state.selection
+        selectionState: state.selection,
     }));
 
     const dispatch = useAppDispatch();
@@ -98,15 +98,15 @@ function HeaderColumnNavigation({
                 id: child.record.whoAmI.id,
                 nodeId: child.id,
                 library: child.record.whoAmI.library.id,
-                label: child.record.whoAmI.label
+                label: child.record.whoAmI.label,
             }));
 
         dispatch(
             setSelection({
                 type: SharedStateSelectionType.NAVIGATION,
                 selected: columnSelection,
-                parent: treeElement?.id ?? null
-            })
+                parent: treeElement?.id ?? null,
+            }),
         );
     };
 
@@ -116,7 +116,7 @@ function HeaderColumnNavigation({
                 <Tooltip
                     title={t('navigation.header.nb-selection', {
                         nb: selectionCount,
-                        selectionType: t(`search.type.${SharedStateSelectionType[selectionState.selection.type]}`)
+                        selectionType: t(`search.type.${SharedStateSelectionType[selectionState.selection.type]}`),
                     })}
                     placement="right"
                 >

@@ -57,14 +57,14 @@ export enum RecordFilterCondition {
     VALUES_COUNT_EQUAL = 'VALUES_COUNT_EQUAL',
     VALUES_COUNT_GREATER_THAN = 'VALUES_COUNT_GREATER_THAN',
     VALUES_COUNT_LOWER_THAN = 'VALUES_COUNT_LOWER_THAN',
-    YESTERDAY = 'YESTERDAY'
+    YESTERDAY = 'YESTERDAY',
 }
 
 export enum RecordFilterOperator {
     AND = 'AND',
     CLOSE_BRACKET = 'CLOSE_BRACKET',
     OPEN_BRACKET = 'OPEN_BRACKET',
-    OR = 'OR'
+    OR = 'OR',
 }
 
 export interface IRecordFilterInput {

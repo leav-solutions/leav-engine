@@ -27,11 +27,11 @@ export const useEditLabelView = () => {
         }
         const mappedView = {
             id: dataViewOnAction.id,
-            label
+            label,
         };
 
         const {data} = await updateView({
-            view: mappedView
+            view: mappedView,
         });
 
         if (data) {
@@ -39,8 +39,8 @@ export const useEditLabelView = () => {
                 type: ViewSettingsActionTypes.RENAME_VIEW,
                 payload: {
                     id: data.updateView.id,
-                    label: data.updateView.label
-                }
+                    label: data.updateView.label,
+                },
             });
         }
     };
@@ -64,6 +64,6 @@ export const useEditLabelView = () => {
                 onSubmit={_onEditLabel}
                 onClose={() => setDataViewOnAction({id: null, label: null})}
             />
-        )
+        ),
     };
 };

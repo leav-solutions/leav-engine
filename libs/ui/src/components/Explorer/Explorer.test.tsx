@@ -31,10 +31,10 @@ const EditRecordModalMock = 'EditRecordModal';
 const LinkRecordModalMock = 'LinkRecordModalMock';
 
 jest.mock('_ui/components/UploadFiles', () => ({
-    UploadFiles: () => <div>{UploadFilesMock}</div>
+    UploadFiles: () => <div>{UploadFilesMock}</div>,
 }));
 jest.mock('_ui/components/CreateDirectory', () => ({
-    CreateDirectory: () => <div>{CreateDirectoryMock}</div>
+    CreateDirectory: () => <div>{CreateDirectoryMock}</div>,
 }));
 const editRecordFn = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
@@ -47,7 +47,7 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
                 <button onClick={() => onClose?.({})}>close-modal</button>
             </div>
         );
-    }
+    },
 }));
 
 jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
@@ -56,44 +56,44 @@ jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
             {LinkRecordModalMock}
             <button onClick={() => onLink([987654])}>link-record</button>
         </div>
-    )
+    ),
 }));
 
 jest.mock('@uidotdev/usehooks', () => ({
-    useMeasure: () => [jest.fn(), {height: 100, width: 100}]
+    useMeasure: () => [jest.fn(), {height: 100, width: 100}],
 }));
 
 const kitNotificationMock = {
     success: jest.fn(),
-    info: jest.fn()
+    info: jest.fn(),
 };
 jest.mock('aristid-ds', () => ({
     ...jest.requireActual('aristid-ds'),
     useKitNotification: () => ({
-        kitNotification: kitNotificationMock
-    })
+        kitNotification: kitNotificationMock,
+    }),
 }));
 
 const simpleMockAttribute = {
     id: 'simple_attribute',
     label: {
         fr: 'Mon attribut simple',
-        en: 'My simple attribute'
+        en: 'My simple attribute',
     },
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.text,
-    multiple_values: false
+    multiple_values: false,
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const booleanMockAttribute = {
     id: 'boolean_attribute',
     label: {
         fr: 'Mon attribut booléen',
-        en: 'My boolean attribute'
+        en: 'My boolean attribute',
     },
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.boolean,
-    multiple_values: false
+    multiple_values: false,
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const linkMockAttribute = {
@@ -101,9 +101,9 @@ const linkMockAttribute = {
     id: 'link_attribute',
     label: {
         fr: 'Mon attribut liaison',
-        en: 'My link attribute'
+        en: 'My link attribute',
     },
-    type: gqlTypes.AttributeType.advanced_link
+    type: gqlTypes.AttributeType.advanced_link,
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const multivalLinkMockAttribute = {
@@ -111,9 +111,9 @@ const multivalLinkMockAttribute = {
     id: 'link_attribute_multival',
     label: {
         fr: 'Mon attribut liaison multival',
-        en: 'My link attribute multi-valued'
+        en: 'My link attribute multi-valued',
     },
-    multiple_values: true
+    multiple_values: true,
     // multi_link_display_option: gqlTypes.MultiLinkDisplayOption.avatar // default value
 } satisfies gqlTypes.AttributePropertiesFragment;
 
@@ -124,8 +124,8 @@ const simpleRichTextMockAttribute = {
     multiple_values: false,
     label: {
         fr: 'Mon simple texte enrichi',
-        en: 'My simple rich text'
-    }
+        en: 'My simple rich text',
+    },
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const simpleColorMockAttribute = {
@@ -135,8 +135,8 @@ const simpleColorMockAttribute = {
     multiple_values: false,
     label: {
         fr: 'Ma simple couleur',
-        en: 'My simple color'
-    }
+        en: 'My simple color',
+    },
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const multivalColorMockAttribute = {
@@ -145,8 +145,8 @@ const multivalColorMockAttribute = {
     multiple_values: true,
     label: {
         fr: 'Mon attribut couleur multiple',
-        en: 'My color attribute multi-valued'
-    }
+        en: 'My color attribute multi-valued',
+    },
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const simpleDateRangeMockAttribute = {
@@ -156,8 +156,8 @@ const simpleDateRangeMockAttribute = {
     multiple_values: false,
     label: {
         fr: 'Ma simple période',
-        en: 'My simple date range'
-    }
+        en: 'My simple date range',
+    },
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const multivalDateRangeMockAttribute = {
@@ -167,8 +167,8 @@ const multivalDateRangeMockAttribute = {
     multiple_values: true,
     label: {
         fr: 'Ma période multival',
-        en: 'My multivalued date range'
-    }
+        en: 'My multivalued date range',
+    },
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 describe('Explorer', () => {
@@ -193,14 +193,14 @@ describe('Explorer', () => {
                     id: 'campaigns',
                     label: {
                         en: 'Campaigns',
-                        fr: 'Campagnes'
-                    }
+                        fr: 'Campagnes',
+                    },
                 },
-                preview: null
+                preview: null,
             },
             permissions: {
                 create_record: true,
-                delete_record: true
+                delete_record: true,
             },
             properties: [
                 {
@@ -208,18 +208,18 @@ describe('Explorer', () => {
                     attributeProperties: simpleMockAttribute,
                     values: [
                         {
-                            valuePayload: recordId1
-                        }
-                    ]
+                            valuePayload: recordId1,
+                        },
+                    ],
                 },
                 {
                     attributeId: linkMockAttribute.id,
                     attributeProperties: linkMockAttribute,
                     values: [
                         {
-                            linkPayload: {id: mockRecord.id, whoAmI: mockRecord}
-                        }
-                    ]
+                            linkPayload: {id: mockRecord.id, whoAmI: mockRecord},
+                        },
+                    ],
                 },
                 {
                     attributeId: multivalLinkMockAttribute.id,
@@ -228,92 +228,92 @@ describe('Explorer', () => {
                         {
                             linkPayload: {
                                 id: 'multivalRecord1',
-                                whoAmI: {...mockRecord, preview: null, label: 'Record A'}
-                            }
+                                whoAmI: {...mockRecord, preview: null, label: 'Record A'},
+                            },
                         },
                         {
                             linkPayload: {
                                 id: 'multivalRecord2',
-                                whoAmI: {...mockRecord, preview: null, label: 'Record B'}
-                            }
+                                whoAmI: {...mockRecord, preview: null, label: 'Record B'},
+                            },
                         },
                         {
                             linkPayload: {
                                 id: 'multivalRecord3',
-                                whoAmI: {...mockRecord, preview: null, label: 'Record C'}
-                            }
+                                whoAmI: {...mockRecord, preview: null, label: 'Record C'},
+                            },
                         },
                         {
                             linkPayload: {
                                 id: 'multivalRecord4',
-                                whoAmI: {...mockRecord, preview: null, label: 'Record D'}
-                            }
+                                whoAmI: {...mockRecord, preview: null, label: 'Record D'},
+                            },
                         },
                         {
-                            linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}}
+                            linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}},
                         },
                         {
-                            linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}}
+                            linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}},
                         },
                         {
-                            linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}}
-                        }
-                    ]
+                            linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}},
+                        },
+                    ],
                 },
                 {
                     attributeId: simpleRichTextMockAttribute.id,
                     attributeProperties: simpleRichTextMockAttribute,
                     values: [
                         {
-                            valuePayload: enrichTextRecord1
-                        }
-                    ]
+                            valuePayload: enrichTextRecord1,
+                        },
+                    ],
                 },
                 {
                     attributeId: simpleColorMockAttribute.id,
                     attributeProperties: simpleColorMockAttribute,
                     values: [
                         {
-                            valuePayload: colorRecord1
-                        }
-                    ]
+                            valuePayload: colorRecord1,
+                        },
+                    ],
                 },
                 {
                     attributeId: multivalColorMockAttribute.id,
                     attributeProperties: multivalColorMockAttribute,
-                    values: [{valuePayload: '#00FF00'}, {valuePayload: '#FF0000'}, {valuePayload: '#0000FF'}]
+                    values: [{valuePayload: '#00FF00'}, {valuePayload: '#FF0000'}, {valuePayload: '#0000FF'}],
                 },
                 {
                     attributeId: booleanMockAttribute.id,
                     attributeProperties: booleanMockAttribute,
                     values: [
                         {
-                            valuePayload: true
-                        }
-                    ]
+                            valuePayload: true,
+                        },
+                    ],
                 },
                 {
                     attributeId: simpleDateRangeMockAttribute.id,
                     attributeProperties: simpleDateRangeMockAttribute,
                     values: [
                         {
-                            valuePayload: dateRangeRecord1
-                        }
-                    ]
+                            valuePayload: dateRangeRecord1,
+                        },
+                    ],
                 },
                 {
                     attributeId: multivalDateRangeMockAttribute.id,
                     attributeProperties: multivalDateRangeMockAttribute,
                     values: [
                         {
-                            valuePayload: dateRangeRecord1
+                            valuePayload: dateRangeRecord1,
                         },
                         {
-                            valuePayload: dateRangeRecord2
-                        }
-                    ]
-                }
-            ]
+                            valuePayload: dateRangeRecord2,
+                        },
+                    ],
+                },
+            ],
         },
         {
             id: '612694174',
@@ -327,14 +327,14 @@ describe('Explorer', () => {
                     id: 'campaigns',
                     label: {
                         en: 'Campaigns',
-                        fr: 'Campagnes'
-                    }
+                        fr: 'Campagnes',
+                    },
                 },
-                preview: null
+                preview: null,
             },
             permissions: {
                 create_record: true,
-                delete_record: true
+                delete_record: true,
             },
             properties: [
                 {
@@ -342,64 +342,64 @@ describe('Explorer', () => {
                     attributeProperties: simpleMockAttribute,
                     values: [
                         {
-                            valuePayload: recordId2
-                        }
-                    ]
+                            valuePayload: recordId2,
+                        },
+                    ],
                 },
                 {
                     attributeId: linkMockAttribute.id,
                     attributeProperties: linkMockAttribute,
                     values: [
                         {
-                            linkPayload: {id: mockRecord.id, whoAmI: mockRecord}
-                        }
-                    ]
+                            linkPayload: {id: mockRecord.id, whoAmI: mockRecord},
+                        },
+                    ],
                 },
                 {
                     attributeId: multivalLinkMockAttribute.id,
                     attributeProperties: multivalLinkMockAttribute,
-                    values: []
+                    values: [],
                 },
                 {
                     attributeId: simpleRichTextMockAttribute.id,
                     attributeProperties: simpleRichTextMockAttribute,
                     values: [
                         {
-                            valuePayload: enrichTextRecord2
-                        }
-                    ]
+                            valuePayload: enrichTextRecord2,
+                        },
+                    ],
                 },
                 {
                     attributeId: simpleColorMockAttribute.id,
                     attributeProperties: simpleColorMockAttribute,
                     values: [
                         {
-                            valuePayload: colorRecord2
-                        }
-                    ]
+                            valuePayload: colorRecord2,
+                        },
+                    ],
                 },
                 {
                     attributeId: multivalColorMockAttribute.id,
                     attributeProperties: multivalColorMockAttribute,
-                    values: []
+                    values: [],
                 },
                 {
                     attributeId: booleanMockAttribute.id,
                     attributeProperties: booleanMockAttribute,
-                    values: []
+                    values: [],
                 },
                 {
                     attributeId: simpleDateRangeMockAttribute.id,
                     attributeProperties: simpleDateRangeMockAttribute,
-                    values: []
+                    values: [],
                 },
                 {
                     attributeId: multivalDateRangeMockAttribute.id,
                     attributeProperties: multivalDateRangeMockAttribute,
-                    values: []
-                }
-            ]
-        }
+                    values: [],
+                },
+            ],
+        },
     ] satisfies gqlTypes.ExplorerLibraryDataQuery['records']['list'];
 
     const mockEmptyExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
@@ -408,9 +408,9 @@ describe('Explorer', () => {
         data: {
             records: {
                 totalCount: 0,
-                list: []
-            }
-        }
+                list: [],
+            },
+        },
     };
 
     const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
@@ -420,20 +420,20 @@ describe('Explorer', () => {
         data: {
             records: {
                 totalCount: mockRecords.length,
-                list: mockRecords
-            }
-        }
+                list: mockRecords,
+            },
+        },
     };
 
     const mockExplorerLinkDataQueryResultProperty = [
         {
             id_value: '0',
-            payload: mockRecords[0]
+            payload: mockRecords[0],
         },
         {
             id_value: '1',
-            payload: mockRecords[1]
-        }
+            payload: mockRecords[1],
+        },
     ];
 
     const mockExplorerLinkDataQueryResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
@@ -448,14 +448,14 @@ describe('Explorer', () => {
                         whoAmI: {
                             id: '612694174',
                             library: {
-                                id: 'campaigns'
-                            }
+                                id: 'campaigns',
+                            },
                         },
-                        property: mockExplorerLinkDataQueryResultProperty
-                    }
-                ]
-            }
-        }
+                        property: mockExplorerLinkDataQueryResultProperty,
+                    },
+                ],
+            },
+        },
     };
 
     const campaignName = 'Campagnes';
@@ -464,11 +464,11 @@ describe('Explorer', () => {
         id: 'campaigns',
         label: {
             en: 'Campaigns',
-            fr: campaignName
+            fr: campaignName,
         },
         permissions: {
-            create_record: true
-        }
+            create_record: true,
+        },
     };
 
     const mockFilesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
@@ -476,36 +476,36 @@ describe('Explorer', () => {
         called: true,
         data: {
             libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.files}]
-            }
-        }
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.files}],
+            },
+        },
     };
     const mockDirectoriesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
         loading: false,
         called: true,
         data: {
             libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.directories}]
-            }
-        }
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.directories}],
+            },
+        },
     };
     const mockStandardLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
         loading: false,
         called: true,
         data: {
             libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}]
-            }
-        }
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}],
+            },
+        },
     };
     const mockJoinLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
         loading: false,
         called: true,
         data: {
             libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.join}]
-            }
-        }
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.join}],
+            },
+        },
     };
 
     const mockExplorerAttributesQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
@@ -518,108 +518,108 @@ describe('Explorer', () => {
                         id: simpleMockAttribute.id,
                         label: simpleMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: simpleMockAttribute.type,
                         format: simpleMockAttribute.format,
-                        multiple_values: true
+                        multiple_values: true,
                     },
                     {
                         id: linkMockAttribute.id,
                         label: linkMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: linkMockAttribute.type,
                         format: linkMockAttribute.format,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     {
                         id: multivalLinkMockAttribute.id,
                         label: multivalLinkMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: multivalLinkMockAttribute.type,
                         format: multivalLinkMockAttribute.format,
-                        multiple_values: true
+                        multiple_values: true,
                     },
                     {
                         id: simpleRichTextMockAttribute.id,
                         label: simpleRichTextMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: simpleRichTextMockAttribute.type,
                         format: simpleRichTextMockAttribute.format,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     {
                         id: simpleColorMockAttribute.id,
                         label: simpleColorMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: simpleColorMockAttribute.type,
                         format: simpleColorMockAttribute.format,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     {
                         id: multivalColorMockAttribute.id,
                         label: multivalColorMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: multivalColorMockAttribute.type,
                         format: multivalColorMockAttribute.format,
-                        multiple_values: true
+                        multiple_values: true,
                     },
                     {
                         id: booleanMockAttribute.id,
                         label: booleanMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: booleanMockAttribute.type,
                         format: booleanMockAttribute.format,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     {
                         id: simpleDateRangeMockAttribute.id,
                         label: simpleDateRangeMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: simpleDateRangeMockAttribute.type,
                         format: simpleDateRangeMockAttribute.format,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     {
                         id: multivalDateRangeMockAttribute.id,
                         label: multivalDateRangeMockAttribute.label,
                         permissions: {
-                            access_attribute: true
+                            access_attribute: true,
                         },
                         type: multivalDateRangeMockAttribute.type,
                         format: multivalDateRangeMockAttribute.format,
-                        multiple_values: true
-                    }
-                ]
-            }
-        }
+                        multiple_values: true,
+                    },
+                ],
+            },
+        },
     };
 
     const customPrimaryActions: IPrimaryAction[] = [
         {
             label: 'Additional action 1',
             icon: <FaBeer />,
-            callback: jest.fn()
+            callback: jest.fn(),
         },
         {
             label: 'Additional action 2',
             icon: <FaAccessibleIcon />,
-            callback: jest.fn()
-        }
+            callback: jest.fn(),
+        },
     ];
     const [customPrimaryAction1, customPrimaryAction2] = customPrimaryActions;
 
@@ -631,7 +631,7 @@ describe('Explorer', () => {
                         id: '43',
                         shared: false,
                         display: {
-                            type: gqlTypes.ViewTypes.list
+                            type: gqlTypes.ViewTypes.list,
                         },
                         created_by: {
                             id: '1',
@@ -639,19 +639,19 @@ describe('Explorer', () => {
                                 id: '1',
                                 label: 'Admin',
                                 library: {
-                                    id: 'users'
-                                }
-                            }
+                                    id: 'users',
+                                },
+                            },
                         },
                         label: {en: 'Second view'},
                         filters: [],
-                        sort: []
+                        sort: [],
                     },
                     {
                         id: '42',
                         shared: false,
                         display: {
-                            type: gqlTypes.ViewTypes.list
+                            type: gqlTypes.ViewTypes.list,
                         },
                         created_by: {
                             id: '1',
@@ -659,19 +659,19 @@ describe('Explorer', () => {
                                 id: '1',
                                 label: 'Admin',
                                 library: {
-                                    id: 'users'
-                                }
-                            }
+                                    id: 'users',
+                                },
+                            },
                         },
                         label: {en: 'My view'},
                         filters: [],
-                        sort: []
-                    }
-                ]
-            }
+                        sort: [],
+                    },
+                ],
+            },
         },
         loading: false,
-        called: true
+        called: true,
     };
 
     const attributesList = [
@@ -679,20 +679,20 @@ describe('Explorer', () => {
             ...simpleMockAttribute,
             id: 'simple_attribute',
             label: {fr: 'Attribut simple'},
-            permissions: {access_attribute: true}
+            permissions: {access_attribute: true},
         },
         {
             ...linkMockAttribute,
             id: 'link_attribute',
             label: {fr: 'Attribut lien'},
-            permissions: {access_attribute: true}
-        }
+            permissions: {access_attribute: true},
+        },
     ];
 
     const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibWithPermissionsQuery> = {
         data: {attributes: {list: attributesList}},
         loading: false,
-        called: true
+        called: true,
     };
 
     const mockMeResult: Mockify<typeof gqlTypes.useMeQuery> = {
@@ -700,24 +700,24 @@ describe('Explorer', () => {
             me: {
                 id: 'admin',
                 whoAmI: {
-                    id: 'admin'
-                }
-            }
-        }
+                    id: 'admin',
+                },
+            },
+        },
     };
 
     let spyUseExplorerLibraryDataQuery: jest.SpyInstance;
 
     const libraryEntrypoint: IEntrypointLibrary = {
         type: 'library',
-        libraryId: 'campaigns'
+        libraryId: 'campaigns',
     };
 
     const linkEntrypoint: IEntrypointLink = {
         type: 'link',
         parentLibraryId: 'campaigns',
         parentRecordId: '42',
-        linkAttributeId: 'link_attribute'
+        linkAttributeId: 'link_attribute',
     };
 
     const explorerLinkAttribute = {
@@ -726,20 +726,20 @@ describe('Explorer', () => {
         permissions: {
             access_attribute: true,
             edit_value: true,
-            __typename: 'AttributePermissions'
+            __typename: 'AttributePermissions',
         },
         label: {
             en: 'Delivery Platforms',
-            fr: 'Plateformes de diffusion'
+            fr: 'Plateformes de diffusion',
         },
         linked_library: {
             id: 'delivery_platforms',
             label: {
-                fr: 'Plateformes de diffusion'
+                fr: 'Plateformes de diffusion',
             },
-            __typename: 'Library'
+            __typename: 'Library',
         },
-        __typename: 'LinkAttribute'
+        __typename: 'LinkAttribute',
     };
 
     interface IExplorerLinkAttributeQueryMockType {
@@ -756,21 +756,21 @@ describe('Explorer', () => {
         request: {
             query: gqlTypes.ExplorerLinkAttributeDocument,
             variables: {
-                id: linkEntrypoint.linkAttributeId
-            }
+                id: linkEntrypoint.linkAttributeId,
+            },
         },
         result: {
             data: {
                 attributes: {
-                    list: [explorerLinkAttribute]
-                }
-            }
-        }
+                    list: [explorerLinkAttribute],
+                },
+            },
+        },
     };
 
     const useGetRecordUpdatesSubscriptionMock = jest.spyOn(
         useGetRecordUpdatesSubscription,
-        'useGetRecordUpdatesSubscription'
+        'useGetRecordUpdatesSubscription',
     );
 
     let user: ReturnType<typeof userEvent.setup>;
@@ -783,38 +783,39 @@ describe('Explorer', () => {
             .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
-            () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult
+            () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult,
         );
 
         jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
-            () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult
+            () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult,
         );
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-            () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
         );
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
-            () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult,
         );
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
-            () => [() => mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+            () =>
+                [() => mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult,
         );
 
         jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
-            mockViewsResult as gqlTypes.GetViewsListQueryResult
+            mockViewsResult as gqlTypes.GetViewsListQueryResult,
         );
 
         jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
-            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult
+            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult,
         );
 
         jest.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
 
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
-            loading: false
+            loading: false,
         });
 
         jest.clearAllMocks();
@@ -826,7 +827,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultPrimaryActions={[]} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
@@ -845,16 +846,16 @@ describe('Explorer', () => {
                                         id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
-                                }
-                            ]
+                                    value: 'Christmas',
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
         });
@@ -873,12 +874,12 @@ describe('Explorer', () => {
                                         id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     hidden: true,
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
+                                    value: 'Christmas',
                                 },
                                 {
                                     id: '',
@@ -886,16 +887,16 @@ describe('Explorer', () => {
                                         id: '',
                                         format: booleanMockAttribute.format,
                                         label: booleanMockAttribute.label.fr,
-                                        type: booleanMockAttribute.type
+                                        type: booleanMockAttribute.type,
                                     },
                                     field: booleanMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.EQUAL,
-                                    value: 'true'
-                                }
-                            ]
+                                    value: 'true',
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
             expect(screen.queryByText(booleanMockAttribute.label.fr)).toBeInTheDocument();
@@ -915,16 +916,16 @@ describe('Explorer', () => {
                                         id: simpleMockAttribute.id,
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
-                                }
-                            ]
+                                    value: 'Christmas',
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
@@ -935,7 +936,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByRole('button', {name: /settings/})).not.toBeInTheDocument();
@@ -945,7 +946,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultViewSettings={{enableConfigureView: true}} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByTitle(/settings/)).toBeInTheDocument();
@@ -955,7 +956,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByText(campaignName)).not.toBeInTheDocument();
@@ -965,7 +966,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} showTitle />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByText(campaignName)).toBeInTheDocument();
@@ -975,7 +976,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.queryByRole('textbox', {name: /search/})).not.toBeInTheDocument();
         });
@@ -984,7 +985,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} showSearch />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.getByRole('textbox', {name: /search/})).toBeInTheDocument();
         });
@@ -993,7 +994,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.getByText('explorer.name')).toBeInTheDocument();
         });
@@ -1002,7 +1003,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} hideTableHeader />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByText('explorer.name')).not.toBeInTheDocument();
@@ -1013,7 +1014,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const tableRows = screen.getAllByRole('row');
@@ -1028,7 +1029,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} disableSelection />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const tableRows = screen.getAllByRole('row');
@@ -1043,7 +1044,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeVisible();
@@ -1053,7 +1054,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} hideSelectAllAction />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
@@ -1063,7 +1064,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByText(/explorer.pagination-total-number/)).toBeInTheDocument();
@@ -1073,7 +1074,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} noPagination />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByText(/explorer.pagination-total-number/)).not.toBeInTheDocument();
@@ -1085,7 +1086,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} showTitle />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByText(campaignName)).toBeInTheDocument();
@@ -1095,7 +1096,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} title="Here's my explorer!" showTitle />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
@@ -1106,7 +1107,7 @@ describe('Explorer', () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         expect(screen.getByRole('table')).toBeVisible();
@@ -1121,7 +1122,7 @@ describe('Explorer', () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
@@ -1135,7 +1136,7 @@ describe('Explorer', () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} emptyPlaceholder={emptyCustomMessage} />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         expect(screen.getByText(emptyCustomMessage)).toBeVisible();
@@ -1156,11 +1157,11 @@ describe('Explorer', () => {
                             multivalColorMockAttribute.id,
                             booleanMockAttribute.id,
                             simpleDateRangeMockAttribute.id,
-                            multivalDateRangeMockAttribute.id
-                        ]
+                            multivalDateRangeMockAttribute.id,
+                        ],
                     }}
                 />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         const tableRows = screen.getAllByRole('row');
@@ -1179,7 +1180,7 @@ describe('Explorer', () => {
             multivalColorCell,
             boolCell,
             simpleDateRangeCell,
-            multivalDateRangeCell
+            multivalDateRangeCell,
         ] = within(firstRecordRow).getAllByRole('cell');
 
         const secondRowCells = within(secondRecordRow).getAllByRole('cell');
@@ -1224,15 +1225,15 @@ describe('Explorer', () => {
                 deactivateRecords: [
                     {
                         id: 42,
-                        whoAmI: mockRecord
-                    }
-                ]
-            }
+                        whoAmI: mockRecord,
+                    },
+                ],
+            },
         });
 
         jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(() => [
             mockDeactivateMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
         ]);
 
         const onRemove = jest.fn();
@@ -1240,7 +1241,7 @@ describe('Explorer', () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
@@ -1254,8 +1255,8 @@ describe('Explorer', () => {
         expect(onRemove).toHaveBeenCalledWith(
             expect.objectContaining({
                 key: mockRecords[1].id,
-                itemId: mockRecords[1].id
-            })
+                itemId: mockRecords[1].id,
+            }),
         );
     });
 
@@ -1265,9 +1266,9 @@ describe('Explorer', () => {
             data: {
                 records: {
                     totalCount: mockRecords.length,
-                    list: mockRecords.map(record => ({...record, active: false}))
-                }
-            }
+                    list: mockRecords.map(record => ({...record, active: false})),
+                },
+            },
         });
 
         const mockActivateMutation = jest.fn().mockResolvedValue({
@@ -1275,15 +1276,15 @@ describe('Explorer', () => {
                 activateRecords: [
                     {
                         id: 42,
-                        whoAmI: mockRecord
-                    }
-                ]
-            }
+                        whoAmI: mockRecord,
+                    },
+                ],
+            },
         });
 
         jest.spyOn(gqlTypes, 'useActivateRecordsMutation').mockImplementation(() => [
             mockActivateMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
         ]);
 
         const onRemove = jest.fn();
@@ -1291,7 +1292,7 @@ describe('Explorer', () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
@@ -1311,22 +1312,22 @@ describe('Explorer', () => {
                 deleteValue: [
                     {
                         id_value: 0,
-                        linkValue: mockRecords[0]
-                    }
-                ]
-            }
+                        linkValue: mockRecords[0],
+                    },
+                ],
+            },
         });
 
         jest.spyOn(gqlTypes, 'useDeleteValueMutation').mockImplementation(() => [
             mockDeleteValueMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
         ]);
 
         jest.spyOn(useColumnWidth, 'useColumnWidth').mockReturnValueOnce({
             ref: {current: null},
             getFieldColumnWidth: () => 500,
             columnWidth: 500,
-            actionsColumnHeaderWidth: 464
+            actionsColumnHeaderWidth: 464,
         });
 
         const onRemove = jest.fn();
@@ -1336,8 +1337,8 @@ describe('Explorer', () => {
                 <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
             </Explorer.EditSettingsContextProvider>,
             {
-                mocks: [ExplorerLinkAttributeQueryMock]
-            }
+                mocks: [ExplorerLinkAttributeQueryMock],
+            },
         );
 
         const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
@@ -1349,8 +1350,8 @@ describe('Explorer', () => {
         expect(mockDeleteValueMutation).toHaveBeenCalled();
         expect(onRemove).toHaveBeenCalledWith(
             expect.objectContaining({
-                itemId: mockRecords[1].id
-            })
+                itemId: mockRecords[1].id,
+            }),
         );
     });
 
@@ -1358,22 +1359,22 @@ describe('Explorer', () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
         expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(6);
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
             {
                 libraries: [''],
-                records: expect.any(Array)
+                records: expect.any(Array),
             },
-            true
+            true,
         ]);
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[3]).toEqual([
             {
                 libraries: [libraryEntrypoint.libraryId],
-                records: [recordId1, recordId2]
+                records: [recordId1, recordId2],
             },
-            false
+            false,
         ]);
     });
 
@@ -1382,13 +1383,13 @@ describe('Explorer', () => {
             const customAction = {
                 icon: <Fa500Px />,
                 label: 'Custom action',
-                callback: jest.fn()
+                callback: jest.fn(),
             } satisfies IItemAction;
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
@@ -1402,29 +1403,29 @@ describe('Explorer', () => {
                 {
                     label: 'Test 1',
                     icon: <FaBeer />,
-                    callback: jest.fn()
+                    callback: jest.fn(),
                 },
                 {
                     label: 'Test 2',
                     icon: <FaAccessibleIcon />,
-                    callback: jest.fn()
+                    callback: jest.fn(),
                 },
                 {
                     label: 'Test 3',
                     icon: <FaXbox />,
-                    callback: jest.fn()
+                    callback: jest.fn(),
                 },
                 {
                     label: 'Test 4',
                     icon: <FaJs />,
-                    callback: jest.fn()
-                }
+                    callback: jest.fn(),
+                },
             ] satisfies IItemAction[];
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
@@ -1447,7 +1448,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultActionsForItem={[]} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
@@ -1459,13 +1460,13 @@ describe('Explorer', () => {
                 icon: <Fa500Px />,
                 label: 'Custom action',
                 useItemActionOnRowClick: true,
-                callback: jest.fn()
+                callback: jest.fn(),
             } satisfies IItemAction;
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
@@ -1479,7 +1480,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.getByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
         });
@@ -1488,7 +1489,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} hidePrimaryActions />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
         });
@@ -1498,7 +1499,7 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1508,7 +1509,7 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={linkEntrypoint} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1518,7 +1519,7 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
 
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
@@ -1537,7 +1538,7 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: false}} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1556,18 +1557,18 @@ describe('Explorer', () => {
                                         {
                                             ...mockLibraryDetailsQueryResultList,
                                             permissions: {create_record: false},
-                                            behavior: gqlTypes.LibraryBehavior.standard
-                                        }
-                                    ]
-                                }
-                            }
-                        }) as gqlTypes.ExplorerLibraryDetailsQueryResult
+                                            behavior: gqlTypes.LibraryBehavior.standard,
+                                        },
+                                    ],
+                                },
+                            },
+                        }) as gqlTypes.ExplorerLibraryDetailsQueryResult,
                 );
 
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1577,7 +1578,7 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly hidePrimaryActions />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1587,7 +1588,7 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: true}} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>
+                    </Explorer.EditSettingsContextProvider>,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
             });
@@ -1595,12 +1596,12 @@ describe('Explorer', () => {
 
         test('Should be able to create a new file when library has files behavior', async () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+                () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1610,12 +1611,12 @@ describe('Explorer', () => {
 
         test('Should be able to create a new directory when library has directories behavior', async () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+                () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1628,7 +1629,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1642,13 +1643,13 @@ describe('Explorer', () => {
 
         test('Should be able to create a new record when library has join behavior', async () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+                () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
             const onCreate = jest.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1664,7 +1665,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} creationFormId="test-creation" />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1678,7 +1679,7 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} ref={explorerRef} hidePrimaryActions />
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
             expect(explorerRef.current?.linkAction).toBeNull();
@@ -1698,7 +1699,7 @@ describe('Explorer', () => {
                         creationFormId="test-creation"
                     />
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
@@ -1713,13 +1714,13 @@ describe('Explorer', () => {
             const saveValues = jest.fn();
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
                 loading: false,
-                saveValues
+                saveValues,
             });
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const creatButton = await screen.findByRole('button', {name: 'explorer.create-one'});
@@ -1737,7 +1738,7 @@ describe('Explorer', () => {
             const saveValues = jest.fn<any, any>(async () => saveValuesResult);
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
                 loading: false,
-                saveValues
+                saveValues,
             }));
             const onCreate = jest.fn();
             render(
@@ -1745,8 +1746,8 @@ describe('Explorer', () => {
                     <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
                 </Explorer.EditSettingsContextProvider>,
                 {
-                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
-                }
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
+                },
             );
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
@@ -1764,7 +1765,7 @@ describe('Explorer', () => {
 
             expect(saveValues).toHaveBeenCalledWith(
                 {id: linkEntrypoint.parentRecordId, library: {id: linkEntrypoint.parentLibraryId}},
-                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}]
+                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}],
             );
             expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654, saveValuesResultOnLink: saveValuesResult});
         });
@@ -1775,7 +1776,7 @@ describe('Explorer', () => {
             const saveValues = jest.fn<any, any>(async () => saveValuesResult);
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
                 loading: false,
-                saveValues
+                saveValues,
             }));
 
             const explorerRef = createRef<IExplorerRef>();
@@ -1790,8 +1791,8 @@ describe('Explorer', () => {
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
                 </Explorer.EditSettingsContextProvider>,
                 {
-                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
-                }
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
+                },
             );
             expect(explorerRef.current?.linkAction?.label).toEqual('record_edition.replace-by-existing-item');
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
@@ -1804,7 +1805,7 @@ describe('Explorer', () => {
 
             expect(saveValues).toHaveBeenCalledWith(
                 {id: linkEntrypoint.parentRecordId, library: {id: linkEntrypoint.parentLibraryId}},
-                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}]
+                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}],
             );
             expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654, saveValuesResultOnLink: saveValuesResult});
         });
@@ -1814,7 +1815,7 @@ describe('Explorer', () => {
             const onLink = jest.fn();
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
                 loading: false,
-                saveValues
+                saveValues,
             });
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1823,19 +1824,19 @@ describe('Explorer', () => {
                         defaultPrimaryActions={[]}
                         defaultCallbacks={{primary: {link: onLink}}}
                         defaultViewSettings={{
-                            enableConfigureView: true
+                            enableConfigureView: true,
                         }}
                     />
                 </Explorer.EditSettingsContextProvider>,
                 {
-                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
-                }
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
+                },
             );
 
             const linkExistingButton = await screen.findByRole(
                 'button',
                 {name: 'explorer.add-existing-item'},
-                {timeout: 5000}
+                {timeout: 5000},
             );
             await user.click(linkExistingButton);
 
@@ -1850,7 +1851,7 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
@@ -1875,7 +1876,7 @@ describe('Explorer', () => {
                         primaryActions={customPrimaryActions}
                         defaultPrimaryActions={[]}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
@@ -1907,7 +1908,7 @@ describe('Explorer', () => {
                         {
                             id: '613982168',
                             permissions: {
-                                delete_record: true
+                                delete_record: true,
                             },
                             whoAmI: {
                                 id: '613982168',
@@ -1918,16 +1919,16 @@ describe('Explorer', () => {
                                     id: 'campaigns',
                                     label: {
                                         en: 'Campaigns',
-                                        fr: 'Campagnes'
-                                    }
+                                        fr: 'Campagnes',
+                                    },
                                 },
-                                preview: null
+                                preview: null,
                             },
-                            properties: []
-                        }
-                    ]
-                }
-            }
+                            properties: [],
+                        },
+                    ],
+                },
+            },
         };
         const spy = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -1935,7 +1936,7 @@ describe('Explorer', () => {
                 ({variables}) =>
                     (variables?.searchQuery
                         ? mockExplorerLibraryDataQueryResultWithSearch
-                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
             );
 
         render(
@@ -1945,11 +1946,11 @@ describe('Explorer', () => {
                     primaryActions={customPrimaryActions}
                     defaultPrimaryActions={[]}
                     defaultViewSettings={{
-                        pageSize: 1
+                        pageSize: 1,
                     }}
                     showSearch
                 />
-            </Explorer.EditSettingsContextProvider>
+            </Explorer.EditSettingsContextProvider>,
         );
 
         const searchInput = screen.getByRole('textbox', {name: /search/});
@@ -1974,10 +1975,10 @@ describe('Explorer', () => {
             expect.objectContaining({
                 variables: expect.objectContaining({
                     pagination: expect.objectContaining({
-                        offset: 0
-                    })
-                })
-            })
+                        offset: 0,
+                    }),
+                }),
+            }),
         );
     });
 
@@ -1991,7 +1992,7 @@ describe('Explorer', () => {
                         {
                             id: '613982168',
                             permissions: {
-                                delete_record: true
+                                delete_record: true,
                             },
                             whoAmI: {
                                 id: '613982168',
@@ -2002,16 +2003,16 @@ describe('Explorer', () => {
                                     id: 'campaigns',
                                     label: {
                                         en: 'Campaigns',
-                                        fr: 'Campagnes'
-                                    }
+                                        fr: 'Campagnes',
+                                    },
                                 },
-                                preview: null
+                                preview: null,
                             },
-                            properties: []
-                        }
-                    ]
-                }
-            }
+                            properties: [],
+                        },
+                    ],
+                },
+            },
         };
 
         test('should handle filters for the request and for the display', async () => {
@@ -2021,7 +2022,7 @@ describe('Explorer', () => {
                     ({variables}) =>
                         (Array.isArray(variables?.filters) && variables.filters.length
                             ? mockExplorerLibraryDataQueryResultWithFilters
-                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
                 );
 
             render(
@@ -2039,22 +2040,22 @@ describe('Explorer', () => {
                                         id: 'simple_attribute',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
-                                }
+                                    value: 'Christmas',
+                                },
                             ],
                             sort: [
                                 {
                                     field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.asc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -2069,11 +2070,11 @@ describe('Explorer', () => {
                             {
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas'
-                            }
-                        ]
-                    })
-                })
+                                value: 'Christmas',
+                            },
+                        ],
+                    }),
+                }),
             );
         });
 
@@ -2084,7 +2085,7 @@ describe('Explorer', () => {
                     ({variables}) =>
                         (Array.isArray(variables?.filters) && variables.filters.length
                             ? mockExplorerLibraryDataQueryResultWithFilters
-                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
                 );
 
             render(
@@ -2103,11 +2104,11 @@ describe('Explorer', () => {
                                         id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
+                                    value: 'Christmas',
                                 },
                                 {
                                     id: '',
@@ -2115,22 +2116,22 @@ describe('Explorer', () => {
                                         id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Test'
-                                }
+                                    value: 'Test',
+                                },
                             ],
                             sort: [
                                 {
                                     field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.asc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -2144,17 +2145,17 @@ describe('Explorer', () => {
                             {
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas'
+                                value: 'Christmas',
                             },
                             {operator: 'OR'},
                             {
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Test'
-                            }
-                        ]
-                    })
-                })
+                                value: 'Test',
+                            },
+                        ],
+                    }),
+                }),
             );
         });
     });
@@ -2173,14 +2174,14 @@ describe('Explorer', () => {
                             {
                                 label: 'Test 1',
                                 icon: <FaBeer />,
-                                callback: actionCallback
-                            }
+                                callback: actionCallback,
+                            },
                         ]}
                     />
                 </Explorer.EditSettingsContextProvider>,
                 {
-                    mocks: [ExplorerLinkAttributeQueryMock]
-                }
+                    mocks: [ExplorerLinkAttributeQueryMock],
+                },
             );
 
             const rows = await screen.findAllByRole('row');
@@ -2189,8 +2190,8 @@ describe('Explorer', () => {
             await user.click(screen.getAllByRole('button', {name: 'Test 1'})[0]);
             expect(actionCallback).toBeCalledWith(
                 expect.objectContaining({
-                    id_value: mockExplorerLinkDataQueryResultProperty[0].id_value
-                })
+                    id_value: mockExplorerLinkDataQueryResultProperty[0].id_value,
+                }),
             );
         });
 
@@ -2206,8 +2207,8 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
                 {
                     // Query called twice : in run time, the cache is effective, but not in tests, so we use the mock twice
-                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
-                }
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
+                },
             );
 
             expect(await screen.findByText(explorerLinkAttribute.label.fr)).toBeVisible();
@@ -2220,13 +2221,13 @@ describe('Explorer', () => {
             const testMassAction = {
                 label: 'test mass action',
                 icon: <FaBeer />,
-                callback: jest.fn()
+                callback: jest.fn(),
             };
             // WHEN the component is rendered
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             // THEN the toolbar should be present
@@ -2272,18 +2273,18 @@ describe('Explorer', () => {
                     {
                         condition: 'EQUAL',
                         field: 'id',
-                        value: '613982168'
+                        value: '613982168',
                     },
                     {
-                        operator: 'OR'
+                        operator: 'OR',
                     },
                     {
                         condition: 'EQUAL',
                         field: 'id',
-                        value: '612694174'
-                    }
+                        value: '612694174',
+                    },
                 ],
-                ['613982168', '612694174']
+                ['613982168', '612694174'],
             );
 
             // AND the selection is cleared
@@ -2295,13 +2296,13 @@ describe('Explorer', () => {
             const testMassAction = {
                 label: 'test mass action',
                 icon: <FaBeer />,
-                callback: jest.fn()
+                callback: jest.fn(),
             };
             // WHEN the component is rendered without pagination (20 items default page size > 2 mock records)
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             // THEN the toolbar should be ready
@@ -2343,18 +2344,18 @@ describe('Explorer', () => {
                     {
                         condition: 'EQUAL',
                         field: 'id',
-                        value: '613982168'
+                        value: '613982168',
                     },
                     {
-                        operator: 'OR'
+                        operator: 'OR',
                     },
                     {
                         condition: 'EQUAL',
                         field: 'id',
-                        value: '612694174'
-                    }
+                        value: '612694174',
+                    },
                 ],
-                ['613982168', '612694174']
+                ['613982168', '612694174'],
             );
 
             // AND the selection is cleared
@@ -2369,16 +2370,16 @@ describe('Explorer', () => {
                 data: {
                     records: {
                         totalCount: mockRecords.length,
-                        list: [firstRecord]
-                    }
-                }
+                        list: [firstRecord],
+                    },
+                },
             } as gqlTypes.ExplorerLibraryDataQueryResult);
 
             // AND a simple mass test action
             const testMassAction = {
                 label: 'test mass action',
                 icon: <FaBeer />,
-                callback: jest.fn()
+                callback: jest.fn(),
             };
             // WHEN the component is rendered with some filter and sort and pagination (1 item on 2 pages)
             render(
@@ -2399,22 +2400,22 @@ describe('Explorer', () => {
                                         id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleColorMockAttribute.type
+                                        type: simpleColorMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
-                                }
+                                    value: 'Christmas',
+                                },
                             ],
                             sort: [
                                 {
                                     field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.asc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             // THEN the toolbar is ready and clean
@@ -2431,7 +2432,7 @@ describe('Explorer', () => {
             // WHEN the user clicks on selection all page only
             await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
             await user.click(
-                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_page/})
+                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_page/}),
             );
 
             // THEN the checkbox in the toolbar should be partially checked because there is 2 items
@@ -2448,9 +2449,9 @@ describe('Explorer', () => {
                 data: {
                     records: {
                         totalCount: mockRecords.length,
-                        list: [secondRecord]
-                    }
-                }
+                        list: [secondRecord],
+                    },
+                },
             } as gqlTypes.ExplorerLibraryDataQueryResult);
             // WHEN the user goes on the second page
             const nextPageElement = screen.getByTitle<HTMLLIElement>('Next Page');
@@ -2474,10 +2475,10 @@ describe('Explorer', () => {
                     {
                         condition: 'EQUAL',
                         field: 'id',
-                        value: firstRecord.id
-                    }
+                        value: firstRecord.id,
+                    },
                 ],
-                [firstRecord.id]
+                [firstRecord.id],
             );
 
             // AND the selection is cleared
@@ -2492,16 +2493,16 @@ describe('Explorer', () => {
                 data: {
                     records: {
                         totalCount: mockRecords.length,
-                        list: [firstRecord]
-                    }
-                }
+                        list: [firstRecord],
+                    },
+                },
             } as gqlTypes.ExplorerLibraryDataQueryResult);
 
             // AND a simple mass test action is set
             const testMassAction = {
                 label: 'test mass action',
                 icon: <FaBeer />,
-                callback: jest.fn()
+                callback: jest.fn(),
             };
             // WHEN the component renders with 2 pages of one record, with filter and sort
             render(
@@ -2523,22 +2524,22 @@ describe('Explorer', () => {
                                         id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
-                                }
+                                    value: 'Christmas',
+                                },
                             ],
                             sort: [
                                 {
                                     field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.asc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             // THEN the select all checkbox is clear
@@ -2547,7 +2548,7 @@ describe('Explorer', () => {
             // AND the snackbar is hidden
             expect(screen.queryByRole('status')).not.toBeInTheDocument();
             expect(
-                within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})
+                within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)}),
             ).not.toHaveClass('kit-filter-disabled');
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).not.toHaveClass('kit-filter-disabled');
 
@@ -2559,14 +2560,14 @@ describe('Explorer', () => {
             // WHEN the user clicks on the select all checkbox (all pages)
             await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
             await user.click(
-                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_all/})
+                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_all/}),
             );
 
             // THEN the select all checkbox is totally checked
             expect(within(toolbar).getByRole('checkbox')).toBeChecked();
             // AND the rest of toolbar: sort and filter are disabled only
             expect(within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})).toHaveClass(
-                'kit-filter-disabled'
+                'kit-filter-disabled',
             );
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
 
@@ -2585,9 +2586,9 @@ describe('Explorer', () => {
                 data: {
                     records: {
                         totalCount: mockRecords.length,
-                        list: [secondRecord]
-                    }
-                }
+                        list: [secondRecord],
+                    },
+                },
             } as gqlTypes.ExplorerLibraryDataQueryResult);
             // WHEN the user clicks on the next page to get the second record
             const nextPageElement = screen.getByTitle<HTMLLIElement>('Next Page');
@@ -2603,7 +2604,7 @@ describe('Explorer', () => {
             expect(within(secondRecordRow).getByRole('button', {name: /deactivate-item/})).toBeDisabled();
             // AND the toolbar: sort and filters stay disabled but displayed
             expect(within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})).toHaveClass(
-                'kit-filter-disabled'
+                'kit-filter-disabled',
             );
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
 
@@ -2614,7 +2615,7 @@ describe('Explorer', () => {
             await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
             // THEN there is a possibility to de-select all items
             expect(
-                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.deselect_all/})
+                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.deselect_all/}),
             ).toBeVisible();
 
             // WHEN the user clicks on the simple mass test action
@@ -2627,10 +2628,10 @@ describe('Explorer', () => {
                     {
                         field: 'simple_attribute',
                         condition: 'CONTAINS',
-                        value: 'Christmas'
-                    }
+                        value: 'Christmas',
+                    },
                 ],
-                'all'
+                'all',
             );
 
             // AND the selection is cleared
@@ -2641,14 +2642,14 @@ describe('Explorer', () => {
             // GIVEN a mocked deactivate record mutation
             const mockOnUseDeactivateRecordsMutation = jest.fn(() => ({data: {deactivateRecords: []}}));
             jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
-                () => [mockOnUseDeactivateRecordsMutation, {}] as any
+                () => [mockOnUseDeactivateRecordsMutation, {}] as any,
             );
             const onDeactivate = jest.fn();
             // WHEN the component is rendered
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             // WHEN the toolbar is cleared
@@ -2695,13 +2696,13 @@ describe('Explorer', () => {
             const expectedDeactivateFilters = [
                 {field: 'id', condition: 'EQUAL', value: firstRecord.id},
                 {operator: 'OR'},
-                {field: 'id', condition: 'EQUAL', value: secondRecord.id}
+                {field: 'id', condition: 'EQUAL', value: secondRecord.id},
             ];
             expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledWith({
                 variables: {
                     libraryId: 'campaigns',
-                    filters: expectedDeactivateFilters
-                }
+                    filters: expectedDeactivateFilters,
+                },
             });
 
             expect(onDeactivate).toHaveBeenCalledWith(expectedDeactivateFilters, [firstRecord.id, secondRecord.id]);
@@ -2718,14 +2719,14 @@ describe('Explorer', () => {
             // GIVEN a mocked deactivate record mutation
             const mockOnUseDeactivateRecordsMutation = jest.fn(() => ({data: {deactivateRecords: []}}));
             jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
-                () => [mockOnUseDeactivateRecordsMutation, {}] as any
+                () => [mockOnUseDeactivateRecordsMutation, {}] as any,
             );
             const onDeactivate = jest.fn();
             // WHEN the component is rendered
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             // WHEN the toolbar is cleared
@@ -2772,13 +2773,13 @@ describe('Explorer', () => {
             const expectedDeactivateFilters = [
                 {field: 'id', condition: 'EQUAL', value: firstRecord.id},
                 {operator: 'OR'},
-                {field: 'id', condition: 'EQUAL', value: secondRecord.id}
+                {field: 'id', condition: 'EQUAL', value: secondRecord.id},
             ];
             expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledWith({
                 variables: {
                     libraryId: 'campaigns',
-                    filters: expectedDeactivateFilters
-                }
+                    filters: expectedDeactivateFilters,
+                },
             });
 
             expect(onDeactivate).toHaveBeenCalledWith(expectedDeactivateFilters, [firstRecord.id, secondRecord.id]);
@@ -2802,35 +2803,35 @@ describe('Explorer', () => {
                             id: simpleMockAttribute.id,
                             label: simpleMockAttribute.label,
                             permissions: {
-                                access_attribute: true
+                                access_attribute: true,
                             },
                             type: simpleMockAttribute.type,
                             format: simpleMockAttribute.format,
-                            multiple_values: true
+                            multiple_values: true,
                         },
                         {
                             id: simpleColorMockAttribute.id,
                             label: simpleColorMockAttribute.label,
                             permissions: {
-                                access_attribute: false
+                                access_attribute: false,
                             },
                             type: simpleColorMockAttribute.type,
                             format: simpleColorMockAttribute.format,
-                            multiple_values: false
+                            multiple_values: false,
                         },
                         {
                             id: booleanMockAttribute.id,
                             label: booleanMockAttribute.label,
                             permissions: {
-                                access_attribute: false
+                                access_attribute: false,
                             },
                             type: booleanMockAttribute.type,
                             format: booleanMockAttribute.format,
-                            multiple_values: false
-                        }
-                    ]
-                }
-            }
+                            multiple_values: false,
+                        },
+                    ],
+                },
+            },
         };
 
         const explorerLinkAttributeNoPermissions = {
@@ -2838,36 +2839,36 @@ describe('Explorer', () => {
             multiple_values: true,
             label: {
                 en: 'Delivery Platforms',
-                fr: 'Plateformes de diffusion'
+                fr: 'Plateformes de diffusion',
             },
             permissions: {
                 access_attribute: true,
                 edit_value: false,
-                __typename: 'AttributePermissions'
+                __typename: 'AttributePermissions',
             },
             linked_library: {
                 id: 'delivery_platforms',
                 label: {
-                    fr: 'Plateformes de diffusion'
+                    fr: 'Plateformes de diffusion',
                 },
-                __typename: 'Library'
+                __typename: 'Library',
             },
-            __typename: 'LinkAttribute'
+            __typename: 'LinkAttribute',
         };
         const ExplorerLinkAttributeWithoutPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
             request: {
                 query: gqlTypes.ExplorerLinkAttributeDocument,
                 variables: {
-                    id: linkEntrypoint.linkAttributeId
-                }
+                    id: linkEntrypoint.linkAttributeId,
+                },
             },
             result: {
                 data: {
                     attributes: {
-                        list: [explorerLinkAttributeNoPermissions]
-                    }
-                }
-            }
+                        list: [explorerLinkAttributeNoPermissions],
+                    },
+                },
+            },
         };
 
         test('Should disable delete action on record without delete_record Permission', async () => {
@@ -2880,12 +2881,12 @@ describe('Explorer', () => {
                 data: {
                     records: {
                         totalCount: mockRecords.length,
-                        list: [mockRecords[0], {...mockRecords[1], permissions: {delete_record: false}}]
-                    }
-                }
+                        list: [mockRecords[0], {...mockRecords[1], permissions: {delete_record: false}}],
+                    },
+                },
             };
             jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult
+                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult,
             );
 
             render(
@@ -2894,12 +2895,12 @@ describe('Explorer', () => {
                         showFilters
                         showSorts
                         defaultViewSettings={{
-                            enableConfigureView: true
+                            enableConfigureView: true,
                         }}
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByRole('table')).toBeVisible();
@@ -2928,14 +2929,14 @@ describe('Explorer', () => {
                             {
                                 ...mockRecords[1],
                                 active: false,
-                                permissions: {create_record: false}
-                            }
-                        ]
-                    }
-                }
+                                permissions: {create_record: false},
+                            },
+                        ],
+                    },
+                },
             };
             jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult
+                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult,
             );
 
             render(
@@ -2946,10 +2947,10 @@ describe('Explorer', () => {
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                         defaultViewSettings={{
-                            enableConfigureView: true
+                            enableConfigureView: true,
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.getByRole('table')).toBeVisible();
@@ -2971,9 +2972,9 @@ describe('Explorer', () => {
                 {
                     mocks: [
                         ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock
-                    ]
-                }
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ],
+                },
             );
 
             const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
@@ -2988,9 +2989,9 @@ describe('Explorer', () => {
                 {
                     mocks: [
                         ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock
-                    ]
-                }
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ],
+                },
             );
 
             const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
@@ -2999,7 +3000,7 @@ describe('Explorer', () => {
 
         test('Should not display the columns for attributes the user does not have access to', async () => {
             jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
-                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
             render(
@@ -3010,11 +3011,11 @@ describe('Explorer', () => {
                             attributesIds: [
                                 simpleMockAttribute.id,
                                 simpleColorMockAttribute.id,
-                                booleanMockAttribute.id
-                            ]
+                                booleanMockAttribute.id,
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const tableRows = screen.getAllByRole('row');
@@ -3029,7 +3030,7 @@ describe('Explorer', () => {
 
         test('Should not display filter for attributes the user does not have access to', async () => {
             jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
-                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
             const spyUseAttributeDetailsData = jest
@@ -3041,16 +3042,16 @@ describe('Explorer', () => {
                             id: simpleMockAttribute.id,
                             type: simpleMockAttribute.type,
                             format: simpleMockAttribute.format,
-                            label: simpleMockAttribute.label.fr
+                            label: simpleMockAttribute.label.fr,
                         },
                         [simpleColorMockAttribute.id]: {
                             id: simpleColorMockAttribute.id,
                             type: simpleColorMockAttribute.type,
                             format: simpleColorMockAttribute.format,
-                            label: simpleColorMockAttribute.label.fr
-                        }
+                            label: simpleColorMockAttribute.label.fr,
+                        },
                     },
-                    isLoading: false
+                    isLoading: false,
                 } as any);
 
             jest.spyOn(console, 'warn').mockImplementationOnce(() => jest.fn());
@@ -3065,7 +3066,7 @@ describe('Explorer', () => {
                             attributesIds: [
                                 simpleMockAttribute.id,
                                 simpleColorMockAttribute.id,
-                                booleanMockAttribute.id
+                                booleanMockAttribute.id,
                             ],
                             filters: [
                                 {
@@ -3074,11 +3075,11 @@ describe('Explorer', () => {
                                         id: '123',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type
+                                        type: simpleMockAttribute.type,
                                     },
                                     field: simpleMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas'
+                                    value: 'Christmas',
                                 },
                                 {
                                     id: '456',
@@ -3086,16 +3087,16 @@ describe('Explorer', () => {
                                         id: '456',
                                         format: booleanMockAttribute.format,
                                         label: booleanMockAttribute.label.fr,
-                                        type: booleanMockAttribute.type
+                                        type: booleanMockAttribute.type,
                                     },
                                     field: booleanMockAttribute.id,
                                     condition: gqlTypes.RecordFilterCondition.EQUAL,
-                                    value: 'true'
-                                }
-                            ]
+                                    value: 'true',
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(console.warn).toHaveBeenCalledWith(expect.stringContaining(booleanMockAttribute.id));
@@ -3114,11 +3115,11 @@ describe('Explorer', () => {
                             expect.objectContaining({
                                 field: simpleMockAttribute.id,
                                 value: 'Christmas',
-                                condition: 'CONTAINS'
-                            })
-                        ])
-                    })
-                })
+                                condition: 'CONTAINS',
+                            }),
+                        ]),
+                    }),
+                }),
             );
         });
 
@@ -3132,12 +3133,12 @@ describe('Explorer', () => {
                             sort: [
                                 {
                                     field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.asc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3155,12 +3156,12 @@ describe('Explorer', () => {
                             sort: [
                                 {
                                     field: simpleColorMockAttribute.id,
-                                    order: gqlTypes.SortOrder.desc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.desc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3171,7 +3172,7 @@ describe('Explorer', () => {
 
         test('Should not display sorts for attributes the user does not have access to', async () => {
             jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
-                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
             render(
@@ -3184,21 +3185,21 @@ describe('Explorer', () => {
                             attributesIds: [
                                 simpleMockAttribute.id,
                                 simpleColorMockAttribute.id,
-                                booleanMockAttribute.id
+                                booleanMockAttribute.id,
                             ],
                             sort: [
                                 {
                                     field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc
+                                    order: gqlTypes.SortOrder.asc,
                                 },
                                 {
                                     field: simpleColorMockAttribute.id,
-                                    order: gqlTypes.SortOrder.desc
-                                }
-                            ]
+                                    order: gqlTypes.SortOrder.desc,
+                                },
+                            ],
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3212,11 +3213,11 @@ describe('Explorer', () => {
                         multipleSort: [
                             {
                                 field: simpleMockAttribute.id,
-                                order: gqlTypes.SortOrder.asc
-                            }
-                        ]
-                    })
-                })
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }),
+                }),
             );
         });
 
@@ -3233,18 +3234,18 @@ describe('Explorer', () => {
                                 whoAmI: {
                                     id: '612694174',
                                     library: {
-                                        id: 'campaigns'
-                                    }
+                                        id: 'campaigns',
+                                    },
                                 },
-                                property: []
-                            }
-                        ]
-                    }
-                }
+                                property: [],
+                            },
+                        ],
+                    },
+                },
             };
 
             jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
-                () => mockExplorerLinkDataQueryEmptyResult as gqlTypes.ExplorerLinkDataQueryResult
+                () => mockExplorerLinkDataQueryEmptyResult as gqlTypes.ExplorerLinkDataQueryResult,
             );
 
             render(
@@ -3256,8 +3257,8 @@ describe('Explorer', () => {
                     />
                 </Explorer.EditSettingsContextProvider>,
                 {
-                    mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock]
-                }
+                    mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
+                },
             );
 
             expect(await screen.queryAllByRole('row')).toHaveLength(0);
@@ -3274,9 +3275,9 @@ describe('Explorer', () => {
                 {
                     mocks: [
                         ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock
-                    ]
-                }
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ],
+                },
             );
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
@@ -3296,14 +3297,14 @@ describe('Explorer', () => {
                 {
                     mocks: [
                         ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock
-                    ]
-                }
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ],
+                },
             );
             const linkExistingButton = await screen.findByRole(
                 'button',
                 {name: 'explorer.add-existing-item'},
-                {timeout: 5000}
+                {timeout: 5000},
             );
             expect(linkExistingButton).toBeVisible();
             expect(linkExistingButton).toBeDisabled();
@@ -3320,10 +3321,10 @@ describe('Explorer', () => {
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                         defaultViewSettings={{
-                            enableConfigureView: true
+                            enableConfigureView: true,
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const manageViewsButton = screen.getByRole('button', {name: /My view/});
@@ -3346,10 +3347,10 @@ describe('Explorer', () => {
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                         defaultViewSettings={{
-                            enableConfigureView: true
+                            enableConfigureView: true,
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByRole('button', {name: /My view/})).not.toBeInTheDocument();
@@ -3365,10 +3366,10 @@ describe('Explorer', () => {
                         defaultPrimaryActions={[]}
                         defaultViewSettings={{
                             viewId: '43',
-                            enableConfigureView: true
+                            enableConfigureView: true,
                         }}
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(screen.queryByRole('button', {name: /Second view/})).toBeInTheDocument();
@@ -3381,42 +3382,42 @@ describe('Explorer', () => {
         const expectedFiltersWithValuesList = {
             filters: [
                 {
-                    operator: 'OPEN_BRACKET'
+                    operator: 'OPEN_BRACKET',
                 },
                 {
                     condition: 'EQUAL',
                     field: 'id',
-                    value: mockRecords[0].id
+                    value: mockRecords[0].id,
                 },
                 {
-                    operator: 'OR'
+                    operator: 'OR',
                 },
                 {
                     condition: 'EQUAL',
                     field: 'id',
-                    value: mockRecords[1].id
+                    value: mockRecords[1].id,
                 },
                 {
-                    operator: 'CLOSE_BRACKET'
-                }
-            ]
+                    operator: 'CLOSE_BRACKET',
+                },
+            ],
         };
 
         const expectedFiltersWithValuesListAndFulltextSearch = {
-            filters: []
+            filters: [],
         };
 
         test('Should call the library data query with filters for values list', async () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={{...libraryEntrypoint, valuesList: mockValuesList}} />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    variables: expect.objectContaining(expectedFiltersWithValuesList)
-                })
+                    variables: expect.objectContaining(expectedFiltersWithValuesList),
+                }),
             );
         });
 
@@ -3427,11 +3428,11 @@ describe('Explorer', () => {
                         entrypoint={{
                             ...libraryEntrypoint,
                             valuesList: mockValuesList,
-                            allowFreeEntry: false
+                            allowFreeEntry: false,
                         }}
                         showSearch
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const searchInput = screen.getByRole('textbox', {name: /search/});
@@ -3439,8 +3440,8 @@ describe('Explorer', () => {
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    variables: expect.objectContaining(expectedFiltersWithValuesList)
-                })
+                    variables: expect.objectContaining(expectedFiltersWithValuesList),
+                }),
             );
 
             const clearButton = screen.getByLabelText('clear');
@@ -3448,8 +3449,8 @@ describe('Explorer', () => {
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    variables: expect.objectContaining(expectedFiltersWithValuesList)
-                })
+                    variables: expect.objectContaining(expectedFiltersWithValuesList),
+                }),
             );
         });
 
@@ -3460,11 +3461,11 @@ describe('Explorer', () => {
                         entrypoint={{
                             ...libraryEntrypoint,
                             valuesList: mockValuesList,
-                            allowFreeEntry: true
+                            allowFreeEntry: true,
                         }}
                         showSearch
                     />
-                </Explorer.EditSettingsContextProvider>
+                </Explorer.EditSettingsContextProvider>,
             );
 
             const searchInput = screen.getByRole('textbox', {name: /search/});
@@ -3472,8 +3473,8 @@ describe('Explorer', () => {
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    variables: expect.objectContaining(expectedFiltersWithValuesListAndFulltextSearch)
-                })
+                    variables: expect.objectContaining(expectedFiltersWithValuesListAndFulltextSearch),
+                }),
             );
 
             const clearButton = screen.getByLabelText('clear');
@@ -3481,8 +3482,8 @@ describe('Explorer', () => {
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    variables: expect.objectContaining(expectedFiltersWithValuesList)
-                })
+                    variables: expect.objectContaining(expectedFiltersWithValuesList),
+                }),
             );
         });
     });

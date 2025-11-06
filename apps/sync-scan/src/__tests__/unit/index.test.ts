@@ -10,7 +10,7 @@ import {mockDbResult, mockFsContent, mockDbSettings} from './scan';
 jest.mock('../../events', () => ({
     create: jest.fn(),
     move: jest.fn(),
-    update: jest.fn()
+    update: jest.fn(),
 }));
 
 let amqp;
@@ -26,7 +26,7 @@ beforeAll(async () => {
         const mockAmqp = {
             publish: jest.fn(),
             consume: jest.fn(),
-            close: jest.fn()
+            close: jest.fn(),
         };
 
         amqp = mockAmqp;
@@ -68,7 +68,7 @@ describe('unit tests', () => {
             const dbScan = extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
 
             await expect(automate(mockFsContent, dbScan, mockDbSettings, amqp as IAmqpService)).resolves.toStrictEqual(
-                undefined
+                undefined,
             );
 
             expect(create).toHaveBeenCalledTimes(1);

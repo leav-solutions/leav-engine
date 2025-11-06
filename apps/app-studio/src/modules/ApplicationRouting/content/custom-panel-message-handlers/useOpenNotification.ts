@@ -9,11 +9,11 @@ export const useOpenNotification = () => {
 
     const openNotification: IUseIFrameMessengerOptions['handlers']['onNotification'] = data => {
         kitNotification.open({
-            ...data
+            ...data,
         });
     };
 
     return {
-        openNotification
+        openNotification,
     };
 };

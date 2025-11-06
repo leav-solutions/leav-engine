@@ -11,6 +11,6 @@ export default function (): GraphQLScalarType {
         description: 'Can be anything',
         serialize: val => val,
         parseValue: val => val,
-        parseLiteral: (ast: ValueNode, variables: IKeyValue<unknown>): unknown => parseLiteral('Any', ast, variables)
+        parseLiteral: (ast: ValueNode, variables: IKeyValue<unknown>): unknown => parseLiteral('Any', ast, variables),
     });
 }

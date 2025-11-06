@@ -33,7 +33,7 @@ function EditApplicationTabs(): JSX.Element {
                 <Tab.Pane key="info" className="grow">
                     <InfosTab />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'permissions',
@@ -43,7 +43,7 @@ function EditApplicationTabs(): JSX.Element {
                 <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
                     <PermissionsTab />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'settings',
@@ -53,8 +53,8 @@ function EditApplicationTabs(): JSX.Element {
                 <Tab.Pane key="settings" style={{padding: 0}}>
                     <SettingsTab />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ].filter(p => p.displayCondition);
 
     const [activeIndex, setActiveIndex] = useState<number>(tabName ? panes.findIndex(p => tabName === p.key) : 0);

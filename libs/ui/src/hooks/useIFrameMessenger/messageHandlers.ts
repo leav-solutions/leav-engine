@@ -19,13 +19,13 @@ import {
     type NavigateToPanelMessage,
     type NotificationMessage,
     packetId,
-    type SimpleMessage
+    type SimpleMessage,
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
     JSON.stringify({
         payload: JSON.stringify(message),
-        [packetId]: true
+        [packetId]: true,
     });
 
 export const decodeMessage = (raw: string): Message | undefined => {
@@ -55,7 +55,7 @@ const setCallbacks = (
     frameId: string,
     data: unknown,
     callCb: CallCbFunction,
-    overrides?: string[]
+    overrides?: string[],
 ): unknown => {
     if (!overrides) {
         return data;
@@ -73,7 +73,7 @@ const setCallbacks = (
 export const initClientHandlers: (
     callCb: CallCbFunction,
     options?: IUseIFrameMessengerOptions,
-    callbacksList?: MutableRefObject<Callbacks>
+    callbacksList?: MutableRefObject<Callbacks>,
 ) => MessageHandler = (callCb, options, callbacksList) => (message, dispatch) => {
     switch (message.type) {
         case 'modal-confirm':
@@ -83,11 +83,11 @@ export const initClientHandlers: (
                     message.__frameId,
                     message.data,
                     callCb,
-                    message.overrides
+                    message.overrides,
                 ) as ModalConfirmMessage['data'],
                 message.id,
                 dispatch,
-                callCb
+                callCb,
             );
             break;
         case 'alert':
@@ -97,11 +97,11 @@ export const initClientHandlers: (
                     message.__frameId,
                     message.data,
                     callCb,
-                    message.overrides
+                    message.overrides,
                 ) as AlertMessage['data'],
                 message.id,
                 dispatch,
-                callCb
+                callCb,
             );
             break;
         case 'notification':
@@ -111,11 +111,11 @@ export const initClientHandlers: (
                     message.__frameId,
                     message.data,
                     callCb,
-                    message.overrides
+                    message.overrides,
                 ) as NotificationMessage['data'],
                 message.id,
                 dispatch,
-                callCb
+                callCb,
             );
             break;
         case 'message':
@@ -142,7 +142,7 @@ export const initClientHandlers: (
 const storeCallbacks = (
     data: unknown,
     id: string,
-    callbacksStore: MutableRefObject<Callbacks>
+    callbacksStore: MutableRefObject<Callbacks>,
 ): {data: unknown; overrides: string[]} => {
     const nextData = {...(data as Record<string, unknown>)};
     const overrides: string[] = [];
@@ -150,7 +150,7 @@ const storeCallbacks = (
         if (typeof value === 'function') {
             callbacksStore.current[id] = {
                 ...callbacksStore.current[id],
-                [key]: value as CallbackFunction
+                [key]: value as CallbackFunction,
             };
             overrides.push(key);
         }
@@ -189,5 +189,5 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     messageToPanel: (data: MessageToPanelMessage['data']) => {
         dispatch?.({type: 'message-to-panel', data});
-    }
+    },
 });

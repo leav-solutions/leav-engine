@@ -14,16 +14,16 @@ describe('filterTypes', () => {
             helper.isAttributeFilter({
                 attributes: [],
                 condition: AttributeCondition.EQUAL,
-                value: 'foo'
-            })
+                value: 'foo',
+            }),
         ).toBe(true);
 
         expect(
             helper.isAttributeFilter({
                 attributes: [],
                 condition: TreeCondition.CLASSIFIED_IN,
-                value: 'foo'
-            })
+                value: 'foo',
+            }),
         ).toBe(false);
     });
 
@@ -36,16 +36,16 @@ describe('filterTypes', () => {
             helper.isClassifyingFilter({
                 attributes: [],
                 condition: TreeCondition.CLASSIFIED_IN,
-                value: 'foo'
-            })
+                value: 'foo',
+            }),
         ).toBe(true);
 
         expect(
             helper.isClassifyingFilter({
                 attributes: [],
                 condition: AttributeCondition.EQUAL,
-                value: 'foo'
-            })
+                value: 'foo',
+            }),
         ).toBe(false);
     });
 });

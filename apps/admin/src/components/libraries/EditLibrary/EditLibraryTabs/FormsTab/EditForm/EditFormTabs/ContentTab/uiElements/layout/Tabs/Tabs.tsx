@@ -41,7 +41,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
 
     const _getNewTab = (index?: number): ITabSettings => ({
         label: {fr: t('forms.new_tab_label', {index})},
-        id: uuid()
+        id: uuid(),
     });
 
     if (!elementData || !dispatch || !state) {
@@ -60,13 +60,13 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
                 ...elementData,
                 settings: {
                     ...elementData.settings,
-                    tabs: elementData?.settings?.tabs ?? []
-                }
+                    tabs: elementData?.settings?.tabs ?? [],
+                },
             },
             settings: {
                 ...elementData?.settings,
-                tabs: [_getNewTab()]
-            }
+                tabs: [_getNewTab()],
+            },
         });
     }
 
@@ -86,8 +86,8 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
             element: elementData,
             settings: {
                 ...elementData?.settings,
-                tabs: newTabs
-            }
+                tabs: newTabs,
+            },
         });
     };
 
@@ -95,7 +95,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
         dispatch({
             type: FormBuilderActionTypes.REMOVE_TAB,
             tabId,
-            parentElement: elementData
+            parentElement: elementData,
         });
     };
 
@@ -127,7 +127,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
                 order: 0,
                 containerId: elementData?.id,
                 type: FormElementTypes.layout,
-                settings: {}
+                settings: {},
             };
 
             return (
@@ -139,7 +139,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
                     />
                 </Tab.Pane>
             );
-        }
+        },
     }));
 
     panes.push({
@@ -148,7 +148,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
                 <Icon name="plus" />
             </Menu.Item>
         ),
-        render: () => <Tab.Pane />
+        render: () => <Tab.Pane />,
     });
 
     return (
@@ -158,7 +158,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
                     tabular: true,
                     vertical: settings.direction === TabsDirection.VERTICAL,
                     compact: true,
-                    fluid: true
+                    fluid: true,
                 }}
                 activeIndex={activeIndex}
                 onTabChange={_handleTabChange}

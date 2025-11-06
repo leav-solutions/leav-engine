@@ -6,5 +6,5 @@ export const routes = {
     root: '/',
     home: '/:panel',
     workspace: '/:panel/:entityId',
-    settings: '/settings/:tabId?'
+    settings: '/settings/:tabId?',
 };

@@ -204,13 +204,13 @@ describe('JoinLibraries', () => {
                 expect(res.data.data.saveValueBatch.values[1].payload.id).toBeTruthy();
 
                 const structureItems1 = await getStructureItemsRecords(
-                    res.data.data.saveValueBatch.values[0].payload.id
+                    res.data.data.saveValueBatch.values[0].payload.id,
                 );
                 expect(structureItems1[0].id).toBe(res.data.data.saveValueBatch.values[0].payload.id);
                 expect(structureItems1[0].property[0].linkPayload.id).toBe(thematic1);
 
                 const structureItems2 = await getStructureItemsRecords(
-                    res.data.data.saveValueBatch.values[1].payload.id
+                    res.data.data.saveValueBatch.values[1].payload.id,
                 );
                 expect(structureItems2[0].id).toBe(res.data.data.saveValueBatch.values[1].payload.id);
                 expect(structureItems2[0].property[0].linkPayload.id).toBe(thematic2);
@@ -219,7 +219,7 @@ describe('JoinLibraries', () => {
                 expect(campaignRecords[0].id).toBe(campaign);
                 expect(campaignRecords[0].property).toHaveLength(2);
                 expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
-                    expect.arrayContaining(res.data.data.saveValueBatch.values.map(v => v.payload.id))
+                    expect.arrayContaining(res.data.data.saveValueBatch.values.map(v => v.payload.id)),
                 );
                 expect(campaignRecords[0].property[0].id_value).toBeTruthy();
                 expect(campaignRecords[0].property[1].id_value).toBeTruthy();
@@ -267,7 +267,7 @@ describe('JoinLibraries', () => {
 
                     campaignStructureItems = res.data.data.saveValueBatch.values.map(v => ({
                         id: v.payload.id,
-                        id_value: v.id_value
+                        id_value: v.id_value,
                     }));
                 });
 
@@ -301,7 +301,7 @@ describe('JoinLibraries', () => {
 
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
-                        expect.arrayContaining([campaignStructureItems[1].id, campaignStructureItems[2].id])
+                        expect.arrayContaining([campaignStructureItems[1].id, campaignStructureItems[2].id]),
                     );
                 });
 
@@ -352,7 +352,7 @@ describe('JoinLibraries', () => {
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property).toHaveLength(1);
                     expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
-                        expect.arrayContaining([campaignStructureItems[1].id])
+                        expect.arrayContaining([campaignStructureItems[1].id]),
                     );
                 });
             });
@@ -523,7 +523,7 @@ describe('JoinLibraries', () => {
                 expect(res.data.data.saveValueBatch.values[0].payload.id).toBeTruthy();
 
                 const structureItems1 = await getStructureItemsRecords(
-                    res.data.data.saveValueBatch.values[0].payload.id
+                    res.data.data.saveValueBatch.values[0].payload.id,
                 );
                 expect(structureItems1[0].id).toBe(res.data.data.saveValueBatch.values[0].payload.id);
                 expect(structureItems1[0].property[0].linkPayload.id).toBe(thematic1);
@@ -531,7 +531,7 @@ describe('JoinLibraries', () => {
                 const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                 expect(campaignRecords[0].id).toBe(campaign);
                 expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual([
-                    res.data.data.saveValueBatch.values[0].payload.id
+                    res.data.data.saveValueBatch.values[0].payload.id,
                 ]);
             });
 
@@ -569,7 +569,7 @@ describe('JoinLibraries', () => {
 
                     campaignStructureItems = res.data.data.saveValueBatch.values.map(v => ({
                         id: v.payload.id,
-                        id_value: v.id_value
+                        id_value: v.id_value,
                     }));
                 });
 
@@ -708,7 +708,7 @@ describe('JoinLibraries', () => {
                     expect(structureItems0).toHaveLength(0); // should be deleted
 
                     const structureItems1 = await getStructureItemsRecords(
-                        res.data.data.saveValueBatch.values[0].payload.id
+                        res.data.data.saveValueBatch.values[0].payload.id,
                     );
                     expect(structureItems1).toHaveLength(1);
 
@@ -909,7 +909,7 @@ describe('JoinLibraries', () => {
 
                     campaignStructureItems = res.data.data.saveValueBatch.values.map(v => ({
                         id: v.payload.id,
-                        id_value: v.id_value
+                        id_value: v.id_value,
                     }));
                 });
 
@@ -943,7 +943,7 @@ describe('JoinLibraries', () => {
 
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
-                        expect.arrayContaining([campaignStructureItems[1].id])
+                        expect.arrayContaining([campaignStructureItems[1].id]),
                     );
                 });
             });
@@ -1275,7 +1275,7 @@ describe('JoinLibraries', () => {
 
                     campaignStructureItems = res.data.data.saveValueBatch.values.map(v => ({
                         id: v.payload.id,
-                        id_value: v.id_value
+                        id_value: v.id_value,
                     }));
                 });
 
@@ -1309,7 +1309,7 @@ describe('JoinLibraries', () => {
 
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
-                        expect.arrayContaining([campaignStructureItems[1].id])
+                        expect.arrayContaining([campaignStructureItems[1].id]),
                     );
                 });
             });
@@ -1638,7 +1638,7 @@ describe('JoinLibraries', () => {
                 expect(joinLibraryElement.attribute.id).toBe(attrStructureItemCategories);
                 expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_tree.id).toBe(treeCategories);
                 expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(
-                    attrStructureItemCategoriesCategory
+                    attrStructureItemCategoriesCategory,
                 );
             });
 
@@ -1667,7 +1667,7 @@ describe('JoinLibraries', () => {
                 expect(res.data.data.saveValue[0].payload.id).toBeTruthy();
 
                 const structureItemsRecords = await getStructureItemsCategoriesRecords(
-                    res.data.data.saveValue[0].payload.id
+                    res.data.data.saveValue[0].payload.id,
                 );
                 expect(structureItemsRecords[0].id).toBe(res.data.data.saveValue[0].payload.id);
                 expect(structureItemsRecords[0].whoAmI.library.id).toBe(libStructureItemCategories);
@@ -1718,7 +1718,7 @@ describe('JoinLibraries', () => {
 
                     structureItemsCategories = res.data.data.saveValueBatch.values.map(v => ({
                         id: v.payload.id,
-                        id_value: v.id_value
+                        id_value: v.id_value,
                     }));
                 });
 
@@ -1748,7 +1748,7 @@ describe('JoinLibraries', () => {
                     expect(res.data.data.deleteValue[0].payload.id).toBe(structureItemsCategories[0].id);
 
                     const structureItemsRecords = await getStructureItemsCategoriesRecords(
-                        res.data.data.deleteValue[0].payload.id
+                        res.data.data.deleteValue[0].payload.id,
                     );
                     expect(structureItemsRecords).toHaveLength(0); // should be deleted
 

@@ -9,7 +9,7 @@ export default function (
     permissionType?: PermissionTypes | null,
     applyTo?: string | null,
     permissionAction?: PermissionsActions | null,
-    key?: string | null
+    key?: string | null,
 ): string {
     let k = `${PERMISSIONS_CACHE_HEADER}`;
 

@@ -8,8 +8,8 @@ describe('getDefaultPermission', () => {
     test('Return default permissions', async () => {
         const config = {
             permissions: {
-                default: false
-            }
+                default: false,
+            },
         };
 
         const defaultPermHelper = defaultPermission({config: config as IConfig});
@@ -22,8 +22,8 @@ describe('getDefaultPermission', () => {
     test('Return true if no default permissions', async () => {
         const config = {
             permissions: {
-                default: null
-            }
+                default: null,
+            },
         };
 
         const defaultPermHelper = defaultPermission({config: config as IConfig});

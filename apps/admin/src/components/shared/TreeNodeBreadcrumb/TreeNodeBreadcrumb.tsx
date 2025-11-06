@@ -31,7 +31,7 @@ function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.E
                 key: el.record?.whoAmI?.id,
                 content: <PathPart record={el.record?.whoAmI} actions={actions} />,
                 link: false,
-                active: false
+                active: false,
             });
         }
     }
@@ -42,7 +42,7 @@ function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.E
             key: elementRecord.whoAmI.id,
             content: <PathPart record={elementRecord.whoAmI} actions={actions} altPaths={altPaths} />,
             link: false,
-            active: true
+            active: true,
         });
     }
 

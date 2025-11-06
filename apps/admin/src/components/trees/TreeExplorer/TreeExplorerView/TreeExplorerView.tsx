@@ -10,7 +10,7 @@ import {useTranslation} from 'react-i18next';
 import {
     type NodeData,
     type OnDragPreviousAndNextLocation,
-    SortableTreeWithoutDndContext as SortableTree
+    SortableTreeWithoutDndContext as SortableTree,
 } from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ import {
     type DeleteNodeHandler,
     type MoveNodeHandler,
     type NodeVisibilityToggleHandler,
-    type TreeChangeHandler
+    type TreeChangeHandler,
 } from '../_types';
 
 const Wrapper = styled.div<{compact: boolean}>`
@@ -115,7 +115,7 @@ const LibIconLabel = styled(Label)`
 const initialEditionState: IEditionState = {
     library: '',
     path: [],
-    parent: null
+    parent: null,
 };
 
 const TreeExplorerView = ({
@@ -129,7 +129,7 @@ const TreeExplorerView = ({
     selection,
     readOnly,
     onAddElement,
-    compact = false
+    compact = false,
 }: ITreeExplorerViewProps) => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
@@ -153,7 +153,7 @@ const TreeExplorerView = ({
         setEditionState({
             parent,
             library,
-            path
+            path,
         });
     };
     const _handleCloseAddElementModal = () => setOpenAddElementModal(false);
@@ -226,7 +226,7 @@ const TreeExplorerView = ({
                                             parent: rowInfo.parentNode?.id ?? fakeRootId,
                                             library: rowInfo.node.record.whoAmI.library?.id,
                                             recordId: rowInfo.node.record.whoAmI.id,
-                                            path: rowInfo.path as string[]
+                                            path: rowInfo.path as string[],
                                         })}
                                     />
                                     <Dropdown.Item
@@ -246,7 +246,7 @@ const TreeExplorerView = ({
                                     onClick={_handleOpenAddElementModal(
                                         rowInfo.node.id,
                                         rowInfo.path as string[],
-                                        lib.library.id
+                                        lib.library.id,
                                     )}
                                     label={
                                         <LibIconLabel
@@ -259,10 +259,10 @@ const TreeExplorerView = ({
                             ))}
                         </Dropdown.Menu>
                     </Dropdown>
-                )
+                ),
             ],
             className: nodeClasses.join(' '),
-            onClick
+            onClick,
         };
     };
 
@@ -273,7 +273,7 @@ const TreeExplorerView = ({
     const theme = {
         scaffoldBlockPxWidth: compact ? 25 : 35,
         rowHeight: compact ? 35 : 50,
-        slideRegionSize: compact ? 30 : 50
+        slideRegionSize: compact ? 30 : 50,
     };
 
     return (

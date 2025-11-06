@@ -22,15 +22,15 @@ export function configureLogger(config: ILoggerConfig): void {
             silent: config.silent,
             format: useJsonFormat
                 ? winston.format.json()
-                : winston.format.combine(winston.format.colorize(), winston.format.simple())
-        })
+                : winston.format.combine(winston.format.colorize(), winston.format.simple()),
+        }),
     ];
     if (destinationFile) {
         transports.push(
             new winston.transports.File({
                 filename: destinationFile,
-                format: useJsonFormat ? winston.format.json() : winston.format.combine(winston.format.simple())
-            })
+                format: useJsonFormat ? winston.format.json() : winston.format.combine(winston.format.simple()),
+            }),
         );
     }
 
@@ -39,7 +39,7 @@ export function configureLogger(config: ILoggerConfig): void {
     const formats = [
         catchErrorLog ? catchErrorLog() : undefined,
         addLocationInfo ? addLocationInfoInLog() : undefined,
-        addTimestamp ? winston.format.timestamp() : undefined
+        addTimestamp ? winston.format.timestamp() : undefined,
     ].filter(f => !!f) as winston.Logform.Format[];
 
     winston.configure({
@@ -47,7 +47,7 @@ export function configureLogger(config: ILoggerConfig): void {
         handleExceptions: true,
         transports,
         defaultMeta: additionalMeta,
-        format: winston.format.combine(...formats)
+        format: winston.format.combine(...formats),
     });
 }
 

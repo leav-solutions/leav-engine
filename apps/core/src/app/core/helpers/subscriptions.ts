@@ -20,6 +20,6 @@ export default function (): ICoreSubscriptionsHelpersApp {
 
     return {
         commonSubscriptionsFilters,
-        isOwnEvent: (event, ctx) => event.userId === ctx.userId
+        isOwnEvent: (event, ctx) => event.userId === ctx.userId,
     };
 }

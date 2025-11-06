@@ -14,9 +14,9 @@ export const mockUser: ME_me = {
         library: {
             id: 'users',
             label: {
-                fr: 'Utilisateurs'
-            }
+                fr: 'Utilisateurs',
+            },
         },
-        preview: null
-    }
+        preview: null,
+    },
 };

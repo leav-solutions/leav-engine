@@ -23,7 +23,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
         module: 'skeleton-app',
         label: {fr: 'Mon application', en: 'My app'},
         description: {fr: 'Application métier', en: 'Business app'},
-        endpoint: 'skeleton-app'
+        endpoint: 'skeleton-app',
     };
 
     const _createApplication = async (app: MigrationApplicationToCreate, ctx: IQueryInfos) => {
@@ -34,14 +34,14 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                         FILTER app._key == ${app._key}
                         RETURN app
                 `,
-            ctx
+            ctx,
         });
 
         // If not, create it
         if (!existingApp.length) {
             await dbService.execute({
                 query: aql`INSERT ${app} INTO core_applications RETURN NEW`,
-                ctx
+                ctx,
             });
         }
     };
@@ -49,6 +49,6 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
     return {
         async run(ctx) {
             await _createApplication(skeletonApplication, ctx);
-        }
+        },
     };
 }

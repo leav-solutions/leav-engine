@@ -7,7 +7,7 @@ export const systemPreviewsSettings: ILibrary['previewsSettings'] = [
     {
         label: {
             fr: 'Aperçu système',
-            en: 'System preview'
+            en: 'System preview',
         },
         description: null,
         system: true,
@@ -17,25 +17,25 @@ export const systemPreviewsSettings: ILibrary['previewsSettings'] = [
             sizes: [
                 {
                     size: 64,
-                    name: 'tiny'
+                    name: 'tiny',
                 },
                 {
                     size: 128,
-                    name: 'small'
+                    name: 'small',
                 },
                 {
                     size: 256,
-                    name: 'medium'
+                    name: 'medium',
                 },
                 {
                     size: 512,
-                    name: 'big'
+                    name: 'big',
                 },
                 {
                     size: 1024,
-                    name: 'huge'
-                }
-            ]
-        }
-    }
+                    name: 'huge',
+                },
+            ],
+        },
+    },
 ];

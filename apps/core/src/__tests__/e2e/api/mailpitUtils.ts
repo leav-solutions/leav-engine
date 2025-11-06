@@ -46,11 +46,11 @@ export async function waitMailpitMessage(acceptMessage: (msg: IMailpitMsgLight) 
     const mailMsg = await waitWebSocketMessage<IMailpitWebSocketMsg>(
         webSocket,
         msg => msg.Type === 'new' && acceptMessage(msg.Data),
-        {timeoutMs: 20000}
+        {timeoutMs: 20000},
     );
 
     const msg = await axios.get<IMailpitMsgFull>(`http://${mailpitAddress}/api/v1/message/${mailMsg.Data.ID}`, {
-        responseType: 'json'
+        responseType: 'json',
     });
 
     return msg.data;

@@ -15,7 +15,7 @@ import {
     AttributeFormats,
     type AttributeTypes,
     type IAttributeVersionsConf,
-    type IEmbeddedAttribute
+    type IEmbeddedAttribute,
 } from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 import {USERS_LIBRARY} from '../../../_types/library';
@@ -37,15 +37,15 @@ const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
         return jwt.sign(
             {
                 userId,
-                groupsId
+                groupsId,
             },
             conf.auth.key,
             {
                 algorithm: conf.auth.algorithm as Algorithm,
-                expiresIn: conf.auth.tokenExpiration
-            }
+                expiresIn: conf.auth.tokenExpiration,
+            },
         );
-    }
+    },
 });
 
 export const e2eAdminUser = (): IE2EUser => e2eUser({userId: adminUserId, groupsId: [adminsGroupId]});
@@ -67,7 +67,7 @@ export const e2eGuestUser = async (): Promise<IE2EUser> => {
                     id
                 }
             }
-        }`
+        }`,
         );
         guestUserId = res.data.data.createRecord.record.id;
     }
@@ -83,7 +83,7 @@ export async function getGraphQLUrl() {
 export class E2EGraphQLError extends Error {
     public constructor(
         message: string,
-        public readonly response: AxiosResponse
+        public readonly response: AxiosResponse,
     ) {
         super(message);
     }
@@ -102,7 +102,7 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
         const data = typeof query === 'string' ? {query} : query;
         const headers = {
             Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
-            ...(typeof query !== 'string' && (data as FormData).getHeaders())
+            ...(typeof query !== 'string' && (data as FormData).getHeaders()),
         };
 
         const res = await axios.post(url, data, {headers});
@@ -110,9 +110,9 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
         if (res.status === 200 && res.data.errors?.length) {
             throw new E2EGraphQLError(
                 `${res.data.errors[0].message} - ${JSON.stringify(
-                    res.data.errors[0]?.extensions?.fields
+                    res.data.errors[0]?.extensions?.fields,
                 )} - Code ${res.data.errors[0]?.extensions?.code} - Query was: ${query}`,
-                res
+                res,
             );
         } else if (res.status !== 200) {
             throw new E2EGraphQLError(`HTTP error ${res.status} - Query was: ${query}`, res);
@@ -131,7 +131,7 @@ export async function gqlSaveLibrary(
     id: string,
     label: string,
     additionalAttributes: string[] = [],
-    settings?: string
+    settings?: string,
 ) {
     const baseAttributes = ['id', 'modified_by', 'modified_at', 'created_by', 'created_at'];
     const libAttributes = baseAttributes.concat(additionalAttributes);
@@ -144,7 +144,7 @@ export async function gqlSaveLibrary(
             attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
             ${settings ? `settings: ${settings}` : ''}
         }) { id }
-    }`
+    }`,
     );
 
     return saveLibRes.data.data;
@@ -159,7 +159,7 @@ export async function gqlSaveApplication(id: string, label: string, endpoint: st
                 endpoint: "${endpoint}",
                 module: "data-studio"
             }) { id }
-        }`
+        }`,
     );
 
     return saveAppRes.data.data;
@@ -195,7 +195,7 @@ export async function gqlSaveAttribute(params: {
         multipleValues,
         reverseLink,
         actionsList,
-        required
+        required,
     } = params;
 
     const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => `
@@ -220,7 +220,7 @@ export async function gqlSaveAttribute(params: {
                                 params: [${(actionConf?.params ?? [])
                                     .map(p => `{name: "${p.name}", value: "${p.value}"}`)
                                     .join(', ')}]
-                            }`
+                            }`,
                         );
 
                         return `${eventKey}: [${eventActions.join(', ')}]`;
@@ -272,13 +272,13 @@ export async function gqlSaveTree(id: string, label: string, libraries: string[]
                 libraries: [${libraries
                     .map(
                         l =>
-                            `{library: "${l}", settings: {allowMultiplePositions: false, allowedAtRoot: true,  allowedChildren: ["__all__"]}}`
+                            `{library: "${l}", settings: {allowMultiplePositions: false, allowedAtRoot: true,  allowedChildren: ["__all__"]}}`,
                     )
                     .join(', ')}]}
         ) {
             id
         }
-    }`
+    }`,
     );
 
     return saveTreeRes.data.data;
@@ -293,7 +293,7 @@ export async function gqlCreateRecord(library: string): Promise<string> {
             }
         }
     }
-    `
+    `,
     );
 
     return res.data.data.c.record.id;
@@ -312,7 +312,7 @@ export async function gqlAddUserToGroup(groupNodeId: string) {
         }) {
             id_value
         }
-    }`
+    }`,
     );
 }
 
@@ -328,7 +328,7 @@ export async function gqlAddElemToTree(
     treeId: string,
     element: ITreeElement,
     parent?: string | null,
-    order?: number
+    order?: number,
 ): Promise<string> {
     const res = await makeGraphQlCall(
         `mutation {
@@ -338,7 +338,7 @@ export async function gqlAddElemToTree(
             ${parent ? `parent: ${parent}` : ''}
             order: ${order ?? 0}
         ) { id }
-    }`
+    }`,
     );
 
     return res.data.data.treeAddElement.id;
@@ -352,7 +352,7 @@ export async function gqlSaveValue(attributeId: string, libraryId: string, recor
         }) {
             id_value
         }
-    }`
+    }`,
     );
 }
 
@@ -366,7 +366,7 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
             }) {
             id
         }
-    }`
+    }`,
     );
 }
 
@@ -382,20 +382,20 @@ export async function makeWebSocketGraphQlCall(options?: {user: IE2EUser}): Prom
     const config = await getConfig();
     const token = await user.getAuthToken();
     const headers = {
-        Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`
+        Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
     };
 
     class MyWebSocket extends WebSocket {
         public constructor(address, protocols) {
             super(address, protocols, {
-                headers
+                headers,
             });
         }
     }
 
     return createGraphqlWsClient({
         url: `ws://${config.server.host}:${config.server.port}/graphql`,
-        webSocketImpl: MyWebSocket
+        webSocketImpl: MyWebSocket,
     });
 }
 
@@ -404,7 +404,7 @@ export async function waitGraphqlWebSocketMessage<T>(
     query: string,
     variables: Record<string, any>,
     acceptMessage: (msg: T) => boolean,
-    {timeoutMs}: {timeoutMs}
+    {timeoutMs}: {timeoutMs},
 ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -414,7 +414,7 @@ export async function waitGraphqlWebSocketMessage<T>(
         client.subscribe(
             {
                 query,
-                variables
+                variables,
             },
             {
                 next: data => {
@@ -430,8 +430,8 @@ export async function waitGraphqlWebSocketMessage<T>(
                 },
                 complete: () => {
                     clearTimeout(timeout);
-                }
-            }
+                },
+            },
         );
     });
 }
@@ -439,7 +439,7 @@ export async function waitGraphqlWebSocketMessage<T>(
 export async function waitWebSocketMessage<T>(
     webSocket: WebSocket,
     acceptMessage: (msg: T) => boolean,
-    {timeoutMs}: {timeoutMs}
+    {timeoutMs}: {timeoutMs},
 ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         const timeout = setTimeout(() => {

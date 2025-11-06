@@ -28,7 +28,7 @@ function Navigator(props: INavigatorProps): JSX.Element {
         ...initialState,
         ...props,
         lang,
-        selectedRoot: props.restrictToRoots && props.restrictToRoots.length === 1 ? props.restrictToRoots[0] : null
+        selectedRoot: props.restrictToRoots && props.restrictToRoots.length === 1 ? props.restrictToRoots[0] : null,
     });
     useEffect(() => {
         if (props.getSelectionRef) {
@@ -38,7 +38,7 @@ function Navigator(props: INavigatorProps): JSX.Element {
     const rootSelected = (root: string) =>
         dispatch({
             type: ActionTypes.SET_SELECTED_ROOT,
-            data: root
+            data: root,
         });
     return state.selectedRoot ? (
         <MainPanel state={state} dispatch={dispatch} />

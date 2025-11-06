@@ -19,12 +19,12 @@ export const useInitAuth = () => {
                         forward(operation).subscribe({
                             next: observer.next.bind(observer),
                             error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer)
+                            complete: observer.complete.bind(observer),
                         });
                     } catch (err) {
                         observer.error(err);
                     }
                 })();
-            })
+            }),
     };
 };

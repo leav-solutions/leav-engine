@@ -9,7 +9,7 @@ export interface ITasksState {
 }
 
 export const tasksInitialState: ITasksState = {
-    tasks: {}
+    tasks: {},
 };
 
 const tasksSlice = createSlice({
@@ -22,8 +22,8 @@ const tasksSlice = createSlice({
         deleteTasks: (state, action: PayloadAction<Array<{id: string}>>) => {
             const toExclude = action.payload.map(e => e.id);
             state.tasks = Object.fromEntries(Object.entries(state.tasks).filter(t => !toExclude.includes(t[0])));
-        }
-    }
+        },
+    },
 });
 
 export const {addTask, deleteTasks} = tasksSlice.actions;

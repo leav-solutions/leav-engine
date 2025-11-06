@@ -8,12 +8,12 @@ export default function useLoginChecker() {
         loginChecker: async () => {
             const res = await fetch(`${GLOBAL_BASE_URL}/auth/login-checker`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'}
+                headers: {'Content-Type': 'application/json'},
             });
 
             if (!res.ok) {
                 throw new Error(res.statusText, {cause: res});
             }
-        }
+        },
     };
 }

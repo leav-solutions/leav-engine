@@ -26,8 +26,8 @@ export const handleVersion = async ({version, rootPaths, input, type, config}: I
                 params: {
                     ...version,
                     name: size.name,
-                    output: null
-                }
+                    output: null,
+                },
             });
         }
 
@@ -48,7 +48,7 @@ export const handleVersion = async ({version, rootPaths, input, type, config}: I
         results,
         rootPaths,
         config,
-        first: true
+        first: true,
     });
 
     const maxSizePath = versionMaxSize.output;
@@ -71,8 +71,8 @@ export const handleVersion = async ({version, rootPaths, input, type, config}: I
                 results,
                 rootPaths,
                 config,
-                first: false
-            })
+                first: false,
+            }),
         );
 
         await Promise.all(resizes);

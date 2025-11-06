@@ -84,7 +84,7 @@ const marginBySize: Record<PreviewSize, string> = {
     [PreviewSize.TINY]: '0.3rem',
     [PreviewSize.SMALL]: '0.5rem',
     [PreviewSize.MEDIUM]: '0.8rem',
-    [PreviewSize.BIG]: '0.8rem'
+    [PreviewSize.BIG]: '0.8rem',
 };
 
 const Wrapper = styled.div<IWrapperProps>`
@@ -134,7 +134,7 @@ function EntityCard({
     withSubLabel = true,
     withPreview = true,
     style,
-    previewStyle
+    previewStyle,
 }: IEntityCardProps): JSX.Element {
     return (
         <Wrapper

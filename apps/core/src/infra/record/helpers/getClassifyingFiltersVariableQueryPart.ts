@@ -19,7 +19,7 @@ export type GetClassifyingFiltersVariableQueryPart = (filter: IRecordFilterOptio
 
 export default function ({
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
-    'core.infra.db.dbService': dbService = null
+    'core.infra.db.dbService': dbService = null,
 }: IDeps): GetClassifyingFiltersVariableQueryPart {
     return filter => {
         if (!filterTypesHelper.isClassifyingFilter(filter)) {

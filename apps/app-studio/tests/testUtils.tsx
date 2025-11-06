@@ -62,7 +62,7 @@ const Providers: FunctionComponent<PropsWithChildren<IProvidersProps>> = ({child
         lang: ['fr'],
         availableLangs: ['en', 'fr'],
         defaultLang: 'fr',
-        setLang: jest.fn()
+        setLang: jest.fn(),
     };
 
     return (

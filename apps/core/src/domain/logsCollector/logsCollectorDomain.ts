@@ -27,7 +27,7 @@ export default function ({
     'core.infra.amqpService': amqpService,
     'core.infra.indexation.indexationService': indexationService,
     'core.utils.logger': logger,
-    'core.infra.elasticsearch.service': esService
+    'core.infra.elasticsearch.service': esService,
 }: ILogsCollectorDomainDeps): ILogsCollectorDomain {
     const _validateMsg = (msg: IDbEvent) => {
         const msgBodySchema = Joi.object()
@@ -43,19 +43,19 @@ export default function ({
                             .keys({
                                 record: Joi.object().keys({
                                     id: Joi.string().required(),
-                                    libraryId: Joi.string().required()
+                                    libraryId: Joi.string().required(),
                                 }),
                                 library: Joi.string(),
                                 attribute: Joi.string(),
-                                tree: Joi.string()
+                                tree: Joi.string(),
                             })
                             .unknown(true)
                             .allow(null),
                         before: Joi.any(),
                         after: Joi.any(),
-                        metadata: Joi.any()
+                        metadata: Joi.any(),
                     })
-                    .required()
+                    .required(),
             })
             .unknown(true);
 
@@ -78,8 +78,8 @@ export default function ({
             logger.error(`Error processing message ${e.stack}`, {
                 msg: {
                     ...msg,
-                    content: msg.content.toString() || 'Unable to parse json content' // override buffer data, may be undefined if JSON.parse failed
-                }
+                    content: msg.content.toString() || 'Unable to parse json content', // override buffer data, may be undefined if JSON.parse failed
+                },
             });
         }
 
@@ -89,7 +89,7 @@ export default function ({
         const dataToSave = {
             '@timestamp': event.time,
             ...msgMetadata,
-            ...payload
+            ...payload,
         };
 
         await esService.writeData(indexName, dataToSave);
@@ -101,18 +101,18 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.logsCollector.queue,
                 config.amqp.exchange,
-                config.eventsManager.routingKeys.data_events
+                config.eventsManager.routingKeys.data_events,
             );
 
             await amqpService.consume(
                 config.logsCollector.queue,
                 config.eventsManager.routingKeys.data_events,
-                _onMessage
+                _onMessage,
             );
 
             await indexationService.init();
 
             logger.info('Logs Manager is ready. Waiting for events... 👀');
-        }
+        },
     };
 }

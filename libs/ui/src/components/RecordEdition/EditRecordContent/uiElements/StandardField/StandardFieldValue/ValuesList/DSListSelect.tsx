@@ -28,7 +28,7 @@ const addOption = (options: IOption[], optionToAdd: IOption) => {
     if (optionToAdd.value && isNewOption(optionToAdd.value, options)) {
         newOptions.unshift({
             value: optionToAdd.value,
-            label: optionToAdd.label
+            label: optionToAdd.label,
         });
     }
     return newOptions;
@@ -44,7 +44,7 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     readonly,
     handleSubmit,
     inheritedFlags,
-    calculatedFlags
+    calculatedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSListSelect should be used inside a antd Form.Item');
@@ -78,11 +78,11 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
             values = valuesList.map(v => {
                 const rangeValue = {
                     from: dayjs.unix(Number(v.from)).format('DD-MM-YYYY'),
-                    to: dayjs.unix(Number(v.to)).format('DD-MM-YYYY')
+                    to: dayjs.unix(Number(v.to)).format('DD-MM-YYYY'),
                 };
                 return {
                     value: stringifyDateRangeValue(rangeValue, t),
-                    label: {from: v.from, to: v.to}
+                    label: {from: v.from, to: v.to},
                 };
             });
         } else {
@@ -109,13 +109,13 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
             value: searchedString,
             label:
                 (allowListUpdate ? t('record_edition.create_and_select_option') : t('record_edition.select_option')) +
-                searchedString
+                searchedString,
         });
     }
 
     const searchResultsCount = useMemo(
         () => options.filter(option => option.label.toLowerCase().includes(searchedString.toLowerCase())).length,
-        [searchedString]
+        [searchedString],
     );
 
     const _resetToInheritedOrCalculatedValue = async () => {
@@ -145,10 +145,10 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
                             enable: true,
                             allowFreeEntry: true,
                             allowListUpdate: true,
-                            values: [...attribute.values_list.values, selectedValue]
-                        }
-                    }
-                }
+                            values: [...attribute.values_list.values, selectedValue],
+                        },
+                    },
+                },
             });
             editRecordDispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
         }

@@ -20,7 +20,7 @@ jest.mock(
     () =>
         function ALCContainer() {
             return <>ALCContainer</>;
-        }
+        },
 );
 
 describe('ActionsListTab', () => {
@@ -30,7 +30,7 @@ describe('ActionsListTab', () => {
                 <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
                     <ActionsListTab attribute={mockAttrSimple} />
                 </MockedProvider>
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(await screen.findByText('ALCContainer'));
@@ -42,7 +42,7 @@ describe('ActionsListTab', () => {
                 <MockedProvider mocks={NO_AVAILABLE_ACTION_MOCK} addTypename={false}>
                     <ActionsListTab attribute={mockAttrSimple} />
                 </MockedProvider>
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(await screen.findByText('ALCContainer'));

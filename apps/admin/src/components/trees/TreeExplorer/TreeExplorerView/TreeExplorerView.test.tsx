@@ -9,7 +9,7 @@ import TreeExplorerView from './TreeExplorerView';
 jest.mock('react-sortable-tree', () => ({
     SortableTreeWithoutDndContext() {
         return <div>MOCK TestComponent</div>;
-    }
+    },
 }));
 
 jest.mock('hooks/useLang');
@@ -30,7 +30,7 @@ describe('StructureView', () => {
                 onVisibilityToggle={onVisibilityToggle}
                 onMoveNode={onMoveNode}
                 onDeleteNode={onDeleteNode}
-            />
+            />,
         );
 
         expect(comp.find('Loading')).toHaveLength(1);
@@ -52,7 +52,7 @@ describe('StructureView', () => {
                 onVisibilityToggle={onVisibilityToggle}
                 onMoveNode={onMoveNode}
                 onDeleteNode={onDeleteNode}
-            />
+            />,
         );
 
         expect(comp.find('Loading')).toHaveLength(0);

@@ -20,9 +20,9 @@ function GeneralCustomizationTab(): JSX.Element {
         update: (cache, {data: {saveGlobalSettings: savedSettings}}) => {
             cache.writeQuery({
                 query: getGlobalSettingsQuery,
-                data: {globalSettings: savedSettings}
+                data: {globalSettings: savedSettings},
             });
-        }
+        },
     });
 
     const _handleSubmit = async (settings: GlobalSettingsInput) => {

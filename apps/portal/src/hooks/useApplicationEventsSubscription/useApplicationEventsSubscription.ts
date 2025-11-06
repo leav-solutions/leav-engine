@@ -14,7 +14,7 @@ const useApplicationEventsSubscription = () =>
             const application = subscriptionData.data.applicationEvent.application;
             const appsList = client.cache.readQuery<GET_APPLICATIONS>({
                 query: getApplicationsQuery,
-                variables: {}
+                variables: {},
             });
 
             const appFromList = appsList?.applications.list.find(app => app.id === application.id);
@@ -39,11 +39,11 @@ const useApplicationEventsSubscription = () =>
                 data: {
                     applications: {
                         ...appsList.applications,
-                        list: newList
-                    }
-                }
+                        list: newList,
+                    },
+                },
             });
-        }
+        },
     });
 
 export default useApplicationEventsSubscription;

@@ -12,8 +12,8 @@ const record: IRecordIdentityWhoAmI = {
     id: '1',
     label: 'record 1',
     library: {
-        id: 'lib1'
-    }
+        id: 'lib1',
+    },
 };
 const attributeId = 'attr1';
 
@@ -39,7 +39,7 @@ describe('ValuesSummary', () => {
                 attributeId={attributeId}
                 globalValues={multipleValues}
                 calculatedValue={null}
-            />
+            />,
         );
 
         expect(screen.getByText(multipleValue1)).toBeVisible();
@@ -54,7 +54,7 @@ describe('ValuesSummary', () => {
                 attributeId={attributeId}
                 globalValues={[]}
                 calculatedValue={calculatedValue}
-            />
+            />,
         );
 
         expect(screen.getByText(calculatedValue)).toBeVisible();
@@ -68,7 +68,7 @@ describe('ValuesSummary', () => {
                 attributeId={attributeId}
                 globalValues={['<div>12</div>']}
                 calculatedValue="<p><span>23</span></p>"
-            />
+            />,
         );
 
         expect(screen.getByText('12')).toBeVisible();
@@ -82,7 +82,7 @@ describe('ValuesSummary', () => {
                 attributeId={attributeId}
                 globalValues={[{from: 1, to: 2}]}
                 calculatedValue={{from: 3, to: 4}}
-            />
+            />,
         );
 
         expect(screen.getAllByTitle(/record_edition.date_range_value|1|2/)[0]).toBeVisible();

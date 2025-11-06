@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function TreeNodeBreadcrumb() {
             return <div>TreeNodeBreadcrumb</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -19,7 +19,7 @@ jest.mock(
     () =>
         function EditRecordModal() {
             return <div>EditRecordModal</div>;
-        }
+        },
 );
 
 describe('EditRecordFormLinksTreeElement', () => {
@@ -33,13 +33,13 @@ describe('EditRecordFormLinksTreeElement', () => {
                     library: {
                         id: 'test_lib',
                         label: {
-                            fr: 'Test Lib'
-                        }
+                            fr: 'Test Lib',
+                        },
                     },
                     label: 'TestLabel',
                     color: null,
-                    preview: null
-                }
+                    preview: null,
+                },
             },
             ancestors: [
                 {
@@ -50,14 +50,14 @@ describe('EditRecordFormLinksTreeElement', () => {
                             library: {
                                 id: 'test_lib',
                                 label: {
-                                    fr: 'Test Lib'
-                                }
+                                    fr: 'Test Lib',
+                                },
                             },
                             label: 'TestLabel2',
                             color: null,
-                            preview: null
-                        }
-                    }
+                            preview: null,
+                        },
+                    },
                 },
                 {
                     id: '1',
@@ -67,20 +67,20 @@ describe('EditRecordFormLinksTreeElement', () => {
                             library: {
                                 id: 'test_lib',
                                 label: {
-                                    fr: 'Test Lib'
-                                }
+                                    fr: 'Test Lib',
+                                },
                             },
                             label: 'TestLabel',
                             color: null,
-                            preview: null
-                        }
-                    }
-                }
-            ]
+                            preview: null,
+                        },
+                    },
+                },
+            ],
         },
         modified_at: 1234567890,
         created_at: 1234567890,
-        version: null
+        version: null,
     };
 
     test('Display value and its ancestors', async () => {

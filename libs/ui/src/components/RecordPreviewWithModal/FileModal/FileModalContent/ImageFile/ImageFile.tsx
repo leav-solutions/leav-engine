@@ -41,8 +41,8 @@ function ImageFile({fileData, fallback, showTransparency = false}: IFileViewerPr
                     icons: {
                         ...defaultPreviewIcons,
                         rotateLeft: false,
-                        rotateRight: false
-                    }
+                        rotateRight: false,
+                    },
                 }}
             />
         </>

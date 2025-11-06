@@ -28,18 +28,18 @@ function DisplayOptions(): JSX.Element {
     const sizes = {
         [ViewSizes.SMALL]: t('items_list.display.small'),
         [ViewSizes.MEDIUM]: t('items_list.display.medium'),
-        [ViewSizes.BIG]: t('items_list.display.big')
+        [ViewSizes.BIG]: t('items_list.display.big'),
     };
 
     enum SizeAction {
         LESS = 'LESS',
-        MORE = 'MORE'
+        MORE = 'MORE',
     }
 
     const _handleChangeType = (type: ViewTypes) => {
         searchDispatch({
             type: SearchActionTypes.SET_DISPLAY,
-            display: {type, size: searchState.display.size}
+            display: {type, size: searchState.display.size},
         });
     };
 
@@ -50,7 +50,7 @@ function DisplayOptions(): JSX.Element {
 
         searchDispatch({
             type: SearchActionTypes.SET_DISPLAY,
-            display: {type: searchState.display.type, size: ViewSizes[Object.keys(sizes)[idx]]}
+            display: {type: searchState.display.type, size: ViewSizes[Object.keys(sizes)[idx]]},
         });
     };
 
@@ -81,25 +81,25 @@ function DisplayOptions(): JSX.Element {
                             +
                         </Button>
                     </DisplaySizeWrapper>
-                )
+                ),
             },
             {
                 type: 'divider',
-                key: 'divider'
+                key: 'divider',
             },
             {
                 key: 'display_list',
                 label: t('view.type-list'),
                 onClick: () => _handleChangeType(ViewTypes.list),
-                icon: <MenuOutlined />
+                icon: <MenuOutlined />,
             },
             {
                 key: 'display_cards',
                 label: t('view.type-cards'),
                 onClick: () => _handleChangeType(ViewTypes.cards),
-                icon: <AppstoreFilled />
-            }
-        ]
+                icon: <AppstoreFilled />,
+            },
+        ],
     };
 
     return (

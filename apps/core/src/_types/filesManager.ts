@@ -11,7 +11,7 @@ export enum FileEvents {
     CREATE = 'CREATE',
     REMOVE = 'REMOVE',
     UPDATE = 'UPDATE',
-    MOVE = 'MOVE'
+    MOVE = 'MOVE',
 }
 
 export enum FilesAttributes {
@@ -31,7 +31,7 @@ export enum FilesAttributes {
     HEIGHT = 'height',
     PRINT_WIDTH = 'print_width',
     PRINT_HEIGHT = 'print_height',
-    RESOLUTION = 'resolution'
+    RESOLUTION = 'resolution',
 }
 
 export const PREVIEWS_ATTRIBUTE_SUFFIX = 'previews';

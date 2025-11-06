@@ -24,12 +24,12 @@ export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExpo
                     Query: {
                         async export(parent, {library, filters, profile}, ctx): Promise<string> {
                             return exportDomain.exportExcel({library, filters, ctx, profile}, {});
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-        }
+        },
     };
 }

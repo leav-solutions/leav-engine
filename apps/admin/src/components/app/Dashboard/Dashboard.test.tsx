@@ -12,32 +12,32 @@ describe('Dashboard', () => {
             {
                 request: {
                     query: getStatsQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         libraries: {
-                            totalCount: 42
+                            totalCount: 42,
                         },
                         attributes: {
-                            totalCount: 1337
+                            totalCount: 1337,
                         },
                         trees: {
-                            totalCount: 38
+                            totalCount: 38,
                         },
                         applications: {
-                            totalCount: 2
-                        }
-                    }
-                }
-            }
+                            totalCount: 2,
+                        },
+                    },
+                },
+            },
         ];
 
         render(
             <MemoryRouter>
                 <Dashboard />
             </MemoryRouter>,
-            {apolloMocks: mocks}
+            {apolloMocks: mocks},
         );
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();

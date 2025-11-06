@@ -35,7 +35,7 @@ interface IDeps {
 export default function ({
     'core.infra.oidcClient': oidcClient = null,
     'core.infra.session': sessionRepo = null,
-    config = null
+    config = null,
 }: IDeps = {}): IOIDCClientService {
     const _buildAuthVerificationKeysCacheKey = (queryId: string) => `${AUTH_VERIFICATION_KEYS_HEADER}:${queryId}`;
     const _buildOriginalUrlCacheKey = (queryId: string) => `${ORIGINAL_URL_HEADER}:${queryId}`;
@@ -56,7 +56,7 @@ export default function ({
         sessionRepo.storeData({
             key: _buildAuthVerificationKeysCacheKey(queryId),
             data: JSON.stringify(data),
-            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS
+            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS,
         });
 
     const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) =>
@@ -77,14 +77,14 @@ export default function ({
         sessionRepo.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
-            expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60
+            expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60,
         });
 
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
         sessionRepo.storeData({
             key: _buildOriginalUrlCacheKey(queryId),
             data: originalUrl,
-            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS
+            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS,
         });
 
     const _getOriginalUrlByQueryId = async (queryId: string) => {
@@ -112,7 +112,7 @@ export default function ({
                 grant_type: 'authorization_code',
                 code: authorizationCode,
                 code_verifier: codeVerifier,
-                redirect_uri: redirectUri
+                redirect_uri: redirectUri,
             });
         },
         getAuthorizationUrl: async ({redirectUri, queryId}) => {
@@ -124,12 +124,12 @@ export default function ({
                 response_type: 'code',
                 scope: 'openid',
                 code_challenge: generators.codeChallenge(codeVerifier),
-                code_challenge_method: 'S256'
+                code_challenge_method: 'S256',
             });
         },
         getLogoutUrl: async ({userId}) => {
             const payload: EndSessionParameters = {
-                post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri
+                post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri,
             };
 
             if (config.auth.oidc.skipLogoutConfirmationPage && userId) {
@@ -156,6 +156,6 @@ export default function ({
             // No need to await delete fn, it's just for clean up
             _deleteOriginalUrlByQueryId(queryId);
             return originalUrl;
-        }
+        },
     };
 }

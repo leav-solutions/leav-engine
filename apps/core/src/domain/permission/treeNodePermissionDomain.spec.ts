@@ -26,13 +26,13 @@ const depsBase: ToAny<ITreeNodePermissionDomainDeps> = {
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.infra.tree': jest.fn(),
     'core.domain.attribute': jest.fn(),
-    'core.infra.value': jest.fn()
+    'core.infra.value': jest.fn(),
 };
 
 describe('treeNodePermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'recordPermissionDomainTest'
+        queryId: 'recordPermissionDomainTest',
     };
 
     afterEach(() => jest.clearAllMocks());
@@ -40,16 +40,16 @@ describe('treeNodePermissionDomain', () => {
     describe('getTreeNodePermission', () => {
         const treeNode: ITreeElement = {
             id: 'baseElement',
-            library: 'lib1'
+            library: 'lib1',
         };
 
         const mockTreeRepoNoPerm: Mockify<ITreeRepo> = {
             getTrees: global.__mockPromise({list: [{...mockTree, permissions_conf: null}]}),
-            getRecordByNodeId: global.__mockPromise(treeNode)
+            getRecordByNodeId: global.__mockPromise(treeNode),
         };
 
         const mockTreeLibPermissionDomain: Mockify<ITreeLibraryPermissionDomain> = {
-            getTreeLibraryPermission: global.__mockPromise(true)
+            getTreeLibraryPermission: global.__mockPromise(true),
         };
 
         const treeWithPerms: ITree = {
@@ -57,9 +57,9 @@ describe('treeNodePermissionDomain', () => {
             permissions_conf: {
                 lib1: {
                     permissionTreeAttributes: ['attr1'],
-                    relation: PermissionsRelations.AND
-                }
-            }
+                    relation: PermissionsRelations.AND,
+                },
+            },
         };
 
         const mockAncestors: TreePath = [
@@ -67,29 +67,29 @@ describe('treeNodePermissionDomain', () => {
                 id: 'parentNode1',
                 record: {
                     id: 'parent1',
-                    library: 'lib1'
-                }
+                    library: 'lib1',
+                },
             },
             {
                 id: 'parentNode2',
                 record: {
                     id: 'parent2',
-                    library: 'lib1'
-                }
-            }
+                    library: 'lib1',
+                },
+            },
         ];
 
         const mockElementAncestors: Mockify<IElementAncestorsHelper> = {
-            getCachedElementAncestors: global.__mockPromise(mockAncestors)
+            getCachedElementAncestors: global.__mockPromise(mockAncestors),
         };
 
         const mockTreeRepoWithPerm: Mockify<ITreeRepo> = {
             getTrees: global.__mockPromise({list: [treeWithPerms]}),
-            getRecordByNodeId: global.__mockPromise(treeNode)
+            getRecordByNodeId: global.__mockPromise(treeNode),
         };
 
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: global.__mockPromise({...mockAttrTree, id: 'category'})
+            getAttributeProperties: global.__mockPromise({...mockAttrTree, id: 'category'}),
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
@@ -103,9 +103,9 @@ describe('treeNodePermissionDomain', () => {
                                 id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
                                 record: {
                                     id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
-                                    library: 'category'
-                                }
-                            }
+                                    library: 'category',
+                                },
+                            },
                         };
                         break;
                     case 'user_groups':
@@ -115,20 +115,20 @@ describe('treeNodePermissionDomain', () => {
                                 id: '12346',
                                 record: {
                                     id: 1,
-                                    library: 'users_groups'
-                                }
-                            }
+                                    library: 'users_groups',
+                                },
+                            },
                         };
                         break;
                 }
 
                 return Promise.resolve([val]);
-            })
+            }),
         };
 
         test('Should return global tree library permission if no permissions conf defined', async () => {
             const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
-                getTreePermission: global.__mockPromise(false)
+                getTreePermission: global.__mockPromise(false),
             };
 
             const domain = treeNodePermissionDomain({
@@ -137,7 +137,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
-                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockTree)
+                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockTree),
             });
 
             const perm = await domain.getTreeNodePermission({
@@ -145,7 +145,7 @@ describe('treeNodePermissionDomain', () => {
                 userId: ctx.userId,
                 nodeId: '123456',
                 treeId: 'test',
-                ctx
+                ctx,
             });
 
             expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).toBeCalled();
@@ -154,7 +154,7 @@ describe('treeNodePermissionDomain', () => {
 
         test('Should return permission defined on element', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
-                getTreeBasedPermission: global.__mockPromise(false)
+                getTreeBasedPermission: global.__mockPromise(false),
             };
 
             const domain = treeNodePermissionDomain({
@@ -165,7 +165,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
                 'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(treeWithPerms),
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as IValueRepo,
             });
 
             const perm = await domain.getTreeNodePermission({
@@ -173,7 +173,7 @@ describe('treeNodePermissionDomain', () => {
                 userId: ctx.userId,
                 nodeId: '123456',
                 treeId: 'test',
-                ctx
+                ctx,
             });
 
             expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).not.toBeCalled();
@@ -190,7 +190,7 @@ describe('treeNodePermissionDomain', () => {
                             return Promise.resolve(false);
                     }
                     return Promise.reject(new Error('Unknown mock call'));
-                })
+                }),
             };
 
             const domain = treeNodePermissionDomain({
@@ -201,7 +201,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
                 'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockTree),
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as IValueRepo,
             });
 
             const perm = await domain.getTreeNodePermission({
@@ -209,7 +209,7 @@ describe('treeNodePermissionDomain', () => {
                 userId: ctx.userId,
                 nodeId: '123456',
                 treeId: 'test',
-                ctx
+                ctx,
             });
 
             expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).toBeCalled();
@@ -220,12 +220,12 @@ describe('treeNodePermissionDomain', () => {
     describe('getInheritedTreeNodePermission', () => {
         test('Return herited tree node permission', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
-                getInheritedTreeBasedPermission: global.__mockPromise(false)
+                getInheritedTreeBasedPermission: global.__mockPromise(false),
             };
 
             const treeNodePermDomain = treeNodePermissionDomain({
                 ...depsBase,
-                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
             });
 
             const perm = await treeNodePermDomain.getInheritedTreeNodePermission({
@@ -235,7 +235,7 @@ describe('treeNodePermissionDomain', () => {
                 libraryId: 'test_lib',
                 permTree: 'categories',
                 permTreeNode: '54321',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(false);

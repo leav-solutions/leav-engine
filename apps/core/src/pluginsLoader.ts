@@ -32,7 +32,7 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
 
             return allExtPoints;
         },
-        {}
+        {},
     );
 
     const utils: IUtils = depsManager.cradle['core.utils'];
@@ -61,8 +61,8 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
             ...depsManager.cradle.config,
             plugins: {
                 ...depsManager.cradle.config.plugins,
-                [pluginName]: pluginConf
-            }
+                [pluginName]: pluginConf,
+            },
         };
 
         depsManager.register('config', asValue(newConf));
@@ -81,7 +81,7 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
             name: packageInfos.name,
             description: packageInfos.description,
             version: packageInfos.version,
-            author: packageInfos.author
+            author: packageInfos.author,
         });
     }
 };

@@ -17,23 +17,23 @@ describe('useCanEditRecord', () => {
                         type: PermissionTypes.admin,
                         actions: [
                             PermissionsActions.admin_create_application,
-                            PermissionsActions.admin_delete_application
-                        ]
-                    }
+                            PermissionsActions.admin_delete_application,
+                        ],
+                    },
                 },
                 result: {
                     data: {
                         isAllowed: [
                             {name: 'admin_create_application', allowed: true},
-                            {name: 'admin_delete_application', allowed: true}
-                        ]
-                    }
-                }
-            }
+                            {name: 'admin_delete_application', allowed: true},
+                        ],
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationsPermissions(), {
-            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>
+            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>,
         });
 
         expect(result.current.loading).toBe(true);
@@ -53,19 +53,19 @@ describe('useCanEditRecord', () => {
                         type: PermissionTypes.admin,
                         actions: [
                             PermissionsActions.admin_create_application,
-                            PermissionsActions.admin_delete_application
-                        ]
-                    }
+                            PermissionsActions.admin_delete_application,
+                        ],
+                    },
                 },
                 result: {
                     // @ts-ignore
-                    errors: [new Error('Test error')]
-                }
-            }
+                    errors: [new Error('Test error')],
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationsPermissions(), {
-            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>
+            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>,
         });
 
         expect(result.current.loading).toBe(true);

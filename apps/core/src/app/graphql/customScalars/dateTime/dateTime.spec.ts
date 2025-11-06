@@ -42,7 +42,7 @@ describe('SystemTranslation', () => {
         test('Convert unix timestamp to Date object', async () => {
             const mockAst: StringValueNode = {
                 kind: Kind.STRING,
-                value: '2119480920'
+                value: '2119480920',
             };
 
             expect(scalar.parseLiteral(mockAst, null)).toEqual(expectedDate);
@@ -56,14 +56,14 @@ describe('SystemTranslation', () => {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'toto'
+                            value: 'toto',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'tat'
-                        }
-                    }
-                ]
+                            value: 'tat',
+                        },
+                    },
+                ],
             };
             expect(() => scalar.parseLiteral(mockAst, null)).toThrow();
         });

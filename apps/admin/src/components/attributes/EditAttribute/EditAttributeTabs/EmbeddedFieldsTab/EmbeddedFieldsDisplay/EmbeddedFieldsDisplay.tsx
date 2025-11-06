@@ -19,7 +19,7 @@ function EmbeddedFieldsDisplay({attribute}: IEmbeddedFieldsDisplayProps) {
                 height: '100%',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
             }}
         >
             <Header as="h5">{attribute.id}</Header>

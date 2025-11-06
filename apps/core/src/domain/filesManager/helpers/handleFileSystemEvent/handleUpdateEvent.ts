@@ -13,7 +13,7 @@ export const handleUpdateEvent = async (
     scanMsg: IFileEventData,
     {library}: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<void> => {
     const {fileName, filePath} = getInputData(scanMsg.pathAfter);
 
@@ -29,7 +29,7 @@ export const handleUpdateEvent = async (
         {recordLibrary, recordId},
         false,
         deps,
-        ctx
+        ctx,
     );
 
     if (!record) {
@@ -44,7 +44,7 @@ export const handleUpdateEvent = async (
         [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
         [FilesAttributes.HASH]: scanMsg.hash,
         [deps.utils.getPreviewsStatusAttributeName(library)]: previewsStatus,
-        [deps.utils.getPreviewsAttributeName(library)]: previews
+        [deps.utils.getPreviewsAttributeName(library)]: previews,
     };
 
     const fileMetadata = !scanMsg.isDirectory
@@ -64,6 +64,6 @@ export const handleUpdateEvent = async (
         pathAfter: scanMsg.pathAfter,
         libraryId: library,
         versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings ?? []),
-        deps: {...deps}
+        deps: {...deps},
     });
 };

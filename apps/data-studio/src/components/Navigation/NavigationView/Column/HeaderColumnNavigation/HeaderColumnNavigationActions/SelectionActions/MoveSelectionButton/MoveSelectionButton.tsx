@@ -26,7 +26,7 @@ function MoveSelectionButton({allowedLibraries, parent, onMessages}: IMoveSelect
 
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
     const dispatch = useAppDispatch();
 
@@ -35,19 +35,19 @@ function MoveSelectionButton({allowedLibraries, parent, onMessages}: IMoveSelect
     const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
 
     const canMoveSelection = selectionState.selection.selected.some((selected: ISharedSelected) =>
-        allowedLibraries.includes(selected.library)
+        allowedLibraries.includes(selected.library),
     );
 
     const _handleMoveEnd = async () => {
         const messages: IMessages = {
             countValid: 0,
-            errors: {}
+            errors: {},
         };
 
         const parentTo = parent?.id ?? null;
 
         const selectionToMove = selectionState.selection.selected.filter((selected: ISharedSelected) =>
-            allowedLibraries.includes(selected.library)
+            allowedLibraries.includes(selected.library),
         );
 
         for (const elementSelected of selectionToMove) {
@@ -56,8 +56,8 @@ function MoveSelectionButton({allowedLibraries, parent, onMessages}: IMoveSelect
                     variables: {
                         treeId: activeTree.id,
                         nodeId: elementSelected.nodeId,
-                        parentTo
-                    }
+                        parentTo,
+                    },
                 });
                 messages.countValid++;
             } catch (e) {
@@ -68,13 +68,13 @@ function MoveSelectionButton({allowedLibraries, parent, onMessages}: IMoveSelect
                     if (errorMessageParent) {
                         messages.errors[errorMessageParent] = [
                             ...(messages.errors[errorMessageParent] ?? []),
-                            elementSelected.id
+                            elementSelected.id,
                         ];
                     }
                     if (errorMessageElement) {
                         messages.errors[errorMessageElement] = [
                             ...(messages.errors[errorMessageElement] ?? []),
-                            elementSelected.label || elementSelected.id
+                            elementSelected.label || elementSelected.id,
                         ];
                     }
                 }

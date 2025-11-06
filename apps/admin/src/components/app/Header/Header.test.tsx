@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function ApplicationsSwitcher() {
             return <div>ApplicationsSwitcher</div>;
-        }
+        },
 );
 
 describe('Header', () => {

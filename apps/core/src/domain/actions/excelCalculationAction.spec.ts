@@ -15,22 +15,22 @@ const mockCalculationsVariable = {
     processVariableString: async (
         ctx: IActionsListContext,
         variable: string,
-        initialValue: ActionsListValueType
+        initialValue: ActionsListValueType,
     ): Promise<IVariableValue[]> => [
         {
             payload: `${variable}Value`,
             raw_payload: `${variable}RawValue`,
             recordId: '1',
-            library: 'meh'
-        }
-    ]
+            library: 'meh',
+        },
+    ],
 };
 
 const ctx = {userId: 'test_user'};
 
 describe('excelCalculationAction', () => {
     const mockUtils: Mockify<IUtils> = {
-        translateError: jest.fn().mockReturnValue('Excel calculation error')
+        translateError: jest.fn().mockReturnValue('Excel calculation error'),
     };
 
     const mockResultValueBase: IValue = {
@@ -40,7 +40,7 @@ describe('excelCalculationAction', () => {
         modified_by: null,
         created_at: null,
         created_by: null,
-        payload: null
+        payload: null,
     };
 
     describe('with hyperformula', () => {
@@ -49,7 +49,7 @@ describe('excelCalculationAction', () => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             config: {actions: {excel: {useNewHyperformula: true}}} as IConfig,
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            'core.utils.logger': {} as ILogger
+            'core.utils.logger': {} as ILogger,
         });
 
         test('Simple excelCalculation', async () => {
@@ -58,9 +58,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: '42'
+                    Formula: '42',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42', raw_payload: '42'}]});
@@ -69,20 +69,20 @@ describe('excelCalculationAction', () => {
                     [],
                     {
                         Description: 'test',
-                        Formula: '42+42'
+                        Formula: '42+42',
                     },
-                    ctx
-                )
+                    ctx,
+                ),
             ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84', raw_payload: '84'}]});
             expect(
                 await action(
                     [],
                     {
                         Description: 'test',
-                        Formula: 'SUM(42,43,44)'
+                        Formula: 'SUM(42,43,44)',
                     },
-                    ctx
-                )
+                    ctx,
+                ),
             ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '129', raw_payload: '129'}]});
         });
 
@@ -92,9 +92,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: ''
+                    Formula: '',
                 },
-                ctx
+                ctx,
             );
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '', raw_payload: ''}]});
         });
@@ -105,9 +105,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: 'T("resultat {toto} {tata} {titi}")'
+                    Formula: 'T("resultat {toto} {tata} {titi}")',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -116,9 +116,9 @@ describe('excelCalculationAction', () => {
                     {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
-                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue'
-                    }
-                ]
+                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
             });
         });
 
@@ -128,9 +128,9 @@ describe('excelCalculationAction', () => {
                 [mockStandardValue],
                 {
                     Description: 'test',
-                    Formula: 'T("resultat {toto} {tata} {titi}")'
+                    Formula: 'T("resultat {toto} {tata} {titi}")',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -140,9 +140,9 @@ describe('excelCalculationAction', () => {
                     {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
-                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue'
-                    }
-                ]
+                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
             });
         });
 
@@ -152,9 +152,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: 'UNKNOWN'
+                    Formula: 'UNKNOWN',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -162,10 +162,10 @@ describe('excelCalculationAction', () => {
                     {
                         errorType: Errors.EXCEL_CALCULATION_ERROR,
                         attributeValue: null,
-                        message: 'Error: Named expression UNKNOWN not recognized. in formula: -- =UNKNOWN --'
-                    }
+                        message: 'Error: Named expression UNKNOWN not recognized. in formula: -- =UNKNOWN --',
+                    },
                 ],
-                values: []
+                values: [],
             });
         });
 
@@ -175,9 +175,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: 'SUM(42'
+                    Formula: 'SUM(42',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -186,10 +186,10 @@ describe('excelCalculationAction', () => {
                         errorType: Errors.EXCEL_CALCULATION_ERROR,
                         attributeValue: null,
                         message:
-                            "Error: Parsing error. Expecting token of type --> RParen <-- but found --> '' <-- in formula: -- =SUM(42 --"
-                    }
+                            "Error: Parsing error. Expecting token of type --> RParen <-- but found --> '' <-- in formula: -- =SUM(42 --",
+                    },
                 ],
-                values: []
+                values: [],
             });
         });
     });
@@ -200,7 +200,7 @@ describe('excelCalculationAction', () => {
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             config: {actions: {excel: {useNewHyperformula: false}}} as IConfig,
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            'core.utils.logger': {} as ILogger
+            'core.utils.logger': {} as ILogger,
         });
 
         test('Simple excelCalculation', async () => {
@@ -209,9 +209,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: '42'
+                    Formula: '42',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42', raw_payload: '42'}]});
@@ -220,10 +220,10 @@ describe('excelCalculationAction', () => {
                     [],
                     {
                         Description: 'test',
-                        Formula: '42+42'
+                        Formula: '42+42',
                     },
-                    ctx
-                )
+                    ctx,
+                ),
             ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84', raw_payload: '84'}]});
         });
 
@@ -233,9 +233,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: ''
+                    Formula: '',
                 },
-                ctx
+                ctx,
             );
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '', raw_payload: ''}]});
         });
@@ -246,9 +246,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: '"resultat {toto} {tata} {titi}"'
+                    Formula: '"resultat {toto} {tata} {titi}"',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -257,9 +257,9 @@ describe('excelCalculationAction', () => {
                     {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
-                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue'
-                    }
-                ]
+                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
             });
         });
 
@@ -269,9 +269,9 @@ describe('excelCalculationAction', () => {
                 [mockStandardValue],
                 {
                     Description: 'test',
-                    Formula: '"resultat {toto} {tata} {titi}"'
+                    Formula: '"resultat {toto} {tata} {titi}"',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -281,9 +281,9 @@ describe('excelCalculationAction', () => {
                     {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
-                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue'
-                    }
-                ]
+                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
             });
         });
 
@@ -293,9 +293,9 @@ describe('excelCalculationAction', () => {
                 [],
                 {
                     Description: 'test',
-                    Formula: 'UNKNOWN'
+                    Formula: 'UNKNOWN',
                 },
-                ctx
+                ctx,
             );
 
             expect(res).toEqual({
@@ -303,10 +303,10 @@ describe('excelCalculationAction', () => {
                     {
                         errorType: Errors.EXCEL_CALCULATION_ERROR,
                         attributeValue: null,
-                        message: 'Error: #NAME? in formula: -- UNKNOWN --'
-                    }
+                        message: 'Error: #NAME? in formula: -- UNKNOWN --',
+                    },
                 ],
-                values: []
+                values: [],
             });
         });
     });

@@ -7,6 +7,6 @@ export default function closeSettings(state: IFormBuilderState, action: IFormBui
     return {
         ...state,
         openSettings: false,
-        elementInSettings: null
+        elementInSettings: null,
     };
 }

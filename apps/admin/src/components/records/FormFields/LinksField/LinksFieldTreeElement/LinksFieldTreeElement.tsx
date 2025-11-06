@@ -41,8 +41,8 @@ function LinksFieldTreeElement({value, readOnly, onDeleteLink}: ILinksFieldTreeE
         {
             text: t('records.edit'),
             icon: 'edit outline',
-            action: _handleOpenEditRecordModal
-        }
+            action: _handleOpenEditRecordModal,
+        },
     ];
 
     if (!readOnly) {
@@ -50,7 +50,7 @@ function LinksFieldTreeElement({value, readOnly, onDeleteLink}: ILinksFieldTreeE
             text: t('records.delete_link'),
             icon: 'trash alternate outline',
             action: _handleDeleteLink,
-            displayFilter: (r: RecordIdentity_whoAmI) => r.id === value.treeValue?.record.whoAmI.id
+            displayFilter: (r: RecordIdentity_whoAmI) => r.id === value.treeValue?.record.whoAmI.id,
         });
     }
 

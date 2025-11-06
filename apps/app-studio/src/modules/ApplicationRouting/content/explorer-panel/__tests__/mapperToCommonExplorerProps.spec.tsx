@@ -18,7 +18,7 @@ describe('mapToCommonExplorerProps', () => {
                 showAttributeLabels: true,
                 creationFormId: 'create-id',
                 noPagination: true,
-                showActionsLabels: true
+                showActionsLabels: true,
             };
 
             expect(mapToCommonExplorerProps({explorerProps})).toEqual({
@@ -32,9 +32,9 @@ describe('mapToCommonExplorerProps', () => {
                 defaultPrimaryActions: ['create'],
                 defaultMassActions: ['deactivate'],
                 defaultViewSettings: {
-                    enableConfigureView: false
+                    enableConfigureView: false,
                 },
-                defaultActionsForItem: ['activate']
+                defaultActionsForItem: ['activate'],
             });
         });
 
@@ -49,7 +49,7 @@ describe('mapToCommonExplorerProps', () => {
                 freezeView: false,
                 showAttributeLabels: false,
                 creationFormId: 'create-id',
-                showActionsLabels: false
+                showActionsLabels: false,
             };
 
             expect(mapToCommonExplorerProps({explorerProps})).toEqual({
@@ -64,8 +64,8 @@ describe('mapToCommonExplorerProps', () => {
                 defaultActionsForItem: [],
                 defaultMassActions: [],
                 defaultViewSettings: {
-                    enableConfigureView: true
-                }
+                    enableConfigureView: true,
+                },
             });
         });
     });
@@ -78,7 +78,7 @@ describe('mapToCommonExplorerProps', () => {
         expect(commonExplorerProps.showSearch).toBeUndefined();
         expect(commonExplorerProps.ignoreViewByDefault).toBeUndefined();
         expect(commonExplorerProps.defaultViewSettings).toEqual({
-            enableConfigureView: false
+            enableConfigureView: false,
         });
         expect(commonExplorerProps.hideTableHeader).toBeUndefined();
         expect(commonExplorerProps.noPagination).toBe(undefined);

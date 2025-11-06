@@ -76,7 +76,7 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
                 {initials}
             </GeneratedPreview>
         ),
-        [initials, bgColor, fontColor, style]
+        [initials, bgColor, fontColor, style],
     );
 }
 

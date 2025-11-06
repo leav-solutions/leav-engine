@@ -88,7 +88,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id library {id}} } }`
+                    ]) { list {id library {id}} } }`,
                 );
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
@@ -110,7 +110,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newDirName}"}
-                    ]) { list {id library {id}} } }`
+                    ]) { list {id library {id}} } }`,
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -133,7 +133,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -153,7 +153,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -173,7 +173,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -194,7 +194,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 const res2 = await makeGraphQlCall(
@@ -202,7 +202,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(res1.data.errors).toBeUndefined();
@@ -226,7 +226,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, newDirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -249,7 +249,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 const fileRecordsFind = await makeGraphQlCall(
@@ -257,7 +257,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName, newDirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(dirRecordsFind.data.errors).toBeUndefined();
@@ -281,7 +281,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id} } }`
+                    ]) { list {id} } }`,
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -319,16 +319,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (preview !== 'pages') {
@@ -352,16 +352,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (preview !== 'pages') {
@@ -385,16 +385,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (preview !== 'pages') {
@@ -418,16 +418,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (preview !== 'pages') {
@@ -451,16 +451,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pdf'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (recordsFind.data.data[library].list[0].previews[preview]) {
@@ -484,16 +484,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.odp'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (recordsFind.data.data[library].list[0].previews[preview]) {
@@ -517,16 +517,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pptx'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (recordsFind.data.data[library].list[0].previews[preview]) {
@@ -550,16 +550,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.docx'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (recordsFind.data.data[library].list[0].previews[preview]) {
@@ -583,7 +583,7 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.eps'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -609,16 +609,16 @@ describe('Files manager', () => {
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.mp4'}"}
-                    ]) { list {id previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`,
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
 
                 recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews
+                    recordsFind.data.data[library].list[0].previews,
                 );
                 recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status
+                    recordsFind.data.data[library].list[0].previews_status,
                 );
                 for (const preview in recordsFind.data.data[library].list[0].previews) {
                     if (preview !== 'pages') {

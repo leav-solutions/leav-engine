@@ -14,7 +14,7 @@ import {
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors
+    useSensors,
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
@@ -51,8 +51,8 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
-        })
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
     );
 
     const _toggleColumnVisibility = (field: string) => () => {
@@ -61,16 +61,16 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
             dispatch({
                 type: ViewSettingsActionTypes.REMOVE_SORT,
                 payload: {
-                    field
-                }
+                    field,
+                },
             });
         } else {
             dispatch({
                 type: ViewSettingsActionTypes.ADD_SORT,
                 payload: {
                     order: SortOrder.asc,
-                    field
-                }
+                    field,
+                },
             });
         }
     };
@@ -80,8 +80,8 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
             type: ViewSettingsActionTypes.CHANGE_SORT_ORDER,
             payload: {
                 field,
-                order
-            }
+                order,
+            },
         });
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
@@ -97,7 +97,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
 
     const activeFilters = view.sort.filter(({field}) => searchFilteredColumnsIds.includes(field));
     const inactiveFilters = searchFilteredColumnsIds.filter(field =>
-        view.sort.every(sortItem => sortItem.field !== field)
+        view.sort.every(sortItem => sortItem.field !== field),
     );
 
     return (
@@ -119,7 +119,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                                         values: [
                                             order === SortOrder.asc
                                                 ? t('explorer.sort-ascending')
-                                                : t('explorer.sort-descending')
+                                                : t('explorer.sort-descending'),
                                         ],
                                         expandable: true,
                                         dropDownProps: {
@@ -129,24 +129,24 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                                                 items: [
                                                     {
                                                         key: SortOrder.asc,
-                                                        label: t('explorer.sort-ascending')
+                                                        label: t('explorer.sort-ascending'),
                                                     },
                                                     {
                                                         key: SortOrder.desc,
-                                                        label: t('explorer.sort-descending')
-                                                    }
+                                                        label: t('explorer.sort-descending'),
+                                                    },
                                                 ],
                                                 onSelect: ({selectedKeys: [newOrder]}) =>
                                                     _changeOrderActiveFilterTo(field)(newOrder as SortOrder),
                                                 onDeselect: ({selectedKeys: [newOrder]}) =>
-                                                    _changeOrderActiveFilterTo(field)(newOrder as SortOrder)
-                                            }
-                                        }
+                                                    _changeOrderActiveFilterTo(field)(newOrder as SortOrder),
+                                            },
+                                        },
                                     }}
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
-                                        onClick: _toggleColumnVisibility(field)
+                                        onClick: _toggleColumnVisibility(field),
                                     }}
                                 />
                             ))}
@@ -167,12 +167,12 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                         key={field}
                         attributeId={field}
                         filterChipProps={{
-                            label: attributeDetailsById[field].label
+                            label: attributeDetailsById[field].label,
                         }}
                         visibilityButtonProps={{
                             icon: <StyledEyeSlash />,
                             title: String(t('explorer.show')),
-                            onClick: _toggleColumnVisibility(field)
+                            onClick: _toggleColumnVisibility(field),
                         }}
                     />
                 ))}

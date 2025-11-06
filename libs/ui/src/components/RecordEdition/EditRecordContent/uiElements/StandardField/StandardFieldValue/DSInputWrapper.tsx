@@ -19,7 +19,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     readonly,
     handleSubmit,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSInputWrapper should be used inside a antd Form.Item');

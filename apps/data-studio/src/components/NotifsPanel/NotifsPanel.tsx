@@ -51,7 +51,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
             completed: Object.values(tasks)
                 .filter(isCompletedTask)
                 .sort((a, b) => b.completedAt - a.completedAt)
-                .map(task => ({type: NotifTypes.TASK, ellipsis: true, data: task}))
+                .map(task => ({type: NotifTypes.TASK, ellipsis: true, data: task})),
         });
 
         setNbNotifs(panel.inProgress.length);
@@ -60,7 +60,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
     const _onCancel = async (notif: INotif) => {
         if (notif.type === NotifTypes.TASK) {
             await runCancelTask({
-                variables: {taskId: notif.data.id}
+                variables: {taskId: notif.data.id},
             });
         }
     };
@@ -68,7 +68,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
     const _onDelete = async (notif: INotif) => {
         if (notif.type === NotifTypes.TASK) {
             await runDeleteTasks({
-                variables: {tasks: [{id: notif.data.id, archive: true}]}
+                variables: {tasks: [{id: notif.data.id, archive: true}]},
             });
 
             dispatch(deleteTasks([{id: notif.data.id}]));
@@ -81,7 +81,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
             .map(n => ({id: n.data.id, archive: true}));
 
         await runDeleteTasks({
-            variables: {tasks: tasksToDel}
+            variables: {tasks: tasksToDel},
         });
 
         dispatch(deleteTasks(tasksToDel.map(ttd => ({id: ttd.id}))));
@@ -92,7 +92,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
         list[index[1]] = {type, ellipsis: !ellipsis, data: task};
         setPanel({
             inProgress: index[0] === 'inProgress' ? list : panel.inProgress,
-            completed: index[0] === 'completed' ? list : panel.completed
+            completed: index[0] === 'completed' ? list : panel.completed,
         });
     };
 
@@ -104,7 +104,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
             onClose={_onClose}
             placement="right"
             styles={{
-                body: {padding: 0}
+                body: {padding: 0},
             }}
         >
             {!!panel.inProgress.length && (

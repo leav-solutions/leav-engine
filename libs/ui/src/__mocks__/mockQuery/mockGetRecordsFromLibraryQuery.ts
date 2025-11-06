@@ -8,7 +8,7 @@ import {type IField} from '_ui/types/search';
 import {
     type IGetRecordsFromLibraryQuery,
     type IGetRecordsFromLibraryQueryElement,
-    type IGetRecordsFromLibraryQueryVariables
+    type IGetRecordsFromLibraryQueryVariables,
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {mockLibrarySimple} from '../common/library';
 import {mockPreviews} from '../common/record';
@@ -23,15 +23,15 @@ export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryE
         subLabel: 'sublabel',
         color: null,
         preview: mockPreviews,
-        library: mockLibrarySimple
-    }
+        library: mockLibrarySimple,
+    },
 };
 
 export const mockGetRecordsFromLibraryQuery = (libraryName: string, fields: IField[]): IGetRecordsFromLibraryQuery => ({
     records: {
         totalCount: 1,
-        list: [mockGetRecordsFromLibraryQueryElement]
-    }
+        list: [mockGetRecordsFromLibraryQueryElement],
+    },
 });
 
 export const mockGetRecordsFromLibraryQueryVar: IGetRecordsFromLibraryQueryVariables = {
@@ -41,5 +41,5 @@ export const mockGetRecordsFromLibraryQueryVar: IGetRecordsFromLibraryQueryVaria
     filters: [],
     sort: null,
     fullText: '',
-    version: []
+    version: [],
 };

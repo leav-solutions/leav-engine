@@ -12,7 +12,7 @@ interface IDeps {
 export type HandleRemovedLibrariesFunc = (
     treeDataBefore: ITree,
     treeDataAfter: ITree,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => Promise<void>;
 
 export default function ({'core.infra.tree': treeRepo}: IDeps): HandleRemovedLibrariesFunc {

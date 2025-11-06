@@ -15,15 +15,15 @@ describe('AttributesSelectionList', () => {
                 id: 'test_attr',
                 label: {
                     fr: 'Test',
-                    en: 'Test'
-                }
-            }
+                    en: 'Test',
+                },
+            },
         ];
 
         const toggleSelection = jest.fn();
 
         const comp = create(
-            <AttributesSelectionList attributes={attributes} selection={[]} toggleSelection={toggleSelection} />
+            <AttributesSelectionList attributes={attributes} selection={[]} toggleSelection={toggleSelection} />,
         );
 
         expect(comp).toMatchSnapshot();

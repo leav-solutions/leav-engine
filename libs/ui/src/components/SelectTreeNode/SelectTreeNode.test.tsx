@@ -30,17 +30,17 @@ describe('SelectTreeNode', () => {
                                     id: 'categories',
                                     label: {fr: 'Catégories'},
                                     behavior: gqlTypes.LibraryBehavior.standard,
-                                    __typename: 'Library'
+                                    __typename: 'Library',
                                 },
                                 preview: null,
-                                __typename: 'RecordIdentity'
+                                __typename: 'RecordIdentity',
                             },
-                            __typename: 'Categorie'
+                            __typename: 'Categorie',
                         },
-                        childrenCount: 1
-                    }
-                ]
-            }
+                        childrenCount: 1,
+                    },
+                ],
+            },
         };
 
         const mockResultFromChild = {
@@ -61,43 +61,43 @@ describe('SelectTreeNode', () => {
                                     id: 'categories',
                                     label: {fr: 'Catégories'},
                                     behavior: gqlTypes.LibraryBehavior.standard,
-                                    __typename: 'Library'
+                                    __typename: 'Library',
                                 },
-                                preview: null
+                                preview: null,
                             },
-                            __typename: 'Categorie'
+                            __typename: 'Categorie',
                         },
                         childrenCount: 0,
-                        __typename: 'TreeNode'
-                    }
-                ]
-            }
+                        __typename: 'TreeNode',
+                    },
+                ],
+            },
         };
 
         const mockResult: Mockify<gqlTypes.TreeNodeChildrenQueryResult> = {
             called: true,
             loading: false,
-            error: null
+            error: null,
         };
 
         jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue({
             data: {
                 trees: {
-                    list: [{id: 'treeId', label: {fr: 'Tree Label'}}]
-                }
+                    list: [{id: 'treeId', label: {fr: 'Tree Label'}}],
+                },
             },
             called: true,
             loading: false,
-            error: null
+            error: null,
         } as gqlTypes.TreeDataQueryQueryHookResult);
 
         jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
             jest
                 .fn()
                 .mockImplementation(({variables}) =>
-                    variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild}
+                    variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild},
                 ),
-            mockResult as gqlTypes.TreeNodeChildrenQueryResult
+            mockResult as gqlTypes.TreeNodeChildrenQueryResult,
         ]);
 
         render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} loadRecursively={false} />);

@@ -104,13 +104,13 @@ const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
         {
             attributesToDisplay: prevProps.attributesToDisplay,
             data: prevProps.dataGroupedFilteredSorted,
-            selectedKeys: prevProps.selection.selectedKeys
+            selectedKeys: prevProps.selection.selectedKeys,
         },
         {
             attributesToDisplay: nextProps.attributesToDisplay,
             data: nextProps.dataGroupedFilteredSorted,
-            selectedKeys: nextProps.selection.selectedKeys
-        }
+            selectedKeys: nextProps.selection.selectedKeys,
+        },
     );
 
 export const DataView: FunctionComponent<IDataViewProps> = memo(
@@ -121,7 +121,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         paginationProps,
         itemActions,
         selection: {onSelectionChange, selectedKeys, isMassSelectionAll, mode},
-        hideTableHeader = false
+        hideTableHeader = false,
     }) => {
         const {t} = useSharedTranslation();
 
@@ -144,7 +144,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                         attributeProperties={attributesProperties[attributeName]}
                         values={item.propertiesById[attributeName]}
                     />
-                )
+                ),
         }));
 
         //TODO: test row click
@@ -162,9 +162,9 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                       onChange: (selectedRowKeys: Key[]) => onSelectionChange(selectedRowKeys),
                       getCheckboxProps: isMassSelectionAll
                           ? () => ({
-                                disabled: true
+                                disabled: true,
                             })
-                          : undefined
+                          : undefined,
                   };
 
         // TODO: handle columns width based on attribute type/format
@@ -172,7 +172,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             <DataViewContainerDivStyled ref={containerRef} className={cn({headless: hideTableHeader})}>
                 <StyledTable
                     className={cn({
-                        'row-clickable': itemActionToUseOnRowClick
+                        'row-clickable': itemActionToUseOnRowClick,
                     })}
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     columns={columns}
@@ -182,7 +182,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     pagination={false}
                     rowSelection={_rowSelection}
                     onRow={(item: IItemData) => ({
-                        onClick: () => itemActionToUseOnRowClick?.callback(item)
+                        onClick: () => itemActionToUseOnRowClick?.callback(item),
                     })}
                 />
                 {paginationProps && (
@@ -205,5 +205,5 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             </DataViewContainerDivStyled>
         );
     },
-    arePropsEqual
+    arePropsEqual,
 );

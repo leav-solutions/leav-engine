@@ -22,7 +22,7 @@ describe('Custom Message', () => {
                 key={lang}
                 actionId={0}
                 setBlockCard={jest.fn()}
-            />
+            />,
         );
         const InputCustomMessageElem = screen.getByRole('textbox');
         expect(InputCustomMessageElem).toHaveValue(customMessage);

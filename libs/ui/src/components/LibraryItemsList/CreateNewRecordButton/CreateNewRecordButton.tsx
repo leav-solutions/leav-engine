@@ -24,7 +24,7 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
     libraryId,
     notifyNewCreation,
     valuesVersions,
-    canCreateAndEdit = true
+    canCreateAndEdit = true,
 }) => {
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState(false);

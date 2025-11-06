@@ -19,9 +19,9 @@ const useRefreshTreeContent = (treeId: string) => {
 
                     // Collect the garbage
                     cache.gc();
-                }
+                },
             });
-        }
+        },
     };
 };
 export default useRefreshTreeContent;

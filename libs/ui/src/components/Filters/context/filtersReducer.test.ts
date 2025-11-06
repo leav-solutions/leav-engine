@@ -10,19 +10,19 @@ const attributeDataStandard = {
     label: 'first',
     id: 'first',
     format: AttributeFormat.text,
-    type: AttributeType.simple
+    type: AttributeType.simple,
 };
 const attributeDataLink = {
     label: 'first',
     id: 'first',
     linkedLibrary: {id: 'toto'},
-    type: AttributeType.simple_link
+    type: AttributeType.simple_link,
 };
 const attributeDataThrough = {
     label: 'first',
     id: 'first',
     linkedLibrary: {id: 'toto'},
-    type: AttributeType.simple_link
+    type: AttributeType.simple_link,
 };
 
 const filtersReducer = filtersReducerBase(null);
@@ -40,14 +40,14 @@ describe('ViewSettings Reducer', () => {
                                 attribute: attributeDataStandard,
                                 field: 'first',
                                 condition: RecordFilterCondition.EQUAL,
-                                value: 'test'
+                                value: 'test',
                             },
                             {
                                 id: 'id2',
                                 attribute: attributeDataLink,
                                 field: 'second',
                                 condition: RecordFilterCondition.EQUAL,
-                                value: 'test'
+                                value: 'test',
                             },
                             {
                                 id: 'id3',
@@ -56,17 +56,17 @@ describe('ViewSettings Reducer', () => {
                                 condition: ThroughConditionFilter.THROUGH,
                                 subField: 'thirdSub',
                                 subCondition: null,
-                                value: 'test'
-                            }
-                        ]
+                                value: 'test',
+                            },
+                        ],
                     },
                     {
                         type: FiltersActionTypes.ADD_FILTER,
                         payload: {
                             attribute: attributeDataStandard,
-                            field: 'fourth'
-                        }
-                    }
+                            field: 'fourth',
+                        },
+                    },
                 );
                 expect(state.filters).toHaveLength(4);
                 expect(state.filters).toEqual([
@@ -75,14 +75,14 @@ describe('ViewSettings Reducer', () => {
                         attribute: attributeDataStandard,
                         field: 'first',
                         condition: RecordFilterCondition.EQUAL,
-                        value: 'test'
+                        value: 'test',
                     },
                     {
                         id: 'id2',
                         attribute: attributeDataLink,
                         field: 'second',
                         condition: RecordFilterCondition.EQUAL,
-                        value: 'test'
+                        value: 'test',
                     },
                     {
                         id: 'id3',
@@ -91,15 +91,15 @@ describe('ViewSettings Reducer', () => {
                         condition: ThroughConditionFilter.THROUGH,
                         subField: 'thirdSub',
                         subCondition: null,
-                        value: 'test'
+                        value: 'test',
                     },
                     {
                         id: expect.any(String),
                         attribute: attributeDataStandard,
                         field: 'fourth',
                         condition: RecordFilterCondition.CONTAINS,
-                        value: null
-                    }
+                        value: null,
+                    },
                 ]);
             });
         });
@@ -116,14 +116,14 @@ describe('ViewSettings Reducer', () => {
                             attribute: attributeDataStandard,
                             field: 'first',
                             condition: RecordFilterCondition.EQUAL,
-                            value: null
+                            value: null,
                         },
                         {
                             id: 'second-id',
                             attribute: attributeDataLink,
                             field: 'second',
                             condition: RecordFilterCondition.CONTAINS,
-                            value: '42'
+                            value: '42',
                         },
                         {
                             id: 'third-id',
@@ -132,16 +132,16 @@ describe('ViewSettings Reducer', () => {
                             condition: ThroughConditionFilter.THROUGH,
                             subField: 'thirdSub',
                             subCondition: RecordFilterCondition.NOT_EQUAL,
-                            value: null
-                        }
-                    ]
+                            value: null,
+                        },
+                    ],
                 },
                 {
                     type: FiltersActionTypes.RESET_FILTER,
                     payload: {
-                        id: 'second-id'
-                    }
-                }
+                        id: 'second-id',
+                    },
+                },
             );
             expect(state.filters).toHaveLength(3);
             expect(state.filters).toEqual([
@@ -150,14 +150,14 @@ describe('ViewSettings Reducer', () => {
                     attribute: attributeDataStandard,
                     field: 'first',
                     condition: RecordFilterCondition.EQUAL,
-                    value: null
+                    value: null,
                 },
                 {
                     id: 'second-id',
                     attribute: attributeDataLink,
                     field: 'second',
                     condition: RecordFilterCondition.CONTAINS,
-                    value: null
+                    value: null,
                 },
                 {
                     id: 'third-id',
@@ -166,8 +166,8 @@ describe('ViewSettings Reducer', () => {
                     condition: ThroughConditionFilter.THROUGH,
                     subField: 'thirdSub',
                     subCondition: RecordFilterCondition.NOT_EQUAL,
-                    value: null
-                }
+                    value: null,
+                },
             ]);
         });
 
@@ -183,8 +183,8 @@ describe('ViewSettings Reducer', () => {
                             attribute: attributeDataStandard,
                             field: 'second',
                             condition: RecordFilterCondition.CONTAINS,
-                            value: userFilterValue
-                        }
+                            value: userFilterValue,
+                        },
                     ],
                     initialFilters: [
                         {
@@ -192,16 +192,16 @@ describe('ViewSettings Reducer', () => {
                             attribute: attributeDataStandard,
                             field: 'second',
                             condition: RecordFilterCondition.NOT_CONTAINS,
-                            value: initialViewFilterValue
-                        }
-                    ]
+                            value: initialViewFilterValue,
+                        },
+                    ],
                 },
                 {
                     type: FiltersActionTypes.RESET_FILTER,
                     payload: {
-                        id: 'first-id'
-                    }
-                }
+                        id: 'first-id',
+                    },
+                },
             );
 
             expect(state.filters).toEqual([
@@ -210,8 +210,8 @@ describe('ViewSettings Reducer', () => {
                     attribute: attributeDataStandard,
                     field: 'second',
                     condition: RecordFilterCondition.NOT_CONTAINS,
-                    value: initialViewFilterValue
-                }
+                    value: initialViewFilterValue,
+                },
             ]);
         });
     });
@@ -226,14 +226,14 @@ describe('ViewSettings Reducer', () => {
                         attribute: attributeDataStandard,
                         field: 'first',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'second-id',
                         attribute: attributeDataLink,
                         field: 'second',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'third-id',
@@ -242,16 +242,16 @@ describe('ViewSettings Reducer', () => {
                         condition: ThroughConditionFilter.THROUGH,
                         subField: 'thirdSub',
                         subCondition: null,
-                        value: null
-                    }
-                ]
+                        value: null,
+                    },
+                ],
             },
             {
                 type: FiltersActionTypes.REMOVE_FILTER,
                 payload: {
-                    id: 'second-id'
-                }
-            }
+                    id: 'second-id',
+                },
+            },
         );
         expect(state.filters).toHaveLength(2);
         expect(state.filters).toEqual([
@@ -260,7 +260,7 @@ describe('ViewSettings Reducer', () => {
                 attribute: attributeDataStandard,
                 field: 'first',
                 condition: RecordFilterCondition.EQUAL,
-                value: null
+                value: null,
             },
             {
                 id: 'third-id',
@@ -269,8 +269,8 @@ describe('ViewSettings Reducer', () => {
                 condition: ThroughConditionFilter.THROUGH,
                 subField: 'thirdSub',
                 subCondition: null,
-                value: null
-            }
+                value: null,
+            },
         ]);
     });
 
@@ -284,16 +284,16 @@ describe('ViewSettings Reducer', () => {
                         attribute: attributeDataStandard,
                         field: 'first',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'second-id',
                         attribute: attributeDataLink,
                         field: 'second',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    }
-                ]
+                        value: null,
+                    },
+                ],
             },
             {
                 type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
@@ -302,9 +302,9 @@ describe('ViewSettings Reducer', () => {
                     attribute: attributeDataStandard,
                     field: 'first',
                     condition: RecordFilterCondition.LESS_THAN,
-                    value: null
-                }
-            }
+                    value: null,
+                },
+            },
         );
         expect(state.filters).toHaveLength(2);
         expect(state.filters).toEqual([
@@ -313,15 +313,15 @@ describe('ViewSettings Reducer', () => {
                 attribute: attributeDataStandard,
                 field: 'first',
                 condition: RecordFilterCondition.LESS_THAN,
-                value: null
+                value: null,
             },
             {
                 id: 'second-id',
                 attribute: attributeDataLink,
                 field: 'second',
                 condition: RecordFilterCondition.EQUAL,
-                value: null
-            }
+                value: null,
+            },
         ]);
     });
 
@@ -334,14 +334,14 @@ describe('ViewSettings Reducer', () => {
                     attribute: attributeDataStandard,
                     field: 'test',
                     condition: RecordFilterCondition.EQUAL,
-                    value: null
+                    value: null,
                 },
                 {
                     id: 'active-id',
                     attribute: attributeDataLink,
                     field: 'active',
                     condition: RecordFilterCondition.EQUAL,
-                    value: null
+                    value: null,
                 },
                 {
                     id: 'created_at-id',
@@ -350,9 +350,9 @@ describe('ViewSettings Reducer', () => {
                     condition: ThroughConditionFilter.THROUGH,
                     subField: 'created_atSub',
                     subCondition: null,
-                    value: null
-                }
-            ]
+                    value: null,
+                },
+            ],
         };
 
         const cases = [
@@ -365,7 +365,7 @@ describe('ViewSettings Reducer', () => {
                         attribute: attributeDataLink,
                         field: 'active',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'created_at-id',
@@ -374,16 +374,16 @@ describe('ViewSettings Reducer', () => {
                         condition: ThroughConditionFilter.THROUGH,
                         subField: 'created_atSub',
                         subCondition: null,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'id',
                         attribute: attributeDataStandard,
                         field: 'test',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    }
-                ]
+                        value: null,
+                    },
+                ],
             },
             {
                 indexFrom: 2,
@@ -396,23 +396,23 @@ describe('ViewSettings Reducer', () => {
                         condition: ThroughConditionFilter.THROUGH,
                         subField: 'created_atSub',
                         subCondition: null,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'id',
                         attribute: attributeDataStandard,
                         field: 'test',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'active-id',
                         attribute: attributeDataLink,
                         field: 'active',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    }
-                ]
+                        value: null,
+                    },
+                ],
             },
             {
                 indexFrom: 2,
@@ -423,7 +423,7 @@ describe('ViewSettings Reducer', () => {
                         attribute: attributeDataStandard,
                         field: 'test',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'created_at-id',
@@ -432,28 +432,28 @@ describe('ViewSettings Reducer', () => {
                         condition: ThroughConditionFilter.THROUGH,
                         subField: 'created_atSub',
                         subCondition: null,
-                        value: null
+                        value: null,
                     },
                     {
                         id: 'active-id',
                         attribute: attributeDataLink,
                         field: 'active',
                         condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    }
-                ]
+                        value: null,
+                    },
+                ],
             },
             {
                 indexFrom: 0,
                 indexTo: 0,
-                expected: initialState.filters
-            }
+                expected: initialState.filters,
+            },
         ];
 
         test.each(cases)('Move filter from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
             const state = filtersReducer(initialState, {
                 type: FiltersActionTypes.MOVE_FILTER,
-                payload: {indexFrom, indexTo}
+                payload: {indexFrom, indexTo},
             });
             expect(state.filters).toEqual(expected);
         });
@@ -468,14 +468,14 @@ describe('ViewSettings Reducer', () => {
                     attribute: attributeDataStandard,
                     field: 'first',
                     condition: RecordFilterCondition.EQUAL,
-                    value: null
-                }
-            ]
+                    value: null,
+                },
+            ],
         };
 
         const state = filtersReducer(filtersInitialState, {
             type: FiltersActionTypes.RESET,
-            payload: newState
+            payload: newState,
         });
 
         expect(state).toEqual(newState);

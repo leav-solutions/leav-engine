@@ -28,8 +28,8 @@ describe('formatDateRangeAction', () => {
                 {localized},
                 {
                     ...ctx,
-                    lang: 'en-GB'
-                }
+                    lang: 'en-GB',
+                },
             );
             expect(resEnGb.errors).toEqual([]);
             expect(resEnGb.values[0].payload).toEqual({from: '28 February 37 at 23:42', to: '28 February 37 at 23:43'});
@@ -39,13 +39,13 @@ describe('formatDateRangeAction', () => {
                 {localized},
                 {
                     ...ctx,
-                    lang: 'ko-KR'
-                }
+                    lang: 'ko-KR',
+                },
             );
             expect(resKoKr.errors).toEqual([]);
             expect(resKoKr.values[0].payload).toEqual({
                 from: '37년 2월 28일 오후 11:42',
-                to: '37년 2월 28일 오후 11:43'
+                to: '37년 2월 28일 오후 11:43',
             });
         });
 
@@ -57,19 +57,19 @@ describe('formatDateRangeAction', () => {
                     {localized},
                     {
                         ...ctx,
-                        lang: 'en-EN'
-                    }
+                        lang: 'en-EN',
+                    },
                 );
                 expect(result.values[0].payload).toEqual({
                     from: '2/28/2037, 11:42:00 PM',
-                    to: '2/28/2037, 11:43:00 PM'
+                    to: '2/28/2037, 11:43:00 PM',
                 });
                 expect(result.errors[0]).toEqual({
                     attributeValue: {value: localized},
                     errorType: 'FORMAT_ERROR',
-                    message: 'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
+                    message: 'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.',
                 });
-            }
+            },
         );
     });
 
@@ -95,15 +95,15 @@ describe('formatDateRangeAction', () => {
             expect((await action([{payload: {}, raw_payload: {}}], {}, ctx)).values[0].payload).toBe(null);
             expect(
                 (await action([{payload: {unknownProperty: null}, raw_payload: {unknownProperty: null}}], {}, ctx))
-                    .values[0].payload
+                    .values[0].payload,
             ).toBe(null);
             expect(
                 (await action([{payload: {from: '2119477320'}, raw_payload: {from: '2119477320'}}], {}, ctx)).values[0]
-                    .payload
+                    .payload,
             ).toBe(null);
             expect(
                 (await action([{payload: {to: '2119477320'}, raw_payload: {to: '2119477320'}}], {}, ctx)).values[0]
-                    .payload
+                    .payload,
             ).toBe(null);
             expect((await action([{payload: null, raw_payload: null}], {}, ctx)).values[0].payload).toBe(null);
         });
@@ -114,18 +114,18 @@ describe('formatDateRangeAction', () => {
                     await action(
                         [{payload: {from: 'aaaa', to: '2119477320'}, raw_payload: {from: 'aaaa', to: '2119477320'}}],
                         {},
-                        ctx
+                        ctx,
                     )
-                ).values[0].payload
+                ).values[0].payload,
             ).toEqual(['', '']);
             expect(
                 (
                     await action(
                         [{payload: {from: '2119477320', to: 'aaaa'}, raw_payload: {from: '2119477320', to: 'aaaa'}}],
                         {},
-                        ctx
+                        ctx,
                     )
-                ).values[0].payload
+                ).values[0].payload,
             ).toEqual(['', '']);
         });
     });
@@ -136,8 +136,8 @@ describe('formatDateRangeAction', () => {
                 [
                     {
                         payload: {from: '2119477320', to: '2119477380'},
-                        raw_payload: {from: '2119477320', to: '2119477380'}
-                    }
+                        raw_payload: {from: '2119477320', to: '2119477380'},
+                    },
                 ],
                 {
                     universal: 'D/MMMM/YY',
@@ -147,9 +147,9 @@ describe('formatDateRangeAction', () => {
                             "month": "narrow",
                             "day": "numeric",
                             "minute": "2-digit"
-                        }`
+                        }`,
                 },
-                {...ctx, lang: 'fr-FR'}
+                {...ctx, lang: 'fr-FR'},
             )
         ).values[0];
 

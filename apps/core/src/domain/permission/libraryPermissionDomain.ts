@@ -15,41 +15,41 @@ interface IDeps {
 }
 
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper
+    'core.domain.permission.helpers.globalPermission': globalPermHelper,
 }: IDeps): ILibraryPermissionDomain {
     const getLibraryPermission = async ({
         action,
         libraryId,
         userId,
-        ctx
+        ctx,
     }: IGetLibraryPermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.LIBRARY,
                 action,
-                applyTo: libraryId
+                applyTo: libraryId,
             },
-            ctx
+            ctx,
         );
 
     const getInheritedLibraryPermission = async ({
         action,
         libraryId,
         userGroupId,
-        ctx
+        ctx,
     }: IGetInheritedLibraryPermissionParams): Promise<boolean> =>
         globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.LIBRARY,
                 action,
                 applyTo: libraryId,
-                userGroupNodeId: userGroupId
+                userGroupNodeId: userGroupId,
             },
-            ctx
+            ctx,
         );
 
     return {
         getLibraryPermission,
-        getInheritedLibraryPermission
+        getInheritedLibraryPermission,
     };
 }

@@ -12,7 +12,7 @@ const FieldColumnWidth = {
     TINY: 125,
     SMALL: 150,
     MEDIUM: 250,
-    LARGE: 300
+    LARGE: 300,
 };
 
 const _getFieldColumWidth = (field: IExplorerData['attributes'][string]): number => {
@@ -54,6 +54,6 @@ export const useColumnWidth = () => {
         ref,
         getFieldColumnWidth: _getFieldColumWidth,
         columnWidth,
-        actionsColumnHeaderWidth: Math.max(columnWidth - lastColumnsInlinePadding, minmimumWidthForOneLineActionHeader)
+        actionsColumnHeaderWidth: Math.max(columnWidth - lastColumnsInlinePadding, minmimumWidthForOneLineActionHeader),
     };
 };

@@ -6,7 +6,7 @@ import {type ISystemTranslation} from './systemTranslation';
 export enum OrderType {
     CREATE = 'CREATE',
     CANCEL = 'CANCEL',
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
 }
 
 export enum TaskStatus {
@@ -16,13 +16,13 @@ export enum TaskStatus {
     FAILED = 'FAILED',
     DONE = 'DONE',
     PENDING_CANCEL = 'PENDING_CANCEL',
-    CANCELED = 'CANCELED'
+    CANCELED = 'CANCELED',
 }
 
 export enum TaskPriority {
     LOW = 0,
     MEDIUM = 1,
-    HIGH = 2
+    HIGH = 2,
 }
 
 export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'callbacks'> &
@@ -49,7 +49,7 @@ export interface ITaskFunc {
 export enum TaskCallbackType {
     ON_SUCCESS = 'ON_SUCCESS',
     ON_FAILURE = 'ON_FAILURE',
-    ON_CANCEL = 'ON_CANCEL'
+    ON_CANCEL = 'ON_CANCEL',
 }
 
 export enum TaskCallbackStatus {
@@ -57,7 +57,7 @@ export enum TaskCallbackStatus {
     RUNNING = 'RUNNING',
     FAILED = 'FAILED',
     DONE = 'DONE',
-    SKIPPED = 'SKIPPED'
+    SKIPPED = 'SKIPPED',
 }
 
 export type ITaskCallback = ITaskFunc & {args: any[]; type: TaskCallbackType[]; status?: TaskCallbackStatus};
@@ -73,7 +73,7 @@ export enum TaskType {
     EXPORT = 'EXPORT',
     IMPORT_CONFIG = 'IMPORT_CONFIG',
     IMPORT_DATA = 'IMPORT_DATA',
-    INDEXATION = 'INDEXATION'
+    INDEXATION = 'INDEXATION',
 }
 
 export interface ITaskRole {

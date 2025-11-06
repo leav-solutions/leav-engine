@@ -25,17 +25,17 @@ jest.mock('_ui/components/LibraryItemsList/LibraryItemsListEmpty', () => ({notif
 });
 
 const kitNotificationMock = {
-    success: jest.fn()
+    success: jest.fn(),
 };
 jest.mock('aristid-ds', () => ({
     ...jest.requireActual('aristid-ds'),
     useKitNotification: () => ({
-        kitNotification: kitNotificationMock
-    })
+        kitNotification: kitNotificationMock,
+    }),
 }));
 
 jest.spyOn(useGetRecordUpdatesSubscription, 'useGetRecordUpdatesSubscription').mockReturnValue({
-    loading: false
+    loading: false,
 });
 
 describe('<LibraryItemsListContent/>', () => {
@@ -50,8 +50,8 @@ describe('<LibraryItemsListContent/>', () => {
                     filters: [],
                     sort: {field: 'id', order: SortOrder.asc},
                     fullText: '',
-                    version: []
-                }
+                    version: [],
+                },
             },
             result: {
                 data: {
@@ -67,13 +67,13 @@ describe('<LibraryItemsListContent/>', () => {
                                     subLabel: 'sublabel',
                                     color: null,
                                     preview: mockPreviews,
-                                    library: mockLibrarySimple
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
+                                    library: mockLibrarySimple,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
         };
 
         test('should refresh and notify', async () => {
@@ -86,9 +86,9 @@ describe('<LibraryItemsListContent/>', () => {
                             behavior: LibraryBehavior.standard,
                             attributes: [],
                             permissions: {
-                                create_record: true
+                                create_record: true,
                             },
-                            linkedTrees: []
+                            linkedTrees: [],
                         } as any
                     }
                     defaultView={{
@@ -102,18 +102,18 @@ describe('<LibraryItemsListContent/>', () => {
                         sort: [
                             {
                                 field: 'id',
-                                order: SortOrder.asc
-                            }
-                        ]
+                                order: SortOrder.asc,
+                            },
+                        ],
                     }}
                 />,
                 {
                     mocks: [
                         mockGetRecordsFromLibraryQuery,
                         mockGetRecordsFromLibraryQuery,
-                        mockGetRecordsFromLibraryQuery
-                    ]
-                }
+                        mockGetRecordsFromLibraryQuery,
+                    ],
+                },
             );
 
             expect(screen.getByText(labelMenuItemList)).toBeVisible();
@@ -123,7 +123,7 @@ describe('<LibraryItemsListContent/>', () => {
             expect(kitNotificationMock.success).toHaveBeenCalledTimes(1);
             expect(kitNotificationMock.success).toHaveBeenCalledWith({
                 message: 'items_list.created_in_success.message',
-                description: ''
+                description: '',
             });
         });
     });

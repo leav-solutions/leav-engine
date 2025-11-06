@@ -14,7 +14,7 @@ export default function (): IActionsListFunction<{
     const _toString = (num: number, d: number): string =>
         num.toLocaleString('en', {
             minimumFractionDigits: d,
-            maximumFractionDigits: d
+            maximumFractionDigits: d,
         });
 
     const _formatSeparators = (num: string, thousSep: string, decSep: string): string => {
@@ -38,36 +38,36 @@ export default function (): IActionsListFunction<{
                 type: 'number',
                 description: 'Number of decimals',
                 required: true,
-                helper_value: '2'
+                helper_value: '2',
             },
             {
                 name: 'thousandsSeparator',
                 type: 'string',
                 description: 'Thousands separator',
                 required: false,
-                helper_value: ' '
+                helper_value: ' ',
             },
             {
                 name: 'decimalsSeparator',
                 type: 'string',
                 description: 'Decimals separator',
                 required: false,
-                helper_value: ','
+                helper_value: ',',
             },
             {
                 name: 'prefix',
                 type: 'string',
                 description: 'Number prefix',
                 required: false,
-                helper_value: ''
+                helper_value: '',
             },
             {
                 name: 'suffix',
                 type: 'string',
                 description: 'Number suffix',
                 required: false,
-                helper_value: ''
-            }
+                helper_value: '',
+            },
         ],
         action: (values, params) => {
             const defaultParams = {
@@ -75,12 +75,12 @@ export default function (): IActionsListFunction<{
                 thousandsSeparator: ',',
                 decimalsSeparator: '.',
                 prefix: '',
-                suffix: ''
+                suffix: '',
             };
 
             const userParams = {
                 ...defaultParams,
-                ...params
+                ...params,
             };
 
             const computedValues = values.map(elementValue => {
@@ -93,12 +93,12 @@ export default function (): IActionsListFunction<{
                           partialRight(_toString, userParams.decimals),
                           partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
                           partialRight(_addPrefix, userParams.prefix),
-                          partialRight(_addSuffix, userParams.suffix)
+                          partialRight(_addSuffix, userParams.suffix),
                       )(Number(elementValue.payload));
                 return elementValue;
             });
 
             return {values: computedValues, errors: []};
-        }
+        },
     };
 }

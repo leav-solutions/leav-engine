@@ -18,10 +18,10 @@ export const mockTreeRecord: IRecordIdentity = {
             id: 'library-id',
             label: {
                 fr: 'library-label',
-                en: 'library-label'
-            }
-        }
-    }
+                en: 'library-label',
+            },
+        },
+    },
 };
 
 export const mockTreeRecordChild: IRecordIdentity = {
@@ -36,10 +36,10 @@ export const mockTreeRecordChild: IRecordIdentity = {
             id: 'library-id',
             label: {
                 fr: 'library-label',
-                en: 'library-label'
-            }
-        }
-    }
+                en: 'library-label',
+            },
+        },
+    },
 };
 
 export const mockTreeNodePermissions: TreeNodeChildFragment['permissions'] & {__typename: string} = {
@@ -47,7 +47,7 @@ export const mockTreeNodePermissions: TreeNodeChildFragment['permissions'] & {__
     access_tree: true,
     edit_children: true,
     detach: true,
-    __typename: 'TreePermissions'
+    __typename: 'TreePermissions',
 };
 
 export const mockTreeElement: TreeNodeChildFragment = {
@@ -56,12 +56,12 @@ export const mockTreeElement: TreeNodeChildFragment = {
         ...mockTreeRecord,
         active: [
             {
-                value: true
-            }
-        ]
+                value: true,
+            },
+        ],
     },
     childrenCount: 1,
-    permissions: mockTreeNodePermissions
+    permissions: mockTreeNodePermissions,
 };
 
 export const mockTreeElements: TreeNodeChildFragment[] = [mockTreeElement];
@@ -69,5 +69,5 @@ export const mockTreeElements: TreeNodeChildFragment[] = [mockTreeElement];
 export const mockNavigationPath: INavigationPath = {
     id: 'id',
     library: 'library',
-    label: 'label'
+    label: 'label',
 };

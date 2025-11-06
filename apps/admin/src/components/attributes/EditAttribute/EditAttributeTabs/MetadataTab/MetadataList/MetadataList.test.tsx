@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 
 describe('MetadataList', () => {
@@ -21,14 +21,14 @@ describe('MetadataList', () => {
             id: 'field1',
             type: AttributeType.simple,
             format: AttributeFormat.text,
-            label: {fr: 'field1'}
+            label: {fr: 'field1'},
         },
         {
             id: 'field2',
             type: AttributeType.simple,
             format: AttributeFormat.text,
-            label: {fr: 'field2'}
-        }
+            label: {fr: 'field2'},
+        },
     ];
 
     const onChange = jest.fn();

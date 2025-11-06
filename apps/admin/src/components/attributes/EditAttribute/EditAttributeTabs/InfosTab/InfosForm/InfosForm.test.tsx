@@ -15,7 +15,7 @@ jest.mock('../../../../../../utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr),
     getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr']),
-    getFieldError: jest.fn().mockReturnValue('')
+    getFieldError: jest.fn().mockReturnValue(''),
 }));
 
 jest.mock('../../../../../../hooks/useLang');
@@ -25,14 +25,14 @@ jest.mock(
     () =>
         function VersionProfilesSelector() {
             return <div>VersionProfilesSelector</div>;
-        }
+        },
 );
 
 describe('InfosForm', () => {
     const attribute = {
         ...mockAttrSimple,
         label: {fr: 'Test 1', en: null},
-        libraries: [mockLibrary]
+        libraries: [mockLibrary],
     };
     const onSubmit = jest.fn();
     const onCheckIdExists = jest.fn().mockReturnValue(false);
@@ -40,7 +40,7 @@ describe('InfosForm', () => {
     const mockLibrariesWithAttributes = {
         request: {
             query: getLibrariesWithAttributesQuery,
-            variables: {}
+            variables: {},
         },
         result: {
             data: {
@@ -51,43 +51,43 @@ describe('InfosForm', () => {
                             id: 'products',
                             label: {
                                 en: '',
-                                fr: 'Produits'
+                                fr: 'Produits',
                             },
                             attributes: [
                                 {
                                     id: 'id',
                                     label: {
                                         fr: 'Identifiant',
-                                        en: 'Identifier'
+                                        en: 'Identifier',
                                     },
-                                    __typename: 'StandardAttribute'
-                                }
+                                    __typename: 'StandardAttribute',
+                                },
                             ],
-                            __typename: 'Library'
+                            __typename: 'Library',
                         },
                         {
                             id: 'categories',
                             label: {
                                 en: '',
-                                fr: 'Categories'
+                                fr: 'Categories',
                             },
                             attributes: [
                                 {
                                     id: 'id',
                                     label: {
                                         fr: 'Identifiant',
-                                        en: 'Identifier'
+                                        en: 'Identifier',
                                     },
-                                    __typename: 'StandardAttribute'
-                                }
+                                    __typename: 'StandardAttribute',
+                                },
                             ],
-                            __typename: 'Library'
-                        }
+                            __typename: 'Library',
+                        },
                     ],
-                    __typename: 'LibrariesList'
-                }
-            }
-        }
+                    __typename: 'LibrariesList',
+                },
+            },
+        },
     };
 
     test('If attribute exists, ID and type are not editable', async () => {
@@ -98,7 +98,7 @@ describe('InfosForm', () => {
                     readonly={false}
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
-                />
+                />,
             );
         });
 
@@ -114,7 +114,7 @@ describe('InfosForm', () => {
                     readonly={false}
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
-                />
+                />,
             );
         });
 
@@ -125,7 +125,7 @@ describe('InfosForm', () => {
     test('If readonly, inputs are disabled', async () => {
         await act(async () => {
             render(
-                <InfosForm attribute={attribute} readonly onSubmitInfos={onSubmit} onCheckIdExists={onCheckIdExists} />
+                <InfosForm attribute={attribute} readonly onSubmitInfos={onSubmit} onCheckIdExists={onCheckIdExists} />,
             );
         });
 
@@ -142,7 +142,7 @@ describe('InfosForm', () => {
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
                 />,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 
@@ -161,7 +161,7 @@ describe('InfosForm', () => {
                     readonly={false}
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
-                />
+                />,
             );
         });
 
@@ -177,7 +177,7 @@ describe('InfosForm', () => {
 
         await act(async () => {
             render(
-                <InfosForm attribute={null} readonly={false} onSubmitInfos={onSubmit} onCheckIdExists={_idNotUnique} />
+                <InfosForm attribute={null} readonly={false} onSubmitInfos={onSubmit} onCheckIdExists={_idNotUnique} />,
             );
         });
 
@@ -197,7 +197,7 @@ describe('InfosForm', () => {
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
                     forcedType={AttributeType.advanced}
-                />
+                />,
             );
         });
 
@@ -214,15 +214,15 @@ describe('InfosForm', () => {
                     query: saveLibAttributesMutation,
                     variables: {
                         libId: 'categories',
-                        attributes: ['id', attribute.id]
-                    }
+                        attributes: ['id', attribute.id],
+                    },
                 },
                 result: () => {
                     saveLibCalled = true;
 
                     return {};
-                }
-            }
+                },
+            },
         ];
         await act(async () => {
             render(
@@ -233,7 +233,7 @@ describe('InfosForm', () => {
                     onCheckIdExists={onCheckIdExists}
                     forcedType={AttributeType.advanced}
                 />,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 

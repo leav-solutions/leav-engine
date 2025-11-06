@@ -9,7 +9,7 @@ import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery
 import {
     type GET_ATTRIBUTES,
     type GET_ATTRIBUTESVariables,
-    type GET_ATTRIBUTES_attributes_list_LinkAttribute
+    type GET_ATTRIBUTES_attributes_list_LinkAttribute,
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
 import AttributeSelectorField from './AttributeSelectorField';
 
@@ -26,9 +26,9 @@ function AttributeSelector({
     const {
         loading,
         error: queryError,
-        data
+        data,
     } = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
-        variables: filters
+        variables: filters,
     });
 
     if (queryError) {

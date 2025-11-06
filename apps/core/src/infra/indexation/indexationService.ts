@@ -37,7 +37,7 @@ export default function ({
     config = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.record': recordRepo = null,
-    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery = null
+    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery = null,
 }: IDeps): IIndexationService {
     return {
         async init(): Promise<void> {
@@ -55,10 +55,10 @@ export default function ({
                         accent: false,
                         stemming: false,
                         edgeNgram: {
-                            preserveOriginal: true
-                        }
+                            preserveOriginal: true,
+                        },
                     },
-                    features: ['frequency', 'norm']
+                    features: ['frequency', 'norm'],
                 });
             }
 
@@ -71,9 +71,9 @@ export default function ({
                         locale: 'en',
                         case: 'lower',
                         accent: false,
-                        stemming: false
+                        stemming: false,
                     },
-                    features: ['frequency', 'norm']
+                    features: ['frequency', 'norm'],
                 });
             }
         },
@@ -85,11 +85,11 @@ export default function ({
                         analyzers: [CORE_INDEX_ANALYZER],
                         fields: {
                             [CORE_INDEX_FIELD]: {
-                                includeAllFields: true
-                            }
-                        }
-                    }
-                }
+                                includeAllFields: true,
+                            },
+                        },
+                    },
+                },
             });
         },
         async isLibraryListed(libraryId: string): Promise<boolean> {
@@ -100,9 +100,9 @@ export default function ({
             await recordRepo.updateRecord({
                 libraryId,
                 recordData: {id: recordId, [CORE_INDEX_FIELD]: data},
-                ctx
+                ctx,
             });
         },
-        getSearchQuery
+        getSearchQuery,
     };
 }

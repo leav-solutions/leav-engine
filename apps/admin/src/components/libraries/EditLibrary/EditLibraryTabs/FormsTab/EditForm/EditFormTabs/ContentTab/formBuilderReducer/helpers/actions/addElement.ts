@@ -8,7 +8,7 @@ import {
     defaultDepAttribute,
     defaultDepValue,
     type IFormBuilderActionAddElement,
-    type IFormBuilderState
+    type IFormBuilderState,
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';
@@ -33,7 +33,7 @@ export default function addElement(state: IFormBuilderState, action: IFormBuilde
     const elementToAdd: IFormElement = {
         ...action.element,
         order: action.position.order,
-        containerId: action.position.containerId
+        containerId: action.position.containerId,
     };
 
     // Add field
@@ -50,9 +50,9 @@ export default function addElement(state: IFormBuilderState, action: IFormBuilde
     const elementToMerge = {
         [depAttributeKey]: {
             [depValueKey]: {
-                [containerId]: [elementToAdd]
-            }
-        }
+                [containerId]: [elementToAdd],
+            },
+        },
     };
     newElementsByDeps = mergeConcat(newElementsByDeps, elementToMerge);
 
@@ -63,7 +63,7 @@ export default function addElement(state: IFormBuilderState, action: IFormBuilde
         .sort(sortByOrder);
 
     const elementToMergeToActiveFields = {
-        [containerId]: [{...elementToAdd, herited: false}]
+        [containerId]: [{...elementToAdd, herited: false}],
     };
     const newActiveFields = mergeConcat(cloneDeep(state.activeElements), elementToMergeToActiveFields);
 
@@ -72,6 +72,6 @@ export default function addElement(state: IFormBuilderState, action: IFormBuilde
     return {
         ...state,
         elements: newElementsByDeps,
-        activeElements: newActiveFields
+        activeElements: newActiveFields,
     };
 }

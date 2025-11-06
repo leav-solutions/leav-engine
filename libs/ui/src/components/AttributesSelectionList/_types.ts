@@ -4,7 +4,7 @@
 import {
     type AttributesByLibAttributeFragment,
     type AttributesByLibAttributeLinkAttributeFragment,
-    type AttributesByLibAttributeTreeAttributeFragment
+    type AttributesByLibAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
 
 export interface ICommonAttributeComponentProps {

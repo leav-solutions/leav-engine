@@ -59,8 +59,8 @@ describe('Values', () => {
             format: AttributeFormats.TEXT,
             label: 'Test attr simple with format',
             actionsList: {
-                getValue: [{id: 'toUppercase', name: 'toUppercase'}]
-            }
+                getValue: [{id: 'toUppercase', name: 'toUppercase'}],
+            },
         });
 
         await makeGraphQlCall(`mutation {
@@ -164,7 +164,7 @@ describe('Values', () => {
             id: attrDateRangeName,
             type: AttributeTypes.SIMPLE,
             format: AttributeFormats.DATE_RANGE,
-            label: 'Test attr date range'
+            label: 'Test attr date range',
         });
 
         // Create library to use in tree
@@ -300,7 +300,7 @@ describe('Values', () => {
                         payload
                     }
                 }
-          }`)
+          }`),
         ).rejects.toThrow(/This value has already been registered"/);
     });
 
@@ -318,7 +318,7 @@ describe('Values', () => {
                             payload
                         }
                     }
-              }`)
+              }`),
         ).rejects.toThrow(/error.INVALID_REGEXP: AAAATEST VAL/);
     });
 
@@ -368,7 +368,7 @@ describe('Values', () => {
         }`;
 
         await expect(makeGraphQlCall(query)).rejects.toThrow(
-            /"city.zipcode" with value "3800" fails to match the required pattern:/
+            /"city.zipcode" with value "3800" fails to match the required pattern:/,
         );
     });
 
@@ -660,10 +660,10 @@ describe('Values', () => {
                 const reverseLinkValues = await getReverseLinkFromRecord(recordIdReverseLink);
                 expect(reverseLinkValues).toHaveLength(2);
                 expect(reverseLinkValues.map(v => v.id_value)).toEqual(
-                    expect.arrayContaining([advancedLinkValue[0].id_value, advancedLinkValueBis[0].id_value])
+                    expect.arrayContaining([advancedLinkValue[0].id_value, advancedLinkValueBis[0].id_value]),
                 );
                 expect(reverseLinkValues.map(v => v.payload.id)).toEqual(
-                    expect.arrayContaining([recordIdAdvancedLink, recordIdAdvancedLinkBis])
+                    expect.arrayContaining([recordIdAdvancedLink, recordIdAdvancedLinkBis]),
                 );
             });
 
@@ -871,10 +871,10 @@ describe('Values', () => {
                 const reverseLinkValues = await getReverseLinkFromRecord(recordIdReverseLink);
                 expect(reverseLinkValues).toHaveLength(2);
                 expect(reverseLinkValues.map(v => v.id_value)).toEqual(
-                    expect.arrayContaining([recordIdSimpleLink, recordIdSimpleLinkBis])
+                    expect.arrayContaining([recordIdSimpleLink, recordIdSimpleLinkBis]),
                 );
                 expect(reverseLinkValues.map(v => v.payload.id)).toEqual(
-                    expect.arrayContaining([recordIdSimpleLink, recordIdSimpleLinkBis])
+                    expect.arrayContaining([recordIdSimpleLink, recordIdSimpleLinkBis]),
                 );
             });
 
@@ -907,7 +907,7 @@ describe('Values', () => {
 
         async function getSimpleLinkLinkedRecord(
             recId: string,
-            expectInactive = false
+            expectInactive = false,
         ): Promise<ILinkValue | undefined> {
             const resLinkedRecord = await makeGraphQlCall(`query {
                     records(
@@ -986,7 +986,7 @@ describe('Values', () => {
             expect(res.data.errors).toBeUndefined();
             expect(res.data.data.saveValue[0].payload).toEqual({
                 from: 1000,
-                to: 2000
+                to: 2000,
             });
         });
 
@@ -1007,7 +1007,7 @@ describe('Values', () => {
                         payload
                     }
                 }
-              }`)
+              }`),
             ).rejects.toThrow(/error.INVALID_DATE_RANGE/);
         });
     });

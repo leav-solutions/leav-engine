@@ -10,14 +10,14 @@ import {type Errors} from './errors';
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
     DELETE_VALUE = 'deleteValue',
-    GET_VALUE = 'getValue'
+    GET_VALUE = 'getValue',
 }
 
 export enum ActionsListIOTypes {
     STRING = 'string',
     NUMBER = 'number',
     OBJECT = 'object',
-    BOOLEAN = 'boolean'
+    BOOLEAN = 'boolean',
 }
 
 export type ActionsListValueType = string | number | boolean | {};
@@ -61,7 +61,7 @@ type PartialByCondition<TargetType, RequiredValues extends Record<keyof TargetTy
  * @types ParamsRequired is record of params key with matching boolean for required option: `{ paramName: isRequired }`
  */
 export interface IActionsListFunction<
-    ParamsRequired extends Record<string | number | symbol, boolean> = Record<string | number | symbol, boolean>
+    ParamsRequired extends Record<string | number | symbol, boolean> = Record<string | number | symbol, boolean>,
 > {
     id: string;
     name: string;
@@ -74,7 +74,7 @@ export interface IActionsListFunction<
     action: (
         values: IValue[],
         params: PartialByCondition<ActionsListParams<keyof ParamsRequired>, ParamsRequired>,
-        ctx: IActionsListContext
+        ctx: IActionsListContext,
     ) => IActionsListFunctionResult | Promise<IActionsListFunctionResult>;
 }
 

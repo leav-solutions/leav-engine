@@ -14,14 +14,14 @@ describe('useRefetchFieldValues', () => {
                 request: {
                     query: getRecordPropertiesQuery([
                         {
-                            attributeId: 'my_attribute'
-                        }
+                            attributeId: 'my_attribute',
+                        },
                     ]),
                     variables: {
                         library: 'test_lib',
                         recordId: '123456',
-                        version: null
-                    }
+                        version: null,
+                    },
                 },
                 result: {
                     data: {
@@ -32,8 +32,8 @@ describe('useRefetchFieldValues', () => {
                                     whoAmI: {
                                         id: '123456',
                                         library: {
-                                            id: 'test_lib'
-                                        }
+                                            id: 'test_lib',
+                                        },
                                     },
                                     my_attribute: [
                                         {
@@ -47,19 +47,19 @@ describe('useRefetchFieldValues', () => {
                                             created_by: null,
                                             modified_at: null,
                                             modified_by: null,
-                                            version: null
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                            version: null,
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useRefreshFieldValues('test_lib', 'my_attribute', '123456'), {
-            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>
+            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>,
         });
 
         let values;
@@ -78,8 +78,8 @@ describe('useRefetchFieldValues', () => {
                 isCalculated: false,
                 isInherited: false,
                 raw_payload: 'my_value',
-                payload: 'my_value'
-            }
+                payload: 'my_value',
+            },
         ]);
     });
 });

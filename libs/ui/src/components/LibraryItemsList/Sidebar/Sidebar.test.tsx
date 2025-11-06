@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function FiltersPanel() {
             return <div>FiltersPanel</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -20,25 +20,25 @@ jest.mock(
     () =>
         function ViewPanel() {
             return <div>ViewPanel</div>;
-        }
+        },
 );
 
 describe('SideItems', () => {
     test('should have Filters', async () => {
         await act(async () => {
             const mockState = {
-                side: {visible: true, type: SidebarContentType.FILTERS}
+                side: {visible: true, type: SidebarContentType.FILTERS},
             };
 
             render(
                 <SearchContext.Provider
                     value={{
                         state: {...initialSearchState, sideBar: {visible: true, type: SidebarContentType.FILTERS}},
-                        dispatch: jest.fn()
+                        dispatch: jest.fn(),
                     }}
                 >
                     <Sidebar />
-                </SearchContext.Provider>
+                </SearchContext.Provider>,
             );
         });
 
@@ -52,11 +52,11 @@ describe('SideItems', () => {
             <SearchContext.Provider
                 value={{
                     state: {...initialSearchState, sideBar: {visible: true, type: SidebarContentType.VIEW}},
-                    dispatch: jest.fn()
+                    dispatch: jest.fn(),
                 }}
             >
                 <Sidebar />
-            </SearchContext.Provider>
+            </SearchContext.Provider>,
         );
 
         const element = await screen.findByText('ViewPanel');

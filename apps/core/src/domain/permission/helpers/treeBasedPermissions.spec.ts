@@ -15,11 +15,11 @@ import {type ToAny} from '../../../utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
-    storeData: global.__mockPromise()
+    storeData: global.__mockPromise(),
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService)
+    getCache: jest.fn().mockReturnValue(mockCacheService),
 };
 
 const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
@@ -27,14 +27,14 @@ const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
     'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
     'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.infra.permission': jest.fn()
+    'core.infra.permission': jest.fn(),
 };
 
 describe('TreeBasedPermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'treePermissionDomainTest',
-        groupsId: ['1']
+        groupsId: ['1'],
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -44,16 +44,16 @@ describe('TreeBasedPermissionDomain', () => {
             category: {
                 id: 'category',
                 type: 'tree',
-                linked_tree: 'categories'
+                linked_tree: 'categories',
             },
             user_groups: {
                 id: 'user_groups',
                 type: 'tree',
-                linked_tree: 'users_groups'
-            }
+                linked_tree: 'users_groups',
+            },
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id]))
+            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id])),
         };
 
         const defaultPerm = false;
@@ -64,93 +64,93 @@ describe('TreeBasedPermissionDomain', () => {
                     {
                         record: {
                             id: 'A',
-                            library: 'category'
-                        }
+                            library: 'category',
+                        },
                     },
                     {
                         record: {
                             id: 'B',
-                            library: 'category'
-                        }
+                            library: 'category',
+                        },
                     },
                     {
                         record: {
                             id: 'C',
-                            library: 'category'
-                        }
-                    }
-                ]
+                            library: 'category',
+                        },
+                    },
+                ],
             ],
             statuses: [
                 [
                     {
                         record: {
                             id: 'AA',
-                            library: 'status'
-                        }
+                            library: 'status',
+                        },
                     },
                     {
                         record: {
                             id: 'BB',
-                            library: 'status'
-                        }
+                            library: 'status',
+                        },
                     },
                     {
                         record: {
                             id: 'CC',
-                            library: 'status'
-                        }
-                    }
-                ]
+                            library: 'status',
+                        },
+                    },
+                ],
             ],
             users_groups: [
                 [
                     {
                         record: {
                             id: 1,
-                            library: 'users_groups'
-                        }
+                            library: 'users_groups',
+                        },
                     },
                     {
                         record: {
                             id: 2,
-                            library: 'users_groups'
-                        }
+                            library: 'users_groups',
+                        },
                     },
                     {
                         record: {
                             id: 3,
-                            library: 'users_groups'
-                        }
-                    }
-                ]
-            ]
+                            library: 'users_groups',
+                        },
+                    },
+                ],
+            ],
         };
 
         const mockElementAncestorsHelper = {
             getCachedElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId])),
-            clearElementAncestorsCache: jest.fn()
+            clearElementAncestorsCache: jest.fn(),
         } satisfies Mockify<IElementAncestorsHelper>;
 
         const attributesProps = {
             category: {
                 id: 'category',
                 type: 'tree',
-                linked_tree: 'categories'
+                linked_tree: 'categories',
             },
             status: {
                 id: 'status',
                 type: 'tree',
-                linked_tree: 'statuses'
+                linked_tree: 'statuses',
             },
             user_groups: {
                 id: 'user_groups',
                 type: 'tree',
-                linked_tree: 'users_groups'
-            }
+                linked_tree: 'users_groups',
+            },
         };
         const mockAttrMultipleDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(attributesProps[id]))
+            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(attributesProps[id])),
         };
 
         const values = {
@@ -159,45 +159,45 @@ describe('TreeBasedPermissionDomain', () => {
                 value: {
                     record: {
                         id: 'A',
-                        library: 'category'
-                    }
-                }
+                        library: 'category',
+                    },
+                },
             },
             status: {
                 id_value: 98765,
                 value: {
                     record: {
                         id: 'AA',
-                        library: 'statuses'
-                    }
-                }
+                        library: 'statuses',
+                    },
+                },
             },
             user_groups: {
                 id_value: 54321,
                 value: {
                     record: {
                         id: 1,
-                        library: 'users_groups'
-                    }
-                }
-            }
+                        library: 'users_groups',
+                    },
+                },
+            },
         };
 
         const mockPermConf = {
             relation: PermissionsRelations.AND,
-            permissionTreeAttributes: ['category']
+            permissionTreeAttributes: ['category'],
         };
 
         const mockReducePermissionsArrayHelper: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: jest.fn().mockReturnValue(true)
+            reducePermissionsArray: jest.fn().mockReturnValue(true),
         };
 
         const mockReducePermissionsArrayHelperFalse: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: jest.fn().mockReturnValue(false)
+            reducePermissionsArray: jest.fn().mockReturnValue(false),
         };
 
         const mockReducePermissionsArrayHelperNull: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: jest.fn().mockReturnValue(null)
+            reducePermissionsArray: jest.fn().mockReturnValue(null),
         };
 
         const params: IGetTreeBasedPermissionParams = {
@@ -206,17 +206,17 @@ describe('TreeBasedPermissionDomain', () => {
             userId: '987654',
             applyTo: 'test_lib',
             treeValues: {
-                category: ['321654']
+                category: ['321654'],
             },
             permissions_conf: mockPermConf,
-            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
+            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm),
         };
 
         beforeEach(() => jest.clearAllMocks());
 
         test('1 tree / 1 user group with heritage', async () => {
             const mockPermByUserGroupsHelper = {
-                getPermissionByUserGroups: global.__mockPromise(true)
+                getPermissionByUserGroups: global.__mockPromise(true),
             } satisfies Mockify<IPermissionByUserGroupsHelper>;
 
             const treePermDomain = treeBasedPermissions({
@@ -225,7 +225,7 @@ describe('TreeBasedPermissionDomain', () => {
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
@@ -237,7 +237,7 @@ describe('TreeBasedPermissionDomain', () => {
 
         test('1 tree with multiple values on tree attribute', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromiseMultiple([false, true])
+                getPermissionByUserGroups: global.__mockPromiseMultiple([false, true]),
             };
 
             const treePermDomain = treeBasedPermissions({
@@ -246,17 +246,17 @@ describe('TreeBasedPermissionDomain', () => {
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(
                 {
                     ...params,
                     treeValues: {
-                        category: ['cat1', 'cat2']
-                    }
+                        category: ['cat1', 'cat2'],
+                    },
                 },
-                ctx
+                ctx,
             );
 
             expect(perm).toBe(true);

@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function BodyCell() {
             return <div>BodyCell</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function BodyCell() {
             return <div>BodyCell</div>;
-        }
+        },
 );
 
 describe('BodyRow', () => {
@@ -26,19 +26,19 @@ describe('BodyRow', () => {
         cells: [
             {
                 getCellProps: () => ({
-                    key: 1
+                    key: 1,
                 }),
                 column: {
-                    id: 'test'
+                    id: 'test',
                 },
                 row: {
                     original: {
-                        record: mockRecord
-                    }
-                }
-            }
+                        record: mockRecord,
+                    },
+                },
+            },
         ],
-        getRowProps: jest.fn()
+        getRowProps: jest.fn(),
     };
     test('should display n cells', async () => {
         render(<BodyRow row={mockRow as any} />);

@@ -10,7 +10,7 @@ import {
     PermissionTypes,
     type SaveLibraryMutation,
     useDeleteLibraryMutation,
-    useIsAllowedQuery
+    useIsAllowedQuery,
 } from '_ui/_gqlTypes';
 import {useLang} from '../../hooks';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
@@ -35,7 +35,7 @@ function EditLibraryModal({
     onClose,
     onPostCreate,
     width,
-    indexationTask
+    indexationTask,
 }: IEditLibraryModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -48,12 +48,12 @@ function EditLibraryModal({
             type: PermissionTypes.admin,
             actions: isEditing
                 ? [PermissionsActions.admin_edit_library, PermissionsActions.admin_delete_library]
-                : [PermissionsActions.admin_create_library]
-        }
+                : [PermissionsActions.admin_create_library],
+        },
     });
     const isReadOnly = !extractPermissionFromQuery(
         permissionsQueryResult,
-        isEditing ? PermissionsActions.admin_edit_library : PermissionsActions.admin_create_library
+        isEditing ? PermissionsActions.admin_edit_library : PermissionsActions.admin_create_library,
     );
 
     const canDelete = extractPermissionFromQuery(permissionsQueryResult, PermissionsActions.admin_delete_library);
@@ -90,13 +90,13 @@ function EditLibraryModal({
 
         const deleteRes = await deleteLibrary({
             variables: {
-                id: libraryId
-            }
+                id: libraryId,
+            },
         });
 
         // Remove library from apollo cache
         apolloClient.cache.evict({
-            id: apolloClient.cache.identify(deleteRes.data.deleteLibrary)
+            id: apolloClient.cache.identify(deleteRes.data.deleteLibrary),
         });
 
         onClose();
@@ -111,13 +111,13 @@ function EditLibraryModal({
         ? apolloClient.readFragment({
               id: apolloClient.cache.identify({
                   __typename: 'Library',
-                  id: libraryId
+                  id: libraryId,
               }),
               fragment: gql`
                   fragment LibraryLabel on Library {
                       label
                   }
-              `
+              `,
           })?.label
         : t('libraries.new_library');
 
@@ -139,7 +139,7 @@ function EditLibraryModal({
               ) : null,
               <Button key="close" onClick={onClose}>
                   {t('global.close')}
-              </Button>
+              </Button>,
           ]
         : [
               <Button key="cancel" onClick={onClose}>
@@ -147,7 +147,7 @@ function EditLibraryModal({
               </Button>,
               <Button key="submit" type="primary" onClick={_handleSubmit} loading={submitLoading}>
                   {t('global.submit')}
-              </Button>
+              </Button>,
           ];
 
     return (

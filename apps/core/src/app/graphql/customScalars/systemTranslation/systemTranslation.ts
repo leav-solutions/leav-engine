@@ -27,10 +27,10 @@ export default function ({config}: IDeps): ISystemTranslationGenerator {
                     [lng]:
                         lng === config.lang.default && !optional
                             ? Joi.string().required()
-                            : Joi.string().optional().allow('')
+                            : Joi.string().optional().allow(''),
                 }),
-                {}
-            )
+                {},
+            ),
         );
 
         const isValid = validValueSchema.validate(val);
@@ -56,12 +56,12 @@ export default function ({config}: IDeps): ISystemTranslationGenerator {
                 _validateValue(objVal, optional);
 
                 return objVal as ISystemTranslation;
-            }
+            },
         });
 
     return {
         getScalarType(optional = false) {
             return getScalar(optional);
-        }
+        },
     };
 }

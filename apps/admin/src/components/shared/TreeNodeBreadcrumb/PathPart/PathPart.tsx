@@ -51,7 +51,7 @@ function PathPart({record, altPaths = [], actions = []}: IPathPartProps): JSX.El
                 text={t('trees.alternative_paths')}
                 icon="list"
                 onClick={() => setShowAltPaths(true)}
-            />
+            />,
         );
     }
 

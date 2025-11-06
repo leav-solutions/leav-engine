@@ -18,7 +18,7 @@ import {
     FieldTypes,
     type IFormBuilderDragObject,
     type IFormElement,
-    type IUIElement
+    type IUIElement,
 } from '../../../_types';
 
 interface IReserveAttributeProps {
@@ -49,7 +49,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             [AttributeFormat.numeric]: formElements[FieldTypes.TEXT_INPUT],
             [AttributeFormat.text]: formElements[FieldTypes.TEXT_INPUT],
             [AttributeFormat.date_range]: formElements[FieldTypes.TEXT_INPUT],
-            [AttributeFormat.rich_text]: formElements[FieldTypes.TEXT_INPUT]
+            [AttributeFormat.rich_text]: formElements[FieldTypes.TEXT_INPUT],
         };
 
         let uiElement: IUIElement;
@@ -75,14 +75,14 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             settings: uiElement.settings.reduce(
                 (acc, cur) => ({
                     [cur.name]: cur.defaultValue,
-                    ...acc
+                    ...acc,
                 }),
                 {
                     attribute: attribute.id,
                     label: attrLabel,
-                    useAttributeLabel: true
-                }
-            )
+                    useAttributeLabel: true,
+                },
+            ),
         };
     };
 
@@ -93,7 +93,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
     >({
         item: {type: DraggableElementTypes.ATTRIBUTE, element: _getElement(), index: -1},
         collect: monitor => ({
-            isDragging: !!monitor.isDragging()
+            isDragging: !!monitor.isDragging(),
         }),
         canDrag: !readonly,
         end: (dropResult, monitor) => {
@@ -105,16 +105,16 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
 
                 const position = {
                     order: monitor.getItem().dropAtPos?.order || 0,
-                    containerId: monitor.getDropResult().containerId
+                    containerId: monitor.getDropResult().containerId,
                 };
 
                 dispatch({
                     type: FormBuilderActionTypes.ADD_ELEMENT,
                     element: {...monitor.getItem().element, containerId: position.containerId},
-                    position
+                    position,
                 });
             }
-        }
+        },
     });
 
     return (

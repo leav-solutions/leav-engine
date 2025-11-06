@@ -12,7 +12,7 @@ import {
     type IFilterAttribute,
     type IFilterLibrary,
     type IFilterTree,
-    TreeConditionFilter
+    TreeConditionFilter,
 } from '_ui/types/search';
 import {AttributeType, RecordFilterCondition, type RecordFilterInput} from '_ui/_gqlTypes';
 
@@ -28,7 +28,7 @@ const _isConditionWithNoValue = (condition: RecordFilterCondition): boolean =>
 export const getFiltersFromRequest = (
     queryFilters: RecordFilterInput[],
     library: string,
-    attributes: IAttribute[]
+    attributes: IAttribute[],
 ): IFilter[] => {
     let filters: IFilter[] = [];
 
@@ -47,11 +47,12 @@ export const getFiltersFromRequest = (
                           value:
                               queryFilter.condition === AttributeConditionFilter.BETWEEN
                                   ? String(JSON.parse(queryFilter.value))
-                                  : queryFilter.value
+                                  : queryFilter.value,
                       }
                     : null,
                 active: true,
-                condition: AttributeConditionFilter[queryFilter.condition] || TreeConditionFilter[queryFilter.condition]
+                condition:
+                    AttributeConditionFilter[queryFilter.condition] || TreeConditionFilter[queryFilter.condition],
             };
 
             // Get root attribute by first key part
@@ -66,12 +67,12 @@ export const getFiltersFromRequest = (
                     const [, linkedAttributeId] = splitKey;
                     if (linkedAttributeId) {
                         const linkedAttribute = attributes.find(
-                            attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === linkedAttributeId
+                            attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === linkedAttributeId,
                         );
 
                         (filter as IFilterAttribute).attribute = {
                             ...linkedAttribute,
-                            parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat}
+                            parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat},
                         };
                     } else {
                         (filter as IFilterAttribute).attribute = rootAttribute;
@@ -85,25 +86,25 @@ export const getFiltersFromRequest = (
                         // Only root attribute => search on tree
                         (filter as IFilterAttribute).attribute = {
                             ...rootAttribute,
-                            format: defaultLinkAttributeFilterFormat
+                            format: defaultLinkAttributeFilterFormat,
                         };
                     } else if (libraryId && !linkedTreeAttribute) {
                         // Search on tree library
                         filter.type = FilterType.LIBRARY;
                         (filter as IFilterLibrary).parentAttribute = {
                             ...rootAttribute,
-                            format: defaultLinkAttributeFilterFormat
+                            format: defaultLinkAttributeFilterFormat,
                         };
                         (filter as IFilterLibrary).library = {
                             id: libraryId,
                             label:
                                 rootAttribute.linkedTree.libraries.filter(l => l.library.id === libraryId)?.[0].library
-                                    .label ?? null
+                                    .label ?? null,
                         };
                     } else {
                         // Search on linked attribute through tree attribute
                         const linkedAttribute = attributes.find(
-                            attr => attr.library === libraryId && attr.id === linkedTreeAttribute
+                            attr => attr.library === libraryId && attr.id === linkedTreeAttribute,
                         );
 
                         (filter as IFilterAttribute).attribute = linkedAttribute;
@@ -115,9 +116,9 @@ export const getFiltersFromRequest = (
                                 label: rootAttribute?.linkedTree?.libraries
                                     ? rootAttribute.linkedTree.libraries.filter(l => l.library.id === libraryId)?.[0]
                                           .library.label
-                                    : null
+                                    : null,
                             },
-                            parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat}
+                            parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat},
                         };
                     }
                 }

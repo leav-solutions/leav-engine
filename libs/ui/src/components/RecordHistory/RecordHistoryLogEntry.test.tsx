@@ -18,17 +18,17 @@ describe('RecordHistoryLogEntry', () => {
                     attributeId: 'email',
                     values: [
                         {
-                            payload: 'test@example.com'
-                        }
-                    ]
-                }
-            ]
+                            payload: 'test@example.com',
+                        },
+                    ],
+                },
+            ],
         },
         topic: {
-            attribute
+            attribute,
         },
         before: before ? {asString: before} : null,
-        after: after ? {asString: after} : null
+        after: after ? {asString: after} : null,
     });
 
     it('Should display user, attribute, date without before and after', async () => {
@@ -40,9 +40,9 @@ describe('RecordHistoryLogEntry', () => {
                     label: {en: 'Attribute 1'},
                     type: AttributeType.simple,
                     format: AttributeFormat.text,
-                    multiple_values: false
+                    multiple_values: false,
                 })}
-            />
+            />,
         );
 
         expect(screen.getByText('test@example.com')).toBeInTheDocument();
@@ -61,12 +61,12 @@ describe('RecordHistoryLogEntry', () => {
                         label: {en: 'Attribute 1'},
                         type: AttributeType.simple,
                         format: AttributeFormat.text,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     'before value',
-                    'after value'
+                    'after value',
                 )}
-            />
+            />,
         );
 
         expect(screen.getByText('record_history.action.value_modify')).toBeInTheDocument();
@@ -85,13 +85,13 @@ describe('RecordHistoryLogEntry', () => {
                             label: {en: 'Attribute 1'},
                             type: AttributeType.simple,
                             format: AttributeFormat.text,
-                            multiple_values: false
+                            multiple_values: false,
                         },
-                        'before value'
+                        'before value',
                     ),
-                    action: LogAction.VALUE_DELETE
+                    action: LogAction.VALUE_DELETE,
                 }}
-            />
+            />,
         );
 
         expect(screen.getByText('record_history.action.value_modify')).toBeInTheDocument();
@@ -109,12 +109,12 @@ describe('RecordHistoryLogEntry', () => {
                         label: {en: 'Attribute 1'},
                         type: AttributeType.simple,
                         format: AttributeFormat.text,
-                        multiple_values: false
+                        multiple_values: false,
                     },
                     undefined,
-                    'after value'
+                    'after value',
                 )}
-            />
+            />,
         );
 
         expect(screen.getByText('record_history.action.value_modify')).toBeInTheDocument();
@@ -132,12 +132,12 @@ describe('RecordHistoryLogEntry', () => {
                         label: {en: 'Attribute 1'},
                         type: AttributeType.advanced,
                         format: AttributeFormat.text,
-                        multiple_values: true
+                        multiple_values: true,
                     },
                     undefined,
-                    'after value'
+                    'after value',
                 )}
-            />
+            />,
         );
 
         expect(screen.getByText('record_history.action.value_add')).toBeInTheDocument();
@@ -155,13 +155,13 @@ describe('RecordHistoryLogEntry', () => {
                             label: {en: 'Attribute 1'},
                             type: AttributeType.advanced,
                             format: AttributeFormat.text,
-                            multiple_values: true
+                            multiple_values: true,
                         },
-                        'before value'
+                        'before value',
                     ),
-                    action: LogAction.VALUE_DELETE
+                    action: LogAction.VALUE_DELETE,
                 }}
-            />
+            />,
         );
 
         expect(screen.getByText('record_history.action.value_delete')).toBeInTheDocument();
@@ -178,11 +178,11 @@ describe('RecordHistoryLogEntry', () => {
                         label: {en: 'Attribute 1'},
                         type: AttributeType.simple,
                         format: AttributeFormat.text,
-                        multiple_values: false
+                        multiple_values: false,
                     }),
-                    user: null
+                    user: null,
                 }}
-            />
+            />,
         );
 
         expect(screen.getByText(/record_history\.unknown_user/)).toBeInTheDocument();

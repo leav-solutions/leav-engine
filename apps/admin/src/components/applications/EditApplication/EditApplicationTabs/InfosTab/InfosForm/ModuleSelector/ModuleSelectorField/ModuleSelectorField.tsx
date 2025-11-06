@@ -14,7 +14,7 @@ const ModuleSelectorField = ({modules, ...fieldProps}: IModuleSelectorFieldProps
         key: comp.id,
         value: comp.id,
         text: comp.id,
-        content: <Header size="small" content={comp.id} subheader={comp.description} />
+        content: <Header size="small" content={comp.id} subheader={comp.description} />,
     }));
 
     return (

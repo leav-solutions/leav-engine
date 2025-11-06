@@ -65,11 +65,11 @@ function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
         const dataToSave = {
             attrData: {
                 id: attribute.id,
-                settings: value
-            }
+                settings: value,
+            },
         };
         saveAttribute({
-            variables: dataToSave
+            variables: dataToSave,
         });
     };
 

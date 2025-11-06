@@ -14,7 +14,7 @@ jest.mock(
     () =>
         function MockStandardField() {
             return <div>StandardField</div>;
-        }
+        },
 );
 
 describe('extractFormElements', () => {
@@ -29,7 +29,7 @@ describe('extractFormElements', () => {
                     settings: [{key: 'foo', value: 'bar'}],
                     attribute: null,
                     type: FormElementTypes.field,
-                    uiElementType: FormFieldTypes.TEXT_INPUT
+                    uiElementType: FormFieldTypes.TEXT_INPUT,
                 },
                 {
                     ...mockFormElementContainer,
@@ -38,7 +38,7 @@ describe('extractFormElements', () => {
                     settings: [],
                     attribute: null,
                     type: FormElementTypes.layout,
-                    uiElementType: FormUIElementTypes.FIELDS_CONTAINER
+                    uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                 },
                 {
                     ...mockFormElementContainer,
@@ -47,7 +47,7 @@ describe('extractFormElements', () => {
                     settings: [],
                     attribute: null,
                     type: FormElementTypes.layout,
-                    uiElementType: FormUIElementTypes.FIELDS_CONTAINER
+                    uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
                 },
                 {
                     ...mockFormElementInput,
@@ -56,9 +56,9 @@ describe('extractFormElements', () => {
                     settings: [],
                     attribute: null,
                     type: FormElementTypes.field,
-                    uiElementType: FormFieldTypes.TEXT_INPUT
-                }
-            ]
+                    uiElementType: FormFieldTypes.TEXT_INPUT,
+                },
+            ],
         };
 
         const convertForm = extractFormElements(baseForm, null, null);
@@ -73,7 +73,7 @@ describe('extractFormElements', () => {
                     attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: StandardField
+                    uiElement: StandardField,
                 },
                 {
                     ...mockFormElementContainer,
@@ -83,8 +83,8 @@ describe('extractFormElements', () => {
                     attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
-                    uiElement: Container
-                }
+                    uiElement: Container,
+                },
             ],
             rootElem2: [
                 {
@@ -95,8 +95,8 @@ describe('extractFormElements', () => {
                     attribute: null,
                     type: FormElementTypes.layout,
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
-                    uiElement: Container
-                }
+                    uiElement: Container,
+                },
             ],
             containerElem1: [
                 {
@@ -107,9 +107,9 @@ describe('extractFormElements', () => {
                     attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: StandardField
-                }
-            ]
+                    uiElement: StandardField,
+                },
+            ],
         };
 
         // Test on stringified objext due to failure caused by some object references
@@ -127,14 +127,14 @@ describe('extractFormElements', () => {
                     settings: [
                         {key: 'foo', value: 'bar'},
                         {key: 'useAttributeLabel', value: false},
-                        {key: 'label', value: {en: 'element 1 label', fr: 'libellé 1 élément'}}
+                        {key: 'label', value: {en: 'element 1 label', fr: 'libellé 1 élément'}},
                     ],
                     attribute: {
                         ...mockFormAttribute,
-                        label: {en: 'attribute label', fr: 'libellé attribut'}
+                        label: {en: 'attribute label', fr: 'libellé attribut'},
                     },
                     type: FormElementTypes.field,
-                    uiElementType: FormFieldTypes.TEXT_INPUT
+                    uiElementType: FormFieldTypes.TEXT_INPUT,
                 },
                 {
                     ...mockFormElementInput,
@@ -143,16 +143,16 @@ describe('extractFormElements', () => {
                     settings: [
                         {key: 'foo', value: 'bar'},
                         {key: 'useAttributeLabel', value: false},
-                        {key: 'label', value: {en: 'element 2 label', fr: 'libellé élément 2'}}
+                        {key: 'label', value: {en: 'element 2 label', fr: 'libellé élément 2'}},
                     ],
                     attribute: {
                         ...mockFormAttribute,
-                        label: {en: 'attribute label 2', fr: 'libellé attribut 2'}
+                        label: {en: 'attribute label 2', fr: 'libellé attribut 2'},
                     },
                     type: FormElementTypes.field,
-                    uiElementType: FormFieldTypes.TEXT_INPUT
-                }
-            ]
+                    uiElementType: FormFieldTypes.TEXT_INPUT,
+                },
+            ],
         };
 
         const convertForm = extractFormElements(baseForm, null, null);
@@ -166,14 +166,14 @@ describe('extractFormElements', () => {
                     settings: {
                         foo: 'bar',
                         label: {en: 'element 1 label', fr: 'libellé 1 élément'},
-                        useAttributeLabel: false
+                        useAttributeLabel: false,
                     },
                     attribute: {
-                        ...baseForm.elements[0].attribute
+                        ...baseForm.elements[0].attribute,
                     },
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: StandardField
+                    uiElement: StandardField,
                 },
                 {
                     ...mockFormElementInput,
@@ -182,16 +182,16 @@ describe('extractFormElements', () => {
                     settings: {
                         foo: 'bar',
                         label: {en: 'element 2 label', fr: 'libellé élément 2'},
-                        useAttributeLabel: false
+                        useAttributeLabel: false,
                     },
                     attribute: {
-                        ...baseForm.elements[1].attribute
+                        ...baseForm.elements[1].attribute,
                     },
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: StandardField
-                }
-            ]
+                    uiElement: StandardField,
+                },
+            ],
         };
 
         // Test on stringified objext due to failure caused by some object references
@@ -209,14 +209,14 @@ describe('extractFormElements', () => {
                     settings: [
                         {key: 'foo', value: 'bar'},
                         {key: 'useAttributeLabel', value: true},
-                        {key: 'label', value: {en: 'element 1 label', fr: 'libellé 1 élément'}}
+                        {key: 'label', value: {en: 'element 1 label', fr: 'libellé 1 élément'}},
                     ],
                     attribute: {
                         ...mockFormAttribute,
-                        label: {en: 'attribute label', fr: 'libellé attribut'}
+                        label: {en: 'attribute label', fr: 'libellé attribut'},
                     },
                     type: FormElementTypes.field,
-                    uiElementType: FormFieldTypes.TEXT_INPUT
+                    uiElementType: FormFieldTypes.TEXT_INPUT,
                 },
                 {
                     ...mockFormElementInput,
@@ -225,16 +225,16 @@ describe('extractFormElements', () => {
                     settings: [
                         {key: 'foo', value: 'bar'},
                         {key: 'useAttributeLabel', value: true},
-                        {key: 'label', value: {en: 'element 2 label', fr: 'libellé élément 2'}}
+                        {key: 'label', value: {en: 'element 2 label', fr: 'libellé élément 2'}},
                     ],
                     attribute: {
                         ...mockFormAttribute,
-                        label: {en: 'attribute label 2', fr: 'libellé attribut 2'}
+                        label: {en: 'attribute label 2', fr: 'libellé attribut 2'},
                     },
                     type: FormElementTypes.field,
-                    uiElementType: FormFieldTypes.TEXT_INPUT
-                }
-            ]
+                    uiElementType: FormFieldTypes.TEXT_INPUT,
+                },
+            ],
         };
 
         const convertForm = extractFormElements(baseForm, null, null);
@@ -248,14 +248,14 @@ describe('extractFormElements', () => {
                     settings: {
                         foo: 'bar',
                         label: {en: 'attribute label', fr: 'libellé attribut'},
-                        useAttributeLabel: true
+                        useAttributeLabel: true,
                     },
                     attribute: {
-                        ...baseForm.elements[0].attribute
+                        ...baseForm.elements[0].attribute,
                     },
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: StandardField
+                    uiElement: StandardField,
                 },
                 {
                     ...mockFormElementInput,
@@ -264,16 +264,16 @@ describe('extractFormElements', () => {
                     settings: {
                         foo: 'bar',
                         label: {en: 'attribute label 2', fr: 'libellé attribut 2'},
-                        useAttributeLabel: true
+                        useAttributeLabel: true,
                     },
                     attribute: {
-                        ...baseForm.elements[1].attribute
+                        ...baseForm.elements[1].attribute,
                     },
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: StandardField
-                }
-            ]
+                    uiElement: StandardField,
+                },
+            ],
         };
 
         // Test on stringified objext due to failure caused by some object references

@@ -48,7 +48,7 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.attribute': attributeRepo,
     'core.infra.cache.cacheService': cacheService,
-    'core.utils': utils
+    'core.utils': utils,
 }: IVersionProfileDomainDeps): IVersionProfileDomain {
     return {
         async getVersionProfiles({params, ctx}) {
@@ -66,7 +66,7 @@ export default function ({
                 throw utils.generateExplicitValidationError(
                     'id',
                     {msg: Errors.UNKNOWN_VERSION_PROFILE, vars: {profile: id}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -75,7 +75,7 @@ export default function ({
         async saveVersionProfile({versionProfile, ctx}) {
             const existingVersionProfile = await versionProfileRepo.getVersionProfiles({
                 params: {filters: {id: versionProfile.id}},
-                ctx
+                ctx,
             });
 
             const isNewProfile = !existingVersionProfile.list.length;
@@ -88,7 +88,7 @@ export default function ({
             const canSave = await adminPermissionDomain.getAdminPermission({
                 action: actionToCheck,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!canSave) {
@@ -103,7 +103,7 @@ export default function ({
                 _key: '',
                 label: null,
                 description: null,
-                trees: []
+                trees: [],
             };
 
             const profileToSave: IVersionProfile = isNewProfile
@@ -111,7 +111,7 @@ export default function ({
                 : {
                       ...defaultParams,
                       ...existingProfileProps,
-                      ...versionProfile
+                      ...versionProfile,
                   };
 
             // Check all trees exist
@@ -122,7 +122,7 @@ export default function ({
                 throw utils.generateExplicitValidationError(
                     'trees',
                     {msg: Errors.UNKNOWN_TREES, vars: {trees: unknownTrees.join(', ')}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -134,12 +134,12 @@ export default function ({
                 {
                     action: EventAction.VERSION_PROFILE_SAVE,
                     topic: {
-                        profile: savedProfile.id
+                        profile: savedProfile.id,
                     },
                     before: existingProfileProps,
-                    after: savedProfile
+                    after: savedProfile,
                 },
-                ctx
+                ctx,
             );
 
             if (!isNewProfile) {
@@ -152,14 +152,14 @@ export default function ({
         async deleteVersionProfile({id, ctx}) {
             const existingVersionProfile = await versionProfileRepo.getVersionProfiles({
                 params: {filters: {id}},
-                ctx
+                ctx,
             });
 
             if (!existingVersionProfile.list.length) {
                 throw utils.generateExplicitValidationError(
                     'id',
                     {msg: Errors.UNKNOWN_VERSION_PROFILE, vars: {profile: id}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -167,7 +167,7 @@ export default function ({
             const canDelete = await adminPermissionDomain.getAdminPermission({
                 action: actionToCheck,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!canDelete) {
@@ -185,12 +185,12 @@ export default function ({
                                 multiple_values: attribute.multiple_values,
                                 versions_conf: {
                                     ...attribute.versions_conf,
-                                    profile: null
-                                }
+                                    profile: null,
+                                },
                             },
-                            ctx
-                        })
-                    )
+                            ctx,
+                        }),
+                    ),
                 );
             }
 
@@ -200,17 +200,17 @@ export default function ({
                 {
                     action: EventAction.VERSION_PROFILE_DELETE,
                     topic: {
-                        profile: id
+                        profile: id,
                     },
-                    before: deletedProfile
+                    before: deletedProfile,
                 },
-                ctx
+                ctx,
             );
 
             return deletedProfile;
         },
         async getAttributesUsingProfile({id, ctx}) {
             return versionProfileRepo.getAttributesUsingProfile({id, ctx});
-        }
+        },
     };
 }

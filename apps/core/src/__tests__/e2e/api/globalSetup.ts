@@ -54,7 +54,7 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
         'core.infra.amqpService': amqp,
         'core.infra.redis': redis,
         'core.infra.mailer': mailer,
-        'core.infra.oidcClient': oidcClient
+        'core.infra.oidcClient': oidcClient,
     });
 
     const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];

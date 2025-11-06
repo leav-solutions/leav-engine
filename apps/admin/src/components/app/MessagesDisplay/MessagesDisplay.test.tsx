@@ -16,21 +16,21 @@ describe('MessagesDisplay', () => {
                 {
                     id: 'A',
                     type: MessagesTypes.SUCCESS,
-                    content: '1'
+                    content: '1',
                 },
                 {
                     id: 'B',
                     type: MessagesTypes.SUCCESS,
-                    content: '2'
+                    content: '2',
                 },
                 {
                     id: 'C',
                     type: MessagesTypes.SUCCESS,
-                    content: '3'
-                }
+                    content: '3',
+                },
             ],
             addMessage: jest.fn(),
-            removeMessage: jest.fn()
+            removeMessage: jest.fn(),
         }));
 
         render(<MessagesDisplay />);
@@ -48,11 +48,11 @@ describe('MessagesDisplay', () => {
                 {
                     id: 'A',
                     type: MessagesTypes.SUCCESS,
-                    content: '1'
-                }
+                    content: '1',
+                },
             ],
             addMessage: jest.fn(),
-            removeMessage: mockRemoveMessage
+            removeMessage: mockRemoveMessage,
         }));
 
         render(<MessagesDisplay />);

@@ -15,11 +15,11 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 jest.mock('../EditAttributeModal', () => ({
-    EditAttributeModal: () => <div>EditAttribute</div>
+    EditAttributeModal: () => <div>EditAttribute</div>,
 }));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
@@ -29,7 +29,7 @@ describe('AttributePicker', () => {
         {
             request: {
                 query: GetAttributesDocument,
-                variables: {pagination: {limit: 20, offset: 0}, filters: {}}
+                variables: {pagination: {limit: 20, offset: 0}, filters: {}},
             },
             result: {
                 data: {
@@ -39,48 +39,48 @@ describe('AttributePicker', () => {
                             {
                                 ...mockAttributeSimple,
                                 format: 'text',
-                                id: 'attributeA'
+                                id: 'attributeA',
                             },
                             {
                                 ...mockAttributeSimple,
                                 format: 'numeric',
-                                id: 'attributeB'
+                                id: 'attributeB',
                             },
                             {
                                 ...mockAttributeSimple,
                                 format: 'text',
-                                id: 'attributeC'
-                            }
-                        ]
-                    }
-                }
-            }
+                                id: 'attributeC',
+                            },
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: IsAllowedDocument,
                 variables: {
                     type: PermissionTypes.admin,
-                    actions: [PermissionsActions.admin_create_attribute]
-                }
+                    actions: [PermissionsActions.admin_create_attribute],
+                },
             },
             result: {
                 data: {
                     isAllowed: [
                         {
                             name: PermissionsActions.admin_create_attribute,
-                            allowed: true
-                        }
-                    ]
-                }
-            }
-        }
+                            allowed: true,
+                        },
+                    ],
+                },
+            },
+        },
     ];
 
     test('Display attributes', async () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
-            mocks: baseMocks
+            mocks: baseMocks,
         });
 
         await waitFor(() => {
@@ -96,7 +96,7 @@ describe('AttributePicker', () => {
             {
                 request: {
                     query: GetAttributesDocument,
-                    variables: {pagination: {limit: 20, offset: 0}, filters: {label: '%attributeA%'}}
+                    variables: {pagination: {limit: 20, offset: 0}, filters: {label: '%attributeA%'}},
                 },
                 result: {
                     data: {
@@ -105,13 +105,13 @@ describe('AttributePicker', () => {
                             list: [
                                 {
                                     ...mockAttributeSimple,
-                                    id: 'attributeA'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'attributeA',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const mockHandleSubmit = jest.fn();
@@ -137,7 +137,7 @@ describe('AttributePicker', () => {
             {
                 request: {
                     query: GetAttributesDocument,
-                    variables: {pagination: {limit: 20, offset: 0}, sort: {field: 'type', order: 'asc'}, filters: {}}
+                    variables: {pagination: {limit: 20, offset: 0}, sort: {field: 'type', order: 'asc'}, filters: {}},
                 },
                 result: {
                     data: {
@@ -147,23 +147,23 @@ describe('AttributePicker', () => {
                                 {
                                     ...mockAttributeSimple,
                                     format: 'text',
-                                    id: 'attributeA'
+                                    id: 'attributeA',
                                 },
                                 {
                                     ...mockAttributeSimple,
                                     format: 'text',
-                                    id: 'attributeC'
+                                    id: 'attributeC',
                                 },
                                 {
                                     ...mockAttributeSimple,
                                     format: 'numeric',
-                                    id: 'attributeB'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'attributeB',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const mockHandleSubmit = jest.fn();
@@ -216,7 +216,7 @@ describe('AttributePicker', () => {
     test('If not multiple, only one element can be selected', async () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {
-            mocks: baseMocks
+            mocks: baseMocks,
         });
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
@@ -251,25 +251,25 @@ describe('AttributePicker', () => {
                     query: IsAllowedDocument,
                     variables: {
                         type: PermissionTypes.admin,
-                        actions: [PermissionsActions.admin_create_attribute]
-                    }
+                        actions: [PermissionsActions.admin_create_attribute],
+                    },
                 },
                 result: {
                     data: {
                         isAllowed: [
                             {
                                 name: PermissionsActions.admin_create_attribute,
-                                allowed: false
-                            }
-                        ]
-                    }
-                }
-            }
+                                allowed: false,
+                            },
+                        ],
+                    },
+                },
+            },
         ];
 
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open showCreateButton={false} />, {
-            mocks: mocksNotAllowed
+            mocks: mocksNotAllowed,
         });
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());

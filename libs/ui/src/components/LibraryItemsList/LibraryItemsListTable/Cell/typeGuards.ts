@@ -4,7 +4,7 @@
 import {
     type RecordFormElementsValueLinkValue,
     type RecordFormElementsValueStandardValue,
-    type RecordFormElementsValueTreeValue
+    type RecordFormElementsValueTreeValue,
 } from '_ui/hooks/useGetRecordForm';
 import {
     type LinkCellValue,
@@ -12,7 +12,7 @@ import {
     type SimpleCellValue,
     type SimpleCellValues,
     type TreeCellValue,
-    type TreeCellValues
+    type TreeCellValues,
 } from './types';
 
 export const TypeGuards = {
@@ -30,18 +30,18 @@ export const TypeGuards = {
         value:
             | RecordFormElementsValueStandardValue
             | RecordFormElementsValueLinkValue
-            | RecordFormElementsValueTreeValue
+            | RecordFormElementsValueTreeValue,
     ): value is RecordFormElementsValueStandardValue => value && 'value' in value,
     isRecordFormElementsValuesLinkValue: (
         value:
             | RecordFormElementsValueStandardValue
             | RecordFormElementsValueLinkValue
-            | RecordFormElementsValueTreeValue
+            | RecordFormElementsValueTreeValue,
     ): value is RecordFormElementsValueLinkValue => value && 'linkValue' in value,
     isRecordFormElementsValuesTreeValue: (
         value:
             | RecordFormElementsValueStandardValue
             | RecordFormElementsValueLinkValue
-            | RecordFormElementsValueTreeValue
-    ): value is RecordFormElementsValueTreeValue => value && 'treeValue' in value
+            | RecordFormElementsValueTreeValue,
+    ): value is RecordFormElementsValueTreeValue => value && 'treeValue' in value,
 };

@@ -76,8 +76,8 @@ export async function loadConfig<T extends {} = {}>(dirPath: string, env: string
         await _getConfigByEnv(dirPath, env),
         ignoreLocal ? {} : await _getConfigByEnv(dirPath, 'local'),
         {
-            env
-        }
+            env,
+        },
     );
 
     return merged as T;

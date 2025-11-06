@@ -9,14 +9,14 @@ import {
     TaskCallbackType,
     TaskPriority,
     TaskStatus,
-    TaskType
+    TaskType,
 } from '../../_types/tasksManager';
 
 const mockFunc: ITaskFunc = {
     moduleName: 'moduleName',
     subModuleName: 'subModuleName',
     name: 'name',
-    args: {arg1: 'arg1'}
+    args: {arg1: 'arg1'},
 };
 
 const mockCallback: ITaskCallback = {
@@ -25,7 +25,7 @@ const mockCallback: ITaskCallback = {
     name: 'name',
     args: [],
     status: TaskCallbackStatus.PENDING,
-    type: [TaskCallbackType.ON_CANCEL, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_SUCCESS]
+    type: [TaskCallbackType.ON_CANCEL, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_SUCCESS],
 };
 
 export const mockTask: ITask = {
@@ -39,5 +39,5 @@ export const mockTask: ITask = {
     status: TaskStatus.CREATED,
     priority: TaskPriority.MEDIUM,
     archive: false,
-    callbacks: [mockCallback]
+    callbacks: [mockCallback],
 };

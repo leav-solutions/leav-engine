@@ -15,7 +15,7 @@ function InputField(props: IFormElementProps<IInputFieldSettings>): JSX.Element 
     const {lang: availableLangs} = useLang();
 
     const fieldProps = {
-        label: localizedLabel(label, availableLangs)
+        label: localizedLabel(label, availableLangs),
     };
 
     return <Input type={type} {...fieldProps} fluid />;

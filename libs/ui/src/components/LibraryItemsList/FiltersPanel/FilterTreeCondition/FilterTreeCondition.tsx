@@ -24,7 +24,7 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
             if (f.index === filter.index) {
                 return {
                     ...filter,
-                    condition: TreeConditionFilter[e]
+                    condition: TreeConditionFilter[e],
                 };
             }
 
@@ -38,8 +38,8 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
         items: conditionOptions.map(condition => ({
             key: condition.value,
             onClick: () => handleOperatorChange(condition.value),
-            label: condition.text
-        }))
+            label: condition.text,
+        })),
     };
 
     return (

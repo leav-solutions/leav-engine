@@ -12,7 +12,7 @@ import {
     type IFormDependentElements,
     type IFormElement,
     type IFormElementJoinLibraryContext,
-    type IRecordForm
+    type IRecordForm,
 } from '_types/forms';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
@@ -25,7 +25,7 @@ import {
     type IFormForGraphql,
     type IGetFormArgs,
     type IGetRecordFormArgs,
-    type ISaveFormArgs
+    type ISaveFormArgs,
 } from './_types';
 import {type IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
@@ -47,7 +47,7 @@ export default function ({
     'core.domain.library': libraryDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
-    'core.utils': utils
+    'core.utils': utils,
 }: IDeps) {
     /** Functions to convert form from GraphQL format to IForm*/
     const _convertFormFromGraphql = (form: IFormForGraphql): IForm => {
@@ -61,15 +61,15 @@ export default function ({
     };
 
     const _convertElementsFromGraphql = (
-        elementsWithDep: IFormDependentElementsForGraphQL
+        elementsWithDep: IFormDependentElementsForGraphQL,
     ): IFormDependentElements => ({
         ...elementsWithDep,
-        elements: elementsWithDep.elements.map(_convertElementSettingsToObject)
+        elements: elementsWithDep.elements.map(_convertElementSettingsToObject),
     });
 
     const _convertElementSettingsToObject = (element: IFormElementForGraphQL): IFormElement => ({
         ...element,
-        settings: utils.nameValArrayToObj(element.settings, 'key')
+        settings: utils.nameValArrayToObj(element.settings, 'key'),
     });
 
     const commonFormElementResolvers = {
@@ -91,24 +91,24 @@ export default function ({
                               formElement.settings?.[settingsKey].map(async columnId => {
                                   const columnAttributeProps = await attributeDomain.getAttributeProperties({
                                       id: columnId,
-                                      ctx
+                                      ctx,
                                   });
                                   return {
                                       id: columnAttributeProps.id,
-                                      label: columnAttributeProps.label
+                                      label: columnAttributeProps.label,
                                   };
-                              })
+                              }),
                           );
 
                 return {
                     key: settingsKey,
-                    value: settingsValue
+                    value: settingsValue,
                 };
             }),
         joinLibraryContext: async (
             formElement: IFormElement,
             _,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<IFormElementJoinLibraryContext | void> => {
             const attributeId = formElement?.settings?.attribute;
 
@@ -120,11 +120,11 @@ export default function ({
             return ifLibraryJoinLinkAttribute(
                 attrProps,
                 async (joinLibId: string, joinAttributeProps: IAttribute) => ({
-                    mandatoryAttribute: joinAttributeProps
+                    mandatoryAttribute: joinAttributeProps,
                 }),
-                ctx
+                ctx,
             );
-        }
+        },
     };
 
     return {
@@ -297,7 +297,7 @@ export default function ({
                         async forms(
                             _,
                             {filters, pagination, sort}: IGetFormArgs,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IList<IForm>> {
                             return formDomain.getFormsByLib({
                                 library: filters.library,
@@ -305,15 +305,15 @@ export default function ({
                                     filters,
                                     pagination,
                                     sort,
-                                    withCount: true
+                                    withCount: true,
                                 },
-                                ctx
+                                ctx,
                             });
                         },
                         async recordForm(
                             _,
                             {recordId, libraryId, formId, version}: IGetRecordFormArgs,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IRecordForm> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
 
@@ -322,9 +322,9 @@ export default function ({
                                 libraryId,
                                 formId,
                                 version: formattedVersion,
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         async saveForm(_, {form}: ISaveFormArgs, ctx: IQueryInfos): Promise<IForm> {
@@ -334,7 +334,7 @@ export default function ({
                         },
                         async deleteForm(_, {library, id}: IDeleteFormArgs, ctx: IQueryInfos) {
                             return formDomain.deleteForm({library, id, ctx});
-                        }
+                        },
                     },
                     Form: {
                         library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>
@@ -342,9 +342,9 @@ export default function ({
                         dependencyAttributes: (form: IForm, _, ctx: IQueryInfos): Promise<IAttribute[]> =>
                             Promise.all(
                                 form.dependencyAttributes.map(attr =>
-                                    attributeDomain.getAttributeProperties({id: attr, ctx})
-                                )
-                            )
+                                    attributeDomain.getAttributeProperties({id: attr, ctx}),
+                                ),
+                            ),
                     },
                     RecordForm: {
                         library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>
@@ -352,14 +352,14 @@ export default function ({
                         dependencyAttributes: (form: IForm, _, ctx: IQueryInfos): Promise<IAttribute[]> =>
                             Promise.all(
                                 (form?.dependencyAttributes ?? []).map(depAttribute =>
-                                    attributeDomain.getAttributeProperties({id: depAttribute, ctx})
-                                )
-                            )
+                                    attributeDomain.getAttributeProperties({id: depAttribute, ctx}),
+                                ),
+                            ),
                     },
                     FormElement: commonFormElementResolvers,
-                    FormElementWithValues: commonFormElementResolvers
-                }
+                    FormElementWithValues: commonFormElementResolvers,
+                },
             };
-        }
+        },
     };
 }

@@ -13,15 +13,15 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
     type: ApplicationType.internal,
     label: {
         fr: 'My App',
-        en: 'My App'
+        en: 'My App',
     },
     description: {
-        en: 'My description'
+        en: 'My description',
     },
     endpoint: 'my-app',
     url: 'http://example.com/app/my-app',
     color: 'orange',
-    icon: null
+    icon: null,
 };
 
 export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applications_list> = {
@@ -31,29 +31,29 @@ export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applicat
     permissions: {
         __typename: 'ApplicationPermissions',
         access_application: true,
-        admin_application: true
+        admin_application: true,
     },
     settings: {
         foo: 'bar',
         libraries: ['libA', 'libB'],
-        trees: ['treeA', 'treeB']
-    }
+        trees: ['treeA', 'treeB'],
+    },
 };
 
 export const mockApplicationsModules: GET_APPLICATION_MODULES_applicationsModules[] = [
     {
         id: 'admin',
         description: 'Administration',
-        version: '0.1.0'
+        version: '0.1.0',
     },
     {
         id: 'data-studio',
         description: 'Generic application to explore your data',
-        version: '0.1.0'
-    }
+        version: '0.1.0',
+    },
 ];
 
 export const mockEditApplicationContextValue: IEditApplicationContextData = {
     application: mockApplicationDetails,
-    readonly: false
+    readonly: false,
 };

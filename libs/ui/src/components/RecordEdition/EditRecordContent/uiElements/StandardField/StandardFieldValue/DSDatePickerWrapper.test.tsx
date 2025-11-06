@@ -23,7 +23,7 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
@@ -31,15 +31,15 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: firstDayOfMonthDateTimestamp
-    }
+        raw_payload: firstDayOfMonthDateTimestamp,
+    },
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
@@ -47,8 +47,8 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: firstDayOfMonthDateTimestamp
-    }
+        raw_payload: firstDayOfMonthDateTimestamp,
+    },
 };
 
 const notRequired = false;
@@ -83,7 +83,7 @@ describe('DSDatePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         expect(screen.getByRole('textbox')).toHaveValue(presentationDate);
@@ -103,7 +103,7 @@ describe('DSDatePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         expect(screen.getByRole('textbox')).toHaveValue(firstDayOfMonthDateFormatted);
@@ -124,7 +124,7 @@ describe('DSDatePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         await user.click(screen.getByRole('textbox'));
@@ -147,7 +147,7 @@ describe('DSDatePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         expect(screen.getByRole('textbox')).toBeDisabled();
@@ -166,7 +166,7 @@ describe('DSDatePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         const datePicker = screen.getByRole('textbox');
@@ -178,7 +178,7 @@ describe('DSDatePickerWrapper', () => {
         expect(mockOnChange).toHaveBeenCalledWith(firstDayOfMonthDateAtNoon, firstDayOfMonthDateFormatted);
         expect(mockHandleSubmit).toHaveBeenCalledWith(
             firstDayOfMonthDateAtNoon.unix().toString(),
-            mockFormAttribute.id
+            mockFormAttribute.id,
         );
     });
 
@@ -195,7 +195,7 @@ describe('DSDatePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         await user.click(screen.getByRole('textbox'));
@@ -217,7 +217,7 @@ describe('DSDatePickerWrapper', () => {
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: firstDayOfMonthDate
+                        datePickerTest: firstDayOfMonthDate,
                     }}
                 >
                     <Form.Item name="datePickerTest">
@@ -232,7 +232,7 @@ describe('DSDatePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             const clearButton = screen.getByRole('button');
@@ -241,7 +241,7 @@ describe('DSDatePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(
                 expect.any(Object),
-                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload
+                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload,
             );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
@@ -260,7 +260,7 @@ describe('DSDatePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             expect(screen.queryByRole('button')).toBeNull();
@@ -272,7 +272,7 @@ describe('DSDatePickerWrapper', () => {
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: firstDayOfMonthDate
+                        datePickerTest: firstDayOfMonthDate,
                     }}
                 >
                     <Form.Item name="datePickerTest">
@@ -287,7 +287,7 @@ describe('DSDatePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             const clearButton = screen.getByRole('button');
@@ -296,7 +296,7 @@ describe('DSDatePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(
                 expect.any(Object),
-                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload
+                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload,
             );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
@@ -315,7 +315,7 @@ describe('DSDatePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             expect(screen.queryByRole('button')).toBeNull();

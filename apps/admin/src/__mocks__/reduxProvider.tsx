@@ -8,15 +8,15 @@ import {type RootState} from 'reduxStore/store';
 
 const mockStoreInitialState: RootState = {
     messages: {
-        messages: []
+        messages: [],
     },
     mutationsWatcher: {
         mutationsCount: 0,
-        hasPendingMutations: false
+        hasPendingMutations: false,
     },
     tasks: {
-        tasks: {}
-    }
+        tasks: {},
+    },
 };
 
 interface IMockReduxProps {

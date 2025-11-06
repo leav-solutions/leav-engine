@@ -24,7 +24,7 @@ import {
     RecordAttributePermissionsActions,
     RecordPermissionsActions,
     TreeNodePermissionsActions,
-    TreePermissionsActions
+    TreePermissionsActions,
 } from '../../_types/permissions';
 import {type IAdminPermissionDomain} from './adminPermissionDomain';
 import {type IApplicationPermissionDomain} from './applicationPermissionDomain';
@@ -41,7 +41,7 @@ import {
     type IGetInheritedPermissionsParams,
     type IGetPermissionsByActionsParams,
     type IIsAllowedParams,
-    type PermByActionsRes
+    type PermByActionsRes,
 } from './_types';
 
 export interface IPermissionDomain {
@@ -52,7 +52,7 @@ export interface IPermissionDomain {
         actions,
         usersGroupNodeId,
         permissionTreeTarget,
-        ctx
+        ctx,
     }: IGetPermissionsByActionsParams): Promise<PermByActionsRes>;
 
     /**
@@ -64,7 +64,7 @@ export interface IPermissionDomain {
         action,
         userGroupId,
         permissionTreeTarget,
-        ctx
+        ctx,
     }: IGetInheritedPermissionsParams): Promise<boolean>;
 
     isAllowed({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
@@ -109,7 +109,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         'core.domain.eventsManager': eventsManagerDomain,
         'core.infra.permission': permissionRepo,
         'core.infra.cache.cacheService': cacheService,
-        config
+        config,
     }: IPermissionDomainDeps = deps;
 
     const _cleanCacheOnSavingPermissions = async (permissionData: IPermission) => {
@@ -123,8 +123,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 getPermissionCachePatternKey({
                     permissionType: type,
                     applyTo,
-                    permissionAction: actionName as PermissionsActions
-                })
+                    permissionAction: actionName as PermissionsActions,
+                }),
             );
 
             if (type === PermissionTypes.TREE) {
@@ -132,13 +132,13 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.TREE_LIBRARY,
                         applyTo,
-                        permissionAction: actionName as PermissionsActions
+                        permissionAction: actionName as PermissionsActions,
                     }),
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.TREE_NODE,
                         applyTo,
-                        permissionAction: actionName as PermissionsActions
-                    })
+                        permissionAction: actionName as PermissionsActions,
+                    }),
                 );
             }
 
@@ -147,8 +147,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.RECORD,
                         applyTo,
-                        permissionAction: actionName as PermissionsActions
-                    })
+                        permissionAction: actionName as PermissionsActions,
+                    }),
                 );
             }
 
@@ -157,8 +157,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.RECORD_ATTRIBUTE,
                         applyTo,
-                        permissionAction: actionName as PermissionsActions
-                    })
+                        permissionAction: actionName as PermissionsActions,
+                    }),
                 );
             }
 
@@ -167,8 +167,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.APPLICATION,
                         applyTo,
-                        permissionAction: actionName as PermissionsActions
-                    })
+                        permissionAction: actionName as PermissionsActions,
+                    }),
                 );
             }
 
@@ -182,7 +182,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         const canSavePermission = await adminPermissionDomain.getAdminPermission({
             action,
             userId: ctx.userId,
-            ctx
+            ctx,
         });
 
         if (!canSavePermission) {
@@ -199,12 +199,12 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 topic: {
                     permission: {
                         type: permData.type,
-                        applyTo: permData.applyTo
-                    }
+                        applyTo: permData.applyTo,
+                    },
                 },
-                after: savedPermission
+                after: savedPermission,
             },
-            ctx
+            ctx,
         );
 
         return savedPermission;
@@ -218,7 +218,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
             applyTo,
             usersGroupNodeId: usersGroupId,
             permissionTreeTarget,
-            ctx
+            ctx,
         });
 
         return actions.reduce((actionsPerms, action) => {
@@ -235,7 +235,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         action,
         userGroupId,
         permissionTreeTarget,
-        ctx
+        ctx,
     }: IGetInheritedPermissionsParams): Promise<boolean> => {
         let perm;
         switch (type) {
@@ -246,7 +246,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     library: applyTo,
                     permTree: permissionTreeTarget.tree,
                     permTreeNode: permissionTreeTarget.nodeId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
@@ -256,9 +256,9 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                         action: action as RecordAttributePermissionsActions,
                         userGroupId,
                         permTree: permissionTreeTarget.tree,
-                        permTreeNode: permissionTreeTarget.nodeId
+                        permTreeNode: permissionTreeTarget.nodeId,
                     },
-                    ctx
+                    ctx,
                 );
                 break;
             case PermissionTypes.LIBRARY:
@@ -267,7 +267,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     libraryId: applyTo,
                     userGroupId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.ATTRIBUTE:
@@ -276,7 +276,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     attributeId: applyTo,
                     userGroupId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.ADMIN:
@@ -284,7 +284,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await adminPermissionDomain.getInheritedAdminPermission({
                     action,
                     userGroupId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.TREE:
@@ -292,7 +292,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action: action as TreePermissionsActions,
                     treeId: applyTo,
                     userGroupId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.TREE_NODE: {
@@ -305,7 +305,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     userGroupId,
                     permTree: permissionTreeTarget.tree,
                     permTreeNode: permissionTreeTarget.nodeId,
-                    ctx
+                    ctx,
                 });
                 break;
             }
@@ -317,7 +317,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     treeId,
                     libraryId,
                     userGroupId,
-                    ctx
+                    ctx,
                 });
                 break;
             }
@@ -327,7 +327,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     applicationId: applyTo,
                     userGroupId,
-                    ctx
+                    ctx,
                 });
                 break;
             }
@@ -350,7 +350,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     userId,
                     library: applyTo,
                     recordId: target.recordId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
@@ -369,7 +369,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
 
                 if (errors.length) {
                     throw new ValidationError({
-                        target: {msg: Errors.MISSING_FIELDS, vars: {fields: errors.join(', ')}}
+                        target: {msg: Errors.MISSING_FIELDS, vars: {fields: errors.join(', ')}},
                     });
                 }
 
@@ -379,7 +379,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     target.attributeId,
                     applyTo,
                     target.recordId,
-                    ctx
+                    ctx,
                 );
 
                 break;
@@ -389,7 +389,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     libraryId: applyTo,
                     userId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.ATTRIBUTE:
@@ -397,7 +397,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await attributePermissionDomain.getAttributePermission({
                     action,
                     attributeId: applyTo,
-                    ctx
+                    ctx,
                 });
 
                 break;
@@ -406,7 +406,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await adminPermissionDomain.getAdminPermission({
                     action,
                     userId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.TREE:
@@ -415,13 +415,13 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     treeId: applyTo,
                     userId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.TREE_NODE:
                 if (!target.nodeId) {
                     throw new ValidationError({
-                        target: {msg: Errors.MISSING_FIELDS, vars: {fields: 'nodeId'}}
+                        target: {msg: Errors.MISSING_FIELDS, vars: {fields: 'nodeId'}},
                     });
                 }
 
@@ -430,7 +430,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     userId,
                     treeId: applyTo,
                     nodeId: target.nodeId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.TREE_LIBRARY:
@@ -441,7 +441,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     userId,
                     treeId,
                     libraryId,
-                    ctx
+                    ctx,
                 });
                 break;
             case PermissionTypes.APPLICATION:
@@ -450,7 +450,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     applicationId: applyTo,
                     userId,
-                    ctx
+                    ctx,
                 });
                 break;
         }
@@ -461,7 +461,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
     const getActionsByType = ({
         type,
         applyOn,
-        skipApplyOn = false
+        skipApplyOn = false,
     }: IGetActionsByTypeParams): ILabeledPermissionsAction[] => {
         let perms = [];
         switch (type) {
@@ -502,10 +502,10 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 // Retrieve label for all available languages
                 (acc, l) => ({
                     ...acc,
-                    [l]: deps.translator.t(`permissions.${p}`, {lng: l})
+                    [l]: deps.translator.t(`permissions.${p}`, {lng: l}),
                 }),
-                {}
-            )
+                {},
+            ),
         }));
     };
 
@@ -523,6 +523,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         isAllowed,
         getActionsByType,
         registerActions,
-        isAdminOrSystemUser
+        isAdminOrSystemUser,
     };
 }

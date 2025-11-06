@@ -13,7 +13,7 @@ function EncryptedField(props: IFormElementProps<ICommonFieldsSettings>): JSX.El
     const {lang: availableLangs} = useLang();
 
     const fieldProps = {
-        label: localizedLabel(label, availableLangs)
+        label: localizedLabel(label, availableLangs),
     };
 
     return <Input type="password" {...fieldProps} />;

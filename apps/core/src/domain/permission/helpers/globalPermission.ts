@@ -43,12 +43,12 @@ export interface IGlobalPermissionDeps {
 export default function ({
     'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
-    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper
+    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
 }: IGlobalPermissionDeps): IGlobalPermissionHelper {
     return {
         async getGlobalPermission(
             {type, applyTo, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
-            ctx
+            ctx,
         ): Promise<boolean> {
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
@@ -56,9 +56,9 @@ export default function ({
                           elementAncestorsHelper.getCachedElementAncestors({
                               treeId: 'users_groups',
                               nodeId: groupId,
-                              ctx
-                          })
-                      )
+                              ctx,
+                          }),
+                      ),
                   )
                 : [];
 
@@ -68,18 +68,18 @@ export default function ({
                 userGroupsPaths,
                 applyTo,
                 getDefaultPermission,
-                ctx
+                ctx,
             });
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
-            ctx
+            ctx,
         ): Promise<boolean> {
             // Get perm for user group's parent
             const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
                 treeId: 'users_groups',
                 nodeId: userGroupNodeId,
-                ctx
+                ctx,
             });
 
             return permByUserGroupsHelper.getPermissionByUserGroups({
@@ -88,8 +88,8 @@ export default function ({
                 userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
                 applyTo,
                 getDefaultPermission,
-                ctx
+                ctx,
             });
-        }
+        },
     };
 }

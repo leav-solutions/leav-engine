@@ -8,13 +8,13 @@ import {type Application} from '../../types';
 import {RedirectToPreviousPanel} from '../RedirectToPreviousPanel';
 
 jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     Navigate: jest.fn(),
-    useParams: jest.fn()
+    useParams: jest.fn(),
 }));
 
 describe('RedirectToPreviousPanel component guard', () => {
@@ -32,11 +32,11 @@ describe('RedirectToPreviousPanel component guard', () => {
                 icon: 'fa-layer-group',
                 title: {
                     fr: 'PACs',
-                    en: 'Roadmap'
+                    en: 'Roadmap',
                 },
                 type: 'library',
-                libraryId: 'map'
-            }
+                libraryId: 'map',
+            },
         ],
         libraries: {
             map: {
@@ -45,7 +45,7 @@ describe('RedirectToPreviousPanel component guard', () => {
                         id: panelId,
                         name: {
                             fr: 'Gestion des PACs',
-                            en: 'MAPs Management'
+                            en: 'MAPs Management',
                         },
                         type: 'explorer',
                         viewId: '885451776',
@@ -55,21 +55,21 @@ describe('RedirectToPreviousPanel component guard', () => {
                                 what: 'record',
                                 label: {
                                     en: 'Open PAC',
-                                    fr: 'Ouvrir le PAC'
-                                }
-                            }
-                        ]
-                    }
+                                    fr: 'Ouvrir le PAC',
+                                },
+                            },
+                        ],
+                    },
                 ],
                 recordPanels: [
                     {
                         id: recordPanelId,
                         type: 'editionForm',
-                        formId: 'edition'
-                    }
-                ]
-            }
-        }
+                        formId: 'edition',
+                    },
+                ],
+            },
+        },
     };
 
     beforeEach(() => {
@@ -87,7 +87,7 @@ describe('RedirectToPreviousPanel component guard', () => {
 
             expect(screen.getByText(child));
             expect(spyOnNavigate).not.toHaveBeenCalled();
-        }
+        },
     );
 
     it.each([[{panelId: 'unknown'}], [{recordPanelId: 'unknown'}]])(
@@ -104,10 +104,10 @@ describe('RedirectToPreviousPanel component guard', () => {
                 {
                     relative: 'path',
                     replace: true,
-                    to: '../../..'
+                    to: '../../..',
                 },
-                {}
+                {},
             );
-        }
+        },
     );
 });

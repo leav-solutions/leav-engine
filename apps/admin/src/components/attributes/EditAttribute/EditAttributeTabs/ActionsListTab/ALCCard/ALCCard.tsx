@@ -49,7 +49,7 @@ function ALCCard({
     changeParam,
     index,
     dragging,
-    onChangeCustomMessage
+    onChangeCustomMessage,
 }: ICardProps) {
     const {t} = useTranslation();
     const container = useRef(null);
@@ -70,7 +70,7 @@ function ALCCard({
             origin,
             action,
             colorTypeDictionnary,
-            width: internalWidth
+            width: internalWidth,
         },
         end(item: any, monitor) {
             if (setCurrentIndex) {
@@ -83,9 +83,9 @@ function ALCCard({
             }
         },
         collect: monitor => ({
-            isDragging: !!monitor.isDragging()
+            isDragging: !!monitor.isDragging(),
         }),
-        canDrag: monitor => !blockedCard
+        canDrag: monitor => !blockedCard,
     });
 
     const [{isOver}, drop] = useDrop({
@@ -110,8 +110,8 @@ function ALCCard({
             }
         },
         collect: monitor => ({
-            isOver: monitor.isOver()
-        })
+            isOver: monitor.isOver(),
+        }),
     });
 
     //////////////////// COMPONENT FUNCTIONS
@@ -177,7 +177,7 @@ function ALCCard({
                                     position: 'absolute',
                                     right: '6px',
                                     top: '15px',
-                                    color: '#383939'
+                                    color: '#383939',
                                 }}
                                 name="lock"
                                 title="action is system"
@@ -188,7 +188,7 @@ function ALCCard({
                                     position: 'absolute',
                                     right: '2px',
                                     top: '10px',
-                                    fontSize: '0.8em'
+                                    fontSize: '0.8em',
                                 }}
                                 circular
                                 icon="trash"

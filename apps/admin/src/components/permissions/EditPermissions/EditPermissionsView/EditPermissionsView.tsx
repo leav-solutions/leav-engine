@@ -38,21 +38,21 @@ const EditPermissionsView = ({
     actions,
     inheritedPermissions,
     onChange,
-    readOnly = false
+    readOnly = false,
 }: IEditPermissionsViewProps): JSX.Element => {
     const {t} = useTranslation();
     const {lang} = useLang();
     const permissionsByName: IKeyValue<boolean | null> = permissions.reduce(
         (perms, perm) => ({
             ...perms,
-            [perm.name]: perm.allowed
+            [perm.name]: perm.allowed,
         }),
-        {}
+        {},
     );
 
     const heritPermByName: IKeyValue<boolean> = inheritedPermissions.reduce(
         (heritPerms, p) => ({...heritPerms, [p.name]: p.allowed}),
-        {}
+        {},
     );
 
     return (

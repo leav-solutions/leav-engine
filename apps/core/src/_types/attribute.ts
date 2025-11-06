@@ -38,7 +38,7 @@ export interface IAttribute extends ICoreEntity {
 
 export enum ValueVersionMode {
     SIMPLE = 'simple',
-    SMART = 'smart'
+    SMART = 'smart',
 }
 
 export interface IAttributeVersionsConf {
@@ -98,7 +98,7 @@ export enum AttributeTypes {
     SIMPLE_LINK = 'simple_link',
     ADVANCED = 'advanced',
     ADVANCED_LINK = 'advanced_link',
-    TREE = 'tree'
+    TREE = 'tree',
 }
 
 export enum AttributeFormats {
@@ -110,18 +110,18 @@ export enum AttributeFormats {
     BOOLEAN = 'boolean',
     EXTENDED = 'extended',
     COLOR = 'color',
-    RICH_TEXT = 'rich_text'
+    RICH_TEXT = 'rich_text',
 }
 
 export enum MultiDisplayOption {
     AVATAR = 'avatar',
     TAG = 'tag',
-    BADGE_QTY = 'badge_qty'
+    BADGE_QTY = 'badge_qty',
 }
 
 export enum IOTypes {
     STRING = 'string',
     NUMBER = 'number',
     BOOLEAN = 'boolean',
-    OBJECT = 'object'
+    OBJECT = 'object',
 }

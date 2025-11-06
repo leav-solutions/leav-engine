@@ -13,13 +13,13 @@ describe('formBuilderReducer', () => {
                 {
                     type: FormBuilderActionTypes.SAVE_SETTINGS,
                     settings: {
-                        label: 'foo'
-                    }
-                }
+                        label: 'foo',
+                    },
+                },
             );
 
             expect(
-                newState.elements[defaultDepAttribute][defaultDepValue][formElem1.containerId][0]?.settings?.label
+                newState.elements[defaultDepAttribute][defaultDepValue][formElem1.containerId][0]?.settings?.label,
             ).toBe('foo');
             expect(newState.activeElements[formElem1.containerId][0]?.settings?.label).toBe('foo');
         });
@@ -30,16 +30,16 @@ describe('formBuilderReducer', () => {
                 {
                     type: FormBuilderActionTypes.SAVE_SETTINGS,
                     settings: {
-                        label: 'foo'
+                        label: 'foo',
                     },
                     element: {
-                        ...formElem1
-                    }
-                }
+                        ...formElem1,
+                    },
+                },
             );
 
             expect(
-                newState.elements[defaultDepAttribute][defaultDepValue][formElem1.containerId][0]?.settings?.label
+                newState.elements[defaultDepAttribute][defaultDepValue][formElem1.containerId][0]?.settings?.label,
             ).toBe('foo');
             expect(newState.activeElements[formElem1.containerId][0]?.settings?.label).toBe('foo');
         });

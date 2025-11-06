@@ -27,7 +27,7 @@ describe('useFetchRecordHistory', () => {
 
         // compute next return value of useGetRecordHistoryQuery call
         const useGetRecordHistoryQueryReturnValueFct = (
-            variables: Pick<gqlTypes.GetRecordHistoryQueryVariables, 'pagination'>
+            variables: Pick<gqlTypes.GetRecordHistoryQueryVariables, 'pagination'>,
         ) => {
             const nbLogsToReturn = Math.min(variables.pagination.limit, remainingToFetch);
             remainingToFetch -= nbLogsToReturn;
@@ -38,10 +38,10 @@ describe('useFetchRecordHistory', () => {
                 data: {
                     logs: {
                         logs: logsToReturn,
-                        total: totalLogs
-                    }
+                        total: totalLogs,
+                    },
                 },
-                refetch: refetchMock
+                refetch: refetchMock,
             } as unknown as QueryResult<any, any>;
         };
 
@@ -49,8 +49,8 @@ describe('useFetchRecordHistory', () => {
         const refetchMock = jest.fn().mockImplementation((variables: gqlTypes.GetRecordHistoryQueryVariables) => {
             useGetRecordHistoryQuerySpy.mockReturnValue(
                 useGetRecordHistoryQueryReturnValueFct({
-                    pagination: variables.pagination
-                })
+                    pagination: variables.pagination,
+                }),
             );
             rerender();
         });
@@ -58,14 +58,14 @@ describe('useFetchRecordHistory', () => {
         // for first call/page
         useGetRecordHistoryQuerySpy.mockReturnValue(
             useGetRecordHistoryQueryReturnValueFct({
-                pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0}
-            })
+                pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0},
+            }),
         );
 
         const {result, rerender} = renderHook(() =>
             useFetchRecordHistory({
-                record: {id: 'record-1', libraryId: 'lib-1'}
-            })
+                record: {id: 'record-1', libraryId: 'lib-1'},
+            }),
         );
 
         expect(gqlTypes.useGetRecordHistoryQuery).toHaveBeenCalledWith({
@@ -73,12 +73,12 @@ describe('useFetchRecordHistory', () => {
             variables: {
                 record: {
                     id: 'record-1',
-                    libraryId: 'lib-1'
+                    libraryId: 'lib-1',
                 },
                 attributeId: undefined,
                 actions: [gqlTypes.LogAction.VALUE_SAVE, gqlTypes.LogAction.VALUE_DELETE],
-                pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0}
-            }
+                pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0},
+            },
         });
         expect(result.current.loading).toBe(false);
         expect(result.current.inError).toBe(false);
@@ -91,18 +91,18 @@ describe('useFetchRecordHistory', () => {
         expect(refetchMock).toHaveBeenCalledWith({
             record: {
                 id: 'record-1',
-                libraryId: 'lib-1'
+                libraryId: 'lib-1',
             },
             attributeId: undefined,
             actions: [gqlTypes.LogAction.VALUE_SAVE, gqlTypes.LogAction.VALUE_DELETE],
-            pagination: {limit: RECORD_HISTORY_LOGS_PAGE, offset: RECORD_HISTORY_LOGS_FIRST_PAGE}
+            pagination: {limit: RECORD_HISTORY_LOGS_PAGE, offset: RECORD_HISTORY_LOGS_FIRST_PAGE},
         });
         expect(result.current.loading).toBe(false);
         expect(result.current.inError).toBe(false);
         expect(result.current.total).toBe(totalLogs);
         expect(result.current.hasMore).toBe(true);
         expect(result.current.logs).toEqual(
-            buildFakeLogs({offset: 0, limit: RECORD_HISTORY_LOGS_PAGE + RECORD_HISTORY_LOGS_FIRST_PAGE})
+            buildFakeLogs({offset: 0, limit: RECORD_HISTORY_LOGS_PAGE + RECORD_HISTORY_LOGS_FIRST_PAGE}),
         );
 
         result.current.fetchMore();
@@ -118,14 +118,14 @@ describe('useFetchRecordHistory', () => {
         const fetchedLogs = [{id: 'log-attribute-1'}, {id: 'log-attribute-2'}];
         useGetRecordHistoryQuerySpy.mockReturnValue({
             loading: false,
-            data: {logs: {logs: fetchedLogs, total: 42}}
+            data: {logs: {logs: fetchedLogs, total: 42}},
         } as QueryResult<any, any>);
 
         const {result, rerender} = renderHook(props => useFetchRecordHistory(props), {
             initialProps: {
                 record: {id: 'record-1', libraryId: 'lib-1'},
-                attributeId: 'attribute-1'
-            }
+                attributeId: 'attribute-1',
+            },
         });
 
         expect(gqlTypes.useGetRecordHistoryQuery).toHaveBeenCalledWith({
@@ -133,12 +133,12 @@ describe('useFetchRecordHistory', () => {
             variables: {
                 record: {
                     id: 'record-1',
-                    libraryId: 'lib-1'
+                    libraryId: 'lib-1',
                 },
                 attributeId: 'attribute-1',
                 actions: [gqlTypes.LogAction.VALUE_SAVE, gqlTypes.LogAction.VALUE_DELETE],
-                pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0}
-            }
+                pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0},
+            },
         });
         expect(result.current.loading).toBe(false);
         expect(result.current.inError).toBe(false);
@@ -146,11 +146,11 @@ describe('useFetchRecordHistory', () => {
         expect(result.current.logs).toEqual(fetchedLogs);
 
         useGetRecordHistoryQuerySpy.mockReturnValue({
-            loading: true
+            loading: true,
         } as QueryResult<any, any>);
         rerender({
             record: {id: 'record-2', libraryId: 'lib-1'},
-            attributeId: 'attribute-2'
+            attributeId: 'attribute-2',
         });
 
         expect(result.current.loading).toBe(true);
@@ -160,13 +160,13 @@ describe('useFetchRecordHistory', () => {
 
     it('Should set loading if fetching is in progress', async () => {
         useGetRecordHistoryQuerySpy.mockReturnValue({
-            loading: true
+            loading: true,
         } as QueryResult<any, any>);
 
         const {result} = renderHook(() =>
             useFetchRecordHistory({
-                record: {id: 'record-1', libraryId: 'lib-1'}
-            })
+                record: {id: 'record-1', libraryId: 'lib-1'},
+            }),
         );
 
         expect(result.current.loading).toBe(true);
@@ -177,13 +177,13 @@ describe('useFetchRecordHistory', () => {
     it('Should set inError if fetching return an error', async () => {
         useGetRecordHistoryQuerySpy.mockReturnValue({
             loading: false,
-            error: {message: 'Some error'}
+            error: {message: 'Some error'},
         } as QueryResult<any, any>);
 
         const {result} = renderHook(() =>
             useFetchRecordHistory({
-                record: {id: 'record-1', libraryId: 'lib-1'}
-            })
+                record: {id: 'record-1', libraryId: 'lib-1'},
+            }),
         );
 
         expect(result.current.loading).toBe(false);

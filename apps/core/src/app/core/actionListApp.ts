@@ -92,20 +92,20 @@ export default function ({'core.domain.actionsList': actionsListDomain, translat
                             const translatedActionList = availableActions.map(action => {
                                 action.description = translator.t(('actions.descriptions.' + action.id) as string, {
                                     lng: ctx.lang,
-                                    interpolation: {escapeValue: false}
+                                    interpolation: {escapeValue: false},
                                 });
                                 action.name = translator.t(('actions.names.' + action.id) as string, {
                                     lng: ctx.lang,
-                                    interpolation: {escapeValue: false}
+                                    interpolation: {escapeValue: false},
                                 });
                                 return action;
                             });
 
                             return translatedActionList;
-                        }
+                        },
                     },
-                    Mutation: {}
-                }
+                    Mutation: {},
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -115,7 +115,7 @@ export default function ({'core.domain.actionsList': actionsListDomain, translat
         extensionPoints: {
             registerActions: (actions: IActionsListFunction[]) => {
                 actionsListDomain.registerActions(actions);
-            }
-        }
+            },
+        },
     };
 }

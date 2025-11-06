@@ -25,7 +25,7 @@ interface IDeps {
 export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.permission.library': libraryPermissionDomain,
-    'core.infra.record': recordRepo
+    'core.infra.record': recordRepo,
 }: IDeps): CreateRecordHelper {
     return async ({library, active, ctx}) => {
         const recordData = {
@@ -34,14 +34,14 @@ export default function ({
             modified_at: moment().unix(),
             modified_by: String(ctx.userId),
             active,
-            ...(!active && {[CORE_IN_CREATION_BY]: String(ctx.userId)})
+            ...(!active && {[CORE_IN_CREATION_BY]: String(ctx.userId)}),
         };
 
         const canCreate = await libraryPermissionDomain.getLibraryPermission({
             action: LibraryPermissionsActions.CREATE_RECORD,
             userId: ctx.userId,
             libraryId: library,
-            ctx
+            ctx,
         });
 
         if (!canCreate) {
@@ -58,12 +58,12 @@ export default function ({
                 topic: {
                     record: {
                         id: newRecord.id,
-                        libraryId: newRecord.library
-                    }
+                        libraryId: newRecord.library,
+                    },
                 },
-                after: newRecord
+                after: newRecord,
             },
-            ctx
+            ctx,
         );
 
         return newRecord;

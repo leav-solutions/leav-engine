@@ -22,7 +22,7 @@ function LibraryPicker({
     onSubmit,
     selected = [],
     multiple = true,
-    showSelected = false
+    showSelected = false,
 }: ILibraryPickerProps): JSX.Element {
     const {t} = useSharedTranslation();
 

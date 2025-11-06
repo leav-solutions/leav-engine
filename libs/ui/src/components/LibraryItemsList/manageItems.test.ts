@@ -21,11 +21,11 @@ describe('manageItems', () => {
             label: 'record_label',
             library: {
                 id: 'record_lib',
-                label: {fr: 'Test Lib'}
+                label: {fr: 'Test Lib'},
             },
             preview: mockPreviews,
-            color: '#123456'
-        }
+            color: '#123456',
+        },
     };
 
     const mockField: IField = {
@@ -33,7 +33,7 @@ describe('manageItems', () => {
         library: 'test_lib',
         label: 'My field',
         type: AttributeType.simple,
-        key: 'myAttribute'
+        key: 'myAttribute',
     };
 
     test('Simple items with no fields', async () => {
@@ -44,7 +44,7 @@ describe('manageItems', () => {
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
-            fields: {}
+            fields: {},
         });
         expect(res[1].index).toBe(2);
     });
@@ -53,8 +53,8 @@ describe('manageItems', () => {
         const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
-                myAttribute: 'myValue'
-            }
+                myAttribute: 'myValue',
+            },
         ];
 
         const res = manageItems({
@@ -62,17 +62,17 @@ describe('manageItems', () => {
             fields: [
                 {
                     ...mockField,
-                    type: AttributeType.simple
-                }
-            ]
+                    type: AttributeType.simple,
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myAttribute: 'myValue'
-            }
+                myAttribute: 'myValue',
+            },
         });
     });
 
@@ -80,8 +80,8 @@ describe('manageItems', () => {
         const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
-                myAttribute: ['myValue1', 'myValue2']
-            }
+                myAttribute: ['myValue1', 'myValue2'],
+            },
         ];
 
         const res = manageItems({
@@ -90,17 +90,17 @@ describe('manageItems', () => {
                 {
                     ...mockField,
                     multipleValues: true,
-                    type: AttributeType.simple
-                }
-            ]
+                    type: AttributeType.simple,
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myAttribute: ['myValue1', 'myValue2']
-            }
+                myAttribute: ['myValue1', 'myValue2'],
+            },
         });
     });
 
@@ -109,9 +109,9 @@ describe('manageItems', () => {
             {
                 ...mockItemBase,
                 myLinkAttribute: {
-                    myAttribute: 'myValue'
-                }
-            }
+                    myAttribute: 'myValue',
+                },
+            },
         ];
 
         const res = manageItems({
@@ -122,18 +122,18 @@ describe('manageItems', () => {
                     type: AttributeType.simple,
                     parentAttributeData: {
                         id: 'myLinkAttribute',
-                        type: AttributeType.simple_link
-                    }
-                }
-            ]
+                        type: AttributeType.simple_link,
+                    },
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myAttribute: 'myValue'
-            }
+                myAttribute: 'myValue',
+            },
         });
     });
 
@@ -143,10 +143,10 @@ describe('manageItems', () => {
                 ...mockItemBase,
                 myTreeAttribute: {
                     record: {
-                        myAttribute: 'myValue'
-                    }
-                }
-            }
+                        myAttribute: 'myValue',
+                    },
+                },
+            },
         ];
 
         const res = manageItems({
@@ -158,18 +158,18 @@ describe('manageItems', () => {
                     type: AttributeType.simple,
                     parentAttributeData: {
                         id: 'myTreeAttribute',
-                        type: AttributeType.tree
-                    }
-                }
-            ]
+                        type: AttributeType.tree,
+                    },
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                'myTreeAttribute.test_lib.myAttribute': 'myValue'
-            }
+                'myTreeAttribute.test_lib.myAttribute': 'myValue',
+            },
         });
     });
 
@@ -178,9 +178,9 @@ describe('manageItems', () => {
             {
                 ...mockItemBase,
                 myLinkAttribute: {
-                    myAttribute: ['myValue1', 'myValue2']
-                }
-            }
+                    myAttribute: ['myValue1', 'myValue2'],
+                },
+            },
         ];
 
         const res = manageItems({
@@ -191,18 +191,18 @@ describe('manageItems', () => {
                     type: AttributeType.simple,
                     parentAttributeData: {
                         id: 'myLinkAttribute',
-                        type: AttributeType.simple_link
-                    }
-                }
-            ]
+                        type: AttributeType.simple_link,
+                    },
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myAttribute: ['myValue1', 'myValue2']
-            }
+                myAttribute: ['myValue1', 'myValue2'],
+            },
         });
     });
 
@@ -212,13 +212,13 @@ describe('manageItems', () => {
                 ...mockItemBase,
                 myLinkAttribute: [
                     {
-                        myAttribute: 'myValue1'
+                        myAttribute: 'myValue1',
                     },
                     {
-                        myAttribute: 'myValue2'
-                    }
-                ]
-            }
+                        myAttribute: 'myValue2',
+                    },
+                ],
+            },
         ];
 
         const res = manageItems({
@@ -229,18 +229,18 @@ describe('manageItems', () => {
                     type: AttributeType.simple,
                     parentAttributeData: {
                         id: 'myLinkAttribute',
-                        type: AttributeType.simple_link
-                    }
-                }
-            ]
+                        type: AttributeType.simple_link,
+                    },
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myAttribute: ['myValue1', 'myValue2']
-            }
+                myAttribute: ['myValue1', 'myValue2'],
+            },
         });
     });
 
@@ -250,9 +250,9 @@ describe('manageItems', () => {
                 ...mockItemBase,
                 myLinkAttribute: {
                     id: '1',
-                    whoAmI: {...mockItemBase.whoAmI}
-                }
-            }
+                    whoAmI: {...mockItemBase.whoAmI},
+                },
+            },
         ];
 
         const res = manageItems({
@@ -262,17 +262,17 @@ describe('manageItems', () => {
                     ...mockField,
                     id: 'myLinkAttribute',
                     key: 'myLinkAttribute',
-                    type: AttributeType.simple_link
-                }
-            ]
+                    type: AttributeType.simple_link,
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myLinkAttribute: {id: '1', whoAmI: {...mockItemBase.whoAmI}}
-            }
+                myLinkAttribute: {id: '1', whoAmI: {...mockItemBase.whoAmI}},
+            },
         });
     });
 
@@ -282,9 +282,9 @@ describe('manageItems', () => {
                 ...mockItemBase,
                 myTreeAttribute: {
                     id: '1',
-                    whoAmI: {...mockItemBase.whoAmI}
-                }
-            }
+                    whoAmI: {...mockItemBase.whoAmI},
+                },
+            },
         ];
 
         const res = manageItems({
@@ -294,17 +294,17 @@ describe('manageItems', () => {
                     ...mockField,
                     id: 'myTreeAttribute',
                     key: 'myTreeAttribute',
-                    type: AttributeType.tree
-                }
-            ]
+                    type: AttributeType.tree,
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myTreeAttribute: {id: '1', whoAmI: {...mockItemBase.whoAmI}}
-            }
+                myTreeAttribute: {id: '1', whoAmI: {...mockItemBase.whoAmI}},
+            },
         });
     });
 
@@ -312,8 +312,8 @@ describe('manageItems', () => {
         const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
-                myAttribute: '{"foo":"bar"}'
-            }
+                myAttribute: '{"foo":"bar"}',
+            },
         ];
 
         const res = manageItems({
@@ -322,17 +322,17 @@ describe('manageItems', () => {
                 {
                     ...mockField,
                     type: AttributeType.simple,
-                    format: AttributeFormat.extended
-                }
-            ]
+                    format: AttributeFormat.extended,
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                myAttribute: '{"foo":"bar"}'
-            }
+                myAttribute: '{"foo":"bar"}',
+            },
         });
     });
 
@@ -340,8 +340,8 @@ describe('manageItems', () => {
         const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
-                myAttribute: '{"foo":"bar"}'
-            }
+                myAttribute: '{"foo":"bar"}',
+            },
         ];
 
         const res = manageItems({
@@ -351,17 +351,17 @@ describe('manageItems', () => {
                     ...mockField,
                     key: 'myAttribute.foo',
                     type: AttributeType.simple,
-                    format: AttributeFormat.extended
-                }
-            ]
+                    format: AttributeFormat.extended,
+                },
+            ],
         });
 
         expect(res[0]).toEqual({
             whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
-                'myAttribute.foo': 'bar'
-            }
+                'myAttribute.foo': 'bar',
+            },
         });
     });
 });

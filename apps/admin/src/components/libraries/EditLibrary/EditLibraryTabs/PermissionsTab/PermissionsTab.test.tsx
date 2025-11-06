@@ -17,13 +17,13 @@ jest.mock(
     () =>
         function PermissionsContent() {
             return <div>PermissionsContent</div>;
-        }
+        },
 );
 
 describe('PermissionsTab', () => {
     const library: GET_LIB_BY_ID_libraries_list = {
         ...mockLibrary,
-        label: {fr: 'Test 1', en: ''}
+        label: {fr: 'Test 1', en: ''},
     };
 
     test('Render content', async () => {
@@ -38,7 +38,7 @@ describe('PermissionsTab', () => {
         let saveQueryCalled = false;
         const permConfToSave: Treepermissions_confInput = {
             permissionTreeAttributes: ['tree1', 'tree2'],
-            relation: PermissionsRelation.and
+            relation: PermissionsRelation.and,
         };
 
         const mocks = [
@@ -46,8 +46,8 @@ describe('PermissionsTab', () => {
                 request: {
                     query: saveLibQuery,
                     variables: {
-                        libData: {id: library.id, permissions_conf: permConfToSave}
-                    }
+                        libData: {id: library.id, permissions_conf: permConfToSave},
+                    },
                 },
                 result: () => {
                     saveQueryCalled = true;
@@ -55,12 +55,12 @@ describe('PermissionsTab', () => {
                         data: {
                             saveLibrary: {
                                 ...library,
-                                __typename: 'Library'
-                            }
-                        }
+                                __typename: 'Library',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         let comp;
@@ -68,7 +68,7 @@ describe('PermissionsTab', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
                     <PermissionsTab library={library} readonly={false} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

@@ -9,17 +9,17 @@ import {savePermissionsQuery} from '../../../queries/permissions/savePermissionM
 import {type GET_PERMISSIONS, type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
 import {
     type GET_PERMISSIONS_ACTIONS,
-    type GET_PERMISSIONS_ACTIONSVariables
+    type GET_PERMISSIONS_ACTIONSVariables,
 } from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
 import {
     type PermissionsActions,
     type PermissionsTreeTargetInput,
-    type PermissionTypes
+    type PermissionTypes,
 } from '../../../_gqlTypes/globalTypes';
 import {
     type SAVE_PERMISSION,
     type SAVE_PERMISSIONVariables,
-    type SAVE_PERMISSION_savePermission_actions
+    type SAVE_PERMISSION_savePermission_actions,
 } from '../../../_gqlTypes/SAVE_PERMISSION';
 import Loading from '../../shared/Loading';
 import EditPermissionsView from './EditPermissionsView';
@@ -41,15 +41,15 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
     const {
         loading: loadingActions,
         error: errorActions,
-        data: dataActions
+        data: dataActions,
     } = useQuery<GET_PERMISSIONS_ACTIONS, GET_PERMISSIONS_ACTIONSVariables>(getPermissionsActionsQuery, {
         variables: {type: permParams.type, applyOn: permParams.applyTo},
         fetchPolicy: 'network-only',
-        notifyOnNetworkStatusChange: true
+        notifyOnNetworkStatusChange: true,
     });
 
     const actionsToEdit = (dataActions?.permissionsActionsByType ?? []).filter(
-        p => !permParams.actions || permParams.actions?.includes(p.name)
+        p => !permParams.actions || permParams.actions?.includes(p.name),
     );
 
     const getPermsVariables = {...permParams, actions: actionsToEdit.map(a => a.name)};
@@ -58,7 +58,7 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         variables: getPermsVariables,
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true,
-        skip: !dataActions
+        skip: !dataActions,
     });
 
     const [savePerms] = useMutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables>(savePermissionsQuery);
@@ -80,10 +80,10 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
             variables: {
                 permData: {
                     ...permParams,
-                    actions: [permToSave]
-                }
+                    actions: [permToSave],
+                },
             },
-            refetchQueries: [{query: getPermissionsQuery, variables: getPermsVariables}]
+            refetchQueries: [{query: getPermissionsQuery, variables: getPermsVariables}],
         });
     };
 

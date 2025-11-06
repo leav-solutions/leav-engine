@@ -11,7 +11,7 @@ export const mockPreviews: Preview = {
     huge: '/fake/url/huge.jpg',
     pdf: '',
     file: null,
-    original: '/fake/url/original.jpg'
+    original: '/fake/url/original.jpg',
 };
 
 export const mockModifier: RecordIdentity = {
@@ -20,9 +20,9 @@ export const mockModifier: RecordIdentity = {
         label: 'admin',
         library: {
             id: 'users',
-            label: {fr: 'Utilisateurs'}
+            label: {fr: 'Utilisateurs'},
         },
         preview: mockPreviews,
-        color: '#123456'
-    }
+        color: '#123456',
+    },
 };

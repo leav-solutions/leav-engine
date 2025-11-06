@@ -65,11 +65,11 @@ function CustomConfigTab({library}: ICustomConfigTabProps): JSX.Element {
         const dataToSave = {
             libData: {
                 id: library.id,
-                settings: {...value}
-            }
+                settings: {...value},
+            },
         };
         saveLibrary({
-            variables: dataToSave
+            variables: dataToSave,
         });
     };
 

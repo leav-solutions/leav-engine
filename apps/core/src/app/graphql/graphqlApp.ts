@@ -36,7 +36,7 @@ interface IDeps {
 
 export default function ({
     'core.depsManager': depsManager = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
 }: IDeps = {}): IGraphqlApp {
     const _pluginsSchema: IAppGraphQLSchema[] = [];
 
@@ -95,7 +95,7 @@ export default function ({
                     const field = {
                         name: selection.name.value,
                         fields: [],
-                        arguments: {}
+                        arguments: {},
                     };
 
                     // Fetch nested fields recursively
@@ -131,7 +131,7 @@ export default function ({
                 }
 
                 _pluginsSchema.push(schemaPart);
-            }
-        }
+            },
+        },
     };
 }

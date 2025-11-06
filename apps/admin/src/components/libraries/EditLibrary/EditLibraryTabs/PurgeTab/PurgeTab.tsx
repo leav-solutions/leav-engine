@@ -9,7 +9,7 @@ import {
     getRecordsListQuery,
     type IGetRecordsListQuery,
     type IGetRecordsListQueryVariables,
-    RecordFilterCondition
+    RecordFilterCondition,
 } from 'queries/records/recordsListQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -49,9 +49,9 @@ function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
             variables: {
                 library: library.id,
                 pagination: {limit: 1, offset: 0},
-                filters: [{field: 'active', condition: RecordFilterCondition.EQUAL, value: 'false'}]
-            }
-        }
+                filters: [{field: 'active', condition: RecordFilterCondition.EQUAL, value: 'false'}],
+            },
+        },
     );
 
     const [purgeRecords, {loading: purgeLoading, error: purgeError}] = useMutation<
@@ -89,7 +89,7 @@ function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
             <div className="warning">
                 {t('libraries.purge.warning', {
                     interpolation: false,
-                    defaultValue: 'warning'
+                    defaultValue: 'warning',
                 })}
             </div>
             <div>{t('libraries.purge.confirm')}</div>

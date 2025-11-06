@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function SelectRecordModal() {
             return <div>SelectRecordModal</div>;
-        }
+        },
 );
 
 jest.mock('hooks/useLang');
@@ -79,7 +79,7 @@ describe('RecordSelector', () => {
                     label="icon"
                     libraries={['my_lib']}
                     required
-                />
+                />,
             );
         });
 

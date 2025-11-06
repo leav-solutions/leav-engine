@@ -5,12 +5,12 @@ import {type IRecordIdentityWhoAmI, type SystemTranslation, type IValueVersion} 
 import {
     type RecordFormAttributeFragment,
     type RecordUpdateSubscription,
-    type ValueDetailsFragment
+    type ValueDetailsFragment,
 } from '_ui/_gqlTypes';
 import {
     type RecordFormElementsValueLinkValue,
     type RecordFormElementsValueStandardValue,
-    type RecordFormElementsValueTreeValue
+    type RecordFormElementsValueTreeValue,
 } from '_ui/hooks/useGetRecordForm';
 import {TypeGuards} from '_ui/components/LibraryItemsList/LibraryItemsListTable/Cell/typeGuards';
 
@@ -24,7 +24,7 @@ export const EditRecordSidebarContentTypeMap = {
     SUMMARY: 'summary',
     VALUE_DETAILS: 'valueDetails',
     VALUES_VERSIONS: 'valuesVersions',
-    NONE: 'none'
+    NONE: 'none',
 } as const;
 
 type EditRecordSidebarContentType =
@@ -64,7 +64,7 @@ export enum EditRecordReducerActionsTypes {
     REQUEST_REFRESH = 'REQUEST_REFRESH',
     REFRESH_DONE = 'REFRESH_DONE',
     ADD_EXTERNAL_UPDATE = 'ADD_EXTERNAL_UPDATE',
-    CLEAR_EXTERNAL_UPDATE = 'CLEAR_EXTERNAL_UPDATE'
+    CLEAR_EXTERNAL_UPDATE = 'CLEAR_EXTERNAL_UPDATE',
 }
 
 export type IEditRecordReducerActions =
@@ -138,14 +138,14 @@ export const initialState: IEditRecordReducerState = {
     refreshRequested: false,
     externalUpdate: {
         modifiers: [],
-        updatedValues: {}
+        updatedValues: {},
     },
-    withInfoButton: false
+    withInfoButton: false,
 };
 
 const editRecordReducer = (
     state: IEditRecordReducerState,
-    action: IEditRecordReducerActions
+    action: IEditRecordReducerActions,
 ): IEditRecordReducerState => {
     switch (action.type) {
         case EditRecordReducerActionsTypes.SET_RECORD:
@@ -161,7 +161,7 @@ const editRecordReducer = (
                 enableSidebar: enabled,
                 sidebarDefaultHidden: !isOpenByDefault,
                 sidebarContent: isOpen ? EditRecordSidebarContentTypeMap.SUMMARY : EditRecordSidebarContentTypeMap.NONE,
-                isOpenSidebar: isOpen
+                isOpenSidebar: isOpen,
             };
         }
         case EditRecordReducerActionsTypes.SET_ENABLE_SIDEBAR:
@@ -194,7 +194,7 @@ const editRecordReducer = (
                         }),
                     calculatedValue: (() => {
                         const calculatedOrInheritedValue = action.values?.filter(
-                            value => value.isCalculated || value.isInherited
+                            value => value.isCalculated || value.isInherited,
                         )?.[0];
 
                         if (TypeGuards.isRecordFormElementsValuesLinkValue(calculatedOrInheritedValue)) {
@@ -212,9 +212,9 @@ const editRecordReducer = (
                         }
 
                         return calculatedOrInheritedValue?.payload;
-                    })()
+                    })(),
                 },
-                sidebarContent: newSidebarContent
+                sidebarContent: newSidebarContent,
             };
         case EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT:
             return {...state, sidebarContent: action.content};
@@ -224,7 +224,7 @@ const editRecordReducer = (
                 sidebarContent: action.isOpen
                     ? EditRecordSidebarContentTypeMap.SUMMARY
                     : EditRecordSidebarContentTypeMap.NONE,
-                isOpenSidebar: action.isOpen
+                isOpenSidebar: action.isOpen,
             };
         case EditRecordReducerActionsTypes.SET_VALUES_VERSION:
             return {...state, valuesVersion: action.valuesVersion};
@@ -243,15 +243,15 @@ const editRecordReducer = (
                     ...acc,
                     [updatedValue.attribute]: [
                         ...(newState.externalUpdate?.[updatedValue.attribute] ?? []),
-                        updatedValue.value
-                    ]
+                        updatedValue.value,
+                    ],
                 }),
-                {}
+                {},
             );
 
             newState.externalUpdate = {
                 modifiers: newModifiers,
-                updatedValues: {...(state.externalUpdate?.updatedValues ?? {}), ...newValues}
+                updatedValues: {...(state.externalUpdate?.updatedValues ?? {}), ...newValues},
             };
 
             return newState;

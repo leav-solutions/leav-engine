@@ -40,7 +40,7 @@ function StandardFieldValue({
     inheritedFlags,
     listField,
     removeLastValueOfMultivalues,
-    isLastValueOfMultivalues = false
+    isLastValueOfMultivalues = false,
 }: IStandardFieldValueProps): JSX.Element {
     const isValuesListEnabled = !!attribute?.values_list?.enable;
 
@@ -52,7 +52,7 @@ function StandardFieldValue({
         AttributeFormat.date,
         AttributeFormat.boolean,
         AttributeFormat.rich_text,
-        AttributeFormat.color
+        AttributeFormat.color,
     ];
 
     const commonProps = {
@@ -64,7 +64,7 @@ function StandardFieldValue({
         readonly,
         label,
         calculatedFlags,
-        inheritedFlags
+        inheritedFlags,
     };
 
     let valueContent: ReactNode;

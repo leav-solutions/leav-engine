@@ -5,7 +5,7 @@
 import {appRootPath} from '.';
 
 jest.mock('app-root-path', () => ({
-    path: 'path/from/deps'
+    path: 'path/from/deps',
 }));
 
 describe('appRootPath', () => {

@@ -33,7 +33,7 @@ const Providers = ({
     apolloMocks,
     cacheSettings,
     currentApp,
-    globalSettings
+    globalSettings,
 }: PropsWithChildren<IProvidersProps>) => {
     const mockCache = new InMemoryCache(cacheSettings);
 
@@ -42,8 +42,8 @@ const Providers = ({
         globalSettings: {
             name: 'My App',
             icon: null,
-            ...globalSettings
-        }
+            ...globalSettings,
+        },
     };
 
     return (

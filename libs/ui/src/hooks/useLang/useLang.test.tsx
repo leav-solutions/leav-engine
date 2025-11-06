@@ -14,7 +14,7 @@ describe('useLang', () => {
 
     test('Return user data from context', async () => {
         const hook = renderHook(() => useLang(), {
-            wrapper: ({children}) => <MockedLangContextProvider>{children as JSX.Element}</MockedLangContextProvider>
+            wrapper: ({children}) => <MockedLangContextProvider>{children as JSX.Element}</MockedLangContextProvider>,
         });
 
         expect(hook.result.current.lang).toEqual(['fr']);

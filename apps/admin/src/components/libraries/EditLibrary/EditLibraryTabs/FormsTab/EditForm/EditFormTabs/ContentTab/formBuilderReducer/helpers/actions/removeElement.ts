@@ -6,7 +6,7 @@ import {
     defaultDepAttribute,
     defaultDepValue,
     type IFormBuilderActionRemoveElement,
-    type IFormBuilderState
+    type IFormBuilderState,
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import removeElementById from '../removeElementById';

@@ -6,7 +6,7 @@ import {SimpleErrorBoundary} from './SimpleErrorBoundary';
 
 let isDevEnvMock: boolean;
 jest.mock('_ui/_utils/isDevEnv', () => ({
-    isDevEnv: () => isDevEnvMock
+    isDevEnv: () => isDevEnvMock,
 }));
 
 let consoleSpy;
@@ -28,7 +28,7 @@ describe('SimpleErrorBoundary', () => {
         render(
             <SimpleErrorBoundary>
                 <ComponentWithError />
-            </SimpleErrorBoundary>
+            </SimpleErrorBoundary>,
         );
 
         expect(screen.getByText(/error_occurred/)).toBeVisible();
@@ -40,7 +40,7 @@ describe('SimpleErrorBoundary', () => {
         render(
             <SimpleErrorBoundary>
                 <ComponentWithError />
-            </SimpleErrorBoundary>
+            </SimpleErrorBoundary>,
         );
 
         expect(screen.getByText(/error_occurred/)).toBeVisible();

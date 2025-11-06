@@ -30,7 +30,7 @@ export default function ({
     'core.domain.helpers.validate': validationHelper,
     'core.domain.tree': treeDomain,
     'core.infra.view': viewRepo,
-    'core.utils': utils
+    'core.utils': utils,
 }: IViewDomainDeps): IViewDomain {
     return {
         async saveView(view: IView, ctx: IQueryInfos): Promise<IView> {
@@ -43,9 +43,9 @@ export default function ({
                 const existingView = await viewRepo.getViews(
                     {
                         filters: {id: view.id},
-                        strictFilters: true
+                        strictFilters: true,
                     },
-                    ctx
+                    ctx,
                 );
 
                 if (!existingView.list.length) {
@@ -68,7 +68,7 @@ export default function ({
                     const isNodePresent = await treeDomain.isNodePresent({
                         treeId,
                         nodeId: view.valuesVersions[treeId],
-                        ctx
+                        ctx,
                     });
 
                     if (!isNodePresent) {
@@ -76,9 +76,9 @@ export default function ({
                             'version',
                             {
                                 msg: Errors.INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID,
-                                vars: {treeId, nodeId: view.valuesVersions[treeId]}
+                                vars: {treeId, nodeId: view.valuesVersions[treeId]},
                             },
-                            ctx.lang
+                            ctx.lang,
                         );
                     }
                 }
@@ -88,7 +88,7 @@ export default function ({
 
             const viewToSave: IView = {
                 ...view,
-                modified_at: now
+                modified_at: now,
             };
 
             if (isExistingView) {
@@ -105,31 +105,31 @@ export default function ({
 
             const filters: IViewFilterOptions = {
                 library,
-                created_by: ctx.userId
+                created_by: ctx.userId,
             };
 
             const views = await viewRepo.getViews(
                 {
                     filters,
-                    withCount: true
+                    withCount: true,
                 },
-                ctx
+                ctx,
             );
 
             return views;
         },
         async getViewById(viewId: string, ctx: IQueryInfos): Promise<IView> {
             const filters: IViewFilterOptions = {
-                id: viewId
+                id: viewId,
             };
 
             const views = await viewRepo.getViews(
                 {
                     filters,
                     strictFilters: true,
-                    withCount: false
+                    withCount: false,
                 },
-                ctx
+                ctx,
             );
 
             if (!views.list.length) {
@@ -143,9 +143,9 @@ export default function ({
             const existingView = await viewRepo.getViews(
                 {
                     filters: {id: viewId},
-                    strictFilters: true
+                    strictFilters: true,
                 },
-                ctx
+                ctx,
             );
 
             if (!existingView.list.length) {
@@ -159,6 +159,6 @@ export default function ({
             }
 
             return viewRepo.deleteView(viewId, ctx);
-        }
+        },
     };
 }

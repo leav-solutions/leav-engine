@@ -7,7 +7,7 @@ import {
     SettingOutlined,
     StarFilled,
     StarOutlined,
-    TableOutlined
+    TableOutlined,
 } from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
@@ -81,7 +81,7 @@ enum MenuType {
     TREE = 'tree',
     SETTINGS = 'settings',
     EXPLORER = 'explorer-library',
-    EXPLORER_LINK = 'explorer-link'
+    EXPLORER_LINK = 'explorer-link',
 }
 
 const Sidebar: FunctionComponent = () => {
@@ -98,7 +98,7 @@ const Sidebar: FunctionComponent = () => {
     const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
     const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
     const favoritesList = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
-        variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]}
+        variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]},
     });
 
     const [menuSelected, setMenuSelected] = useState<string[]>([]);
@@ -124,7 +124,7 @@ const Sidebar: FunctionComponent = () => {
 
             return newGroups;
         },
-        {related: [], favorites: [], others: []}
+        {related: [], favorites: [], others: []},
     );
 
     const groupedTrees: IGroupedElements<GET_TREES_trees_list> = trees.reduce(
@@ -141,7 +141,7 @@ const Sidebar: FunctionComponent = () => {
 
             return newGroups;
         },
-        {related: [], favorites: [], others: []}
+        {related: [], favorites: [], others: []},
     );
 
     const _handleToggleFavorite = (wasFavorite: boolean, entityId: string, entityType: 'library' | 'tree') => {
@@ -156,8 +156,8 @@ const Sidebar: FunctionComponent = () => {
             variables: {
                 key: entityType === 'library' ? FAVORITE_LIBRARIES_KEY : FAVORITE_TREES_KEY,
                 value: newFavorites,
-                global: false
-            }
+                global: false,
+            },
         });
     };
 
@@ -212,15 +212,15 @@ const Sidebar: FunctionComponent = () => {
         libsMenuItems = menuType => [
             {
                 key: `libs-loading_${menuType}`,
-                label: <Spin />
-            }
+                label: <Spin />,
+            },
         ];
     } else if (librariesError || favoritesList.error) {
         libsMenuItems = menuType => [
             {
                 key: `libs-error_${menuType}`,
-                label: <ErrorDisplay message={librariesError || favoritesList?.error?.message} />
-            }
+                label: <ErrorDisplay message={librariesError || favoritesList?.error?.message} />,
+            },
         ];
     } else {
         libsMenuItems = menuType =>
@@ -260,9 +260,9 @@ const Sidebar: FunctionComponent = () => {
                                         {isFavorite ? <StarFilled /> : <StarOutlined />}
                                     </FavoriteStarSpan>
                                 </MenuItemContentSpan>
-                            )
+                            ),
                         };
-                    })
+                    }),
                 };
             });
     }
@@ -272,15 +272,15 @@ const Sidebar: FunctionComponent = () => {
         treesMenuItems = [
             {
                 key: 'trees-loading',
-                label: <Spin />
-            }
+                label: <Spin />,
+            },
         ];
     } else if (treesError || favoritesList.error) {
         treesMenuItems = [
             {
                 key: 'trees-error',
-                label: <ErrorDisplay message={treesError || favoritesList?.error?.message} />
-            }
+                label: <ErrorDisplay message={treesError || favoritesList?.error?.message} />,
+            },
         ];
     } else {
         treesMenuItems = Object.keys(groupedTrees).map(treeGroupKey => {
@@ -317,9 +317,9 @@ const Sidebar: FunctionComponent = () => {
                                     {isFavorite ? <StarFilled /> : <StarOutlined />}
                                 </FavoriteStarSpan>
                             </MenuItemContentSpan>
-                        )
+                        ),
                     };
-                })
+                }),
             };
         });
     }
@@ -330,34 +330,34 @@ const Sidebar: FunctionComponent = () => {
             icon: <TableOutlined onClick={_goToExplorerOnActiveLibrary} />,
             label: t('app_settings.explorer'),
             onTitleClick: _goToExplorerOnActiveLibrary,
-            children: libsMenuItems(MenuType.EXPLORER)
+            children: libsMenuItems(MenuType.EXPLORER),
         },
         {
             icon: <TreeIcon onClick={_goToActiveTree} />,
             label: !!activeTree?.label ? activeTree.label : t('sidebar.tree'),
             key: MenuType.TREE,
             onTitleClick: _goToActiveTree,
-            children: treesMenuItems
+            children: treesMenuItems,
         },
         {
             key: MenuType.DATA_STUDIO,
             icon: <DatabaseOutlined onClick={_goToActiveLibrary} />,
             label: !!activeLibrary?.name ? activeLibrary.name : t('sidebar.library'),
             onTitleClick: _goToActiveLibrary,
-            children: libsMenuItems(MenuType.DATA_STUDIO)
+            children: libsMenuItems(MenuType.DATA_STUDIO),
         },
         {
             key: MenuType.SETTINGS,
             icon: <SettingOutlined />,
             label: t('app_settings.title'),
-            onClick: _goToSettings
+            onClick: _goToSettings,
         },
         {
             key: MenuType.EXPLORER_LINK,
             icon: <LinkOutlined />,
             label: t('app_settings.explorer_link'),
-            onClick: _goToLinkExplorer
-        }
+            onClick: _goToLinkExplorer,
+        },
     ];
 
     return (
@@ -370,7 +370,7 @@ const Sidebar: FunctionComponent = () => {
                         width: '100%',
                         objectFit: 'contain',
                         padding: '5px',
-                        verticalAlign: 'top'
+                        verticalAlign: 'top',
                     }}
                 />
             </HomeButtonDiv>

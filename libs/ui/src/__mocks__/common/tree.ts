@@ -8,15 +8,15 @@ export const mockTreeSimple: TreeLightFragment = {
     id: 'my_tree',
     label: {
         fr: 'Mon arbre',
-        en: 'My tree'
-    }
+        en: 'My tree',
+    },
 };
 
 export const mockTreeWithDetails: TreeDetailsFragment = {
     id: 'my_tree',
     label: {
         fr: 'Mon arbre',
-        en: 'My tree'
+        en: 'My tree',
     },
     behavior: TreeBehavior.standard,
     system: false,
@@ -26,8 +26,8 @@ export const mockTreeWithDetails: TreeDetailsFragment = {
             settings: {
                 allowedAtRoot: true,
                 allowedChildren: ['__all__'],
-                allowMultiplePositions: false
-            }
-        }
-    ]
+                allowMultiplePositions: false,
+            },
+        },
+    ],
 };

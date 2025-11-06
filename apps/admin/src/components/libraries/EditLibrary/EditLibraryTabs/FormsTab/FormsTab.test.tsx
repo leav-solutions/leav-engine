@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function FormsList() {
             return <div>FormsList</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -24,7 +24,7 @@ jest.mock(
     () =>
         function EditFormModal() {
             return <div>EditFormModal</div>;
-        }
+        },
 );
 
 describe('FormsTab', () => {
@@ -33,15 +33,15 @@ describe('FormsTab', () => {
             request: {
                 query: getFormsQuery,
                 variables: {
-                    library: 'my_lib'
-                }
+                    library: 'my_lib',
+                },
             },
             result: {
                 data: {
-                    forms: {__typename: 'FormsList', totalCount: 1, list: [{...mockFormLight, __typename: 'Form'}]}
-                }
-            }
-        }
+                    forms: {__typename: 'FormsList', totalCount: 1, list: [{...mockFormLight, __typename: 'Form'}]},
+                },
+            },
+        },
     ];
 
     test('Display list of forms', async () => {
@@ -58,11 +58,11 @@ describe('FormsTab', () => {
                 request: {
                     query: getFormsQuery,
                     variables: {
-                        library: 'my_lib'
-                    }
+                        library: 'my_lib',
+                    },
                 },
-                error: new Error('boom!')
-            }
+                error: new Error('boom!'),
+            },
         ];
         await act(async () => {
             render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: errorMock});
@@ -78,26 +78,26 @@ describe('FormsTab', () => {
                 request: {
                     query: getFormsQuery,
                     variables: {
-                        library: 'my_lib'
-                    }
+                        library: 'my_lib',
+                    },
                 },
                 result: {
                     data: {
                         forms: {
                             __typename: 'FormsList',
                             totalCount: 1,
-                            list: {...mockFormLight, __typename: 'Form'}
-                        }
-                    }
-                }
+                            list: {...mockFormLight, __typename: 'Form'},
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getFormsQuery,
                     variables: {
                         library: 'my_lib',
-                        id: '%foo%'
-                    }
+                        id: '%foo%',
+                    },
                 },
                 result: () => {
                     filteredQueryCalled = true;
@@ -106,12 +106,12 @@ describe('FormsTab', () => {
                             forms: {
                                 __typename: 'FormsList',
                                 totalCount: 1,
-                                list: {...mockFormLight, __typename: 'Form'}
-                            }
-                        }
+                                list: {...mockFormLight, __typename: 'Form'},
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         let comp;
@@ -119,7 +119,7 @@ describe('FormsTab', () => {
             comp = mount(
                 <MockedProvider mocks={mocksWithCount}>
                     <FormsTab libraryId="my_lib" readonly={false} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -148,7 +148,7 @@ describe('FormsTab', () => {
                 comp = mount(
                     <MockedProvider mocks={mocks}>
                         <FormsTab libraryId="my_lib" readonly={false} />
-                    </MockedProvider>
+                    </MockedProvider>,
                 );
             });
 
@@ -196,8 +196,8 @@ describe('FormsTab', () => {
                     query: deleteFormQuery,
                     variables: {
                         library: 'my_lib',
-                        formId: 'my_form'
-                    }
+                        formId: 'my_form',
+                    },
                 },
                 result: () => {
                     deleteMutationCalled = true;
@@ -208,13 +208,13 @@ describe('FormsTab', () => {
                                 id: 'my_form',
                                 library: {
                                     __typename: 'Library',
-                                    id: 'my_lib'
-                                }
-                            }
-                        }
+                                    id: 'my_lib',
+                                },
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         let comp;
@@ -222,7 +222,7 @@ describe('FormsTab', () => {
             comp = mount(
                 <MockedProvider mocks={mocksWithDelete}>
                     <FormsTab libraryId="my_lib" readonly={false} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

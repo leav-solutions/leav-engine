@@ -21,19 +21,19 @@ const useSharedTranslation = () => {
                     defaultNS: 'shared',
                     resources: {
                         fr: {shared: fr},
-                        en: {shared: en}
+                        en: {shared: en},
                     },
                     react: {
-                        useSuspense: true
-                    }
+                        useSuspense: true,
+                    },
                 },
                 (err, t) => {
                     if (err) {
                         return console.error('Something went wrong loading', err);
                     }
-                }
+                },
             ),
-        [langContext.lang]
+        [langContext.lang],
     );
 
     return useTranslation('shared', {i18n});

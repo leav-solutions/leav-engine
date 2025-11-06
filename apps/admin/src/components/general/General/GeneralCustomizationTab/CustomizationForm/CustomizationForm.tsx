@@ -29,7 +29,7 @@ function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.E
               .filter(app => app.endpoint !== 'login')
               .map(app => ({
                   text: app.endpoint,
-                  value: app.endpoint
+                  value: app.endpoint,
               }));
 
     const _handleChangeName = (e: React.SyntheticEvent<HTMLInputElement>) => {
@@ -44,9 +44,9 @@ function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.E
                 [field]: selectedFile
                     ? {
                           library: selectedFile.library.id,
-                          recordId: selectedFile.id
+                          recordId: selectedFile.id,
                       }
-                    : null
+                    : null,
             });
         };
 

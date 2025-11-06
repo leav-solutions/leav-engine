@@ -17,8 +17,8 @@ describe('logRepo', () => {
         const mockESService: Mockify<IElasticsearchService> = {
             search: global.__mockPromise({
                 hits: [mockLog],
-                total: 1
-            })
+                total: 1,
+            }),
         };
 
         const mockConfig: Partial<IConfig> = {
@@ -27,14 +27,14 @@ describe('logRepo', () => {
                 indexPrefix: 'leav-logs-',
                 url: 'http://localhost:9200',
                 ilmPolicyName: '',
-                templateName: ''
-            }
+                templateName: '',
+            },
         };
 
         test('Read logs from Elasticsearch', async () => {
             const repo = logRepo({
                 'core.infra.elasticsearch.service': mockESService as IElasticsearchService,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const logs = await repo.getLogs({}, mockCtx);
 
@@ -46,7 +46,7 @@ describe('logRepo', () => {
         test('Convert filters to ES format', async () => {
             const repo = logRepo({
                 'core.infra.elasticsearch.service': mockESService as IElasticsearchService,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
             const logs = await repo.getLogs(
                 {
@@ -58,12 +58,12 @@ describe('logRepo', () => {
                             attribute: 'my_attribute',
                             record: {
                                 libraryId: 'my_lib',
-                                id: '123456'
-                            }
-                        }
-                    }
+                                id: '123456',
+                            },
+                        },
+                    },
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(logs.logs).toEqual([mockLog]);
@@ -75,9 +75,9 @@ describe('logRepo', () => {
                         {match: {'topic.library': 'my_lib'}},
                         {match: {'topic.attribute': 'my_attribute'}},
                         {match: {'topic.record.libraryId': 'my_lib'}},
-                        {match: {'topic.record.id': '123456'}}
-                    ]
-                }
+                        {match: {'topic.record.id': '123456'}},
+                    ],
+                },
             });
         });
     });

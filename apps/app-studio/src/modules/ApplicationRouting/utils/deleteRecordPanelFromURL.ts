@@ -3,5 +3,5 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export const deleteRecordPanelFromURL = (
     pathname: string,
-    recordPanel: {recordId: string; where: string; recordPanelId: string}
+    recordPanel: {recordId: string; where: string; recordPanelId: string},
 ): string => pathname.split(`/${recordPanel.recordId}/${recordPanel.where}/${recordPanel.recordPanelId}`).join('');

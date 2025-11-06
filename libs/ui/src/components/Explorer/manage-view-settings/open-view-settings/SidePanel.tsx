@@ -18,7 +18,7 @@ export const SidePanel: FunctionComponent = () => {
     // TODO: handle transition opening/closing on floating prop true
 
     const makeA11yBackButton: ButtonHTMLAttributes<HTMLButtonElement> = {
-        title: String(t('explorer.back')) /* TODO: avoid transform null to 'null' */
+        title: String(t('explorer.back')) /* TODO: avoid transform null to 'null' */,
     };
 
     return (

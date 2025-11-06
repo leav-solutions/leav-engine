@@ -10,7 +10,7 @@ import {
     type CalculatedFlags,
     computeCalculatedFlags,
     computeInheritedFlags,
-    type InheritedFlags
+    type InheritedFlags,
 } from '../shared/calculatedInheritedFlags';
 import {type FormInstance} from 'antd';
 import {mockFormElementTree} from '_ui/__mocks__/common/form';
@@ -32,20 +32,20 @@ const mockedComputeCalculatedFlags = computeCalculatedFlags as jest.MockedFuncti
 const mockedComputeInheritedFlags = computeInheritedFlags as jest.MockedFunction<typeof computeInheritedFlags>;
 
 jest.mock('./display-tree-node/TreeNodeList', () => ({
-    TreeNodeList: jest.fn()
+    TreeNodeList: jest.fn(),
 }));
 
 jest.mock('./manage-tree-node-selection/useManageTreeNodeSelection', () => ({
-    useManageTreeNodeSelection: jest.fn()
+    useManageTreeNodeSelection: jest.fn(),
 }));
 
 jest.mock('../shared/calculatedInheritedFlags', () => ({
     computeCalculatedFlags: jest.fn(),
-    computeInheritedFlags: jest.fn()
+    computeInheritedFlags: jest.fn(),
 }));
 
 jest.mock('../shared/useOutsideInteractionDetector', () => ({
-    useOutsideInteractionDetector: jest.fn()
+    useOutsideInteractionDetector: jest.fn(),
 }));
 
 jest.mock('aristid-ds', () => ({
@@ -56,13 +56,13 @@ jest.mock('aristid-ds', () => ({
                 {children}
             </div>
         ),
-        useFormInstance: jest.fn()
-    }
+        useFormInstance: jest.fn(),
+    },
 }));
 
 jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
     state: mockInitialState,
-    dispatch: jest.fn()
+    dispatch: jest.fn(),
 }));
 
 describe('TreeField', () => {
@@ -71,39 +71,39 @@ describe('TreeField', () => {
             ...mockFormElementTree,
             settings: {
                 ...mockFormElementTree.settings,
-                label: {fr: 'arbre', en: 'tree'}
+                label: {fr: 'arbre', en: 'tree'},
             },
             attribute: {
                 ...(mockFormElementTree.attribute as RecordFormAttributeTreeAttributeFragment),
-                multiple_values: false
-            }
+                multiple_values: false,
+            },
         },
         readonly: false,
         isCreationForm: false,
         onValueSubmit: jest.fn(),
         onValueDelete: jest.fn(),
         onDeleteMultipleValues: jest.fn(),
-        metadataEdit: false
+        metadataEdit: false,
     };
 
     const recordEditionContextDefaultProps = {
         record: mockRecord,
         readOnly: true,
-        elements: null
+        elements: null,
     };
 
     const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
         isCalculatedValue: false,
         isCalculatedOverrideValue: false,
         isCalculatedNotOverrideValue: false,
-        calculatedValue: null
+        calculatedValue: null,
     };
 
     const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
         isInheritedValue: false,
         isInheritedOverrideValue: false,
         isInheritedNotOverrideValue: false,
-        inheritedValue: null
+        inheritedValue: null,
     };
 
     beforeEach(() => {
@@ -112,7 +112,7 @@ describe('TreeField', () => {
         Object.assign(mockInitialState, initialState);
 
         mockedUseFormInstance.mockReturnValue({
-            getFieldError: jest.fn().mockReturnValue([])
+            getFieldError: jest.fn().mockReturnValue([]),
         } as unknown as FormInstance);
 
         mockedComputeCalculatedFlags.mockReturnValue(calculatedFlagsWithoutCalculatedValue);
@@ -125,7 +125,7 @@ describe('TreeField', () => {
             removeTreeNode: jest.fn(),
             actionButtonLabel: 'Select Tree Node',
             SelectTreeNodeModal: <div data-testid="select-tree-node-modal">Select Tree Node Modal</div>,
-            RemoveAllTreeNodes: <div data-testid="remove-all-tree-nodes">Remove All Tree Nodes</div>
+            RemoveAllTreeNodes: <div data-testid="remove-all-tree-nodes">Remove All Tree Nodes</div>,
         } as any);
     });
 
@@ -135,7 +135,7 @@ describe('TreeField', () => {
                 <MockedLangContextProvider>
                     <TreeField {...treeFieldDefaultProps} />
                 </MockedLangContextProvider>
-            </RecordEditionContext.Provider>
+            </RecordEditionContext.Provider>,
         );
 
         expect(screen.getByTestId('tree-node-list')).toBeInTheDocument();
@@ -150,7 +150,7 @@ describe('TreeField', () => {
                 <MockedLangContextProvider>
                     <TreeField {...treeFieldDefaultProps} />
                 </MockedLangContextProvider>
-            </RecordEditionContext.Provider>
+            </RecordEditionContext.Provider>,
         );
 
         expect(mockedUseManageTreeNodeSelection).toHaveBeenCalled();
@@ -170,7 +170,7 @@ describe('TreeField', () => {
                 <MockedLangContextProvider>
                     <TreeField {...treeFieldDefaultProps} />
                 </MockedLangContextProvider>
-            </RecordEditionContext.Provider>
+            </RecordEditionContext.Provider>,
         );
 
         expect(mockedTreeNodeList).toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe('TreeField', () => {
                 <MockedLangContextProvider>
                     <TreeField {...treeFieldDefaultProps} readonly={true} />
                 </MockedLangContextProvider>
-            </RecordEditionContext.Provider>
+            </RecordEditionContext.Provider>,
         );
 
         const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];
@@ -197,7 +197,7 @@ describe('TreeField', () => {
 
     it('should call useManageTreeNodeSelection with isFieldInError to true', () => {
         mockedUseFormInstance.mockReturnValue({
-            getFieldError: jest.fn().mockReturnValue(['Test error'])
+            getFieldError: jest.fn().mockReturnValue(['Test error']),
         } as unknown as FormInstance);
 
         render(
@@ -205,7 +205,7 @@ describe('TreeField', () => {
                 <MockedLangContextProvider>
                     <TreeField {...treeFieldDefaultProps} />
                 </MockedLangContextProvider>
-            </RecordEditionContext.Provider>
+            </RecordEditionContext.Provider>,
         );
 
         const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];

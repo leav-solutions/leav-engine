@@ -26,7 +26,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSDatePickerWrapper should be used inside a antd Form.Item');
@@ -49,12 +49,12 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
         if (inheritedFlags.isInheritedValue) {
             onChange(
                 dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload)),
-                inheritedFlags.inheritedValue.raw_payload
+                inheritedFlags.inheritedValue.raw_payload,
             );
         } else if (calculatedFlags.isCalculatedValue) {
             onChange(
                 dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload)),
-                calculatedFlags.calculatedValue.raw_payload
+                calculatedFlags.calculatedValue.raw_payload,
             );
         }
 
@@ -63,7 +63,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
     const _handleDateChange: (
         datePickerDate: dayjs.Dayjs | null,
-        antOnChangeParams: string | string[]
+        antOnChangeParams: string | string[],
     ) => void = async (datePickerDate, ...antOnChangeParams) => {
         hasChangedRef.current = true;
 

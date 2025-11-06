@@ -24,10 +24,10 @@ export default function (): IActionsListFunction {
 
                     return errors;
                 },
-                []
+                [],
             );
 
             return {values, errors: allErrors};
-        }
+        },
     };
 }

@@ -10,14 +10,14 @@ import {type IPreviewMessage, type IPreviewResponseContext, type IPreviewVersion
 export const sendPreviewMessage = async (
     previewMessage: IPreviewMessage,
     priority: PreviewPriority,
-    deps: {amqpService: IAmqpService; config: Config.IConfig}
+    deps: {amqpService: IAmqpService; config: Config.IConfig},
 ) => {
     const msg = JSON.stringify(previewMessage);
     await deps.amqpService.publish(
         deps.config.amqp.exchange,
         deps.config.filesManager.routingKeys.previewRequest,
         msg,
-        priority
+        priority,
     );
 };
 
@@ -25,7 +25,7 @@ export const generatePreviewMsg = (
     recordId: string,
     pathAfter: string,
     versions: IPreviewVersion[],
-    context: any
+    context: any,
 ): IPreviewMessage => {
     const input = pathAfter;
 
@@ -40,13 +40,13 @@ export const generatePreviewMsg = (
     const versionsWithOutput = versions.map(version => ({
         ...version,
         pdf: `${pdfFolderName}/${output}.pdf`,
-        sizes: version.sizes.map(size => ({...size, output: `${size.name}/${output}.${extension}`}))
+        sizes: version.sizes.map(size => ({...size, output: `${size.name}/${output}.${extension}`})),
     }));
 
     const previewMsg = {
         input,
         context,
-        versions: versionsWithOutput
+        versions: versionsWithOutput,
     };
 
     return previewMsg;
@@ -58,7 +58,7 @@ export const requestPreviewGeneration = async ({
     libraryId,
     versions,
     priority = PreviewPriority.LOW,
-    deps
+    deps,
 }: {
     recordId: string;
     pathAfter: string;

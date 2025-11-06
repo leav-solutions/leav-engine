@@ -15,7 +15,7 @@ export interface IRecordInCreationBypassHelperDeps {
 }
 
 export default function ({
-    'core.infra.record': recordRepo
+    'core.infra.record': recordRepo,
 }: IRecordInCreationBypassHelperDeps): IRecordInCreationBypassHelper {
     const _recordInCreationBypass = (record: IRecord, ctx: IQueryInfos): boolean =>
         !record.active && record[CORE_IN_CREATION_BY] === ctx.userId;
@@ -25,6 +25,6 @@ export default function ({
         recordInCreationBypassById: async (libraryId: string, recordId: string, ctx: IQueryInfos): Promise<boolean> => {
             const record = await recordRepo.getRecord({libraryId, recordId, ctx});
             return _recordInCreationBypass(record, ctx);
-        }
+        },
     };
 }

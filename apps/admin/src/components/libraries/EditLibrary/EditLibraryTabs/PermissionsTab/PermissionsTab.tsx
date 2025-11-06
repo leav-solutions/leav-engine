@@ -22,9 +22,9 @@ function PermissionsTab({library, readonly}: IPermissionsTabProps): JSX.Element 
             variables: {
                 libData: {
                     id: library.id,
-                    permissions_conf: conf
-                }
-            }
+                    permissions_conf: conf,
+                },
+            },
         });
 
     return <PermissionsContent library={library} readonly={readonly} onSubmitSettings={_handleSubmitSettings} />;

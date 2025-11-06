@@ -12,7 +12,7 @@ export default (condition: AttributeConditionType): boolean => {
         AttributeConditionFilter.TOMORROW,
         AttributeConditionFilter.YESTERDAY,
         AttributeConditionFilter.LAST_MONTH,
-        AttributeConditionFilter.NEXT_MONTH
+        AttributeConditionFilter.NEXT_MONTH,
     ];
 
     return noValueConditions.includes(condition);

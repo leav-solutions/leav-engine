@@ -52,14 +52,14 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
             {
                 linkValue: {
                     id: record.id,
-                    whoAmI: record
+                    whoAmI: record,
                 },
                 id_value: null,
                 modified_at: null,
                 created_at: null,
-                version: null
+                version: null,
             },
-            values.length
+            values.length,
         );
         _handleCloseSelectRecordModal();
     };
@@ -75,14 +75,14 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 record: {whoAmI: node.record.whoAmI},
                 ancestors: node.parents.map(p => ({
                     record: {
-                        whoAmI: p.record.whoAmI
-                    }
-                }))
+                        whoAmI: p.record.whoAmI,
+                    },
+                })),
             },
             id_value: null,
             modified_at: null,
             created_at: null,
-            version: null
+            version: null,
         };
 
         onChange(val, values.length);
@@ -97,14 +97,14 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 {
                     linkValue: {
                         id: record.id,
-                        whoAmI: record
+                        whoAmI: record,
                     },
                     id_value: null,
                     modified_at: null,
                     created_at: null,
-                    version: null
+                    version: null,
                 },
-                values.length
+                values.length,
             );
         }
         setIsOpenAddRecordModal(false);
@@ -124,9 +124,9 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
                 id_value: valueToDelete.id_value,
                 modified_at: null,
                 created_at: null,
-                version: null
+                version: null,
             },
-            index
+            index,
         );
     };
 

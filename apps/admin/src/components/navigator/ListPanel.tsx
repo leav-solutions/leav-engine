@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import {
     getRecordsListQuery,
     type IGetRecordsListQuery,
-    type IGetRecordsListQueryVariables
+    type IGetRecordsListQueryVariables,
 } from 'queries/records/recordsListQuery';
 import {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -38,16 +38,16 @@ function List({state, dispatch}: IListProps) {
             const actionType = data.checked ? ActionTypes.SELECTION_ADD : ActionTypes.SELECTION_REMOVE;
             dispatch({
                 type: actionType,
-                data: entity.whoAmI
+                data: entity.whoAmI,
             });
         },
-        [dispatch]
+        [dispatch],
     );
 
     const isSelected = useMemo(
         () => idToSearch =>
             state.selection.find(elementInSelection => elementInSelection.id === idToSearch) !== undefined,
-        [state.selection]
+        [state.selection],
     );
 
     const onEdit = useMemo(() => {
@@ -66,14 +66,14 @@ function List({state, dispatch}: IListProps) {
         const data = {offset, page: activePage};
         dispatch({
             type: ActionTypes.SET_OFFSET,
-            data
+            data,
         });
     };
 
     const _handleLimitChange = (e, data) => {
         dispatch({
             type: ActionTypes.SET_LIMIT,
-            data: {limit: data.value}
+            data: {limit: data.value},
         });
     };
 
@@ -153,14 +153,14 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
     const filtersVar = filters.reduce((queryFilters, filter, index) => {
         if (filters.length > 1 && index > 0) {
             queryFilters.push({
-                operator: 'AND'
+                operator: 'AND',
             });
         }
 
         const newFilter = {
             field: filter.attribute,
             condition: 'EQUAL',
-            value: filter.value
+            value: filter.value,
         };
 
         queryFilters.push(newFilter);
@@ -173,7 +173,7 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
             ? null
             : {
                   offset: offset !== null ? offset : 0,
-                  limit
+                  limit,
               };
 
     const {loading, error, data} = useQuery<IGetRecordsListQuery, IGetRecordsListQueryVariables>(getRecordsListQuery, {
@@ -181,8 +181,8 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
         variables: {
             library: selectedRootQuery,
             filters: filtersVar,
-            pagination
-        }
+            pagination,
+        },
     });
 
     useEffect(() => {
@@ -192,7 +192,7 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
 
         dispatch({
             type: ActionTypes.SET_LIST,
-            data: {...data.records, offset, all}
+            data: {...data.records, offset, all},
         });
     }, [data]);
 

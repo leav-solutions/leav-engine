@@ -10,7 +10,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 export interface ILogRepo {
     getLogs(
         params: {filters?: ILogFilters; sort?: ILogSort; pagination?: ILogPagination},
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<ILogResponse>;
 }
 
@@ -63,16 +63,16 @@ export default function ({'core.infra.elasticsearch.service': esService, config}
                             range: {
                                 time: {
                                     gte: value.from ? new Date(value.from).toISOString() : null,
-                                    lte: value.to ? new Date(value.to).toISOString() : null
-                                }
-                            }
+                                    lte: value.to ? new Date(value.to).toISOString() : null,
+                                },
+                            },
                         });
                         break;
                     case 'actions':
                         acc.push({
                             terms: {
-                                action: value
-                            }
+                                action: value,
+                            },
                         });
                         break;
                     case 'userId':
@@ -80,15 +80,15 @@ export default function ({'core.infra.elasticsearch.service': esService, config}
                     case 'instanceId':
                         acc.push({
                             match: {
-                                [field]: value
-                            }
+                                [field]: value,
+                            },
                         });
                         break;
                     case 'trigger':
                         acc.push({
                             wildcard: {
-                                trigger: `*${value}*`
-                            }
+                                trigger: `*${value}*`,
+                            },
                         });
                         break;
                     case 'topic':
@@ -107,15 +107,15 @@ export default function ({'core.infra.elasticsearch.service': esService, config}
                 sort,
                 query: {
                     bool: {
-                        must: queryParts
-                    }
-                }
+                        must: queryParts,
+                    },
+                },
             });
 
             return {
                 logs: response.hits,
-                total: response.total
+                total: response.total,
             };
-        }
+        },
     };
 }

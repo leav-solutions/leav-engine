@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function BreadcrumbNavigator() {
             return <div>BreadcrumbNavigator</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function DependencySettings() {
             return <div>DependencySettings</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -29,7 +29,7 @@ jest.mock(
     () =>
         function ElementsReserve() {
             return <div>ElementsReserve</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -37,7 +37,7 @@ jest.mock(
     () =>
         function FormLayout() {
             return <div>FormLayout</div>;
-        }
+        },
 );
 
 describe('ContentTab', () => {
@@ -52,7 +52,7 @@ describe('ContentTab', () => {
                     >
                         <ContentTab />
                     </EditFormContext.Provider>
-                </EditFormModalButtonsContext.Provider>
+                </EditFormModalButtonsContext.Provider>,
             );
         });
 

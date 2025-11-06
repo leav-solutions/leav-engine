@@ -15,7 +15,7 @@ describe('FormLayout', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <FormLayout />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

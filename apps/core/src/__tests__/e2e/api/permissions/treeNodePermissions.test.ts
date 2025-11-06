@@ -11,7 +11,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('TreeNodePermissions', () => {
@@ -76,7 +76,7 @@ describe('TreeNodePermissions', () => {
             id: treeAttrID,
             label: 'Test Attr',
             type: AttributeTypes.TREE,
-            linkedTree: permissionsTreeId
+            linkedTree: permissionsTreeId,
         });
 
         await gqlSaveLibrary(elementsTreeLibId, 'Test', [treeAttrID]);
@@ -95,22 +95,22 @@ describe('TreeNodePermissions', () => {
         // Add elements to tree
         nodeElementsRecord1 = await gqlAddElemToTree(elementsTreeId, {
             library: elementsTreeLibId,
-            id: elementsTreeRecord1
+            id: elementsTreeRecord1,
         });
         nodeElementsRecord2 = await gqlAddElemToTree(
             elementsTreeId,
             {library: elementsTreeLibId, id: elementsTreeRecord2},
-            nodeElementsRecord1
+            nodeElementsRecord1,
         );
 
         nodePermissionsRecord1 = await gqlAddElemToTree(permissionsTreeId, {
             library: permissionsTreeLibId,
-            id: permissionsTreeRecord1
+            id: permissionsTreeRecord1,
         });
         nodePermissionsRecord2 = await gqlAddElemToTree(
             permissionsTreeId,
             {library: permissionsTreeLibId, id: permissionsTreeRecord2},
-            nodePermissionsRecord1
+            nodePermissionsRecord1,
         );
 
         // Save value on record to be able to retrieve permissions
@@ -209,7 +209,7 @@ describe('TreeNodePermissions', () => {
             expect(resGetPerm.data.data.permissions).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'detach', allowed: true},
-                {name: 'edit_children', allowed: null}
+                {name: 'edit_children', allowed: null},
             ]);
             expect(resGetPerm.data.errors).toBeUndefined();
 
@@ -254,12 +254,12 @@ describe('TreeNodePermissions', () => {
             expect(resIsAllowedOnElement.data.data.onElement).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'detach', allowed: true},
-                {name: 'edit_children', allowed: false} // Inherited from library
+                {name: 'edit_children', allowed: false}, // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.data.onChild).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'detach', allowed: true},
-                {name: 'edit_children', allowed: false} // Inherited from library
+                {name: 'edit_children', allowed: false}, // Inherited from library
             ]);
 
             /**
@@ -289,7 +289,7 @@ describe('TreeNodePermissions', () => {
             expect(resGetInheritedPermission.data.data.inheritedPermissions).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'detach', allowed: true},
-                {name: 'edit_children', allowed: false} // Inherited from library
+                {name: 'edit_children', allowed: false}, // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.errors).toBeUndefined();
         });

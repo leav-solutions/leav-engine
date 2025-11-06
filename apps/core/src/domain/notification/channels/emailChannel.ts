@@ -24,7 +24,7 @@ export default function ({
     config,
     'core.infra.mailer.mailerService': mailerService,
     'core.domain.globalSettings': globalSettingsDomain,
-    'core.domain.user': userDomain
+    'core.domain.user': userDomain,
 }: INotificationByEmailChannelDeps): INotificationChannel {
     const emailTemplatesByLang: Record<string, handlebars.TemplateDelegate> = {};
 
@@ -57,16 +57,16 @@ export default function ({
             appName: globalSettings.name,
             publicUrl: config.server.publicUrl,
             message: notification.content.message,
-            links: [...(notification.content.relatedEntities || []), ...(notification.content.attachments || [])]
+            links: [...(notification.content.relatedEntities || []), ...(notification.content.attachments || [])],
         });
 
         await mailerService.sendEmail(
             {
                 to: email,
                 subject: notification.content.title,
-                html: htmlWithData
+                html: htmlWithData,
             },
-            ctx
+            ctx,
         );
     };
 
@@ -79,11 +79,11 @@ export default function ({
                         await sendNotification(notification, ctx);
                     } catch (error) {
                         logger.error(
-                            `Error sending email notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`
+                            `Error sending email notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`,
                         );
                     }
-                })
+                }),
             );
-        }
+        },
     };
 }

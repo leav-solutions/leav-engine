@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function EditAttribute() {
             return <div>EditAttribute</div>;
-        }
+        },
 );
 
 describe('EditAttributeModal', () => {

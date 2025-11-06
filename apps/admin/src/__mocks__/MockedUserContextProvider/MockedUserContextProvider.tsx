@@ -17,10 +17,10 @@ function MockedUserContextProvider({permissions, children}: IProps) {
             label: 'Test',
             library: {
                 id: 'users',
-                label: {fr: 'Users'}
+                label: {fr: 'Users'},
             },
             color: null,
-            preview: null
+            preview: null,
         },
         permissions:
             permissions ??
@@ -30,7 +30,7 @@ function MockedUserContextProvider({permissions, children}: IProps) {
                     perms[p] = true;
 
                     return perms;
-                }, {})
+                }, {}),
     };
 
     return <UserContext.Provider value={userData}>{children}</UserContext.Provider>;

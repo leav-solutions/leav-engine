@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
-    type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf
+    type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf,
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {type Override} from '_types/Override';
 

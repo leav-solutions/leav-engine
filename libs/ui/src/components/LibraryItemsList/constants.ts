@@ -17,7 +17,7 @@ export const defaultView: IView = {
     owner: true,
     display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
     shared: false,
-    filters: []
+    filters: [],
 };
 
 export const formatNotUsingCondition = [AttributeFormat.boolean];

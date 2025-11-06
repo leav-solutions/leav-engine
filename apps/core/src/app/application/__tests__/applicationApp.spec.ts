@@ -24,18 +24,18 @@ const depsBase: ToAny<IApplicationAppDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.domain.globalSettings': jest.fn(),
     'core.utils.logger': jest.fn(),
-    'core.utils': jest.fn()
+    'core.utils': jest.fn(),
 };
 
 describe('ApplicationApp', () => {
     const utilsMock: Mockify<IUtils> = {
-        getFullApplicationEndpoint: jest.fn().mockReturnValueOnce('getFullApplicationEndpoint')
+        getFullApplicationEndpoint: jest.fn().mockReturnValueOnce('getFullApplicationEndpoint'),
     };
 
     describe('when token is invalid', () => {
         it('Should authenticate on OIDC Service', async () => {
             const authAppMock: Mockify<IAuthApp> = {
-                authenticateWithOIDCService: jest.fn()
+                authenticateWithOIDCService: jest.fn(),
             };
             const validateRequestTokenHelper = jest.fn();
             const applicationDomainMock: Mockify<IApplicationDomain> = {
@@ -43,10 +43,10 @@ describe('ApplicationApp', () => {
                     list: [
                         {
                             id: 'applicationId',
-                            module: 'applicationModule'
-                        }
-                    ]
-                })
+                            module: 'applicationModule',
+                        },
+                    ],
+                }),
             };
 
             const applicationApp = createApplicationApp({
@@ -60,14 +60,14 @@ describe('ApplicationApp', () => {
                     auth: {oidc: {enable: true}},
                     applications: {rootFolder: 'applications/rootFolder'},
                     server: {
-                        basePath: ''
-                    }
-                } as IConfig
+                        basePath: '',
+                    },
+                } as IConfig,
             });
             validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
             const expressInstance: any = {
-                get: jest.fn()
+                get: jest.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -78,10 +78,10 @@ describe('ApplicationApp', () => {
                 params: {endpoint: 'test'},
                 path: '/app/application-test',
                 query: {lang: 'fr'},
-                body: {requestId: 'requestId'}
+                body: {requestId: 'requestId'},
             };
             const res = {
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
             const next = jest.fn();
             await authHandler(req, res, next);
@@ -99,10 +99,10 @@ describe('ApplicationApp', () => {
                     list: [
                         {
                             id: 'applicationId',
-                            module: 'applicationModule'
-                        }
-                    ]
-                })
+                            module: 'applicationModule',
+                        },
+                    ],
+                }),
             };
 
             const applicationApp = createApplicationApp({
@@ -115,14 +115,14 @@ describe('ApplicationApp', () => {
                     auth: {oidc: {enable: false}},
                     applications: {rootFolder: 'applications/rootFolder'},
                     server: {
-                        basePath: '/server-base'
-                    }
-                } as IConfig
+                        basePath: '/server-base',
+                    },
+                } as IConfig,
             });
             validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
             const expressInstance: any = {
-                get: jest.fn()
+                get: jest.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -134,10 +134,10 @@ describe('ApplicationApp', () => {
                 params: {endpoint: 'test'},
                 path: '/app/application-test',
                 query: {lang: 'fr'},
-                body: {requestId: 'requestId'}
+                body: {requestId: 'requestId'},
             };
             const res = {
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
             const next = jest.fn();
             await authHandler(req, res, next);
@@ -145,7 +145,7 @@ describe('ApplicationApp', () => {
             expect(next).not.toHaveBeenCalled();
             expect(res.redirect).toHaveBeenCalled();
             expect(res.redirect).toHaveBeenCalledWith(
-                '/server-base/app/login/?dest=test%3A%2F%2Fmock.domain.application%2Ffake%2Fpath%3Fquery%3D1%26requestId%3D1'
+                '/server-base/app/login/?dest=test%3A%2F%2Fmock.domain.application%2Ffake%2Fpath%3Fquery%3D1%26requestId%3D1',
             );
         });
     });
@@ -156,8 +156,8 @@ describe('ApplicationApp', () => {
                 getSettings: jest.fn().mockResolvedValueOnce({
                     name: 'My App',
                     icon: null,
-                    defaultApp: 'admin'
-                })
+                    defaultApp: 'admin',
+                }),
             };
             const applicationApp = createApplicationApp({
                 ...depsBase,
@@ -167,13 +167,13 @@ describe('ApplicationApp', () => {
                     applications: {rootFolder: 'applications/rootFolder'},
                     auth: {oidc: {enable: true}},
                     server: {
-                        basePath: ''
-                    }
-                } as IConfig
+                        basePath: '',
+                    },
+                } as IConfig,
             });
 
             const expressInstance: any = {
-                get: jest.fn()
+                get: jest.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -184,10 +184,10 @@ describe('ApplicationApp', () => {
                 originalUrl: 'test://mock.domain.application/fake/path?query=1&requestId=1',
                 params: {endpoint: 'login'},
                 query: {lang: 'fr'},
-                body: {requestId: 'requestId'}
+                body: {requestId: 'requestId'},
             };
             const res = {
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
             const next = jest.fn();
             await authHandler(req, res, next);
@@ -208,12 +208,12 @@ describe('ApplicationApp', () => {
                     applications: {rootFolder: 'applications/rootFolder'},
                     auth: {oidc: {enable: false}},
                     server: {
-                        basePath: ''
-                    }
-                } as IConfig
+                        basePath: '',
+                    },
+                } as IConfig,
             });
             const expressInstance: any = {
-                get: jest.fn()
+                get: jest.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -225,10 +225,10 @@ describe('ApplicationApp', () => {
                 params: {endpoint: 'login'},
                 query: {lang: 'fr'},
                 body: {requestId: 'requestId'},
-                path: '/app/login'
+                path: '/app/login',
             };
             const res = {
-                redirect: jest.fn()
+                redirect: jest.fn(),
             };
             const next = jest.fn();
             await authHandler(req, res, next);

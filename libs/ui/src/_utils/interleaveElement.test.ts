@@ -13,7 +13,7 @@ describe('interleavElement', () => {
             {sepa: 'rator'},
             2,
             {sepa: 'rator'},
-            3
+            3,
         ]);
         expect(interleaveElement(null, [[1], [2], [3]])).toEqual([1, null, 2, null, 3]);
     });

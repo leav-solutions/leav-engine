@@ -54,7 +54,7 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
 
     const dispatch = useAppDispatch();
     const {navigation} = useAppSelector(state => ({
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
 
     const queryVariables = {
@@ -62,8 +62,8 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
         node: treeElement?.id ?? null,
         pagination: {
             limit: treeNavigationPageSize,
-            offset: (currentPage - 1) * treeNavigationPageSize
-        }
+            offset: (currentPage - 1) * treeNavigationPageSize,
+        },
     };
 
     const {loading, error, data, refetch, called} = useQuery<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>(
@@ -72,8 +72,8 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
             variables: queryVariables,
             onCompleted: res => {
                 setTotalCount(res.treeNodeChildren.totalCount);
-            }
-        }
+            },
+        },
     );
 
     useTreeEventsSubscription({
@@ -83,7 +83,7 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
             // We known something happened concerning this node.
             // To make sure everything is clean and up to date, we just refetch data
             refetch(queryVariables);
-        }
+        },
     });
 
     const ref = createRef<HTMLDivElement>();
@@ -92,7 +92,7 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
         if (ref?.current?.scrollIntoView && columnActive) {
             ref.current?.scrollIntoView({
                 behavior: 'smooth',
-                block: 'end'
+                block: 'end',
             });
         }
     }, [ref, columnActive]);

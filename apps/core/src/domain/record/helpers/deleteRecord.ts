@@ -30,7 +30,7 @@ export default function ({
     'core.domain.permission.record': recordPermissionDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
-    'core.infra.value': valueRepo
+    'core.infra.value': valueRepo,
 }: IDeps): DeleteRecordHelper {
     return async (library, id, ctx) => {
         await validateHelper.validateLibrary(library, ctx);
@@ -41,7 +41,7 @@ export default function ({
             userId: ctx.userId,
             library,
             recordId: id,
-            ctx
+            ctx,
         });
 
         if (!canDelete) {
@@ -57,10 +57,10 @@ export default function ({
         const libraryTrees = await treeRepo.getTrees({
             params: {
                 filters: {
-                    library
-                }
+                    library,
+                },
             },
-            ctx
+            ctx,
         });
 
         // For each tree, get all record nodes
@@ -70,9 +70,9 @@ export default function ({
                     treeId: tree.id,
                     record: {
                         id,
-                        library
+                        library,
                     },
-                    ctx
+                    ctx,
                 });
 
                 for (const node of nodes) {
@@ -80,10 +80,10 @@ export default function ({
                         treeId: tree.id,
                         nodeId: node,
                         deleteChildren: true,
-                        ctx
+                        ctx,
                     });
                 }
-            })
+            }),
         );
 
         // Everything is clean, we can actually delete the record
@@ -95,12 +95,12 @@ export default function ({
                 topic: {
                     record: {
                         libraryId: deletedRecord.library,
-                        id: deletedRecord.id
-                    }
+                        id: deletedRecord.id,
+                    },
                 },
-                before: deletedRecord
+                before: deletedRecord,
             },
-            ctx
+            ctx,
         );
 
         return deletedRecord;

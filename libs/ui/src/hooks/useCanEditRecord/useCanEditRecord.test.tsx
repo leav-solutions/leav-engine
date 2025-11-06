@@ -18,28 +18,28 @@ describe('useCanEditRecord', () => {
                 isAllowed: [
                     {
                         name: gqlTypes.PermissionsActions.create_record,
-                        allowed: true
+                        allowed: true,
                     },
                     {
                         name: gqlTypes.PermissionsActions.access_record,
-                        allowed: true
+                        allowed: true,
                     },
                     {
                         name: gqlTypes.PermissionsActions.edit_record,
-                        allowed: true
+                        allowed: true,
                     },
                     {
                         name: gqlTypes.PermissionsActions.delete_record,
-                        allowed: true
-                    }
-                ]
+                        allowed: true,
+                    },
+                ],
             },
-            called: true
+            called: true,
         };
         const spy = jest
             .spyOn(gqlTypes, 'useIsAllowedQuery')
             .mockImplementation(
-                () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+                () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
             );
 
         const ComponentUsingHook = () => {
@@ -62,28 +62,28 @@ describe('useCanEditRecord', () => {
                 isAllowed: [
                     {
                         name: gqlTypes.PermissionsActions.create_record,
-                        allowed: true
+                        allowed: true,
                     },
                     {
                         name: gqlTypes.PermissionsActions.access_record,
-                        allowed: false
+                        allowed: false,
                     },
                     {
                         name: gqlTypes.PermissionsActions.edit_record,
-                        allowed: false
+                        allowed: false,
                     },
                     {
                         name: gqlTypes.PermissionsActions.delete_record,
-                        allowed: true
-                    }
-                ]
+                        allowed: true,
+                    },
+                ],
             },
-            called: true
+            called: true,
         };
         const spy = jest
             .spyOn(gqlTypes, 'useIsAllowedQuery')
             .mockImplementation(
-                () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+                () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
             );
 
         const ComponentUsingHook = () => {
@@ -119,13 +119,13 @@ describe('useCanEditRecord', () => {
                                 [gqlTypes.PermissionsActions.create_record]: true,
                                 [gqlTypes.PermissionsActions.access_record]: true,
                                 [gqlTypes.PermissionsActions.edit_record]: true,
-                                [gqlTypes.PermissionsActions.delete_record]: true
-                            }
-                        }
-                    ]
-                }
+                                [gqlTypes.PermissionsActions.delete_record]: true,
+                            },
+                        },
+                    ],
+                },
             },
-            called: true
+            called: true,
         };
         const spy = jest
             .spyOn(gqlTypes, 'useGetLibraryPermissionsQuery')
@@ -134,7 +134,7 @@ describe('useCanEditRecord', () => {
                     mockResultLibraryPermissions as QueryResult<
                         gqlTypes.GetLibraryPermissionsQuery,
                         gqlTypes.GetLibraryPermissionsQueryVariables
-                    >
+                    >,
             );
 
         const ComponentUsingHook = () => {
@@ -162,13 +162,13 @@ describe('useCanEditRecord', () => {
                                 [gqlTypes.PermissionsActions.create_record]: false,
                                 [gqlTypes.PermissionsActions.access_record]: true,
                                 [gqlTypes.PermissionsActions.edit_record]: true,
-                                [gqlTypes.PermissionsActions.delete_record]: true
-                            }
-                        }
-                    ]
-                }
+                                [gqlTypes.PermissionsActions.delete_record]: true,
+                            },
+                        },
+                    ],
+                },
             },
-            called: true
+            called: true,
         };
         const spy = jest
             .spyOn(gqlTypes, 'useGetLibraryPermissionsQuery')
@@ -177,7 +177,7 @@ describe('useCanEditRecord', () => {
                     mockResultLibraryPermissions as QueryResult<
                         gqlTypes.GetLibraryPermissionsQuery,
                         gqlTypes.GetLibraryPermissionsQueryVariables
-                    >
+                    >,
             );
 
         const ComponentUsingHook = () => {

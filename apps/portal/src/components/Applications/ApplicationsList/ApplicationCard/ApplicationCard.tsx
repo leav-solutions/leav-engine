@@ -8,7 +8,7 @@ import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
 import {KitAvatar, KitImage, KitRedirectCard} from 'aristid-ds';
 import EditApplicationModal, {
-    type IEditApplicationModalProps
+    type IEditApplicationModalProps,
 } from 'components/Applications/EditApplicationModal/EditApplicationModal';
 import {type ComponentProps, useState} from 'react';
 import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
@@ -66,14 +66,14 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             key: '1',
             label: t('application.edit'),
             icon: <FontAwesomeIcon icon={faPencil} />,
-            onClick: event => _handleOpenEditAppModal(event as MouseEvent)
+            onClick: event => _handleOpenEditAppModal(event as MouseEvent),
         },
         {
             key: '2',
             label: t(isFavorite ? 'application.favorite.remove' : 'application.favorite.add'),
             icon: <FontAwesomeIcon icon={isFavorite ? faSolidStar : faEmptyStar} />,
-            onClick: event => _toggleFavorite(event as MouseEvent)
-        }
+            onClick: event => _toggleFavorite(event as MouseEvent),
+        },
     ];
 
     return (

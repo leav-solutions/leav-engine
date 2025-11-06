@@ -12,7 +12,7 @@ import SortableTree, {
     removeNodeAtPath,
     type TreeIndex,
     type TreeItem,
-    type TreeNode
+    type TreeNode,
 } from 'react-sortable-tree';
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
@@ -23,7 +23,7 @@ import {
     type IEmbeddedFields,
     type IGetEmbeddedFieldsQuery as IQuery,
     type IGetEmbeddedFieldsQueryVariables as IQueryVariables,
-    type ILabel
+    type ILabel,
 } from '../../../../../_types/embeddedFields';
 import EditButtons from './EditButtons';
 import EmbeddedFieldsWrapper from './EmbeddedFieldsWrapper/EmbeddedFieldsWrapper';
@@ -66,7 +66,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         loading: lQuery,
         error: eQuery,
         data: dQuery,
-        refetch: rQuery
+        refetch: rQuery,
     } = useQuery<IQuery, IQueryVariables>(getAttributesEmbeddedFieldsQuery(level), {variables: {attId: attribute.id}});
 
     const [saveAttribute] = useMutation(saveAttributesEmbeddedFieldsQuery);
@@ -89,7 +89,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                 });
             }
         },
-        [saveAttribute, rQuery, setTreeItems]
+        [saveAttribute, rQuery, setTreeItems],
     );
 
     useEffect(() => {
@@ -116,7 +116,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                 const newFlatItem: IFlatItem = {
                     id: att.id,
                     expanded: false,
-                    displayForm: false
+                    displayForm: false,
                 };
 
                 setFlatItems(items => [...items, newFlatItem]);
@@ -128,7 +128,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                     id: att.id,
                     label: att.label,
                     format: att.format,
-                    validation_regex: att?.validation_regex ?? ''
+                    validation_regex: att?.validation_regex ?? '',
                 };
 
                 setFormValues(values => [...values.filter(value => value.originalId === value.id), newFormValue]);
@@ -155,7 +155,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                     />
                 ),
                 children,
-                expanded: flatItem?.expanded
+                expanded: flatItem?.expanded,
             };
         };
 
@@ -176,7 +176,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                     return {...item, expanded: !item.expanded};
                 }
                 return item;
-            })
+            }),
         );
     };
 
@@ -203,7 +203,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                         return {...item, displayForm: !item.displayForm};
                     }
                     return item;
-                })
+                }),
             );
         };
 
@@ -213,8 +213,8 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                 format: 'text',
                 label: {
                     fr: '',
-                    en: newId
-                }
+                    en: newId,
+                },
             };
 
             const _save = (nValues: IFormValue[]) => save(nValues);
@@ -236,8 +236,8 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                         />
                     ),
                     children: undefined,
-                    expanded: false
-                }
+                    expanded: false,
+                },
             });
 
             const newValues = [...formValues, {originalId: newAtt.id, ...newAtt}];
@@ -251,7 +251,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
             const treeData = removeNodeAtPath({
                 treeData: treeItems,
                 path: info.path,
-                getNodeKey: ({treeIndex}) => treeIndex
+                getNodeKey: ({treeIndex}) => treeIndex,
             });
 
             setTreeItems(treeData as ITreeItem[]);
@@ -281,7 +281,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                 <div
                     key={info.treeIndex + '_btn-group'}
                     style={{
-                        position: 'absolute'
+                        position: 'absolute',
                     }}
                 >
                     <EditButtons
@@ -294,8 +294,8 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                         isRoot={attribute.id === info.node.id}
                         t={t}
                     />
-                </div>
-            ]
+                </div>,
+            ],
         };
     };
 
@@ -311,7 +311,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
             const variables = _getNewAttribute(treeItems[0], formValues);
 
             await saveAttribute({
-                variables
+                variables,
             });
 
             rQuery();
@@ -328,7 +328,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
             style={{
                 display: 'flex',
                 flexFlow: 'column',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
             }}
         >
             <ExpandButtons flatItems={flatItems} setFlatItems={setFlatItems} />
@@ -368,12 +368,12 @@ const _getNewAttribute = (treeItem: TreeItem, values: IFormValue[]) => {
 
         return {
             ...cloneValueFind,
-            embedded_fields: (nTreeItems?.children as ITreeItem[]).map(em => _recreateAttributeFromTree(em, nValues))
+            embedded_fields: (nTreeItems?.children as ITreeItem[]).map(em => _recreateAttributeFromTree(em, nValues)),
         };
     };
 
     const variables = {
-        attribute: _recreateAttributeFromTree(treeItem, valuesChecked)
+        attribute: _recreateAttributeFromTree(treeItem, valuesChecked),
     };
 
     delete variables.attribute.validation_regex;

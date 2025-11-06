@@ -19,7 +19,7 @@ export default function useGetPreparedFileData(libraryId: string, fileId: string
     const {data, error, loading} = useGetFileDataQuery({
         fetchPolicy: 'cache-and-network',
         skip: !fileId,
-        variables: {library: libraryId, fileId, previewsStatusAttribute: `${libraryId}_previews_status`}
+        variables: {library: libraryId, fileId, previewsStatusAttribute: `${libraryId}_previews_status`},
     });
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function useGetPreparedFileData(libraryId: string, fileId: string
                 previews_status: previewsStatus,
                 isPreviewsGenerationPending: previewsStatus
                     ? Object.keys(previewsStatus).some(key => previewsStatus[key]?.status === -1)
-                    : false
+                    : false,
             };
 
             setFileData(file);
@@ -49,6 +49,6 @@ export default function useGetPreparedFileData(libraryId: string, fileId: string
     return {
         error,
         loading: loading || (!loading && typeof fileData === undefined),
-        fileData
+        fileData,
     };
 }

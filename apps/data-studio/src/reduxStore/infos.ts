@@ -9,8 +9,8 @@ export const infosInitialState: IInfosState = {
     stack: [],
     base: {
         content: '',
-        type: InfoType.BASIC
-    }
+        type: InfoType.BASIC,
+    },
 };
 
 const infosSlice = createSlice({
@@ -25,8 +25,8 @@ const infosSlice = createSlice({
         },
         addInfo: (state, action: PayloadAction<IInfo>) => {
             state.stack = [...state.stack, action.payload];
-        }
-    }
+        },
+    },
 });
 
 export const {setInfoBase, setInfoStack, addInfo} = infosSlice.actions;

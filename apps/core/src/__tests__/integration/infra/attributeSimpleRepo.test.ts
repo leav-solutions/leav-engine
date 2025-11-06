@@ -27,7 +27,7 @@ describe('attributeSimpleRepo', () => {
 
     const libraryId = 'test_lib_attribute_simple_repo';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
@@ -37,9 +37,9 @@ describe('attributeSimpleRepo', () => {
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
     });
 
@@ -47,28 +47,28 @@ describe('attributeSimpleRepo', () => {
         recordRepo.createRecord({
             libraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createValue = async (
         attribute: IAttributeWithRevLink,
         recordId: string,
-        payload: any
+        payload: any,
     ): Promise<IStandardValue> =>
         attributeSimpleRepo.createValue({
             library: libraryId,
             attribute,
             recordId,
             value: {
-                payload
+                payload,
             },
-            ctx
+            ctx,
         });
 
     describe('2 records exists with simple attribute', () => {
         const simpleTextAttribute: IAttributeWithRevLink = {
             id: 'text_attr',
-            type: AttributeTypes.SIMPLE
+            type: AttributeTypes.SIMPLE,
         };
 
         let record1: IRecord;
@@ -86,13 +86,13 @@ describe('attributeSimpleRepo', () => {
                 payload: 'value1',
                 attribute: simpleTextAttribute.id,
                 modified_by: null,
-                created_by: null
+                created_by: null,
             });
             expect(record2Value).toMatchObject({
                 payload: 'value2',
                 attribute: simpleTextAttribute.id,
                 modified_by: null,
-                created_by: null
+                created_by: null,
             });
         });
 
@@ -102,7 +102,7 @@ describe('attributeSimpleRepo', () => {
                     library: libraryId,
                     attribute: simpleTextAttribute,
                     recordIds: [record1.id, record2.id],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([[record1Value], [record2Value]]);
@@ -113,7 +113,7 @@ describe('attributeSimpleRepo', () => {
                     library: libraryId,
                     attribute: simpleTextAttribute,
                     recordIds: [record1.id, record2.id, 'no-exists'],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -126,7 +126,7 @@ describe('attributeSimpleRepo', () => {
                     library: libraryId,
                     attribute: simpleTextAttribute,
                     recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -139,7 +139,7 @@ describe('attributeSimpleRepo', () => {
                     library: libraryId,
                     attribute: simpleTextAttribute,
                     recordId: record1.id,
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([record1Value]);
@@ -150,7 +150,7 @@ describe('attributeSimpleRepo', () => {
                     library: libraryId,
                     attribute: simpleTextAttribute,
                     recordId: 'no-exists',
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([]);
@@ -163,7 +163,7 @@ describe('attributeSimpleRepo', () => {
                     library: libraryId,
                     attribute: simpleTextAttribute,
                     recordId: record3WithoutAttr.id,
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([]);

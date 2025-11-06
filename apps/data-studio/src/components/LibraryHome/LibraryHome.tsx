@@ -9,7 +9,7 @@ import {
     type ISearchSelection,
     LibraryItemsList,
     Loading,
-    useLang
+    useLang,
 } from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
@@ -81,7 +81,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 behavior: currentLibrary.behavior,
                 attributes,
                 trees: currentLibrary.linkedTrees,
-                permissions: currentLibrary.permissions
+                permissions: currentLibrary.permissions,
             });
         }
 
@@ -90,9 +90,9 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
             content: t('info.active-lib', {
                 lib: currentLibLabel,
                 appLabel: localizedTranslation(appData.currentApp.label, lang),
-                interpolation: {escapeValue: false}
+                interpolation: {escapeValue: false},
             }),
-            type: InfoType.BASIC
+            type: InfoType.BASIC,
         };
 
         dispatch(setInfoBase(baseInfo));
@@ -107,8 +107,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         dispatch(
             setSelection({
                 ...selection.selection,
-                selected: selection.selection.selected.filter(record => record.library === library)
-            })
+                selected: selection.selection.selected.filter(record => record.library === library),
+            }),
         );
     }, [library]);
 
@@ -139,8 +139,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 type: SharedStateSelectionType.SEARCH,
                 selected: newSelection.selected.filter(record => record.library === library),
                 allSelected: newSelection.allSelected,
-                filters
-            })
+                filters,
+            }),
         );
     };
 
@@ -151,7 +151,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                     <Explorer
                         entrypoint={{
                             type: 'library',
-                            libraryId: library
+                            libraryId: library,
                         }}
                         showTitle
                         showSearch
@@ -174,12 +174,12 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                                             label: item.whoAmI?.label,
                                             subLabel: item.whoAmI?.subLabel,
                                             color: item.whoAmI?.color,
-                                            library: {id: item.libraryId}
+                                            library: {id: item.libraryId},
                                         },
-                                        editionFormId: 'edition'
+                                        editionFormId: 'edition',
                                     });
-                                }
-                            }
+                                },
+                            },
                         ]}
                         massActions={
                             [
@@ -215,7 +215,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                             type: 'link',
                             parentLibraryId: 'sebastien_s_librairy',
                             parentRecordId: '600359434',
-                            linkAttributeId: 'multiple_link'
+                            linkAttributeId: 'multiple_link',
                         }}
                         itemActions={[
                             {
@@ -230,12 +230,12 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                                             label: item.whoAmI?.label,
                                             subLabel: item.whoAmI?.subLabel,
                                             color: item.whoAmI?.color,
-                                            library: {id: item.libraryId}
+                                            library: {id: item.libraryId},
                                         },
-                                        editionFormId: 'edition'
+                                        editionFormId: 'edition',
                                     });
-                                }
-                            }
+                                },
+                            },
                         ]}
                     />
                 </ExplorerContainerDivStyled>

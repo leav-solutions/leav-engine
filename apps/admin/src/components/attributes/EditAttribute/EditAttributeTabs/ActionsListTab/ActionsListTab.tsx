@@ -17,7 +17,7 @@ interface IActionListConfigurerProps {
 
 function ActionsListTab({attribute}: IActionListConfigurerProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_AVAILABLE_ACTIONS, GET_ATTRIBUTES_attributes_list>(
-        getAvailableActionsQuery
+        getAvailableActionsQuery,
     );
 
     if (loading) {

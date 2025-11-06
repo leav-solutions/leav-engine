@@ -6,7 +6,7 @@ import {
     Loading,
     SubmitStateNotifier,
     type SubmitStateNotifierStates,
-    useSaveApplicationMutation
+    useSaveApplicationMutation,
 } from '@leav/ui';
 import {type IApplicationSettings} from '_types/types';
 import {useApplicationContext} from 'context/ApplicationContext';
@@ -63,22 +63,22 @@ function LibrariesSettings(): JSX.Element {
     const _executeSave = async (settings: IApplicationSettings) => {
         const newSettings = {
             ...currentApp.settings,
-            ...settings
+            ...settings,
         };
 
         await saveApplication({
             optimisticResponse: {
                 saveApplication: {
                     ...currentApp,
-                    settings: newSettings
-                }
+                    settings: newSettings,
+                },
             },
             variables: {
                 application: {
                     id: currentApp.id,
-                    settings: newSettings
-                }
-            }
+                    settings: newSettings,
+                },
+            },
         });
 
         setSubmitState('success');
@@ -93,14 +93,14 @@ function LibrariesSettings(): JSX.Element {
         orderAfter.splice(to, 0, libraryId);
 
         _executeSave({
-            librariesOrder: orderAfter
+            librariesOrder: orderAfter,
         });
     };
 
     const _handleSelectionModeChange = async (value: 'all' | 'none' | 'custom') => {
         _executeSave({
             libraries: value === 'custom' ? [] : value,
-            librariesOrder: value === 'none' ? [] : currentApp.settings?.librariesOrder
+            librariesOrder: value === 'none' ? [] : currentApp.settings?.librariesOrder,
         });
     };
 
@@ -111,7 +111,7 @@ function LibrariesSettings(): JSX.Element {
 
         _executeSave({
             libraries: (currentApp.settings?.libraries ?? []).filter(id => id !== libraryId),
-            librariesOrder: (currentApp.settings?.librariesOrder ?? []).filter(id => id !== libraryId)
+            librariesOrder: (currentApp.settings?.librariesOrder ?? []).filter(id => id !== libraryId),
         });
     };
 
@@ -129,7 +129,7 @@ function LibrariesSettings(): JSX.Element {
         }
 
         _executeSave({
-            libraries: [...currentApp.settings?.libraries, ...addedLibraries]
+            libraries: [...currentApp.settings?.libraries, ...addedLibraries],
         });
     };
 

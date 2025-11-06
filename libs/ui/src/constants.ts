@@ -10,7 +10,7 @@ export enum PreviewSize {
     TINY = 'tiny',
     SMALL = 'small',
     MEDIUM = 'medium',
-    BIG = 'big'
+    BIG = 'big',
 }
 
 export const tagColorByAttributeType: {[key in AttributeType]: [border: string, background: string]} = {
@@ -18,7 +18,7 @@ export const tagColorByAttributeType: {[key in AttributeType]: [border: string, 
     [AttributeType.simple_link]: ['blue', '#e5e5ff'],
     [AttributeType.advanced]: ['orange', '#fff6e5'],
     [AttributeType.advanced_link]: ['#d4380d', '#fde4dd'],
-    [AttributeType.tree]: ['green', '#e5ffe5']
+    [AttributeType.tree]: ['green', '#e5ffe5'],
 };
 
 export const tagColorByAttributeFormat: {[key in AttributeFormat]: [border: string, background: string]} = {
@@ -30,13 +30,13 @@ export const tagColorByAttributeFormat: {[key in AttributeFormat]: [border: stri
     [AttributeFormat.numeric]: ['orange', '#fff6e5'],
     [AttributeFormat.text]: ['green', '#e5ffe5'],
     [AttributeFormat.color]: ['purple', '#ffe5ff'],
-    [AttributeFormat.rich_text]: ['#d4380d', '#fde4dd']
+    [AttributeFormat.rich_text]: ['#d4380d', '#fde4dd'],
 };
 
 export enum ErrorDisplayTypes {
     ERROR = 'error',
     PERMISSION_ERROR = 'permission_error',
-    PAGE_NOT_FOUND = 'page_not_found_error'
+    PAGE_NOT_FOUND = 'page_not_found_error',
 }
 
 declare global {

@@ -24,7 +24,7 @@ export enum Operator {
     AND = 'AND',
     OR = 'OR',
     OPEN_BRACKET = 'OPEN_BRACKET',
-    CLOSE_BRACKET = 'CLOSE_BRACKET'
+    CLOSE_BRACKET = 'CLOSE_BRACKET',
 }
 
 export enum AttributeCondition {
@@ -52,12 +52,12 @@ export enum AttributeCondition {
     END_AFTER = 'END_AFTER',
     VALUES_COUNT_EQUAL = 'VALUES_COUNT_EQUAL',
     VALUES_COUNT_GREATER_THAN = 'VALUES_COUNT_GREATER_THAN',
-    VALUES_COUNT_LOWER_THAN = 'VALUES_COUNT_LOWER_THAN'
+    VALUES_COUNT_LOWER_THAN = 'VALUES_COUNT_LOWER_THAN',
 }
 
 export enum TreeCondition {
     CLASSIFIED_IN = 'CLASSIFIED_IN',
-    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
+    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN',
 }
 
 export interface IDateFilterValue {

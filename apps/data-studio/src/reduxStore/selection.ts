@@ -8,12 +8,12 @@ import {type ISelectionState} from './stateType';
 export const selectionInitialState: ISelectionState = {
     selection: {
         type: SharedStateSelectionType.SEARCH,
-        selected: []
+        selected: [],
     },
     searchSelection: {
         type: SharedStateSelectionType.SEARCH,
-        selected: []
-    }
+        selected: [],
+    },
 };
 
 const selectionSlice = createSlice({
@@ -28,8 +28,8 @@ const selectionSlice = createSlice({
             if (state.selection.type === SharedStateSelectionType.SEARCH && state.selection.allSelected) {
                 state.selection.allSelected = false;
             }
-        }
-    }
+        },
+    },
 });
 
 export const {setSelection, resetSelection} = selectionSlice.actions;

@@ -15,11 +15,11 @@ const init = (basename: string, defaultLang: string) => {
             ns: ['translations'],
             defaultNS: 'translations',
             backend: {
-                loadPath: `${basename}/locales/{{lng}}/{{ns}}.json`
+                loadPath: `${basename}/locales/{{lng}}/{{ns}}.json`,
             },
             react: {
-                useSuspense: true
-            }
+                useSuspense: true,
+            },
         });
 };
 

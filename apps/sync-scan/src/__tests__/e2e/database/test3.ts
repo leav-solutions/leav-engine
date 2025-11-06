@@ -5,7 +5,7 @@ import {type FullTreeContent} from '../../../_types/queries';
 
 const DB_SETTINGS = {
     filesLibraryId: 'files_library_id',
-    directoriesLibraryId: 'directories_library_id'
+    directoriesLibraryId: 'directories_library_id',
 };
 
 export default (inodes: {[ino: string]: any}) => setInodes(inodes, database);
@@ -38,29 +38,29 @@ const database: FullTreeContent = [
             previews_status: {
                 small: {
                     status: -1,
-                    message: 'wait for creation'
+                    message: 'wait for creation',
                 },
                 medium: {
                     status: -1,
-                    message: 'wait for creation'
+                    message: 'wait for creation',
                 },
                 big: {
                     status: -1,
-                    message: 'wait for creation'
+                    message: 'wait for creation',
                 },
                 pdf: {
                     status: -1,
-                    message: 'wait for creation'
-                }
+                    message: 'wait for creation',
+                },
             },
             previews: {
                 small: '',
                 medium: '',
                 big: '',
-                pdf: ''
+                pdf: '',
             },
             root_key: 'files1',
-            library: DB_SETTINGS.directoriesLibraryId
+            library: DB_SETTINGS.directoriesLibraryId,
         },
         children: [
             {
@@ -78,29 +78,29 @@ const database: FullTreeContent = [
                     previews_status: {
                         small: {
                             status: -1,
-                            message: 'wait for creation'
+                            message: 'wait for creation',
                         },
                         medium: {
                             status: -1,
-                            message: 'wait for creation'
+                            message: 'wait for creation',
                         },
                         big: {
                             status: -1,
-                            message: 'wait for creation'
+                            message: 'wait for creation',
                         },
                         pdf: {
                             status: -1,
-                            message: 'wait for creation'
-                        }
+                            message: 'wait for creation',
+                        },
                     },
                     previews: {
                         small: '',
                         medium: '',
                         big: '',
-                        pdf: ''
+                        pdf: '',
                     },
                     root_key: 'files1',
-                    library: DB_SETTINGS.directoriesLibraryId
+                    library: DB_SETTINGS.directoriesLibraryId,
                 },
                 children: [
                     {
@@ -119,33 +119,33 @@ const database: FullTreeContent = [
                             previews_status: {
                                 small: {
                                     status: -1,
-                                    message: 'wait for creation'
+                                    message: 'wait for creation',
                                 },
                                 medium: {
                                     status: -1,
-                                    message: 'wait for creation'
+                                    message: 'wait for creation',
                                 },
                                 big: {
                                     status: -1,
-                                    message: 'wait for creation'
+                                    message: 'wait for creation',
                                 },
                                 pdf: {
                                     status: -1,
-                                    message: 'wait for creation'
-                                }
+                                    message: 'wait for creation',
+                                },
                             },
                             previews: {
                                 small: '',
                                 medium: '',
                                 big: '',
-                                pdf: ''
+                                pdf: '',
                             },
                             root_key: 'files1',
-                            library: DB_SETTINGS.filesLibraryId
+                            library: DB_SETTINGS.filesLibraryId,
                         },
-                        children: []
-                    }
-                ]
+                        children: [],
+                    },
+                ],
             },
             {
                 order: 0,
@@ -163,33 +163,33 @@ const database: FullTreeContent = [
                     previews_status: {
                         small: {
                             status: -1,
-                            message: 'wait for creation'
+                            message: 'wait for creation',
                         },
                         medium: {
                             status: -1,
-                            message: 'wait for creation'
+                            message: 'wait for creation',
                         },
                         big: {
                             status: -1,
-                            message: 'wait for creation'
+                            message: 'wait for creation',
                         },
                         pdf: {
                             status: -1,
-                            message: 'wait for creation'
-                        }
+                            message: 'wait for creation',
+                        },
                     },
                     previews: {
                         small: '',
                         medium: '',
                         big: '',
-                        pdf: ''
+                        pdf: '',
                     },
                     root_key: 'files1',
-                    library: DB_SETTINGS.filesLibraryId
+                    library: DB_SETTINGS.filesLibraryId,
                 },
-                children: []
-            }
-        ]
+                children: [],
+            },
+        ],
     },
     {
         order: 0,
@@ -207,30 +207,30 @@ const database: FullTreeContent = [
             previews_status: {
                 small: {
                     status: -1,
-                    message: 'wait for creation'
+                    message: 'wait for creation',
                 },
                 medium: {
                     status: -1,
-                    message: 'wait for creation'
+                    message: 'wait for creation',
                 },
                 big: {
                     status: -1,
-                    message: 'wait for creation'
+                    message: 'wait for creation',
                 },
                 pdf: {
                     status: -1,
-                    message: 'wait for creation'
-                }
+                    message: 'wait for creation',
+                },
             },
             previews: {
                 small: '',
                 medium: '',
                 big: '',
-                pdf: ''
+                pdf: '',
             },
             root_key: 'files1',
-            library: DB_SETTINGS.filesLibraryId
+            library: DB_SETTINGS.filesLibraryId,
         },
-        children: []
-    }
+        children: [],
+    },
 ];

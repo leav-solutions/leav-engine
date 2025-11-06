@@ -22,7 +22,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     filter,
     onFilterChange,
     selectDropDownRef,
-    removeThroughCondition = false
+    removeThroughCondition = false,
 }) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -36,7 +36,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         useGetLibraryAttributesLazyQuery();
 
     const [selectedSubField, setSelectedSubField] = useState<string | null>(
-        isUIFilterThrough(filter) ? filter.subField : null
+        isUIFilterThrough(filter) ? filter.subField : null,
     );
 
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
@@ -59,7 +59,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     useEffect(() => {
         if (filter.condition === ThroughConditionFilter.THROUGH && filter.attribute.linkedLibrary?.id) {
             getLibraryAttributes({
-                variables: {libraryId: filter.attribute.linkedLibrary.id}
+                variables: {libraryId: filter.attribute.linkedLibrary.id},
             });
         }
     }, [filter.condition, filter.attribute, getLibraryAttributes]);
@@ -69,13 +69,13 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         ![
             AttributeConditionFilter.IS_EMPTY,
             AttributeConditionFilter.IS_NOT_EMPTY,
-            ThroughConditionFilter.THROUGH
+            ThroughConditionFilter.THROUGH,
         ].includes(filter.condition);
 
     const libraryLinkAttributes = libraryAttributesData?.libraries?.list[0].attributes ?? [];
     const linkAttributesOptions = libraryLinkAttributes.map(attribute => ({
         label: localizedTranslation(attribute.label, lang) ?? '',
-        value: attribute.id
+        value: attribute.id,
     }));
 
     const _handleThroughFilterChange = (filterData: UIFilter) => {
@@ -83,7 +83,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
             ...filter,
             subField: filterData.field,
             subCondition: filterData.condition,
-            value: filterData.value
+            value: filterData.value,
         } as IUIFilterThrough);
     };
 
@@ -124,10 +124,10 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                                 field: selectedSubField,
                                 attribute: {
                                     ...linkedAttribute,
-                                    label: localizedTranslation(linkedAttribute.label, lang) ?? ''
+                                    label: localizedTranslation(linkedAttribute.label, lang) ?? '',
                                 },
                                 condition: filter.subCondition,
-                                value: filter.value
+                                value: filter.value,
                             }}
                             onFilterChange={_handleThroughFilterChange}
                             selectDropDownRef={selectDropDownRef}

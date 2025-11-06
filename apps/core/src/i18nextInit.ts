@@ -13,8 +13,8 @@ export default async (config: IConfig): Promise<i18n> => {
         debug: false,
         preload: config.lang.available,
         backend: {
-            loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json'
-        }
+            loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json',
+        },
     });
 
     return i18next;

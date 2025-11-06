@@ -5,7 +5,7 @@ import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {type INotificationsState} from './stateType';
 
 export const notificationsInitialState: INotificationsState = {
-    isPanelOpen: false
+    isPanelOpen: false,
 };
 
 const notificationsSlice = createSlice({
@@ -14,8 +14,8 @@ const notificationsSlice = createSlice({
     reducers: {
         setIsPanelOpen: (state, action: PayloadAction<boolean>) => {
             state.isPanelOpen = action.payload;
-        }
-    }
+        },
+    },
 });
 
 export const {setIsPanelOpen} = notificationsSlice.actions;

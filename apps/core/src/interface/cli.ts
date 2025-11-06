@@ -51,6 +51,6 @@ export default function ({'core.app.core.import': importApp}: IDeps) {
             if (!process.argv.slice(2).length) {
                 program.outputHelp();
             }
-        }
+        },
     };
 }

@@ -15,10 +15,10 @@ function MockedUserContextProvider({children}) {
                 label: 'Test User',
                 id: '123',
                 library: {...mockLibrarySimple},
-                color: '#000000'
-            }
+                color: '#000000',
+            },
         },
-        setUserData: jest.fn()
+        setUserData: jest.fn(),
     };
 
     return <UserContext.Provider value={mockUserCtx}>{children}</UserContext.Provider>;

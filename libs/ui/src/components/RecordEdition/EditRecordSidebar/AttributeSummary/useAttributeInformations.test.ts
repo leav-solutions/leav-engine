@@ -8,7 +8,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn()
+    useSharedTranslation: jest.fn(),
 }));
 
 jest.mock('_ui/hooks/useLang');
@@ -30,8 +30,8 @@ describe('useAttributeInformations', () => {
         expect(result.current).toEqual([
             {
                 title: 'record_summary.attribute_format',
-                value: 'attributes.format_extended'
-            }
+                value: 'attributes.format_extended',
+            },
         ]);
     });
 
@@ -41,12 +41,12 @@ describe('useAttributeInformations', () => {
         expect(result.current).toEqual([
             {
                 title: 'record_summary.attribute_format',
-                value: 'attributes.format_extended'
+                value: 'attributes.format_extended',
             },
             {
                 title: 'record_summary.descriptive',
-                value: 'Mon attribut'
-            }
+                value: 'Mon attribut',
+            },
         ]);
     });
 });

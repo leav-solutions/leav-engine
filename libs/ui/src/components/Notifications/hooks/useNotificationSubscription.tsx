@@ -48,9 +48,9 @@ export const useNotificationsSubscription = () => {
                             </KitButton>
                         ))}
                     </KitSpace>
-                )
+                ),
             });
-        }
+        },
     });
 };
 

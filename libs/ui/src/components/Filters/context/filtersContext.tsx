@@ -9,5 +9,5 @@ export const FiltersContext = createContext<{
     dispatch: Dispatch<UIFiltersAction>;
 }>({
     filtersData: null as IUIFiltersState,
-    dispatch: () => null
+    dispatch: () => null,
 });

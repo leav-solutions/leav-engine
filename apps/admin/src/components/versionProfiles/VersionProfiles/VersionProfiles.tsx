@@ -30,13 +30,13 @@ function VersionProfiles(): JSX.Element {
 
     const {loading, error, data} = useQuery<GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables>(
         getVersionProfilesQuery,
-        {variables: {filters: {...addWildcardToFilters(filters, ['label', 'id'])}}}
+        {variables: {filters: {...addWildcardToFilters(filters, ['label', 'id'])}}},
     );
 
     const _onFiltersUpdate = (filterElem: any) => {
         setFilters({
             ...filters,
-            [filterElem.name]: filterElem.value
+            [filterElem.name]: filterElem.value,
         });
     };
 

@@ -13,7 +13,7 @@ describe('test consume', () => {
     test('execution', async () => {
         const channel: Mockify<Channel> = {
             consume: jest.fn(),
-            prefetch: jest.fn()
+            prefetch: jest.fn(),
         };
 
         await consume(channel as Channel, config as unknown as IConfig);
@@ -28,7 +28,7 @@ describe('test handleMsg', () => {
 
         const channel: Mockify<Channel> = {
             ack: jest.fn(),
-            prefetch: jest.fn()
+            prefetch: jest.fn(),
         };
 
         const msg: Mockify<ConsumeMessage> = {
@@ -41,13 +41,13 @@ describe('test handleMsg', () => {
                             sizes: [
                                 {
                                     size: 600,
-                                    output: 'test'
-                                }
-                            ]
-                        }
-                    ]
-                })
-            )
+                                    output: 'test',
+                                },
+                            ],
+                        },
+                    ],
+                }),
+            ),
         };
 
         const response: IResponse = {
@@ -59,10 +59,10 @@ describe('test handleMsg', () => {
                     params: {
                         output: 'test',
                         size: 800,
-                        name: 'big'
-                    }
-                }
-            ]
+                        name: 'big',
+                    },
+                },
+            ],
         };
 
         (processPreview as jest.FunctionLike) = jest.fn(() => response);

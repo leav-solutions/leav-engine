@@ -104,9 +104,9 @@ const Header = ({id, children, type}: IHeaderProps) => {
             sort: [
                 {
                     field: newSortField,
-                    order
-                }
-            ]
+                    order,
+                },
+            ],
         });
 
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
@@ -122,14 +122,14 @@ const Header = ({id, children, type}: IHeaderProps) => {
 
     const cancelSort = () => {
         searchDispatch({
-            type: SearchActionTypes.CANCEL_SORT
+            type: SearchActionTypes.CANCEL_SORT,
         });
     };
 
     const handleHideColumn = (attId: string) => {
         searchDispatch({
             type: SearchActionTypes.SET_FIELDS,
-            fields: searchState.fields.filter(f => f.id !== attId)
+            fields: searchState.fields.filter(f => f.id !== attId),
         });
     };
 
@@ -149,31 +149,31 @@ const Header = ({id, children, type}: IHeaderProps) => {
                         {
                             key: 'sort-ascend',
                             onClick: () => handleAsc(id, type),
-                            label: t('items_list.table.header-cell-menu.sort-ascend')
+                            label: t('items_list.table.header-cell-menu.sort-ascend'),
                         },
                         {
                             key: 'sort-descend',
                             onClick: () => handleDesc(id, type),
-                            label: t('items_list.table.header-cell-menu.sort-descend')
+                            label: t('items_list.table.header-cell-menu.sort-descend'),
                         },
                         {
                             key: 'cancel-sort',
                             onClick: cancelSort,
-                            label: t('items_list.table.header-cell-menu.cancel-sort')
+                            label: t('items_list.table.header-cell-menu.cancel-sort'),
                         },
                         id !== infosCol
                             ? {
                                   key: 'hide-column',
                                   onClick: () => handleHideColumn(id),
-                                  label: t('items_list.table.header-cell-menu.hide-column')
+                                  label: t('items_list.table.header-cell-menu.hide-column'),
                               }
                             : null,
                         {
                             key: 'choose-columns',
                             onClick: () => setOpenChangeColumns(true),
-                            label: t('items_list.table.header-cell-menu.choose-columns')
-                        }
-                    ]
+                            label: t('items_list.table.header-cell-menu.choose-columns'),
+                        },
+                    ],
                 }}
             >
                 <DropdownContent>

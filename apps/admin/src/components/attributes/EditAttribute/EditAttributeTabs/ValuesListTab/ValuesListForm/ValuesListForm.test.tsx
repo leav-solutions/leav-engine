@@ -7,7 +7,7 @@ import {act} from 'react-dom/test-utils';
 import {
     mockAttrAdvLinkWithValuesList,
     mockAttrSimpleLinkWithValuesList,
-    mockAttrSimpleWithValuesList
+    mockAttrSimpleWithValuesList,
 } from '../../../../../../__mocks__/attributes';
 import ValuesListForm from './ValuesListForm';
 
@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function StandardValuesList() {
             return <div>StandardValuesList</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -24,7 +24,7 @@ jest.mock(
     () =>
         function LinkValuesList() {
             return <div>LinkValuesList</div>;
-        }
+        },
 );
 
 describe('ValuesListForm', () => {
@@ -43,10 +43,10 @@ describe('ValuesListForm', () => {
             <ValuesListForm
                 attribute={{
                     ...mockAttrSimpleWithValuesList,
-                    values_list: {enable: false, allowFreeEntry: null, allowListUpdate: null, values: null}
+                    values_list: {enable: false, allowFreeEntry: null, allowListUpdate: null, values: null},
                 }}
                 onSubmit={onSubmit}
-            />
+            />,
         );
 
         expect(comp.find('FormCheckbox[name="enable"]').prop('checked')).toBe(false);
@@ -83,13 +83,13 @@ describe('ValuesListForm', () => {
 
         // Simple link
         const compLink = shallow(
-            <ValuesListForm attribute={{...mockAttrSimpleLinkWithValuesList}} onSubmit={onSubmit} />
+            <ValuesListForm attribute={{...mockAttrSimpleLinkWithValuesList}} onSubmit={onSubmit} />,
         );
         expect(compLink.find('LinkValuesList')).toHaveLength(1);
 
         // Advanced Link
         const compAdvLink = shallow(
-            <ValuesListForm attribute={{...mockAttrAdvLinkWithValuesList}} onSubmit={onSubmit} />
+            <ValuesListForm attribute={{...mockAttrAdvLinkWithValuesList}} onSubmit={onSubmit} />,
         );
         expect(compAdvLink.find('LinkValuesList')).toHaveLength(1);
     });

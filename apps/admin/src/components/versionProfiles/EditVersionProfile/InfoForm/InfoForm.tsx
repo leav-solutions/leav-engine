@@ -64,14 +64,14 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
             acc[cur] = '';
             return acc;
         }, {}),
-        trees: []
+        trees: [],
     };
 
     const isNewProfile = !profile;
     const initialValues: VersionProfileInput = {
         ...defaultApplicationData,
         ...profile,
-        trees: (profile?.trees ?? []).map(tree => tree.id)
+        trees: (profile?.trees ?? []).map(tree => tree.id),
     };
 
     const _handleSubmit = (values: VersionProfileInput) => {
@@ -95,15 +95,15 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
     const validationSchema = yup.object().shape({
         id: idValidator,
         label: yup.object().shape({
-            [defaultLang]: yup.string().required()
+            [defaultLang]: yup.string().required(),
         }),
         description: yup
             .object()
             .shape({
-                [defaultLang]: yup.string()
+                [defaultLang]: yup.string(),
             })
             .nullable(),
-        trees: yup.array(yup.string())
+        trees: yup.array(yup.string()),
     });
 
     const _renderForm = ({
@@ -113,7 +113,7 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
         errors: inputErrors,
         values,
         touched,
-        submitForm
+        submitForm,
     }: FormikProps<VersionProfileInput>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);

@@ -7,6 +7,6 @@ export default function openSettings(state: IFormBuilderState, action: IFormBuil
     return {
         ...state,
         openSettings: true,
-        elementInSettings: action.element
+        elementInSettings: action.element,
     };
 }

@@ -10,22 +10,22 @@ import getClassifyingFiltersVariableQueryPart from './getClassifyingFiltersVaria
 describe('getClassifyingFiltersVariableQueryPart', () => {
     test('Return variable query part for classifying filters', async () => {
         const mockDbService: Mockify<IDbService> = {
-            db: new Database()
+            db: new Database(),
         };
 
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isClassifyingFilter: jest.fn().mockReturnValue(true)
+            isClassifyingFilter: jest.fn().mockReturnValue(true),
         };
 
         const func = getClassifyingFiltersVariableQueryPart({
             'core.infra.db.dbService': mockDbService as IDbService,
-            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
         });
 
         const queryPart = func({
             condition: TreeCondition.CLASSIFIED_IN,
             treeId: 'my_tree',
-            value: '123456'
+            value: '123456',
         });
 
         expect(queryPart).toMatchSnapshot();

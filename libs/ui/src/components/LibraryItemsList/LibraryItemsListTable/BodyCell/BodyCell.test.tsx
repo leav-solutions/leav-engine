@@ -15,29 +15,29 @@ jest.mock(
     () =>
         function Cell() {
             return <div>Cell</div>;
-        }
+        },
 );
 
 describe('BodyCell', () => {
     const mockCell = {
         getCellProps: jest.fn(),
         column: {
-            id: 'columnId'
+            id: 'columnId',
         },
         value: {value: 'valueCell', type: AttributeType.simple, id: 'idCell'},
         row: {
             original: {
-                record: mockRecord
-            }
+                record: mockRecord,
+            },
         },
-        render: jest.fn()
+        render: jest.fn(),
     };
 
     test('should call cell', async () => {
         render(
             <MockSearchContextProvider>
                 <BodyCell cell={mockCell as any} selected={false} />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('Cell')).toBeInTheDocument();
@@ -57,25 +57,25 @@ describe('BodyCell', () => {
             [Symbol.toStringTag]: 'Error',
             extensions: {
                 fields: {
-                    [mockCell.column.id]: 'error message'
+                    [mockCell.column.id]: 'error message',
                 },
                 record: {
                     id: mockCell.row.original.record.id,
-                    library: mockCell.row.original.record.library.id
-                }
-            }
+                    library: mockCell.row.original.record.library.id,
+                },
+            },
         };
 
         const state: ISearchState = {
             ...initialSearchState,
             library: mockGetLibraryDetailExtendedElement,
-            errors: [error]
+            errors: [error],
         };
 
         render(
             <MockSearchContextProvider state={state}>
                 <BodyCell cell={mockCell as any} selected={false} />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('error message')).toBeInTheDocument();

@@ -12,7 +12,7 @@ export interface INotificationByWebSocketChannelDeps {
 }
 
 export default function ({
-    'core.domain.eventsManager': eventsManagerDomain
+    'core.domain.eventsManager': eventsManagerDomain,
 }: INotificationByWebSocketChannelDeps): INotificationChannel {
     return {
         type: NotificationChannels.WEB_SOCKET,
@@ -22,7 +22,7 @@ export default function ({
                 notifications.map(async notification => {
                     try {
                         logger.debug(
-                            `Sending webSocket notification "${notification.content.title}" to user ${notification.recipientUserId}`
+                            `Sending webSocket notification "${notification.content.title}" to user ${notification.recipientUserId}`,
                         );
                         await eventsManagerDomain.sendPubSubEvent(
                             {
@@ -30,20 +30,20 @@ export default function ({
                                 data: {
                                     notification: {
                                         ...notification.content,
-                                        date: notification.date
+                                        date: notification.date,
                                     },
-                                    recipientUserIds: [notification.recipientUserId]
-                                } satisfies IPubSubNotificationData
+                                    recipientUserIds: [notification.recipientUserId],
+                                } satisfies IPubSubNotificationData,
                             },
-                            ctx
+                            ctx,
                         );
                     } catch (error) {
                         logger.error(
-                            `Error sending webSocket notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`
+                            `Error sending webSocket notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`,
                         );
                     }
-                })
+                }),
             );
-        }
+        },
     };
 }

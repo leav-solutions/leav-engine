@@ -51,7 +51,7 @@ function ALCInputConnector({
     types,
     colorTypeDictionnary,
     connColor,
-    forList
+    forList,
 }: IALCInputConnectorProps): JSX.Element {
     const width = size ? size : 50;
 

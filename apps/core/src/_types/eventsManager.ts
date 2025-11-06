@@ -11,7 +11,7 @@ export enum TriggerNames {
     TASK = 'TASK',
     TREE_EVENT = 'TREE_EVENT',
     RECORD_UPDATE = 'RECORD_UPDATE',
-    NOTIFICATION = 'NOTIFICATION'
+    NOTIFICATION = 'NOTIFICATION',
 }
 
 export interface IPubSubNotificationData {

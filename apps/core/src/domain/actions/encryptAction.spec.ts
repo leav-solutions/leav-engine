@@ -21,7 +21,7 @@ describe('encryptAction', () => {
     test('should return null if no value', async () => {
         expect(await action([{...mockStandardValue, payload: null}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, payload: null}]
+            values: [{...mockStandardValue, payload: null}],
         });
     });
 });

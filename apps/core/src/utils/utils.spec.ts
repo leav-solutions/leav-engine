@@ -11,7 +11,7 @@ import {
     mockAttrAdvLink,
     mockAttrSimple,
     mockAttrSimpleLink,
-    mockAttrTree
+    mockAttrTree,
 } from '../__tests__/mocks/attribute';
 import {mockLibraryFiles} from '../__tests__/mocks/library';
 import utils from './utils';
@@ -125,18 +125,18 @@ describe('Utils', () => {
             const utilsModule = utils();
             const o1 = {
                 val1: 'toto',
-                val2: ['a', 'b']
+                val2: ['a', 'b'],
             };
 
             const o2 = {
                 val2: ['c', 'd'],
-                val3: 'tata'
+                val3: 'tata',
             };
 
             expect(utilsModule.mergeConcat(o1, o2)).toEqual({
                 val1: 'toto',
                 val2: ['a', 'b', 'c', 'd'],
-                val3: 'tata'
+                val3: 'tata',
             });
         });
     });
@@ -147,8 +147,8 @@ describe('Utils', () => {
             expect(
                 utilsModule.nameValArrayToObj([
                     {name: 'key1', value: 'val1'},
-                    {name: 'key2', value: 'val2'}
-                ])
+                    {name: 'key2', value: 'val2'},
+                ]),
             ).toStrictEqual({key1: 'val1', key2: 'val2'});
         });
 
@@ -157,11 +157,11 @@ describe('Utils', () => {
                 utilsModule.nameValArrayToObj(
                     [
                         {myKey: 'key1', myValueField: 'val1'},
-                        {myKey: 'key2', myValueField: 'val2'}
+                        {myKey: 'key2', myValueField: 'val2'},
                     ],
                     'myKey',
-                    'myValueField'
-                )
+                    'myValueField',
+                ),
             ).toStrictEqual({key1: 'val1', key2: 'val2'});
         });
 
@@ -176,7 +176,7 @@ describe('Utils', () => {
             const utilsModule = utils();
             const obj = {
                 toto: 'tata',
-                tutu: 'titi'
+                tutu: 'titi',
             };
 
             const arr = utilsModule.objToNameValArray(obj);
@@ -184,12 +184,12 @@ describe('Utils', () => {
             expect(arr).toEqual([
                 {
                     name: 'toto',
-                    value: 'tata'
+                    value: 'tata',
                 },
                 {
                     name: 'tutu',
-                    value: 'titi'
-                }
+                    value: 'titi',
+                },
             ]);
         });
 
@@ -197,7 +197,7 @@ describe('Utils', () => {
             const utilsModule = utils();
             const obj = {
                 toto: 'tata',
-                tutu: 'titi'
+                tutu: 'titi',
             };
 
             const arr = utilsModule.objToNameValArray(obj, 'myKey', 'myValueField');
@@ -205,12 +205,12 @@ describe('Utils', () => {
             expect(arr).toEqual([
                 {
                     myKey: 'toto',
-                    myValueField: 'tata'
+                    myValueField: 'tata',
                 },
                 {
                     myKey: 'tutu',
-                    myValueField: 'titi'
-                }
+                    myValueField: 'titi',
+                },
             ]);
         });
     });
@@ -311,7 +311,7 @@ describe('Utils', () => {
 
     describe('translateError', () => {
         const mockTranslator: Mockify<i18n> = {
-            t: jest.fn().mockImplementation((str, options) => `${str}_${JSON.stringify(options)}`)
+            t: jest.fn().mockImplementation((str, options) => `${str}_${JSON.stringify(options)}`),
         };
         test('Translate error by code', async () => {
             const utilsModule = utils({translator: mockTranslator as i18n});
@@ -344,7 +344,7 @@ describe('Utils', () => {
     describe('generateExplicitValidationError', () => {
         test('Generate a validation error with explicit message', async () => {
             const mockTranslator: Mockify<i18n> = {
-                t: jest.fn().mockImplementation((str, options) => `[TRANSLATED] ${str}_${JSON.stringify(options)}`)
+                t: jest.fn().mockImplementation((str, options) => `[TRANSLATED] ${str}_${JSON.stringify(options)}`),
             };
 
             const utilsModule = utils({translator: mockTranslator as i18n});
@@ -358,8 +358,8 @@ describe('Utils', () => {
         test('Generate a full URL for a preview file with basePAth', async () => {
             const mockConfig: Partial<IConfig> = {
                 server: {
-                    basePath: '/base'
-                } as IServer
+                    basePath: '/base',
+                } as IServer,
             };
             const utilsModule = utils({config: mockConfig as IConfig});
             const url = utilsModule.getPreviewUrl('my_lib/small/12345.png');
@@ -369,7 +369,7 @@ describe('Utils', () => {
         test('Generate a full URL for a preview file without basePath', async () => {
             // No base path
             const mockConfigNoBase: Partial<IConfig> = {
-                server: {} as IServer
+                server: {} as IServer,
             };
             const utilsModuleNoBase = utils({config: mockConfigNoBase as IConfig});
             const urlNoBase = utilsModuleNoBase.getPreviewUrl('my_lib/small/12345.png');
@@ -380,7 +380,7 @@ describe('Utils', () => {
     describe('getPreviewAttributesSettings', () => {
         test('Generate attribute settings for previews attributes', async () => {
             const mockConfig = {
-                lang: {available: ['fr', 'en'], default: 'fr'}
+                lang: {available: ['fr', 'en'], default: 'fr'},
             };
 
             const utilsModule = utils({config: mockConfig as IConfig});
@@ -397,16 +397,16 @@ describe('Utils', () => {
                             sizes: [
                                 {
                                     name: 'small',
-                                    size: 42
+                                    size: 42,
                                 },
                                 {
                                     name: 'huge',
-                                    size: 1337
-                                }
-                            ]
-                        }
-                    }
-                ]
+                                    size: 1337,
+                                },
+                            ],
+                        },
+                    },
+                ],
             });
 
             expect(settings).toEqual({
@@ -414,13 +414,13 @@ describe('Utils', () => {
                     {
                         id: 'small',
                         label: {fr: 'small', en: 'small'},
-                        format: AttributeFormats.TEXT
+                        format: AttributeFormats.TEXT,
                     },
                     {
                         id: 'huge',
                         label: {fr: 'huge', en: 'huge'},
-                        format: AttributeFormats.TEXT
-                    }
+                        format: AttributeFormats.TEXT,
+                    },
                 ],
                 files_previews_status: [
                     {
@@ -430,13 +430,13 @@ describe('Utils', () => {
                         embedded_fields: [
                             {
                                 id: 'status',
-                                format: AttributeFormats.NUMERIC
+                                format: AttributeFormats.NUMERIC,
                             },
                             {
                                 id: 'message',
-                                format: AttributeFormats.TEXT
-                            }
-                        ]
+                                format: AttributeFormats.TEXT,
+                            },
+                        ],
                     },
                     {
                         id: 'huge',
@@ -445,15 +445,15 @@ describe('Utils', () => {
                         embedded_fields: [
                             {
                                 id: 'status',
-                                format: AttributeFormats.NUMERIC
+                                format: AttributeFormats.NUMERIC,
                             },
                             {
                                 id: 'message',
-                                format: AttributeFormats.TEXT
-                            }
-                        ]
-                    }
-                ]
+                                format: AttributeFormats.TEXT,
+                            },
+                        ],
+                    },
+                ],
             });
         });
     });
@@ -468,9 +468,9 @@ describe('Utils', () => {
                     sizes: [
                         {
                             name: 'my_size',
-                            size: 1337
-                        }
-                    ]
+                            size: 1337,
+                        },
+                    ],
                 },
                 {
                     background: '#123456',
@@ -478,10 +478,10 @@ describe('Utils', () => {
                     sizes: [
                         {
                             name: 'my_other_size',
-                            size: 1337
-                        }
-                    ]
-                }
+                            size: 1337,
+                        },
+                    ],
+                },
             ]);
         });
     });

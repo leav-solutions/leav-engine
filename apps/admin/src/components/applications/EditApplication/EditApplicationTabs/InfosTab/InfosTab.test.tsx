@@ -17,7 +17,7 @@ jest.mock(
     () =>
         function FileSelector() {
             return <div>FileSelector</div>;
-        }
+        },
 );
 
 describe('InfosTab', () => {
@@ -28,13 +28,13 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: getApplicationModulesQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        applicationsModules: mockApplicationsModules
-                    }
-                }
+                        applicationsModules: mockApplicationsModules,
+                    },
+                },
             },
             {
                 request: {
@@ -47,20 +47,20 @@ describe('InfosTab', () => {
                             description: {en: 'My description'},
                             module: 'admin',
                             endpoint: 'my-app',
-                            icon: null
-                        }
-                    }
+                            icon: null,
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
 
                     return {
                         data: {
-                            saveApplication: mockApplicationDetails
-                        }
+                            saveApplication: mockApplicationDetails,
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         await act(async () => {
@@ -68,7 +68,7 @@ describe('InfosTab', () => {
                 <EditApplicationContext.Provider value={{application: mockApplicationDetails, readonly: false}}>
                     <InfosTab />
                 </EditApplicationContext.Provider>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 
@@ -95,14 +95,14 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: getApplicationModulesQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        applicationsModules: mockApplicationsModules
-                    }
-                }
-            }
+                        applicationsModules: mockApplicationsModules,
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -110,7 +110,7 @@ describe('InfosTab', () => {
                 <EditApplicationContext.Provider value={{application: mockApplicationDetails, readonly: true}}>
                     <InfosTab />
                 </EditApplicationContext.Provider>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 
@@ -125,16 +125,16 @@ describe('InfosTab', () => {
             request: {
                 query: getApplicationByIdQuery,
                 variables: {
-                    id: 'myapp'
-                }
+                    id: 'myapp',
+                },
             },
             result: {
                 data: {
                     applications: {
-                        list: []
-                    }
-                }
-            }
+                        list: [],
+                    },
+                },
+            },
         };
 
         const mocks = [
@@ -146,13 +146,13 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: getApplicationModulesQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        applicationsModules: mockApplicationsModules
-                    }
-                }
+                        applicationsModules: mockApplicationsModules,
+                    },
+                },
             },
             {
                 request: {
@@ -165,20 +165,20 @@ describe('InfosTab', () => {
                             description: {fr: '', en: ''},
                             module: 'admin',
                             endpoint: 'my-app',
-                            icon: null
-                        }
-                    }
+                            icon: null,
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
 
                     return {
                         data: {
-                            saveApplication: mockApplicationDetails
-                        }
+                            saveApplication: mockApplicationDetails,
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         await act(async () => {
@@ -186,7 +186,7 @@ describe('InfosTab', () => {
                 <EditApplicationContext.Provider value={{application: null, readonly: false}}>
                     <InfosTab />
                 </EditApplicationContext.Provider>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 
@@ -209,7 +209,7 @@ describe('InfosTab', () => {
                     value={{application: {...mockApplicationDetails, type: ApplicationType.external}, readonly: false}}
                 >
                     <InfosTab />
-                </EditApplicationContext.Provider>
+                </EditApplicationContext.Provider>,
             );
         });
 

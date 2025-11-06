@@ -10,7 +10,7 @@ describe('EntityCard', () => {
         label: 'Some entity',
         subLabel: 'Some sub label',
         color: 'orange',
-        preview: 'https://some.url'
+        preview: 'https://some.url',
     };
 
     test('Display full entity card', async () => {
@@ -38,7 +38,7 @@ describe('EntityCard', () => {
         render(<EntityCard entity={mockEntity} withColor={false} />);
 
         expect(screen.getByTestId('entity-card')).not.toHaveStyle({
-            borderLeft: `5px solid ${mockEntity.color}`
+            borderLeft: `5px solid ${mockEntity.color}`,
         });
     });
 

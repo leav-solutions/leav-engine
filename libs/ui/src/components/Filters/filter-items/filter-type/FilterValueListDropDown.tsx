@@ -11,7 +11,7 @@ import {
     isUIFilterLinkWithValueList,
     isUIFilterStandardWithValueList,
     type IUIFilterValueList,
-    type UIFilter
+    type UIFilter,
 } from '../../_types';
 
 interface IFilterValueListDropDownProps {
@@ -59,7 +59,7 @@ const Label = styled.div`
 export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
     const [searchText, setSearchText] = useState('');
@@ -71,7 +71,7 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
         // disable NOT_EQUAL for now because of backend condition filter issue
         // {label: t('filters.not-equal'), value: RecordFilterCondition.NOT_EQUAL}
         {label: t('filters.is-empty'), value: RecordFilterCondition.IS_EMPTY},
-        {label: t('filters.is-not-empty'), value: RecordFilterCondition.IS_NOT_EMPTY}
+        {label: t('filters.is-not-empty'), value: RecordFilterCondition.IS_NOT_EMPTY},
     ];
 
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
@@ -85,13 +85,13 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
             valueListFormatted =
                 filter.attribute.valuesList?.values?.map(value => ({
                     label: value,
-                    value
+                    value,
                 })) || [];
         } else if (isUIFilterLinkWithValueList(filter)) {
             valueListFormatted =
                 filter.attribute.valuesList?.linkedValues?.map(value => ({
                     label: value.whoAmI.label!,
-                    value: value.id
+                    value: value.id,
                 })) || [];
         }
 
@@ -114,7 +114,7 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
             onFilterChange({
                 ...filter,
                 value: [],
-                field: (filter as any).field
+                field: (filter as any).field,
             });
             return;
         }
@@ -128,7 +128,7 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
         onFilterChange({
             ...filter,
             condition,
-            value: valuesSelected
+            value: valuesSelected,
         });
     };
 

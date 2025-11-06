@@ -14,7 +14,7 @@ describe('TreesSelector', () => {
         const mocks = [
             {
                 request: {
-                    query: getTreesQuery
+                    query: getTreesQuery,
                 },
                 result: {
                     data: {
@@ -28,7 +28,7 @@ describe('TreesSelector', () => {
                                     system: false,
                                     label: {
                                         en: 'TestTree',
-                                        fr: 'TestTree'
+                                        fr: 'TestTree',
                                     },
                                     behavior: TreeBehavior.standard,
                                     libraries: [
@@ -38,22 +38,22 @@ describe('TreesSelector', () => {
                                                 id: 'test_lib',
                                                 label: {fr: 'My Lib'},
                                                 attributes: [],
-                                                __typename: 'Library'
+                                                __typename: 'Library',
                                             },
                                             settings: {
                                                 __typename: 'TreeLibrarySettings',
                                                 allowMultiplePositions: true,
                                                 allowedAtRoot: true,
-                                                allowedChildren: ['__all__']
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                                allowedChildren: ['__all__'],
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {

@@ -9,15 +9,15 @@ import {ApplicationType} from '_gqlTypes/globalTypes';
 export const mockApplication: GET_APPLICATIONS_applications_list = {
     id: 'my-app',
     label: {
-        en: 'My App'
+        en: 'My App',
     },
     description: {
-        en: 'My description'
+        en: 'My description',
     },
     endpoint: 'my-app',
     url: 'http://example.com/app/my-app',
     color: 'orange',
-    icon: null
+    icon: null,
 };
 
 export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ENDPOINT_applications_list> = {
@@ -28,11 +28,11 @@ export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ENDPOINT_ap
     permissions: {
         admin_application: true,
         access_application: true,
-        __typename: 'ApplicationPermissions'
+        __typename: 'ApplicationPermissions',
     },
     settings: {
         libraries: ['libA', 'libB'],
         trees: ['treeA', 'treeB'],
-        showTransparency: false
-    }
+        showTransparency: false,
+    },
 };

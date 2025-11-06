@@ -26,12 +26,12 @@ function Settings(): JSX.Element {
     const {
         loading: permissionsLoading,
         error: permissionsError,
-        data: permissionsData
+        data: permissionsData,
     } = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
         variables: {
             type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_access_libraries, PermissionsActions.admin_access_trees]
-        }
+            actions: [PermissionsActions.admin_access_libraries, PermissionsActions.admin_access_trees],
+        },
     });
     const canAccessLibraries =
         permissionsData?.isAllowed?.find(p => p.name === PermissionsActions.admin_access_libraries)?.allowed ?? false;
@@ -44,22 +44,22 @@ function Settings(): JSX.Element {
             label: t('app_settings.application'),
             children: <ApplicationSettings />,
             style: {padding: 0},
-            accessible: true
+            accessible: true,
         },
         {
             key: 'libraries',
             label: t('app_settings.libraries'),
             children: <LibrariesSettings />,
             style: {padding: 0},
-            accessible: canAccessLibraries
+            accessible: canAccessLibraries,
         },
         {
             key: 'trees',
             label: t('app_settings.trees'),
             children: <TreesSettings />,
             style: {padding: 0},
-            accessible: canAccessTrees
-        }
+            accessible: canAccessTrees,
+        },
     ].filter(tab => tab.accessible);
 
     const _handleTabClick = (key: string) => {

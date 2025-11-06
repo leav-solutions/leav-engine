@@ -22,12 +22,12 @@ export default function (): IFilterTypesHelper {
             AttributeCondition.VALUES_COUNT_GREATER_THAN,
             AttributeCondition.VALUES_COUNT_LOWER_THAN,
             AttributeCondition.IS_EMPTY,
-            AttributeCondition.IS_NOT_EMPTY
+            AttributeCondition.IS_NOT_EMPTY,
         ].includes(filter.condition as AttributeCondition);
 
     return {
         isAttributeFilter: _isAttributeFilter,
         isClassifyingFilter: _isClassifyingFilter,
-        isCountFilter: _isCountFilter
+        isCountFilter: _isCountFilter,
     };
 }

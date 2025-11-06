@@ -173,8 +173,8 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     const [isSelected, setIsSelect] = useState<boolean>(
         !!searchState.selection.selected.some(
             elementSelected =>
-                elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-        )
+                elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id,
+        ),
     );
 
     const mustShowTransparency = searchState.showTransparency;
@@ -190,12 +190,12 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
         const newSelected: ISelectedRecord = {
             id: item.whoAmI.id,
             library: item.whoAmI.library.id,
-            label: item.whoAmI.label
+            label: item.whoAmI.label,
         };
 
         searchDispatch({
             type: SearchActionTypes.TOGGLE_RECORD_SELECTION,
-            record: newSelected
+            record: newSelected,
         });
     };
 
@@ -203,8 +203,8 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
         setIsSelect(
             searchState.selection.selected.some(
                 elementSelected =>
-                    elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-            )
+                    elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id,
+            ),
         );
     }, [searchState.selection, item, searchState]);
 
@@ -246,14 +246,14 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                             tile={true}
                             style={{
                                 width: itemPreviewSize,
-                                height: itemPreviewSize
+                                height: itemPreviewSize,
                             }}
                             placeholderStyle={{
                                 width: itemPreviewSize,
-                                height: itemPreviewSize
+                                height: itemPreviewSize,
                             }}
                             imageStyle={{
-                                background: mustShowTransparency ? themeVars.checkerBoard : 'transparent'
+                                background: mustShowTransparency ? themeVars.checkerBoard : 'transparent',
                             }}
                         />
                         <ActionsWrapper>

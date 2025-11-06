@@ -18,6 +18,6 @@ export const useMessages: () => IUseMessagesHook = () => {
     return {
         messages: messagesFromStore,
         addMessage: message => dispatch(addMessage(message)),
-        removeMessage: message => dispatch(removeMessage(message.id))
+        removeMessage: message => dispatch(removeMessage(message.id)),
     };
 };

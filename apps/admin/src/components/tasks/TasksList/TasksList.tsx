@@ -36,7 +36,7 @@ const TasksList = ({
     actionsBtn,
     footerBtn,
     tasks,
-    loading
+    loading,
 }: ITasksListProps): JSX.Element => {
     const {t} = useTranslation();
     const lang = useLang().lang;
@@ -44,13 +44,13 @@ const TasksList = ({
     const [maxNbBtnsInRow, setmaxNbBtnsInRow] = useState<number>(0);
     const [sort, setSort] = useState<{column: string; direction: 'ascending' | 'descending'}>({
         column: 'completedAt',
-        direction: 'descending'
+        direction: 'descending',
     });
 
     useEffect(() => {
         if (!!actionsBtn && tasks.length) {
             setmaxNbBtnsInRow(
-                tasks.map(task => actionsBtn(task).length).reduce((prev, curr) => (curr > prev ? curr : prev), 0)
+                tasks.map(task => actionsBtn(task).length).reduce((prev, curr) => (curr > prev ? curr : prev), 0),
             );
         }
     }, [actionsBtn]);
@@ -200,7 +200,7 @@ const TasksList = ({
 TasksList.defaultProps = {
     loading: false,
     tasks: [],
-    filters: {}
+    filters: {},
 };
 
 export default TasksList;

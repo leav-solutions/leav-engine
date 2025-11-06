@@ -17,7 +17,7 @@ function ElementsReserve(): JSX.Element {
                 <Tab.Pane>
                     <LayoutElementsList />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             menuItem: t('forms.attributes'),
@@ -25,8 +25,8 @@ function ElementsReserve(): JSX.Element {
                 <Tab.Pane>
                     <AttributesList />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ];
 
     return <Tab panes={panes} />;

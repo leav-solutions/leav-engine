@@ -9,7 +9,7 @@ jest.mock(
     () =>
         function ItemsTitleDisplay() {
             return <div>ItemsTitleDisplay</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -17,7 +17,7 @@ jest.mock(
     () =>
         function LibraryItemsListTable() {
             return <div>LibraryItemsListTable</div>;
-        }
+        },
 );
 
 describe('DisplayTypeSelector', () => {

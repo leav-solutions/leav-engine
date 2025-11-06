@@ -22,7 +22,7 @@ export interface IFilesManagerRepo {
         {fileName, filePath, fileInode}: {fileName: string; filePath: string; fileInode?: number},
         {recordLibrary, recordId}: {recordLibrary: string; recordId?: string},
         retrieveInactive: boolean,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IRecord | null>;
     getParentRecord(fullParentPath: string, library: string, ctx: IQueryInfos): Promise<IRecord | null>;
 }
@@ -30,14 +30,14 @@ export interface IFilesManagerRepo {
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.utils.logger': logger = null
+    'core.utils.logger': logger = null,
 }: IDeps): IFilesManagerRepo {
     return {
         async getRecord(
             {fileName, filePath, fileInode}: {fileName: string; filePath: string; fileInode?: number},
             {recordLibrary, recordId}: {recordLibrary: string; recordId?: string},
             retrieveInactive: boolean,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<IRecord | null> {
             const coll = dbService.db.collection(recordLibrary);
 
@@ -65,7 +65,7 @@ export default function ({
                 results = await dbService.execute({
                     query,
                     withTotalCount: false,
-                    ctx
+                    ctx,
                 });
             } catch (e) {
                 return null;
@@ -99,7 +99,7 @@ export default function ({
                 results = await dbService.execute({
                     query,
                     withTotalCount: false,
-                    ctx
+                    ctx,
                 });
             } catch (e) {
                 logger.warn(`[FilesManager] Error when search parent folder : ${fullParentPath}`);
@@ -109,6 +109,6 @@ export default function ({
             const parent = results[0] ? dbUtils.cleanup(results[0]) : null;
 
             return parent;
-        }
+        },
     };
 }

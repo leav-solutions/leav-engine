@@ -75,7 +75,7 @@ export interface ILibraryRepo {
     saveLibraryFullTextAttributes({
         libId,
         fullTextAttributes,
-        ctx
+        ctx,
     }: {
         libId: string;
         fullTextAttributes: string[];
@@ -94,7 +94,7 @@ interface IDeps {
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attribute': attributeRepo = null
+    'core.infra.attribute': attributeRepo = null,
 }: IDeps = {}): ILibraryRepo {
     return {
         async getLibraries({params = {}, ctx}): Promise<IList<ILibrary>> {
@@ -103,14 +103,14 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
 
             const initializedParams = {...defaultParams, ...params};
             const libraries = await dbUtils.findCoreEntity<ILibrary>({
                 ...initializedParams,
                 collectionName: LIB_COLLECTION_NAME,
-                ctx
+                ctx,
             });
 
             return libraries;
@@ -125,7 +125,7 @@ export default function ({
             const libCollc = dbService.db.collection(LIB_COLLECTION_NAME);
             const libRes = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(libRes.pop());
@@ -138,7 +138,7 @@ export default function ({
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`UPDATE ${docToInsert} IN ${col} OPTIONS { mergeObjects: false } RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -148,13 +148,13 @@ export default function ({
             // Delete attributes linked to this library
             const linkedAttributes = await attributeRepo.getAttributes({
                 params: {filters},
-                ctx
+                ctx,
             });
 
             for (const linkedAttribute of linkedAttributes.list) {
                 await attributeRepo.deleteAttribute({
                     attrData: linkedAttribute,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -165,14 +165,14 @@ export default function ({
                 query: aql`FOR e IN ${libAttributesCollec}
                          FILTER e._from == ${LIB_COLLECTION_NAME + '/' + id}
                          REMOVE e IN ${libAttributesCollec}`,
-                ctx
+                ctx,
             });
 
             // Delete library
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             // Delete library's collection
@@ -190,7 +190,7 @@ export default function ({
                 const currentAttrs = await attributeRepo.getLibraryAttributes({libraryId: libId, ctx});
                 const deletedAttrs = difference(
                     currentAttrs.filter(a => !a.system).map(a => a.id),
-                    attributes
+                    attributes,
                 );
 
                 // Unlink attributes not used anymore
@@ -206,7 +206,7 @@ export default function ({
                                 IN ${libAttribCollec}
                                 RETURN OLD
                     `,
-                        ctx
+                        ctx,
                     });
                 }
             }
@@ -228,7 +228,7 @@ export default function ({
                         IN ${libAttribCollec}
                         RETURN NEW
                 `,
-                ctx
+                ctx,
             });
 
             return libAttribRes.map(res => res._to.split('/')[1]);
@@ -246,7 +246,7 @@ export default function ({
                         }
                         IN ${libAttribCollec}
                 `,
-                ctx
+                ctx,
             });
         },
         async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
@@ -256,10 +256,10 @@ export default function ({
                 query: aql`FOR e IN ${libAttributesCollec}
                         FILTER e._to == ${'core_attributes/' + attributeId}
                     RETURN LAST(SPLIT(e._from, ${LIB_COLLECTION_NAME + '/'}))`,
-                ctx
+                ctx,
             });
 
             return res;
-        }
+        },
     };
 }

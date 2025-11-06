@@ -49,7 +49,7 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.value': valueRepo = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
 }: IDeps = {}): IAttributeRepo {
     return {
         async getLibraryAttributes({libraryId, ctx}): Promise<IAttribute[]> {
@@ -90,14 +90,14 @@ export default function ({
                             FILTER POSITION(fullTextAttrs, a._key)
                         RETURN a
                     `,
-                ctx
+                ctx,
             });
 
             return attrs.map(a => dbUtils.cleanup<IAttribute>(a));
         },
         async getAttributes({
             params,
-            ctx
+            ctx,
         }: {
             params?: IGetCoreAttributesParams;
             ctx: IQueryInfos;
@@ -129,7 +129,7 @@ export default function ({
             // Will retrieve attributes that are **not** linked to given libraries
             const _generateLibrariesExcludedFilterConds = (
                 filterKey: string,
-                filterVal: string | boolean | string[]
+                filterVal: string | boolean | string[],
             ) => {
                 if (typeof filterVal === 'boolean') {
                     return aql``;
@@ -178,7 +178,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
 
             const initializedParams = {...defaultParams, ...params};
@@ -190,9 +190,9 @@ export default function ({
                     libraries: _generateLibrariesFilterConds,
                     librariesExcluded: _generateLibrariesExcludedFilterConds,
                     versionable: _generateVersionableFilterConds,
-                    metadata_fields: _generateMetadataFilterConds
+                    metadata_fields: _generateMetadataFilterConds,
                 },
-                ctx
+                ctx,
             });
         },
         async updateAttribute({attrData, ctx}): Promise<IAttribute> {
@@ -202,7 +202,7 @@ export default function ({
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`UPDATE ${docToInsert} IN ${col} OPTIONS { mergeObjects: false } RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -213,7 +213,7 @@ export default function ({
             const col = dbService.db.collection(ATTRIB_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -231,7 +231,7 @@ export default function ({
                         FILTER e._to == ${'core_attributes/' + attrData.id}
                         REMOVE e IN ${libAttributesCollec}
                     `,
-                ctx
+                ctx,
             });
 
             // Delete attribute
@@ -239,11 +239,11 @@ export default function ({
 
             const res = await dbService.execute({
                 query: aql`REMOVE ${{_key: attrData.id}} IN ${col} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             // Return deleted attribute
             return dbUtils.cleanup(res.pop());
-        }
+        },
     };
 }

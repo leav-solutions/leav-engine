@@ -19,7 +19,7 @@ import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {
     type GET_APPLICATION_BY_ENDPOINT,
-    type GET_APPLICATION_BY_ENDPOINTVariables
+    type GET_APPLICATION_BY_ENDPOINTVariables,
 } from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
@@ -45,12 +45,12 @@ const App = (): JSX.Element => {
     const {
         loading: isAllowedLoading,
         error: isAllowedError,
-        data: isAllowedData
+        data: isAllowedData,
     } = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
         variables: {
             type: PermissionTypes.admin,
-            actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
-        }
+            actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/)),
+        },
     });
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
@@ -58,15 +58,15 @@ const App = (): JSX.Element => {
     const {
         data: applicationData,
         loading: applicationLoading,
-        error: applicationError
+        error: applicationError,
     } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
-        variables: {endpoint: APP_ENDPOINT}
+        variables: {endpoint: APP_ENDPOINT},
     });
 
     const {
         data: globalSettingsData,
         loading: globalSettingsLoading,
-        error: globalSettingsError
+        error: globalSettingsError,
     } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
     const [lang, setLang] = useState<AvailableLanguage[]>(getSysTranslationQueryLanguage(i18n));
 
@@ -85,11 +85,11 @@ const App = (): JSX.Element => {
     yup.setLocale({
         string: {matches: t('admin.validation_errors.matches')},
         array: {
-            min: t('admin.validation_errors.min')
+            min: t('admin.validation_errors.min'),
         },
         mixed: {
-            required: t('admin.validation_errors.required')
-        }
+            required: t('admin.validation_errors.required'),
+        },
     });
 
     if (
@@ -136,12 +136,12 @@ const App = (): JSX.Element => {
     const userData: IUserContext = {
         id: meData.me.whoAmI.id,
         whoAmI: meData.me.whoAmI,
-        permissions: permsArrayToObject(isAllowedData.isAllowed)
+        permissions: permsArrayToObject(isAllowedData.isAllowed),
     };
 
     const applicationContextData: ICurrentApplicationContext = {
         currentApp,
-        globalSettings: globalSettingsData?.globalSettings
+        globalSettings: globalSettingsData?.globalSettings,
     };
 
     return (
@@ -151,7 +151,7 @@ const App = (): JSX.Element => {
                     lang,
                     availableLangs: availableLangs.langs.map(l => AvailableLanguage[l]),
                     defaultLang: AvailableLanguage[appLang],
-                    setLang
+                    setLang,
                 }}
             >
                 <UserContext.Provider value={userData}>

@@ -13,15 +13,15 @@ const myField = {
     settings: [
         {key: 'attribute', value: 'test_attribute'},
         {key: 'required', value: false},
-        {key: 'input', value: 'text'}
+        {key: 'input', value: 'text'},
     ],
-    type: FormElementTypes.layout
+    type: FormElementTypes.layout,
 };
 
 export const mockFormLight: GET_FORMS_LIST_forms_list = {
     id: 'test_form_light',
     system: false,
-    label: {fr: 'Test Form'}
+    label: {fr: 'Test Form'},
 };
 
 export const mockFormFull: GET_FORM_forms_list = {
@@ -33,6 +33,6 @@ export const mockFormFull: GET_FORM_forms_list = {
     elements: [{dependencyValue: null, elements: [{...myField}]}],
     sidePanel: {
         enable: true,
-        isOpenByDefault: true
-    }
+        isOpenByDefault: true,
+    },
 };

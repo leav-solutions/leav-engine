@@ -16,7 +16,7 @@ describe('Header', () => {
                     <Header id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockSearchContextProvider>
+                </MockSearchContextProvider>,
             );
         });
 
@@ -33,15 +33,15 @@ describe('Header', () => {
                         sort: [
                             {
                                 field: 'id',
-                                order: SortOrder.desc
-                            }
-                        ]
+                                order: SortOrder.desc,
+                            },
+                        ],
                     }}
                 >
                     <Header id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockSearchContextProvider>
+                </MockSearchContextProvider>,
             );
         });
 
@@ -59,15 +59,15 @@ describe('Header', () => {
                         sort: [
                             {
                                 field: 'id',
-                                order: SortOrder.asc
-                            }
-                        ]
+                                order: SortOrder.asc,
+                            },
+                        ],
                     }}
                 >
                     <Header id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockSearchContextProvider>
+                </MockSearchContextProvider>,
             );
         });
 

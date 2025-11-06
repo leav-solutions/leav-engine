@@ -14,36 +14,36 @@ interface IDeps {
     'core.domain.permission.helpers.globalPermission': IGlobalPermissionHelper;
 }
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper
+    'core.domain.permission.helpers.globalPermission': globalPermHelper,
 }: IDeps): ITreePermissionDomain {
     const getTreePermission = async ({action, treeId, userId, ctx}: IGetTreePermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.TREE,
                 action,
-                applyTo: treeId
+                applyTo: treeId,
             },
-            ctx
+            ctx,
         );
 
     const getInheritedTreePermission = async ({
         action,
         treeId,
         userGroupId,
-        ctx
+        ctx,
     }: IGetInheritedTreePermissionParams): Promise<boolean> =>
         globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.TREE,
                 action,
                 applyTo: treeId,
-                userGroupNodeId: userGroupId
+                userGroupNodeId: userGroupId,
             },
-            ctx
+            ctx,
         );
 
     return {
         getTreePermission,
-        getInheritedTreePermission
+        getInheritedTreePermission,
     };
 }

@@ -83,7 +83,7 @@ export interface IFilesManagerDomain {
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
     storeFiles(
         {library, nodeId, files}: IStoreFilesParams,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<Array<{uid: string; record: IRecord}>>;
     createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord>;
     doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
@@ -128,7 +128,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.infra.record': recordRepo,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
-    translator
+    translator,
 }: IFilesManagerDomainDeps): IFilesManagerDomain {
     const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
         amqpService.consumer.channel.ack(msg);
@@ -158,7 +158,7 @@ export default function ({
             rootKey: Joi.string().required(),
             isDirectory: Joi.boolean().required(),
             hash: Joi.string(),
-            recordId: Joi.string()
+            recordId: Joi.string(),
         });
 
         const isValid = msgBodySchema.validate(msg);
@@ -189,21 +189,21 @@ export default function ({
         records: IRecord[],
         libraryId: string,
         filesLibraryId: string,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) =>
         records.reduce(async (promAcc, record): Promise<Record<string, IRecord>> => {
             const acc = await promAcc;
             const treeNodes = await treeDomain.getNodesByRecord({
                 treeId,
                 record: {id: record.id, library: libraryId},
-                ctx
+                ctx,
             });
 
             // Get children for first node only, as a record in file tree shouldn't be at multiple places
             const nodes: ITreeNode[] = await treeDomain.getTreeContent({
                 treeId,
                 startingNode: treeNodes[0],
-                ctx
+                ctx,
             });
 
             const childrenRecords = _extractChildrenFromNodes(nodes);
@@ -225,7 +225,7 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.filesManager.queues.events,
                 config.amqp.exchange,
-                config.filesManager.routingKeys.events
+                config.filesManager.routingKeys.events,
             );
 
             await initPreviewResponseHandler(config, logger, getSystemQueryContext('filesManager:init'), {
@@ -238,13 +238,13 @@ export default function ({
                 sendRecordUpdateEvent,
                 config,
                 logger,
-                utils
+                utils,
             });
 
             await amqpService.consume(
                 config.filesManager.queues.events,
                 config.filesManager.routingKeys.events,
-                _onMessage
+                _onMessage,
             );
 
             logger.info('Files Manager is ready. Waiting for messages... 👀');
@@ -264,7 +264,7 @@ export default function ({
                     throw utils.generateExplicitValidationError(
                         'directories',
                         Errors.ONLY_FOLDERS_CAN_BE_SELECTED,
-                        ctx.lang
+                        ctx.lang,
                     );
                 }
 
@@ -273,7 +273,7 @@ export default function ({
 
             // get root key of library from config
             const rootKey = Object.keys(config.filesManager.rootKeys).find(
-                key => config.filesManager.rootKeys[key] === filesLibrary
+                key => config.filesManager.rootKeys[key] === filesLibrary,
             );
 
             const rootPath = this.getRootPathByKey(rootKey);
@@ -287,21 +287,21 @@ export default function ({
                         {
                             field: FilesAttributes.FILE_NAME,
                             condition: AttributeCondition.EQUAL,
-                            value: name
+                            value: name,
                         },
                         {
-                            operator: Operator.AND
+                            operator: Operator.AND,
                         },
                         {
                             field: FilesAttributes.FILE_PATH,
                             condition: AttributeCondition.EQUAL,
-                            value: path
-                        }
+                            value: path,
+                        },
                     ],
                     withCount: true,
-                    retrieveInactive: true
+                    retrieveInactive: true,
                 },
-                ctx
+                ctx,
             });
 
             if (fileExists.totalCount) {
@@ -316,9 +316,9 @@ export default function ({
                     id: creationRes.record.id,
                     [FilesAttributes.FILE_NAME]: name,
                     [FilesAttributes.FILE_PATH]: path,
-                    [FilesAttributes.ROOT_KEY]: rootKey
+                    [FilesAttributes.ROOT_KEY]: rootKey,
                 },
-                ctx: getSystemQueryContext('filesManager:createDirectory')
+                ctx: getSystemQueryContext('filesManager:createDirectory'),
             });
 
             await createDirectory(name, fullPath, ctx);
@@ -346,7 +346,7 @@ export default function ({
 
             // get root key of library from config
             const rootKey = Object.keys(config.filesManager.rootKeys).find(
-                key => config.filesManager.rootKeys[key] === library
+                key => config.filesManager.rootKeys[key] === library,
             );
 
             const rootPath = this.getRootPathByKey(rootKey);
@@ -365,7 +365,7 @@ export default function ({
                 throw utils.generateExplicitValidationError(
                     'files',
                     {msg: Errors.FORBIDDEN_FILES, vars: {files: forbiddenFiles.join(', ')}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -387,21 +387,21 @@ export default function ({
                             {
                                 field: FilesAttributes.FILE_NAME,
                                 condition: AttributeCondition.EQUAL,
-                                value: file.data.filename
+                                value: file.data.filename,
                             },
                             {
-                                operator: Operator.AND
+                                operator: Operator.AND,
                             },
                             {
                                 field: FilesAttributes.FILE_PATH,
                                 condition: AttributeCondition.EQUAL,
-                                value: path
-                            }
+                                value: path,
+                            },
                         ],
                         withCount: true,
-                        retrieveInactive: true
+                        retrieveInactive: true,
                     },
-                    ctx
+                    ctx,
                 });
 
                 let record;
@@ -411,7 +411,7 @@ export default function ({
                         action: LibraryPermissionsActions.EDIT_RECORD,
                         userId: ctx.userId,
                         libraryId: library,
-                        ctx
+                        ctx,
                     });
 
                     if (!canEdit) {
@@ -427,7 +427,7 @@ export default function ({
                     if (fileExists.totalCount && !file.replace) {
                         const newPath = increment.path(`${fullPath}/${file.data.filename}`, {
                             fs: true,
-                            platform: 'darwin'
+                            platform: 'darwin',
                         });
 
                         file.data.filename = newPath.split('/').pop();
@@ -439,9 +439,9 @@ export default function ({
                             id: record.id,
                             [FilesAttributes.FILE_NAME]: file.data.filename,
                             [FilesAttributes.FILE_PATH]: path,
-                            [FilesAttributes.ROOT_KEY]: rootKey
+                            [FilesAttributes.ROOT_KEY]: rootKey,
                         },
-                        ctx: getSystemQueryContext('filesManager:storeFiles')
+                        ctx: getSystemQueryContext('filesManager:storeFiles'),
                     });
                 }
 
@@ -454,9 +454,9 @@ export default function ({
                     await eventsManager.sendPubSubEvent(
                         {
                             triggerName: TriggerNames.UPLOAD_FILE,
-                            data: {upload: {uid: file.uid, userId: ctx.userId, progress}}
+                            data: {upload: {uid: file.uid, userId: ctx.userId, progress}},
                         },
-                        ctx
+                        ctx,
                     );
                 };
 
@@ -476,7 +476,7 @@ export default function ({
             failedOnly,
             filters,
             recordIds = [],
-            previewVersionSizeNames
+            previewVersionSizeNames,
         }: IForcePreviewsGenerationParams): Promise<boolean> {
             const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
 
@@ -493,12 +493,12 @@ export default function ({
                           allFilters.push({
                               field: 'id',
                               value: recordId,
-                              condition: AttributeCondition.EQUAL
+                              condition: AttributeCondition.EQUAL,
                           });
 
                           if (index !== recordIds.length - 1) {
                               allFilters.push({
-                                  operator: Operator.OR
+                                  operator: Operator.OR,
                               });
                           }
 
@@ -523,8 +523,8 @@ export default function ({
                 const tree = trees.list[0];
                 const treeLibraries = await Promise.all(
                     Object.keys(tree.libraries).map(treeLibraryId =>
-                        libraryDomain.getLibraryProperties(treeLibraryId, ctx)
-                    )
+                        libraryDomain.getLibraryProperties(treeLibraryId, ctx),
+                    ),
                 );
                 const filesLibraryId = treeLibraries.find(l => l.behavior === LibraryBehavior.FILES).id;
                 filesLibraryProps = await libraryDomain.getLibraryProperties(filesLibraryId, ctx);
@@ -563,13 +563,13 @@ export default function ({
                     !failedOnly ||
                     (failedOnly &&
                         Object.entries(r[utils.getPreviewsStatusAttributeName(libraryProps.id)]).some(
-                            p => (p[1] as {status: number; message: string}).status !== 0
+                            p => (p[1] as {status: number; message: string}).status !== 0,
                         ))
                 ) {
                     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
                     const recordData: IFileMetadata = {
                         [utils.getPreviewsStatusAttributeName(libraryProps.id)]: previewsStatus,
-                        [utils.getPreviewsAttributeName(libraryProps.id)]: previews
+                        [utils.getPreviewsAttributeName(libraryProps.id)]: previews,
                     };
                     await updateRecordFile(
                         recordData,
@@ -581,9 +581,9 @@ export default function ({
                             sendRecordUpdateEvent,
                             valueDomain,
                             config,
-                            logger
+                            logger,
                         },
-                        ctx
+                        ctx,
                     );
 
                     await requestPreviewGeneration({
@@ -592,7 +592,7 @@ export default function ({
                         libraryId: r.library,
                         priority: PreviewPriority.MEDIUM,
                         versions,
-                        deps: {amqpService, config, logger}
+                        deps: {amqpService, config, logger},
                     });
                     generationRequested++;
                 }
@@ -605,7 +605,7 @@ export default function ({
         },
         async doesFileExistAsChild(
             {treeId, filename, parentNodeId}: IIsFileExistsAsChild,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<boolean> {
             const nodes = await treeDomain.getElementChildren({treeId, nodeId: parentNodeId, ctx});
 
@@ -616,17 +616,17 @@ export default function ({
             const fileRecords = await recordDomain.find({
                 params: {
                     library: libraryId,
-                    filters: [{field: 'id', value: fileId, condition: AttributeCondition.EQUAL}]
+                    filters: [{field: 'id', value: fileId, condition: AttributeCondition.EQUAL}],
                 },
-                ctx
+                ctx,
             });
 
             if (!fileRecords.list.length) {
                 throw new ValidationError(
                     {
-                        id: Errors.FILE_NOT_FOUND
+                        id: Errors.FILE_NOT_FOUND,
                     },
-                    translator.t('errors.FILE_NOT_FOUND', {lng: ctx.lang}) ?? 'File not found'
+                    translator.t('errors.FILE_NOT_FOUND', {lng: ctx.lang}) ?? 'File not found',
                 );
             }
 
@@ -647,6 +647,6 @@ export default function ({
 
             // Clean double slashes, just to be sure
             return fullPath.replace('//', '/');
-        }
+        },
     };
 }

@@ -13,7 +13,7 @@ import {
     AttributeType,
     ImportMode,
     ImportType,
-    type LibraryLightFragment
+    type LibraryLightFragment,
 } from '_ui/_gqlTypes';
 import {useImportReducerContext} from '../../importReducer/ImportReducerContext';
 
@@ -46,7 +46,7 @@ function ImportSheetSettings({
     onImportTypeSelect,
     onImportModeSelect,
     onLinkAttributeSelect,
-    onTreeLinkLibrarySelect
+    onTreeLinkLibrarySelect,
 }: IImportSettingsProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
@@ -62,32 +62,32 @@ function ImportSheetSettings({
               ).map(treeLib => ({
                   key: treeLib.library.id,
                   value: treeLib.library.id,
-                  label: localizedTranslation(treeLib.library.label, lang)
+                  label: localizedTranslation(treeLib.library.label, lang),
               }))
             : null;
 
     const typeOptions = Object.values(ImportType).map(type => ({
         key: type,
         value: type,
-        label: t(`import.types.${type}`)
+        label: t(`import.types.${type}`),
     }));
 
     const modeOptions = Object.values(ImportMode).map(mode => ({
         key: mode,
         value: mode,
-        label: t(`import.modes.${mode}`)
+        label: t(`import.modes.${mode}`),
     }));
 
     const librariesOptions = libraries.map(l => ({
         key: l.id,
         value: l.id,
-        label: localizedTranslation(l.label, lang) || l.id
+        label: localizedTranslation(l.label, lang) || l.id,
     }));
 
     const linkAttributeOptions = sheet.attributes.filter(isLinkAttribute).map(a => ({
         key: a.id,
         value: a.id,
-        label: localizedTranslation(a.label, lang) || a.id
+        label: localizedTranslation(a.label, lang) || a.id,
     }));
 
     return (

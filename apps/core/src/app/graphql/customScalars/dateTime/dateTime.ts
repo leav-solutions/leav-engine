@@ -37,6 +37,6 @@ export default function ({'core.utils': utils}: IDeps): GraphQLScalarType {
             }
 
             throw new Error('Value must be string or a number');
-        }
+        },
     });
 }

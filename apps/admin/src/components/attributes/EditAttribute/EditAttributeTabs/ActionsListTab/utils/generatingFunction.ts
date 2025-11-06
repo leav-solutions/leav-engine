@@ -7,7 +7,7 @@ export const generateReserveActionFrom = action => {
     if (newAction.params && newAction.params.length) {
         newAction.params = newAction.params.map(param => ({
             ...param,
-            value: param.value
+            value: param.value,
         }));
     } else {
         newAction.params = null;

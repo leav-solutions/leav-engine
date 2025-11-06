@@ -17,15 +17,15 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'toNumber',
                         name: 'To Number',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
-                    }
+                        is_system: true,
+                    },
                 ],
-                [ActionsListEvents.GET_VALUE]: []
+                [ActionsListEvents.GET_VALUE]: [],
             };
             break;
         case AttributeFormats.DATE:
@@ -34,21 +34,21 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'toNumber',
                         name: 'To Number',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
-                    }
+                        is_system: true,
+                    },
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
                         id: 'formatDate',
                         name: 'Format Date',
-                        is_system: false
-                    }
-                ]
+                        is_system: false,
+                    },
+                ],
             };
             break;
         case AttributeFormats.BOOLEAN:
@@ -57,14 +57,14 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'toBoolean',
                         name: 'To Boolean',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
-                    }
-                ]
+                        is_system: true,
+                    },
+                ],
             };
             break;
         case AttributeFormats.ENCRYPTED:
@@ -73,21 +73,21 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'encrypt',
                         name: 'Encrypt',
-                        is_system: true
-                    }
+                        is_system: true,
+                    },
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
                         id: 'toBoolean',
                         name: 'To Boolean',
-                        is_system: true
-                    }
-                ]
+                        is_system: true,
+                    },
+                ],
             };
             break;
         case AttributeFormats.EXTENDED:
@@ -96,21 +96,21 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'parseJSON',
                         name: 'Parse JSON',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
-                    }
+                        is_system: true,
+                    },
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
                         is_system: true,
                         id: 'toJSON',
-                        name: 'To JSON'
-                    }
-                ]
+                        name: 'To JSON',
+                    },
+                ],
             };
             break;
         case AttributeFormats.DATE_RANGE:
@@ -119,26 +119,26 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'parseJSON',
                         name: 'Parse JSON',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'dateRangeToNumber',
                         name: 'dateRangeToNumber',
-                        is_system: true
+                        is_system: true,
                     },
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
-                    }
+                        is_system: true,
+                    },
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
                         id: 'formatDateRange',
                         name: 'Format Date Range',
-                        is_system: false
-                    }
-                ]
+                        is_system: false,
+                    },
+                ],
             };
             break;
         default:
@@ -147,9 +147,9 @@ export default (attribute: IAttribute): ActionsListConfig => {
                     {
                         id: 'validateFormat',
                         name: 'Validate Format',
-                        is_system: true
-                    }
-                ]
+                        is_system: true,
+                    },
+                ],
             };
             break;
     }
@@ -158,6 +158,6 @@ export default (attribute: IAttribute): ActionsListConfig => {
         [ActionsListEvents.GET_VALUE]: [],
         [ActionsListEvents.SAVE_VALUE]: [],
         [ActionsListEvents.DELETE_VALUE]: [],
-        ...defaultActions
+        ...defaultActions,
     };
 };

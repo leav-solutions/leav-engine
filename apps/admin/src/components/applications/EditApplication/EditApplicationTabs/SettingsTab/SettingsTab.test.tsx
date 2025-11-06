@@ -10,7 +10,7 @@ import SettingsTab from './SettingsTab';
 jest.mock('jsoneditor-react', () => ({
     JsonEditor() {
         return <div>JsonEditor</div>;
-    }
+    },
 }));
 
 describe('SettingsTab', () => {
@@ -23,13 +23,13 @@ describe('SettingsTab', () => {
                         ...mockEditApplicationContextValue.application,
                         settings: {
                             myField: 'myValue',
-                            otherField: 'otherValue'
-                        }
-                    }
+                            otherField: 'otherValue',
+                        },
+                    },
                 }}
             >
                 <SettingsTab />
-            </EditApplicationContext.Provider>
+            </EditApplicationContext.Provider>,
         );
 
         expect(screen.getByText('JsonEditor')).toBeInTheDocument();

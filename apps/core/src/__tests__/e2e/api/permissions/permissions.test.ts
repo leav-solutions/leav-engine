@@ -10,7 +10,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('Permissions', () => {
@@ -44,7 +44,7 @@ describe('Permissions', () => {
             id: testLibAttrId,
             label: 'Test Attr tree record permissions',
             type: AttributeTypes.TREE,
-            linkedTree: permTreeName
+            linkedTree: permTreeName,
         });
 
         await makeGraphQlCall(`mutation {
@@ -181,7 +181,7 @@ describe('Permissions', () => {
                 ) {
                     id_value
                 }
-            }`)
+            }`),
             ).rejects.toThrow(/This library does not use this attribute/);
         });
     });
@@ -373,19 +373,19 @@ describe('Permissions', () => {
             nodeUserGroupId2 = await gqlAddElemToTree(
                 'users_groups',
                 {library: 'users_groups', id: userGroupId2},
-                nodeUserGroupId1
+                nodeUserGroupId1,
             );
             nodeUserGroupId3 = await gqlAddElemToTree('users_groups', {library: 'users_groups', id: userGroupId3});
             nodeUserGroupId4 = await gqlAddElemToTree(
                 'users_groups',
                 {library: 'users_groups', id: userGroupId4},
-                nodeUserGroupId3
+                nodeUserGroupId3,
             );
             nodeUserGroupId5 = await gqlAddElemToTree('users_groups', {library: 'users_groups', id: userGroupId5});
             nodeUserGroupId6 = await gqlAddElemToTree(
                 'users_groups',
                 {library: 'users_groups', id: userGroupId6},
-                nodeUserGroupId5
+                nodeUserGroupId5,
             );
 
             // Create records for tree
@@ -399,12 +399,12 @@ describe('Permissions', () => {
             // Add records to tree
             nodeTreeElem1 = await gqlAddElemToTree(inheritTestTreeName, {
                 id: treeElemId1,
-                library: inheritTestTreeElemLibName
+                library: inheritTestTreeElemLibName,
             });
             nodeTreeElem2 = await gqlAddElemToTree(
                 inheritTestTreeName,
                 {id: treeElemId2, library: inheritTestTreeElemLibName},
-                nodeTreeElem1
+                nodeTreeElem1,
             );
         });
 
@@ -610,7 +610,7 @@ describe('Permissions', () => {
             // Add users groups to tree
             nodeUserGroup = await gqlAddElemToTree('users_groups', {
                 id: userGroupId,
-                library: 'users_groups'
+                library: 'users_groups',
             });
         });
 

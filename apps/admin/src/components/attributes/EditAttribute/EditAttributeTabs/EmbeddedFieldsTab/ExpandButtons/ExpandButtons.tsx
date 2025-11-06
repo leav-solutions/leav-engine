@@ -24,15 +24,15 @@ function ExpandButtons({flatItems, setFlatItems: setTreeItems}: IExpandButtonPro
                         e.id === node.id
                             ? {
                                   ...e,
-                                  expanded: true
+                                  expanded: true,
                               }
-                            : e
-                    )
+                            : e,
+                    ),
                 );
                 return {...node, expanded: true};
             },
             getNodeKey: ({treeIndex}) => treeIndex,
-            ignoreCollapsed: false
+            ignoreCollapsed: false,
         });
     };
 
@@ -45,15 +45,15 @@ function ExpandButtons({flatItems, setFlatItems: setTreeItems}: IExpandButtonPro
                         e.id === node.id
                             ? {
                                   ...e,
-                                  expanded: false
+                                  expanded: false,
                               }
-                            : e
-                    )
+                            : e,
+                    ),
                 );
                 return {...node, expanded: false};
             },
             getNodeKey: ({treeIndex}) => treeIndex,
-            ignoreCollapsed: false
+            ignoreCollapsed: false,
         });
     };
 

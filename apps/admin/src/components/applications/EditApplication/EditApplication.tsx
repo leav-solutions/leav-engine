@@ -34,8 +34,8 @@ function EditApplication({match: routerMatch}: IEditApplicationProps): JSX.Eleme
         getApplicationByIdQuery,
         {
             variables: {id: appId},
-            skip: isNewApp
-        }
+            skip: isNewApp,
+        },
     );
 
     if (loading) {

@@ -25,57 +25,57 @@ export interface IVariableFunctions {
 
 export default function ({
     'core.domain.record': recordDomain,
-    'core.domain.attribute': attributeDomain
+    'core.domain.attribute': attributeDomain,
 }: IDeps): IVariableFunctions {
     const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
-            ...inputValue[0]
-        }
+            ...inputValue[0],
+        },
     ];
     const input = first;
     const last = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
-            ...inputValue[inputValue.length - 1]
-        }
+            ...inputValue[inputValue.length - 1],
+        },
     ];
 
     const fromDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
             payload: (variableValue.raw_payload as IDateRangeValue).from,
-            raw_payload: (variableValue.raw_payload as IDateRangeValue).from
+            raw_payload: (variableValue.raw_payload as IDateRangeValue).from,
         }));
 
     const toDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
             payload: (variableValue.raw_payload as IDateRangeValue).to,
-            raw_payload: (variableValue.raw_payload as IDateRangeValue).to
+            raw_payload: (variableValue.raw_payload as IDateRangeValue).to,
         }));
 
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0)
-        }
+            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0),
+        },
     ];
 
     const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0) / inputValue.length
-        }
+            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0) / inputValue.length,
+        },
     ];
 
     const concat = async (
         context: IActionsListContext,
         inputValue: IVariableValue[],
-        separator: string
+        separator: string,
     ): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            payload: inputValue.map(v => v.payload).join(separator)
-        }
+            payload: inputValue.map(v => v.payload).join(separator),
+        },
     ];
 
     const dedup = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
@@ -92,7 +92,7 @@ export default function ({
     const getValue = async (
         context: IActionsListContext,
         inputValue: IVariableValue[],
-        attributeKey: string
+        attributeKey: string,
     ): Promise<IVariableValue[]> =>
         Promise.all(
             inputValue.map(async ({library, recordId, payload}) => {
@@ -103,7 +103,7 @@ export default function ({
                         ? {library: payload.record.library, record: payload.record}
                         : {library, record: {id: recordId, library}}),
                     attributeId: attributeKey,
-                    ctx: context
+                    ctx: context,
                 });
 
                 if (!Array.isArray(values)) {
@@ -122,9 +122,9 @@ export default function ({
                                     ? {
                                           library: properties?.linked_library,
                                           recordId: v.payload.id,
-                                          payload: v.payload.id
+                                          payload: v.payload.id,
                                       }
-                                    : null
+                                    : null,
                             )
                             .filter(v => !!v);
                     } else {
@@ -132,60 +132,60 @@ export default function ({
                             library: isTreeNodePayload ? payload.record.library : library,
                             recordId: isTreeNodePayload ? payload.record.id : recordId,
                             payload: v?.payload ?? null,
-                            raw_payload: TypeGuards.isIStandardValue(v) ? v?.raw_payload : null
+                            raw_payload: TypeGuards.isIStandardValue(v) ? v?.raw_payload : null,
                         }));
                     }
                 }
 
                 return currReturnValue;
-            })
+            }),
         ).then(tmp =>
             tmp.reduce((acc, v) => {
                 acc = [...acc, ...v];
                 return acc;
-            }, [])
+            }, []),
         );
 
     return {
         input: {
             run: input,
-            after: []
+            after: [],
         },
         first: {
             run: first,
-            after: []
+            after: [],
         },
         last: {
             run: last,
-            after: []
+            after: [],
         },
         sum: {
             run: sum,
-            after: []
+            after: [],
         },
         avg: {
             run: avg,
-            after: []
+            after: [],
         },
         concat: {
             run: concat,
-            after: []
+            after: [],
         },
         dedup: {
             run: dedup,
-            after: []
+            after: [],
         },
         getValue: {
             run: getValue,
-            after: []
+            after: [],
         },
         fromDate: {
             run: fromDate,
-            after: []
+            after: [],
         },
         toDate: {
             run: toDate,
-            after: []
-        }
+            after: [],
+        },
     };
 }

@@ -23,8 +23,8 @@ describe('InfosTab', () => {
             mandatoryAttribute: null,
             defaultView: null,
             fullTextAttributes: [],
-            recordIdentityConf: null
-        }
+            recordIdentityConf: null,
+        },
     };
 
     const commonMocks = [
@@ -32,31 +32,31 @@ describe('InfosTab', () => {
             request: {
                 query: getViewsQuery,
                 variables: {
-                    library: mockLibrary.id
-                }
+                    library: mockLibrary.id,
+                },
             },
             result: {
                 data: {
-                    views: []
-                }
-            }
+                    views: [],
+                },
+            },
         },
         {
             request: {
                 query: getLibsQuery,
                 variables: {
-                    behavior: [LibraryBehavior.files]
-                }
+                    behavior: [LibraryBehavior.files],
+                },
             },
             result: {
                 data: {
                     libraries: {
                         totalCount: 1,
-                        list: [{...mockLibrary, id: 'files', behavior: LibraryBehavior.files}]
-                    }
-                }
-            }
-        }
+                        list: [{...mockLibrary, id: 'files', behavior: LibraryBehavior.files}],
+                    },
+                },
+            },
+        },
     ];
 
     test('Display form, edit value and submit on blur', async () => {
@@ -66,7 +66,7 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: saveLibQuery,
-                    variables
+                    variables,
                 },
                 result: () => {
                     saveCalled = true;
@@ -74,17 +74,17 @@ describe('InfosTab', () => {
                         data: {
                             saveLibrary: {
                                 ...mockLibrary,
-                                __typename: 'Library'
-                            }
-                        }
+                                __typename: 'Library',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         await act(async () => {
             render(<InfosTab library={mockLibrary} readonly={false} />, {
-                apolloMocks: mocks
+                apolloMocks: mocks,
             });
         });
 
@@ -111,7 +111,7 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: saveLibQuery,
-                    variables
+                    variables,
                 },
                 result: {
                     errors: [
@@ -119,7 +119,7 @@ describe('InfosTab', () => {
                             message: 'Error',
                             extensions: {
                                 code: 'VALIDATION_ERROR',
-                                fields: {id: 'invalid id'}
+                                fields: {id: 'invalid id'},
                             },
                             locations: null,
                             path: null,
@@ -127,16 +127,16 @@ describe('InfosTab', () => {
                             source: null,
                             positions: null,
                             originalError: null,
-                            name: 'Error'
-                        }
-                    ]
-                }
-            }
+                            name: 'Error',
+                        },
+                    ],
+                },
+            },
         ];
 
         await act(async () => {
             render(<InfosTab library={mockLibrary} readonly={false} />, {
-                apolloMocks: mocks as Array<MockedResponse<Record<string, any>>>
+                apolloMocks: mocks as Array<MockedResponse<Record<string, any>>>,
             });
         });
 
@@ -154,7 +154,7 @@ describe('InfosTab', () => {
     test('Render form for new library', async () => {
         await act(async () => {
             render(<InfosTab library={null} readonly={false} />, {
-                apolloMocks: commonMocks
+                apolloMocks: commonMocks,
             });
         });
 
@@ -164,7 +164,7 @@ describe('InfosTab', () => {
     test('Autofill ID with label on new lib', async () => {
         await act(async () => {
             render(<InfosTab library={null} readonly={false} />, {
-                apolloMocks: commonMocks
+                apolloMocks: commonMocks,
             });
         });
 

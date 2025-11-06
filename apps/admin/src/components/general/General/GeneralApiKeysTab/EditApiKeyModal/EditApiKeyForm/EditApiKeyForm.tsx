@@ -65,13 +65,13 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
     const validationSchema: yup.ObjectSchema<IEditApiKeyFormValues> = yup.object().shape({
         label: yup.string().nullable().required(),
         expiresAt: yup.number().nullable(),
-        user: yup.object().nullable().required()
+        user: yup.object().nullable().required(),
     });
 
     const initialValues: IEditApiKeyFormValues = {
         label: apiKey?.label ?? null,
         expiresAt: apiKey?.expiresAt ?? null,
-        user: apiKey?.user?.whoAmI ?? null
+        user: apiKey?.user?.whoAmI ?? null,
     };
 
     const _handleSubmit = async (values: IEditApiKeyFormValues) => {
@@ -79,7 +79,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
             id: apiKey?.id ?? null,
             label: values.label,
             expiresAt: values.expiresAt,
-            userId: values.user.id
+            userId: values.user.id,
         };
 
         await onSubmit(apiKeyInput);
@@ -93,7 +93,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
         errors: inputErrors,
         values,
         touched,
-        submitForm
+        submitForm,
     }: FormikProps<IEditApiKeyFormValues>) => {
         const serverValidationErrors =
             errors && errors.extensions.code === ErrorTypes.VALIDATION_ERROR ? errors.extensions.fields : {};

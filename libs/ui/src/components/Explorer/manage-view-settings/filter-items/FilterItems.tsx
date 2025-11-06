@@ -11,7 +11,7 @@ import {
     type AttributesByLibAttributeFragment,
     type AttributesByLibAttributeLinkAttributeFragment,
     type AttributesByLibAttributeTreeAttributeFragment,
-    AttributeType
+    AttributeType,
 } from '_ui/_gqlTypes';
 import {
     closestCenter,
@@ -20,7 +20,7 @@ import {
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors
+    useSensors,
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
@@ -52,12 +52,12 @@ const StyledFaEye = styled(FaEye)`
 `;
 
 const _isLibraryLinkAttribute = (
-    attribute: AttributesByLibAttributeFragment
+    attribute: AttributesByLibAttributeFragment,
 ): attribute is AttributesByLibAttributeLinkAttributeFragment =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) && 'linked_library' in attribute;
 
 const _isLibraryTreeAttribute = (
-    attribute: AttributesByLibAttributeFragment
+    attribute: AttributesByLibAttributeFragment,
 ): attribute is AttributesByLibAttributeTreeAttributeFragment =>
     attribute.type === AttributeType.tree && 'linked_tree' in attribute;
 
@@ -65,7 +65,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     const {t} = useSharedTranslation();
     const {
         filtersData: {filters},
-        dispatch
+        dispatch,
     } = useFiltersContext();
 
     const {onSearchChanged, searchFilteredColumnsIds, attributeDetailsById} = useAttributeDetailsData(libraryId);
@@ -73,8 +73,8 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
-        })
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
     );
 
     const addFilter = (attributeId: string) => () => {
@@ -93,9 +93,9 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                         : undefined, // TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
                     linkedTree: _isLibraryTreeAttribute(attributeDetailsById[attributeId])
                         ? (attributeDetailsById[attributeId].linked_tree ?? undefined)
-                        : undefined
-                }
-            }
+                        : undefined,
+                },
+            },
         });
     };
 
@@ -103,8 +103,8 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
         dispatch({
             type: ViewSettingsActionTypes.REMOVE_FILTER,
             payload: {
-                id: filterId
-            }
+                id: filterId,
+            },
         });
     };
 
@@ -123,7 +123,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     const inactiveFilters = searchFilteredColumnsIds.filter(
         attributeId =>
             filters.every(filterItem => filterItem.attribute.id !== attributeId) &&
-            !('compute' in attributeDetailsById[attributeId] && attributeDetailsById[attributeId]?.compute)
+            !('compute' in attributeDetailsById[attributeId] && attributeDetailsById[attributeId]?.compute),
     );
 
     if (!Object.keys(attributeDetailsById).length) {
@@ -147,7 +147,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
-                                        onClick: removeFilter(activeFilter.id)
+                                        onClick: removeFilter(activeFilter.id),
                                     }}
                                 >
                                     <CommonFilterItem
@@ -156,8 +156,8 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                                 ...activeFilter,
                                                 attribute: {
                                                     ...activeFilter.attribute,
-                                                    ...attributeDetailsById[activeFilter?.attribute?.id]
-                                                }
+                                                    ...attributeDetailsById[activeFilter?.attribute?.id],
+                                                },
                                             } as UIFilter
                                         }
                                     />
@@ -182,7 +182,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                         visibilityButtonProps={{
                             icon: <StyledEyeSlash />,
                             title: String(t('explorer.show')),
-                            onClick: addFilter(attributeId)
+                            onClick: addFilter(attributeId),
                         }}
                     >
                         <KitFilter label={attributeDetailsById[attributeId].label} />

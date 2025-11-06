@@ -10,14 +10,14 @@ import {type ToAny} from 'utils/utils';
 
 const depsBase: ToAny<IApiKeyRepoDeps> = {
     'core.infra.db.dbUtils': jest.fn(),
-    'core.infra.db.dbService': jest.fn()
+    'core.infra.db.dbService': jest.fn(),
 };
 
 describe('apiKeyRepo', () => {
     const docKeyData = {
         _key: 'test_key',
         label: {fr: 'Test'},
-        trees: ['treeA', 'treeB']
+        trees: ['treeA', 'treeB'],
     };
 
     const keyData: IApiKey = {
@@ -29,25 +29,25 @@ describe('apiKeyRepo', () => {
         createdAt: 1234567890,
         createdBy: '42',
         modifiedAt: 1234567890,
-        modifiedBy: '42'
+        modifiedBy: '42',
     };
 
     const mockDbUtils = {
         cleanup: jest.fn().mockReturnValue(keyData),
         convertToDoc: jest.fn().mockReturnValue(docKeyData),
-        findCoreEntity: global.__mockPromise([keyData])
+        findCoreEntity: global.__mockPromise([keyData]),
     } satisfies Mockify<IDbUtils>;
 
     describe('createApiKey', () => {
         test('Should create a new version key', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docKeyData])
+                execute: global.__mockPromise([docKeyData]),
             };
 
             const repo = apiKeyRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const createdKey = await repo.createApiKey({keyData, ctx: mockCtx});
@@ -65,12 +65,12 @@ describe('apiKeyRepo', () => {
         test('Should update an existing version key', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docKeyData])
+                execute: global.__mockPromise([docKeyData]),
             };
 
             const repo = apiKeyRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const updatedKey = await repo.updateApiKey({keyData, ctx: mockCtx});
@@ -91,7 +91,7 @@ describe('apiKeyRepo', () => {
             const repo = apiKeyRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const keys = await repo.getApiKeys({ctx: mockCtx});
@@ -105,12 +105,12 @@ describe('apiKeyRepo', () => {
         test('Should delete a version key', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docKeyData])
+                execute: global.__mockPromise([docKeyData]),
             };
 
             const repo = apiKeyRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const deletedKey = await repo.deleteApiKey({id: keyData.id, ctx: mockCtx});

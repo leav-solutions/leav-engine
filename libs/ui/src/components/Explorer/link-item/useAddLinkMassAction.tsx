@@ -19,7 +19,7 @@ export const useAddLinkMassAction = ({
     store: {view},
     linkAttributeId,
     onLink,
-    closeModal
+    closeModal,
 }: {
     store: {
         view: IViewSettingsState;
@@ -36,20 +36,20 @@ export const useAddLinkMassAction = ({
             const values = data.records.list.map(({id}) => ({
                 attribute: linkAttributeId,
                 idValue: null,
-                value: id
+                value: id,
             }));
 
             const saveValuesResult = await saveValues(
                 {
                     id: entrypoint.parentRecordId,
                     library: {
-                        id: entrypoint.parentLibraryId
-                    }
+                        id: entrypoint.parentLibraryId,
+                    },
                 },
-                values
+                values,
             );
             onLink?.(saveValuesResult);
             closeModal();
-        }
+        },
     };
 };

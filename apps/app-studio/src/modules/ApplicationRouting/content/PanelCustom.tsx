@@ -33,8 +33,8 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
             onNotification: openNotification,
             onNavigateToPanel: navigateToPanel,
             onNavigateToIframe: navigateToIframe,
-            onClosePanel: closePanel
-        }
+            onClosePanel: closePanel,
+        },
     });
 
     const {lang} = useContext(LangContext);

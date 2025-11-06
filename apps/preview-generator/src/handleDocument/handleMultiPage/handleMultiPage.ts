@@ -18,7 +18,7 @@ export const handleMultiPage = async (
     pdfFile: string,
     multiPage: string,
     rootPaths: IRootPaths,
-    results: IResult[]
+    results: IResult[],
 ) => {
     const folderDestinationPath = join(rootPaths.output, multiPage);
 
@@ -42,8 +42,8 @@ export const handleMultiPage = async (
         error: 0,
         params: {
             output: multiPage,
-            name: 'pages'
-        }
+            name: 'pages',
+        },
     };
 
     results.push(result);
@@ -53,7 +53,7 @@ const _createFolderRec = async (folderDestinationPath: string) => {
     const pathExist = await new Promise(r =>
         access(folderDestinationPath, e => {
             r(!e);
-        })
+        }),
     );
 
     if (!pathExist) {
@@ -67,8 +67,8 @@ const _createFolderRec = async (folderDestinationPath: string) => {
             throw new ErrorPreview({
                 error: 601,
                 params: {
-                    errorId
-                }
+                    errorId,
+                },
             });
         }
     }
@@ -84,9 +84,9 @@ const _countPage = async (pdfFile: string) => {
                 '-dNODISPLAY', // only display the command result
                 '-dBATCH', // quit ghostscript after the command
                 '-c',
-                `(${pdfFile}) (r) file runpdfbegin pdfpagecount = quit`
+                `(${pdfFile}) (r) file runpdfbegin pdfpagecount = quit`,
             ],
-            (err, stdout) => resolve({result: stdout, error: err})
+            (err, stdout) => resolve({result: stdout, error: err}),
         );
     })) as IExecResult;
 
@@ -96,8 +96,8 @@ const _countPage = async (pdfFile: string) => {
         throw new ErrorPreview({
             error: 602,
             params: {
-                errorId
-            }
+                errorId,
+            },
         });
     }
 
@@ -117,10 +117,10 @@ const _split = async (folderDestinationPath: string, nbDigit: number, pdfFile: s
                 '-dQUIET', // disable display
                 '-dBATCH', // quit ghostscript after the command
                 '-dNOPAUSE', // don't stop after each page
-                pdfFile
+                pdfFile,
             ],
-            err => resolve({error: err})
-        )
+            err => resolve({error: err}),
+        ),
     )) as IExecResult;
 
     if (error) {
@@ -129,8 +129,8 @@ const _split = async (folderDestinationPath: string, nbDigit: number, pdfFile: s
         throw new ErrorPreview({
             error: 603,
             params: {
-                errorId
-            }
+                errorId,
+            },
         });
     }
 };

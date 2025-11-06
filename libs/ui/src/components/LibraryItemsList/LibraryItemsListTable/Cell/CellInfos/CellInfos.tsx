@@ -41,7 +41,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
             record,
             library: record.library.id,
             onClose: () => null,
-            valuesVersion: searchState.valuesVersions
+            valuesVersion: searchState.valuesVersions,
         });
     };
 
@@ -56,14 +56,14 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
                     icon={<ArrowsAltOutlined size={48} />}
                     onClick={_onEditRecord}
                 />
-            )
-        }
+            ),
+        },
     ];
 
     if (canDeleteRecord) {
         menuActions.push({
             title: t('records_deactivation.title_one'),
-            button: <DeactivateRecordBtn record={record} />
+            button: <DeactivateRecordBtn record={record} />,
         });
     }
 
@@ -77,7 +77,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
                     record={record}
                     size={menuBtnSize}
                 />
-            )
+            ),
         },
         {
             title: t('items-list-row.select-all'),
@@ -88,8 +88,8 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
                     record={record}
                     size={menuBtnSize}
                 />
-            )
-        }
+            ),
+        },
     ];
 
     const isSelectActive = searchState.selection.selected.length || searchState.selection.allSelected;

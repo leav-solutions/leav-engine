@@ -34,7 +34,7 @@ function PermissionsActionsGroupSelector({
     actions,
     type,
     selectedGroup,
-    onSelect
+    onSelect,
 }: IPermissionsActionsGroupSelectorProps): JSX.Element {
     const {t} = useTranslation();
 

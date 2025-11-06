@@ -22,7 +22,7 @@ describe('GetConditionPart', () => {
             id: testSimpleAttrId,
             type: AttributeTypes.SIMPLE,
             label: 'test',
-            format: AttributeFormats.TEXT
+            format: AttributeFormats.TEXT,
         });
 
         // Save attribute on library

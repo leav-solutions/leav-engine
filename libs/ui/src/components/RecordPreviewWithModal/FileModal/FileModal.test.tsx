@@ -18,8 +18,8 @@ describe('FileModal', () => {
             ...mockRecord,
             preview: {
                 ...mockRecord.preview,
-                pdf: '/path/to/file.pdf'
-            }
+                pdf: '/path/to/file.pdf',
+            },
         },
         created_at: [{value: '2020-01-01T00:00:00.000Z', __typename: 'Value'}],
         created_by: [{value: {id: '1', whoAmI: mockRecord, __typename: 'Record'}, __typename: 'LinkValue'}],
@@ -30,19 +30,19 @@ describe('FileModal', () => {
         previews_status: [
             {
                 value: '{"big":{"message":"preview create","status":0},"huge":{"message":"preview create","status":0},"medium":{"message":"preview create","status":0},"small":{"message":"preview create","status":0},"tiny":{"message":"preview create","status":0}}',
-                __typename: 'Value'
-            }
+                __typename: 'Value',
+            },
         ],
         library: {
             behavior: LibraryBehavior.files,
-            __typename: 'Library'
-        }
+            __typename: 'Library',
+        },
     };
 
     const mockVariables: GetFileDataQueryVariables = {
         library: 'files',
         fileId: mockRecord.id,
-        previewsStatusAttribute: 'files_previews_status'
+        previewsStatusAttribute: 'files_previews_status',
     };
 
     test('Display file record properties', async () => {
@@ -50,13 +50,13 @@ describe('FileModal', () => {
             {
                 request: {
                     query: GetFileDataDocument,
-                    variables: mockVariables
+                    variables: mockVariables,
                 },
-                result: {data: {records: {list: [mockFileData]}}}
-            }
+                result: {data: {records: {list: [mockFileData]}}},
+            },
         ];
         render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         await waitFor(() => screen.getByTestId('title-section'));
@@ -74,13 +74,13 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
-                    result: {data: {records: {list: [mockFileData]}}}
-                }
+                    result: {data: {records: {list: [mockFileData]}}},
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -97,7 +97,7 @@ describe('FileModal', () => {
             expect(
                 within(contentSection)
                     .getAllByRole('img')
-                    .find(img => img.getAttribute('src') === (mockFileData.whoAmI.preview as IPreviewScalar).huge)
+                    .find(img => img.getAttribute('src') === (mockFileData.whoAmI.preview as IPreviewScalar).huge),
             ).toBeDefined();
         });
 
@@ -106,15 +106,15 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
-                        data: {records: {list: [{...mockFileData, whoAmI: {...mockFileData.whoAmI, preview: null}}]}}
-                    }
-                }
+                        data: {records: {list: [{...mockFileData, whoAmI: {...mockFileData.whoAmI, preview: null}}]}},
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -127,14 +127,14 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
-                    result: {data: {records: {list: [mockFileData]}}}
-                }
+                    result: {data: {records: {list: [mockFileData]}}},
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
                 mocks,
-                currentApp: {...mockApplication, settings: {showTransparency: true}}
+                currentApp: {...mockApplication, settings: {showTransparency: true}},
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -158,19 +158,19 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
                             records: {
-                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.mp4'}]}]
-                            }
-                        }
-                    }
-                }
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.mp4'}]}],
+                            },
+                        },
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -183,7 +183,7 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
@@ -192,16 +192,16 @@ describe('FileModal', () => {
                                     {
                                         ...mockFileData,
                                         file_name: [{__typename: 'Value', value: 'some_file.mp4'}],
-                                        whoAmI: {...mockFileData.whoAmI, preview: null}
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
+                                        whoAmI: {...mockFileData.whoAmI, preview: null},
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -216,19 +216,19 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
                             records: {
-                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.mp3'}]}]
-                            }
-                        }
-                    }
-                }
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.mp3'}]}],
+                            },
+                        },
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -241,7 +241,7 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
@@ -250,16 +250,16 @@ describe('FileModal', () => {
                                     {
                                         ...mockFileData,
                                         file_name: [{__typename: 'Value', value: 'some_file.mp4'}],
-                                        whoAmI: {...mockFileData.whoAmI, preview: null}
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
+                                        whoAmI: {...mockFileData.whoAmI, preview: null},
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -274,19 +274,19 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
                             records: {
-                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.pdf'}]}]
-                            }
-                        }
-                    }
-                }
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.pdf'}]}],
+                            },
+                        },
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -299,7 +299,7 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
@@ -308,17 +308,17 @@ describe('FileModal', () => {
                                     {
                                         ...mockFileData,
                                         file_name: [{__typename: 'Value', value: 'some_file.pdf'}],
-                                        whoAmI: {...mockFileData.whoAmI, preview: null}
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
+                                        whoAmI: {...mockFileData.whoAmI, preview: null},
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
             ];
 
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));
@@ -333,19 +333,19 @@ describe('FileModal', () => {
                 {
                     request: {
                         query: GetFileDataDocument,
-                        variables: mockVariables
+                        variables: mockVariables,
                     },
                     result: {
                         data: {
                             records: {
-                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.txt'}]}]
-                            }
-                        }
-                    }
-                }
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.txt'}]}],
+                            },
+                        },
+                    },
+                },
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => screen.getByTestId('content-section'));

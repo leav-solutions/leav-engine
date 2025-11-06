@@ -83,12 +83,12 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.utils': utils,
     config,
-    translator: translator
+    translator: translator,
 }: ILibraryDomainDeps): ILibraryDomain {
     return {
         async getLibraries({
             params,
-            ctx
+            ctx,
         }: {
             params?: IGetCoreEntitiesParams;
             ctx: IQueryInfos;
@@ -106,12 +106,12 @@ export default function ({
                     lib.fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(lib.id, ctx);
 
                     return lib;
-                })
+                }),
             );
 
             return {
                 totalCount: libsList.totalCount,
-                list: libs
+                list: libs,
             };
         },
         async getLibraryProperties(id: string, ctx: IQueryInfos): Promise<ILibrary> {
@@ -132,7 +132,7 @@ export default function ({
 
             if (!attribute) {
                 throw new ValidationError<IAttribute>({
-                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: attributeId}}
+                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: attributeId}},
                 });
             }
 
@@ -146,7 +146,7 @@ export default function ({
                 id: '',
                 system: false,
                 behavior: LibraryBehavior.STANDARD,
-                label: {fr: '', en: ''}
+                label: {fr: '', en: ''},
             };
 
             // We need behavior later on for validation. It's forbidden to change it so we get it from the existing lib
@@ -164,7 +164,7 @@ export default function ({
                 // Make sure the "system" flag is defined everywhere
                 dataToSave.previewsSettings = dataToSave.previewsSettings.map(preview => ({
                     ...preview,
-                    system: preview.system ?? false
+                    system: preview.system ?? false,
                 }));
             }
 
@@ -192,7 +192,7 @@ export default function ({
 
             if (dataToSave.defaultView && !(await validateHelper.validateView(dataToSave.defaultView, false, ctx))) {
                 validationErrors.push({
-                    defaultView: Errors.UNKNOWN_VIEW
+                    defaultView: Errors.UNKNOWN_VIEW,
                 });
             }
 
@@ -218,21 +218,21 @@ export default function ({
                     {...dataToSave, behavior: libBehavior},
                     libAttributes,
                     {attributeDomain},
-                    ctx
+                    ctx,
                 ),
                 validateLibFullTextAttributes(
                     union(defaultAttributes, attributesToSave.length ? attributesToSave : currentLibraryAttributes),
-                    libFullTextAttributes
+                    libFullTextAttributes,
                 ),
                 await validateRecordIdentityConf(
                     dataToSave as ILibrary,
                     libAttributes,
                     {
-                        attributeDomain
+                        attributeDomain,
                     },
-                    ctx
+                    ctx,
                 ),
-                await validatePreviewsSettings(dataToSave, ctx)
+                await validatePreviewsSettings(dataToSave, ctx),
             );
 
             // remove full text attributes if attribute is delete
@@ -251,11 +251,11 @@ export default function ({
             ) {
                 const keyLib = getPermissionCachePatternKey({
                     permissionType: PermissionTypes.LIBRARY,
-                    applyTo: libData.id
+                    applyTo: libData.id,
                 });
                 const keyRec = getPermissionCachePatternKey({
                     permissionType: PermissionTypes.RECORD,
-                    applyTo: libData.id
+                    applyTo: libData.id,
                 });
 
                 await cacheService.getCache(ECacheType.RAM).deleteData([keyLib, keyRec]);
@@ -264,30 +264,30 @@ export default function ({
             const savedLib = existingLib
                 ? await libraryRepo.updateLibrary({
                       libData: dataToSave as ILibrary,
-                      ctx
+                      ctx,
                   })
                 : await libraryRepo.createLibrary({
                       libData: dataToSave as ILibrary,
-                      ctx
+                      ctx,
                   });
 
             await libraryRepo.saveLibraryAttributes({
                 libId: dataToSave.id,
                 attributes: libAttributes,
-                ctx
+                ctx,
             });
 
             await libraryRepo.saveLibraryFullTextAttributes({
                 libId: dataToSave.id,
                 fullTextAttributes: libFullTextAttributes,
-                ctx
+                ctx,
             });
 
             await runBehaviorPostSave(
                 savedLib,
                 !existingLib,
                 {treeRepo, attributeRepo, libraryRepo, translator, utils, config},
-                ctx
+                ctx,
             );
 
             // delete associate values and update forms if attribute is delete
@@ -302,22 +302,22 @@ export default function ({
                 {
                     action: EventAction.LIBRARY_SAVE,
                     topic: {
-                        library: savedLib.id
+                        library: savedLib.id,
                     },
                     after: {
                         ...savedLib,
                         fullTextAttributes: libFullTextAttributes,
-                        attributes: libAttributes
+                        attributes: libAttributes,
                     },
                     before: existingLib
                         ? {
                               ...library,
                               fullTextAttributes: currentFullTextAttributes,
-                              attributes: currentLibraryAttributes
+                              attributes: currentLibraryAttributes,
                           }
-                        : null
+                        : null,
                 },
-                ctx
+                ctx,
             );
 
             if (existingLib) {
@@ -358,17 +358,17 @@ export default function ({
                 {
                     action: EventAction.LIBRARY_DELETE,
                     topic: {
-                        library: id
+                        library: id,
                     },
-                    before: {...deletedLibrary, attributes: undefined, fullTextAttributes: undefined}
+                    before: {...deletedLibrary, attributes: undefined, fullTextAttributes: undefined},
                 },
-                ctx
+                ctx,
             );
 
             const cacheKey = utils.getCoreEntityCacheKey('library', id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
 
             return deletedLibrary;
-        }
+        },
     };
 }

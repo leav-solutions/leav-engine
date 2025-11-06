@@ -17,8 +17,8 @@ const pluginsProp = [
         description: '',
         name: 'plugin',
         version: '0.0.1',
-        __typename: 'Plugin'
-    }
+        __typename: 'Plugin',
+    },
 ];
 
 describe('PluginsList', () => {

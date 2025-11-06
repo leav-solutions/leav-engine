@@ -13,7 +13,7 @@ import {
     PermissionsActions,
     PermissionTypes,
     useDeleteAttributeMutation,
-    useIsAllowedQuery
+    useIsAllowedQuery,
 } from '_ui/_gqlTypes';
 import {useLang} from '../../hooks';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
@@ -36,7 +36,7 @@ function EditAttributeModal({
     attributeId,
     onClose,
     onPostCreate,
-    width
+    width,
 }: IEditAttributeModalModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -46,8 +46,8 @@ function EditAttributeModal({
         fetchPolicy: 'cache-and-network',
         variables: {
             type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_edit_attribute, PermissionsActions.admin_delete_attribute]
-        }
+            actions: [PermissionsActions.admin_edit_attribute, PermissionsActions.admin_delete_attribute],
+        },
     });
     const isReadOnly = !extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_edit_attribute);
     const canDelete = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_delete_attribute);
@@ -81,13 +81,13 @@ function EditAttributeModal({
 
         const deleteRes = await deleteAttribute({
             variables: {
-                id: attributeId
-            }
+                id: attributeId,
+            },
         });
 
         // Remove library from apollo cache
         apolloClient.cache.evict({
-            id: apolloClient.cache.identify(deleteRes.data.deleteAttribute)
+            id: apolloClient.cache.identify(deleteRes.data.deleteAttribute),
         });
 
         onClose();
@@ -139,7 +139,7 @@ function EditAttributeModal({
               ) : null,
               <Button key="close" onClick={onClose}>
                   {t('global.close')}
-              </Button>
+              </Button>,
           ]
         : [
               <Button key="cancel" onClick={onClose}>
@@ -147,7 +147,7 @@ function EditAttributeModal({
               </Button>,
               <Button key="submit" type="primary" onClick={_handleSubmit} loading={submitLoading}>
                   {t('global.submit')}
-              </Button>
+              </Button>,
           ];
 
     return (

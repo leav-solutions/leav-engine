@@ -20,7 +20,7 @@ function AdvancedSettings(): JSX.Element {
         },
         onError: () => {
             setSubmitState('error');
-        }
+        },
     });
 
     useEffect(() => {
@@ -36,10 +36,10 @@ function AdvancedSettings(): JSX.Element {
                     id: currentApp.id,
                     settings: {
                         ...currentApp.settings,
-                        showTransparency: checked
-                    }
-                }
-            }
+                        showTransparency: checked,
+                    },
+                },
+            },
         });
     };
 

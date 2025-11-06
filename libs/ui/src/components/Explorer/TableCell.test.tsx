@@ -9,7 +9,7 @@ import {
     AttributeType,
     MultiDisplayOption,
     type PropertyValueLinkValueFragment,
-    type PropertyValueTreeValueFragment
+    type PropertyValueTreeValueFragment,
 } from '_ui/_gqlTypes';
 import {TableCell} from './TableCell';
 
@@ -22,16 +22,16 @@ describe('TableCell component', () => {
                 {
                     linkPayload: {
                         id: 'singlevalRecord1',
-                        whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'}
-                    }
-                }
+                        whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'},
+                    },
+                },
             ];
 
             test('Should display IdCard', async () => {
                 const attributeProperties: AttributePropertiesFragment = {
                     id: 'default',
                     type: AttributeType.advanced_link,
-                    multiple_values: false
+                    multiple_values: false,
                 };
 
                 render(<TableCell values={linkValue} attributeProperties={attributeProperties} />);
@@ -46,16 +46,16 @@ describe('TableCell component', () => {
             const treeValue: PropertyValueTreeValueFragment[] = [
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'}}
-                    }
-                }
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'}},
+                    },
+                },
             ];
 
             test('Should display IdCard', async () => {
                 const attributeProperties: AttributePropertiesFragment = {
                     id: 'default',
                     type: AttributeType.tree,
-                    multiple_values: false
+                    multiple_values: false,
                 };
 
                 render(<TableCell values={treeValue} attributeProperties={attributeProperties} />);
@@ -72,36 +72,36 @@ describe('TableCell component', () => {
                 {
                     linkPayload: {
                         id: 'multivalRecord1',
-                        whoAmI: {...mockRecord, preview: null, label: 'Record A'}
-                    }
+                        whoAmI: {...mockRecord, preview: null, label: 'Record A'},
+                    },
                 },
                 {
                     linkPayload: {
                         id: 'multivalRecord2',
-                        whoAmI: {...mockRecord, preview: null, label: 'Record B'}
-                    }
+                        whoAmI: {...mockRecord, preview: null, label: 'Record B'},
+                    },
                 },
                 {
                     linkPayload: {
                         id: 'multivalRecord3',
-                        whoAmI: {...mockRecord, preview: null, label: 'Record C'}
-                    }
+                        whoAmI: {...mockRecord, preview: null, label: 'Record C'},
+                    },
                 },
                 {
                     linkPayload: {
                         id: 'multivalRecord4',
-                        whoAmI: {...mockRecord, preview: null, label: 'Record D'}
-                    }
+                        whoAmI: {...mockRecord, preview: null, label: 'Record D'},
+                    },
                 },
                 {
-                    linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}}
+                    linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}},
                 },
                 {
-                    linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}}
+                    linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}},
                 },
                 {
-                    linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}}
-                }
+                    linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}},
+                },
             ];
 
             test('Should display list of avatar as default', async () => {
@@ -109,7 +109,7 @@ describe('TableCell component', () => {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.avatar,
-                    type: AttributeType.advanced_link
+                    type: AttributeType.advanced_link,
                 };
 
                 render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
@@ -127,7 +127,7 @@ describe('TableCell component', () => {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.badge_qty,
-                    type: AttributeType.advanced_link
+                    type: AttributeType.advanced_link,
                 };
 
                 render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
@@ -140,7 +140,7 @@ describe('TableCell component', () => {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.tag,
-                    type: AttributeType.advanced_link
+                    type: AttributeType.advanced_link,
                 };
 
                 render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
@@ -158,39 +158,39 @@ describe('TableCell component', () => {
             const treeValues: PropertyValueTreeValueFragment[] = [
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record A'}}
-                    }
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record A'}},
+                    },
                 },
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record B'}}
-                    }
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record B'}},
+                    },
                 },
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record C'}}
-                    }
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record C'}},
+                    },
                 },
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record D'}}
-                    }
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record D'}},
+                    },
                 },
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record E'}}
-                    }
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record E'}},
+                    },
                 },
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record F'}}
-                    }
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record F'}},
+                    },
                 },
                 {
                     treePayload: {
-                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record G'}}
-                    }
-                }
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record G'}},
+                    },
+                },
             ];
 
             test('Should display list of avatar as default', async () => {
@@ -198,7 +198,7 @@ describe('TableCell component', () => {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.avatar,
-                    type: AttributeType.tree
+                    type: AttributeType.tree,
                 };
 
                 render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
@@ -216,7 +216,7 @@ describe('TableCell component', () => {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.badge_qty,
-                    type: AttributeType.tree
+                    type: AttributeType.tree,
                 };
 
                 render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
@@ -229,7 +229,7 @@ describe('TableCell component', () => {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.tag,
-                    type: AttributeType.tree
+                    type: AttributeType.tree,
                 };
 
                 render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);

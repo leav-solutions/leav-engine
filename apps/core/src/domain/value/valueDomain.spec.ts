@@ -24,7 +24,7 @@ import {
     mockAttrAdvVersionableSimple,
     mockAttrAdvWithMetadata,
     mockAttrSimple,
-    mockAttrTree
+    mockAttrTree,
 } from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
@@ -58,59 +58,59 @@ const depsBase: ToAny<IValueDomainDeps> = {
     'core.domain.tree': jest.fn(),
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': jest.fn(),
     'core.domain.record.helpers.createRecord': jest.fn(),
-    'core.domain.record.helpers.deleteRecord': jest.fn()
+    'core.domain.record.helpers.deleteRecord': jest.fn(),
 };
 
 describe('ValueDomain', () => {
     const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
-        routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
+        routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
     };
 
     const mockConfig: Mockify<Config.IConfig> = {
-        eventsManager: eventsManagerMockConfig as Config.IEventsManager
+        eventsManager: eventsManagerMockConfig as Config.IEventsManager,
     };
 
     const mockRecordRepo: Mockify<IRecordRepo> = {
         updateRecord: jest.fn(),
-        find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
+        find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]}),
     };
 
     const mockActionsListDomain = {
-        runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val))
+        runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val)),
     } satisfies Mockify<IActionsListDomain>;
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
-        getRecordPermission: global.__mockPromise(true)
+        getRecordPermission: global.__mockPromise(true),
     };
 
     const mockRecordAttrPermDomain: Mockify<IRecordAttributePermissionDomain> = {
-        getRecordAttributePermission: global.__mockPromise(true)
+        getRecordAttributePermission: global.__mockPromise(true),
     };
 
     const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-        sendDatabaseEvent: global.__mockPromise()
+        sendDatabaseEvent: global.__mockPromise(),
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
         validateLibrary: global.__mockPromise(true),
         validateRecord: global.__mockPromise(true),
-        validateLibraryAttribute: global.__mockPromise(true)
+        validateLibraryAttribute: global.__mockPromise(true),
     };
 
     const mockAttribute = {
         id: 'test_attr',
         actions_list: {
             saveValue: [{name: 'validate'}],
-            getValue: [{name: 'toNumber'}]
+            getValue: [{name: 'toNumber'}],
         },
-        type: AttributeTypes.SIMPLE
+        type: AttributeTypes.SIMPLE,
     };
 
     const mockUtilsStandardAttribute: Mockify<IUtils> = {
         isStandardAttribute: jest.fn(() => true),
         isLinkAttribute: jest.fn(() => false),
         isTreeAttribute: jest.fn(() => false),
-        areValuesIdentical: jest.fn(() => false)
+        areValuesIdentical: jest.fn(() => false),
     };
 
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
@@ -119,45 +119,45 @@ describe('ValueDomain', () => {
                 id: '7',
                 record: {
                     id: 7,
-                    library: 'my_lib'
-                }
+                    library: 'my_lib',
+                },
             },
             {
                 id: '8',
                 record: {
                     id: 8,
-                    library: 'my_lib'
-                }
+                    library: 'my_lib',
+                },
             },
             {
                 id: '9',
                 record: {
                     id: 9,
-                    library: 'my_lib'
-                }
-            }
-        ])
+                    library: 'my_lib',
+                },
+            },
+        ]),
     };
 
     const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
-        getDefaultElement: global.__mockPromise({id: '12345'})
+        getDefaultElement: global.__mockPromise({id: '12345'}),
     };
 
     const mockRecordInCreationBypassHelper: Mockify<IRecordInCreationBypassHelper> = {
-        recordInCreationBypassById: global.__mockPromise(false)
+        recordInCreationBypassById: global.__mockPromise(false),
     };
 
     const mockUpdateRecordLastModif = jest.fn();
 
     const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
-        getVersionProfileProperties: global.__mockPromise({...mockVersionProfile, trees: ['my_tree']})
+        getVersionProfileProperties: global.__mockPromise({...mockVersionProfile, trees: ['my_tree']}),
     };
 
     const mockSendRecordUpdateEventHelper = jest.fn();
 
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'valueDomainTest'
+        queryId: 'valueDomainTest',
     };
 
     beforeEach(() => {
@@ -167,7 +167,7 @@ describe('ValueDomain', () => {
     describe('saveValue', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
             isNodePresent: global.__mockPromise(true),
-            getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
+            getTrees: global.__mockPromise({list: [mockTree], totalCount: 0}),
         };
 
         test('Should save an indexed value', async function () {
@@ -175,12 +175,12 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
-                getValues: global.__mockPromise([{id_value: '12345'}])
+                getValues: global.__mockPromise([{id_value: '12345'}]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -197,7 +197,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -205,7 +205,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {payload: 'test val'},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
@@ -219,16 +219,16 @@ describe('ValueDomain', () => {
                 payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
-                created_at: 123456
+                created_at: 123456,
             };
 
             const mockValRepo = {
-                createValue: global.__mockPromise(savedValueData)
+                createValue: global.__mockPromise(savedValueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -245,7 +245,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -253,7 +253,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {payload: 'test val'},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
@@ -273,19 +273,19 @@ describe('ValueDomain', () => {
                 payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
-                created_at: 123456
+                created_at: 123456,
             };
 
             const mockValRepo = {
                 updateValue: global.__mockPromise(savedValueData),
                 getValueById: global.__mockPromise({
-                    id_value: '12345'
-                })
+                    id_value: '12345',
+                }),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -302,7 +302,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -311,9 +311,9 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     id_value: '12345',
-                    payload: 'test val'
+                    payload: 'test val',
                 },
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
@@ -332,7 +332,7 @@ describe('ValueDomain', () => {
                 getAttributeProperties: jest.fn().mockImplementationOnce(() => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 }),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
             const valDomain = valueDomain({
                 ...depsBase,
@@ -341,7 +341,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -350,8 +350,8 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {payload: 'test val'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
@@ -359,17 +359,17 @@ describe('ValueDomain', () => {
             const mValidateHelper: Mockify<IValidateHelper> = {
                 validateLibraryAttribute: jest.fn().mockImplementation(() => {
                     throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
-                })
+                }),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.helpers.validate': mValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mValidateHelper as IValidateHelper,
             });
 
             await expect(
@@ -378,15 +378,15 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {payload: 'test val'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
         test('Should throw if unknown library', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -396,7 +396,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -405,15 +405,15 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {payload: 'test val'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
         test('Should throw if unknown value', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -423,7 +423,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -433,10 +433,10 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         id_value: '12345',
-                        payload: 'test val'
+                        payload: 'test val',
                     },
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
@@ -445,17 +445,17 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
-                getValues: global.__mockPromise([{id_value: '12345'}])
+                getValues: global.__mockPromise([{id_value: '12345'}]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockRecRepo = {
                 updateRecord: global.__mockPromise({}),
-                find: global.__mockPromise({totalCount: 1, list: [{id: '54321'}]})
+                find: global.__mockPromise({totalCount: 1, list: [{id: '54321'}]}),
             };
 
             const valDomain = valueDomain({
@@ -472,7 +472,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -480,7 +480,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {payload: 'test val'},
-                ctx
+                ctx,
             });
 
             expect(mockUpdateRecordLastModif).toBeCalledWith('test_lib', '12345', ctx);
@@ -495,16 +495,16 @@ describe('ValueDomain', () => {
                 attribute: 'advanced_attribute',
                 modified_at: 123456,
                 created_at: 123456,
-                version: {my_tree: '1'}
+                version: {my_tree: '1'},
             };
 
             const mockValRepo = {
-                createValue: global.__mockPromise(savedValueData)
+                createValue: global.__mockPromise(savedValueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -522,7 +522,7 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -531,9 +531,9 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     payload: 'test val',
-                    version: {my_tree: '1'}
+                    version: {my_tree: '1'},
                 },
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
@@ -543,12 +543,12 @@ describe('ValueDomain', () => {
 
         test('Should ignore version when saving version on a non versionable attribute', async () => {
             const mockValRepo = {
-                createValue: global.__mockPromise({})
+                createValue: global.__mockPromise({}),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdv),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -565,7 +565,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -574,9 +574,9 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     payload: 'test val',
-                    version: {my_tree: '1'}
+                    version: {my_tree: '1'},
                 },
-                ctx
+                ctx,
             });
 
             expect(savedValue[0].version).toBeUndefined();
@@ -588,21 +588,21 @@ describe('ValueDomain', () => {
                 value: '123465',
                 attribute: mockAttrAdvLink.id,
                 modified_at: 123456,
-                created_at: 123456
+                created_at: 123456,
             };
 
             const mockValRepo = {
-                createValue: global.__mockPromise(savedValueData)
+                createValue: global.__mockPromise(savedValueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
                 find: global.__mockPromise({totalCount: 0, list: []}),
-                updateRecord: global.__mockPromise(true)
+                updateRecord: global.__mockPromise(true),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
@@ -610,7 +610,7 @@ describe('ValueDomain', () => {
                     throw new ValidationError({test_record: Errors.UNKNOWN_RECORD});
                 }),
                 validateLibrary: global.__mockPromise(true),
-                validateLibraryAttribute: global.__mockPromise(true)
+                validateLibraryAttribute: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
@@ -625,7 +625,7 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -634,23 +634,23 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {payload: 'test val'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if version is incorrect: unknown tree', async () => {
             const mockValRepo = {
-                createValue: global.__mockPromise({})
+                createValue: global.__mockPromise({}),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockTreeRepoNoTree: Mockify<ITreeRepo> = {
-                getTrees: global.__mockPromise({list: [], totalCount: 0})
+                getTrees: global.__mockPromise({list: [], totalCount: 0}),
             };
 
             const valDomain = valueDomain({
@@ -663,7 +663,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNoTree as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -673,26 +673,26 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         payload: 'test val',
-                        version: {my_tree: '1'}
+                        version: {my_tree: '1'},
                     },
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
 
         test('Should throw if version is incorrect: bad tree node', async () => {
             const mockValRepo = {
-                createValue: global.__mockPromise({})
+                createValue: global.__mockPromise({}),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockTreeRepoNotPresent: Mockify<ITreeRepo> = {
                 ...mockTreeRepo,
-                isNodePresent: global.__mockPromise(false)
+                isNodePresent: global.__mockPromise(false),
             };
 
             const valDomain = valueDomain({
@@ -705,7 +705,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -715,10 +715,10 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         payload: 'test val',
-                        version: {my_tree: '1'}
+                        version: {my_tree: '1'},
                     },
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
 
@@ -728,20 +728,20 @@ describe('ValueDomain', () => {
                 value: '123465',
                 attribute: mockAttrAdvLink.id,
                 modified_at: 123456,
-                created_at: 123456
+                created_at: 123456,
             };
 
             const mockValRepo = {
-                createValue: global.__mockPromise(savedValueData)
+                createValue: global.__mockPromise(savedValueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrAdvLink}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
-                getRecord: global.__mockPromise(null)
+                getRecord: global.__mockPromise(null),
             };
 
             const valDomain = valueDomain({
@@ -754,7 +754,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -763,8 +763,8 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {payload: 'test val'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
 
@@ -773,16 +773,16 @@ describe('ValueDomain', () => {
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrTree}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockRecordRepoWithFind: Mockify<IRecordRepo> = {
-                find: global.__mockPromise({totalCount: 1, list: [{id: '123456'}]})
+                find: global.__mockPromise({totalCount: 1, list: [{id: '123456'}]}),
             };
 
             const mockTreeRepoNotPresent: Mockify<ITreeRepo> = {
                 isNodePresent: global.__mockPromise(false),
-                getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
+                getTrees: global.__mockPromise({list: [mockTree], totalCount: 1}),
             };
 
             const valDomain = valueDomain({
@@ -795,7 +795,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             await expect(
@@ -804,8 +804,8 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: mockAttrTree.id,
                     value: {payload: 'lib1/123456'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
 
@@ -815,22 +815,22 @@ describe('ValueDomain', () => {
                 payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
-                created_at: 123456
+                created_at: 123456,
             };
 
             const mockValRepo: Mockify<IValueRepo> = {
                 updateValue: jest.fn(),
-                getValueById: global.__mockPromise(dbValueData)
+                getValueById: global.__mockPromise(dbValueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                areValuesIdentical: jest.fn(() => true)
+                areValuesIdentical: jest.fn(() => true),
             };
 
             const valDomain = valueDomain({
@@ -847,7 +847,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const savedValue = await valDomain.saveValue({
@@ -856,9 +856,9 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     id_value: '12345',
-                    payload: 'test val'
+                    payload: 'test val',
                 },
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.updateValue).not.toBeCalled();
@@ -877,17 +877,17 @@ describe('ValueDomain', () => {
                     modified_at: 123456,
                     created_at: 123456,
                     metadata: {
-                        meta_attribute: 'metadata value'
-                    }
+                        meta_attribute: 'metadata value',
+                    },
                 };
 
                 const mockValRepo = {
-                    createValue: global.__mockPromise(savedValueData)
+                    createValue: global.__mockPromise(savedValueData),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise({...mockAttrAdvWithMetadata}),
-                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
                 const valDomain = valueDomain({
@@ -905,7 +905,7 @@ describe('ValueDomain', () => {
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils,
-                    'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                    'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
                 });
 
                 const savedValue = await valDomain.saveValue({
@@ -913,18 +913,18 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    ctx
+                    ctx,
                 });
 
                 expect(mockValRepo.createValue.mock.calls.length).toBe(1);
                 expect(mockValRepo.createValue.mock.calls[0][0].value.metadata).toMatchObject({
-                    meta_attribute: 'metadata value'
+                    meta_attribute: 'metadata value',
                 });
 
                 expect(savedValue[0].metadata).toMatchObject({
                     meta_attribute: {
-                        payload: 'metadata value'
-                    }
+                        payload: 'metadata value',
+                    },
                 });
             });
 
@@ -936,17 +936,17 @@ describe('ValueDomain', () => {
                     modified_at: 123456,
                     created_at: 123456,
                     metadata: {
-                        meta_attribute: 'metadata value'
-                    }
+                        meta_attribute: 'metadata value',
+                    },
                 };
 
                 const mockValRepo = {
-                    createValue: global.__mockPromise(savedValueData)
+                    createValue: global.__mockPromise(savedValueData),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise({...mockAttrAdv}),
-                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
                 const valDomain = valueDomain({
@@ -960,7 +960,7 @@ describe('ValueDomain', () => {
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                    'core.utils': mockUtilsStandardAttribute as IUtils
+                    'core.utils': mockUtilsStandardAttribute as IUtils,
                 });
 
                 const saveVal = valDomain.saveValue({
@@ -968,7 +968,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    ctx
+                    ctx,
                 });
 
                 await expect(saveVal).rejects.toThrow(ValidationError);
@@ -983,23 +983,23 @@ describe('ValueDomain', () => {
                     modified_at: 123456,
                     created_at: 123456,
                     metadata: {
-                        meta_attribute: 'metadata value'
-                    }
+                        meta_attribute: 'metadata value',
+                    },
                 };
 
                 const mockValRepo = {
-                    createValue: global.__mockPromise(savedValueData)
+                    createValue: global.__mockPromise(savedValueData),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise({...mockAttrAdv}),
-                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
                 const mockRecordAttrPermForbidDom: Mockify<IRecordAttributePermissionDomain> = {
                     getRecordAttributePermission: jest
                         .fn()
-                        .mockImplementation((a, u, attrId) => Promise.resolve(attrId !== 'meta_attribute'))
+                        .mockImplementation((a, u, attrId) => Promise.resolve(attrId !== 'meta_attribute')),
                 };
                 const valDomain = valueDomain({
                     ...depsBase,
@@ -1012,7 +1012,7 @@ describe('ValueDomain', () => {
                         mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                    'core.utils': mockUtilsStandardAttribute as IUtils
+                    'core.utils': mockUtilsStandardAttribute as IUtils,
                 });
 
                 const saveVal = valDomain.saveValue({
@@ -1020,7 +1020,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    ctx
+                    ctx,
                 });
 
                 await expect(saveVal).rejects.toThrow(PermissionError);
@@ -1036,12 +1036,12 @@ describe('ValueDomain', () => {
                     modified_at: 123456,
                     created_at: 123456,
                     metadata: {
-                        meta_attribute: 'metadata value'
-                    }
+                        meta_attribute: 'metadata value',
+                    },
                 };
 
                 const mockValRepo = {
-                    createValue: global.__mockPromise(savedValueData)
+                    createValue: global.__mockPromise(savedValueData),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1052,11 +1052,11 @@ describe('ValueDomain', () => {
                                 : {
                                       ...mockAttrSimple,
                                       id: 'meta_attribute',
-                                      actions_list: {[ActionsListEvents.SAVE_VALUE]: {name: 'myAction'}}
-                                  }
-                        )
+                                      actions_list: {[ActionsListEvents.SAVE_VALUE]: {name: 'myAction'}},
+                                  },
+                        ),
                     ),
-                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
                 const valDomain = valueDomain({
@@ -1074,7 +1074,7 @@ describe('ValueDomain', () => {
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils,
-                    'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                    'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
                 });
 
                 await valDomain.saveValue({
@@ -1082,7 +1082,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: attrWithMetadataId,
                     value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    ctx
+                    ctx,
                 });
 
                 expect(mockActionsListDomain.runActionsList).toHaveBeenCalled();
@@ -1094,7 +1094,7 @@ describe('ValueDomain', () => {
                     ...mockUtilsStandardAttribute,
                     rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                         throw e;
-                    })
+                    }),
                 };
 
                 const attrWithMetadataId = 'advanced_attribute_with_meta';
@@ -1105,12 +1105,12 @@ describe('ValueDomain', () => {
                     modified_at: 123456,
                     created_at: 123456,
                     metadata: {
-                        meta_attribute: 'metadata value'
-                    }
+                        meta_attribute: 'metadata value',
+                    },
                 };
 
                 const mockValRepo = {
-                    createValue: global.__mockPromise(savedValueData)
+                    createValue: global.__mockPromise(savedValueData),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1121,17 +1121,17 @@ describe('ValueDomain', () => {
                                 : {
                                       ...mockAttrSimple,
                                       id: 'meta_attribute',
-                                      actions_list: {[ActionsListEvents.SAVE_VALUE]: {name: 'myAction'}}
-                                  }
-                        )
+                                      actions_list: {[ActionsListEvents.SAVE_VALUE]: {name: 'myAction'}},
+                                  },
+                        ),
                     ),
-                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
                 const mockALThrowsDomain: Mockify<IActionsListDomain> = {
                     runActionsList: jest.fn().mockImplementation(() => {
                         throw new ValidationError({test_attr: Errors.ERROR});
-                    })
+                    }),
                 };
 
                 const valDomain = valueDomain({
@@ -1145,7 +1145,7 @@ describe('ValueDomain', () => {
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.utils': mockUtils as IUtils,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 });
 
                 const saveVal = valDomain.saveValue({
@@ -1153,7 +1153,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
                     value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
-                    ctx
+                    ctx,
                 });
 
                 await expect(saveVal).rejects.toThrow(ValidationError);
@@ -1165,7 +1165,7 @@ describe('ValueDomain', () => {
     describe('saveValueBatch', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
             isNodePresent: global.__mockPromise(true),
-            getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
+            getTrees: global.__mockPromise({list: [mockTree], totalCount: 0}),
         };
 
         test('Should save multiple values', async () => {
@@ -1173,34 +1173,34 @@ describe('ValueDomain', () => {
                 ...mockUtilsStandardAttribute,
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
-                })
+                }),
             };
             const values: ISaveValue[] = [
                 {
                     attribute: 'test_attr',
                     payload: 'test',
-                    id_value: '12345'
+                    id_value: '12345',
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test'
+                    payload: 'test',
                 },
                 {
                     attribute: 'test_attr3',
-                    payload: 'test'
-                }
+                    payload: 'test',
+                },
             ];
 
             const mockValRepo = {
                 updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
                     {payload: 'test', raw_payload: 'test', id_value: 12345},
-                    {payload: 'test', raw_payload: 'test', id_value: null}
+                    {payload: 'test', raw_payload: 'test', id_value: null},
                 ]),
                 getValueById: global.__mockPromise({
-                    id_value: '12345'
+                    id_value: '12345',
                 }),
-                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
+                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}]),
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1219,7 +1219,7 @@ describe('ValueDomain', () => {
 
                     return Promise.resolve(attrProps);
                 }),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -1237,14 +1237,14 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
             });
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
@@ -1256,22 +1256,22 @@ describe('ValueDomain', () => {
                         attribute: 'test_attr',
                         payload: 'test',
                         raw_payload: 'test',
-                        id_value: 12345
+                        id_value: 12345,
                     },
                     {
                         attribute: 'test_attr2',
                         payload: 'test',
                         raw_payload: 'test',
-                        id_value: 12345
+                        id_value: 12345,
                     },
                     {
                         attribute: 'test_attr3',
                         payload: 'test',
                         raw_payload: 'test',
-                        id_value: null
-                    }
+                        id_value: null,
+                    },
                 ],
-                errors: null
+                errors: null,
             });
         });
 
@@ -1279,40 +1279,40 @@ describe('ValueDomain', () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
                 areValuesIdentical: jest.fn().mockImplementation(
-                    (val1, val2) => val2?.payload === 'identical' // Consider values for test_attr as identical
+                    (val1, val2) => val2?.payload === 'identical', // Consider values for test_attr as identical
                 ),
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
-                })
+                }),
             };
             const values: ISaveValue[] = [
                 {
                     attribute: 'test_attr',
                     payload: 'identical',
-                    id_value: '12345'
+                    id_value: '12345',
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test'
+                    payload: 'test',
                 },
                 {
                     attribute: 'test_attr3',
-                    payload: 'test'
-                }
+                    payload: 'test',
+                },
             ];
 
             const mockValRepo = {
                 updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
                     {payload: 'test', raw_payload: 'test', id_value: 12345},
-                    {payload: 'test', raw_payload: 'test', id_value: null}
+                    {payload: 'test', raw_payload: 'test', id_value: null},
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: 12345,
                     payload: 'identical',
-                    raw_payload: 'identical'
+                    raw_payload: 'identical',
                 }),
-                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
+                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}]),
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1331,7 +1331,7 @@ describe('ValueDomain', () => {
 
                     return Promise.resolve(attrProps);
                 }),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -1349,14 +1349,14 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
             });
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
@@ -1368,22 +1368,22 @@ describe('ValueDomain', () => {
                         attribute: 'test_attr',
                         payload: 'identical',
                         raw_payload: 'identical',
-                        id_value: 12345
+                        id_value: 12345,
                     },
                     {
                         attribute: 'test_attr2',
                         payload: 'test',
                         raw_payload: 'test',
-                        id_value: 12345
+                        id_value: 12345,
                     },
                     {
                         attribute: 'test_attr3',
                         payload: 'test',
                         raw_payload: 'test',
-                        id_value: null
-                    }
+                        id_value: null,
+                    },
                 ],
-                errors: null
+                errors: null,
             });
         });
 
@@ -1392,35 +1392,35 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr',
                     payload: 'test',
-                    id_value: '12345'
+                    id_value: '12345',
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test'
-                }
+                    payload: 'test',
+                },
             ];
 
             const mockValRepo = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
-                    id_value: '12345'
-                })
+                    id_value: '12345',
+                }),
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({...mockAttribute})
+                getAttributeProperties: global.__mockPromise({...mockAttribute}),
             };
 
             const mockActionsListDomainInvalid: Mockify<IActionsListDomain> = {
                 runActionsList: jest.fn().mockImplementation(() => {
                     throw new ValidationError({test_attr: Errors.ERROR});
-                })
+                }),
             };
 
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                translateError: jest.fn().mockImplementation(err => err.msg ?? err)
+                translateError: jest.fn().mockImplementation(err => err.msg ?? err),
             };
 
             const valDomain = valueDomain({
@@ -1435,22 +1435,22 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtils as IUtils,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
             });
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
-                ctx
+                ctx,
             });
 
             expect(res).toStrictEqual({
                 values: [],
                 errors: [
                     {attribute: 'test_attr', input: 'test', message: 'ERROR', type: 'VALIDATION_ERROR'},
-                    {attribute: 'test_attr2', input: 'test', message: 'Invalid request', type: 'VALIDATION_ERROR'}
-                ]
+                    {attribute: 'test_attr2', input: 'test', message: 'Invalid request', type: 'VALIDATION_ERROR'},
+                ],
             });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
@@ -1462,28 +1462,28 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr',
                     payload: 'test',
-                    id_value: '12345'
+                    id_value: '12345',
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test'
-                }
+                    payload: 'test',
+                },
             ];
 
             const mockValRepo = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
-                    id_value: '12345'
-                })
+                    id_value: '12345',
+                }),
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({...mockAttribute})
+                getAttributeProperties: global.__mockPromise({...mockAttribute}),
             };
 
             const mockRecordAttrPermDomainNoEdit: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: global.__mockPromise(false)
+                getRecordAttributePermission: global.__mockPromise(false),
             };
 
             const valDomain = valueDomain({
@@ -1498,22 +1498,22 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const res = await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
-                ctx
+                ctx,
             });
 
             expect(res).toStrictEqual({
                 values: [],
                 errors: [
                     {attribute: 'test_attr', input: 'test', message: 'Action forbidden', type: 'PERMISSION_ERROR'},
-                    {attribute: 'test_attr2', input: 'test', message: 'Action forbidden', type: 'PERMISSION_ERROR'}
-                ]
+                    {attribute: 'test_attr2', input: 'test', message: 'Action forbidden', type: 'PERMISSION_ERROR'},
+                ],
             });
 
             expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
@@ -1525,15 +1525,15 @@ describe('ValueDomain', () => {
                 ...mockUtilsStandardAttribute,
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
-                })
+                }),
             };
 
             const values: ISaveValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
-                    id_value: '987654'
-                }
+                    id_value: '987654',
+                },
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
@@ -1541,17 +1541,17 @@ describe('ValueDomain', () => {
                 createValue: jest.fn(),
                 deleteValue: global.__mockPromise({
                     id_value: '12345',
-                    payload: 'MyLabel'
+                    payload: 'MyLabel',
                 }),
                 getValueById: global.__mockPromise({
-                    id_value: '12345'
-                })
+                    id_value: '12345',
+                }),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 getAttributeProperties: global.__mockPromise({...mockAttrAdv}),
-                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
             const valDomain = valueDomain({
@@ -1570,7 +1570,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
                 'core.domain.permission.helpers.recordInCreationBypass':
-                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
             });
 
             await valDomain.saveValueBatch({
@@ -1578,7 +1578,7 @@ describe('ValueDomain', () => {
                 recordId: '123456',
                 values,
                 keepEmpty: false,
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.deleteValue).toBeCalledTimes(1);
@@ -1589,32 +1589,32 @@ describe('ValueDomain', () => {
                 ...mockUtilsStandardAttribute,
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
-                })
+                }),
             };
 
             const values: ISaveValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
-                    id_value: '987654'
-                }
+                    id_value: '987654',
+                },
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
                 updateValue: global.__mockPromise({payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
                     {payload: 'test', id_value: 12345},
-                    {payload: 'test', id_value: null}
+                    {payload: 'test', id_value: null},
                 ]),
                 deleteValue: jest.fn(),
                 getValueById: global.__mockPromise({
-                    id_value: '12345'
-                })
+                    id_value: '12345',
+                }),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrAdv}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
@@ -1631,7 +1631,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
             });
 
             await valDomain.saveValueBatch({
@@ -1639,7 +1639,7 @@ describe('ValueDomain', () => {
                 recordId: '123456',
                 values,
                 ctx,
-                keepEmpty: true
+                keepEmpty: true,
             });
 
             expect(mockValRepo.deleteValue).toBeCalledTimes(0);
@@ -1650,20 +1650,20 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
-                    id_value: '987654'
-                }
+                    id_value: '987654',
+                },
             ];
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateRecord: global.__mockPromise(true),
                 validateLibrary: jest.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
-                })
+                }),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.helpers.validate': mockValidHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
             });
 
             const saveVal = valDomain.saveValueBatch({
@@ -1671,7 +1671,7 @@ describe('ValueDomain', () => {
                 recordId: '123456',
                 values,
                 ctx,
-                keepEmpty: true
+                keepEmpty: true,
             });
 
             await expect(saveVal).rejects.toThrow(ValidationError);
@@ -1683,12 +1683,12 @@ describe('ValueDomain', () => {
                 validateLibrary: global.__mockPromise(true),
                 validateLibraryAttribute: jest.fn().mockImplementation(() => {
                     throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
-                })
+                }),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.helpers.validate': mValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mValidateHelper as IValidateHelper,
             });
 
             await expect(
@@ -1697,8 +1697,8 @@ describe('ValueDomain', () => {
                     recordId: '123456',
                     values: [],
                     ctx,
-                    keepEmpty: true
-                })
+                    keepEmpty: true,
+                }),
             ).rejects.toThrow();
         });
 
@@ -1707,8 +1707,8 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
-                    id_value: '987654'
-                }
+                    id_value: '987654',
+                },
             ];
 
             const mockValidHelper: Mockify<IValidateHelper> = {
@@ -1716,12 +1716,12 @@ describe('ValueDomain', () => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
                 }),
                 validateLibrary: global.__mockPromise(true),
-                validateLibraryAttribute: global.__mockPromise(true)
+                validateLibraryAttribute: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.helpers.validate': mockValidHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
             });
 
             const saveVal = valDomain.saveValueBatch({
@@ -1729,7 +1729,7 @@ describe('ValueDomain', () => {
                 recordId: '123456',
                 values,
                 ctx,
-                keepEmpty: true
+                keepEmpty: true,
             });
 
             await expect(saveVal).rejects.toThrow(ValidationError);
@@ -1744,13 +1744,13 @@ describe('ValueDomain', () => {
             const mockValRepo = {
                 deleteValue: global.__mockPromise({payload: 'test val', attribute: 'test_attr', id_value: '123'}),
                 getValueById: global.__mockPromise({id_value: '12345'}),
-                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}])
+                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
-                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
             const valDomain = valueDomain({
@@ -1766,7 +1766,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
                 'core.domain.permission.helpers.recordInCreationBypass':
-                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
             });
 
             const deletedValue = await valDomain.deleteValue({
@@ -1774,7 +1774,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {id_value: '123'},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.deleteValue.mock.calls.length).toBe(1);
@@ -1786,12 +1786,12 @@ describe('ValueDomain', () => {
                 getAttributeProperties: jest.fn().mockImplementationOnce(() => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 }),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             });
 
             await expect(
@@ -1800,15 +1800,15 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {payload: 'test val'},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
         test('Should throw if unknown library', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
-                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
             };
 
             const mockValRepo = {
@@ -1818,15 +1818,15 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     valueId: '123',
-                    ctx
-                })
+                    ctx,
+                }),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateRecord: global.__mockPromise(true),
                 validateLibrary: jest.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
-                })
+                }),
             };
 
             const valDomain = valueDomain({
@@ -1837,7 +1837,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
-                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
             });
 
             const deleteVal = valDomain.deleteValue({
@@ -1845,7 +1845,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {id_value: '123'},
-                ctx
+                ctx,
             });
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
@@ -1855,7 +1855,7 @@ describe('ValueDomain', () => {
         test('Should throw if unknown record', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
-                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
             };
 
             const mockValRepo = {
@@ -1865,15 +1865,15 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {id_value: '123'},
-                    ctx
-                })
+                    ctx,
+                }),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: global.__mockPromise(true),
                 validateRecord: jest.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
-                })
+                }),
             };
 
             const valDomain = valueDomain({
@@ -1883,7 +1883,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
             });
 
             const deleteVal = valDomain.deleteValue({
@@ -1891,7 +1891,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {id_value: '123'},
-                ctx
+                ctx,
             });
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
@@ -1902,16 +1902,16 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple, required: true}),
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
-                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
             const mockValRepo = {
-                getValues: global.__mockPromise([{payload: 'payload'}])
+                getValues: global.__mockPromise([{payload: 'payload'}]),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: global.__mockPromise(true),
-                validateRecord: global.__mockPromise(true)
+                validateRecord: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
@@ -1923,7 +1923,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.helpers.recordInCreationBypass':
-                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
             });
 
             const deleteVal = valDomain.deleteValue({
@@ -1931,7 +1931,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {id_value: '123'},
-                ctx
+                ctx,
             });
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
@@ -1944,17 +1944,17 @@ describe('ValueDomain', () => {
             const mockValRepo = {
                 deleteValue: global.__mockPromise({payload: 'test val', attribute: 'test_attr', id_value: '123'}),
                 getValueById: global.__mockPromise({id_value: '12345'}),
-                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}])
+                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
                     ...mockAttribute,
                     type: AttributeTypes.SIMPLE,
-                    required: true
+                    required: true,
                 }),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
-                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
             const valDomain = valueDomain({
@@ -1971,8 +1971,8 @@ describe('ValueDomain', () => {
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
                 'core.domain.permission.helpers.recordInCreationBypass': {
                     ...mockRecordInCreationBypassHelper,
-                    recordInCreationBypassById: global.__mockPromise(true)
-                } as IRecordInCreationBypassHelper
+                    recordInCreationBypassById: global.__mockPromise(true),
+                } as IRecordInCreationBypassHelper,
             });
 
             const deletedValue = await valDomain.deleteValue({
@@ -1980,7 +1980,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {id_value: '123'},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.deleteValue.mock.calls.length).toBe(1);
@@ -1990,12 +1990,12 @@ describe('ValueDomain', () => {
         test('Should throw if unknown value', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             });
 
             await expect(
@@ -2005,26 +2005,26 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         id_value: '12345',
-                        payload: 'test val'
+                        payload: 'test val',
                     },
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
         test('Should return an empty array if no values', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrSimple),
-                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
             const mockValRepo = {
-                getValues: global.__mockPromise([])
+                getValues: global.__mockPromise([]),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: global.__mockPromise(true),
-                validateRecord: global.__mockPromise(true)
+                validateRecord: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
@@ -2036,14 +2036,14 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.helpers.recordInCreationBypass':
-                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
             });
 
             const deletedValues = valDomain.deleteValue({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                ctx
+                ctx,
             });
 
             await expect(deletedValues).resolves.toEqual([]);
@@ -2052,16 +2052,16 @@ describe('ValueDomain', () => {
         test('Should check readonly/required param only if the attribute is linked to library', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple, required: true, readonly: true}),
-                getAttributeLibraries: global.__mockPromise([])
+                getAttributeLibraries: global.__mockPromise([]),
             };
 
             const mockValRepo = {
-                getValues: global.__mockPromise([])
+                getValues: global.__mockPromise([]),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: global.__mockPromise(true),
-                validateRecord: global.__mockPromise(true)
+                validateRecord: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
@@ -2071,14 +2071,14 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
             });
 
             const deletedValues = valDomain.deleteValue({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                ctx
+                ctx,
             });
 
             await expect(deletedValues).resolves.toEqual([]);
@@ -2090,15 +2090,15 @@ describe('ValueDomain', () => {
             const valueData = [{payload: 'test val', attribute: 'test_attr'}];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
             };
 
             const mockUtils: Mockify<IUtils> = {
-                isStandardAttribute: global.__mockPromise(true)
+                isStandardAttribute: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
@@ -2108,14 +2108,14 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
@@ -2128,19 +2128,19 @@ describe('ValueDomain', () => {
                 {
                     payload: 'test val',
                     attribute: 'test_attr',
-                    version
-                }
+                    version,
+                },
             ];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple)
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple),
             };
             const mockUtils: Mockify<IUtils> = {
-                isStandardAttribute: global.__mockPromise(true)
+                isStandardAttribute: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
@@ -2150,7 +2150,7 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const resValue = await valDomain.getValues({
@@ -2158,7 +2158,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
@@ -2172,21 +2172,21 @@ describe('ValueDomain', () => {
                 {
                     payload: 'val1',
                     attribute: 'test_attr',
-                    version: {my_tree: '7'}
+                    version: {my_tree: '7'},
                 },
                 {
                     payload: 'val2',
                     attribute: 'test_attr',
-                    version: {my_tree: '8'}
-                }
+                    version: {my_tree: '8'},
+                },
             ];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
             };
 
             const valDomain = valueDomain({
@@ -2198,7 +2198,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const version: IValueVersion = {my_tree: '9'};
@@ -2208,7 +2208,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
@@ -2223,7 +2223,7 @@ describe('ValueDomain', () => {
 
         test('Should return versioned values for default tree node (no version supplied)', async function () {
             const mockGetDefaultElementHelperForRoot: Mockify<IGetDefaultElementHelper> = {
-                getDefaultElement: global.__mockPromise({id: '7'})
+                getDefaultElement: global.__mockPromise({id: '7'}),
             };
 
             const mockElementAncestorsHelperForRoot: Mockify<IElementAncestorsHelper> = {
@@ -2232,31 +2232,31 @@ describe('ValueDomain', () => {
                         id: '7',
                         record: {
                             id: 7,
-                            library: 'my_lib'
-                        }
-                    }
-                ])
+                            library: 'my_lib',
+                        },
+                    },
+                ]),
             };
 
             const valueData = [
                 {
                     payload: 'val1',
                     attribute: 'test_attr',
-                    version: {my_tree: '7'}
+                    version: {my_tree: '7'},
                 },
                 {
                     payload: 'val2',
                     attribute: 'test_attr',
-                    version: {my_tree: '8'}
-                }
+                    version: {my_tree: '8'},
+                },
             ];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
             };
 
             const valDomain = valueDomain({
@@ -2271,7 +2271,7 @@ describe('ValueDomain', () => {
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.domain.tree.helpers.getDefaultElement':
                     mockGetDefaultElementHelperForRoot as IGetDefaultElementHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const resValue = await valDomain.getValues({
@@ -2279,7 +2279,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 options: {},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
@@ -2296,25 +2296,25 @@ describe('ValueDomain', () => {
                 {
                     payload: 'val1',
                     attribute: 'test_attr',
-                    version: {my_tree: '7'}
+                    version: {my_tree: '7'},
                 },
                 {
                     payload: 'val2',
                     attribute: 'test_attr',
-                    version: {my_tree: '8'}
-                }
+                    version: {my_tree: '8'},
+                },
             ];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
             };
 
             const mockGetDefaultElementHelperNoElement: Mockify<IGetDefaultElementHelper> = {
-                getDefaultElement: global.__mockPromise(undefined)
+                getDefaultElement: global.__mockPromise(undefined),
             };
 
             const valDomain = valueDomain({
@@ -2328,7 +2328,7 @@ describe('ValueDomain', () => {
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.domain.tree.helpers.getDefaultElement':
                     mockGetDefaultElementHelperNoElement as IGetDefaultElementHelper,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const resValue = await valDomain.getValues({
@@ -2336,7 +2336,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 options: {},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
@@ -2354,8 +2354,8 @@ describe('ValueDomain', () => {
                     version: {
                         my_tree: '9',
                         other_tree: '1',
-                        third_tree: '88'
-                    }
+                        third_tree: '88',
+                    },
                 },
                 {
                     payload: 'val2',
@@ -2363,8 +2363,8 @@ describe('ValueDomain', () => {
                     version: {
                         my_tree: '8',
                         other_tree: '2',
-                        third_tree: '99'
-                    }
+                        third_tree: '99',
+                    },
                 },
                 {
                     payload: 'val3',
@@ -2372,8 +2372,8 @@ describe('ValueDomain', () => {
                     version: {
                         my_tree: '8',
                         other_tree: '2',
-                        third_tree: '99'
-                    }
+                        third_tree: '99',
+                    },
                 },
                 {
                     payload: 'val4',
@@ -2381,25 +2381,25 @@ describe('ValueDomain', () => {
                     version: {
                         my_tree: '9',
                         other_tree: '2',
-                        third_tree: '88'
-                    }
-                }
+                        third_tree: '88',
+                    },
+                },
             ];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrAdvVersionableWithThreeTrees = {
                 ...mockAttrAdvVersionable,
                 versions_conf: {
                     versionable: true,
-                    trees: ['my_tree', 'other_tree', 'third_tree']
-                }
+                    trees: ['my_tree', 'other_tree', 'third_tree'],
+                },
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableWithThreeTrees)
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableWithThreeTrees),
             };
 
             const mockElementAncestorsHelperMultipleTrees = {
@@ -2413,23 +2413,23 @@ describe('ValueDomain', () => {
                                     id: '7',
                                     record: {
                                         id: 7,
-                                        library: 'my_lib'
-                                    }
+                                        library: 'my_lib',
+                                    },
                                 },
                                 {
                                     id: '8',
                                     record: {
                                         id: 8,
-                                        library: 'my_lib'
-                                    }
+                                        library: 'my_lib',
+                                    },
                                 },
                                 {
                                     id: '9',
                                     record: {
                                         id: 9,
-                                        library: 'my_lib'
-                                    }
-                                }
+                                        library: 'my_lib',
+                                    },
+                                },
                             ];
                             break;
                         case 'other_tree':
@@ -2438,23 +2438,23 @@ describe('ValueDomain', () => {
                                     id: '1',
                                     record: {
                                         id: '1',
-                                        library: 'my_lib'
-                                    }
+                                        library: 'my_lib',
+                                    },
                                 },
                                 {
                                     id: '2',
                                     record: {
                                         id: 2,
-                                        library: 'my_lib'
-                                    }
+                                        library: 'my_lib',
+                                    },
                                 },
                                 {
                                     id: '3',
                                     record: {
                                         id: 3,
-                                        library: 'my_lib'
-                                    }
-                                }
+                                        library: 'my_lib',
+                                    },
+                                },
                             ];
                             break;
                         case 'third_tree':
@@ -2463,29 +2463,29 @@ describe('ValueDomain', () => {
                                     id: '88',
                                     record: {
                                         id: '88',
-                                        library: 'my_lib'
-                                    }
+                                        library: 'my_lib',
+                                    },
                                 },
                                 {
                                     id: '99',
                                     record: {
                                         id: '99',
-                                        library: 'my_lib'
-                                    }
-                                }
+                                        library: 'my_lib',
+                                    },
+                                },
                             ];
                             break;
                     }
 
                     return Promise.resolve(parents);
-                })
+                }),
             };
 
             const mockVersionProfileDomainMultipleTrees: Mockify<IVersionProfileDomain> = {
                 getVersionProfileProperties: global.__mockPromise({
                     ...mockVersionProfile,
-                    trees: ['my_tree', 'other_tree', 'third_tree']
-                })
+                    trees: ['my_tree', 'other_tree', 'third_tree'],
+                }),
             };
 
             const valDomain = valueDomain({
@@ -2498,13 +2498,13 @@ describe('ValueDomain', () => {
                 'core.domain.tree.helpers.elementAncestors':
                     mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain,
-                'core.utils': mockUtilsStandardAttribute as IUtils
+                'core.utils': mockUtilsStandardAttribute as IUtils,
             });
 
             const version: IValueVersion = {
                 my_tree: '9',
                 other_tree: '3',
-                third_tree: '99'
+                third_tree: '99',
             };
 
             const resValue = await valDomain.getValues({
@@ -2512,7 +2512,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
-                ctx
+                ctx,
             });
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
@@ -2524,7 +2524,7 @@ describe('ValueDomain', () => {
             expect(resValue[0].version).toMatchObject({
                 my_tree: '8',
                 other_tree: '2',
-                third_tree: '99'
+                third_tree: '99',
             });
         });
 
@@ -2534,28 +2534,28 @@ describe('ValueDomain', () => {
                     payload: 'val1',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: '99'
-                    }
+                        my_tree: '99',
+                    },
                 },
                 {
                     payload: 'val2',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: '88'
-                    }
-                }
+                        my_tree: '88',
+                    },
+                },
             ];
 
             const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
+                getValues: global.__mockPromise(valueData),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
             };
 
             const mockUtils: Mockify<IUtils> = {
-                isStandardAttribute: jest.fn().mockReturnValue(true)
+                isStandardAttribute: jest.fn().mockReturnValue(true),
             };
 
             const valDomain = valueDomain({
@@ -2567,7 +2567,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const version: IValueVersion = {my_tree: '9'};
@@ -2577,7 +2577,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 options: {version},
-                ctx
+                ctx,
             });
 
             expect(resValue.length).toBe(0);
@@ -2587,12 +2587,12 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(() => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
-                })
+                }),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             });
 
             await expect(
@@ -2600,8 +2600,8 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
         });
 
@@ -2610,19 +2610,19 @@ describe('ValueDomain', () => {
                 validateLibrary: jest.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
                 }),
-                validateRecord: global.__mockPromise(true)
+                validateRecord: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.helpers.validate': mockValidHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
             });
 
             const getVal = valDomain.getValues({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                ctx
+                ctx,
             });
 
             await expect(getVal).rejects.toThrow(ValidationError);
@@ -2634,19 +2634,19 @@ describe('ValueDomain', () => {
                 validateRecord: jest.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
                 }),
-                validateLibrary: global.__mockPromise(true)
+                validateLibrary: global.__mockPromise(true),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
-                'core.domain.helpers.validate': mockValidHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
             });
 
             const getVal = valDomain.getValues({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                ctx
+                ctx,
             });
 
             await expect(getVal).rejects.toThrow(ValidationError);

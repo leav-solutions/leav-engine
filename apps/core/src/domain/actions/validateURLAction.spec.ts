@@ -9,7 +9,7 @@ describe('validateURLFormatAction', () => {
 
     const ctx = {
         attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE},
-        userId: 'test_user'
+        userId: 'test_user',
     };
 
     test('validateURL should throw', async () => {

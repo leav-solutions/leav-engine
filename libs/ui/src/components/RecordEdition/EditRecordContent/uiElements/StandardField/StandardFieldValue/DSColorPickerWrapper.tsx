@@ -63,7 +63,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     readonly,
     handleSubmit,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
@@ -101,7 +101,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const _handleOnChange = (
         color: Parameters<KitColorPickerProps['onChange']>[0],
-        hex: Parameters<KitColorPickerProps['onChange']>[1]
+        hex: Parameters<KitColorPickerProps['onChange']>[1],
     ) => {
         setHasChanged(true);
         onChange(color, hex);

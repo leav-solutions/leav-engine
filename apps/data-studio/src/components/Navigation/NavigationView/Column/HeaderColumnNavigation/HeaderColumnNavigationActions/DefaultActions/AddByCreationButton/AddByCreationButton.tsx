@@ -44,7 +44,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
         let notification: IInfo;
         let messages: IMessages = {
             countValid: 0,
-            errors: {}
+            errors: {},
         };
         try {
             await addToTree({
@@ -52,10 +52,10 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                     treeId: activeTree.id,
                     element: {
                         id: newRecord.id,
-                        library: newRecord.library.id
+                        library: newRecord.library.id,
                     },
-                    parent: parent?.id ?? null
-                }
+                    parent: parent?.id ?? null,
+                },
             });
 
             messages = {...messages, countValid: 1};
@@ -63,7 +63,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
             notification = {
                 channel: InfoChannel.TRIGGER,
                 type: InfoType.SUCCESS,
-                content: t('navigation.notifications.success-add', {nb: 1})
+                content: t('navigation.notifications.success-add', {nb: 1}),
             };
         } catch (err) {
             if (err.graphQLErrors && err.graphQLErrors.length) {
@@ -81,7 +81,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                 notification = {
                     channel: InfoChannel.TRIGGER,
                     type: InfoType.ERROR,
-                    content: `${err.message}`
+                    content: `${err.message}`,
                 };
             }
         }
@@ -105,8 +105,8 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                         items: availableLibraries.map(library => ({
                             key: library.library.id,
                             onClick: _handleOpenCreateRecordModal(library.library.id),
-                            label: localizedTranslation(library.library.label, lang)
-                        }))
+                            label: localizedTranslation(library.library.label, lang),
+                        })),
                     }}
                 >
                     <Tooltip title={t('navigation.header.add_by_creation')} placement="top">

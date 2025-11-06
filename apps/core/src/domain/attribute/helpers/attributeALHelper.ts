@@ -13,28 +13,28 @@ export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             };
             break;
         case AttributeFormats.BOOLEAN:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
             };
             break;
         case AttributeFormats.DATE_RANGE:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.OBJECT],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
             };
             break;
         default:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
             };
             break;
     }
@@ -49,26 +49,26 @@ export const getAllowedOutputTypes = (attribute: IAttribute): IOAllowedTypes => 
         case AttributeFormats.DATE:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             };
             break;
         case AttributeFormats.BOOLEAN:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
             };
             break;
         case AttributeFormats.EXTENDED:
         case AttributeFormats.DATE_RANGE:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT],
             };
             break;
         default:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
-                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
             };
             break;
     }
@@ -81,7 +81,7 @@ export const getActionsListToSave = (
     attrDataToSave: IAttribute,
     existingAttrData: IAttribute,
     newAttr: boolean,
-    utils: IUtils
+    utils: IUtils,
 ): ActionsListConfig => {
     let alToSave: ActionsListConfig = null;
     if (!newAttr) {
@@ -91,7 +91,7 @@ export const getActionsListToSave = (
             const existingAL = existingAttrData.actions_list || {
                 [ActionsListEvents.SAVE_VALUE]: [],
                 [ActionsListEvents.GET_VALUE]: [],
-                [ActionsListEvents.DELETE_VALUE]: []
+                [ActionsListEvents.DELETE_VALUE]: [],
             };
 
             alToSave = Object.values(ActionsListEvents).reduce((allALs, evName) => {
@@ -100,12 +100,12 @@ export const getActionsListToSave = (
                 allALs[evName] = attrDataToSave.actions_list[evName]
                     ? attrDataToSave.actions_list[evName].map(actionToSave => {
                           const sysActionIndex = (existingAL[evName] ?? []).findIndex(
-                              al => al.id === actionToSave.id && al.is_system
+                              al => al.id === actionToSave.id && al.is_system,
                           );
                           return {
                               ...{is_system: false},
                               ...existingAL[evName]?.[sysActionIndex],
-                              ...actionToSave
+                              ...actionToSave,
                           };
                       })
                     : [];
@@ -116,7 +116,7 @@ export const getActionsListToSave = (
         // set is_system to false of new actions
         attrDataToSave.actions_list = Object.entries(attrDataToSave.actions_list || {}).reduce(
             (acc, [k, v]) => ({...acc, [k]: v.map(a => ({...a, is_system: false}))}),
-            {} as ActionsListConfig
+            {} as ActionsListConfig,
         );
 
         alToSave = utils.mergeConcat(utils.getDefaultActionsList(attrDataToSave), attrDataToSave.actions_list);

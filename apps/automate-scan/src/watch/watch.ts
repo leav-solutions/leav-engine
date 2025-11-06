@@ -27,7 +27,7 @@ export const start = async (
     rootPathProps: string,
     rootKey: string,
     watchParams?: IWatcherParams,
-    amqpParams?: IAmqpParams
+    amqpParams?: IAmqpParams,
 ) => {
     const verbose = watchParams?.verbose ?? false;
     let ready = false;
@@ -40,7 +40,7 @@ export const start = async (
         ignoreInitial: false, // use init for redis
         alwaysStat: true, // always give stats for add and update event
         awaitWriteFinish: watcherConfig, // wait for copy to finish before trigger event
-        cwd
+        cwd,
     });
 
     watcher.on('all', async (event: string, path: string, stats: any) =>
@@ -53,10 +53,10 @@ export const start = async (
                 rootPath: rootPathProps,
                 rootKey,
                 verbose,
-                amqp: amqpParams
+                amqp: amqpParams,
             },
-            stats
-        )
+            stats,
+        ),
     );
 
     watcher.on('ready', () => {
@@ -125,13 +125,13 @@ const _checkMove = async (event: string, path: string, isDirectory: boolean, ino
                                 rootPath: params.rootPath,
                                 rootKey: params.rootKey,
                                 amqp: params.amqp || {},
-                                verbose: params.verbose
+                                verbose: params.verbose,
                             },
-                            pathBefore
-                        )
+                            pathBefore,
+                        ),
                     ),
-                params.delay
-            )
+                params.delay,
+            ),
         );
     } else {
         inodesTmp[inode] = path;
@@ -147,10 +147,10 @@ const _checkMove = async (event: string, path: string, isDirectory: boolean, ino
                             rootPath: params.rootPath,
                             rootKey: params.rootKey,
                             verbose: params.verbose,
-                            amqp: params.amqp
-                        })
+                            amqp: params.amqp,
+                        }),
                     ),
-                params.delay
+                params.delay,
             );
         });
     }
@@ -162,7 +162,7 @@ export const handleEvent = async (
     isDirectory: boolean,
     inode: number,
     params: IParams,
-    oldPath?: string
+    oldPath?: string,
 ) => {
     const config = await getConfig();
     let hashFile: string | undefined;
@@ -170,7 +170,7 @@ export const handleEvent = async (
         rootPath: params.rootPath,
         rootKey: params.rootKey,
         verbose: params.verbose,
-        amqp: params.amqp
+        amqp: params.amqp,
     };
 
     const allowList = getSplittedListFiles(config.allowFilesList);
@@ -281,7 +281,7 @@ const _createHashFromFile = async (filePath: string): Promise<string> => {
                     reject(err);
                 })
                 .on('data', data => hash.update(data))
-                .on('end', () => resolve(hash.digest('hex')))
+                .on('end', () => resolve(hash.digest('hex'))),
         );
     } catch (e) {
         logger.error(`Can't get hash from file ${filePath} because ${e.stack}`);

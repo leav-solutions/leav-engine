@@ -25,12 +25,12 @@ const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | n
     const [deleteLib] = useMutation<DELETE_LIBRARY, DELETE_LIBRARYVariables>(deleteLibQuery, {
         update: (cache, {data: {deleteLibrary}}) => {
             deleteFromCache(cache, deleteLibrary as unknown as StoreObject);
-        }
+        },
     });
 
     const _handleDelete = async () =>
         deleteLib({
-            variables: {libID: library.id}
+            variables: {libID: library.id},
         });
 
     const libLabel = library.label !== null ? library.label.fr || library.label.en || library.id : library.id;

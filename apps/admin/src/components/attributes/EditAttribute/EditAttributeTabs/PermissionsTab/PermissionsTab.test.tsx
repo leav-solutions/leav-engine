@@ -20,13 +20,13 @@ jest.mock(
     () =>
         function PermissionsContent() {
             return <div>PermissionsContent</div>;
-        }
+        },
 );
 
 describe('PermissionsTab', () => {
     const attribute = {
         ...mockAttrSimple,
-        label: {fr: 'Test 1', en: null}
+        label: {fr: 'Test 1', en: null},
     };
 
     test('Render content', async () => {
@@ -34,7 +34,7 @@ describe('PermissionsTab', () => {
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: {type: [AttributeType.tree]}
+                    variables: {type: [AttributeType.tree]},
                 },
                 result: {
                     data: {
@@ -45,20 +45,20 @@ describe('PermissionsTab', () => {
                                 {
                                     ...mockAttrAdv,
                                     __typename: 'Attribute',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(
             <MockedProviderWithFragments mocks={mocks}>
                 <PermissionsTab attribute={attribute} readonly={false} />
             </MockedProviderWithFragments>,
-            {apolloMocks: mocks}
+            {apolloMocks: mocks},
         );
 
         expect(screen.getByText('PermissionsContent')).toBeInTheDocument();
@@ -68,14 +68,14 @@ describe('PermissionsTab', () => {
         let saveQueryCalled = false;
         const permConfToSave: Treepermissions_confInput = {
             permissionTreeAttributes: ['tree1', 'tree2'],
-            relation: PermissionsRelation.and
+            relation: PermissionsRelation.and,
         };
 
         const mocks = [
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: {type: [AttributeType.tree]}
+                    variables: {type: [AttributeType.tree]},
                 },
                 result: {
                     data: {
@@ -86,19 +86,19 @@ describe('PermissionsTab', () => {
                                 {
                                     ...mockAttrAdv,
                                     __typename: 'Attribute',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: saveAttributeQuery,
                     variables: {
-                        attrData: {id: attribute.id, permissions_conf: permConfToSave}
-                    }
+                        attrData: {id: attribute.id, permissions_conf: permConfToSave},
+                    },
                 },
                 result: () => {
                     saveQueryCalled = true;
@@ -107,12 +107,12 @@ describe('PermissionsTab', () => {
                             saveAttribute: {
                                 ...attribute,
                                 __typename: 'Attribute',
-                                versions_conf: null
-                            }
-                        }
+                                versions_conf: null,
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         const mockCache = new InMemoryCache({possibleTypes: attributesPossibleTypes});
@@ -127,11 +127,11 @@ describe('PermissionsTab', () => {
                         {
                             ...mockAttrSimple,
                             __typename: 'Attribute',
-                            versions_conf: null
-                        }
-                    ]
-                }
-            }
+                            versions_conf: null,
+                        },
+                    ],
+                },
+            },
         });
 
         let comp;
@@ -139,7 +139,7 @@ describe('PermissionsTab', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} cache={mockCache}>
                     <PermissionsTab attribute={attribute} readonly={false} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

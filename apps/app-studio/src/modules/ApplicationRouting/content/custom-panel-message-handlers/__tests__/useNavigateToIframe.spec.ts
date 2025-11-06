@@ -9,11 +9,11 @@ import {useNavigateToIframe} from '../useNavigateToIframe';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn()
+    useNavigate: jest.fn(),
 }));
 
 jest.mock('../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 describe('useNavigateToIframe', () => {
@@ -35,12 +35,12 @@ describe('useNavigateToIframe', () => {
                         id: '1',
                         title: {
                             fr: 'un',
-                            en: 'one'
+                            en: 'one',
                         },
                         icon: 'fa-house',
                         type: 'library',
-                        libraryId: 'test1'
-                    }
+                        libraryId: 'test1',
+                    },
                 ],
                 libraries: {
                     test1: {
@@ -49,17 +49,17 @@ describe('useNavigateToIframe', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
-                                actions: []
-                            }
-                        ]
-                    }
-                }
+                                actions: [],
+                            },
+                        ],
+                    },
+                },
             } satisfies Application,
-            mockSetApplication
+            mockSetApplication,
         ]);
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useNavigateToIframe());
 
         current.navigateToIframe({
@@ -67,14 +67,14 @@ describe('useNavigateToIframe', () => {
                 id: 'panelIdTest',
                 type: 'custom',
                 iframeSource: 'https://fakeurl.aristid.com/fake/path',
-                isStandalone: true
+                isStandalone: true,
             },
             destination: {
-                libraryId: 'test1'
+                libraryId: 'test1',
             },
             recordId: '1234567890',
             where: 'fullpage',
-            recordPanelId: 'panelIdTest'
+            recordPanelId: 'panelIdTest',
         });
 
         expect(mockSetApplication).toHaveBeenCalledTimes(1);

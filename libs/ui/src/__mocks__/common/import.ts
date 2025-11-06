@@ -16,16 +16,16 @@ export const mockSheet: ISheet = {
     data: [
         {
             colA: '1',
-            colB: '2'
+            colB: '2',
         },
         {
             colA: '21',
-            colB: '22'
-        }
+            colB: '22',
+        },
     ],
     name: 'test_sheet',
     attributes: [
         {...mockAttributeWithDetails, id: 'colA'},
-        {...mockAttributeWithDetails, id: 'colB'}
-    ]
+        {...mockAttributeWithDetails, id: 'colB'},
+    ],
 };

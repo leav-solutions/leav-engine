@@ -25,8 +25,8 @@ const Login = (): JSX.Element => {
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({
                     login,
-                    password
-                })
+                    password,
+                }),
             });
 
             if (response.status === 401) {

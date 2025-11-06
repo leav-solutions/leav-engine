@@ -62,12 +62,12 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.utils.logger': logger,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
-    translator
+    translator,
 }: IIndexationManagerDomainDeps): IIndexationManagerDomain {
     const _indexRecords = async (
         findRecordParams: IFindRecordParams,
         ctx: IQueryInfos,
-        attributes?: {up?: string[]; del?: string[]}
+        attributes?: {up?: string[]; del?: string[]},
     ): Promise<void> => {
         if (!(await indexationService.isLibraryListed(findRecordParams.library))) {
             await indexationService.listLibrary(findRecordParams.library);
@@ -75,7 +75,7 @@ export default function ({
 
         const fullTextLibraryAttributes = await attributeDomain.getLibraryFullTextAttributes(
             findRecordParams.library,
-            ctx
+            ctx,
         );
 
         // We retrieve the properties of the indexed attributes to be updated
@@ -95,9 +95,9 @@ export default function ({
                 record,
                 attributeId: attribute.id,
                 options: {
-                    forceGetAllValues: true
+                    forceGetAllValues: true,
                 },
-                ctx
+                ctx,
             });
 
             // FIXME: is this statement necessary?
@@ -114,13 +114,13 @@ export default function ({
             }
 
             return {
-                [attribute.id]: typeof value === 'object' ? JSON.stringify(value) : String(value)
+                [attribute.id]: typeof value === 'object' ? JSON.stringify(value) : String(value),
             };
         };
 
         const records = await recordDomain.find({
             params: findRecordParams,
-            ctx
+            ctx,
         });
 
         for (const record of records.list) {
@@ -137,12 +137,12 @@ export default function ({
     const _getFormattedValuesAndLabels = async (
         attribute: IAttribute,
         values: IValue[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IValue[]> => {
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
                 ...v,
-                payload: v.payload?.record
+                payload: v.payload?.record,
             }));
         }
 
@@ -154,12 +154,12 @@ export default function ({
             const promises = values.map(async v => {
                 const recordIdentity = await recordDomain.getRecordIdentity(
                     {id: v.payload.id, library: attribute.linked_library || v.payload.library},
-                    ctx
+                    ctx,
                 );
 
                 return {
                     ...v,
-                    payload: (await recordIdentity.getLabel?.()) || v.payload.id
+                    payload: (await recordIdentity.getLabel?.()) || v.payload.id,
                 };
             });
 
@@ -174,19 +174,19 @@ export default function ({
         const attributesToUpdate = (
             await attributeDomain.getAttributes({
                 params: {
-                    filters: {linked_library: libraryId}
+                    filters: {linked_library: libraryId},
                 },
-                ctx
+                ctx,
             })
         ).list.concat(
             (
                 await attributeDomain.getAttributes({
                     params: {
-                        filters: {linked_tree: libraryId}
+                        filters: {linked_tree: libraryId},
                     },
-                    ctx
+                    ctx,
                 })
-            ).list
+            ).list,
         );
 
         const libs = (await libraryDomain.getLibraries({ctx})).list;
@@ -203,7 +203,7 @@ export default function ({
                     filters = intersections.map(a => ({
                         field: `${a.id}.${a.linked_tree ? `${libraryId}.` : ''}id`, // if field is a tree attribute, we must specify the library
                         condition: AttributeCondition.EQUAL,
-                        value: toRecordId
+                        value: toRecordId,
                     }));
                 }
 
@@ -211,7 +211,7 @@ export default function ({
                     findRecordParams: {library: l.id, filters},
                     ctx,
                     attributes: {up: intersections.map(a => a.id)},
-                    forceNoTask: true
+                    forceNoTask: true,
                 });
             }
         }
@@ -229,8 +229,8 @@ export default function ({
             logger.error(`Indexation Manager - Invalid message received: ${e.message}`, {
                 msg: {
                     ...msg,
-                    content: msg.content.toString()
-                }
+                    content: msg.content.toString(),
+                },
             });
         }
 
@@ -241,10 +241,10 @@ export default function ({
                     findRecordParams: {
                         library: payload.topic.record.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}],
-                        retrieveInactive: true
+                        retrieveInactive: true,
                     },
                     ctx,
-                    forceNoTask: true
+                    forceNoTask: true,
                 });
 
                 break;
@@ -254,18 +254,18 @@ export default function ({
                 const newSettings = payload.after;
                 const attrsToDel = difference(
                     oldSettings?.fullTextAttributes,
-                    newSettings?.fullTextAttributes
+                    newSettings?.fullTextAttributes,
                 ) as string[];
                 const attrsToAdd = difference(
                     newSettings?.fullTextAttributes,
-                    oldSettings?.fullTextAttributes
+                    oldSettings?.fullTextAttributes,
                 ) as string[];
 
                 if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
                     await _indexDatabase({
                         findRecordParams: {library: payload.topic.library, retrieveInactive: true},
                         ctx,
-                        attributes: {up: attrsToAdd, del: attrsToDel}
+                        attributes: {up: attrsToAdd, del: attrsToDel},
                     });
                 }
 
@@ -279,7 +279,7 @@ export default function ({
             case EventAction.VALUE_SAVE: {
                 const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(
                     payload.topic.library,
-                    ctx
+                    ctx,
                 );
 
                 const isActivated = payload.topic.attribute === 'active' && payload.after.value === true;
@@ -290,13 +290,13 @@ export default function ({
                         findRecordParams: {
                             library: payload.topic.library,
                             filters: [
-                                {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}
+                                {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id},
                             ],
-                            retrieveInactive: true
+                            retrieveInactive: true,
                         },
                         ctx,
                         attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
-                        forceNoTask: true
+                        forceNoTask: true,
                     });
                 }
 
@@ -316,13 +316,13 @@ export default function ({
                     findRecordParams: {
                         library: payload.topic.library,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}],
-                        retrieveInactive: true
+                        retrieveInactive: true,
                     },
                     ctx,
                     attributes: attrProps.multiple_values
                         ? {up: [payload.topic.attribute]}
                         : {del: [payload.topic.attribute]},
-                    forceNoTask: true
+                    forceNoTask: true,
                 });
 
                 // if the updated/deleted attribute is the label of the library
@@ -351,19 +351,19 @@ export default function ({
                             .keys({
                                 record: Joi.object().keys({
                                     id: Joi.string().required(),
-                                    libraryId: Joi.string().required()
+                                    libraryId: Joi.string().required(),
                                 }),
                                 library: Joi.string(),
                                 attribute: Joi.string(),
-                                tree: Joi.string()
+                                tree: Joi.string(),
                             })
                             .unknown(true)
                             .allow(null),
                         before: Joi.any(),
                         after: Joi.any(),
-                        metadata: Joi.any()
+                        metadata: Joi.any(),
                     })
-                    .required()
+                    .required(),
             })
             .unknown(true);
 
@@ -378,7 +378,7 @@ export default function ({
     async function _createIndexationTask(
         findRecordParams: IFindRecordParams[],
         params: IIndexDatabaseParams,
-        task: ITaskFuncParams
+        task: ITaskFuncParams,
     ) {
         const newTaskId = uuidv4();
 
@@ -388,7 +388,7 @@ export default function ({
                 label: config.lang.available.reduce((labels, lang) => {
                     labels[lang] = `${translator.t('indexation.index_database', {
                         lng: lang,
-                        library: findRecordParams.map(e => e.library).join(', ')
+                        library: findRecordParams.map(e => e.library).join(', '),
                     })}`;
                     return labels;
                 }, {}),
@@ -396,17 +396,17 @@ export default function ({
                     moduleName: 'domain',
                     subModuleName: 'indexationManager',
                     name: 'indexDatabase',
-                    args: params
+                    args: params,
                 },
                 role: {
                     type: TaskType.INDEXATION,
-                    detail: findRecordParams.map(e => e.library).join(',')
+                    detail: findRecordParams.map(e => e.library).join(','),
                 },
                 priority: TaskPriority.MEDIUM,
                 startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                ...(!!task?.callbacks && {callbacks: task.callbacks})
+                ...(!!task?.callbacks && {callbacks: task.callbacks}),
             },
-            params.ctx
+            params.ctx,
         );
 
         return newTaskId;
@@ -426,9 +426,9 @@ export default function ({
                 await eventsManager.sendPubSubEvent(
                     {
                         triggerName: TriggerNames.INDEXATION,
-                        data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
+                        data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}},
                     },
-                    params.ctx
+                    params.ctx,
                 );
             }
         };
@@ -449,19 +449,19 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.indexationManager.queues.events,
                 config.amqp.exchange,
-                config.eventsManager.routingKeys.data_events
+                config.eventsManager.routingKeys.data_events,
             );
 
             await amqpService.consume(
                 config.indexationManager.queues.events,
                 config.eventsManager.routingKeys.data_events,
-                _onMessage
+                _onMessage,
             );
 
             await indexationService.init();
 
             logger.info('Indexation Manager is ready. Waiting for events... 👀');
         },
-        indexDatabase: _indexDatabase
+        indexDatabase: _indexDatabase,
     };
 }

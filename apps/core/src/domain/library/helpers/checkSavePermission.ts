@@ -9,7 +9,7 @@ export default async (
     existingLib: boolean,
     userId: string,
     deps: {adminPermissionDomain: IAdminPermissionDomain},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<{canSave: boolean; action: AdminPermissionsActions}> => {
     const action = existingLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
     const canSaveLibrary = await deps.adminPermissionDomain.getAdminPermission({action, userId, ctx});

@@ -9,7 +9,7 @@ export const APPS_URL_PREFIX = 'app';
 
 export enum ApplicationTypes {
     INTERNAL = 'internal',
-    EXTERNAL = 'external'
+    EXTERNAL = 'external',
 }
 
 export interface IApplication extends ICoreEntity {
@@ -44,7 +44,7 @@ export interface IApplicationModule {
 
 export enum ApplicationEventTypes {
     SAVE = 'SAVE',
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
 }
 
 export interface IApplicationEvent {

@@ -7,7 +7,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {
     AttributePermissionsActions,
     PermissionTypes,
-    type RecordAttributePermissionsActions
+    type RecordAttributePermissionsActions,
 } from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IAttributePermissionDomain} from './attributePermissionDomain';
@@ -16,7 +16,7 @@ import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGrou
 import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {
     type IGetDefaultPermissionParams,
-    type IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams
+    type IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams,
 } from './_types';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import {type IRecordInCreationBypassHelper} from './helpers/recordInCreationBypass';
@@ -28,12 +28,12 @@ export interface IRecordAttributePermissionDomain {
         attributeId: string,
         recordLibrary: string,
         recordId: string,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<boolean>;
 
     getInheritedRecordAttributePermission(
         params: IGetRecordAttributeInheritedPermissionsParams,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<boolean>;
 }
 
@@ -57,7 +57,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
         'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
         'core.domain.attribute': attributeDomain,
         'core.infra.value': valueRepo,
-        'core.infra.record': recordRepo
+        'core.infra.record': recordRepo,
     } = deps;
     return {
         async getRecordAttributePermission(
@@ -66,7 +66,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
             attributeId: string,
             recordLibrary: string,
             recordId: string,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<boolean> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             if (
@@ -76,14 +76,14 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                 // Check if action is present in library permissions
                 const isAttrAction =
                     Object.values(AttributePermissionsActions).indexOf(
-                        action as unknown as AttributePermissionsActions
+                        action as unknown as AttributePermissionsActions,
                     ) !== -1;
 
                 return isAttrAction
                     ? attrPermissionDomain.getAttributePermission({
                           action: action as unknown as AttributePermissionsActions,
                           attributeId,
-                          ctx
+                          ctx,
                       })
                     : defaultPermHelper.getDefaultPermission();
             }
@@ -95,9 +95,9 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                         library: recordLibrary,
                         recordId,
                         attribute: permTreeAttrProps as IAttributeWithRevLink,
-                        ctx
+                        ctx,
                     });
-                })
+                }),
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
@@ -110,7 +110,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                 attrPermissionDomain.getAttributePermission({
                     action: action as unknown as AttributePermissionsActions,
                     attributeId,
-                    ctx
+                    ctx,
                 });
 
             const treeBasedPermission = await treeBasedPermissionsHelper.getTreeBasedPermission(
@@ -121,9 +121,9 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                     applyTo: attributeId,
                     treeValues: valuesByAttr,
                     permissions_conf: attrProps.permissions_conf,
-                    getDefaultPermission: _getDefaultPermission
+                    getDefaultPermission: _getDefaultPermission,
                 },
-                ctx
+                ctx,
             );
 
             // If record is in creation and user is the creator, we allow all actions
@@ -136,7 +136,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
         },
         async getInheritedRecordAttributePermission(
             {action, attributeId, userGroupId, permTree, permTreeNode},
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<boolean> {
             const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
                 permByUserGroupsHelper.getPermissionByUserGroups({
@@ -144,7 +144,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                     action,
                     userGroupsPaths: params.userGroups,
                     applyTo: params.applyTo,
-                    ctx
+                    ctx,
                 });
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
@@ -154,10 +154,10 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                     action,
                     userGroupId,
                     permissionTreeTarget: {tree: permTree, nodeId: permTreeNode},
-                    getDefaultPermission: _getDefaultPermission
+                    getDefaultPermission: _getDefaultPermission,
                 },
-                ctx
+                ctx,
             );
-        }
+        },
     };
 }

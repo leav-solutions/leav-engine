@@ -6,7 +6,7 @@ import {
     type AttributePropertiesFragment,
     type PropertyValueFragment,
     type RecordFilterInput,
-    type RecordIdentityFragment
+    type RecordIdentityFragment,
 } from '_ui/_gqlTypes';
 import {type Key, type ReactElement} from 'react';
 import {type IViewSettingsState} from './manage-view-settings';

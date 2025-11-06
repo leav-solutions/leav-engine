@@ -19,7 +19,7 @@ const SettingsWrapper = styled.div`
 function SettingsEdition(): JSX.Element {
     const {
         state: {elementInSettings, openSettings, library},
-        dispatch
+        dispatch,
     } = useFormBuilderReducer();
 
     const {t} = useTranslation();
@@ -49,7 +49,7 @@ function SettingsEdition(): JSX.Element {
                                     <SettingsTranslatedField key={settingsField.name} settingsField={settingsField} />
                                 ) : (
                                     <SettingsField key={settingsField.name} settingsField={settingsField} />
-                                )
+                                ),
                             )}
                         </Form>
                     </SettingsWrapper>

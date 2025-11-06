@@ -20,7 +20,7 @@ export interface INotificationDomainDeps {
 export default function ({
     'core.domain.notification.emailChannel': emailChannel,
     'core.domain.notification.webSocketChannel': webSocketChannel,
-    config
+    config,
 }: INotificationDomainDeps): INotificationDomain {
     if (config.notification.enable === false) {
         return notificationsDisabled();
@@ -28,7 +28,7 @@ export default function ({
 
     const channels: INotificationChannel[] = [
         ...((config.notification.email.enable && [emailChannel]) || []),
-        ...((config.notification.webSocket.enable && [webSocketChannel]) || [])
+        ...((config.notification.webSocket.enable && [webSocketChannel]) || []),
     ];
 
     logger.verbose(`Notification system enabled with channels: ${channels.map(c => c.type).join(', ')}`);
@@ -40,10 +40,10 @@ export default function ({
                     await channel.sendNotifications(notifications, ctx);
                 } catch (error) {
                     logger.error(
-                        `Error sending ${notifications.length} notifications via channel ${channel.type}: ${error.message}`
+                        `Error sending ${notifications.length} notifications via channel ${channel.type}: ${error.message}`,
                     );
                 }
-            })
+            }),
         );
 
     return {
@@ -67,13 +67,13 @@ export default function ({
                         notification.content.attachments && notification.content.attachments.length > 0
                             ? notification.content.attachments.map(a => `${a.label} (${a.url})`).join(', ')
                             : 'No attachments'
-                    }`
+                    }`,
                 );
 
                 const notifications: INotification[] = notification.recipients.userIds.map(userId => ({
                     date: moment().unix(),
                     recipientUserId: userId,
-                    content: notification.content
+                    content: notification.content,
                 }));
 
                 // save notifications to the database
@@ -82,7 +82,7 @@ export default function ({
             } catch (error) {
                 logger.error(`Error creating notification: ${error.message}`);
             }
-        }
+        },
     };
 }
 
@@ -91,6 +91,6 @@ function notificationsDisabled(): INotificationDomain {
     return {
         async createNotification(): Promise<void> {
             logger.silly('Notification system is disabled. Skipping notification creation.');
-        }
+        },
     };
 }

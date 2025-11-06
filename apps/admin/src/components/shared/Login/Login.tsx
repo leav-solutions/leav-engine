@@ -22,15 +22,15 @@ const processLogin = (
     password: string,
     setIsLoading: (n: boolean) => void,
     onSuccess: (n: string) => void,
-    setLoginError: (n: string) => void
+    setLoginError: (n: string) => void,
 ) => {
     fetch(authUrl, {
         method: 'POST',
         headers: new Headers([['Content-Type', 'application/json']]),
         body: JSON.stringify({
             login,
-            password
-        })
+            password,
+        }),
     })
         .then(
             response => {
@@ -45,7 +45,7 @@ const processLogin = (
             },
             error => {
                 throw new Error('no_server_response');
-            }
+            },
         )
         .then(response => response.json())
         .then(data => {

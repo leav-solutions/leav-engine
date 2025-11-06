@@ -41,7 +41,7 @@ const SelectedAttribute = ({selectedAttribute, handleProps}: ISelectedAttributeP
     const _handleUnselectAttribute = () => {
         dispatch({
             type: AttributesSelectionListActionTypes.TOGGLE_ATTRIBUTE_SELECTION,
-            attribute: selectedAttribute
+            attribute: selectedAttribute,
         });
     };
 

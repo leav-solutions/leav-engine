@@ -15,7 +15,7 @@ describe('AttributeTypesRepo', () => {
     describe('getTypeRepo', () => {
         const mockAttribute = {
             id: 'test_attr',
-            type: null
+            type: null,
         };
 
         test('Should return repo by attribute type', () => {
@@ -30,16 +30,16 @@ describe('AttributeTypesRepo', () => {
                 'core.infra.attributeTypes.attributeSimpleLink': mockAttrSimpleLinkRepo as IAttributeSimpleLinkRepo,
                 'core.infra.attributeTypes.attributeAdvanced': mockAttrAdvRepo as IAttributeAdvancedRepo,
                 'core.infra.attributeTypes.attributeAdvancedLink': mockAttrAdvLinkRepo as IAttributeAdvancedLinkRepo,
-                'core.infra.attributeTypes.attributeTree': mockAttrTreeRepo as IAttributeTreeRepo
+                'core.infra.attributeTypes.attributeTree': mockAttrTreeRepo as IAttributeTreeRepo,
             });
 
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE})).toBe(mockAttrSimpleRepo);
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE_LINK})).toBe(
-                mockAttrSimpleLinkRepo
+                mockAttrSimpleLinkRepo,
             );
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.ADVANCED})).toBe(mockAttrAdvRepo);
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.ADVANCED_LINK})).toBe(
-                mockAttrAdvLinkRepo
+                mockAttrAdvLinkRepo,
             );
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.TREE})).toBe(mockAttrTreeRepo);
         });

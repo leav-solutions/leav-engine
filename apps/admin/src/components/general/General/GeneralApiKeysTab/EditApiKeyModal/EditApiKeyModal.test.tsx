@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function RecordSelector() {
             return <div>RecordSelector</div>;
-        }
+        },
 );
 
 describe('EditApiKeyModal', () => {

@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function ValuesVersionConfigurator() {
             return <div>ValuesVersionConfigurator</div>;
-        }
+        },
 );
 
 describe('VersionsPanel', () => {
@@ -18,7 +18,7 @@ describe('VersionsPanel', () => {
         render(
             <MockSearchContextProvider>
                 <VersionsPanel />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(await screen.findByText(/ValuesVersionConfigurator/i)).toBeInTheDocument();

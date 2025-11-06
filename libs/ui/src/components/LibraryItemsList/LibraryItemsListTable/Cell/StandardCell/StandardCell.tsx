@@ -25,7 +25,7 @@ const alignmentByFormat: Record<AttributeFormat, 'left' | 'right' | 'center'> = 
     [AttributeFormat.extended]: 'left',
     [AttributeFormat.encrypted]: 'left',
     [AttributeFormat.color]: 'left',
-    [AttributeFormat.rich_text]: 'center'
+    [AttributeFormat.rich_text]: 'center',
 };
 
 const Wrapper = styled.div<{$format: AttributeFormat}>`
@@ -105,7 +105,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                 <Typography.Paragraph
                     ellipsis={{
                         rows: 1,
-                        tooltip: formattedValuesToDisplay
+                        tooltip: formattedValuesToDisplay,
                     }}
                     style={{margin: 0}}
                 >

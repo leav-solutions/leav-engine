@@ -13,7 +13,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
     onChange,
     attribute,
     handleSubmit,
-    readonly
+    readonly,
 }) => {
     if (!onChange) {
         throw Error('DSInputEncryptedWrapper should be used inside a antd Form.Item');

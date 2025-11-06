@@ -23,12 +23,12 @@ describe('TriggerPreviewsGenerationModal', () => {
                     sizes: [
                         {
                             name: 'PreviewSettings1ChildName',
-                            size: 'PreviewSettings1ChildSize'
-                        }
-                    ]
-                }
-            }
-        ]
+                            size: 'PreviewSettings1ChildSize',
+                        },
+                    ],
+                },
+            },
+        ],
     };
 
     test('Display confirm message and trigger mutation', async () => {
@@ -39,8 +39,8 @@ describe('TriggerPreviewsGenerationModal', () => {
                 request: {
                     query: getLibraryPreviewsSettingsQuery,
                     variables: {
-                        id: 'files'
-                    }
+                        id: 'files',
+                    },
                 },
                 result: {
                     data: {
@@ -48,12 +48,12 @@ describe('TriggerPreviewsGenerationModal', () => {
                             list: [
                                 {
                                     ...mockLibBase,
-                                    id: 'files'
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    id: 'files',
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
@@ -63,23 +63,23 @@ describe('TriggerPreviewsGenerationModal', () => {
                         recordIds: ['123456'],
                         filters: null,
                         failedOnly: false,
-                        previewVersionSizeNames: ['PreviewSettings1ChildName']
-                    }
+                        previewVersionSizeNames: ['PreviewSettings1ChildName'],
+                    },
                 },
                 result: () => {
                     mutationCalled = true;
 
                     return {
                         data: {
-                            forcePreviewsGeneration: true
-                        }
+                            forcePreviewsGeneration: true,
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         expect(screen.getByText('files.generate_previews')).toBeInTheDocument();
@@ -101,7 +101,7 @@ describe('TriggerPreviewsGenerationModal', () => {
             {
                 request: {
                     query: getLibraryPreviewsSettingsQuery,
-                    variables: {id: 'files'}
+                    variables: {id: 'files'},
                 },
                 result: () => ({
                     data: {
@@ -109,12 +109,12 @@ describe('TriggerPreviewsGenerationModal', () => {
                             list: [
                                 {
                                     ...mockLibBase,
-                                    id: 'files'
-                                }
-                            ]
-                        }
-                    }
-                })
+                                    id: 'files',
+                                },
+                            ],
+                        },
+                    },
+                }),
             },
             {
                 request: {
@@ -124,22 +124,22 @@ describe('TriggerPreviewsGenerationModal', () => {
                         recordIds: ['123456'],
                         filters: null,
                         failedOnly: true,
-                        previewVersionSizeNames: ['PreviewSettings1ChildName']
-                    }
+                        previewVersionSizeNames: ['PreviewSettings1ChildName'],
+                    },
                 },
                 result: () => {
                     mutationCalled = true;
                     return {
                         data: {
-                            forcePreviewsGeneration: true
-                        }
+                            forcePreviewsGeneration: true,
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         expect(await screen.findByText('files.previews_generation_failed_only')).toBeInTheDocument();

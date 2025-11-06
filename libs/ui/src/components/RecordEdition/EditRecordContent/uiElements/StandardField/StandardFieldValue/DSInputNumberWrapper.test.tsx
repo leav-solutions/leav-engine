@@ -16,7 +16,7 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
@@ -24,15 +24,15 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: dartMaxScore
-    }
+        raw_payload: dartMaxScore,
+    },
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
@@ -40,8 +40,8 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: dartMaxScore
-    }
+        raw_payload: dartMaxScore,
+    },
 };
 
 const notReadonly = false;
@@ -74,7 +74,7 @@ describe('DSInputNumberWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const inputNumber = screen.getByRole('spinbutton');
@@ -95,7 +95,7 @@ describe('DSInputNumberWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const inputNumber = screen.getByRole('spinbutton');
@@ -117,7 +117,7 @@ describe('DSInputNumberWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const inputNumber = screen.getByRole('spinbutton');
@@ -140,7 +140,7 @@ describe('DSInputNumberWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const inputNumber = screen.getByRole('spinbutton');
@@ -160,7 +160,7 @@ describe('DSInputNumberWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const inputNumber = screen.getByRole('spinbutton');
@@ -187,7 +187,7 @@ describe('DSInputNumberWrapper', () => {
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             const inputNumber = screen.getByRole('spinbutton');
@@ -211,7 +211,7 @@ describe('DSInputNumberWrapper', () => {
             'Should submit empty value on clear and call onChange with inherited value',
             async ({
                 calculatedValue,
-                inheritedValue
+                inheritedValue,
             }: {
                 calculatedValue: string | null;
                 inheritedValue: string | null;
@@ -237,7 +237,7 @@ describe('DSInputNumberWrapper', () => {
                                 onChange={mockOnChange}
                             />
                         </AntForm.Item>
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const input = screen.getByRole('spinbutton');
@@ -247,7 +247,7 @@ describe('DSInputNumberWrapper', () => {
 
                 expect(mockOnChange).toHaveBeenCalledWith(dartMaxScore);
                 expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
-            }
+            },
         );
     });
 });

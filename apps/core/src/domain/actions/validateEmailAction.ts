@@ -23,6 +23,6 @@ export default function (): IActionsListFunction {
             }, []);
 
             return {values, errors: allErrors};
-        }
+        },
     };
 }

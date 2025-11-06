@@ -18,7 +18,7 @@ import {logger} from '@leav/logger';
 
     const dbSettings = {
         filesLibraryId: dbElements.filesLibraryId,
-        directoriesLibraryId: dbElements.directoriesLibraryId
+        directoriesLibraryId: dbElements.directoriesLibraryId,
     };
     const dbScan = extractChildrenDbElements(dbSettings, dbElements.treeContent);
 

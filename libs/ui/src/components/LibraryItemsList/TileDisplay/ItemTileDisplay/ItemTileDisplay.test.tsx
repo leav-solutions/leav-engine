@@ -13,16 +13,16 @@ describe('ItemTileDisplay', () => {
         fields: {},
         whoAmI: {
             ...mockRecord,
-            id: 'test'
+            id: 'test',
         },
-        index: 0
+        index: 0,
     };
 
     test('should call RecordPreview', async () => {
         render(
             <MockSearchContextProvider>
                 <ItemTileDisplay item={itemMock} />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByAltText('record preview')).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe('ItemTileDisplay', () => {
         render(
             <MockSearchContextProvider state={{showTransparency: true}}>
                 <ItemTileDisplay item={itemMock} />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByAltText('record preview')).toHaveStyle(`background: ${themeVars.checkerBoard}`);

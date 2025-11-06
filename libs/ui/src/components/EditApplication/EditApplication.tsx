@@ -20,16 +20,16 @@ function EditApplication({
     onSetSubmitFunction,
     tabContentStyle,
     additionalTabs = [],
-    activeTab = 'info'
+    activeTab = 'info',
 }: IEditApplicationProps): JSX.Element {
     const {t} = useSharedTranslation();
     const isEditing = !!applicationId;
 
     const {loading, error, data} = useGetApplicationByIdQuery({
         variables: {
-            id: applicationId
+            id: applicationId,
         },
-        skip: !applicationId
+        skip: !applicationId,
     });
 
     if (loading) {
@@ -53,9 +53,9 @@ function EditApplication({
         {
             key: 'info',
             label: t('applications.info'),
-            tabContent: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
+            tabContent: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>,
         },
-        ...additionalTabs
+        ...additionalTabs,
     ];
 
     return <KitTabs items={tabs} defaultKey={activeTab} />;

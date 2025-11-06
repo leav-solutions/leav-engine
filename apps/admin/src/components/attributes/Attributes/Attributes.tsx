@@ -43,7 +43,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
     const [deleteError, setDeleteError] = useState<ApolloError | null>(null);
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
-        variables: {...addWildcardToFilters(filters)}
+        variables: {...addWildcardToFilters(filters)},
     });
 
     const _onFiltersUpdate = (filterElem: any) => {
@@ -56,7 +56,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
 
         setFilters({
             ...filters,
-            [filterElem.name]: newElemState
+            [filterElem.name]: newElemState,
         });
 
         setDeleteError(null);

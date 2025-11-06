@@ -8,7 +8,7 @@ import {type ISettingsFieldCommonProps} from '../../../../_types';
 
 function SettingsCheckbox({onChange, fieldName, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {
-        state: {elementInSettings}
+        state: {elementInSettings},
     } = useFormBuilderReducer();
 
     const _handleChange = (_, data) => onChange(data.name, data.checked);

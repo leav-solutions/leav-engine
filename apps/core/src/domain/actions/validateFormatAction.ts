@@ -18,13 +18,13 @@ export default function (): IActionsListFunction {
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
             ActionsListIOTypes.BOOLEAN,
-            ActionsListIOTypes.OBJECT
+            ActionsListIOTypes.OBJECT,
         ],
         output_types: [
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
             ActionsListIOTypes.BOOLEAN,
-            ActionsListIOTypes.OBJECT
+            ActionsListIOTypes.OBJECT,
         ],
         action: (values, _, ctx) => {
             const _getSchema = (attribute: IAttribute | IEmbeddedAttribute): Joi.Schema => {
@@ -58,7 +58,7 @@ export default function (): IActionsListFunction {
                                     acc[field.id] = _getSchema(field);
 
                                     return acc;
-                                }, {})
+                                }, {}),
                             );
                         }
 
@@ -68,7 +68,7 @@ export default function (): IActionsListFunction {
                     case AttributeFormats.DATE_RANGE:
                         schema = Joi.object({
                             from: Joi.date().timestamp('unix').raw().required(),
-                            to: Joi.date().timestamp('unix').raw().required()
+                            to: Joi.date().timestamp('unix').raw().required(),
                         });
                         break;
                     case AttributeFormats.COLOR:
@@ -84,7 +84,7 @@ export default function (): IActionsListFunction {
                             Joi.string().pattern(rgbaPattern),
                             Joi.string().pattern(hsbPattern),
                             Joi.string().pattern(hsbaPattern),
-                            Joi.string().valid(null)
+                            Joi.string().valid(null),
                         );
 
                         break;
@@ -110,7 +110,7 @@ export default function (): IActionsListFunction {
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
                         attributeValue: elementValue,
-                        message: validationRes.error.message
+                        message: validationRes.error.message,
                     });
                 }
 
@@ -120,7 +120,7 @@ export default function (): IActionsListFunction {
                     if (Number(rangeValue.from) > Number(rangeValue.to)) {
                         errors.push({
                             errorType: Errors.INVALID_DATE_RANGE,
-                            attributeValue: elementValue
+                            attributeValue: elementValue,
                         });
                     }
                 }
@@ -128,6 +128,6 @@ export default function (): IActionsListFunction {
             });
 
             return {values: computedValues, errors};
-        }
+        },
     };
 }

@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function EditRecordForm() {
             return <div>EditRecordForm</div>;
-        }
+        },
 );
 
 describe('EditRecordFormContainer', () => {

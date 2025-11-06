@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function EditAttributeTabs() {
             return <div>EditAttributeTabs</div>;
-        }
+        },
 );
 
 describe('EditAttribute', () => {
@@ -22,7 +22,7 @@ describe('EditAttribute', () => {
             {
                 request: {
                     query: getAttributeByIdQuery,
-                    variables: {id: 'test_attr'}
+                    variables: {id: 'test_attr'},
                 },
                 result: {
                     data: {
@@ -33,13 +33,13 @@ describe('EditAttribute', () => {
                                 {
                                     ...mockAttrAdv,
                                     __typename: 'Attribute',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});
@@ -53,10 +53,10 @@ describe('EditAttribute', () => {
             {
                 request: {
                     query: getAttributeByIdQuery,
-                    variables: {id: 'test_attr'}
+                    variables: {id: 'test_attr'},
                 },
-                error: new Error('boom!')
-            }
+                error: new Error('boom!'),
+            },
         ];
 
         let comp;
@@ -72,18 +72,18 @@ describe('EditAttribute', () => {
             {
                 request: {
                     query: getAttributeByIdQuery,
-                    variables: {id: 'test_attr'}
+                    variables: {id: 'test_attr'},
                 },
                 result: {
                     data: {
                         attributes: {
                             __typename: 'AttributesList',
                             totalCount: 0,
-                            list: []
-                        }
-                    }
-                }
-            }
+                            list: [],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});

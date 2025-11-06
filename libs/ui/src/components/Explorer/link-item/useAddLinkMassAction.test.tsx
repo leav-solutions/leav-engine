@@ -9,7 +9,7 @@ import {viewSettingsInitialState} from '../manage-view-settings';
 
 const libraryEntrypoint: IEntrypointLibrary = {
     type: 'library',
-    libraryId: 'campaigns'
+    libraryId: 'campaigns',
 };
 
 const explorerLinkAttribute = {
@@ -17,38 +17,38 @@ const explorerLinkAttribute = {
     multiple_values: true,
     label: {
         en: 'Delivery Platforms',
-        fr: 'Plateformes de diffusion'
+        fr: 'Plateformes de diffusion',
     },
     linked_library: {
         id: 'delivery_platforms',
         label: {
-            fr: 'Plateformes de diffusion'
+            fr: 'Plateformes de diffusion',
         },
-        __typename: 'Library'
+        __typename: 'Library',
     },
-    __typename: 'LinkAttribute'
+    __typename: 'LinkAttribute',
 };
 
 describe('useAddLinkMassAction', () => {
     test('should call the link action', async () => {
         const viewInitialState = {
             ...viewSettingsInitialState,
-            entrypoint: libraryEntrypoint
+            entrypoint: libraryEntrypoint,
         };
 
         const saveValuesResult = 'saveValuesResult';
         const saveValues = jest.fn<any, any>(async () => saveValuesResult);
         jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
             loading: false,
-            saveValues
+            saveValues,
         }));
 
         const onLink = jest.fn();
 
         const {
             result: {
-                current: {createLinks}
-            }
+                current: {createLinks},
+            },
         } = renderHook(() =>
             useAddLinkMassAction({
                 store: {
@@ -58,14 +58,14 @@ describe('useAddLinkMassAction', () => {
                             ...viewInitialState.entrypoint,
                             type: 'link',
                             parentRecordId: 'parentRecordId',
-                            parentLibraryId: 'parentLibraryId'
-                        } as any
-                    }
+                            parentLibraryId: 'parentLibraryId',
+                        } as any,
+                    },
                 },
                 onLink,
                 linkAttributeId: explorerLinkAttribute.id,
-                closeModal: () => null
-            })
+                closeModal: () => null,
+            }),
         );
 
         await act(() =>
@@ -73,21 +73,21 @@ describe('useAddLinkMassAction', () => {
                 records: {
                     list: [
                         {
-                            id: '123456'
-                        }
-                    ]
-                }
-            })
+                            id: '123456',
+                        },
+                    ],
+                },
+            }),
         );
 
         expect(saveValues).toHaveBeenCalledWith(
             {
                 id: 'parentRecordId',
                 library: {
-                    id: 'parentLibraryId'
-                }
+                    id: 'parentLibraryId',
+                },
             },
-            [{attribute: 'link_attribute', idValue: null, value: '123456'}]
+            [{attribute: 'link_attribute', idValue: null, value: '123456'}],
         );
         expect(onLink).toHaveBeenCalledWith(saveValuesResult);
     });

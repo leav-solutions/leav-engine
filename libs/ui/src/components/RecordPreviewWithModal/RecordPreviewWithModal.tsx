@@ -72,7 +72,7 @@ const RecordPreviewWithModal: FunctionComponent<IRecordPreviewWithModalProps> = 
                 <EntityPreview
                     imageStyle={{
                         background: showTransparency ? themeVars.checkerBoard : 'transparent',
-                        ...imageStyle
+                        ...imageStyle,
                     }}
                     {...recordPreviewProps}
                 />

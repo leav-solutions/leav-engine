@@ -9,7 +9,7 @@ import {clearCacheForQuery} from '../../../../../utils';
 import {
     type GET_LIB_BY_ID,
     type GET_LIB_BY_IDVariables,
-    type GET_LIB_BY_ID_libraries_list
+    type GET_LIB_BY_ID_libraries_list,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
@@ -32,11 +32,11 @@ function InfosTab({library, readonly}: IInfosTabProps): JSX.Element {
             if (isNewLib) {
                 clearCacheForQuery(cache, 'libraries');
             }
-        }
+        },
     });
 
     const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
     });
 
     const _handleCheckIdExists = async val => {
@@ -50,12 +50,12 @@ function InfosTab({library, readonly}: IInfosTabProps): JSX.Element {
             id: libData.id,
             label: {
                 fr: libData.label.fr,
-                en: libData.label.en
+                en: libData.label.en,
             },
             icon: libData.icon?.whoAmI
                 ? {
                       libraryId: libData.icon.whoAmI.library.id,
-                      recordId: libData.icon.whoAmI.id
+                      recordId: libData.icon.whoAmI.id,
                   }
                 : null,
             behavior: libData.behavior,
@@ -69,14 +69,14 @@ function InfosTab({library, readonly}: IInfosTabProps): JSX.Element {
                           subLabel: libData.recordIdentityConf.subLabel,
                           preview: libData.recordIdentityConf.preview,
                           color: libData.recordIdentityConf.color,
-                          treeColorPreview: libData.recordIdentityConf.treeColorPreview
+                          treeColorPreview: libData.recordIdentityConf.treeColorPreview,
                       }
-                    : null
+                    : null,
         };
         await saveLibrary({
             variables: {
-                libData: dataToSave
-            }
+                libData: dataToSave,
+            },
         });
 
         if (isNewLib) {

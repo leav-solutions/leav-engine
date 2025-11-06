@@ -8,7 +8,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('Trees', () => {
@@ -162,7 +162,7 @@ describe('Trees', () => {
                     parent: "${nodeRecord6}",
                     order: 2
             ) {id}
-        }`)
+        }`),
         ).rejects.toThrow(/Element already present in ancestors/);
 
         await gqlAddElemToTree(testTreeName, {id: recordId4, library: 'users'}, nodeRecord1);
@@ -278,7 +278,7 @@ describe('Trees', () => {
             id: attrTreeName,
             type: AttributeTypes.TREE,
             linkedTree: testTreeName,
-            label: 'Test attr tree'
+            label: 'Test attr tree',
         });
 
         await gqlSaveLibrary(testLibName, 'Test lib', [attrTreeName]);

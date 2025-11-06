@@ -47,8 +47,8 @@ function GetLibraryInfos({state, dispatch}: IListProps) {
     const {loading, error, data} = useQuery(getLibraryByIdWithAttributes, {
         variables: {
             id: state.selectedRoot,
-            lang: state.lang
-        }
+            lang: state.lang,
+        },
     });
 
     useEffect(() => {
@@ -60,8 +60,8 @@ function GetLibraryInfos({state, dispatch}: IListProps) {
             type: ActionTypes.SET_ROOT_INFOS,
             data: {
                 label: data.libraries.list[0].label[`${state.lang[0]}`],
-                attributes: data.libraries.list[0].attributes
-            }
+                attributes: data.libraries.list[0].attributes,
+            },
         });
     }, [data?.libraries]);
 

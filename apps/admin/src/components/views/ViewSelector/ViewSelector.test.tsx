@@ -14,7 +14,7 @@ jest.mock(
     () =>
         function ViewSelectorField() {
             return <div>ViewSelectorField</div>;
-        }
+        },
 );
 
 describe('ViewSelector', () => {
@@ -24,8 +24,8 @@ describe('ViewSelector', () => {
                 request: {
                     query: getViewsQuery,
                     variables: {
-                        library: 'test_lib'
-                    }
+                        library: 'test_lib',
+                    },
                 },
                 result: {
                     data: {
@@ -36,18 +36,18 @@ describe('ViewSelector', () => {
                                 {
                                     __typename: 'View',
                                     id: '123456',
-                                    label: {fr: 'Test View'}
+                                    label: {fr: 'Test View'},
                                 },
                                 {
                                     __typename: 'View',
                                     id: '123457',
-                                    label: {fr: 'Test View 2'}
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    label: {fr: 'Test View 2'},
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         let comp;
@@ -55,7 +55,7 @@ describe('ViewSelector', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <ViewSelector library="test_lib" />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -72,10 +72,10 @@ describe('ViewSelector', () => {
         const mocks = [
             {
                 request: {
-                    query: getViewsQuery
+                    query: getViewsQuery,
                 },
-                error: new Error('Boom!')
-            }
+                error: new Error('Boom!'),
+            },
         ];
 
         let comp;
@@ -83,7 +83,7 @@ describe('ViewSelector', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <ViewSelector library="test_lib" />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

@@ -18,7 +18,7 @@ export const TreeNodeList: FunctionComponent<IDisplayTreeNodeProps> = ({
     attribute,
     backendValues,
     removeTreeNode,
-    isReadOnly
+    isReadOnly,
 }) => (
     <TreeFieldWrapper>
         {backendValues.map((value, index) => (

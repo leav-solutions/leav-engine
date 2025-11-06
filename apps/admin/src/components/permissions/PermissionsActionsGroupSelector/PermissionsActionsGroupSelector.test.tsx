@@ -15,12 +15,12 @@ describe('ActionsGroupSelector', () => {
                 <PermissionsActionsGroupSelector
                     actions={{
                         firstGroup: [PermissionsActions.access_attribute],
-                        secondGroup: [PermissionsActions.access_attribute]
+                        secondGroup: [PermissionsActions.access_attribute],
                     }}
                     onSelect={onSelect}
                     selectedGroup={null}
                     type={PermissionTypes.admin}
-                />
+                />,
             );
 
             expect(screen.getByText(/firstGroup/)).toBeInTheDocument();

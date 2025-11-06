@@ -25,7 +25,7 @@ describe('MessageHandlers', () => {
                 messageToPanel: expect.any(Function),
                 navigateToPanel: expect.any(Function),
                 navigateToIframe: expect.any(Function),
-                closePanel: expect.any(Function)
+                closePanel: expect.any(Function),
             });
         });
 
@@ -40,12 +40,12 @@ describe('MessageHandlers', () => {
                 type: 'modal-confirm',
                 data,
                 id: String(fakeTime),
-                overrides: ['someCallback']
+                overrides: ['someCallback'],
             });
             expect(callbacksStore.current).toEqual({
                 [String(fakeTime)]: {
-                    someCallback: data.someCallback
-                }
+                    someCallback: data.someCallback,
+                },
             });
         });
 
@@ -60,12 +60,12 @@ describe('MessageHandlers', () => {
                 type: 'alert',
                 data,
                 id: String(fakeTime),
-                overrides: ['someCallback']
+                overrides: ['someCallback'],
             });
             expect(callbacksStore.current).toEqual({
                 [String(fakeTime)]: {
-                    someCallback: data.someCallback
-                }
+                    someCallback: data.someCallback,
+                },
             });
         });
 
@@ -80,12 +80,12 @@ describe('MessageHandlers', () => {
                 type: 'notification',
                 data,
                 id: String(fakeTime),
-                overrides: ['someCallback']
+                overrides: ['someCallback'],
             });
             expect(callbacksStore.current).toEqual({
                 [String(fakeTime)]: {
-                    someCallback: data.someCallback
-                }
+                    someCallback: data.someCallback,
+                },
             });
         });
 
@@ -140,37 +140,37 @@ describe('MessageHandlers', () => {
             const message = {
                 __frameId: '__frameId',
                 type: 'change-language',
-                language: 'fr'
+                language: 'fr',
             } as const;
 
             const encodedMessage = encodeMessage(message);
 
             expect(encodedMessage).toBe(
-                '{"payload":"{\\"__frameId\\":\\"__frameId\\",\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":true}'
+                '{"payload":"{\\"__frameId\\":\\"__frameId\\",\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":true}',
             );
         });
 
         it('Should encode a structure above message without `__frameId`', async () => {
             const message: Message = {
                 type: 'change-language',
-                language: 'fr'
+                language: 'fr',
             };
 
             const encodedMessage = encodeMessage(message);
 
             expect(encodedMessage).toBe(
-                '{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":true}'
+                '{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":true}',
             );
         });
 
         it('Should decode to `undefined` on packetId false or not present', async () => {
             expect(
                 decodeMessage(
-                    '{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":false}'
-                )
+                    '{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":false}',
+                ),
             ).toBeUndefined();
             expect(
-                decodeMessage('{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}"}')
+                decodeMessage('{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}"}'),
             ).toBeUndefined();
         });
 
@@ -181,8 +181,8 @@ describe('MessageHandlers', () => {
         it('Should decode the payload', async () => {
             expect(
                 decodeMessage(
-                    '{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":true}'
-                )
+                    '{"payload":"{\\"type\\":\\"change-language\\",\\"language\\":\\"fr\\"}","__fromIframeMessenger":true}',
+                ),
             ).toEqual({language: 'fr', type: 'change-language'});
         });
 
@@ -191,7 +191,7 @@ describe('MessageHandlers', () => {
                 __frameId: '__frameId',
                 type: 'on-call-callback',
                 path: 'path',
-                data: 'data'
+                data: 'data',
             };
 
             expect(decodeMessage(encodeMessage(data))).toEqual(data);

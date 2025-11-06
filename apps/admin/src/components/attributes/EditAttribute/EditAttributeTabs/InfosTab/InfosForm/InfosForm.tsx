@@ -14,7 +14,7 @@ import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
-    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
@@ -22,7 +22,7 @@ import {
     AttributeFormat,
     AttributeType,
     ValueVersionMode,
-    MultiDisplayOption
+    MultiDisplayOption,
 } from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
@@ -47,11 +47,11 @@ const defaultAttributeData: AttributeInfosFormValues = {
     required: false,
     label: {
         fr: '',
-        en: ''
+        en: '',
     },
     description: {
         fr: '',
-        en: ''
+        en: '',
     },
     type: AttributeType.simple,
     format: AttributeFormat.text,
@@ -66,11 +66,11 @@ const defaultAttributeData: AttributeInfosFormValues = {
     versions_conf: {
         versionable: false,
         mode: ValueVersionMode.smart,
-        profile: null
+        profile: null,
     },
     libraries: [],
     multi_link_display_option: MultiDisplayOption.avatar,
-    multi_tree_display_option: MultiDisplayOption.avatar
+    multi_tree_display_option: MultiDisplayOption.avatar,
 };
 
 const FormWrapper = styled(Form)`
@@ -91,7 +91,7 @@ function InfosForm({
     onSubmitInfos,
     errors,
     onCheckIdExists,
-    forcedType
+    forcedType,
 }: IInfosFormProps): JSX.Element {
     const {t} = useTranslation();
     const {lang: userLang, availableLangs, defaultLang} = useLang();
@@ -107,9 +107,9 @@ function InfosForm({
                   linked_tree: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute).linked_tree?.id ?? null,
                   versions_conf: {
                       ...attribute.versions_conf,
-                      profile: attribute.versions_conf?.profile?.id ?? null
+                      profile: attribute.versions_conf?.profile?.id ?? null,
                   },
-                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null
+                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null,
               }
             : defaultAttributeData;
 
@@ -137,12 +137,12 @@ function InfosForm({
 
     const validationSchema = yup.object().shape({
         label: yup.object().shape({
-            [defaultLang]: yup.string().required()
+            [defaultLang]: yup.string().required(),
         }),
         description: yup
             .object()
             .shape({
-                [defaultLang]: yup.string()
+                [defaultLang]: yup.string(),
             })
             .nullable(),
         id: idValidator,
@@ -159,9 +159,9 @@ function InfosForm({
                     .string()
                     .oneOf([...Object.values(ValueVersionMode), null])
                     .nullable(),
-                profile: yup.string().nullable()
+                profile: yup.string().nullable(),
             })
-            .nullable()
+            .nullable(),
     });
 
     const _renderForm = ({
@@ -171,7 +171,7 @@ function InfosForm({
         errors: inputErrors,
         values,
         touched,
-        submitForm
+        submitForm,
     }: FormikProps<AttributeInfosFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
@@ -208,10 +208,10 @@ function InfosForm({
 
         const allowFormat = [AttributeType.advanced, AttributeType.simple].includes(values.type);
         const allowMultipleValues = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
-            values.type
+            values.type,
         );
         const allowVersionable = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
-            values.type
+            values.type,
         );
         const isVersionable = !!values.versions_conf && values.versions_conf.versionable;
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
@@ -226,7 +226,7 @@ function InfosForm({
                 fieldName,
                 touched,
                 serverValidationErrors || {},
-                inputErrors
+                inputErrors,
             );
 
         const _handleBlur = (e: React.FocusEvent) => {
@@ -303,7 +303,7 @@ function InfosForm({
                         onChange={_handleChangeWithSubmit}
                         options={Object.keys(AttributeType).map(attrType => ({
                             text: t('attributes.types.' + attrType),
-                            value: attrType
+                            value: attrType,
                         }))}
                         value={values.type}
                     />
@@ -319,7 +319,7 @@ function InfosForm({
                             onChange={_handleChangeWithSubmit}
                             options={Object.keys(AttributeFormat).map(f => ({
                                 text: t('attributes.formats.' + f),
-                                value: f
+                                value: f,
                             }))}
                             value={values.format || ''}
                         />
@@ -404,7 +404,7 @@ function InfosForm({
                         <AttributeSelector
                             filters={{
                                 libraries: [values.linked_library],
-                                type: [AttributeType.advanced_link, AttributeType.simple_link]
+                                type: [AttributeType.advanced_link, AttributeType.simple_link],
                             }}
                             excludeReverseLinks
                             disabled={values.system || readonly}
@@ -465,7 +465,7 @@ function InfosForm({
                             onChange={_handleChangeWithSubmit}
                             options={Object.keys(MultiDisplayOption).map(format => ({
                                 text: t('attributes.multi_display_options.' + format),
-                                value: format
+                                value: format,
                             }))}
                             value={values.multi_tree_display_option ?? ''}
                         />
@@ -481,7 +481,7 @@ function InfosForm({
                             onChange={_handleChangeWithSubmit}
                             options={Object.keys(MultiDisplayOption).map(format => ({
                                 text: t('attributes.multi_display_options.' + format),
-                                value: format
+                                value: format,
                             }))}
                             value={values.multi_link_display_option ?? ''}
                         />
@@ -515,12 +515,12 @@ function InfosForm({
                                         options={[
                                             {
                                                 text: t('attributes.versions_mode_simple'),
-                                                value: ValueVersionMode.simple
+                                                value: ValueVersionMode.simple,
                                             },
                                             {
                                                 text: t('attributes.versions_mode_smart'),
-                                                value: ValueVersionMode.smart
-                                            }
+                                                value: ValueVersionMode.smart,
+                                            },
                                         ]}
                                         value={
                                             !!values.versions_conf && values.versions_conf.mode

@@ -11,7 +11,7 @@ import {type IFormElementProps} from '../../_types';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
-    RecordPermissionsActions
+    RecordPermissionsActions,
 } from '_ui/_gqlTypes';
 import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
@@ -59,14 +59,14 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     onDeleteMultipleValues,
     onValueSubmit,
     onValueDelete,
-    metadataEdit = false
+    metadataEdit = false,
 }) => {
     const {state, dispatch} = useEditRecordReducer();
     const {lang} = useLang();
     const {
         settings,
         attribute,
-        values
+        values,
     }: {
         settings: typeof element.settings;
         attribute?: RecordFormAttributeTreeAttributeFragment;
@@ -88,7 +88,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         if (state.activeAttribute?.attribute.id === attribute.id) {
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                values: backendValues
+                values: backendValues,
             });
         }
     }, [backendValues]);
@@ -99,13 +99,13 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         attributePrefix: TREE_FIELD_ID_PREFIX,
         dispatch,
         backendValues,
-        allowedSelectors: ['.kit-modal-wrapper']
+        allowedSelectors: ['.kit-modal-wrapper'],
     });
 
     const childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput = {
         libraryId: state.libraryId,
         attributeId: state.activeAttribute?.attribute?.id,
-        action: RecordPermissionsActions.create_record
+        action: RecordPermissionsActions.create_record,
     };
 
     const {openModal, removeTreeNode, actionButtonLabel, SelectTreeNodeModal, RemoveAllTreeNodes} =
@@ -120,7 +120,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
             onDeleteMultipleValues,
             isReadOnly,
             isFieldInError,
-            childrenAsRecordValuePermissionFilter
+            childrenAsRecordValuePermissionFilter,
         });
 
     return (

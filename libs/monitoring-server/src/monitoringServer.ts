@@ -69,11 +69,11 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
                 server = serve(
                     {
                         port: serverPort,
-                        fetch: createMonitoringApp().fetch
+                        fetch: createMonitoringApp().fetch,
                     },
                     info => {
                         logger.info(`Monitoring server listening on http://localhost:${info.port}`);
-                    }
+                    },
                 );
             } catch (e) {
                 logger.error(`Unable to start monitoring server because of error: ${e.message}`);
@@ -93,6 +93,6 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
                 server = undefined;
                 logger.info('Monitoring server closed');
             }
-        }
+        },
     };
 }

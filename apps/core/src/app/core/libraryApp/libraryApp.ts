@@ -43,7 +43,7 @@ export default function ({
     'core.domain.view': viewDomain = null,
     'core.domain.permission': permissionDomain = null,
     'core.app.graphql': graphqlApp = null,
-    'core.app.core': coreApp = null
+    'core.app.core': coreApp = null,
 }: IDeps = {}): ICoreLibraryApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -184,25 +184,25 @@ export default function ({
                         async libraries(
                             _,
                             {filters, pagination, sort, strictFilters}: IGetLibraryParams,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IList<ILibrary>> {
                             return libraryDomain.getLibraries({
                                 params: {filters, withCount: true, pagination, sort, strictFilters},
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         async saveLibrary(parent, {library}, ctx): Promise<ILibrary> {
                             if (typeof library.attributes !== 'undefined') {
                                 library.attributes = library.attributes.map(attrName => ({
-                                    id: attrName
+                                    id: attrName,
                                 }));
                             }
 
                             if (typeof library.fullTextAttributes !== 'undefined') {
                                 library.fullTextAttributes = library.fullTextAttributes.map(fullTextAttrName => ({
-                                    id: fullTextAttrName
+                                    id: fullTextAttrName,
                                 }));
                             }
 
@@ -210,7 +210,7 @@ export default function ({
                         },
                         async deleteLibrary(parent, {id}, ctx): Promise<ILibrary> {
                             return libraryDomain.deleteLibrary(id, ctx);
-                        }
+                        },
                     },
                     Library: {
                         attributes: async (parent, args, ctx, info): Promise<ILibrary[]> =>
@@ -229,7 +229,7 @@ export default function ({
                         icon: async (
                             libData: Override<ILibrary, {icon: {libraryId: string; recordId: string}}>,
                             _,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IRecord> => {
                             if (!libData.icon) {
                                 return null;
@@ -239,10 +239,14 @@ export default function ({
                                 params: {
                                     library: libData.icon.libraryId,
                                     filters: [
-                                        {field: 'id', value: libData.icon.recordId, condition: AttributeCondition.EQUAL}
-                                    ]
+                                        {
+                                            field: 'id',
+                                            value: libData.icon.recordId,
+                                            condition: AttributeCondition.EQUAL,
+                                        },
+                                    ],
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return record.list.length ? record.list[0] : null;
@@ -251,10 +255,10 @@ export default function ({
                             const trees = await treeDomain.getTrees({
                                 params: {
                                     filters: {
-                                        library: parent.id
-                                    }
+                                        library: parent.id,
+                                    },
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return trees.list;
@@ -265,7 +269,7 @@ export default function ({
                             libData: ILibrary,
                             _,
                             ctx: IQueryInfos,
-                            infos: GraphQLResolveInfo
+                            infos: GraphQLResolveInfo,
                         ): Promise<IKeyValue<boolean>> => {
                             const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
                             return requestedActions.reduce(async (allPermsProm, action) => {
@@ -276,19 +280,19 @@ export default function ({
                                     applyTo: libData.id,
                                     action: action as LibraryPermissionsActions,
                                     userId: ctx.userId,
-                                    ctx
+                                    ctx,
                                 });
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

@@ -26,9 +26,9 @@ function EditTree({treeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditTree
     const {loading, error, data} = useGetTreeByIdQuery({
         fetchPolicy: 'cache-and-network',
         variables: {
-            id: [treeId]
+            id: [treeId],
         },
-        skip: !treeId
+        skip: !treeId,
     });
 
     if (loading) {
@@ -58,8 +58,8 @@ function EditTree({treeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditTree
         {
             key: 'info',
             label: t('global.info'),
-            children: <TabContentWrapper>{treeInfoComp}</TabContentWrapper>
-        }
+            children: <TabContentWrapper>{treeInfoComp}</TabContentWrapper>,
+        },
     ];
 
     return <Tabs items={tabs} />;

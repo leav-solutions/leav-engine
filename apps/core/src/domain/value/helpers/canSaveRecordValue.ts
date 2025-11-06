@@ -37,7 +37,7 @@ const _canSaveMetadata = async (
     recordId: string,
     value: IValue,
     ctx: IQueryInfos,
-    deps: {recordAttributePermissionDomain: IRecordAttributePermissionDomain}
+    deps: {recordAttributePermissionDomain: IRecordAttributePermissionDomain},
 ): Promise<{canSave: boolean; fields?: ErrorFieldDetail<IValue>; reason?: RecordAttributePermissionsActions}> => {
     const permToCheck = RecordAttributePermissionsActions.EDIT_VALUE;
     const errors: string[] = await Object.keys(value.metadata).reduce(async (allErrorsProm, field) => {
@@ -49,7 +49,7 @@ const _canSaveMetadata = async (
             field,
             library,
             recordId,
-            ctx
+            ctx,
         );
 
         if (!canUpdateField) {
@@ -66,7 +66,7 @@ const _canSaveMetadata = async (
     return {
         canSave: false,
         fields: {metadata: {msg: Errors.METADATA_PERMISSION_ERROR, vars: {fields: errors.join(', ')}}},
-        reason: permToCheck
+        reason: permToCheck,
     };
 };
 
@@ -81,7 +81,7 @@ export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecord
         userId: ctx.userId,
         library,
         recordId,
-        ctx
+        ctx,
     });
 
     if (!canSaveRecord) {
@@ -96,7 +96,7 @@ export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecord
         attributeProps.id,
         library,
         recordId,
-        ctx
+        ctx,
     );
 
     if (!isAllowed) {
@@ -106,7 +106,7 @@ export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecord
     // Check metadata permissions
     if (value.metadata) {
         return _canSaveMetadata(valueExists, library, recordId, value, ctx, {
-            recordAttributePermissionDomain: deps.recordAttributePermissionDomain
+            recordAttributePermissionDomain: deps.recordAttributePermissionDomain,
         });
     }
 

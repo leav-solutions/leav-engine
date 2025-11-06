@@ -49,14 +49,14 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
             ...activeSettings!,
             content: <SettingsPanel library={view.libraryId} page={pageName} />,
             title,
-            onClickLeftButton
+            onClickLeftButton,
         });
     };
 
     const _openSettingsPanel = (pageName: SettingsPanelPages = 'router-menu') => {
         const chanelPageParams: IChangePanelPage = {
             pageName,
-            title: t(`explorer.${pageName}`)
+            title: t(`explorer.${pageName}`),
         };
         if (pageName !== rootPanel.pageName) {
             chanelPageParams.onClickLeftButton = () => {
@@ -79,7 +79,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
                 onClick={() => _openSettingsPanel()}
                 disabled={isMassSelectionAll}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
-            />
+            />,
         );
         setViewListButton(
             <KitButton
@@ -94,7 +94,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
                 {view.viewModified && (
                     <ModifiedStyledKitTag type="error" idCardProps={{description: String(t('explorer.modified'))}} />
                 )}
-            </KitButton>
+            </KitButton>,
         );
     }, [view.viewModified, viewName, isMassSelectionAll]);
 
@@ -102,6 +102,6 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
         openSettingsPanel: _openSettingsPanel,
         viewSettingsButton: button,
         viewListButton,
-        viewName: viewName === '' ? t('explorer.viewList.default-view') : viewName
+        viewName: viewName === '' ? t('explorer.viewList.default-view') : viewName,
     };
 };

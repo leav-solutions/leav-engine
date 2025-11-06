@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function DefinePermByUserGroupView() {
             return <div>DefinePermByUserGroupView</div>;
-        }
+        },
 );
 describe('GeneralAdminPermissionsTab', () => {
     test('Render test', async () => {
@@ -20,7 +20,7 @@ describe('GeneralAdminPermissionsTab', () => {
             render(
                 <EditApplicationContext.Provider value={{application: mockApplicationDetails, readonly: false}}>
                     <PermissionsTab />
-                </EditApplicationContext.Provider>
+                </EditApplicationContext.Provider>,
             );
         });
 

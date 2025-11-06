@@ -12,7 +12,7 @@ import {
     type DeleteMultipleValuesFunc,
     type DeleteValueFunc,
     type ISubmitMultipleResult,
-    type SubmitValueFunc
+    type SubmitValueFunc,
 } from '../../_types';
 import StandardField from './StandardField';
 import {AntForm} from 'aristid-ds';
@@ -26,7 +26,7 @@ describe('StandardField', () => {
         label: {en: 'Test Attribute'},
         format: AttributeFormat.text,
         type: AttributeType.simple,
-        system: false
+        system: false,
     };
 
     const newFormatedValue = 'New formated value';
@@ -38,11 +38,11 @@ describe('StandardField', () => {
                 id_value: idValue,
                 created_at: 1234567890,
                 created_by: {
-                    ...mockModifier
+                    ...mockModifier,
                 },
                 modified_at: 1234567890,
                 modified_by: {
-                    ...mockModifier
+                    ...mockModifier,
                 },
                 value: newFormatedValue,
                 raw_value: 'new raw value',
@@ -50,9 +50,9 @@ describe('StandardField', () => {
                 raw_payload: 'new raw value',
                 version: null,
                 attribute: mockAttribute as ValueDetailsValueFragment['attribute'],
-                metadata: null
-            }
-        ]
+                metadata: null,
+            },
+        ],
     };
     const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
@@ -65,7 +65,7 @@ describe('StandardField', () => {
         readonly: false,
         onValueSubmit: mockHandleSubmit,
         onValueDelete: mockHandleDelete,
-        onDeleteMultipleValues: mockHandleMultipleValues
+        onDeleteMultipleValues: mockHandleMultipleValues,
     };
 
     const mockEditRecordDispatch = jest.fn();
@@ -73,7 +73,7 @@ describe('StandardField', () => {
 
     jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
         state: initialState,
-        dispatch: mockEditRecordDispatch
+        dispatch: mockEditRecordDispatch,
     }));
 
     beforeEach(() => {
@@ -84,14 +84,14 @@ describe('StandardField', () => {
         const initialValues = {
             [mockFormElementInput.attribute.id]: (
                 mockFormElementInput.values[0] as RecordFormElementsValueStandardValue
-            ).raw_payload
+            ).raw_payload,
         };
 
         test('Should display an error with missing attribute', () => {
             render(
                 <AntForm>
                     <StandardField element={{...mockFormElementInput, attribute: null}} {...baseProps} />
-                </AntForm>
+                </AntForm>,
             );
 
             expect(screen.getByText('record_edition.missing_attribute')).toBeVisible();
@@ -101,7 +101,7 @@ describe('StandardField', () => {
             render(
                 <AntForm>
                     <StandardField element={mockFormElementInput} {...baseProps} />
-                </AntForm>
+                </AntForm>,
             );
 
             const textInput = screen.getByRole('textbox');
@@ -113,7 +113,7 @@ describe('StandardField', () => {
             render(
                 <AntForm initialValues={initialValues}>
                     <StandardField element={mockFormElementInput} {...baseProps} />
-                </AntForm>
+                </AntForm>,
             );
 
             const textInput = screen.getByRole('textbox');
@@ -126,7 +126,7 @@ describe('StandardField', () => {
             render(
                 <AntForm initialValues={initialValues}>
                     <StandardField element={mockFormElementInput} {...baseProps} />
-                </AntForm>
+                </AntForm>,
             );
 
             const textInput = screen.getByRole('textbox');
@@ -147,11 +147,11 @@ describe('StandardField', () => {
                     <StandardField
                         element={{
                             ...mockFormElementInput,
-                            values: [{...mockFormElementInput.values[0], id_value: idValue}]
+                            values: [{...mockFormElementInput.values[0], id_value: idValue}],
                         }}
                         {...baseProps}
                     />
-                </AntForm>
+                </AntForm>,
             );
 
             let textInput = screen.getByRole('textbox');
@@ -169,10 +169,10 @@ describe('StandardField', () => {
                     {
                         attribute: mockFormElementInput.attribute,
                         idValue,
-                        value: newValue
-                    }
+                        value: newValue,
+                    },
                 ],
-                null
+                null,
             );
             expect(mockHandleDelete).not.toHaveBeenCalled();
             expect(mockHandleMultipleValues).not.toHaveBeenCalled();
@@ -192,13 +192,13 @@ describe('StandardField', () => {
                                     ...mockFormElementInput.attribute,
                                     permissions: {
                                         ...mockFormElementInput.attribute.permissions,
-                                        edit_value: false
-                                    }
-                                }
+                                        edit_value: false,
+                                    },
+                                },
                             }}
                             {...baseProps}
                         />
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const textInput = screen.getByRole('textbox');
@@ -214,11 +214,11 @@ describe('StandardField', () => {
                         <StandardField
                             element={{
                                 ...mockFormElementInput,
-                                attribute: {...mockFormElementInput.attribute, character_limit: 5}
+                                attribute: {...mockFormElementInput.attribute, character_limit: 5},
                             }}
                             {...baseProps}
                         />
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const textInput = screen.getByRole('textbox');
@@ -234,11 +234,11 @@ describe('StandardField', () => {
                             element={{
                                 ...mockFormElementInput,
                                 attribute: {...mockFormElementInput.attribute, character_limit: 5},
-                                values: [{...mockFormElementInput.values[0], payload: ''}]
+                                values: [{...mockFormElementInput.values[0], payload: ''}],
                             }}
                             {...baseProps}
                         />
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 expect(screen.getByText('0 / 5')).toBeVisible();
@@ -255,8 +255,8 @@ describe('StandardField', () => {
         const initialValues = {
             [mockFormElementInput.attribute.id]: [
                 (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload,
-                (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload
-            ]
+                (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload,
+            ],
         };
 
         test('Should call onValueDelete click on delete', async () => {
@@ -265,11 +265,11 @@ describe('StandardField', () => {
                     <StandardField
                         element={{
                             ...mockFormElementMultipleInput,
-                            values: [{...mockFormElementMultipleInput.values[0], id_value: idValue}]
+                            values: [{...mockFormElementMultipleInput.values[0], id_value: idValue}],
                         }}
                         {...baseProps}
                     />
-                </AntForm>
+                </AntForm>,
             );
 
             const deleteButtons = screen.getAllByTitle('record_edition.delete_value');
@@ -277,17 +277,17 @@ describe('StandardField', () => {
             await userEvent.click(screen.getAllByTitle('record_edition.delete_value')[0]);
             expect(mockHandleDelete).toHaveBeenCalledWith(
                 {
-                    id_value: idValue
+                    id_value: idValue,
                 },
-                mockFormElementMultipleInput.attribute.id
+                mockFormElementMultipleInput.attribute.id,
             );
         });
 
         test('Should call onValueDelete on submitting an empty value', async () => {
             const initialValue = {
                 [mockFormElementInput.attribute.id]: [
-                    (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload
-                ]
+                    (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload,
+                ],
             };
 
             render(
@@ -295,11 +295,11 @@ describe('StandardField', () => {
                     <StandardField
                         element={{
                             ...mockFormElementMultipleInput,
-                            values: [{id_value: idValue}]
+                            values: [{id_value: idValue}],
                         }}
                         {...baseProps}
                     />
-                </AntForm>
+                </AntForm>,
             );
 
             const textInput = screen.getByRole('textbox');
@@ -308,9 +308,9 @@ describe('StandardField', () => {
 
             expect(mockHandleDelete).toHaveBeenCalledWith(
                 {
-                    id_value: idValue
+                    id_value: idValue,
                 },
-                mockFormElementMultipleInput.attribute.id
+                mockFormElementMultipleInput.attribute.id,
             );
         });
 
@@ -319,7 +319,7 @@ describe('StandardField', () => {
                 const idValue2 = 'idValue2';
                 const backendValues = [
                     {...mockFormElementMultipleInput.values[0], id_value: idValue},
-                    {...mockFormElementMultipleInput.values[0], id_value: idValue2}
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue2},
                 ];
 
                 render(
@@ -327,11 +327,11 @@ describe('StandardField', () => {
                         <StandardField
                             element={{
                                 ...mockFormElementMultipleInput,
-                                values: backendValues
+                                values: backendValues,
                             }}
                             {...baseProps}
                         />
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const deleteAllButton = screen.getByRole('button', {name: 'record_edition.delete_all'});
@@ -346,7 +346,7 @@ describe('StandardField', () => {
                 const idValue2 = 'idValue2';
                 const backendValues = [
                     {...mockFormElementMultipleInput.values[0], id_value: idValue},
-                    {...mockFormElementMultipleInput.values[0], id_value: idValue2}
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue2},
                 ];
 
                 render(
@@ -354,11 +354,11 @@ describe('StandardField', () => {
                         <StandardField
                             element={{
                                 ...mockFormElementMultipleInput,
-                                values: backendValues
+                                values: backendValues,
                             }}
                             {...baseProps}
                         />
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const deleteAllButton = screen.getByRole('button', {name: 'record_edition.delete_all'});
@@ -369,7 +369,7 @@ describe('StandardField', () => {
                 expect(mockHandleMultipleValues).toHaveBeenCalledWith(
                     mockFormElementMultipleInput.attribute.id,
                     backendValues,
-                    null
+                    null,
                 );
             });
         });

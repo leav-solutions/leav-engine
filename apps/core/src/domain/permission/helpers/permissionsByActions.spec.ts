@@ -9,7 +9,7 @@ import {default as permissionsByActions} from './permissionsByActions';
 describe('getPermissionsByActions', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'permissionDomainTest'
+        queryId: 'permissionDomainTest',
     };
 
     test('Return permission for each actions', async () => {
@@ -21,14 +21,14 @@ describe('getPermissionsByActions', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: null
+                    [RecordPermissionsActions.DELETE_RECORD]: null,
                 },
-                permissionTreeTarget: 'test_lib/12345'
-            })
+                permissionTreeTarget: 'test_lib/12345',
+            }),
         };
 
         const permsByActionsHelper = permissionsByActions({
-            'core.infra.permission': mockPermRepo as IPermissionRepo
+            'core.infra.permission': mockPermRepo as IPermissionRepo,
         });
 
         const perms = await permsByActionsHelper.getPermissionsByActions({
@@ -37,20 +37,20 @@ describe('getPermissionsByActions', () => {
             actions: [
                 RecordPermissionsActions.ACCESS_RECORD,
                 RecordPermissionsActions.EDIT_RECORD,
-                RecordPermissionsActions.DELETE_RECORD
+                RecordPermissionsActions.DELETE_RECORD,
             ],
             usersGroupNodeId: '12345',
             permissionTreeTarget: {
                 nodeId: '123',
-                tree: 'categories'
+                tree: 'categories',
             },
-            ctx
+            ctx,
         });
 
         expect(perms).toEqual({
             [RecordPermissionsActions.ACCESS_RECORD]: true,
             [RecordPermissionsActions.EDIT_RECORD]: false,
-            [RecordPermissionsActions.DELETE_RECORD]: null
+            [RecordPermissionsActions.DELETE_RECORD]: null,
         });
     });
 
@@ -62,14 +62,14 @@ describe('getPermissionsByActions', () => {
                 usersGroup: '12345',
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
-                permissionTreeTarget: 'test_lib/12345'
-            })
+                permissionTreeTarget: 'test_lib/12345',
+            }),
         };
 
         const permsByActionsHelper = permissionsByActions({
-            'core.infra.permission': mockPermRepo as IPermissionRepo
+            'core.infra.permission': mockPermRepo as IPermissionRepo,
         });
 
         const permEdit = await permsByActionsHelper.getPermissionsByActions({
@@ -78,30 +78,30 @@ describe('getPermissionsByActions', () => {
             actions: [
                 RecordPermissionsActions.ACCESS_RECORD,
                 RecordPermissionsActions.EDIT_RECORD,
-                RecordPermissionsActions.DELETE_RECORD
+                RecordPermissionsActions.DELETE_RECORD,
             ],
             usersGroupNodeId: '12345',
             permissionTreeTarget: {
                 nodeId: '123',
-                tree: 'categories'
+                tree: 'categories',
             },
-            ctx
+            ctx,
         });
 
         expect(permEdit).toEqual({
             [RecordPermissionsActions.ACCESS_RECORD]: true,
             [RecordPermissionsActions.EDIT_RECORD]: null,
-            [RecordPermissionsActions.DELETE_RECORD]: false
+            [RecordPermissionsActions.DELETE_RECORD]: false,
         });
     });
 
     test('Return null for each action if no permission defined', async () => {
         const mockPermRepo: Mockify<IPermissionRepo> = {
-            getPermissions: global.__mockPromise(null)
+            getPermissions: global.__mockPromise(null),
         };
 
         const permsByActionsHelper = permissionsByActions({
-            'core.infra.permission': mockPermRepo as IPermissionRepo
+            'core.infra.permission': mockPermRepo as IPermissionRepo,
         });
 
         const permEdit = await permsByActionsHelper.getPermissionsByActions({
@@ -110,20 +110,20 @@ describe('getPermissionsByActions', () => {
             actions: [
                 RecordPermissionsActions.ACCESS_RECORD,
                 RecordPermissionsActions.EDIT_RECORD,
-                RecordPermissionsActions.DELETE_RECORD
+                RecordPermissionsActions.DELETE_RECORD,
             ],
             usersGroupNodeId: '12345',
             permissionTreeTarget: {
                 nodeId: '123',
-                tree: 'categories'
+                tree: 'categories',
             },
-            ctx
+            ctx,
         });
 
         expect(permEdit).toEqual({
             [RecordPermissionsActions.ACCESS_RECORD]: null,
             [RecordPermissionsActions.EDIT_RECORD]: null,
-            [RecordPermissionsActions.DELETE_RECORD]: null
+            [RecordPermissionsActions.DELETE_RECORD]: null,
         });
     });
 });

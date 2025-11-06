@@ -22,9 +22,9 @@ function PermissionsTab({attribute, readonly}: IPermissionsTabProps): JSX.Elemen
             variables: {
                 attrData: {
                     id: attribute.id,
-                    permissions_conf: conf
-                }
-            }
+                    permissions_conf: conf,
+                },
+            },
         });
     };
 

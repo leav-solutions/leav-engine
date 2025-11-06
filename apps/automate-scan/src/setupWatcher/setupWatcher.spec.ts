@@ -7,7 +7,7 @@ import {start} from '../watch/watch';
 jest.mock('redis-typescript');
 
 jest.mock('../watch/watch', () => ({
-    start: jest.fn()
+    start: jest.fn(),
 }));
 
 jest.mock('../config', () => ({
@@ -15,17 +15,17 @@ jest.mock('../config', () => ({
         rootPath: '',
         redis: {
             host: 'test',
-            port: 1234
-        }
-    })
+            port: 1234,
+        },
+    }),
 }));
 
 jest.mock('./../redis/redis', () => ({
-    createClient: jest.fn()
+    createClient: jest.fn(),
 }));
 
 jest.mock('fs', () => ({
-    existsSync: jest.fn(() => true)
+    existsSync: jest.fn(() => true),
 }));
 
 describe('test init', () => {

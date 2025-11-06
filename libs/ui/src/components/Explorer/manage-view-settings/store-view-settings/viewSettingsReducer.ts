@@ -10,7 +10,7 @@ import {DefaultViewId} from './viewSettingsInitialState';
 import {isLinkAttribute} from '_ui/_utils/attributeType';
 import {
     conditionsByFormat,
-    getFirstConditionByFilterType
+    getFirstConditionByFilterType,
 } from '_ui/components/Filters/filter-items/filter-type/useConditionOptionsByType';
 import {
     isUIFilterLink,
@@ -20,7 +20,7 @@ import {
     isUIFilterValueList,
     type IUIFilterStandard,
     type IUIFilterTree,
-    type UIFilter
+    type UIFilter,
 } from '_ui/components/Filters';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
@@ -49,7 +49,7 @@ export const ViewSettingsActionTypes = {
     UPDATE_VIEWS: 'UPDATE_VIEWS',
     RENAME_VIEW: 'RENAME_VIEW',
     DELETE_VIEW: 'DELETE_VIEW',
-    LOAD_VIEW: 'LOAD_VIEW'
+    LOAD_VIEW: 'LOAD_VIEW',
 } as const;
 
 export interface IViewSettingsState {
@@ -213,26 +213,26 @@ type Reducer<
     PAYLOAD extends {
         type: keyof typeof ViewSettingsActionTypes;
         payload?: unknown;
-    } = {type: any; payload: 'no_payload'}
+    } = {type: any; payload: 'no_payload'},
 > = PAYLOAD['payload'] extends 'no_payload'
     ? (state: IViewSettingsState) => IViewSettingsState
     : (state: IViewSettingsState, payload: PAYLOAD['payload']) => IViewSettingsState;
 
 const changePageSize: Reducer<IViewSettingsActionChangePageSize> = (state, payload) => ({
     ...state,
-    pageSize: payload.pageSize
+    pageSize: payload.pageSize,
 });
 
 const addAttribute: Reducer<IViewSettingsActionAddAttribute> = (state, payload) => ({
     ...state,
     attributesIds: [...state.attributesIds, payload.attributeId],
-    viewModified: true
+    viewModified: true,
 });
 
 const removeAttribute: Reducer<IViewSettingsActionRemoveAttribute> = (state, payload) => ({
     ...state,
     attributesIds: state.attributesIds.filter(attributesId => attributesId !== payload.attributeId),
-    viewModified: true
+    viewModified: true,
 });
 
 const moveAttribute: Reducer<IViewSettingsActionMoveAttribute> = (state, payload) => {
@@ -243,37 +243,37 @@ const moveAttribute: Reducer<IViewSettingsActionMoveAttribute> = (state, payload
     return {
         ...state,
         attributesIds,
-        viewModified: true
+        viewModified: true,
     };
 };
 
 const resetAttributes: Reducer = state => ({
     ...state,
-    attributesIds: []
+    attributesIds: [],
 });
 
 const changeViewType: Reducer<IViewSettingsActionChangeViewType> = (state, payload) => ({
     ...state,
     viewType: payload.viewType,
-    viewModified: true
+    viewModified: true,
 });
 
 const addSort: Reducer<IViewSettingsActionAddSort> = (state, payload) => ({
     ...state,
     sort: [...state.sort, {field: payload.field, order: payload.order}],
-    viewModified: true
+    viewModified: true,
 });
 
 const removeSort: Reducer<IViewSettingsActionRemoveSort> = (state, payload) => ({
     ...state,
     sort: state.sort.filter(({field: attributeId}) => attributeId !== payload.field),
-    viewModified: true
+    viewModified: true,
 });
 
 const changeSortOrder: Reducer<IViewSettingsActionChangeSortOrder> = (state, payload) => ({
     ...state,
     sort: state.sort.map(sort => (sort.field === payload.field ? {...sort, order: payload.order} : sort)),
-    viewModified: true
+    viewModified: true,
 });
 
 const moveSort: Reducer<IViewSettingsActionMoveSort> = (state, payload) => {
@@ -283,31 +283,31 @@ const moveSort: Reducer<IViewSettingsActionMoveSort> = (state, payload) => {
     return {
         ...state,
         sort: attributesUsedToSort,
-        viewModified: true
+        viewModified: true,
     };
 };
 
 const changeFulltextSearch: Reducer<IViewSettingsActionChangeFulltextSearch> = (state, payload) => ({
     ...state,
-    fulltextSearch: payload.search
+    fulltextSearch: payload.search,
 });
 
 export const clearFulltextSearch: Reducer = state => ({
     ...state,
-    fulltextSearch: ''
+    fulltextSearch: '',
 });
 
 const reset: Reducer<IViewSettingsActionReset> = (_, payload) => payload;
 
 const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, payload) => ({
     ...state,
-    massSelection: payload
+    massSelection: payload,
 });
 
 const restoreInitialViewSettings: Reducer = state => ({
     ...state,
     ...state.initialViewSettings,
-    viewModified: false
+    viewModified: false,
 });
 
 const updateViewListAndCurrentView: Reducer<IViewSettingsActionUpdateViewListAndCurrentView> = (state, payload) => ({
@@ -321,15 +321,15 @@ const updateViewListAndCurrentView: Reducer<IViewSettingsActionUpdateViewListAnd
         viewType: state.viewType,
         attributesIds: state.attributesIds,
         sort: state.sort,
-        pageSize: state.pageSize
+        pageSize: state.pageSize,
     },
-    viewModified: false
+    viewModified: false,
 });
 
 const renameView: Reducer<IViewSettingsActionRenameView> = (state, payload) => ({
     ...state,
     viewLabels: payload.label,
-    savedViews: state.savedViews.map(view => (view.id === payload.id ? {...view, label: payload?.label} : view))
+    savedViews: state.savedViews.map(view => (view.id === payload.id ? {...view, label: payload?.label} : view)),
 });
 
 const deleteView: Reducer<IViewSettingsActionDeleteView> = (state, payload) => {
@@ -344,17 +344,17 @@ const deleteView: Reducer<IViewSettingsActionDeleteView> = (state, payload) => {
             ...state.defaultViewSettings,
             viewId: DefaultViewId,
             viewLabels: {},
-            viewModified: false
+            viewModified: false,
         };
         return {
             ...state,
             ...defaultViewSettings,
-            savedViews: newSavedViews
+            savedViews: newSavedViews,
         };
     }
     return {
         ...state,
-        savedViews: newSavedViews
+        savedViews: newSavedViews,
     };
 };
 
@@ -365,9 +365,9 @@ const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
         viewType: payload.viewType,
         attributesIds: payload.attributesIds,
         sort: payload.sort,
-        pageSize: state.pageSize
+        pageSize: state.pageSize,
     },
-    viewModified: false
+    viewModified: false,
 });
 
 export type IViewSettingsAction =

@@ -24,7 +24,7 @@ function AddValueBtn({bordered = false, linkField = false, activeScope, ...props
                 color:
                     activeScope === VersionFieldScope.INHERITED
                         ? themeVars.inheritedValuesVersionColor
-                        : themeVars.defaultTextColor
+                        : themeVars.defaultTextColor,
             }}
         >
             <PlusOutlined />

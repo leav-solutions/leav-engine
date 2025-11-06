@@ -25,23 +25,23 @@ export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filte
     const onFilterChange: ComponentProps<typeof FilterDropdownContent>['onFilterChange'] = (filterData: UIFilter) =>
         dispatch({
             type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
-            payload: filterData
+            payload: filterData,
         });
 
     const _onResetFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
         dispatch({
             type: FiltersActionTypes.RESET_FILTER,
             payload: {
-                id: filter.id
-            }
+                id: filter.id,
+            },
         });
 
     const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
         dispatch({
             type: FiltersActionTypes.REMOVE_FILTER,
             payload: {
-                id: filter.id
-            }
+                id: filter.id,
+            },
         });
 
     return (

@@ -7,7 +7,7 @@ import {
     gqlCreateRecord,
     gqlGetAdminsGroupNodeId,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('TreePermissions', () => {
@@ -70,7 +70,7 @@ describe('TreePermissions', () => {
             expect(resGetTreePerm.data.data.permissions).toEqual([
                 {name: 'access_tree', allowed: true},
                 {name: 'detach', allowed: false},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: true},
             ]);
             expect(resGetTreePerm.data.errors).toBeUndefined();
 
@@ -93,7 +93,7 @@ describe('TreePermissions', () => {
             expect(resIsAllowed.data.data.isAllowed).toEqual([
                 {name: 'access_tree', allowed: true},
                 {name: 'detach', allowed: false},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: true},
             ]);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });
@@ -114,7 +114,7 @@ describe('TreePermissions', () => {
             nodeUserGroup2 = await gqlAddElemToTree(
                 'users_groups',
                 {id: userGroupId2, library: 'users_groups'},
-                nodeUserGroup1
+                nodeUserGroup1,
             );
 
             // User groups tree: [ROOT] -> group 1 -> group 2

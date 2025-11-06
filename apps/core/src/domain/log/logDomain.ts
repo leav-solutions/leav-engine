@@ -12,7 +12,7 @@ import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDo
 export interface ILogDomain {
     getLogs: (
         params: {filters?: ILogFilters; sort?: ILogSort; pagination?: ILogPagination},
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) => Promise<ILogResponse>;
 }
 
@@ -25,7 +25,7 @@ interface IDeps {
 export default function ({
     'core.infra.log': logRepo,
     'core.domain.permission': permissionDomain,
-    'core.domain.permission.record': recordPermissionDomain
+    'core.domain.permission.record': recordPermissionDomain,
 }: IDeps): ILogDomain {
     return {
         async getLogs({pagination, filters, sort}, ctx) {
@@ -36,7 +36,7 @@ export default function ({
                     recordId: filters.topic.record.id,
                     library: filters.topic.record.libraryId,
                     userId: ctx.userId,
-                    ctx
+                    ctx,
                 });
                 if (!canAccessRecord) {
                     throw new PermissionError(RecordPermissionsActions.ACCESS_RECORD);
@@ -53,6 +53,6 @@ export default function ({
 
             const defaultSort: ILogSort = {field: 'time', order: 'desc'};
             return logRepo.getLogs({filters, sort: sort ?? defaultSort, pagination}, ctx);
-        }
+        },
     };
 }

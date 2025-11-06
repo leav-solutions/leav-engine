@@ -21,12 +21,12 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     consume: jest.fn(),
     publish: jest.fn(),
     waitForConfirms: jest.fn(),
-    prefetch: jest.fn()
+    prefetch: jest.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
 };
 
 const depsBase: ToAny<ITasksManagerDomainDeps> = {
@@ -37,7 +37,7 @@ const depsBase: ToAny<ITasksManagerDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.utils.logger': jest.fn(),
     'core.utils': jest.fn(),
-    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext)
+    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
 };
 
 describe('Tasks Manager', () => {
@@ -52,12 +52,12 @@ describe('Tasks Manager', () => {
             restartWorker: false,
             queues: {
                 execOrders: 'tasks_exec_orders.test',
-                cancelOrders: 'tasks_cancel_orders.test'
+                cancelOrders: 'tasks_cancel_orders.test',
             },
             routingKeys: {
                 execOrders: 'tasks.exec.orders.test',
-                cancelOrders: 'tasks.cancel.orders.test'
-            }
+                cancelOrders: 'tasks.cancel.orders.test',
+            },
         },
         defaultUserId: '1',
         amqp: {
@@ -67,28 +67,28 @@ describe('Tasks Manager', () => {
                 hostname: 'localhost',
                 username: 'user',
                 password: 'user',
-                port: 1234
+                port: 1234,
             },
-            type: 'direct'
+            type: 'direct',
         },
-        server: {basePath: '/server-base'} as IServer
+        server: {basePath: '/server-base'} as IServer,
     } satisfies Mockify<IConfig>;
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendDatabaseEvent: global.__mockPromise(),
-        sendPubSubEvent: global.__mockPromise()
+        sendPubSubEvent: global.__mockPromise(),
     };
 
     test('Create task', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
-            createTask: global.__mockPromise({})
+            createTask: global.__mockPromise({}),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
+            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
         });
 
         await tm.createTask(mockTask, mockCtx);
@@ -100,14 +100,14 @@ describe('Tasks Manager', () => {
     test('Delete task', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            deleteTask: global.__mockPromise()
+            deleteTask: global.__mockPromise(),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
+            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
         });
 
         await tm.deleteTasks([mockTask], mockCtx);
@@ -118,14 +118,14 @@ describe('Tasks Manager', () => {
     test('Archive task', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            updateTask: global.__mockPromise()
+            updateTask: global.__mockPromise(),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
+            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
         });
 
         await tm.deleteTasks([{...mockTask, archive: true}], mockCtx);
@@ -137,11 +137,11 @@ describe('Tasks Manager', () => {
     test('Cancel task', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            updateTask: global.__mockPromise()
+            updateTask: global.__mockPromise(),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000))
+            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -149,7 +149,7 @@ describe('Tasks Manager', () => {
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         await tm.cancelTask(mockTask, mockCtx);
@@ -160,13 +160,13 @@ describe('Tasks Manager', () => {
 
     test('Get tasks', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
-            getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]})
+            getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.task': mockTaskRepo as ITaskRepo
+            'core.infra.task': mockTaskRepo as ITaskRepo,
         });
 
         await tm.getTasks({params: {}, ctx: mockCtx});
@@ -181,16 +181,16 @@ describe('Tasks Manager', () => {
                 list: [
                     {
                         ...mockTask,
-                        link: {name: 'name', url: '/some/path'}
-                    }
-                ]
-            })
+                        link: {name: 'name', url: '/some/path'},
+                    },
+                ],
+            }),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.task': mockTaskRepo as ITaskRepo
+            'core.infra.task': mockTaskRepo as ITaskRepo,
         });
 
         const tasks = await tm.getTasks({params: {}, ctx: mockCtx});
@@ -205,9 +205,9 @@ describe('Tasks Manager', () => {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
+                channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn()
+            publish: jest.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
@@ -215,11 +215,11 @@ describe('Tasks Manager', () => {
             getTasksToExecute: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             getTasksToCancel: global.__mockPromise({totalCount: 0, list: []}),
             getTasksWithPendingCallbacks: global.__mockPromise({totalCount: 0, list: []}),
-            updateTask: global.__mockPromise()
+            updateTask: global.__mockPromise(),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000))
+            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -228,7 +228,7 @@ describe('Tasks Manager', () => {
             'core.infra.amqpService': mockAmqpService,
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
-            'core.utils': mockUtils
+            'core.utils': mockUtils,
         } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
@@ -242,8 +242,8 @@ describe('Tasks Manager', () => {
             {id: mockTask.id, status: TaskStatus.PENDING},
             {
                 userId: conf.defaultUserId,
-                queryId: 'TasksManagerDomain'
-            }
+                queryId: 'TasksManagerDomain',
+            },
         );
 
         expect(mockEventsManager.sendPubSubEvent).toBeCalled();
@@ -259,19 +259,19 @@ describe('Tasks Manager', () => {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
+                channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn()
+            publish: jest.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasksToExecute: global.__mockPromise({totalCount: 0, list: []}),
             getTasksToCancel: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            getTasksWithPendingCallbacks: global.__mockPromise({totalCount: 0, list: []})
+            getTasksWithPendingCallbacks: global.__mockPromise({totalCount: 0, list: []}),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000))
+            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -280,7 +280,7 @@ describe('Tasks Manager', () => {
             'core.infra.amqpService': mockAmqpService,
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
-            'core.utils': mockUtils
+            'core.utils': mockUtils,
         } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
@@ -302,9 +302,9 @@ describe('Tasks Manager', () => {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
+                channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn()
+            publish: jest.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
@@ -313,13 +313,13 @@ describe('Tasks Manager', () => {
             getTasksToCancel: global.__mockPromise({totalCount: 0, list: []}),
             getTasksWithPendingCallbacks: global.__mockPromise({
                 totalCount: 1,
-                list: [mockTask]
+                list: [mockTask],
             }),
-            updateTask: global.__mockPromise()
+            updateTask: global.__mockPromise(),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000))
+            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -328,7 +328,7 @@ describe('Tasks Manager', () => {
             'core.infra.amqpService': mockAmqpService,
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
-            'core.utils': mockUtils
+            'core.utils': mockUtils,
         } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
@@ -342,8 +342,8 @@ describe('Tasks Manager', () => {
             {id: mockTask.id, callbacks: [{...mockTask.callbacks?.[0], status: TaskCallbackStatus.RUNNING}]},
             {
                 userId: conf.defaultUserId,
-                queryId: 'TasksManagerDomain'
-            }
+                queryId: 'TasksManagerDomain',
+            },
         );
 
         clearInterval(Number(timerId));
@@ -354,15 +354,15 @@ describe('Tasks Manager', () => {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
+                channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn()
+            publish: jest.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService
+            'core.infra.amqpService': mockAmqpService,
         } as ToAny<ITasksManagerDomainDeps>);
 
         await tm.initWorker();
@@ -371,12 +371,12 @@ describe('Tasks Manager', () => {
         expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(2);
         expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
             1,
-            conf.tasksManager.queues.execOrders
+            conf.tasksManager.queues.execOrders,
         );
         expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
             2,
             expect.stringMatching(conf.tasksManager.queues.cancelOrders),
-            {autoDelete: true, durable: false, exclusive: true}
+            {autoDelete: true, durable: false, exclusive: true},
         );
         expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
     });
@@ -384,52 +384,52 @@ describe('Tasks Manager', () => {
     test('Update progress', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            updateTask: global.__mockPromise()
+            updateTask: global.__mockPromise(),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
+            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
         });
 
         await tm.updateProgress(
             mockTask.id,
             {percent: 55, description: {fr: 'description', en: 'description'}},
-            mockCtx
+            mockCtx,
         );
 
         expect(mockTaskRepo.getTasks).toHaveBeenCalledTimes(1);
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, progress: {percent: 55, description: {fr: 'description', en: 'description'}}},
-            mockCtx
+            mockCtx,
         );
         expect(mockEventsManager.sendPubSubEvent).toHaveBeenCalledTimes(1);
 
         await tm.updateProgress(
             mockTask.id,
             {percent: 100, description: {fr: 'description', en: 'description'}},
-            mockCtx
+            mockCtx,
         );
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, progress: {percent: 99, description: {fr: 'description', en: 'description'}}},
-            mockCtx
+            mockCtx,
         );
     });
 
     test('Set link', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            updateTask: global.__mockPromise()
+            updateTask: global.__mockPromise(),
         };
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
+            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
         });
 
         await tm.setLink(mockTask.id, {name: 'name', url: 'url'}, mockCtx);

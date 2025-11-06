@@ -27,6 +27,6 @@ export function setupLogger(config: IConfig) {
         : undefined;
 
     configureLogger({
-        onErrorLog
+        onErrorLog,
     });
 }

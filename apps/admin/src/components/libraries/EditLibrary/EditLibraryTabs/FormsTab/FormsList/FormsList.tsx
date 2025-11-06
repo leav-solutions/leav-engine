@@ -31,7 +31,7 @@ function FormsList({
     onFiltersChange,
     onCreate,
     onRowClick,
-    onDelete
+    onDelete,
 }: IFormsListProps): JSX.Element {
     const {lang: availableLanguages} = useLang();
     const {t} = useTranslation();

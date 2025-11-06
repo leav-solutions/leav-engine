@@ -48,7 +48,7 @@ export enum CoreMode {
     TASKS_MANAGER_MASTER = 'tasksManager:master',
     TASKS_MANAGER_WORKER = 'tasksManager:worker',
     LOGS_COLLECTOR = 'logsCollector',
-    CLI = 'cli' // default
+    CLI = 'cli', // default
 }
 
 export interface IServer {

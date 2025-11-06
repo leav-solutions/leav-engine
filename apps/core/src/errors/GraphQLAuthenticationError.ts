@@ -13,11 +13,11 @@ export default class GraphQLAuthenticationError extends GraphQLError {
         positions?: Maybe<readonly number[]>,
         path?: Maybe<ReadonlyArray<string | number>>,
         originalError?: Maybe<Error>,
-        extensions?: Maybe<GraphQLErrorExtensions>
+        extensions?: Maybe<GraphQLErrorExtensions>,
     ) {
         super(message, nodes, source, positions, path, originalError, {
             ...extensions,
-            code: 'UNAUTHENTICATED'
+            code: 'UNAUTHENTICATED',
         });
     }
 }

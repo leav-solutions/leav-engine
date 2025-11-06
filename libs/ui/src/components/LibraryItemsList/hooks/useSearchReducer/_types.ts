@@ -10,7 +10,7 @@ import {
     type IFilter,
     type ISearchSelection,
     type SearchMode,
-    type SidebarContentType
+    type SidebarContentType,
 } from '_ui/types/search';
 import {type IValueVersion} from '_ui/types/values';
 import {type IView, type IViewDisplay} from '_ui/types/views';
@@ -18,7 +18,7 @@ import {type PermissionsActions, type SortOrder} from '_ui/_gqlTypes';
 import {type GraphQLError, type GraphQLErrorExtensions} from 'graphql';
 import {
     type ILibraryDetailExtended,
-    type ILibraryDetailExtendedLinkedTree
+    type ILibraryDetailExtendedLinkedTree,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 
 export type IRecordPreview = {

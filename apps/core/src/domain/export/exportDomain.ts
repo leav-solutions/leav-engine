@@ -41,7 +41,7 @@ export interface IExportDomain {
     exportData(
         mapping: IExportMapping,
         elements: Array<{[libraryId: string]: string}>,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<Array<{[key: string]: any}>>;
 }
 
@@ -79,17 +79,17 @@ export default function ({
     'core.domain.notification': notificationDomain,
     'core.domain.export.exportProfile': exportProfileDomain,
     'core.utils': utils,
-    translator
+    translator,
 }: IExportDomainDeps): IExportDomain {
     const _getFormattedValues = async (
         attribute: IAttribute,
         values: IValue[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IValue[]> => {
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
                 ...v,
-                payload: v.payload?.record
+                payload: v.payload?.record,
             }));
         }
 
@@ -101,7 +101,7 @@ export default function ({
             for (const [i, v] of values.entries()) {
                 const recordIdentity = await recordDomain.getRecordIdentity(
                     {id: v.payload.id, library: attribute.linked_library || v.payload.library},
-                    ctx
+                    ctx,
                 );
 
                 values[i].payload = (await recordIdentity.getLabel?.()) || v.payload.id;
@@ -115,13 +115,13 @@ export default function ({
         record: IRecord,
         attribute: IAttribute,
         asRecord: boolean,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IRecord | IRecord[] | IValue | IValue[] | null> => {
         let res = await recordDomain.getRecordFieldValue({
             library: record.library,
             record,
             attributeId: attribute.id,
-            ctx
+            ctx,
         });
 
         if (res !== null && asRecord) {
@@ -141,7 +141,7 @@ export default function ({
     const _getRecFieldValue = async (
         elements: Array<IValue | IValue[]> | Array<IRecord | IRecord[]>,
         attributes: string[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<Array<IValue | IValue[]>> => {
         if (!attributes.length) {
             return elements;
@@ -181,7 +181,7 @@ export default function ({
         recordIds: string[],
         nestedAttribute: string[],
         ctx: IQueryInfos,
-        rawValue: boolean = false
+        rawValue: boolean = false,
     ): Promise<string> => {
         const attributeProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
 
@@ -191,9 +191,9 @@ export default function ({
                     library: libraryId,
                     record: {id: recordId},
                     attributeId: nestedAttribute[0],
-                    ctx
-                })
-            )
+                    ctx,
+                }),
+            ),
         );
 
         let values = recordsFieldValues.flatMap(recordFieldValues =>
@@ -201,8 +201,8 @@ export default function ({
                 recordFieldValue =>
                     (rawValue && 'raw_payload' in recordFieldValue
                         ? recordFieldValue.raw_payload
-                        : recordFieldValue.payload) ?? ''
-            )
+                        : recordFieldValue.payload) ?? '',
+            ),
         );
 
         if (utils.isLinkAttribute(attributeProps)) {
@@ -211,17 +211,17 @@ export default function ({
                 values.map(({id}) => id),
                 nestedAttribute.slice(1),
                 ctx,
-                rawValue
+                rawValue,
             );
         } else if (nestedAttribute.length > 1) {
             if (attributeProps.format === AttributeFormats.EXTENDED) {
                 values = values.map(value =>
-                    nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value))
+                    nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value)),
                 );
             } else {
                 throw new LeavError(
                     ErrorTypes.VALIDATION_ERROR,
-                    `Attribute "${attributeProps.id}" is not an extended or a link attribute, cannot access sub-attributes`
+                    `Attribute "${attributeProps.id}" is not an extended or a link attribute, cannot access sub-attributes`,
                 );
             }
         } else if (attributeProps.format === AttributeFormats.DATE_RANGE) {
@@ -234,7 +234,7 @@ export default function ({
     const _extractAttributesAndColumnsFromProfile = async (
         profile: string | undefined,
         library: string,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<{attributes: string[]; columnLabels: string[]}> => {
         const columns = await exportProfileDomain.getColumnsFromProfileConfig(profile, library, ctx);
         const attributes = columns?.map(c => c.attribute);
@@ -242,7 +242,7 @@ export default function ({
 
         if (!attributes || attributes.length === 0) {
             throw new ValidationError({
-                msg: `No attributes provided for exportExcel function for library ${library}`
+                msg: `No attributes provided for exportExcel function for library ${library}`,
             });
         }
 
@@ -253,7 +253,7 @@ export default function ({
         async exportData(
             mapping: IExportMapping,
             recordsToExport: Array<{[libraryId: string]: string}>,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<Array<{[key: string]: any}>> {
             const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
 
@@ -265,7 +265,7 @@ export default function ({
                         [recordId],
                         nestedAttributes,
                         ctx,
-                        mapping[key].rawValue
+                        mapping[key].rawValue,
                     );
                     return set(await acc, key, value);
                 }, Promise.resolve({}));
@@ -276,11 +276,11 @@ export default function ({
                         async (acc, [libraryId, recordId]) => ({
                             ...(await acc),
                             ...(mappingKeysByLibrary[libraryId] &&
-                                (await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId)))
+                                (await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId))),
                         }),
-                        Promise.resolve({})
-                    )
-                )
+                        Promise.resolve({}),
+                    ),
+                ),
             );
         },
 
@@ -306,16 +306,16 @@ export default function ({
                             moduleName: 'domain',
                             subModuleName: 'export',
                             name: 'exportExcel',
-                            args: params
+                            args: params,
                         },
                         role: {
-                            type: TaskType.EXPORT
+                            type: TaskType.EXPORT,
                         },
                         startAt: Math.floor(Date.now() / 1000),
                         priority: TaskPriority.MEDIUM,
-                        ...(!!task?.callbacks && {callbacks: task.callbacks})
+                        ...(!!task?.callbacks && {callbacks: task.callbacks}),
                     },
-                    ctx
+                    ctx,
                 );
 
                 return newTaskId;
@@ -331,17 +331,17 @@ export default function ({
                         metadata: {
                             params: {
                                 attributes,
-                                filters
-                            }
-                        }
+                                filters,
+                            },
+                        },
                     },
-                    ctx
+                    ctx,
                 );
 
                 const progress = {
                     recordsNb: 0,
                     position: 0,
-                    percent: 0
+                    percent: 0,
                 };
 
                 const _updateTaskProgress = async (increasePosition: number, translationKey?: string) => {
@@ -349,9 +349,9 @@ export default function ({
                     progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
                         position: {
                             index: progress.position,
-                            total: progress.recordsNb
+                            total: progress.recordsNb,
                         },
-                        ...(translationKey && {translationKey})
+                        ...(translationKey && {translationKey}),
                     });
                 };
 
@@ -365,16 +365,16 @@ export default function ({
                 const libraryAttributesIds = libraryAttributes.map(a => a.id);
                 // Filter out empty/null attributes before validation
                 const invalidAttributes = firstAttributes.filter(
-                    a => a && a !== '' && !libraryAttributesIds.includes(a)
+                    a => a && a !== '' && !libraryAttributesIds.includes(a),
                 );
                 if (invalidAttributes.length) {
                     throw utils.generateExplicitValidationError(
                         'attributes',
                         {
                             msg: Errors.INVALID_ATTRIBUTES,
-                            vars: {attributes: invalidAttributes.join(', ')}
+                            vars: {attributes: invalidAttributes.join(', ')},
                         },
-                        ctx.lang
+                        ctx.lang,
                     );
                 }
 
@@ -390,7 +390,7 @@ export default function ({
                 // Set page
                 const libAttributes = await libraryDomain.getLibraryProperties(library, ctx);
                 const data = workbook.addWorksheet(
-                    libAttributes?.label[ctx?.lang] || libAttributes?.label[config.lang.default] || library
+                    libAttributes?.label[ctx?.lang] || libAttributes?.label[config.lang.default] || library,
                 );
 
                 // Set columns
@@ -435,12 +435,12 @@ export default function ({
                         // get record label or id if last attribute of full path is a link or tree type
                         const attributeProps = await attributeDomain.getAttributeProperties({
                             id: attr[attr.length - 1],
-                            ctx
+                            ctx,
                         });
                         const value = await _getFormattedValues(
                             attributeProps,
                             fieldValues.flat(Infinity) as IValue[],
-                            ctx
+                            ctx,
                         );
 
                         // set value(s) and concat them if there are several
@@ -466,17 +466,17 @@ export default function ({
                     {
                         action: EventAction.EXPORT_END,
                         topic: {
-                            library
+                            library,
                         },
                         metadata: {
                             file: url,
                             params: {
                                 attributes,
-                                filters
-                            }
-                        }
+                                filters,
+                            },
+                        },
                     },
-                    ctx
+                    ctx,
                 );
 
                 logger.debug(`Export of library "${library}" completed, file available at: ${url}`);
@@ -489,23 +489,23 @@ export default function ({
                             message: translator.t('notifications.export_complete_message', {
                                 lng: ctx.lang,
                                 interpolation: {escapeValue: false},
-                                date: new Date().toLocaleString(ctx.lang)
+                                date: new Date().toLocaleString(ctx.lang),
                             }),
                             attachments: [
                                 {
                                     label: filename,
-                                    url: config.server.publicUrl + url
-                                }
-                            ]
+                                    url: config.server.publicUrl + url,
+                                },
+                            ],
                         },
                         recipients: {
                             userIds: [ctx.userId],
-                            groupIds: []
+                            groupIds: [],
                         },
                         emitterUserId: ctx.userId,
-                        priority: 'normal'
+                        priority: 'normal',
                     },
-                    ctx
+                    ctx,
                 );
 
                 return task.id;
@@ -519,21 +519,21 @@ export default function ({
                             message: translator.t('notifications.export_error_message', {
                                 lng: ctx.lang,
                                 interpolation: {escapeValue: false},
-                                date: new Date().toLocaleString(ctx.lang)
-                            })
+                                date: new Date().toLocaleString(ctx.lang),
+                            }),
                         },
                         recipients: {
                             userIds: [ctx.userId],
-                            groupIds: []
+                            groupIds: [],
                         },
                         emitterUserId: ctx.userId,
-                        priority: 'normal'
+                        priority: 'normal',
                     },
-                    ctx
+                    ctx,
                 );
 
                 throw error;
             }
-        }
+        },
     };
 }

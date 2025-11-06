@@ -75,7 +75,7 @@ export default function ({
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
-    'core.depsManager': depsManager = null
+    'core.depsManager': depsManager = null,
 }: IDeps = {}): IServer {
     const _checkAuth = async (req, res, next) => {
         try {
@@ -103,7 +103,7 @@ export default function ({
             const httpServer = createServer(app);
             const wsServer = new WebSocketServer({
                 server: httpServer,
-                path: `${config.server.basePath}/graphql`
+                path: `${config.server.basePath}/graphql`,
             });
 
             try {
@@ -117,8 +117,8 @@ export default function ({
                 baseRouter.use(cookieParser());
                 baseRouter.use(
                     compression({
-                        threshold: 50 * 1024 // Files under 50kb won't be compressed
-                    })
+                        threshold: 50 * 1024, // Files under 50kb won't be compressed
+                    }),
                 );
 
                 // CORS - see https://expressjs.com/en/resources/middleware/cors.html#configuring-cors-w-dynamic-origin
@@ -127,8 +127,8 @@ export default function ({
                         origin: true, // Allows the request origin in Access-Control-Allow-Origin
                         credentials: true, // Allows client to send cookies in cross-origin request
                         methods: 'POST, GET, PUT, DELETE, OPTIONS',
-                        allowedHeaders: 'Origin, Content-Type, Authorization'
-                    })
+                        allowedHeaders: 'Origin, Content-Type, Authorization',
+                    }),
                 );
 
                 // Initialize routes
@@ -147,7 +147,7 @@ export default function ({
                     async (err, req, res, next) => {
                         const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
                         res.status(404).type('html').send(htmlContent);
-                    }
+                    },
                 ]);
                 baseRouter.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
                 baseRouter.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
@@ -163,7 +163,7 @@ export default function ({
                             | Error,
                         req: IRequestWithContext<unknown>,
                         res: Response<unknown>,
-                        next?: NextFunction
+                        next?: NextFunction,
                     ) => {
                         if (!err) {
                             return next ? next() : res.end();
@@ -184,7 +184,7 @@ export default function ({
                         logger.error(`Server http error [${req.ctx?.queryId ?? 'unknown_query'}] ${err.stack}`);
 
                         res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
-                    }
+                    },
                 );
 
                 const schema = await graphqlApp.getSchema();
@@ -197,7 +197,7 @@ export default function ({
                             // Recreate headers object from rawHeaders array
                             const headers: Record<string, string> = ctx.extra.request.rawHeaders.reduce(
                                 (prev, curr, i, arr) => (!(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev),
-                                {}
+                                {},
                             );
 
                             const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
@@ -209,19 +209,19 @@ export default function ({
                                     cookies: cookieIncluded
                                         ? {
                                               [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
-                                                  headers.Cookie
-                                              )
+                                                  headers.Cookie,
+                                              ),
                                           }
                                         : null,
-                                    headers
+                                    headers,
                                 },
-                                null
+                                null,
                             );
 
                             const context: IQueryInfos = {
                                 ...initQueryContext(),
                                 userId: payload.userId,
-                                groupsId: payload.groupsId
+                                groupsId: payload.groupsId,
                             };
 
                             // Store context in extra to retrieve it later on
@@ -234,7 +234,7 @@ export default function ({
                     },
                     context: async ctx =>
                         // Extract relevant context from extra
-                        ctx.extra.leavCtx
+                        ctx.extra.leavCtx,
                 };
 
                 const graphqlWsServer = graphqlWS.useServer(wsServerOptions, wsServer);
@@ -255,7 +255,7 @@ export default function ({
                                         ...(contextValue.errors ?? []).map(err => {
                                             const gqlErr = new GraphQLError(err.message, {originalError: err});
                                             return handleGraphqlError(gqlErr, contextValue);
-                                        })
+                                        }),
                                     ];
                                 }
 
@@ -270,11 +270,11 @@ export default function ({
                                                     ...q,
                                                     // Transform callers hash map into an array, sort callers by count
                                                     callers: Object.values(q.callers).sort(
-                                                        (a: any, b: any) => b.count - a.count
-                                                    )
+                                                        (a: any, b: any) => b.count - a.count,
+                                                    ),
                                                 }))
-                                                .sort((a: any, b: any) => b.count - a.count)
-                                        }
+                                                .sort((a: any, b: any) => b.count - a.count),
+                                        },
                                     };
                                 }
                             },
@@ -288,7 +288,7 @@ export default function ({
                                         const formattedError = handleGraphqlError(e, contextValue);
                                         e = Object.assign(e, {
                                             extensions: {...e.extensions, ...formattedError.extensions},
-                                            message: formattedError.message
+                                            message: formattedError.message,
                                         });
 
                                         // Hide stacktrace when not in debug mode
@@ -301,9 +301,9 @@ export default function ({
                                 }
 
                                 return;
-                            }
+                            },
                         };
-                    }
+                    },
                 };
 
                 const plugins = [
@@ -314,11 +314,11 @@ export default function ({
                                 async drainServer() {
                                     // This will turn off all listeners to wsServer and actually close the wsServer
                                     await graphqlWsServer.dispose();
-                                }
+                                },
                             };
-                        }
+                        },
                     },
-                    responseFormattingPlugin
+                    responseFormattingPlugin,
                 ];
 
                 const server = new ApolloServer<IQueryInfos>({
@@ -327,7 +327,7 @@ export default function ({
                     introspection: config.server.allowIntrospection,
                     schema,
                     plugins,
-                    csrfPrevention: true
+                    csrfPrevention: true,
                 });
 
                 await server.start();
@@ -343,7 +343,7 @@ export default function ({
                                 const ctx: IQueryInfos = {
                                     ...initQueryContext(req),
                                     userId: payload.userId,
-                                    groupsId: payload.groupsId
+                                    groupsId: payload.groupsId,
                                 };
 
                                 return ctx;
@@ -351,12 +351,12 @@ export default function ({
                                 throw new GraphQLError(e.message ?? 'You must be logged in', {
                                     extensions: {
                                         code: 'UNAUTHENTICATED',
-                                        http: {status: 401}
-                                    }
+                                        http: {status: 401},
+                                    },
                                 });
                             }
-                        }
-                    })
+                        },
+                    }),
                 );
 
                 applicationApp.registerRoute(baseRouter);
@@ -371,6 +371,6 @@ export default function ({
         },
         async initConsumers() {
             await coreApp.initPubSubEventsConsumer();
-        }
+        },
     };
 }

@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function InfosTab() {
             return <div>InfosTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function PermissionsTab() {
             return <div>PermissionsTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -29,19 +29,19 @@ jest.mock(
     () =>
         function SettingsTab() {
             return <div>SettingsTab</div>;
-        }
+        },
 );
 
 jest.mock('react-router-v5', () => ({
     ...jest.requireActual('react-router-v5'),
-    useLocation: () => ({hash: ''})
+    useLocation: () => ({hash: ''}),
 }));
 
 describe('EditApplication', () => {
     type MatchType = match<IEditApplicationMatchParams>;
     test('Edit existing app', async () => {
         const mockMatch: Mockify<MatchType> = {
-            params: {id: mockApplicationDetails.id}
+            params: {id: mockApplicationDetails.id},
         };
 
         const mocks = [
@@ -49,24 +49,24 @@ describe('EditApplication', () => {
                 request: {
                     query: getApplicationByIdQuery,
                     variables: {
-                        id: mockApplicationDetails.id
-                    }
+                        id: mockApplicationDetails.id,
+                    },
                 },
                 result: {
                     data: {
                         applications: {
-                            list: [mockApplicationDetails]
-                        }
-                    }
-                }
-            }
+                            list: [mockApplicationDetails],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<EditApplication match={mockMatch as MatchType} />, {
             apolloMocks: mocks,
             routerProps: {
-                initialEntries: [`/applications/edit/${mockApplicationDetails.id}`]
-            }
+                initialEntries: [`/applications/edit/${mockApplicationDetails.id}`],
+            },
         });
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
@@ -79,7 +79,7 @@ describe('EditApplication', () => {
 
     test('Edit new app', async () => {
         const mockMatch: Mockify<MatchType> = {
-            params: {id: null}
+            params: {id: null},
         };
 
         render(<EditApplication match={mockMatch as MatchType} />);
@@ -91,7 +91,7 @@ describe('EditApplication', () => {
 
     test('Display a link to open app', async () => {
         const mockMatch: Mockify<MatchType> = {
-            params: {id: mockApplicationDetails.id}
+            params: {id: mockApplicationDetails.id},
         };
 
         const mocks = [
@@ -99,17 +99,17 @@ describe('EditApplication', () => {
                 request: {
                     query: getApplicationByIdQuery,
                     variables: {
-                        id: mockApplicationDetails.id
-                    }
+                        id: mockApplicationDetails.id,
+                    },
                 },
                 result: {
                     data: {
                         applications: {
-                            list: [mockApplicationDetails]
-                        }
-                    }
-                }
-            }
+                            list: [mockApplicationDetails],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<EditApplication match={mockMatch as MatchType} />, {apolloMocks: mocks});

@@ -14,7 +14,7 @@ jest.mock(
     () =>
         function TreeExplorerView() {
             return <div>TreeExplorerView</div>;
-        }
+        },
 );
 
 describe('EditTreeExplorer', () => {
@@ -25,8 +25,8 @@ describe('EditTreeExplorer', () => {
                     query: getTreeNodeChildrenQuery,
                     variables: {
                         treeId: 'test_tree',
-                        node: null
-                    }
+                        node: null,
+                    },
                 },
                 result: {
                     data: {
@@ -42,19 +42,19 @@ describe('EditTreeExplorer', () => {
                                     library: {
                                         __typename: 'Library',
                                         id: 'test_lib',
-                                        label: {fr: 'Test'}
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
+                                        label: {fr: 'Test'},
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
         ];
 
         render(<TreeExplorer tree={mockTree} />, {
             apolloMocks: mocks,
-            cacheSettings: {possibleTypes: {Record: ['UsersGroup']}}
+            cacheSettings: {possibleTypes: {Record: ['UsersGroup']}},
         });
 
         expect(screen.getByText('TreeExplorerView')).toBeInTheDocument();

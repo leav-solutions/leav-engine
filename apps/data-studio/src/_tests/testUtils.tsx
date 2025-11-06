@@ -39,32 +39,32 @@ const Providers = ({
     storeState,
     cacheSettings,
     currentApp,
-    globalSettings
+    globalSettings,
 }: PropsWithChildren<IProvidersProps>) => {
     const appContextData: IApplicationContext = {
         currentApp: currentApp ?? mockApplicationDetails,
         globalSettings: {
             name: 'My App',
             icon: null,
-            ...globalSettings
-        }
+            ...globalSettings,
+        },
     };
 
     const mockLang: ILangContext = {
         lang: ['fr'],
         availableLangs: ['en', 'fr'],
         defaultLang: 'fr',
-        setLang: jest.fn()
+        setLang: jest.fn(),
     };
 
     const mockUserContext: IUserContext = {
         userData: {
             userId: '123',
             userWhoAmI: {
-                ...mockRecord
-            }
+                ...mockRecord,
+            },
         },
-        setUserData: jest.fn()
+        setUserData: jest.fn(),
     };
 
     return (

@@ -101,13 +101,13 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
         await deleteView(view.id);
 
         const newOrder = (view.shared ? searchState.sharedViewsOrder : searchState.userViewsOrder).filter(
-            vId => vId !== view.id
+            vId => vId !== view.id,
         );
 
         await updateViewsOrder({
             key: (view.shared ? PREFIX_SHARED_VIEWS_ORDER_KEY : PREFIX_USER_VIEWS_ORDER_KEY) + searchState.library.id,
             value: newOrder,
-            global: false
+            global: false,
         });
 
         if (view.id === searchState.view.current.id) {
@@ -124,28 +124,28 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                 ...omit(view, ['id', 'owner']),
                 library: searchState.library.id,
                 label: {
-                    [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`
+                    [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`,
                 },
                 filters: getRequestFromFilters(view.filters),
                 display: {
                     size: ViewSizes.MEDIUM,
-                    type: ViewTypes.list
+                    type: ViewTypes.list,
                 },
                 valuesVersions: objectToNameValueArray(view.valuesVersions).map(version => ({
                     treeId: version.name,
-                    treeNode: version.value.id
+                    treeNode: version.value.id,
                 })),
-                shared: false
+                shared: false,
             };
 
             const newViewRes = await saveView({
-                view: newView
+                view: newView,
             });
 
             await updateViewsOrder({
                 key: PREFIX_USER_VIEWS_ORDER_KEY + newView.library,
                 value: [...searchState.userViewsOrder, newViewRes.data.saveView.id],
-                global: false
+                global: false,
             });
         } catch (e) {
             console.error(e);
@@ -198,7 +198,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                                 rows: ROWS_DESCRIPTION,
                                 expandable: true,
                                 onExpand: _onExpand,
-                                symbol: t('view.see-more')
+                                symbol: t('view.see-more'),
                             }}
                             style={{marginBottom: 0}}
                         >

@@ -15,7 +15,7 @@ export const mapperToItemActions = ({
     application,
     lang,
     navigate,
-    libraryId
+    libraryId,
 }: {
     actions: ItemActions;
     application: Application;
@@ -38,8 +38,8 @@ export const mapperToItemActions = ({
                     generatePath(RelativePaths.nextLevelPanel, {
                         recordId: item.itemId,
                         where: action.where,
-                        recordPanelId: application.libraries[libraryId].recordPanels[0].id
-                    })
-                )
+                        recordPanelId: application.libraries[libraryId].recordPanels[0].id,
+                    }),
+                ),
         };
     });

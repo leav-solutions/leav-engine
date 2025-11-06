@@ -24,8 +24,8 @@ const ForgotPassword = (): JSX.Element => {
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({
                     email,
-                    lang: i18n.language
-                })
+                    lang: i18n.language,
+                }),
             });
 
             if (response.status === 400) {

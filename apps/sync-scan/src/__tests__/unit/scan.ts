@@ -7,7 +7,7 @@ import {type IDbScanResult} from '_types/queries';
 
 export const mockDbSettings = {
     filesLibraryId: 'files',
-    directoriesLibraryId: 'directories'
+    directoriesLibraryId: 'directories',
 };
 
 export const mockDbResult: IDbScanResult = {
@@ -29,33 +29,33 @@ export const mockDbResult: IDbScanResult = {
                 previews_status: {
                     small: {
                         status: -1,
-                        message: 'wait for creation'
+                        message: 'wait for creation',
                     },
                     medium: {
                         status: -1,
-                        message: 'wait for creation'
+                        message: 'wait for creation',
                     },
                     big: {
                         status: -1,
-                        message: 'wait for creation'
+                        message: 'wait for creation',
                     },
                     pdf: {
                         status: -1,
-                        message: 'wait for creation'
-                    }
+                        message: 'wait for creation',
+                    },
                 },
                 previews: {
                     small: '',
                     medium: '',
                     big: '',
-                    pdf: ''
+                    pdf: '',
                 },
                 root_key: 'files1',
-                library: 'files'
+                library: 'files',
             },
-            children: []
-        }
-    ]
+            children: [],
+        },
+    ],
 };
 
 export const mockFsContent: FilesystemContent = [
@@ -82,7 +82,7 @@ export const mockFsContent: FilesystemContent = [
         type: 'directory',
         path: '.',
         level: 0,
-        trt: false
+        trt: false,
     },
     {
         dev: 16777220,
@@ -108,6 +108,6 @@ export const mockFsContent: FilesystemContent = [
         hash: 'd41d8cd98f00b204e9800998ecf8427e',
         path: 'dir',
         level: 1,
-        trt: false
-    }
+        trt: false,
+    },
 ];

@@ -23,7 +23,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
         module: 'skeleton-app',
         label: {fr: 'Mon application', en: 'My app'},
         description: {fr: 'Application métier', en: 'Business app'},
-        endpoint: 'skeleton-app'
+        endpoint: 'skeleton-app',
     };
 
     const appStudioApplication: MigrationApplicationToCreate = {
@@ -33,12 +33,12 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
         module: 'app-studio',
         label: {fr: 'À changer', en: 'REPLACE ME'},
         description: {fr: 'À changer', en: 'REPLACE ME'},
-        endpoint: 'app-studio'
+        endpoint: 'app-studio',
     };
 
     const _renameApplication = async (
         {from, to}: {from: MigrationApplicationToCreate; to: MigrationApplicationToCreate},
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) => {
         // Check if from app already exists
         const existingApp = await dbService.execute({
@@ -47,7 +47,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                     FILTER app._key == ${from._key}
                     RETURN app
             `,
-            ctx
+            ctx,
         });
 
         // If not, create to app
@@ -56,7 +56,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 query: aql`
                     INSERT ${to} INTO core_applications
                 `,
-                ctx
+                ctx,
             });
         } else {
             to.settings = existingApp[0].settings;
@@ -64,13 +64,13 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 query: aql`
                     INSERT ${to} INTO core_applications
                 `,
-                ctx
+                ctx,
             });
             await dbService.execute({
                 query: aql`
                     REMOVE ${existingApp[0]} INTO core_applications
                 `,
-                ctx
+                ctx,
             });
         }
     };
@@ -78,6 +78,6 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
     return {
         async run(ctx) {
             await _renameApplication({from: skeletonApplication, to: appStudioApplication}, ctx);
-        }
+        },
     };
 }

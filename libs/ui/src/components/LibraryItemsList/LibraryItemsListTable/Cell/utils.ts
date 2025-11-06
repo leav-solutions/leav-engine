@@ -37,7 +37,7 @@ const _getNotInheritedOrOverrideValues = (values: SimpleCellValues | LinkCellVal
 };
 
 export const getValuesToDisplayInCell = (
-    values: SimpleCellValues | LinkCellValues | TreeCellValues
+    values: SimpleCellValues | LinkCellValues | TreeCellValues,
 ): SimpleCellValues | LinkCellValues | TreeCellValues => {
     const notInheritedOrOverrideValues = _getNotInheritedOrOverrideValues(values);
 

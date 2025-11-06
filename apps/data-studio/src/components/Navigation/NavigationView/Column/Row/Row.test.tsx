@@ -22,11 +22,11 @@ describe('Cell', () => {
                 <Row
                     treeElement={{
                         ...mockTreeElement,
-                        permissions: {...mockTreeElement.permissions, access_tree: false}
+                        permissions: {...mockTreeElement.permissions, access_tree: false},
                     }}
                     depth={0}
                     isActive
-                />
+                />,
             );
         });
 
@@ -40,7 +40,7 @@ describe('Cell', () => {
                     treeElement={{...mockTreeElement, record: {...mockTreeElement.record, active: false}}}
                     depth={0}
                     isActive
-                />
+                />,
             );
         });
 

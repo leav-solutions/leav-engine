@@ -17,12 +17,12 @@ describe('Tabs', () => {
         const tabs: ITabSettings[] = [
             {
                 id: '12345',
-                label: {fr: 'test_tab'}
+                label: {fr: 'test_tab'},
             },
             {
                 id: '98765',
-                label: {fr: 'test_tab 2'}
-            }
+                label: {fr: 'test_tab 2'},
+            },
         ];
 
         const tabElementData = {
@@ -31,7 +31,7 @@ describe('Tabs', () => {
             type: FormElementTypes.layout,
             order: 0,
             settings: {},
-            uiElement: layoutElements[UIElementTypes.TABS]
+            uiElement: layoutElements[UIElementTypes.TABS],
         };
 
         const comp = shallow(<Tabs elementData={tabElementData} settings={{tabs}} />);

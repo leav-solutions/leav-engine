@@ -28,7 +28,7 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
     const {previousRecordId} = useGetPreviousPanelParams({
         currentRecordId: recordId,
         currentWhere: where,
-        currentRecordPanelId: recordPanelId
+        currentRecordPanelId: recordPanelId,
     });
 
     return (
@@ -45,16 +45,16 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
                         {
                             id: recordIdCreated,
                             library: {
-                                id: libraryId
-                            }
+                                id: libraryId,
+                            },
                         },
                         [
                             {
                                 attribute: (currentPanel as CreationFormPanel).attributeSource,
                                 idValue: null,
-                                value: previousRecordId
-                            }
-                        ]
+                                value: previousRecordId,
+                            },
+                        ],
                     );
                 }
                 navigate(RelativePaths.closeCurrentPanel, {relative: 'path'});

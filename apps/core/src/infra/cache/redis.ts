@@ -20,9 +20,9 @@ export async function initRedis({config}: IDeps): Promise<IRedis> {
         const client = redis.createClient({
             socket: {
                 host: config.redis.host,
-                port: config.redis.port
+                port: config.redis.port,
             },
-            database
+            database,
         });
 
         client.on('error', err => {
@@ -36,6 +36,6 @@ export async function initRedis({config}: IDeps): Promise<IRedis> {
 
     return {
         cache: await _newClient(config.redis.cacheDatabase),
-        session: await _newClient(config.redis.sessionDatabase)
+        session: await _newClient(config.redis.sessionDatabase),
     };
 }

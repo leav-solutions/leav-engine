@@ -30,7 +30,7 @@ export const startWatch = async () => {
             protocol: config.amqp.protocol,
             hostname: config.amqp.hostname,
             username: config.amqp.username,
-            password: config.amqp.password
+            password: config.amqp.password,
         };
 
         const exchange = config.amqp.exchange;
@@ -48,7 +48,7 @@ export const startWatch = async () => {
         const watcher = await start(config.rootPath, rootKey, watchParams, {
             channel,
             exchange,
-            routingKey
+            routingKey,
         });
 
         return watcher;
@@ -63,7 +63,7 @@ export const getChannel = async (
     exchange: string,
     queue: string,
     routingKey: string,
-    type: string
+    type: string,
 ) =>
     new Promise<Channel>(resolve =>
         amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
@@ -96,5 +96,5 @@ export const getChannel = async (
             }
 
             resolve(ch);
-        })
+        }),
     );

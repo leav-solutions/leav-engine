@@ -37,7 +37,7 @@ function ALCReserveCard({
     removeActionFromList,
     setCurrentIndex,
     connectionState,
-    colorTypeDictionnary
+    colorTypeDictionnary,
 }: IALCReserveCardProps): JSX.Element {
     const {t} = useTranslation();
     const container = useRef(null);
@@ -53,7 +53,7 @@ function ALCReserveCard({
             action,
             connectionState,
             colorTypeDictionnary,
-            width: internalWidth
+            width: internalWidth,
         },
         end(item: any, monitor) {
             if (setCurrentIndex) {
@@ -66,8 +66,8 @@ function ALCReserveCard({
             }
         },
         collect: monitor => ({
-            isDragging: !!monitor.isDragging()
-        })
+            isDragging: !!monitor.isDragging(),
+        }),
     });
 
     useEffect(() => {
@@ -105,7 +105,7 @@ function ALCReserveCard({
                                 position: 'absolute',
                                 right: '2px',
                                 top: '5px',
-                                fontSize: '0.8em'
+                                fontSize: '0.8em',
                             }}
                             circular
                             icon="add"
@@ -113,7 +113,7 @@ function ALCReserveCard({
                         />
                         <div
                             style={{
-                                textAlign: 'right'
+                                textAlign: 'right',
                             }}
                             onClick={handleToggleTypes}
                         >

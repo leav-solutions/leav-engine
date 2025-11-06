@@ -13,7 +13,7 @@ import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
 import {type DELETE_VALUE, type DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
 import {
     type GET_LIB_BY_ID_libraries_list,
-    type GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
@@ -25,7 +25,7 @@ import {
     type ILinkValue,
     type ITreeLinkValue,
     type IValue,
-    type RecordData
+    type RecordData,
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import LinksField from '../../../FormFields/LinksField';
@@ -52,7 +52,7 @@ const EditRecordForm = ({
     library,
     valueVersion,
     initialRecordId,
-    setRecordIdentity
+    setRecordIdentity,
 }: IEditRecordFormProps): JSX.Element => {
     const lang = useLang().lang;
 
@@ -63,20 +63,20 @@ const EditRecordForm = ({
         library: library.id,
         id: recordId,
         version: versionObjToGraphql(valueVersion || null),
-        lang
+        lang,
     };
 
     const {loading, error, data, networkStatus} = useQuery<IGetRecordData, IGetRecordDataVariables>(query, {
         variables: getRecordDataVariables,
-        skip: !recordId
+        skip: !recordId,
     });
 
     const [deleteValueMutation] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueQuery, {
-        refetchQueries: [{query, variables: getRecordDataVariables}]
+        refetchQueries: [{query, variables: getRecordDataVariables}],
     });
 
     const [saveValueMutation] = useMutation<SAVE_VALUE, SAVE_VALUEVariables>(saveValueQuery, {
-        refetchQueries: [{query, variables: getRecordDataVariables}]
+        refetchQueries: [{query, variables: getRecordDataVariables}],
     });
 
     const _extractRecordIdentity = useCallback(
@@ -84,7 +84,7 @@ const EditRecordForm = ({
             dataQueryRes && dataQueryRes.record.list[0].whoAmI
                 ? dataQueryRes.record.list[0].whoAmI
                 : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null},
-        []
+        [],
     );
 
     useEffect(() => {
@@ -124,8 +124,8 @@ const EditRecordForm = ({
                 library: library.id,
                 recordId,
                 attribute: attribute.id,
-                value
-            }
+                value,
+            },
         });
 
     const _deleteValue = attribute => (value: ValueInput) => {
@@ -134,8 +134,8 @@ const EditRecordForm = ({
                 library: library.id,
                 recordId,
                 attribute: attribute.id,
-                valueId: value.id_value
-            }
+                valueId: value.id_value,
+            },
         });
     };
 
@@ -153,7 +153,7 @@ const EditRecordForm = ({
 
                 const savedValue = {
                     id_value: value.id_value,
-                    value: isTreeValue(value) ? value.treeValue?.id : (value as ILinkValue)!.linkValue?.id
+                    value: isTreeValue(value) ? value.treeValue?.id : (value as ILinkValue)!.linkValue?.id,
                 };
 
                 return _submitValue(attribute)(savedValue);

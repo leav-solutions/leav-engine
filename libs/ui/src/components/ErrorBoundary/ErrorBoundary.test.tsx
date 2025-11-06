@@ -8,7 +8,7 @@ import {type FunctionComponent} from 'react';
 
 let isDevEnvMock: boolean;
 jest.mock('_ui/_utils/isDevEnv', () => ({
-    isDevEnv: () => isDevEnvMock
+    isDevEnv: () => isDevEnvMock,
 }));
 
 let consoleSpy;
@@ -35,7 +35,7 @@ describe('ErrorBoundary', () => {
             render(
                 <ErrorBoundary recoveryButtons={buttons}>
                     <ComponentWithError />
-                </ErrorBoundary>
+                </ErrorBoundary>,
             );
 
             expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe('ErrorBoundary', () => {
             render(
                 <ErrorBoundary>
                     <ComponentWithError />
-                </ErrorBoundary>
+                </ErrorBoundary>,
             );
 
             expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe('ErrorBoundary', () => {
             render(
                 <ErrorBoundary recoveryButtons={buttons}>
                     <ComponentWithError />
-                </ErrorBoundary>
+                </ErrorBoundary>,
             );
 
             expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe('ErrorBoundary', () => {
             render(
                 <ErrorBoundary>
                     <ComponentWithError />
-                </ErrorBoundary>
+                </ErrorBoundary>,
             );
 
             expect(screen.getByText(/error_occurred/)).toBeInTheDocument();

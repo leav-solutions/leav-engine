@@ -22,15 +22,15 @@ describe('EditTabLabelModal', () => {
                 tabs: [
                     {
                         id: '12345',
-                        label: {fr: 'test_tab'}
+                        label: {fr: 'test_tab'},
                     },
                     {
                         id: '98765',
-                        label: {fr: 'test_tab 2'}
-                    }
-                ]
+                        label: {fr: 'test_tab 2'},
+                    },
+                ],
             },
-            uiElement: layoutElements[UIElementTypes.TABS]
+            uiElement: layoutElements[UIElementTypes.TABS],
         };
 
         const comp = shallow(
@@ -38,11 +38,11 @@ describe('EditTabLabelModal', () => {
                 tabsElement={tabElementData}
                 tab={{
                     id: '12345',
-                    label: {fr: 'test_tab'}
+                    label: {fr: 'test_tab'},
                 }}
                 onClose={jest.fn()}
                 open
-            />
+            />,
         );
 
         expect(comp.find('Input[name="fr"]')).toHaveLength(1);

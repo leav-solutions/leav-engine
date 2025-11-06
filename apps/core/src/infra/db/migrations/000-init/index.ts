@@ -40,7 +40,7 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.infra.permission': permissionRepo = null,
     translator = null,
-    config = null
+    config = null,
 }: IDeps = {}): IMigration {
     const adminUserId = '1';
     const systemUserId = String(config.defaultUserId);
@@ -52,12 +52,12 @@ export default function ({
             const attributeFromDb = await attributeRepo.getAttributes({
                 params: {
                     filters: {
-                        id: attribute.id
+                        id: attribute.id,
                     },
                     strictFilters: true,
-                    withCount: false
+                    withCount: false,
                 },
-                ctx
+                ctx,
             });
 
             // It already exists, move on
@@ -68,7 +68,7 @@ export default function ({
             // Let's create it
             await attributeRepo.createAttribute({
                 attrData: {...attribute},
-                ctx
+                ctx,
             });
         }
     };
@@ -91,7 +91,7 @@ export default function ({
                         FILTER lib._key == ${lib._key}
                         RETURN lib
                 `,
-                ctx
+                ctx,
             });
 
             // If not, create it
@@ -100,20 +100,20 @@ export default function ({
                 // Insert in libraries collection
                 await dbService.execute({
                     query: aql`INSERT ${libData} INTO ${libsCollec} RETURN NEW`,
-                    ctx
+                    ctx,
                 });
 
                 // Save its attributes
                 await libraryRepo.saveLibraryAttributes({
                     libId: lib._key,
                     attributes,
-                    ctx
+                    ctx,
                 });
 
                 await libraryRepo.saveLibraryFullTextAttributes({
                     libId: lib._key,
                     fullTextAttributes,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -132,13 +132,13 @@ export default function ({
                         FILTER t._key == ${tree._key}
                     RETURN t._key
                 `,
-                ctx
+                ctx,
             });
 
             if (!treeFromDb.length) {
                 await dbService.execute({
                     query: aql`INSERT ${tree} INTO core_trees RETURN NEW`,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -163,14 +163,14 @@ export default function ({
                         FILTER app._key == ${app._key}
                         RETURN app
                 `,
-                ctx
+                ctx,
             });
 
             // If not, create it
             if (!existingApp.length) {
                 await dbService.execute({
                     query: aql`INSERT ${app} INTO core_applications RETURN NEW`,
-                    ctx
+                    ctx,
                 });
             }
         }
@@ -183,7 +183,7 @@ export default function ({
             created_at: now,
             modified_at: now,
             created_by: ctx.userId,
-            modified_by: ctx.userId
+            modified_by: ctx.userId,
         };
 
         // System user password is randomly generated as nobody is supposed to sign in with it
@@ -198,7 +198,7 @@ export default function ({
                 label: 'Admin',
                 password: adminPwd,
                 group: [adminsGroupId],
-                active: true
+                active: true,
             },
             {
                 _key: systemUserId,
@@ -207,8 +207,8 @@ export default function ({
                 label: 'System',
                 password: systemUserPwd,
                 group: [filesAdminsGroupId],
-                active: true
-            }
+                active: true,
+            },
         ];
 
         const usersCollec = dbService.db.collection('users');
@@ -222,16 +222,16 @@ export default function ({
                         FILTER u._key == ${user._key}
                         RETURN u
                 `,
-                ctx
+                ctx,
             });
 
             if (!existingUser.length) {
                 await dbService.execute({
                     query: aql`INSERT ${{
                         ...userData,
-                        ...creationMetadata
+                        ...creationMetadata,
                     }} INTO ${usersCollec} RETURN NEW`,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -244,7 +244,7 @@ export default function ({
                         FILTER link._from == ${userDbId} AND link._to == ${groupNodeId}
                         RETURN link
                 `,
-                ctx
+                ctx,
             });
 
             if (!linkFromDb.length) {
@@ -260,7 +260,7 @@ export default function ({
                             modified_by: ${creationMetadata.modified_by}
                         } IN ${valuesLinkCollec}
                     `,
-                    ctx
+                    ctx,
                 });
             }
         }
@@ -271,12 +271,12 @@ export default function ({
         const groups = [
             {
                 id: adminsGroupId,
-                label: translator.t('default.admin_users_group_label', {lng: ctx.lang})
+                label: translator.t('default.admin_users_group_label', {lng: ctx.lang}),
             },
             {
                 id: filesAdminsGroupId,
-                label: translator.t('files.default_users_group_label', {lng: ctx.lang})
-            }
+                label: translator.t('files.default_users_group_label', {lng: ctx.lang}),
+            },
         ];
 
         const usersGroupsLibCollec = dbService.db.collection('users_groups');
@@ -288,7 +288,7 @@ export default function ({
                         FILTER group._key == ${group.id}
                         RETURN group
                 `,
-                ctx
+                ctx,
             });
 
             let groupRecord;
@@ -306,7 +306,7 @@ export default function ({
                         } IN ${usersGroupsLibCollec}
                         RETURN NEW
                     `,
-                    ctx
+                    ctx,
                 });
                 groupRecord = resInsertAdminGroupRecord[0];
             } else {
@@ -319,7 +319,7 @@ export default function ({
                         FILTER node.recordId == ${groupRecord._key}
                         RETURN node
                 `,
-                ctx
+                ctx,
             });
 
             let groupNode;
@@ -333,7 +333,7 @@ export default function ({
                             } IN ${usersGroupsNodeCollec}
                             RETURN NEW
                         `,
-                    ctx
+                    ctx,
                 });
 
                 groupNode = resInsertAdminGroupNode[0];
@@ -349,7 +349,7 @@ export default function ({
                         FILTER edge._from == ${groupNode._id} AND edge._to == ${groupNode._id}
                         RETURN edge
                 `,
-                ctx
+                ctx,
             });
 
             if (!edgeFromDb.length) {
@@ -358,7 +358,7 @@ export default function ({
                         _from: 'core_trees/users_groups',
                         _to: ${groupNode._id}
                     } IN ${usersGroupsEdgeCollec}`,
-                    ctx
+                    ctx,
                 });
             }
         }
@@ -382,7 +382,7 @@ export default function ({
                     FILTER tree.behavior == 'files'
                     RETURN tree
             `,
-                    ctx
+                    ctx,
                 })
             )[0];
 
@@ -393,12 +393,12 @@ export default function ({
                     applyTo: filesTree._key,
                     actions: {
                         [TreeNodePermissionsActions.DETACH]: false,
-                        [TreeNodePermissionsActions.EDIT_CHILDREN]: false
+                        [TreeNodePermissionsActions.EDIT_CHILDREN]: false,
                     },
                     usersGroup: null,
-                    permissionTreeTarget: null
+                    permissionTreeTarget: null,
                 },
-                ctx
+                ctx,
             });
 
             await permissionRepo.savePermission({
@@ -407,12 +407,12 @@ export default function ({
                     applyTo: filesTree._key,
                     actions: {
                         [TreeNodePermissionsActions.DETACH]: true,
-                        [TreeNodePermissionsActions.EDIT_CHILDREN]: true
+                        [TreeNodePermissionsActions.EDIT_CHILDREN]: true,
                     },
                     usersGroup: filesAdminsGroupId,
-                    permissionTreeTarget: null
+                    permissionTreeTarget: null,
                 },
-                ctx
+                ctx,
             });
 
             const treeLibraries = Object.keys(filesTree.libraries);
@@ -424,12 +424,12 @@ export default function ({
                         applyTo: `${filesTree._key}/${treeLibrary}`,
                         actions: {
                             [TreeNodePermissionsActions.DETACH]: false,
-                            [TreeNodePermissionsActions.EDIT_CHILDREN]: false
+                            [TreeNodePermissionsActions.EDIT_CHILDREN]: false,
                         },
                         usersGroup: null,
-                        permissionTreeTarget: null
+                        permissionTreeTarget: null,
                     },
-                    ctx
+                    ctx,
                 });
 
                 await permissionRepo.savePermission({
@@ -438,12 +438,12 @@ export default function ({
                         applyTo: `${filesTree._key}/${treeLibrary}`,
                         actions: {
                             [TreeNodePermissionsActions.DETACH]: true,
-                            [TreeNodePermissionsActions.EDIT_CHILDREN]: true
+                            [TreeNodePermissionsActions.EDIT_CHILDREN]: true,
                         },
                         usersGroup: filesAdminsGroupId,
-                        permissionTreeTarget: null
+                        permissionTreeTarget: null,
                     },
-                    ctx
+                    ctx,
                 });
             }
 
@@ -461,17 +461,17 @@ export default function ({
                 sort: [
                     {
                         field: 'id',
-                        order: SortOrder.ASC
-                    }
+                        order: SortOrder.ASC,
+                    },
                 ],
                 description: null,
-                color: null
+                color: null,
             };
 
             const viewsCollec = dbService.db.collection(VIEWS_COLLECTION_NAME);
             const createdView = await dbService.execute({
                 query: aql`INSERT ${filesDefaultView} INTO ${viewsCollec} RETURN NEW`,
-                ctx
+                ctx,
             });
             const viewId = createdView[0]._key;
 
@@ -483,8 +483,8 @@ export default function ({
                             WITH ${{defaultView: viewId}}
                             IN ${libsCollec}
                         RETURN NEW`,
-                ctx
+                ctx,
             });
-        }
+        },
     };
 }

@@ -9,7 +9,7 @@ describe('FieldsGroup', () => {
         render(
             <FieldsGroup label="My Label">
                 <div>CHILD</div>
-            </FieldsGroup>
+            </FieldsGroup>,
         );
 
         expect(screen.getByRole('group', {name: 'My Label'})).toBeInTheDocument();

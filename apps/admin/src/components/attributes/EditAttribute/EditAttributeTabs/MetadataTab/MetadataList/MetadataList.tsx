@@ -28,7 +28,7 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
         visible: boolean;
         attribute?: string;
     }>({
-        visible: false
+        visible: false,
     });
 
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
@@ -119,7 +119,7 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
                                         <ConfirmedButton
                                             data-test-id="metadata-delete-button"
                                             confirmMessage={t('attributes.metadata_field_delete_confirm', {
-                                                attrLabel: fieldLabel
+                                                attrLabel: fieldLabel,
                                             })}
                                             action={_onDelete}
                                         >

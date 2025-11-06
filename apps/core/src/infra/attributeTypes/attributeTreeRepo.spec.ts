@@ -18,7 +18,7 @@ describe('AttributeTreeRepo', () => {
         id: 'test_tree_attr',
         type: AttributeTypes.TREE,
         linked_tree: 'test_tree',
-        multiple_values: true
+        multiple_values: true,
     };
 
     const savedEdgeData = {
@@ -34,8 +34,8 @@ describe('AttributeTreeRepo', () => {
         created_by: '0',
         metadata: {my_attribute: 'metadata value'},
         version: {
-            my_tree: '1'
-        }
+            my_tree: '1',
+        },
     };
 
     const valueData: IValue = {
@@ -47,23 +47,23 @@ describe('AttributeTreeRepo', () => {
         modified_by: '0',
         created_by: '0',
         metadata: {my_attribute: 'metadata value'},
-        version: {my_tree: '1'}
+        version: {my_tree: '1'},
     };
 
     const mockUtils: Mockify<IUtils> = {
-        decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'categories', id: '123456'})
+        decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'categories', id: '123456'}),
     };
 
     const ctx: IQueryInfos = {
         userId: '0',
-        queryId: 'treeRepoTest'
+        queryId: 'treeRepoTest',
     };
 
     describe('createValue', () => {
         test('Should create a new advanced tree value', async function () {
             const mockRecord = {
                 id: '123456',
-                library: 'categories'
+                library: 'categories',
             };
 
             const mockDbServ = {
@@ -71,22 +71,22 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise([
                     {
                         newEdge: savedEdgeData,
-                        linkedRecord: mockRecord
-                    }
-                ])
+                        linkedRecord: mockRecord,
+                    },
+                ]),
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue({
                     id: '123456',
-                    library: 'categories'
-                })
+                    library: 'categories',
+                }),
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const createdVal = await attrRepo.createValue({
@@ -98,9 +98,9 @@ describe('AttributeTreeRepo', () => {
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {my_tree: '1'}
+                    version: {my_tree: '1'},
                 },
-                ctx
+                ctx,
             });
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -113,8 +113,8 @@ describe('AttributeTreeRepo', () => {
                 payload: {
                     record: {
                         id: '123456',
-                        library: 'categories'
-                    }
+                        library: 'categories',
+                    },
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
@@ -122,7 +122,7 @@ describe('AttributeTreeRepo', () => {
                 modified_by: '0',
                 created_by: '0',
                 metadata: {my_attribute: 'metadata value'},
-                version: {my_tree: '1'}
+                version: {my_tree: '1'},
             });
         });
     });
@@ -131,7 +131,7 @@ describe('AttributeTreeRepo', () => {
         test('Should update a advanced link value', async function () {
             const mockRecord = {
                 id: '123456',
-                library: 'categories'
+                library: 'categories',
             };
 
             const mockDbServ = {
@@ -139,22 +139,22 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise([
                     {
                         newEdge: savedEdgeData,
-                        linkedRecord: mockRecord
-                    }
-                ])
+                        linkedRecord: mockRecord,
+                    },
+                ]),
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue({
                     id: '123456',
-                    library: 'categories'
-                })
+                    library: 'categories',
+                }),
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const savedVal = await attrRepo.updateValue({
@@ -166,9 +166,9 @@ describe('AttributeTreeRepo', () => {
                     payload: 'categories/123456',
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {my_tree: '1'}
+                    version: {my_tree: '1'},
                 },
-                ctx
+                ctx,
             });
 
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -181,9 +181,9 @@ describe('AttributeTreeRepo', () => {
                 payload: {
                     record: {
                         id: '123456',
-                        library: 'categories'
-                    }
-                }
+                        library: 'categories',
+                    },
+                },
             });
         });
     });
@@ -195,19 +195,19 @@ describe('AttributeTreeRepo', () => {
                 _rev: '_WSywvyC--_',
                 _from: 'test_lib/12345',
                 _to: 'categories/123456',
-                _key: '445566'
+                _key: '445566',
             };
 
             const mockRecord = {
                 id: '123456',
-                library: 'categories'
+                library: 'categories',
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue({
                     id: '123456',
-                    library: 'categories'
-                })
+                    library: 'categories',
+                }),
             };
 
             const mockDbServ = {
@@ -215,15 +215,15 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise([
                     {
                         edge: deletedEdgeData,
-                        linkedRecord: mockRecord
-                    }
-                ])
+                        linkedRecord: mockRecord,
+                    },
+                ]),
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtilsWithCleanup,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const deletedVal = await attrRepo.deleteValue({
@@ -233,13 +233,13 @@ describe('AttributeTreeRepo', () => {
                 value: {
                     id_value: '445566',
                     payload: {
-                        id: 'categories/123456'
+                        id: 'categories/123456',
                     },
                     modified_at: 400999999,
                     created_at: 400999999,
-                    treeId: 'categories'
+                    treeId: 'categories',
                 },
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -251,8 +251,8 @@ describe('AttributeTreeRepo', () => {
             expect(deletedVal).toMatchObject({
                 id_value: '445566',
                 payload: {
-                    record: {library: 'categories', id: '123456'}
-                }
+                    record: {library: 'categories', id: '123456'},
+                },
             });
         });
     });
@@ -266,7 +266,7 @@ describe('AttributeTreeRepo', () => {
                         _id: 'categories/123456',
                         _rev: '_WgJhrXO--_',
                         created_at: 88888,
-                        modified_at: 88888
+                        modified_at: 88888,
                     },
                     edge: {
                         _key: '112233',
@@ -279,29 +279,29 @@ describe('AttributeTreeRepo', () => {
                         created_at: 99999,
                         modified_by: '0',
                         created_by: '0',
-                        metadata: {my_attribute: 'metadata value'}
-                    }
-                }
+                        metadata: {my_attribute: 'metadata value'},
+                    },
+                },
             ];
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise(traversalRes),
             };
 
             const mockCleanupRes = jest.fn().mockReturnValueOnce({
                 id: 123456,
                 created_at: 88888,
-                modified_at: 88888
+                modified_at: 88888,
             });
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: mockCleanupRes
+                cleanup: mockCleanupRes,
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils,
             });
 
             const value = await attrRepo.getValueById({
@@ -309,7 +309,7 @@ describe('AttributeTreeRepo', () => {
                 recordId: '987654',
                 attribute: mockAttribute,
                 valueId: '112233',
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -322,15 +322,15 @@ describe('AttributeTreeRepo', () => {
                     record: {
                         id: 123456,
                         created_at: 88888,
-                        modified_at: 88888
-                    }
+                        modified_at: 88888,
+                    },
                 },
                 modified_by: '0',
                 created_by: '0',
                 modified_at: 99999,
                 created_at: 99999,
                 attribute: 'test_tree_attr',
-                metadata: {my_attribute: 'metadata value'}
+                metadata: {my_attribute: 'metadata value'},
             });
         });
 
@@ -339,7 +339,7 @@ describe('AttributeTreeRepo', () => {
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise(traversalRes),
             };
 
             const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
@@ -353,7 +353,7 @@ describe('AttributeTreeRepo', () => {
                 //     id_value: '112233',
                 //     value: 'categories/123456'
                 // },
-                ctx
+                ctx,
             });
 
             expect(value).toBeNull();
@@ -369,7 +369,7 @@ describe('AttributeTreeRepo', () => {
                     _id: 'images/123456',
                     _rev: '_WgJhrXO--_',
                     created_at: 88888,
-                    modified_at: 88888
+                    modified_at: 88888,
                 },
                 edge: {
                     _key: '112233',
@@ -382,8 +382,8 @@ describe('AttributeTreeRepo', () => {
                     created_at: 99999,
                     modified_by: '0',
                     created_by: '0',
-                    metadata: {my_attribute: 'metadata value'}
-                }
+                    metadata: {my_attribute: 'metadata value'},
+                },
             },
             {
                 id: '654321',
@@ -392,7 +392,7 @@ describe('AttributeTreeRepo', () => {
                     _id: 'images/123457',
                     _rev: '_WgJhrXO--_',
                     created_at: 88888,
-                    modified_at: 88888
+                    modified_at: 88888,
                 },
                 edge: {
                     _key: '11223344',
@@ -405,15 +405,15 @@ describe('AttributeTreeRepo', () => {
                     created_at: 99999,
                     modified_by: '0',
                     created_by: '0',
-                    metadata: {my_attribute: 'metadata value'}
-                }
-            }
+                    metadata: {my_attribute: 'metadata value'},
+                },
+            },
         ];
 
         test('Should return linked tree element', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise(traversalRes),
             };
 
             const mockCleanupRes = jest
@@ -421,27 +421,27 @@ describe('AttributeTreeRepo', () => {
                 .mockReturnValueOnce({
                     id: 123456,
                     created_at: 88888,
-                    modified_at: 88888
+                    modified_at: 88888,
                 })
                 .mockReturnValueOnce({
                     id: 123457,
                     created_at: 88888,
-                    modified_at: 88888
+                    modified_at: 88888,
                 });
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: mockCleanupRes
+                cleanup: mockCleanupRes,
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils,
             });
             const values = await attrRepo.getValues({
                 library: 'test_lib',
                 recordId: '123456',
                 attribute: mockAttribute,
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -456,15 +456,15 @@ describe('AttributeTreeRepo', () => {
                     record: {
                         id: 123456,
                         created_at: 88888,
-                        modified_at: 88888
-                    }
+                        modified_at: 88888,
+                    },
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
                 created_at: 99999,
                 modified_by: '0',
                 created_by: '0',
-                metadata: {my_attribute: 'metadata value'}
+                metadata: {my_attribute: 'metadata value'},
             });
 
             expect(values[1]).toMatchObject({
@@ -473,15 +473,15 @@ describe('AttributeTreeRepo', () => {
                     record: {
                         id: 123457,
                         created_at: 88888,
-                        modified_at: 88888
-                    }
+                        modified_at: 88888,
+                    },
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
                 created_at: 99999,
                 modified_by: '0',
                 created_by: '0',
-                metadata: {my_attribute: 'metadata value'}
+                metadata: {my_attribute: 'metadata value'},
             });
         });
 
@@ -494,7 +494,7 @@ describe('AttributeTreeRepo', () => {
                         _id: 'images/123456',
                         _rev: '_WgJhrXO--_',
                         created_at: 88888,
-                        modified_at: 88888
+                        modified_at: 88888,
                     },
                     edge: {
                         _key: '112233',
@@ -507,29 +507,29 @@ describe('AttributeTreeRepo', () => {
                         created_at: 99999,
                         modified_by: '0',
                         created_by: '0',
-                        version: {my_tree: '1345'}
-                    }
-                }
+                        version: {my_tree: '1345'},
+                    },
+                },
             ];
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalResWithVers)
+                execute: global.__mockPromise(traversalResWithVers),
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
-                modified_at: 88888
+                modified_at: 88888,
             });
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: mockCleanupRes
+                cleanup: mockCleanupRes,
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils,
             });
             const values = await attrRepo.getValues({
                 library: 'test_lib',
@@ -538,10 +538,10 @@ describe('AttributeTreeRepo', () => {
                 forceGetAllValues: false,
                 options: {
                     version: {
-                        my_tree: '1345'
-                    }
+                        my_tree: '1345',
+                    },
                 },
-                ctx
+                ctx,
             });
 
             expect(values.length).toBe(1);
@@ -553,34 +553,34 @@ describe('AttributeTreeRepo', () => {
         test('Should return only first linked tree element if not multiple values', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([traversalRes[0]])
+                execute: global.__mockPromise([traversalRes[0]]),
             };
 
             const mockAttributeNotMultiVal = {
                 ...mockAttribute,
-                multiple_values: false
+                multiple_values: false,
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
-                modified_at: 88888
+                modified_at: 88888,
             });
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: mockCleanupRes
+                cleanup: mockCleanupRes,
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils,
             });
 
             const values = await attrRepo.getValues({
                 library: 'test_lib',
                 recordId: '123456',
                 attribute: mockAttributeNotMultiVal,
-                ctx
+                ctx,
             });
 
             expect(values.length).toBe(1);
@@ -591,40 +591,40 @@ describe('AttributeTreeRepo', () => {
                     record: {
                         id: 123456,
                         created_at: 88888,
-                        modified_at: 88888
-                    }
+                        modified_at: 88888,
+                    },
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
                 created_at: 99999,
                 modified_by: '0',
-                created_by: '0'
+                created_by: '0',
             });
         });
 
         test('Should return all values if forced', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(traversalRes)
+                execute: global.__mockPromise(traversalRes),
             };
             const mockAttributeNotMultiVal = {
                 ...mockAttribute,
-                multiple_values: false
+                multiple_values: false,
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
-                modified_at: 88888
+                modified_at: 88888,
             });
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: mockCleanupRes
+                cleanup: mockCleanupRes,
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils,
             });
 
             const values = await attrRepo.getValues({
@@ -632,7 +632,7 @@ describe('AttributeTreeRepo', () => {
                 recordId: '123456',
                 attribute: mockAttributeNotMultiVal,
                 forceGetAllValues: true,
-                ctx
+                ctx,
             });
 
             expect(values.length).toBe(2);
@@ -642,27 +642,27 @@ describe('AttributeTreeRepo', () => {
 
     describe('filterValueQueryPart', () => {
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isCountFilter: jest.fn().mockReturnValue(false)
+            isCountFilter: jest.fn().mockReturnValue(false),
         };
 
         test('Should return query to retrieve value to filter on', () => {
             const mockDbServ = {
-                db: new Database()
+                db: new Database(),
             };
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql``)
+                filterValueQueryPart: jest.fn().mockReturnValue(aql``),
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
-                'core.infra.db.dbService': mockDbServ
+                'core.infra.db.dbService': mockDbServ,
             });
             const filter = attrRepo.filterValueQueryPart(
                 [
                     {id: 'label', type: AttributeTypes.TREE, _repo: mockRepo as IAttributeTypeRepo},
-                    {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
+                    {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo},
                 ],
-                {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'},
             );
 
             expect(filter).toMatchSnapshot();
@@ -670,20 +670,20 @@ describe('AttributeTreeRepo', () => {
 
         test('Should return query to retrieve value to filter on for "count" filter', async () => {
             const mockDbServ = {
-                db: new Database()
+                db: new Database(),
             };
 
             const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(true)
+                isCountFilter: jest.fn().mockReturnValue(true),
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.record.helpers.filterTypes': mockFilterTypesHelperCount as IFilterTypesHelper,
-                'core.infra.db.dbService': mockDbServ
+                'core.infra.db.dbService': mockDbServ,
             });
 
             const valueQuery = attrRepo.filterValueQueryPart(
@@ -691,10 +691,10 @@ describe('AttributeTreeRepo', () => {
                     {
                         id: 'tree_attr',
                         type: AttributeTypes.TREE,
-                        _repo: mockRepo as IAttributeTypeRepo
-                    }
+                        _repo: mockRepo as IAttributeTypeRepo,
+                    },
                 ],
-                {condition: AttributeCondition.IS_EMPTY}
+                {condition: AttributeCondition.IS_EMPTY},
             );
 
             expect(valueQuery).toMatchSnapshot();
@@ -704,15 +704,15 @@ describe('AttributeTreeRepo', () => {
     describe('sortQueryPart', () => {
         test('Should return tree filter', () => {
             const mockDbServ = {
-                db: new Database()
+                db: new Database(),
             };
             const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.sortQueryPart({
                 attributes: [
                     {id: 'label', type: AttributeTypes.TREE},
-                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                    {id: 'linked', type: AttributeTypes.SIMPLE},
                 ],
-                order: 'ASC'
+                order: 'ASC',
             });
 
             expect(filter).toMatchSnapshot();

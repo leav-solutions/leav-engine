@@ -125,7 +125,7 @@ export interface IUtils {
     generateExplicitValidationError<T>(
         field: keyof T,
         message: ErrorFieldDetailMessage,
-        lang?: string
+        lang?: string,
     ): ValidationError<T>;
 
     deleteFile(path: string): Promise<void>;
@@ -244,10 +244,10 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                     ...arr,
                     {
                         [keyFieldName]: key,
-                        [valueFieldName]: obj[key]
-                    }
+                        [valueFieldName]: obj[key],
+                    },
                 ],
-                []
+                [],
             );
         },
         getLibraryTreeId(library) {
@@ -299,7 +299,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             return translator.t(('errors.' + toTranslate.msg) as string, {
                 ...toTranslate.vars,
                 lng: lang,
-                interpolation: {escapeValue: false}
+                interpolation: {escapeValue: false},
             });
         },
         getFullApplicationEndpoint(endpoint): string {
@@ -317,7 +317,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         generateExplicitValidationError<T>(
             field: keyof T,
             message: ErrorFieldDetailMessage,
-            lang: string = config.lang.default
+            lang: string = config.lang.default,
         ): ValidationError<T> {
             const fieldDetails: ErrorFieldDetail<T> = {};
             fieldDetails[field] = message;
@@ -354,7 +354,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                         allSettings[previewsAttributeName].push({
                             id: size.name,
                             label: _getSizeLabel(size),
-                            format: AttributeFormats.TEXT
+                            format: AttributeFormats.TEXT,
                         });
 
                         allSettings[previewsStatusAttributeName].push({
@@ -364,21 +364,21 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                             embedded_fields: [
                                 {
                                     id: 'status',
-                                    format: AttributeFormats.NUMERIC
+                                    format: AttributeFormats.NUMERIC,
                                 },
                                 {
                                     id: 'message',
-                                    format: AttributeFormats.TEXT
-                                }
-                            ]
+                                    format: AttributeFormats.TEXT,
+                                },
+                            ],
                         });
                     }
                     return allSettings;
                 },
                 {
                     [previewsAttributeName]: [],
-                    [previewsStatusAttributeName]: []
-                }
+                    [previewsStatusAttributeName]: [],
+                },
             );
         },
         previewsSettingsToVersions(previewsSettings) {
@@ -393,6 +393,6 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                 (isValue1MetadataEmpty && isValue2MetadataEmpty) || isEqual(value1?.metadata, value2?.metadata);
 
             return isValueIdentical && isMetadataIdentical;
-        }
+        },
     };
 }

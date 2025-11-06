@@ -12,7 +12,7 @@ import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLIC
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
-    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType, type AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {type IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
@@ -157,7 +157,7 @@ export function getFieldError<T>(
     fieldName: string,
     touchedFields: FormikTouched<T>,
     serverErrors: IErrorByField,
-    inputErrors: FormikErrors<T>
+    inputErrors: FormikErrors<T>,
 ): string {
     let inputFieldError = '';
     let serverFieldError = '';
@@ -189,7 +189,7 @@ export function versionObjToGraphql(version: {
 
 export function isLinkAttribute(
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list,
-    strict = true
+    strict = true,
 ): attribute is GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
     const linkTypes = [AttributeType.advanced_link, AttributeType.simple_link];
 
@@ -201,7 +201,7 @@ export function isLinkAttribute(
 }
 
 export function isTreeAttribute(
-    attribute: GET_ATTRIBUTE_BY_ID_attributes_list
+    attribute: GET_ATTRIBUTE_BY_ID_attributes_list,
 ): attribute is GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     return attribute.type === AttributeType.tree;
 }

@@ -40,8 +40,8 @@ export const useNavigateToPanel = (): {
                     generatePath(RelativePaths.nextLevelPanel, {
                         recordId,
                         where,
-                        recordPanelId: firstRecordPanelId
-                    })
+                        recordPanelId: firstRecordPanelId,
+                    }),
                 );
             }
 
@@ -49,9 +49,9 @@ export const useNavigateToPanel = (): {
                 generatePath(RelativePaths.nextLevelPanel, {
                     recordId,
                     where,
-                    recordPanelId: panelId
-                })
+                    recordPanelId: panelId,
+                }),
             );
-        }
+        },
     };
 };

@@ -94,13 +94,13 @@ function FiltersPanel(): JSX.Element {
                         ? result.destination.index
                         : result.destination.index === filter.index
                           ? result.source.index
-                          : filter.index
+                          : filter.index,
             }))
             .sort((a, b) => a.index - b.index);
 
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
-            filters: newFilter
+            filters: newFilter,
         });
     };
 
@@ -123,21 +123,21 @@ function FiltersPanel(): JSX.Element {
                                 key: 'disable',
                                 disabled: allFiltersDisabled,
                                 onClick: _disableFilters,
-                                label: t('filters.disable-filters')
+                                label: t('filters.disable-filters'),
                             },
                             {
                                 key: 'enable',
                                 disabled: allFiltersEnabled,
                                 onClick: _enableFilters,
-                                label: t('filters.enable-filters')
+                                label: t('filters.enable-filters'),
                             },
                             {
                                 key: 'remove',
                                 disabled: !searchState.filters.length,
                                 onClick: _resetFilters,
-                                label: t('filters.remove-filters')
-                            }
-                        ]
+                                label: t('filters.remove-filters'),
+                            },
+                        ],
                     }}
                 >
                     <Button type="text" style={{display: 'inline-flex'}}>

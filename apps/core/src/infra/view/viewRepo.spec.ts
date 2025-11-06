@@ -11,22 +11,22 @@ import {type IViewFilterOptions} from '_types/views';
 describe('viewRepo', () => {
     const docViewData = {
         ...mockView,
-        _key: mockView.id
+        _key: mockView.id,
     };
 
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     const mockDbUtils: Mockify<IDbUtils> = {
         cleanup: jest.fn().mockReturnValue(mockView),
         convertToDoc: jest.fn().mockReturnValue(docViewData),
-        findCoreEntity: global.__mockPromise({list: [{...mockView}]})
+        findCoreEntity: global.__mockPromise({list: [{...mockView}]}),
     };
 
     const mockDbServ = {
         db: new Database(),
-        execute: global.__mockPromise([docViewData])
+        execute: global.__mockPromise([docViewData]),
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -35,7 +35,7 @@ describe('viewRepo', () => {
         test('Should create a new view', async () => {
             const repo = viewRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const newView = await repo.createView({...mockView}, ctx);
@@ -54,7 +54,7 @@ describe('viewRepo', () => {
         test('Should update an existing view', async () => {
             const repo = viewRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const updatedView = await repo.updateView({...mockView}, ctx);
@@ -73,12 +73,12 @@ describe('viewRepo', () => {
         test("Get shared and user's views", async () => {
             const repo = viewRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const filters: IViewFilterOptions = {
                 created_by: '1',
-                library: 'test_lib'
+                library: 'test_lib',
             };
 
             const views = await repo.getViews({filters}, ctx);
@@ -92,7 +92,7 @@ describe('viewRepo', () => {
         test('Should delete view', async () => {
             const repo = viewRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const delView = await repo.deleteView(mockView.id, ctx);

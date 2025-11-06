@@ -5,28 +5,28 @@ import {type ISharedSelected, type SharedStateSelection, SharedStateSelectionTyp
 
 export const mockSelection = {
     type: SharedStateSelectionType.SEARCH,
-    selected: []
+    selected: [],
 };
 
 export const mockSharedSelectedElement: ISharedSelected = {
     id: 'id',
     library: 'library',
-    label: 'label'
+    label: 'label',
 };
 
 export const mockSharedSearchSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement, mockSharedSelectedElement],
-    type: SharedStateSelectionType.SEARCH
+    type: SharedStateSelectionType.SEARCH,
 };
 
 export const mockSharedNavigationSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement],
     type: SharedStateSelectionType.NAVIGATION,
-    parent: '12345'
+    parent: '12345',
 };
 
 export const mockSharedNavigationSelectionWithNoSelected: SharedStateSelection = {
     selected: [],
     type: SharedStateSelectionType.NAVIGATION,
-    parent: '12345'
+    parent: '12345',
 };

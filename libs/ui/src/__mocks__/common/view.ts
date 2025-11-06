@@ -12,19 +12,19 @@ export const mockView: IView = {
     owner: true,
     label: {
         fr: 'list',
-        en: 'list'
+        en: 'list',
     },
     description: {
         fr: 'this is a list ',
-        en: 'this is a list '
+        en: 'this is a list ',
     },
     color: '#e48232',
     filters: [],
     sort: [
         {
             field: 'id',
-            order: SortOrder.asc
-        }
+            order: SortOrder.asc,
+        },
     ],
-    attributes: []
+    attributes: [],
 };

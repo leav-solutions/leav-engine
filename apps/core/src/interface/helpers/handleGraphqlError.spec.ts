@@ -15,18 +15,18 @@ import {type ILogger} from '@leav/logger';
 
 describe('handleGraphqlError', () => {
     const mockConfig = {
-        debug: false
+        debug: false,
     };
 
     const mockLogger: Mockify<ILogger> = {
         warn: jest.fn(),
-        error: jest.fn()
+        error: jest.fn(),
     };
 
     const _makeError: (
         message: string,
         originalError: LeavError<unknown> | PermissionError<unknown> | ValidationError<unknown>,
-        extensions?: GraphQLErrorExtensions
+        extensions?: GraphQLErrorExtensions,
     ) => GraphQLError = (message, originalError, extensions = {}) => ({
         extensions,
         path: [],
@@ -38,25 +38,25 @@ describe('handleGraphqlError', () => {
         originalError,
         name: 'error',
         toJSON: null,
-        [Symbol.toStringTag]: 'error'
+        [Symbol.toStringTag]: 'error',
     });
 
     const mockUtils: Mockify<IUtils> = {
-        translateError: jest.fn().mockImplementation(err => err.msg + ' TRANSLATED')
+        translateError: jest.fn().mockImplementation(err => err.msg + ' TRANSLATED'),
     };
 
     describe('VALIDATION_ERROR', () => {
         it('Should return an error with original message and all fields provided with translated error', () => {
             const fields = {
                 price: 'invalid price format',
-                name: 'name does not match regex'
+                name: 'name does not match regex',
             };
             const originalError = new ValidationError(fields, 'Validation error');
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(_makeError('Some error message', originalError), mockCtx);
 
@@ -64,41 +64,41 @@ describe('handleGraphqlError', () => {
             expect(handledError.extensions.code).toBe(ErrorTypes.VALIDATION_ERROR);
             expect(handledError.extensions.fields).toEqual({
                 price: fields.price + ' TRANSLATED',
-                name: fields.name + ' TRANSLATED'
+                name: fields.name + ' TRANSLATED',
             });
         });
 
         it('Should return error message from first field if one field provided', () => {
             const fields = {
-                price: 'invalid price format'
+                price: 'invalid price format',
             };
             const originalError = new ValidationError(fields, 'Validation error');
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(_makeError('Some error message', originalError), mockCtx);
 
             expect(handledError.message).toBe(fields.price + ' TRANSLATED');
             expect(handledError.extensions.code).toBe(ErrorTypes.VALIDATION_ERROR);
             expect(handledError.extensions.fields).toEqual({
-                price: fields.price + ' TRANSLATED'
+                price: fields.price + ' TRANSLATED',
             });
         });
 
         it('Should not translate error message if it is a custom message', () => {
             const fields = {
                 price: 'invalid price format',
-                name: 'name does not match regex'
+                name: 'name does not match regex',
             };
             const originalError = new ValidationError(fields, 'Validation error', true);
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(_makeError('Some error message', originalError), mockCtx);
 
@@ -106,7 +106,7 @@ describe('handleGraphqlError', () => {
             expect(handledError.extensions.code).toBe(ErrorTypes.VALIDATION_ERROR);
             expect(handledError.extensions.fields).toEqual({
                 price: fields.price,
-                name: fields.name
+                name: fields.name,
             });
         });
     });
@@ -114,13 +114,13 @@ describe('handleGraphqlError', () => {
     describe('PERMISSION_ERROR', () => {
         it('Should return permission action and a generic message', () => {
             const originalError: PermissionError<unknown> = new PermissionError(
-                AdminPermissionsActions.ACCESS_LIBRARIES
+                AdminPermissionsActions.ACCESS_LIBRARIES,
             );
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(_makeError('You shall not pass!', originalError), mockCtx);
 
@@ -134,11 +134,11 @@ describe('handleGraphqlError', () => {
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(
                 _makeError('Bad request', null, {code: GRAPHQL_ERROR_CODES.VALIDATION_FAILED}),
-                mockCtx
+                mockCtx,
             );
 
             expect(handledError.message).toBe('Bad request');
@@ -150,13 +150,13 @@ describe('handleGraphqlError', () => {
         it('Should return an error with an ID and provided message', () => {
             const mockConfigWithDebug = {
                 ...mockConfig,
-                debug: true
+                debug: true,
             };
 
             const errorHandler = handleGraphqlError({
                 config: mockConfigWithDebug as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(_makeError('Boom!', null, {}), mockCtx);
 
@@ -169,7 +169,7 @@ describe('handleGraphqlError', () => {
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const handledError = errorHandler(_makeError('Boom!', null, {}), mockCtx);
 

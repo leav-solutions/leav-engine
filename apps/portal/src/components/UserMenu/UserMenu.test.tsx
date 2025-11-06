@@ -14,13 +14,13 @@ describe('UserMenu', () => {
         lang: ['en'],
         availableLangs: ['fr', 'en'],
         defaultLang: 'en',
-        setLang: jest.fn()
+        setLang: jest.fn(),
     };
 
     test('Open menu and click on elements', async () => {
         const mockLogout = jest.fn();
         jest.spyOn(leavUi, 'useAuth').mockReturnValue({
-            logout: mockLogout
+            logout: mockLogout,
         });
 
         render(
@@ -28,7 +28,7 @@ describe('UserMenu', () => {
                 <UserContext.Provider value={mockUser}>
                     <UserMenu />
                 </UserContext.Provider>
-            </leavUi.LangContext.Provider>
+            </leavUi.LangContext.Provider>,
         );
 
         const userLabel = screen.getByText(mockUser.whoAmI.label);

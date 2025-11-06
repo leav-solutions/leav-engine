@@ -16,17 +16,17 @@ describe('TreesSelectorField', () => {
             id: 'tree1',
             label: {
                 fr: 'Tree 1',
-                en: 'Tree 1'
-            }
+                en: 'Tree 1',
+            },
         },
         {
             ...mockTree,
             id: 'tree2',
             label: {
                 fr: 'Tree 2',
-                en: 'Tree 2'
-            }
-        }
+                en: 'Tree 2',
+            },
+        },
     ];
 
     test('Render a dropdown with trees', async () => {

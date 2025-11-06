@@ -43,7 +43,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     selectableLibraries,
     loadRecursively = true,
     noPagination = false,
-    showSelectChildrenButton = false
+    showSelectChildrenButton = false,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -55,13 +55,13 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         isLeaf: false,
         parents: [],
         paginationOffset: 0,
-        children: []
+        children: [],
     };
 
     // As we'll fetch children when a node is expanded, we store the whole tree content in a hash map
     // to make update easier and more efficient
     const [treeMap, setTreeMap] = useState<ITreeMap>({
-        [tree.id]: rootNode
+        [tree.id]: rootNode,
     });
 
     const [fetchError, setFetchError] = useState<string | undefined>();
@@ -70,7 +70,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const _fetchTreeContent = async (parentNodeKey?: string, offset = 0, currentTreeMap = {...treeMap}) => {
         try {
             const {
-                data: {treeNodeChildren}
+                data: {treeNodeChildren},
             } = await loadTreeContent({
                 variables: {
                     treeId: tree.id,
@@ -79,10 +79,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                         ? undefined
                         : {
                               limit: defaultPaginationPageSize,
-                              offset
+                              offset,
                           },
-                    childrenAsRecordValuePermissionFilter
-                }
+                    childrenAsRecordValuePermissionFilter,
+                },
             });
 
             const parentMapKey = parentNodeKey ?? tree.id;
@@ -102,14 +102,14 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 children: [],
                 parents: currentParents,
                 paginationOffset: 0,
-                disabled: disabledNodes.includes(e.id)
+                disabled: disabledNodes.includes(e.id),
             }));
 
             const existingKeys = new Set(parentElement.children.map(child => child.key));
             const newNodes = formattedNodes.filter(node => !existingKeys.has(node.key));
             parentElement.children = [
                 ...parentElement.children.filter(child => !child.key.startsWith(`__showMore${parentMapKey}`)),
-                ...newNodes
+                ...newNodes,
             ];
 
             for (const node of formattedNodes) {
@@ -126,7 +126,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     key: showMoreKey,
                     isLeaf: false,
                     children: [],
-                    paginationOffset: 0
+                    paginationOffset: 0,
                 };
                 parentElement.children.push(showMoreElement);
             }
@@ -200,7 +200,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         const getAllDescendants = (nodeId: string): string[] =>
             treeMap[nodeId].children.reduce<string[]>(
                 (acc, child) => [...acc, child.id, ...getAllDescendants(child.id)],
-                []
+                [],
             );
 
         if (node) {
@@ -209,7 +209,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 if (isDeselecting) {
                     const nodeToDeselect = [node.id, ...node.parents, ...getAllDescendants(node.id)];
                     const selectionToKeep = selectedNodes.filter(
-                        selectedNode => !nodeToDeselect.includes(selectedNode)
+                        selectedNode => !nodeToDeselect.includes(selectedNode),
                     );
                     _handleCheck(selectionToKeep, null);
                 } else {

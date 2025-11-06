@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function PluginsExplorer() {
             return <div>PluginsExplorer</div>;
-        }
+        },
 );
 
 describe('GeneralInfosTab', () => {
@@ -20,14 +20,14 @@ describe('GeneralInfosTab', () => {
             {
                 request: {
                     query: getCoreVersionQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        version: '42.0.0'
-                    }
-                }
-            }
+                        version: '42.0.0',
+                    },
+                },
+            },
         ];
         await act(async () => {
             render(<GeneralInfosTab />, {apolloMocks: mocks});

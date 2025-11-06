@@ -10,7 +10,7 @@ import {
     renderHook,
     type RenderHookOptions,
     type RenderOptions,
-    type RenderResult
+    type RenderResult,
 } from '@testing-library/react';
 import {AntApp, KitApp} from 'aristid-ds';
 import {type PropsWithChildren, type ReactElement} from 'react';
@@ -29,7 +29,7 @@ export interface ICustomRenderHookOptions<
     Props,
     Q extends Queries = typeof queries,
     Container extends Element | DocumentFragment = HTMLElement,
-    BaseElement extends Element | DocumentFragment = Container
+    BaseElement extends Element | DocumentFragment = Container,
 > extends RenderHookOptions<Props, Q, Container, BaseElement> {
     mocks?: readonly MockedResponse[];
 }
@@ -67,10 +67,10 @@ const renderHookWithProviders = <
     Props,
     Q extends Queries = typeof queries,
     Container extends Element | DocumentFragment = HTMLElement,
-    BaseElement extends Element | DocumentFragment = Container
+    BaseElement extends Element | DocumentFragment = Container,
 >(
     hook: (initialProps: Props) => Result,
-    options?: ICustomRenderHookOptions<Props, Q, Container, BaseElement>
+    options?: ICustomRenderHookOptions<Props, Q, Container, BaseElement>,
 ) => renderHook(hook, {wrapper: props => <Providers {...props} {...options} />, ...options});
 
 const mockBrowserFunctionsForTiptap = () => {
@@ -89,7 +89,7 @@ const mockBrowserFunctionsForTiptap = () => {
             left: 0,
             right: 0,
             top: 0,
-            width: 0
+            width: 0,
         };
         return {...rec, toJSON: () => rec};
     }

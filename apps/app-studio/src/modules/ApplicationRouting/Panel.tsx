@@ -31,7 +31,7 @@ export const Panel: FunctionComponent = () => {
     return isLastFullpagePanel || isLastLevelRecordPanel ? (
         <section
             className={cn(page, {
-                [fullpagePage]: isLastFullpagePanel
+                [fullpagePage]: isLastFullpagePanel,
             })}
         >
             {(isLastFullpagePanel || !currentPanel.isStandalone) && (
@@ -57,7 +57,7 @@ export const Panel: FunctionComponent = () => {
             )}
             <div
                 className={cn(content, {
-                    [fullpageContent]: isLastFullpagePanel
+                    [fullpageContent]: isLastFullpagePanel,
                 })}
             >
                 <PanelContent

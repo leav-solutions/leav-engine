@@ -53,9 +53,9 @@ describe('User Data', () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     name: 'admin_manage_global_preferences',
-                    allowed: true
-                })
-            ])
+                    allowed: true,
+                }),
+            ]),
         );
 
         const res = await makeGraphQlCall(`mutation {
@@ -109,9 +109,9 @@ describe('User Data', () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     name: 'admin_manage_global_preferences',
-                    allowed: false
-                })
-            ])
+                    allowed: false,
+                }),
+            ]),
         );
 
         await expect(
@@ -124,7 +124,7 @@ describe('User Data', () => {
                 global
                 data
             }
-        }`)
+        }`),
         ).rejects.toThrow(/Action forbidden/);
 
         await expect(
@@ -133,7 +133,7 @@ describe('User Data', () => {
                keys: ["test_global"],
                global: true
               ) { global data }
-        }`)
+        }`),
         ).rejects.toThrow(/Action forbidden/);
     });
 });

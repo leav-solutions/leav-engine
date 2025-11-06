@@ -11,8 +11,8 @@ export const store = configureStore({
     reducer: {
         messages: messagesReducer,
         mutationsWatcher: mutationsWatcherReducer,
-        tasks: tasksReducer
-    }
+        tasks: tasksReducer,
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -27,7 +27,7 @@ describe('attributeAdvancedRepo', () => {
 
     const libraryId = 'test_lib_attribute_advanced_repo';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
@@ -37,9 +37,9 @@ describe('attributeAdvancedRepo', () => {
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
     });
 
@@ -47,14 +47,14 @@ describe('attributeAdvancedRepo', () => {
         recordRepo.createRecord({
             libraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createValue = async (
         attribute: IAttributeWithRevLink,
         recordId: string,
         payload: any,
-        version: IValueVersion | null = null
+        version: IValueVersion | null = null,
     ): Promise<IStandardValue> =>
         attributeAdvancedRepo.createValue({
             library: libraryId,
@@ -64,16 +64,16 @@ describe('attributeAdvancedRepo', () => {
                 payload,
                 created_at: Date.now(),
                 modified_at: Date.now(),
-                version
+                version,
             },
-            ctx
+            ctx,
         });
 
     describe('2 records exists with advanced mono attribute', () => {
         const advancedTextMonoAttribute: IAttributeWithRevLink = {
             id: 'text_attr_mono',
             type: AttributeTypes.ADVANCED,
-            multiple_values: false
+            multiple_values: false,
         };
 
         let record1: IRecord;
@@ -93,7 +93,7 @@ describe('attributeAdvancedRepo', () => {
                 attribute: advancedTextMonoAttribute.id,
                 modified_by: ctx.userId,
                 created_by: ctx.userId,
-                version: null
+                version: null,
             });
             expect(record2Value).toMatchObject({
                 id_value: expect.any(String),
@@ -101,7 +101,7 @@ describe('attributeAdvancedRepo', () => {
                 attribute: advancedTextMonoAttribute.id,
                 modified_by: ctx.userId,
                 created_by: ctx.userId,
-                version: null
+                version: null,
             });
         });
 
@@ -111,7 +111,7 @@ describe('attributeAdvancedRepo', () => {
                     library: libraryId,
                     attribute: advancedTextMonoAttribute,
                     recordIds: [record1.id, record2.id],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([[record1Value], [record2Value]]);
@@ -122,7 +122,7 @@ describe('attributeAdvancedRepo', () => {
                     library: libraryId,
                     attribute: advancedTextMonoAttribute,
                     recordIds: [record1.id, record2.id, 'no-exists'],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -132,14 +132,14 @@ describe('attributeAdvancedRepo', () => {
                 const record3WithoutAttr = await recordRepo.createRecord({
                     libraryId,
                     recordData: {},
-                    ctx
+                    ctx,
                 });
 
                 const values = await attributeAdvancedRepo.getValuesBatch({
                     library: libraryId,
                     attribute: advancedTextMonoAttribute,
                     recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -151,7 +151,7 @@ describe('attributeAdvancedRepo', () => {
                         library: libraryId,
                         attribute: advancedTextMonoAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1Value]);
@@ -162,7 +162,7 @@ describe('attributeAdvancedRepo', () => {
                         library: libraryId,
                         attribute: advancedTextMonoAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -175,7 +175,7 @@ describe('attributeAdvancedRepo', () => {
                         library: libraryId,
                         attribute: advancedTextMonoAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -185,7 +185,7 @@ describe('attributeAdvancedRepo', () => {
 
         describe('add version values', () => {
             const version1: IValueVersion = {
-                version1: 'node1'
+                version1: 'node1',
             };
             let record1ValueV1: IStandardValue;
             let record2ValueV1: IStandardValue;
@@ -194,10 +194,10 @@ describe('attributeAdvancedRepo', () => {
                 record2ValueV1 = await createValue(advancedTextMonoAttribute, record2.id, 'value2V1', version1);
 
                 expect(record1ValueV1).toMatchObject({
-                    version: version1
+                    version: version1,
                 });
                 expect(record2ValueV1).toMatchObject({
-                    version: version1
+                    version: version1,
                 });
             });
 
@@ -208,7 +208,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMonoAttribute,
                         recordIds: [record1.id, record2.id],
                         options: {version: null},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value]]);
@@ -220,7 +220,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMonoAttribute,
                         recordIds: [record1.id, record2.id],
                         options: {version: version1},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1ValueV1], [record2ValueV1]]);
@@ -232,11 +232,11 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMonoAttribute,
                         recordIds: [record1.id, record2.id],
                         options: {forceGetAllValues: true},
-                        ctx
+                        ctx,
                     });
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value, record1ValueV1]),
-                        expect.arrayContaining([record2Value, record2ValueV1])
+                        expect.arrayContaining([record2Value, record2ValueV1]),
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -250,7 +250,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMonoAttribute,
                         recordId: record1.id,
                         options: {version: null},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1Value]);
@@ -262,7 +262,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMonoAttribute,
                         recordId: record1.id,
                         options: {version: version1},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1ValueV1]);
@@ -274,7 +274,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMonoAttribute,
                         recordId: record1.id,
                         forceGetAllValues: true,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
@@ -288,7 +288,7 @@ describe('attributeAdvancedRepo', () => {
         const advancedTextMultiAttribute: IAttributeWithRevLink = {
             id: 'text_attr_multi',
             type: AttributeTypes.ADVANCED,
-            multiple_values: true
+            multiple_values: true,
         };
 
         let record1: IRecord;
@@ -312,7 +312,7 @@ describe('attributeAdvancedRepo', () => {
                 attribute: advancedTextMultiAttribute.id,
                 modified_by: ctx.userId,
                 created_by: ctx.userId,
-                version: null
+                version: null,
             });
             expect(record2Value2).toMatchObject({
                 id_value: expect.any(String),
@@ -320,7 +320,7 @@ describe('attributeAdvancedRepo', () => {
                 attribute: advancedTextMultiAttribute.id,
                 modified_by: ctx.userId,
                 created_by: ctx.userId,
-                version: null
+                version: null,
             });
         });
 
@@ -330,12 +330,12 @@ describe('attributeAdvancedRepo', () => {
                     library: libraryId,
                     attribute: advancedTextMultiAttribute,
                     recordIds: [record1.id, record2.id],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([
                     expect.arrayContaining([record1Value1, record1Value2]),
-                    expect.arrayContaining([record2Value1, record2Value2])
+                    expect.arrayContaining([record2Value1, record2Value2]),
                 ]);
                 expect(values[0]).toHaveLength(2);
                 expect(values[1]).toHaveLength(2);
@@ -346,13 +346,13 @@ describe('attributeAdvancedRepo', () => {
                     library: libraryId,
                     attribute: advancedTextMultiAttribute,
                     recordIds: [record1.id, record2.id, 'no-exists'],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([
                     expect.arrayContaining([record1Value1, record1Value2]),
                     expect.arrayContaining([record2Value1, record2Value2]),
-                    []
+                    [],
                 ]);
                 expect(values[0]).toHaveLength(2);
                 expect(values[1]).toHaveLength(2);
@@ -362,20 +362,20 @@ describe('attributeAdvancedRepo', () => {
                 const record3WithoutAttr = await recordRepo.createRecord({
                     libraryId,
                     recordData: {},
-                    ctx
+                    ctx,
                 });
 
                 const values = await attributeAdvancedRepo.getValuesBatch({
                     library: libraryId,
                     attribute: advancedTextMultiAttribute,
                     recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                    ctx
+                    ctx,
                 });
 
                 expect(values).toEqual([
                     expect.arrayContaining([record1Value1, record1Value2]),
                     expect.arrayContaining([record2Value1, record2Value2]),
-                    []
+                    [],
                 ]);
                 expect(values[0]).toHaveLength(2);
                 expect(values[1]).toHaveLength(2);
@@ -387,7 +387,7 @@ describe('attributeAdvancedRepo', () => {
                         library: libraryId,
                         attribute: advancedTextMultiAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -399,7 +399,7 @@ describe('attributeAdvancedRepo', () => {
                         library: libraryId,
                         attribute: advancedTextMultiAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -412,7 +412,7 @@ describe('attributeAdvancedRepo', () => {
                         library: libraryId,
                         attribute: advancedTextMultiAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -422,7 +422,7 @@ describe('attributeAdvancedRepo', () => {
 
         describe('add version values', () => {
             const version1: IValueVersion = {
-                version1: 'node1'
+                version1: 'node1',
             };
             let record1ValueV1: IStandardValue;
             let record2ValueV1: IStandardValue;
@@ -431,10 +431,10 @@ describe('attributeAdvancedRepo', () => {
                 record2ValueV1 = await createValue(advancedTextMultiAttribute, record2.id, 'value2V2', version1);
 
                 expect(record1ValueV1).toMatchObject({
-                    version: version1
+                    version: version1,
                 });
                 expect(record2ValueV1).toMatchObject({
-                    version: version1
+                    version: version1,
                 });
             });
 
@@ -445,12 +445,12 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMultiAttribute,
                         recordIds: [record1.id, record2.id],
                         options: {version: null},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
-                        expect.arrayContaining([record2Value1, record2Value2])
+                        expect.arrayContaining([record2Value1, record2Value2]),
                     ]);
 
                     expect(values[0]).toHaveLength(2);
@@ -463,7 +463,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMultiAttribute,
                         recordIds: [record1.id, record2.id],
                         options: {version: version1},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1ValueV1], [record2ValueV1]]);
@@ -475,12 +475,12 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMultiAttribute,
                         recordIds: [record1.id, record2.id],
                         options: {forceGetAllValues: true},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]),
-                        expect.arrayContaining([record2Value1, record2Value2, record2ValueV1])
+                        expect.arrayContaining([record2Value1, record2Value2, record2ValueV1]),
                     ]);
                     expect(values[0]).toHaveLength(3);
                     expect(values[1]).toHaveLength(3);
@@ -494,7 +494,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMultiAttribute,
                         recordId: record1.id,
                         options: {version: null},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -507,7 +507,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMultiAttribute,
                         recordId: record1.id,
                         options: {version: version1},
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1ValueV1]);
@@ -519,7 +519,7 @@ describe('attributeAdvancedRepo', () => {
                         attribute: advancedTextMultiAttribute,
                         recordId: record1.id,
                         forceGetAllValues: true,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));

@@ -59,7 +59,7 @@ export interface ICreateNotification {
 
 export enum NotificationChannels {
     EMAIL = 'email',
-    WEB_SOCKET = 'web_socket'
+    WEB_SOCKET = 'web_socket',
     // WEB_PUSH = 'web_push'
 }
 

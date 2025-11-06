@@ -18,9 +18,9 @@ export const useApplicationsPermissions = (): IUseApplicationsPermissionsHook =>
     const {loading, error, data} = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
         variables: {
             type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_create_application, PermissionsActions.admin_delete_application]
+            actions: [PermissionsActions.admin_create_application, PermissionsActions.admin_delete_application],
         },
-        fetchPolicy: 'cache-and-network'
+        fetchPolicy: 'cache-and-network',
     });
 
     if (error) {
@@ -28,17 +28,17 @@ export const useApplicationsPermissions = (): IUseApplicationsPermissionsHook =>
     }
 
     const canCreate = data?.isAllowed?.find(
-        permission => permission.name === PermissionsActions.admin_create_application
+        permission => permission.name === PermissionsActions.admin_create_application,
     ).allowed;
 
     const canDelete = data?.isAllowed?.find(
-        permission => permission.name === PermissionsActions.admin_delete_application
+        permission => permission.name === PermissionsActions.admin_delete_application,
     ).allowed;
 
     return {
         loading,
         canCreate,
         canDelete,
-        error: null
+        error: null,
     };
 };

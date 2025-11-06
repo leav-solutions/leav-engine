@@ -23,14 +23,14 @@ export type IAttributeSimpleRepo = IAttributeTypeRepo<AttributeTypes.SIMPLE>;
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps = {}): IAttributeSimpleRepo {
     async function _saveValue(
         library: string,
         recordId: string,
         attribute: IAttribute,
         value: ISaveStandardValue,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IStandardValue> {
         const collec = dbService.db.collection(library);
         const res = await dbService.execute({
@@ -40,7 +40,7 @@ export default function ({
                 IN ${collec}
                 OPTIONS { keepNull: false }
                 RETURN NEW`,
-            ctx
+            ctx,
         });
 
         const updatedDoc = res.length ? res[0] : {};
@@ -49,7 +49,7 @@ export default function ({
             payload: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null,
             attribute: attribute.id,
             created_by: null,
-            modified_by: null
+            modified_by: null,
         };
     }
 
@@ -80,7 +80,7 @@ export default function ({
         async isValueUsed({library, excludedRecordId, attribute, value, ctx}): Promise<boolean> {
             const queryParts = [
                 aql`FOR r IN ${dbService.db.collection(library)} 
-                        FILTER r.${attribute.id} == ${value.payload}`
+                        FILTER r.${attribute.id} == ${value.payload}`,
             ];
 
             if (excludedRecordId) {
@@ -164,6 +164,6 @@ export default function ({
             }
 
             return true;
-        }
+        },
     };
 }

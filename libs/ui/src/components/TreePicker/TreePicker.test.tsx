@@ -15,11 +15,11 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 jest.mock('../EditTreeModal', () => ({
-    EditTreeModal: () => <div>EditTree</div>
+    EditTreeModal: () => <div>EditTree</div>,
 }));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
@@ -28,52 +28,52 @@ describe('TreePicker', () => {
     const mockTreeA = {
         __typename: 'Tree',
         ...mockTreeSimple,
-        id: 'treeA'
+        id: 'treeA',
     };
     const mockTreeB = {
         __typename: 'Tree',
         ...mockTreeSimple,
-        id: 'treeB'
+        id: 'treeB',
     };
     const mockTreeC = {
         __typename: 'Tree',
         ...mockTreeSimple,
-        id: 'treeC'
+        id: 'treeC',
     };
 
     const mocks = [
         {
             request: {
                 query: GetTreesDocument,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
                     trees: {
-                        list: [mockTreeA, mockTreeB, mockTreeC]
-                    }
-                }
-            }
+                        list: [mockTreeA, mockTreeB, mockTreeC],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: IsAllowedDocument,
                 variables: {
                     type: PermissionTypes.admin,
-                    actions: [PermissionsActions.admin_create_tree]
-                }
+                    actions: [PermissionsActions.admin_create_tree],
+                },
             },
             result: {
                 data: {
                     isAllowed: [
                         {
                             name: PermissionsActions.admin_create_tree,
-                            allowed: true
-                        }
-                    ]
-                }
-            }
-        }
+                            allowed: true,
+                        },
+                    ],
+                },
+            },
+        },
     ];
 
     test('Display trees', async () => {
@@ -135,7 +135,7 @@ describe('TreePicker', () => {
         await userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
         await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockTreeB, mockTreeC]), {
-            timeout: 10_000
+            timeout: 10_000,
         });
     });
 
@@ -178,25 +178,25 @@ describe('TreePicker', () => {
                     query: IsAllowedDocument,
                     variables: {
                         type: PermissionTypes.admin,
-                        actions: [PermissionsActions.admin_create_tree]
-                    }
+                        actions: [PermissionsActions.admin_create_tree],
+                    },
                 },
                 result: {
                     data: {
                         isAllowed: [
                             {
                                 name: PermissionsActions.admin_create_tree,
-                                allowed: false
-                            }
-                        ]
-                    }
-                }
-            }
+                                allowed: false,
+                            },
+                        ],
+                    },
+                },
+            },
         ];
 
         const mockHandleSubmit = jest.fn();
         render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
-            mocks: mocksNotAllowed
+            mocks: mocksNotAllowed,
         });
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());

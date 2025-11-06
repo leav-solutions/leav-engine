@@ -17,7 +17,7 @@ function EditRecordFormContainer({
     initialRecordId,
     library,
     setRecordIdentity,
-    onIdentityUpdate
+    onIdentityUpdate,
 }: IEditRecordFormProps): JSX.Element {
     const attributes = library?.attributes ?? [];
 

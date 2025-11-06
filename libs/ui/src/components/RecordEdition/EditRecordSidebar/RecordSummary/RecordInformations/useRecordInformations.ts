@@ -5,7 +5,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type GetRecordColumnsValuesRecord,
     type IRecordColumnValueLink,
-    type IRecordColumnValueStandard
+    type IRecordColumnValueStandard,
 } from '_ui/_queries/records/getRecordColumnsValues';
 import {type IRecordIdentityWhoAmI} from '_ui/types';
 
@@ -15,8 +15,8 @@ export const useRecordInformations = (record: IRecordIdentityWhoAmI, recordData:
     const recordInformations = [
         {
             title: t('record_summary.id_entity'),
-            value: record?.id ?? '-'
-        }
+            value: record?.id ?? '-',
+        },
     ];
 
     if (recordData?.created_at?.[0]) {
@@ -25,8 +25,8 @@ export const useRecordInformations = (record: IRecordIdentityWhoAmI, recordData:
             value: t('record_summary.date_by_user', {
                 date: (recordData?.created_at?.[0] as IRecordColumnValueStandard).payload,
                 user: (recordData?.created_by?.[0] as IRecordColumnValueLink)?.linkValue?.whoAmI?.label,
-                interpolation: {escapeValue: false}
-            })
+                interpolation: {escapeValue: false},
+            }),
         });
     }
 
@@ -36,8 +36,8 @@ export const useRecordInformations = (record: IRecordIdentityWhoAmI, recordData:
             value: t('record_summary.date_by_user', {
                 date: (recordData?.modified_at?.[0] as IRecordColumnValueStandard).payload,
                 user: (recordData?.modified_by?.[0] as IRecordColumnValueLink)?.linkValue?.whoAmI?.label,
-                interpolation: {escapeValue: false}
-            })
+                interpolation: {escapeValue: false},
+            }),
         });
     }
 

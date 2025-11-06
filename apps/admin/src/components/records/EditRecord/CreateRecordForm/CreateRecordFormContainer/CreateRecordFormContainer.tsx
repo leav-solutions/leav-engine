@@ -11,7 +11,7 @@ import {isValueNull, versionObjToGraphql} from '../../../../../utils';
 import {type CREATE_RECORD, type CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
 import {
     type GET_LIB_BY_ID_libraries_list,
-    type GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, type ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
@@ -23,7 +23,7 @@ import {
     type ITreeLinkValue,
     type IValue,
     type RecordData,
-    type RecordEdition
+    type RecordEdition,
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import CreateRecordForm from '../CreateRecordForm';
@@ -53,7 +53,7 @@ const _extractValueToSave = (value: IGenericValue, attribute: GET_LIB_BY_ID_libr
                 (value as ITreeLinkValue).treeValue !== null
                     ? [
                           (value as ITreeLinkValue).treeValue!.record.whoAmI.library.id,
-                          (value as ITreeLinkValue).treeValue!.record.whoAmI.id
+                          (value as ITreeLinkValue).treeValue!.record.whoAmI.id,
                       ].join('/')
                     : null;
             break;
@@ -73,7 +73,7 @@ function CreateRecordFormContainer({
     onIdentityUpdate,
     setSubmitFunc,
     onPostSave,
-    inModal = false
+    inModal = false,
 }: ICreateRecordFormContainerProps): JSX.Element {
     const attributesById = useMemo(
         () =>
@@ -81,7 +81,7 @@ function CreateRecordFormContainer({
                 acc[attr.id] = attr;
                 return acc;
             }, {}),
-        [attributes]
+        [attributes],
     );
 
     const lang = useLang().lang;
@@ -95,15 +95,15 @@ function CreateRecordFormContainer({
         error,
         data,
         refetch: refetchData,
-        networkStatus
+        networkStatus,
     } = useQuery<IGetRecordData>(query, {
         variables: {library: library.id, id: recordId, version: versionObjToGraphql(valueVersion || null), lang},
         skip: !recordId || savePending,
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
     });
 
     const [saveValueBatch, {data: dataSave}] = useMutation<SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables>(
-        saveValueBatchQuery
+        saveValueBatchQuery,
     );
 
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordQuery);
@@ -113,7 +113,7 @@ function CreateRecordFormContainer({
             dataQueryRes && dataQueryRes.record.list[0].whoAmI
                 ? dataQueryRes.record.list[0].whoAmI
                 : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null},
-        []
+        [],
     );
 
     useEffect(() => {
@@ -137,7 +137,7 @@ function CreateRecordFormContainer({
                             allValues.push({
                                 attribute: attrName,
                                 id_value: val ? val.id_value : null,
-                                value: valToSave
+                                value: valToSave,
                             });
                         }
                     }
@@ -152,13 +152,13 @@ function CreateRecordFormContainer({
                     library: library.id,
                     recordId: idRecord,
                     version: !!valueVersion ? versionObjToGraphql(valueVersion) : null,
-                    values: submittedValues
-                }
+                    values: submittedValues,
+                },
             });
 
         let saveValuesRes;
         const resCreaRecord = await createRecord({
-            variables: {library: library.id}
+            variables: {library: library.id},
         });
 
         if (!!resCreaRecord && !!resCreaRecord.data) {

@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function InfosForm() {
             return <div>InfosForm</div>;
-        }
+        },
 );
 describe('InfosTab', () => {
     const variables = {
@@ -26,11 +26,11 @@ describe('InfosTab', () => {
             id: mockAttrAdv.id,
             label: {
                 fr: mockAttrAdv.label?.fr ?? '',
-                en: mockAttrAdv.label?.en ?? ''
+                en: mockAttrAdv.label?.en ?? '',
             },
             description: {
                 fr: mockAttrAdv.description?.fr ?? '',
-                en: mockAttrAdv.description?.en ?? ''
+                en: mockAttrAdv.description?.en ?? '',
             },
             readonly: false,
             required: false,
@@ -45,10 +45,10 @@ describe('InfosTab', () => {
             versions_conf: {
                 versionable: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.versionable : false,
                 mode: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.mode : null,
-                profile: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.profile : null
+                profile: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.profile : null,
             },
-            character_limit: null
-        }
+            character_limit: null,
+        },
     };
 
     test('Render form', async () => {
@@ -67,7 +67,7 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: saveAttributeQuery,
-                    variables
+                    variables,
                 },
                 result: () => {
                     saveQueryCalled = true;
@@ -76,12 +76,12 @@ describe('InfosTab', () => {
                             saveAttribute: {
                                 ...mockAttrAdv,
                                 __typename: 'Attribute',
-                                versions_conf: null
-                            }
-                        }
+                                versions_conf: null,
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         const mockCache = getMockCacheWithFragments();
@@ -97,17 +97,17 @@ describe('InfosTab', () => {
                         {
                             ...mockAttrAdv,
                             __typename: 'Attribute',
-                            versions_conf: null
-                        }
-                    ]
-                }
-            }
+                            versions_conf: null,
+                        },
+                    ],
+                },
+            },
         });
 
         const comp = mount(
             <MockedProvider mocks={mocks} addTypename>
                 <InfosTab onPostSave={onPostSave} />
-            </MockedProvider>
+            </MockedProvider>,
         );
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');
 
@@ -127,7 +127,7 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: saveAttributeQuery,
-                    variables
+                    variables,
                 },
                 result: {
                     errors: [
@@ -135,12 +135,12 @@ describe('InfosTab', () => {
                             message: 'Error',
                             extensions: {
                                 code: 'VALIDATION_ERROR',
-                                fields: {id: 'invalid id'}
-                            }
-                        }
-                    ]
-                }
-            }
+                                fields: {id: 'invalid id'},
+                            },
+                        },
+                    ],
+                },
+            },
         ];
 
         const mockCache = getMockCacheWithFragments();
@@ -156,11 +156,11 @@ describe('InfosTab', () => {
                         {
                             ...mockAttrAdv,
                             __typename: 'Attribute',
-                            versions_conf: null
-                        }
-                    ]
-                }
-            }
+                            versions_conf: null,
+                        },
+                    ],
+                },
+            },
         });
 
         let comp;
@@ -168,7 +168,7 @@ describe('InfosTab', () => {
             comp = mount(
                 <MockedProvider mocks={mocksError as unknown as MockedResponse[]} cache={mockCache} addTypename>
                     <InfosTab />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
         const submitFunc: any = comp.find('InfosForm').prop('onSubmitInfos');

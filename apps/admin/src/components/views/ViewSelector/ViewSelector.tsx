@@ -16,8 +16,8 @@ interface IViewSelectorProps extends FormDropdownProps {
 function ViewSelector({library, ...fieldProps}: IViewSelectorProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_VIEWS, GET_VIEWSVariables>(getViewsQuery, {
         variables: {
-            library
-        }
+            library,
+        },
     });
 
     if (loading) {

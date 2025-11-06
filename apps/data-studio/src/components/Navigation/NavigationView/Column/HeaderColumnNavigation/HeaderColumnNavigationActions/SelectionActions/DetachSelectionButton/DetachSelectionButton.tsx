@@ -23,7 +23,7 @@ function DetachSelectionButton({onMessages}: IDetachSelectionButtonProps): JSX.E
 
     const {selectionState, navigation} = useAppSelector(state => ({
         selectionState: state.selection,
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
     const dispatch = useAppDispatch();
 
@@ -35,7 +35,7 @@ function DetachSelectionButton({onMessages}: IDetachSelectionButtonProps): JSX.E
     const _handleDetachElements = async () => {
         const messages: IMessages = {
             countValid: 0,
-            errors: {}
+            errors: {},
         };
         const deletedNodes = [];
 
@@ -44,8 +44,8 @@ function DetachSelectionButton({onMessages}: IDetachSelectionButtonProps): JSX.E
                 await detachFromTree({
                     variables: {
                         treeId: activeTree.id,
-                        nodeId: elementSelected.nodeId
-                    }
+                        nodeId: elementSelected.nodeId,
+                    },
                 });
 
                 messages.countValid++;
@@ -58,13 +58,13 @@ function DetachSelectionButton({onMessages}: IDetachSelectionButtonProps): JSX.E
                     if (errorMessageParent) {
                         messages.errors[errorMessageParent] = [
                             ...(messages.errors[errorMessageParent] ?? []),
-                            elementSelected.id
+                            elementSelected.id,
                         ];
                     }
                     if (errorMessageElement) {
                         messages.errors[errorMessageElement] = [
                             ...(messages.errors[errorMessageElement] ?? []),
-                            elementSelected.label || elementSelected.id
+                            elementSelected.label || elementSelected.id,
                         ];
                     }
                 }

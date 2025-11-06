@@ -15,13 +15,13 @@ jest.mock(
     () =>
         function ConfirmedButton() {
             return <div>ConfirmedButton</div>;
-        }
+        },
 );
 
 describe('FormsList', () => {
     const forms = [
         {...mockFormLight, id: 'form1'},
-        {...mockFormLight, id: 'form2'}
+        {...mockFormLight, id: 'form2'},
     ];
     const onRowClick = jest.fn();
     const onCreate = jest.fn();
@@ -39,7 +39,7 @@ describe('FormsList', () => {
                 onCreate={onCreate}
                 onDelete={onDelete}
                 onFiltersChange={onFiltersChange}
-            />
+            />,
         );
     });
 
@@ -69,7 +69,7 @@ describe('FormsList', () => {
                 onCreate={onCreate}
                 onDelete={onDelete}
                 onFiltersChange={onFiltersChange}
-            />
+            />,
         );
         mountedComp.find('.filters input[name="label"]').simulate('change', {target: {value: 'MyLabel'}});
         mountedComp.find('.filters input[name="id"]').simulate('change');

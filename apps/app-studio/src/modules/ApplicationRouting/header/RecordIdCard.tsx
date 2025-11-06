@@ -20,24 +20,24 @@ export const RecordIdCard: FunctionComponent<{
     const {data, loading} = useGetRecordIdCardQuery({
         variables: {
             id: currentRecordId,
-            libraryId
+            libraryId,
         },
-        skip: !currentRecordId || !libraryId
+        skip: !currentRecordId || !libraryId,
     });
 
     // TODO Remove the library label part to display breadcrumb instead
     const {data: libraryData, loading: libraryLoading} = useGetLibraryNameQuery({
         variables: {
-            libraryId
+            libraryId,
         },
-        skip: libraryId === null
+        skip: libraryId === null,
     });
 
     // Complete breadcrumb data here
     const breadcrumbItems: ComponentProps<typeof KitBreadcrumb>['items'] = [
         {
-            title: localizedTranslation(libraryData?.libraries?.list?.[0]?.label, lang)
-        }
+            title: localizedTranslation(libraryData?.libraries?.list?.[0]?.label, lang),
+        },
     ];
 
     const avatarProps: ComponentProps<typeof KitIdCard>['avatarProps'] =
@@ -46,7 +46,7 @@ export const RecordIdCard: FunctionComponent<{
                   shape: 'square',
                   src: data?.records?.list?.[0]?.whoAmI?.preview?.small,
                   label: data?.records?.list?.[0]?.whoAmI?.label,
-                  size: avatarSize
+                  size: avatarSize,
               }
             : undefined;
 
@@ -55,7 +55,7 @@ export const RecordIdCard: FunctionComponent<{
     const labelsProps: Pick<ComponentProps<typeof KitIdCard>, 'title' | 'description'> = currentRecordId ===
     NEW_RECORD_ID
         ? {
-              title: <KitTypography.Title level="h2">{t('record_edition.new_record')}</KitTypography.Title>
+              title: <KitTypography.Title level="h2">{t('record_edition.new_record')}</KitTypography.Title>,
           }
         : {
               title: <KitBreadcrumb items={breadcrumbItems} />,
@@ -64,7 +64,7 @@ export const RecordIdCard: FunctionComponent<{
                       label={data?.records?.list?.[0]?.whoAmI?.label}
                       sublabel={data?.records?.list?.[0]?.whoAmI?.subLabel}
                   />
-              )
+              ),
           };
 
     return isLoading ? <PanelIdCardSkeleton /> : <KitIdCard size="s" {...labelsProps} avatarProps={avatarProps} />;

@@ -8,13 +8,13 @@ import {type Application} from '../../types';
 import {RedirectToFirstWorkspace} from '../RedirectToFirstWorkspace';
 
 jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     Navigate: jest.fn(),
-    generatePath: jest.fn()
+    generatePath: jest.fn(),
 }));
 
 describe('RedirectToFirstWorkspace component guard', () => {
@@ -30,11 +30,11 @@ describe('RedirectToFirstWorkspace component guard', () => {
                 icon: 'fa-layer-group',
                 title: {
                     fr: 'PACs',
-                    en: 'Roadmap'
+                    en: 'Roadmap',
                 },
                 type: 'library',
-                libraryId: 'map'
-            }
+                libraryId: 'map',
+            },
         ],
         libraries: {
             map: {
@@ -43,7 +43,7 @@ describe('RedirectToFirstWorkspace component guard', () => {
                         id: 'maps',
                         name: {
                             fr: 'Gestion des PACs',
-                            en: 'MAPs Management'
+                            en: 'MAPs Management',
                         },
                         type: 'explorer',
                         viewId: '885451776',
@@ -53,15 +53,15 @@ describe('RedirectToFirstWorkspace component guard', () => {
                                 what: 'record',
                                 label: {
                                     en: 'Open PAC',
-                                    fr: 'Ouvrir le PAC'
-                                }
-                            }
-                        ]
-                    }
+                                    fr: 'Ouvrir le PAC',
+                                },
+                            },
+                        ],
+                    },
                 ],
-                recordPanels: []
-            }
-        }
+                recordPanels: [],
+            },
+        },
     };
 
     beforeEach(() => {

@@ -62,7 +62,7 @@ describe('Plugins', () => {
             }`);
 
             expect(
-                resPermissions.data.data.permissionsActionsByType.find(p => p.name === 'fake_plugin_permission')
+                resPermissions.data.data.permissionsActionsByType.find(p => p.name === 'fake_plugin_permission'),
             ).toBeDefined();
         });
     });
@@ -82,7 +82,7 @@ describe('Plugins', () => {
             }`);
 
             const logActionEnums: Array<{name: string}> = resLogs.data.data.__schema.types.find(
-                t => t.name === 'LogAction'
+                t => t.name === 'LogAction',
             ).enumValues;
             expect(logActionEnums.find(e => e.name === 'fakeplugin_FAKE_PLUGIN_ACTION')).toBeDefined();
         });

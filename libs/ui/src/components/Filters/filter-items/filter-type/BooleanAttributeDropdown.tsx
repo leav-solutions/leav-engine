@@ -10,7 +10,7 @@ import {type IFilterChildrenDropDownProps} from './_types';
 export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
     const _onSelectionChanged: ComponentProps<typeof KitSelect>['onChange'] = value => {
@@ -20,13 +20,13 @@ export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
                       ...filter,
                       condition: null,
                       value: null,
-                      formattedValue: undefined
+                      formattedValue: undefined,
                   }
                 : {
                       ...filter,
                       condition: AttributeConditionFilter.EQUAL,
                       value,
-                      formattedValue: value === 'true' ? t('explorer.true') : t('explorer.false')
+                      formattedValue: value === 'true' ? t('explorer.true') : t('explorer.false'),
                   };
 
         onFilterChange(filterData);
@@ -35,12 +35,12 @@ export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
     const valuesOptions = [
         {
             label: t('explorer.true'),
-            value: 'true'
+            value: 'true',
         },
         {
             label: t('explorer.false'),
-            value: 'false'
-        }
+            value: 'false',
+        },
     ];
 
     return (

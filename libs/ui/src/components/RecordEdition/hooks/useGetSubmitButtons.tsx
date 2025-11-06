@@ -12,7 +12,7 @@ export const useGetSubmitButtons = (
     buttons: PossibleSubmitButtons,
     id: string,
     isInCreateMode: boolean,
-    onClickSubmit: (button: SubmitButtonsName) => void
+    onClickSubmit: (button: SubmitButtonsName) => void,
 ) => {
     const {t} = useSharedTranslation();
     const headerSubmitButtons = [];
@@ -32,7 +32,7 @@ export const useGetSubmitButtons = (
                 onClick={() => onClickSubmit('create')}
             >
                 {t('record_edition.create')}
-            </KitButton>
+            </KitButton>,
         );
     }
 
@@ -47,7 +47,7 @@ export const useGetSubmitButtons = (
                 onClick={() => onClickSubmit('createAndEdit')}
             >
                 {t('record_edition.create_and_edit')}
-            </KitButton>
+            </KitButton>,
         );
     }
 

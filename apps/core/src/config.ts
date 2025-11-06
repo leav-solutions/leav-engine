@@ -23,29 +23,29 @@ export const validateConfig = (conf: IConfig) => {
             admin: {
                 login: Joi.string().required(),
                 password: Joi.string().required(),
-                email: Joi.string().email().required()
+                email: Joi.string().email().required(),
             },
             systemUser: {
-                email: Joi.string().email().required()
-            }
+                email: Joi.string().email().required(),
+            },
         }),
         coreMode: Joi.string()
             .valid(...Object.values(CoreMode))
             .required(),
         db: Joi.object().keys({
             url: Joi.string().required(),
-            name: Joi.string().required()
+            name: Joi.string().required(),
         }),
         diskCache: Joi.object().keys({
-            directory: Joi.string().required()
+            directory: Joi.string().required(),
         }),
         dataLoaders: Joi.object().keys({
             valueRepo: Joi.object().keys({
                 getValues: Joi.object().keys({
                     enableCache: Joi.boolean().required(),
-                    useBatch: Joi.boolean().required()
-                })
-            })
+                    useBatch: Joi.boolean().required(),
+                }),
+            }),
         }),
         auth: Joi.object().keys({
             scheme: Joi.string().required(),
@@ -55,7 +55,7 @@ export const validateConfig = (conf: IConfig) => {
             refreshTokenExpiration: Joi.string().required(),
             cookie: {
                 sameSite: Joi.string().valid('none', 'lax', 'strict'),
-                secure: Joi.boolean()
+                secure: Joi.boolean(),
             },
             resetPasswordExpiration: Joi.string().required(),
             oidc: Joi.object().keys({
@@ -63,27 +63,27 @@ export const validateConfig = (conf: IConfig) => {
                 wellKnownEndpoint: Joi.alternatives().conditional('enable', {
                     is: true,
                     then: Joi.string().required(),
-                    otherwise: Joi.string()
+                    otherwise: Joi.string(),
                 }),
                 clientId: Joi.alternatives().conditional('enable', {
                     is: true,
                     then: Joi.string().required(),
-                    otherwise: Joi.string()
+                    otherwise: Joi.string(),
                 }),
                 postLogoutRedirectUri: Joi.alternatives().conditional('enable', {
                     is: true,
                     then: Joi.string().required(),
-                    otherwise: Joi.string()
+                    otherwise: Joi.string(),
                 }),
                 skipLogoutConfirmationPage: Joi.boolean(),
                 idTokenUserClaim: Joi.string().required(),
                 enableAutoProvisioning: Joi.alternatives().conditional('enable', {
                     is: true,
                     then: Joi.boolean().required(),
-                    otherwise: Joi.boolean()
-                })
+                    otherwise: Joi.boolean(),
+                }),
             }),
-            testApiKey: Joi.string()
+            testApiKey: Joi.string(),
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),
@@ -92,26 +92,26 @@ export const validateConfig = (conf: IConfig) => {
             requireTLS: Joi.boolean(),
             from: Joi.object().keys({
                 name: Joi.string().required(),
-                email: Joi.string().email().required()
+                email: Joi.string().email().required(),
             }),
             auth: {
                 user: Joi.string(),
-                password: Joi.string()
-            }
+                password: Joi.string(),
+            },
         }),
         actions: Joi.object().keys({
             excel: {
                 useNewHyperformula: Joi.boolean().required(),
-                debug: Joi.boolean().required()
-            }
+                debug: Joi.boolean().required(),
+            },
         }),
         lang: Joi.object().keys({
             available: Joi.array().items(Joi.string()).required(),
-            default: Joi.string().required()
+            default: Joi.string().required(),
         }),
         permissions: Joi.object().keys({
             default: Joi.boolean().required(),
-            enableCache: Joi.boolean().required()
+            enableCache: Joi.boolean().required(),
         }),
         amqp: Joi.object().keys({
             connOpt: Joi.object().keys({
@@ -119,39 +119,39 @@ export const validateConfig = (conf: IConfig) => {
                 hostname: Joi.string().required(),
                 username: Joi.string().required(),
                 password: Joi.string().required(),
-                port: Joi.string().required()
+                port: Joi.string().required(),
             }),
             exchange: Joi.string().required(),
             type: Joi.string().required(),
-            prefetch: Joi.number().required()
+            prefetch: Joi.number().required(),
         }),
         redis: Joi.object().keys({
             host: Joi.string().required(),
             port: Joi.string().required(),
             cacheDatabase: Joi.number().required(),
-            sessionDatabase: Joi.number().required()
+            sessionDatabase: Joi.number().required(),
         }),
         filesManager: Joi.object().keys({
             queues: Joi.object().keys({
                 events: Joi.string().required(),
                 previewRequest: Joi.string().required(),
-                previewResponse: Joi.string().required()
+                previewResponse: Joi.string().required(),
             }),
             routingKeys: Joi.object().keys({
                 events: Joi.string().required(),
                 previewRequest: Joi.string().required(),
-                previewResponse: Joi.string().required()
+                previewResponse: Joi.string().required(),
             }),
             rootKeys: Joi.object().keys({
-                files1: Joi.string().required()
+                files1: Joi.string().required(),
             }),
             allowFilesList: Joi.string().required().allow(''),
-            ignoreFilesList: Joi.string().required().allow('')
+            ignoreFilesList: Joi.string().required().allow(''),
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({
-                events: Joi.string().required()
-            })
+                events: Joi.string().required(),
+            }),
         }),
         tasksManager: Joi.object().keys({
             checkingInterval: Joi.number().required(),
@@ -159,28 +159,28 @@ export const validateConfig = (conf: IConfig) => {
             restartWorker: Joi.boolean().required(),
             queues: Joi.object().keys({
                 execOrders: Joi.string().required(),
-                cancelOrders: Joi.string().required()
+                cancelOrders: Joi.string().required(),
             }),
             routingKeys: Joi.object().keys({
                 execOrders: Joi.string().required(),
-                cancelOrders: Joi.string().required()
-            })
+                cancelOrders: Joi.string().required(),
+            }),
         }),
         eventsManager: Joi.object().keys({
             routingKeys: Joi.object().keys({
                 data_events: Joi.string().required(),
-                pubsub_events: Joi.string().required()
+                pubsub_events: Joi.string().required(),
             }),
             queues: Joi.object().keys({
-                pubsub_events_prefix: Joi.string().required()
-            })
+                pubsub_events_prefix: Joi.string().required(),
+            }),
         }),
         debug: Joi.boolean(),
         env: Joi.string(),
         defaultUserId: Joi.string().required(),
         export: Joi.object().keys({
             directory: Joi.string().required(),
-            endpoint: Joi.string().required()
+            endpoint: Joi.string().required(),
         }),
         import: Joi.object().keys({
             directory: Joi.string().required(),
@@ -188,40 +188,40 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required(),
             maxStackedElements: Joi.number().required(),
-            delayTaskExecMs: Joi.number().required()
+            delayTaskExecMs: Joi.number().required(),
         }),
         plugins: Joi.object().keys().unknown(),
         preview: Joi.object().keys({
-            directory: Joi.string().required()
+            directory: Joi.string().required(),
         }),
         applications: Joi.object().keys({
-            rootFolder: Joi.string().required()
+            rootFolder: Joi.string().required(),
         }),
         files: Joi.object().keys({
             rootPaths: Joi.string().required(),
-            originalsPathPrefix: Joi.string().required()
+            originalsPathPrefix: Joi.string().required(),
         }),
         dbProfiler: Joi.object().keys({
-            enable: Joi.boolean().required()
+            enable: Joi.boolean().required(),
         }),
         instanceId: Joi.string().required(),
         elasticsearch: Joi.object().keys({
             indexPrefix: Joi.string().required(),
             url: Joi.string().required(),
             ilmPolicyName: Joi.string().required(),
-            templateName: Joi.string().required()
+            templateName: Joi.string().required(),
         }),
         logsCollector: Joi.object().keys({
-            queue: Joi.string().required()
+            queue: Joi.string().required(),
         }),
         notification: Joi.object().keys({
             enable: Joi.boolean().required(),
             email: Joi.object().keys({
-                enable: Joi.boolean().required()
+                enable: Joi.boolean().required(),
             }),
             webSocket: Joi.object().keys({
-                enable: Joi.boolean().required()
-            })
+                enable: Joi.boolean().required(),
+            }),
         }),
         pluginsPath: Joi.array().items(Joi.string()).required(),
         bugsnag: Joi.object().keys({
@@ -229,37 +229,37 @@ export const validateConfig = (conf: IConfig) => {
             apiKey: Joi.alternatives().conditional('enable', {
                 is: true,
                 then: Joi.string().required(),
-                otherwise: Joi.string()
+                otherwise: Joi.string(),
             }),
             appVersion: Joi.alternatives().conditional('enable', {
                 is: true,
                 then: Joi.string().required(),
-                otherwise: Joi.string()
+                otherwise: Joi.string(),
             }),
             appType: Joi.alternatives().conditional('enable', {
                 is: true,
                 then: Joi.string().required(),
-                otherwise: Joi.string()
+                otherwise: Joi.string(),
             }),
             releaseStage: Joi.alternatives().conditional('enable', {
                 is: true,
                 then: Joi.string().required(),
-                otherwise: Joi.string()
-            })
+                otherwise: Joi.string(),
+            }),
         }),
         matomo: Joi.object().keys({
             enable: Joi.boolean().required(),
             url: Joi.alternatives().conditional('enable', {
                 is: true,
                 then: Joi.string().required(),
-                otherwise: Joi.string().required().allow('')
+                otherwise: Joi.string().required().allow(''),
             }),
             siteId: Joi.alternatives().conditional('enable', {
                 is: true,
                 then: Joi.string().required(),
-                otherwise: Joi.string().required().allow('')
-            })
-        })
+                otherwise: Joi.string().required().allow(''),
+            }),
+        }),
     });
 
     const isValid = configSchema.validate(conf);

@@ -31,13 +31,13 @@ import {
     type IFormElementWithValuesAndChildren,
     type IFormFilterOptions,
     type IFormStrict,
-    type IRecordForm
+    type IRecordForm,
 } from '../../_types/forms';
 import {type IList, SortOrder} from '../../_types/list';
 import {
     AttributePermissionsActions,
     LibraryPermissionsActions,
-    RecordAttributePermissionsActions
+    RecordAttributePermissionsActions,
 } from '../../_types/permissions';
 import {getElementValues} from './helpers/getElementValues';
 import {mustIncludeElement} from './helpers/mustIncludeElement';
@@ -47,7 +47,7 @@ export interface IFormDomain {
     getFormsByLib({
         library,
         params,
-        ctx
+        ctx,
     }: {
         library: string;
         params?: IGetCoreEntitiesParams;
@@ -91,7 +91,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
         'core.infra.form': formRepo,
         'core.utils': utils,
         'core.utils.logger': logger,
-        translator
+        translator,
     } = deps;
 
     const _canAccessAttribute = (attribute: string, libraryId: string, recordId: string, ctx: IQueryInfos) =>
@@ -102,12 +102,12 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                   attribute,
                   libraryId,
                   recordId,
-                  ctx
+                  ctx,
               )
             : attributePermissionDomain.getAttributePermission({
                   action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
                   attributeId: attribute,
-                  ctx
+                  ctx,
               });
 
     const _getMissingFormDefaultProps = async ({library, id, ctx}): Promise<IForm> => {
@@ -120,7 +120,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 order: 0,
                 uiElementType: 'text_block',
                 type: FormElementTypes.LAYOUT,
-                settings: {content: translator.t('forms.missing_form_warning', {idForm: id, lng: ctx.lang})}
+                settings: {content: translator.t('forms.missing_form_warning', {idForm: id, lng: ctx.lang})},
             },
             {
                 id: generateElementId('missing_form_warning_divider'),
@@ -128,12 +128,12 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 order: 1,
                 uiElementType: 'divider',
                 type: FormElementTypes.LAYOUT,
-                settings: null
-            }
+                settings: null,
+            },
         ];
 
         const attributes = (await attributeDomain.getLibraryAttributes(library, ctx)).filter(
-            attr => !baseAttributes.includes(attr?.id)
+            attr => !baseAttributes.includes(attr?.id),
         );
 
         const attributesElements = attributes.map((att, index): IFormElement => {
@@ -145,8 +145,8 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 type: FormElementTypes.FIELD,
                 settings: {
                     label: att.label || att.id,
-                    attribute: att.id
-                }
+                    attribute: att.id,
+                },
             };
             switch (att.type) {
                 case AttributeTypes.SIMPLE:
@@ -158,7 +158,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                     data.settings = {
                         displayRecordIdentity: true,
                         label: att.label || att.id,
-                        attribute: att.id
+                        attribute: att.id,
                     };
                     data.uiElementType = 'link';
                     break;
@@ -176,13 +176,13 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             library,
             elements: [
                 {
-                    elements: finalElements
-                }
+                    elements: finalElements,
+                },
             ],
             sidePanel: {
                 enable: true,
-                isOpenByDefault: true
-            }
+                isOpenByDefault: true,
+            },
         };
     };
 
@@ -246,14 +246,14 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                                 libraryId,
                                 version,
                                 deps,
-                                ctx
+                                ctx,
                             });
 
                             const depElementWithValues: IFormElementWithValuesAndChildren = {
                                 ...depElement,
                                 values,
                                 valueError: elementError || valueError,
-                                children: []
+                                children: [],
                             };
 
                             // Add elements to the flat list as well, as we'll to run through all elements easily
@@ -272,7 +272,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                                         children: [],
                                         values: null,
                                         order: i,
-                                        containerId: depElement.id
+                                        containerId: depElement.id,
                                     };
                                     flatElementsList.push(tabContainer);
                                     allElems[tabContainer.id] = tabContainer;
@@ -283,7 +283,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
 
                     return allElems;
                 },
-                Promise.resolve({})
+                Promise.resolve({}),
             );
 
             // Convert hash map to tree structure in order to filter out empty containers
@@ -302,7 +302,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
              * If a form has no visible field at all, nothing will be returned, including all other layout elements
              */
             const _filterEmptyContainers = (
-                elements: IFormElementWithValuesAndChildren[]
+                elements: IFormElementWithValuesAndChildren[],
             ): {children: IFormElementWithValues[]; hasFields: boolean} => {
                 let elementsToKeep: IFormElementWithValuesAndChildren[] = [];
                 let hasFields = false; // Used to inform caller about presence of a field
@@ -323,14 +323,14 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                             if (elem.uiElementType === FormUIElementTypes.TABS) {
                                 // If element is a tab => update settings
                                 elem.settings.tabs = (elem.settings ?? {}).tabs.filter(tab =>
-                                    children.some(c => c.id === `${elem.id}/${tab.id}`)
+                                    children.some(c => c.id === `${elem.id}/${tab.id}`),
                                 );
                             }
 
                             // If element has children we must keep element itself and its children
                             _childrenToKeep = [
                                 omit(elem, ['children']),
-                                ...children.filter(c => c.uiElementType !== FormUIElementTypes.TAB_FIELDS_CONTAINER)
+                                ...children.filter(c => c.uiElementType !== FormUIElementTypes.TAB_FIELDS_CONTAINER),
                             ];
                         }
                         hasFields = hasFields || childHasFields;
@@ -361,7 +361,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 library: libraryId,
                 dependencyAttributes: formProps.dependencyAttributes,
                 elements: formElements,
-                sidePanel: formProps.sidePanel
+                sidePanel: formProps.sidePanel,
             };
         },
         async getFormProperties({library, id, ctx}): Promise<IForm> {
@@ -371,7 +371,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
 
             const forms = await formRepo.getForms({
                 params: {filters, strictFilters: true, withCount: false},
-                ctx
+                ctx,
             });
 
             if (!forms.list.length) {
@@ -390,8 +390,8 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 elements: [],
                 sidePanel: {
                     enable: true,
-                    isOpenByDefault: true
-                }
+                    isOpenByDefault: true,
+                },
             };
 
             const filters: IFormFilterOptions = {library: form.library, id: form.id};
@@ -400,9 +400,9 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 params: {
                     filters,
                     strictFilters: true,
-                    withCount: false
+                    withCount: false,
                 },
-                ctx
+                ctx,
             });
 
             const existingForm = !!forms.list.length;
@@ -418,7 +418,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                     libraryId: form.library,
                     action: permToCheck,
                     userId: ctx.userId,
-                    ctx
+                    ctx,
                 }))
             ) {
                 throw new PermissionError(permToCheck);
@@ -446,19 +446,19 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 // Check if they exist
                 const existingAttributes = await attributeDomain.getAttributes({
                     params: {withCount: false},
-                    ctx
+                    ctx,
                 });
                 const invalidAttributes = difference(
                     attributes,
-                    existingAttributes.list.map(a => a.id)
+                    existingAttributes.list.map(a => a.id),
                 );
 
                 if (invalidAttributes.length) {
                     throw new ValidationError({
                         elements: {
                             msg: Errors.UNKNOWN_FORM_ATTRIBUTES,
-                            vars: {attributes: invalidAttributes.join(', ')}
-                        }
+                            vars: {attributes: invalidAttributes.join(', ')},
+                        },
                     });
                 }
             }
@@ -475,7 +475,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                     action: permToCheck,
                     libraryId: library,
                     userId: ctx.userId,
-                    ctx
+                    ctx,
                 }))
             ) {
                 throw new PermissionError(permToCheck);
@@ -487,9 +487,9 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 params: {
                     filters,
                     strictFilters: true,
-                    withCount: false
+                    withCount: false,
                 },
-                ctx
+                ctx,
             });
 
             if (!forms.list.length) {
@@ -497,6 +497,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             }
 
             return formRepo.deleteForm({formData: forms.list[0], ctx});
-        }
+        },
     };
 }

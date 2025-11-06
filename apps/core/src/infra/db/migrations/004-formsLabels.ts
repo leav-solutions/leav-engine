@@ -24,7 +24,7 @@ export default function ({'core.infra.form': formRepo = null, config = null}: ID
                         dependentElements.elements = dependentElements.elements.map(element => {
                             if (element.settings?.label && typeof element.settings?.label !== 'object') {
                                 element.settings.label = {
-                                    [defaultLang]: element.settings.label
+                                    [defaultLang]: element.settings.label,
                                 };
                             }
                             return element;
@@ -33,8 +33,8 @@ export default function ({'core.infra.form': formRepo = null, config = null}: ID
                     });
 
                     return formRepo.updateForm({formData: form as IFormStrict, ctx});
-                })
+                }),
             );
-        }
+        },
     };
 }

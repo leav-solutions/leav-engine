@@ -50,7 +50,7 @@ function EditRecordInput({
     onChange,
     onSubmit,
     onDelete,
-    onCancel
+    onCancel,
 }: IEditRecordInputProps): JSX.Element {
     const {t} = useTranslation();
     const [editing, setEditing] = useState(false);

@@ -69,8 +69,8 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
                             rules={[
                                 {
                                     required: lang === defaultLang,
-                                    message: String(t('errors.standard_field_required'))
-                                }
+                                    message: String(t('errors.standard_field_required')),
+                                },
                             ]}
                         >
                             <KitInput

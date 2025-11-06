@@ -20,7 +20,7 @@ import {
     type IFilterTree,
     SidebarContentType,
     ThroughConditionFilter,
-    TreeConditionFilter
+    TreeConditionFilter,
 } from '_ui/types/search';
 import {AttributeType} from '_ui/_gqlTypes';
 import {
@@ -31,7 +31,7 @@ import {
     type ILibraryDetailExtendedAttributeParentLinkedTreeLibrary,
     type ILibraryDetailExtendedAttributeStandard,
     type ILibraryDetailExtendedAttributeTree,
-    type ILibraryDetailExtendedLinkedTree
+    type ILibraryDetailExtendedLinkedTree,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {defaultLinkAttributeFilterFormat} from '../constants';
 import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/filterUtils';
@@ -53,7 +53,7 @@ function FiltersDropdown({
     attributes,
     libraries,
     trees,
-    filter
+    filter,
 }: IFiltersDropdownProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
@@ -96,9 +96,9 @@ function FiltersDropdown({
                 linkedLibrary: (attribute as ILibraryDetailExtendedAttributeLink).linked_library,
                 linkedTree: (attribute as ILibraryDetailExtendedAttributeTree).linked_tree,
                 library: (attribute as ILibraryDetailExtendedAttributeLink).linked_library?.id || libraryId,
-                embedded_fields: (attribute as ILibraryDetailExtendedAttributeStandard).embedded_fields
+                embedded_fields: (attribute as ILibraryDetailExtendedAttributeStandard).embedded_fields,
             },
-            value: {value: getDefaultFilterValueByFormat(attribute.format)}
+            value: {value: getDefaultFilterValueByFormat(attribute.format)},
         };
 
         // If filter's condition is a through condition it means current filter is a parent
@@ -129,7 +129,7 @@ function FiltersDropdown({
         key: tree.id,
         condition: TreeConditionFilter[TreeConditionFilter.CLASSIFIED_IN],
         tree,
-        value: {value: null}
+        value: {value: null},
     });
 
     const getLibraryFilter = (library: {
@@ -157,7 +157,7 @@ function FiltersDropdown({
             parentAttribute:
                 filter?.condition === ThroughConditionFilter.THROUGH
                     ? ((filter as IFilterAttribute).attribute ?? (filter as IFilterLibrary).parentAttribute)
-                    : (filter as IFilterLibrary).parentAttribute
+                    : (filter as IFilterLibrary).parentAttribute,
         };
     };
 
@@ -175,13 +175,13 @@ function FiltersDropdown({
 
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
-            filters
+            filters,
         });
 
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
             visible: true,
-            sidebarType: SidebarContentType.FILTERS
+            sidebarType: SidebarContentType.FILTERS,
         });
     };
 
@@ -195,11 +195,11 @@ function FiltersDropdown({
         T extends
             | ILibraryDetailExtendedAttribute
             | ILibraryDetailExtendedLinkedTree
-            | ILibraryDetailExtendedAttributeParentLinkedTreeLibrary
+            | ILibraryDetailExtendedAttributeParentLinkedTreeLibrary,
     >(el: T) {
         return {
             ...el,
-            localizedLabel: localizedTranslation(el.label, lang) || el.id
+            localizedLabel: localizedTranslation(el.label, lang) || el.id,
         };
     };
 
@@ -222,18 +222,18 @@ function FiltersDropdown({
                 (f as IFilterTree)?.key === id ||
                 (f as IFilterAttribute).attribute?.parentAttribute?.id === id ||
                 (f as IFilterLibrary).parentAttribute?.id === id ||
-                (f as IFilterAttribute).parentTreeLibrary?.parentAttribute?.id === id
+                (f as IFilterAttribute).parentTreeLibrary?.parentAttribute?.id === id,
         );
 
     const menuItems: ItemType[] = [
         {
             key: 'search',
-            label: <Input.Search placeholder={t('global.search')} onChange={_handleSearchChange} />
+            label: <Input.Search placeholder={t('global.search')} onChange={_handleSearchChange} />,
         },
         {
             key: 'divider',
-            type: 'divider'
-        }
+            type: 'divider',
+        },
     ];
 
     let menuElements = [];
@@ -252,9 +252,9 @@ function FiltersDropdown({
                         <Badge color="blue" text={tree.localizedLabel} />
                     ) : (
                         tree.localizedLabel
-                    )
-                }))
-            }
+                    ),
+                })),
+            },
         ];
     }
 
@@ -273,9 +273,9 @@ function FiltersDropdown({
                         <Badge color="blue" text={attribute.localizedLabel} />
                     ) : (
                         attribute.localizedLabel
-                    )
-                }))
-            }
+                    ),
+                })),
+            },
         ];
     }
 
@@ -294,9 +294,9 @@ function FiltersDropdown({
                         <Badge color="blue" text={library.localizedLabel} />
                     ) : (
                         library.localizedLabel
-                    )
-                }))
-            }
+                    ),
+                })),
+            },
         ];
     }
 
@@ -306,7 +306,7 @@ function FiltersDropdown({
         children: menuElements,
         label: null,
         className: 'elements-wrapper',
-        style: {maxHeight: '75vh', overflowY: 'auto'}
+        style: {maxHeight: '75vh', overflowY: 'auto'},
     });
 
     const menu = {items: menuItems};

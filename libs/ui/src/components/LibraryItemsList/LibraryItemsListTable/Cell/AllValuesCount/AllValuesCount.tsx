@@ -59,7 +59,7 @@ const AllValuesCount: FunctionComponent<IAllValuesCountProps> = ({values, attrib
                     maxHeight="50vh"
                 />
             ),
-            okText: t('global.close')
+            okText: t('global.close'),
         });
     };
 

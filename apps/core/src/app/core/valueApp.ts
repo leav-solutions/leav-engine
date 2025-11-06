@@ -17,7 +17,7 @@ import {
     type IValue,
     type IValueFromGql,
     type IValueVersion,
-    type IValueVersionFromGql
+    type IValueVersionFromGql,
 } from '_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
@@ -39,7 +39,7 @@ export default function ({
     'core.domain.record': recordDomain,
     'core.domain.attribute': attributeDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
-    'core.utils': utils
+    'core.utils': utils,
 }: IDeps): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
@@ -47,7 +47,7 @@ export default function ({
         for (const versName of versionsNames) {
             formattedVersion.push({
                 treeId: versName,
-                treeNode: {id: version[versName], treeId: versName}
+                treeNode: {id: version[versName], treeId: versName},
             });
         }
         return formattedVersion;
@@ -57,9 +57,9 @@ export default function ({
         const res = await recordDomain.find({
             params: {
                 library: 'users',
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}],
             },
-            ctx
+            ctx,
         });
 
         return res.list[0] ? res.list[0] : null;
@@ -78,9 +78,9 @@ export default function ({
             value?.version
                 ? objectToNameValueArray(value.version).map(v => ({
                       treeId: v.name,
-                      treeNode: {id: v.value, treeId: v.name}
+                      treeNode: {id: v.value, treeId: v.name},
                   }))
-                : []
+                : [],
     };
 
     const _getLinkValuePayload = (parent: IValue) => {
@@ -91,7 +91,7 @@ export default function ({
         return {
             ...parent.payload,
             // Add attribute on value as it might be useful for nested resolvers like ancestors
-            attribute: parent.attribute
+            attribute: parent.attribute,
         };
     };
 
@@ -104,7 +104,7 @@ export default function ({
             ...parent.payload,
             // Add attribute and treeId on value as it might be useful for nested resolvers like ancestors
             attribute: parent.attribute,
-            treeId: parent.treeId
+            treeId: parent.treeId,
         };
     };
 
@@ -253,7 +253,7 @@ export default function ({
                                 ...value,
                                 payload: value.payload ?? value.value,
                                 version: convertVersionFromGqlFormat(value.version),
-                                metadata: utils.nameValArrayToObj(value.metadata)
+                                metadata: utils.nameValArrayToObj(value.metadata),
                             };
 
                             valToSave.payload = isEmptyValue(valToSave) ? EMPTY_VALUE : valToSave.payload;
@@ -263,7 +263,7 @@ export default function ({
                                 recordId,
                                 attribute,
                                 value: valToSave,
-                                ctx
+                                ctx,
                             });
 
                             return savedValues;
@@ -276,7 +276,7 @@ export default function ({
                                     ...val,
                                     payload: val.payload ?? val.value,
                                     version: versionToUse,
-                                    metadata: utils.nameValArrayToObj(val.metadata)
+                                    metadata: utils.nameValArrayToObj(val.metadata),
                                 };
 
                                 valToSave.payload = isEmptyValue(valToSave) ? EMPTY_VALUE : valToSave.payload;
@@ -289,7 +289,7 @@ export default function ({
                                 recordId,
                                 values: convertedValues,
                                 ctx,
-                                keepEmpty: !deleteEmpty
+                                keepEmpty: !deleteEmpty,
                             });
 
                             const res = {
@@ -299,8 +299,8 @@ export default function ({
                                     version:
                                         Array.isArray(val.version) && val.version.length
                                             ? _convertVersionToGqlFormat(val.version)
-                                            : null
-                                }))
+                                            : null,
+                                })),
                             };
 
                             return res;
@@ -310,7 +310,7 @@ export default function ({
                                 value?.payload || value?.value
                                     ? {
                                           ...value,
-                                          payload: value.payload ?? value.value
+                                          payload: value.payload ?? value.value,
                                       }
                                     : value;
                             return valueDomain.deleteValue({
@@ -318,9 +318,9 @@ export default function ({
                                 recordId,
                                 attribute,
                                 value: valToDelete,
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     GenericValue: {
                         __resolveType: async (fieldValue, ctx) => {
@@ -338,27 +338,27 @@ export default function ({
                                 case AttributeTypes.TREE:
                                     return 'TreeValue';
                             }
-                        }
+                        },
                     },
                     Value: {
                         ...commonValueResolvers,
                         value: (parent: IStandardValue) => parent.payload,
-                        raw_value: (parent: IStandardValue) => parent.raw_payload
+                        raw_value: (parent: IStandardValue) => parent.raw_payload,
                     },
                     LinkValue: {
                         ...commonValueResolvers,
                         value: (parent: IValue) => _getLinkValuePayload(parent),
-                        payload: (parent: IValue) => _getLinkValuePayload(parent)
+                        payload: (parent: IValue) => _getLinkValuePayload(parent),
                     },
                     TreeValue: {
                         ...commonValueResolvers,
                         value: (parent: ITreeValue) => _getTreeValuePayload(parent),
-                        payload: (parent: ITreeValue) => _getTreeValuePayload(parent)
-                    }
-                }
+                        payload: (parent: ITreeValue) => _getTreeValuePayload(parent),
+                    },
+                },
             };
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
             return fullSchema;
-        }
+        },
     };
 }

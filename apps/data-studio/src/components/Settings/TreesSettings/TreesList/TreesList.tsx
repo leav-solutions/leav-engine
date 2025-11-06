@@ -71,10 +71,10 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                     ...(data?.trees?.list || []),
                     {
                         ...newTree,
-                        permissions: {access_tree: true, edit_children: true}
-                    }
-                ]
-            }
+                        permissions: {access_tree: true, edit_children: true},
+                    },
+                ],
+            },
         }));
     };
 
@@ -168,7 +168,7 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                                             </Draggable>
                                         ) : (
                                             _getTreeBlock(tree)
-                                        )
+                                        ),
                                     )}
                                     {provided.placeholder}
                                 </div>
@@ -181,7 +181,7 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                 <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                     imageStyle={{
-                        height: 60
+                        height: 60,
                     }}
                     description={<span>{t('app_settings.trees_settings.no_trees')}.</span>}
                 >

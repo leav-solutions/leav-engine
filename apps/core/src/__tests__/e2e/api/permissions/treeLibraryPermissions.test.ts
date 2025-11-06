@@ -6,7 +6,7 @@ import {
     gqlAddUserToGroup,
     gqlGetAdminsGroupNodeId,
     gqlSaveLibrary,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('TreeLibraryPermissions', () => {
@@ -85,7 +85,7 @@ describe('TreeLibraryPermissions', () => {
             expect(resGetTreePerm.data.data.permissions).toEqual([
                 {name: 'access_tree', allowed: true},
                 {name: 'detach', allowed: false},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: true},
             ]);
             expect(resGetTreePerm.data.errors).toBeUndefined();
 
@@ -108,7 +108,7 @@ describe('TreeLibraryPermissions', () => {
             expect(resIsAllowed.data.data.isAllowed).toEqual([
                 {name: 'access_tree', allowed: true},
                 {name: 'detach', allowed: false},
-                {name: 'edit_children', allowed: true}
+                {name: 'edit_children', allowed: true},
             ]);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });
@@ -143,13 +143,13 @@ describe('TreeLibraryPermissions', () => {
             nodeUserGroup2 = await gqlAddElemToTree(
                 'users_groups',
                 {id: userGroupId2, library: 'users_groups'},
-                nodeUserGroup1
+                nodeUserGroup1,
             );
             nodeUserGroup3 = await gqlAddElemToTree('users_groups', {id: userGroupId3, library: 'users_groups'});
             nodeUserGroup4 = await gqlAddElemToTree(
                 'users_groups',
                 {id: userGroupId4, library: 'users_groups'},
-                nodeUserGroup3
+                nodeUserGroup3,
             );
 
             // User groups tree: [ROOT] -> group 1 -> group 2

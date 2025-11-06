@@ -64,7 +64,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                                         icon={<FaFilter />}
                                         title={t('explorer.filters')}
                                         value={String(
-                                            t('explorer.active-items-number', {count: filtersData.filters.length})
+                                            t('explorer.active-items-number', {count: filtersData.filters.length}),
                                         )}
                                         onClick={() => openSettingsPanel('filter-items')}
                                     />

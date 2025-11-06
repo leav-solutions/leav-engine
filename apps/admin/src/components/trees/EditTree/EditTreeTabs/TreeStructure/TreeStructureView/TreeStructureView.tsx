@@ -58,7 +58,7 @@ function TreeStructureView({tree, readOnly, onChange, loading}: ITreeStructureVi
         } else if (parentTo) {
             deps[parentTo] = {
                 ...deps[parentTo],
-                allowedChildren: [...deps[parentTo].allowedChildren, libraryId].filter(id => id !== ALLOW_ALL_ID)
+                allowedChildren: [...deps[parentTo].allowedChildren, libraryId].filter(id => id !== ALLOW_ALL_ID),
             };
         }
 
@@ -69,7 +69,7 @@ function TreeStructureView({tree, readOnly, onChange, loading}: ITreeStructureVi
         } else if (parentFrom) {
             deps[parentFrom] = {
                 ...deps[parentFrom],
-                allowedChildren: deps[parentFrom].allowedChildren.filter(id => id !== libraryId && id !== ALLOW_ALL_ID)
+                allowedChildren: deps[parentFrom].allowedChildren.filter(id => id !== libraryId && id !== ALLOW_ALL_ID),
             };
         }
 

@@ -5,7 +5,7 @@ import {type ComponentProps, type Dispatch, type SetStateAction, useEffect, useS
 import {AntForm} from 'aristid-ds';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
-    type RecordFormAttributeTreeAttributeFragment
+    type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {arrayValueVersionToObject} from '_ui/_utils';
@@ -14,7 +14,7 @@ import {
     APICallStatus,
     type DeleteMultipleValuesFunc,
     type DeleteValueFunc,
-    type SubmitValueFunc
+    type SubmitValueFunc,
 } from '../../../_types';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {SelectTreeNodeModal} from './SelectTreeNodeModal';
@@ -44,7 +44,7 @@ export const useManageTreeNodeSelection = ({
     onDeleteMultipleValues,
     isReadOnly,
     isFieldInError,
-    childrenAsRecordValuePermissionFilter
+    childrenAsRecordValuePermissionFilter,
 }: IUseManageTreeNodeSelectionProps) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
@@ -68,7 +68,7 @@ export const useManageTreeNodeSelection = ({
         const valuesToSave = selectedNodes.map(node => ({
             attribute,
             idValue: !attribute.multiple_values && backendValues.length > 0 ? backendValues[0].id_value : null,
-            value: node
+            value: node,
         }));
 
         // When we will handle computed values, we will need to passe the active version (if still needed)
@@ -82,9 +82,9 @@ export const useManageTreeNodeSelection = ({
                     ...metadata,
                     value: {
                         ...metadata.value,
-                        version: arrayValueVersionToObject(metadata.value.version ?? [])
-                    }
-                }))
+                        version: arrayValueVersionToObject(metadata.value.version ?? []),
+                    },
+                })),
             }));
 
             const updatedValues = attribute.multiple_values
@@ -97,8 +97,8 @@ export const useManageTreeNodeSelection = ({
                 {
                     name: attribute.id,
                     errors: [],
-                    touched: true // necessary for isFieldsTouched to work properly (only for tree fields)
-                }
+                    touched: true, // necessary for isFieldsTouched to work properly (only for tree fields)
+                },
             ]);
 
             setBackendValues(updatedValues);
@@ -116,8 +116,8 @@ export const useManageTreeNodeSelection = ({
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: errorsMessage ?? [t('error.error_occurred')]
-                }
+                    errors: errorsMessage ?? [t('error.error_occurred')],
+                },
             ]);
         }
     };
@@ -131,8 +131,8 @@ export const useManageTreeNodeSelection = ({
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: attribute.required ? [t('errors.standard_field_required')] : []
-                }
+                    errors: attribute.required ? [t('errors.standard_field_required')] : [],
+                },
             ]);
             setBackendValues([]);
         }
@@ -143,8 +143,8 @@ export const useManageTreeNodeSelection = ({
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: errorsMessage ?? [t('error.error_occurred')]
-                }
+                    errors: errorsMessage ?? [t('error.error_occurred')],
+                },
             ]);
         }
     };
@@ -167,7 +167,7 @@ export const useManageTreeNodeSelection = ({
 
                 form.setFieldValue(
                     attribute.id,
-                    newBackendValues.map(({treeValue}) => treeValue.id)
+                    newBackendValues.map(({treeValue}) => treeValue.id),
                 );
 
                 form.setFields([
@@ -176,8 +176,8 @@ export const useManageTreeNodeSelection = ({
                         errors:
                             attribute.required && newBackendValues.length === 0
                                 ? [t('errors.standard_field_required')]
-                                : []
-                    }
+                                : [],
+                    },
                 ]);
 
                 setBackendValues(newBackendValues);
@@ -187,8 +187,8 @@ export const useManageTreeNodeSelection = ({
                 form.setFields([
                     {
                         name: attribute.id,
-                        errors: [t('error.error_occurred')]
-                    }
+                        errors: [t('error.error_occurred')],
+                    },
                 ]);
             }
         },
@@ -211,6 +211,6 @@ export const useManageTreeNodeSelection = ({
                     disabled={isReadOnly}
                     danger={isFieldInError}
                 />
-            ) : null
+            ) : null,
     };
 };

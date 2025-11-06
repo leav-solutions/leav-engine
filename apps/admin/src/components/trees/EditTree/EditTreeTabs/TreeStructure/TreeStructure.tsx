@@ -18,7 +18,7 @@ interface ITreeStructureProps {
 function TreeStructure({tree, readOnly}: ITreeStructureProps): JSX.Element {
     const {t} = useTranslation();
     const [saveTree, {loading}] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
-        onError: error => undefined
+        onError: error => undefined,
     });
 
     const _handleChange = async (dependencies: IKeyValue<SAVE_TREE_saveTree_libraries_settings>) => {
@@ -31,11 +31,11 @@ function TreeStructure({tree, readOnly}: ITreeStructureProps): JSX.Element {
                         settings: {
                             allowMultiplePositions: dependencies[treeLibrary.library.id].allowMultiplePositions,
                             allowedAtRoot: dependencies[treeLibrary.library.id].allowedAtRoot,
-                            allowedChildren: dependencies[treeLibrary.library.id].allowedChildren
-                        }
-                    }))
-                }
-            }
+                            allowedChildren: dependencies[treeLibrary.library.id].allowedChildren,
+                        },
+                    })),
+                },
+            },
         });
     };
 

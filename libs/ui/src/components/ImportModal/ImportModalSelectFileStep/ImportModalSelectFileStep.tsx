@@ -13,7 +13,7 @@ import {
     type AttributesByLibAttributeLinkAttributeFragment,
     AttributeType,
     ImportMode,
-    ImportType
+    ImportType,
 } from '_ui/_gqlTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
@@ -43,7 +43,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                 // Use the sheet_to_json method to convert excel to json data
                 const sheetData: Array<{[col: string]: string}> = xlsxUtils.sheet_to_json(workbook.Sheets[sheetName], {
                     blankrows: false,
-                    defval: null
+                    defval: null,
                 });
 
                 // if sheet is empty we skip it
@@ -56,7 +56,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
 
                 // match only first line cells (A1, B1, etc.)
                 const firstRowAddresses = Object.keys(workbook.Sheets[sheetName]).filter(
-                    k => !!k.match(/\b[A-Z]+1\b/g)
+                    k => !!k.match(/\b[A-Z]+1\b/g),
                 );
 
                 const isMapped = !!workbook.Sheets[sheetName][firstRowAddresses[0]]?.c;
@@ -102,7 +102,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     const linkAttributeProps =
                         sKeyToColumnIndex && sLinkAttribute
                             ? (attributes.find(
-                                  a => a.id === sLinkAttribute
+                                  a => a.id === sLinkAttribute,
                               ) as AttributesByLibAttributeLinkAttributeFragment)
                             : null;
 
@@ -136,7 +136,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         keyToAttributes: sKeyToAttributes,
                         treeLinkLibrary: sTreeLinkLibrary,
                         data: sheetData.length ? sheetData : null,
-                        mapping: sMapping
+                        mapping: sMapping,
                     });
                 } else {
                     const sLibrary = state.defaultLibrary;
@@ -150,7 +150,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         mode: defaultMode,
                         attributes,
                         mapping: [],
-                        data: sheetData.length ? sheetData : null
+                        data: sheetData.length ? sheetData : null,
                     });
                 }
             }
@@ -191,7 +191,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     const errorMessage = error?.message ?? t('error.error_occurred');
                     kitNotification.error({
                         message: t('error.error_occurred'),
-                        description: errorMessage
+                        description: errorMessage,
                     });
                 }
             };
@@ -207,13 +207,13 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
             reader.onerror = e => {
                 kitNotification.error({
                     message: t('error.error_occurred'),
-                    description: reader.error?.message ?? ''
+                    description: reader.error?.message ?? '',
                 });
             };
 
             // Prevent default upload. We'll handle it ourselves later on
             return false;
-        }
+        },
     };
 
     return (

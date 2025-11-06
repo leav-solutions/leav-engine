@@ -19,14 +19,14 @@ jest.mock('aristid-ds', () => ({
     AntForm: {
         useFormInstance: jest.fn(() => ({
             setFieldValue: mockSetFieldValue,
-            setFields: mockSetFields
+            setFields: mockSetFields,
         })),
-        useWatch: jest.fn()
-    }
+        useWatch: jest.fn(),
+    },
 }));
 
 jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn()
+    useSharedTranslation: jest.fn(),
 }));
 
 jest.mock('./SelectTreeNodeModal', () => ({
@@ -39,7 +39,7 @@ jest.mock('./SelectTreeNodeModal', () => ({
                 Close
             </button>
         </div>
-    )
+    ),
 }));
 
 jest.mock('../../shared/DeleteAllValuesButton', () => ({
@@ -52,7 +52,7 @@ jest.mock('../../shared/DeleteAllValuesButton', () => ({
         >
             {children || 'global.delete_all'}
         </button>
-    )
+    ),
 }));
 
 // Test component to use the hook
@@ -82,7 +82,7 @@ const mockBackendValue = {
     id_value: 'value_1',
     treeValue: {id: 'tree_1', title: 'Node 1'},
     version: {},
-    metadata: []
+    metadata: [],
 };
 
 const mockBackendValues = [
@@ -90,14 +90,14 @@ const mockBackendValues = [
         id_value: 'value_1',
         treeValue: {id: 'tree_1', title: 'Node 1'},
         version: {},
-        metadata: []
+        metadata: [],
     },
     {
         id_value: 'value_2',
         treeValue: {id: 'tree_2', title: 'Node 2'},
         version: {},
-        metadata: []
-    }
+        metadata: [],
+    },
 ];
 
 const mockSelectedNode1 = {id: 'tree_2', title: 'Node 2'};
@@ -113,7 +113,7 @@ const hookProps = {
     onValueDelete: mockOnValueDelete,
     onDeleteMultipleValues: mockOnDeleteMultipleValues,
     isReadOnly: false,
-    isFieldInError: false
+    isFieldInError: false,
 };
 
 const addTreeNodeSuccessResponse = {
@@ -123,15 +123,15 @@ const addTreeNodeSuccessResponse = {
             id_value: 'new_value_1',
             treeValue: mockSelectedNode1,
             version: [],
-            metadata: []
+            metadata: [],
         },
         {
             id_value: 'new_value_2',
             treeValue: mockSelectedNode2,
             version: [],
-            metadata: []
-        }
-    ]
+            metadata: [],
+        },
+    ],
 };
 
 const addTreeNodeSingleSuccessResponse = {
@@ -141,22 +141,22 @@ const addTreeNodeSingleSuccessResponse = {
             id_value: 'new_value_1',
             treeValue: mockSelectedNode1,
             version: [],
-            metadata: []
-        }
-    ]
+            metadata: [],
+        },
+    ],
 };
 
 const addTreeNodeErrorResponse = {
     status: APICallStatus.ERROR,
-    errors: [{input: mockSelectedNode1.id, message: 'Invalid node'}]
+    errors: [{input: mockSelectedNode1.id, message: 'Invalid node'}],
 };
 
 const successResponse = {
-    status: APICallStatus.SUCCESS
+    status: APICallStatus.SUCCESS,
 };
 
 const errorResponse = {
-    status: APICallStatus.ERROR
+    status: APICallStatus.ERROR,
 };
 
 describe('useManageTreeNodeSelection', () => {
@@ -197,13 +197,13 @@ describe('useManageTreeNodeSelection', () => {
         expect(mockOnValueSubmit).toHaveBeenCalledWith(
             [
                 {attribute: mockFormAttribute, idValue: null, value: mockSelectedNode1},
-                {attribute: mockFormAttribute, idValue: null, value: mockSelectedNode2}
+                {attribute: mockFormAttribute, idValue: null, value: mockSelectedNode2},
             ],
-            null
+            null,
         );
         expect(mockSetFieldValue).toHaveBeenCalledWith(mockFormAttribute.id, [
             mockSelectedNode1.id,
-            mockSelectedNode2.id
+            mockSelectedNode2.id,
         ]);
         expect(mockSetFields).toHaveBeenCalledWith([{name: mockFormAttribute.id, errors: [], touched: true}]);
         expect(mockSetBackendValues).toHaveBeenCalledWith([
@@ -211,14 +211,14 @@ describe('useManageTreeNodeSelection', () => {
                 id_value: 'new_value_1',
                 treeValue: mockSelectedNode1,
                 version: {},
-                metadata: []
+                metadata: [],
             },
             {
                 id_value: 'new_value_2',
                 treeValue: mockSelectedNode2,
                 version: {},
-                metadata: []
-            }
+                metadata: [],
+            },
         ]);
     });
 
@@ -231,15 +231,15 @@ describe('useManageTreeNodeSelection', () => {
             <TestComponent
                 hookProps={{
                     ...hookProps,
-                    backendValues: [mockBackendValue]
+                    backendValues: [mockBackendValue],
                 }}
-            />
+            />,
         );
         await user.click(screen.getByTestId('open-modal'));
         await user.click(screen.getByTestId('confirm-selection'));
         expect(mockOnValueSubmit).toHaveBeenCalledWith(
             [{attribute: mockFormAttribute, idValue: 'value_1', value: mockSelectedNode1}],
-            null
+            null,
         );
         expect(mockOnValueDelete).toHaveBeenCalledTimes(0);
     });
@@ -255,15 +255,15 @@ describe('useManageTreeNodeSelection', () => {
         expect(mockOnValueSubmit).toHaveBeenCalledWith(
             [
                 {attribute: mockFormAttribute, idValue: null, value: mockSelectedNode1},
-                {attribute: mockFormAttribute, idValue: null, value: mockSelectedNode2}
+                {attribute: mockFormAttribute, idValue: null, value: mockSelectedNode2},
             ],
-            null
+            null,
         );
         expect(mockSetFields).toHaveBeenCalledWith([
             {
                 name: mockFormAttribute.id,
-                errors: [`${mockSelectedNode1.title}: Invalid node`]
-            }
+                errors: [`${mockSelectedNode1.title}: Invalid node`],
+            },
         ]);
         expect(mockSetBackendValues).not.toHaveBeenCalled();
     });
@@ -289,9 +289,9 @@ describe('useManageTreeNodeSelection', () => {
                 hookProps={{
                     ...hookProps,
                     backendValues: [mockBackendValue],
-                    attribute: {...mockFormAttribute, required: true}
+                    attribute: {...mockFormAttribute, required: true},
                 }}
-            />
+            />,
         );
 
         await user.click(screen.getByTestId('remove-node'));
@@ -299,8 +299,8 @@ describe('useManageTreeNodeSelection', () => {
         expect(mockSetFields).toHaveBeenCalledWith([
             {
                 name: mockFormAttribute.id,
-                errors: ['errors.standard_field_required']
-            }
+                errors: ['errors.standard_field_required'],
+            },
         ]);
     });
 
@@ -316,8 +316,8 @@ describe('useManageTreeNodeSelection', () => {
         expect(mockSetFields).toHaveBeenCalledWith([
             {
                 name: mockFormAttribute.id,
-                errors: ['error.error_occurred']
-            }
+                errors: ['error.error_occurred'],
+            },
         ]);
         expect(mockSetBackendValues).not.toHaveBeenCalled();
     });
@@ -330,9 +330,9 @@ describe('useManageTreeNodeSelection', () => {
                 hookProps={{
                     ...hookProps,
                     backendValues: mockBackendValues,
-                    attribute: {...mockFormAttribute, multiple_values: true}
+                    attribute: {...mockFormAttribute, multiple_values: true},
                 }}
-            />
+            />,
         );
 
         await user.click(screen.getByTestId('delete-all-button'));
@@ -350,9 +350,9 @@ describe('useManageTreeNodeSelection', () => {
                 hookProps={{
                     ...hookProps,
                     backendValues: mockBackendValues,
-                    attribute: {...mockFormAttribute, multiple_values: true}
+                    attribute: {...mockFormAttribute, multiple_values: true},
                 }}
-            />
+            />,
         );
 
         await user.click(screen.getByTestId('delete-all-button'));
@@ -362,8 +362,8 @@ describe('useManageTreeNodeSelection', () => {
         expect(mockSetFields).toHaveBeenCalledWith([
             {
                 name: mockFormAttribute.id,
-                errors: ['error.error_occurred']
-            }
+                errors: ['error.error_occurred'],
+            },
         ]);
         expect(mockSetBackendValues).not.toHaveBeenCalled();
     });

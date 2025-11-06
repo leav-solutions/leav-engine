@@ -10,8 +10,8 @@ describe('SystemTranslation', () => {
     const mockConfig: Partial<IConfig> = {
         lang: {
             default: 'fr',
-            available: ['fr', 'en']
-        }
+            available: ['fr', 'en'],
+        },
     };
 
     const scalar = systemTranslation({config: mockConfig as IConfig}).getScalarType();
@@ -57,25 +57,25 @@ describe('SystemTranslation', () => {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'fr'
+                            value: 'fr',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'Mon libellé'
-                        }
+                            value: 'Mon libellé',
+                        },
                     },
                     {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'en'
+                            value: 'en',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'My Label'
-                        }
-                    }
-                ]
+                            value: 'My Label',
+                        },
+                    },
+                ],
             };
 
             expect(scalar.parseLiteral(mockAst, null)).toEqual(mockLabel);
@@ -84,7 +84,7 @@ describe('SystemTranslation', () => {
         test('Reject invalid (not key/value) input', async () => {
             const mockAst: StringValueNode = {
                 kind: Kind.STRING,
-                value: 'coucou'
+                value: 'coucou',
             };
 
             expect(() => scalar.parseLiteral(mockAst, null)).toThrow(Error);
@@ -98,25 +98,25 @@ describe('SystemTranslation', () => {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'fr'
+                            value: 'fr',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'Mon libellé'
-                        }
+                            value: 'Mon libellé',
+                        },
                     },
                     {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'es'
+                            value: 'es',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'La descripción'
-                        }
-                    }
-                ]
+                            value: 'La descripción',
+                        },
+                    },
+                ],
             };
             expect(() => scalar.parseLiteral(mockAst, null)).toThrow();
         });
@@ -129,14 +129,14 @@ describe('SystemTranslation', () => {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'es'
+                            value: 'es',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'La descripción'
-                        }
-                    }
-                ]
+                            value: 'La descripción',
+                        },
+                    },
+                ],
             };
             expect(() => scalar.parseLiteral(mockAst, null)).toThrow();
         });
@@ -149,14 +149,14 @@ describe('SystemTranslation', () => {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'en'
+                            value: 'en',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'The description'
-                        }
-                    }
-                ]
+                            value: 'The description',
+                        },
+                    },
+                ],
             };
 
             expect(scalarOptional.parseLiteral(mockAst, null)).toEqual({en: 'The description'});

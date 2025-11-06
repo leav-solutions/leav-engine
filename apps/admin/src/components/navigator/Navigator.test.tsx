@@ -11,14 +11,14 @@ jest.mock(
     () =>
         function MainPanel() {
             return <>MainPanel MOCKED</>;
-        }
+        },
 );
 jest.mock(
     './RootSelector',
     () =>
         function RootSelector() {
             return <>ROOT SELECTOR MOCKED</>;
-        }
+        },
 );
 
 describe('Navigator', () => {
@@ -26,7 +26,7 @@ describe('Navigator', () => {
         const comp = shallow(
             <MockedLangContextProvider>
                 <Navigator />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
         expect(comp).toBeDefined();
     });
@@ -34,7 +34,7 @@ describe('Navigator', () => {
         const comp = mount(
             <MockedLangContextProvider>
                 <Navigator />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
         expect(comp.find('RootSelector')).toHaveLength(1);
     });
@@ -42,7 +42,7 @@ describe('Navigator', () => {
         const comp = mount(
             <MockedLangContextProvider>
                 <Navigator restrictToRoots={['test']} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
         const mainPanel = comp.find('MainPanel');
         expect(mainPanel).toHaveLength(1);
@@ -52,7 +52,7 @@ describe('Navigator', () => {
         const comp = mount(
             <MockedLangContextProvider>
                 <Navigator restrictToRoots={roots} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
         const rootSelector = comp.find('RootSelector');
         expect(rootSelector).toHaveLength(1);

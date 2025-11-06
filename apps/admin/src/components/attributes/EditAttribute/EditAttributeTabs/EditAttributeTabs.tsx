@@ -36,7 +36,7 @@ function EditAttributeTabs({
     attribute,
     onPostSave,
     forcedType,
-    redirectAfterCreate
+    redirectAfterCreate,
 }: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
@@ -58,13 +58,13 @@ function EditAttributeTabs({
                         redirectAfterCreate={redirectAfterCreate}
                     />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ];
 
     if (!!attribute) {
         const isMetadataAllowed = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
-            attribute.type
+            attribute.type,
         );
 
         const isFormatExtended = attribute.format === 'extended';
@@ -77,7 +77,7 @@ function EditAttributeTabs({
                     <Tab.Pane key="values_list" className="grow flex-col height100">
                         <ValuesListTab attributeId={attribute.id} />
                     </Tab.Pane>
-                )
+                ),
             },
             {
                 key: 'permissions',
@@ -86,7 +86,7 @@ function EditAttributeTabs({
                     <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
                         <PermissionsTab attribute={attribute} readonly={false} />
                     </Tab.Pane>
-                )
+                ),
             },
             {
                 key: 'actions_list',
@@ -95,8 +95,8 @@ function EditAttributeTabs({
                     <Tab.Pane key="actions_list" className="grow flex-col height100">
                         <ActionsListTab attribute={attribute} />
                     </Tab.Pane>
-                )
-            }
+                ),
+            },
         );
 
         if (isMetadataAllowed) {
@@ -107,7 +107,7 @@ function EditAttributeTabs({
                     <Tab.Pane key="metadata" className="grow flex-col">
                         <MetadataTab attribute={attribute} readonly={false} />
                     </Tab.Pane>
-                )
+                ),
             });
         }
 
@@ -119,7 +119,7 @@ function EditAttributeTabs({
                     <Tab.Pane key="EmbeddedFields" className="grow flex-col">
                         <EmbeddedFieldsTab attribute={attribute} />
                     </Tab.Pane>
-                )
+                ),
             });
         }
         panes.push({
@@ -129,13 +129,13 @@ function EditAttributeTabs({
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                     <CustomConfigTab attribute={attribute} />
                 </Tab.Pane>
-            )
+            ),
         });
     }
 
     const tabName = location ? location.hash.replace('#', '') : undefined;
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
-        tabName ? panes.findIndex(p => tabName === p.key) : 0
+        tabName ? panes.findIndex(p => tabName === p.key) : 0,
     );
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {

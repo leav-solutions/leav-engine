@@ -15,7 +15,7 @@ describe('Auth', () => {
 
         const resAuthenticate = await axios.post(urlAuthenticate, {
             login: 'admin',
-            password: 'admin'
+            password: 'admin',
         });
 
         expect(resAuthenticate.status).toBe(200);
@@ -44,16 +44,16 @@ describe('Auth', () => {
 
         const headers = {
             'user-agent': 'jest-e2e',
-            'x-forwarded-for': '127.0.0.1'
+            'x-forwarded-for': '127.0.0.1',
         };
 
         const resAuthenticate = await axios.post(
             urlAuthenticate,
             {
                 login: 'admin',
-                password: 'admin'
+                password: 'admin',
             },
-            {headers}
+            {headers},
         );
 
         expect(resAuthenticate.status).toBe(200);
@@ -84,10 +84,10 @@ describe('Auth', () => {
             {
                 headers: {
                     ...headers,
-                    Cookie: `${REFRESH_TOKEN_COOKIE_NAME}=${initialRefresh}`
+                    Cookie: `${REFRESH_TOKEN_COOKIE_NAME}=${initialRefresh}`,
                 },
-                validateStatus: () => true
-            }
+                validateStatus: () => true,
+            },
         );
 
         expect(resGql.status).toBe(200);

@@ -31,7 +31,7 @@ export const useMassActions = ({
     totalCount,
     allVisibleKeys,
     massActions,
-    snackbarId
+    snackbarId,
 }: {
     isEnabled: boolean;
     store: {
@@ -55,7 +55,7 @@ export const useMassActions = ({
                 toasterId: snackbarId,
                 onClose: () => _setSelectedKeys([]),
                 message: t('explorer.massAction.selectedItems', {
-                    count: view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length
+                    count: view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length,
                 }),
                 actions: massActions.map(({label, icon, callback}, index) => ({
                     key: index,
@@ -71,18 +71,18 @@ export const useMassActions = ({
                                           {
                                               field: 'id',
                                               condition: RecordFilterCondition.EQUAL,
-                                              value: String(key)
-                                          }
-                                      ])
+                                              value: String(key),
+                                          },
+                                      ]),
                                   ),
-                            view.massSelection
+                            view.massSelection,
                         );
                         dispatch({
                             type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                            payload: []
+                            payload: [],
                         });
-                    }
-                }))
+                    },
+                })),
             });
         } else {
             closeKitSnackBar(snackbarId);
@@ -126,7 +126,7 @@ export const useMassActions = ({
                               label: t('explorer.massAction.toggle_selection.select_page', {count: view.pageSize}),
                               onClick: () => {
                                   _setSelectedKeys([...new Set([...view.massSelection, ...allVisibleKeys])]);
-                              }
+                              },
                           },
                     {
                         key: 'toggle_all_selection',
@@ -139,9 +139,9 @@ export const useMassActions = ({
                             } else {
                                 _setSelectedKeys(MASS_SELECTION_ALL);
                             }
-                        }
-                    }
-                ]
+                        },
+                    },
+                ],
             }}
         >
             <KitCheckbox
@@ -161,13 +161,13 @@ export const useMassActions = ({
         (keys: MassSelection) =>
             dispatch({
                 type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                payload: keys
+                payload: keys,
             }),
-        [dispatch]
+        [dispatch],
     );
 
     return {
         selectAllButton: isEnabled ? _selectAllButton : null,
-        setSelectedKeys: isEnabled ? _setSelectedKeys : null
+        setSelectedKeys: isEnabled ? _setSelectedKeys : null,
     };
 };

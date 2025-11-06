@@ -9,7 +9,7 @@ import {
     type IEntrypointLink,
     type IExplorerData,
     type DefaultViewSettings,
-    type IEntrypointLibrary
+    type IEntrypointLibrary,
 } from '../_types';
 import {
     type ExplorerLibraryDataQuery,
@@ -18,7 +18,7 @@ import {
     type SortOrder,
     useExplorerLibraryDataQuery,
     useExplorerLinkAttributeQuery,
-    useExplorerLinkDataQuery
+    useExplorerLinkDataQuery,
 } from '_ui/_gqlTypes';
 import {type UIFilter} from '_ui/components/Filters/_types';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
@@ -28,13 +28,13 @@ export const dateValuesSeparator = '\n';
 const _mappingLibrary = (
     data: ExplorerLibraryDataQuery,
     libraryId: string,
-    availableLangs: string[]
+    availableLangs: string[],
 ): IExplorerData => {
     const attributes = data.records.list.length
         ? data.records.list[0].properties.reduce((acc, property) => {
               acc[property.attributeId] = {
                   ...property.attributeProperties,
-                  label: localizedTranslation(property.attributeProperties.label, availableLangs)
+                  label: localizedTranslation(property.attributeProperties.label, availableLangs),
               };
 
               return acc;
@@ -53,15 +53,15 @@ const _mappingLibrary = (
             subLabel: null,
             color: null,
             preview: null,
-            ...whoAmI
+            ...whoAmI,
         },
-        propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {})
+        propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {}),
     }));
 
     return {
         totalCount: data.records.totalCount ?? 0,
         attributes,
-        records
+        records,
     };
 };
 
@@ -71,12 +71,12 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
               (acc, property) => {
                   acc[property.attributeId] = {
                       ...property.attributeProperties,
-                      label: localizedTranslation(property.attributeProperties.label, availableLangs)
+                      label: localizedTranslation(property.attributeProperties.label, availableLangs),
                   };
 
                   return acc;
               },
-              {}
+              {},
           )
         : {};
 
@@ -101,13 +101,13 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                             subLabel: null,
                             color: null,
                             preview: null,
-                            ...linkValue.payload.whoAmI
+                            ...linkValue.payload.whoAmI,
                         },
                         propertiesById: linkValue.payload.properties.reduce(
                             (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
-                            {}
+                            {},
                         ),
-                        id_value: linkValue.id_value ?? undefined
+                        id_value: linkValue.id_value ?? undefined,
                     };
                 })
                 .filter(Boolean)) ||
@@ -116,7 +116,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
     return {
         totalCount: records.length,
         attributes,
-        records
+        records,
     };
 };
 
@@ -129,7 +129,7 @@ export const useExplorerData = ({
     pagination,
     filters,
     filtersOperator,
-    skip
+    skip,
 }: {
     entrypoint: Entrypoint;
     libraryId: string;
@@ -152,15 +152,15 @@ export const useExplorerData = ({
     const {data: attributeData} = useExplorerLinkAttributeQuery({
         skip: isLibrary,
         variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
-        }
+            id: (entrypoint as IEntrypointLink).linkAttributeId,
+        },
     });
 
     const isLinkAttributeAllowed = attributeData?.attributes?.list?.[0]?.permissions?.access_attribute;
     const {
         data: linkData,
         loading: linkLoading,
-        refetch: linkRefetch
+        refetch: linkRefetch,
     } = useExplorerLinkDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLink || !isLinkAttributeAllowed,
@@ -168,8 +168,8 @@ export const useExplorerData = ({
             parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
             parentRecordId: (entrypoint as IEntrypointLink).parentRecordId,
             linkAttributeId: (entrypoint as IEntrypointLink).linkAttributeId,
-            attributeIds
-        }
+            attributeIds,
+        },
     });
 
     const allowFreeEntry = isLibrary ? (entrypoint as IEntrypointLibrary).allowFreeEntry : undefined;
@@ -180,7 +180,7 @@ export const useExplorerData = ({
     const {
         data: libraryData,
         loading: libraryLoading,
-        refetch: libraryRefetch
+        refetch: libraryRefetch,
     } = useExplorerLibraryDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
@@ -190,8 +190,8 @@ export const useExplorerData = ({
             pagination,
             searchQuery: fulltextSearch,
             multipleSort: sorts,
-            filters: preparedFilters
-        }
+            filters: preparedFilters,
+        },
     });
 
     const isMultivalue = !!attributeData?.attributes?.list?.[0]?.multiple_values;
@@ -217,6 +217,6 @@ export const useExplorerData = ({
         isMultivalue,
         canEditLinkAttributeValues,
         loading: isLibrary ? libraryLoading : linkLoading,
-        refetch: isLibrary ? libraryRefetch : linkRefetch
+        refetch: isLibrary ? libraryRefetch : linkRefetch,
     };
 };

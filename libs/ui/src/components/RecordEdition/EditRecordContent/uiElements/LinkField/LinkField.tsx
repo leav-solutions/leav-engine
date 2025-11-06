@@ -19,7 +19,7 @@ import {useLinkRecords} from './link-record/useLinkRecords';
 import {
     CREATE_RECORD_MODAL_CLASSNAME,
     EDIT_RECORD_MODAL_CLASSNAME,
-    LINK_RECORDS_MODAL_CLASSNAME
+    LINK_RECORDS_MODAL_CLASSNAME,
 } from '_ui/components/Explorer/_constants';
 import {type IFormLinkFieldSettings} from '@leav/utils/src/types/forms';
 
@@ -75,14 +75,14 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     readonly,
     isFormCreationMode,
     onDeleteMultipleValues,
-    metadataEdit = false
+    metadataEdit = false,
 }) => {
     const {state, dispatch} = useEditRecordReducer();
     const {lang} = useLang();
     const {
         settings,
         attribute,
-        joinLibraryContext
+        joinLibraryContext,
     }: {
         settings: typeof element.settings;
         attribute?: RecordFormAttributeLinkAttributeFragment;
@@ -113,8 +113,8 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
             `.${CREATE_RECORD_MODAL_CLASSNAME}`,
             `.${LINK_RECORDS_MODAL_CLASSNAME}`,
             `.${EDIT_RECORD_MODAL_CLASSNAME}`,
-            '.kit-select-dropdown-content'
-        ]
+            '.kit-select-dropdown-content',
+        ],
     });
 
     const editionFormId = settings.editFormId ? settings.editFormId : 'edition';
@@ -132,7 +132,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         isReadOnly,
         isFieldInError,
         hasNoValue: backendValues.length === 0,
-        onDeleteMultipleValues
+        onDeleteMultipleValues,
     });
 
     return (

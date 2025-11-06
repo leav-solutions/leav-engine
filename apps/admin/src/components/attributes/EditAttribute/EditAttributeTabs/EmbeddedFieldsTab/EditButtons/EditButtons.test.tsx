@@ -10,7 +10,7 @@ import EditButtons from './EditButtons';
 describe('EmbeddedFieldsWrapper', () => {
     test('should display three Button', async () => {
         const mockFlatItem: Mockify<IFlatItem> = {
-            displayForm: false
+            displayForm: false,
         };
         const mockFormat = 'extended';
 
@@ -24,7 +24,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 remove={jest.fn()}
                 t={jest.fn()}
                 isRoot={false}
-            />
+            />,
         );
 
         expect(comp.find('button')).toHaveLength(3);

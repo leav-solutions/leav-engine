@@ -9,7 +9,7 @@ import {
     type FloatingMenuAction,
     type IEntityData,
     PreviewSize,
-    useLang
+    useLang,
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState, useEffect} from 'react';
@@ -70,7 +70,7 @@ function LibraryBlock({
     readOnly,
     canDrag,
     onRemoveLibrary,
-    dragProvided
+    dragProvided,
 }: ILibraryBlockProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
@@ -86,15 +86,15 @@ function LibraryBlock({
         {
             title: t('global.details'),
             icon: <ExpandAltOutlined />,
-            onClick: _handleOpenEditLibraryModal
-        }
+            onClick: _handleOpenEditLibraryModal,
+        },
     ];
 
     const libraryIdentity: IEntityData = {
         label: localizedTranslation(library.label, lang),
         subLabel: library.id,
         color: null,
-        preview: library.icon?.whoAmI?.preview?.[PreviewSize.SMALL] as string
+        preview: library.icon?.whoAmI?.preview?.[PreviewSize.SMALL] as string,
     };
 
     const isTaskInProgress = (task: GET_TASKS_tasks_list): boolean =>
@@ -108,7 +108,7 @@ function LibraryBlock({
             e =>
                 e.role?.type === TaskType.INDEXATION &&
                 e.role?.detail.split(',').includes(library.id) &&
-                isTaskInProgress(e)
+                isTaskInProgress(e),
         )[0];
 
         setIndexationTask(task?.id);

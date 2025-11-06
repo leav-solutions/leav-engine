@@ -39,8 +39,8 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
                 record={{
                     id: recordId,
                     library: {
-                        id: libraryId
-                    }
+                        id: libraryId,
+                    },
                 }}
                 editionFormId={panel.formId}
                 library={libraryId}

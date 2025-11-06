@@ -33,10 +33,10 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
                     icon: <FontAwesomeIcon icon={icon} />,
                     onClick: () => {
                         navigate(generatePath(UnreachablePaths.workspace, {workspaceId: workspace.id}));
-                    }
+                    },
                 };
             }),
-        [application.workspaces, lang]
+        [application.workspaces, lang],
     );
 
     return (

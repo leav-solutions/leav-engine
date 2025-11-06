@@ -18,7 +18,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.versionProfile': versionProfileDomain = null,
-    'core.domain.tree': treeDomain = null
+    'core.domain.tree': treeDomain = null,
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -77,9 +77,9 @@ export default function ({
                         versionProfiles(_, {filters, pagination, sort}: IVersionProfilesArgs, ctx: IQueryInfos) {
                             return versionProfileDomain.getVersionProfiles({
                                 params: {filters, withCount: true, pagination, sort},
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         saveVersionProfile(_, {versionProfile}: ISaveVersionProfileArgs, ctx: IQueryInfos) {
@@ -87,24 +87,24 @@ export default function ({
                         },
                         deleteVersionProfile(_, {id}: IDeleteVersionProfileArgs, ctx: IQueryInfos) {
                             return versionProfileDomain.deleteVersionProfile({id, ctx});
-                        }
+                        },
                     },
                     VersionProfile: {
                         trees(versionProfile: IVersionProfile, _, ctx: IQueryInfos) {
                             return Promise.all(
-                                versionProfile.trees.map(treeId => treeDomain.getTreeProperties(treeId, ctx))
+                                versionProfile.trees.map(treeId => treeDomain.getTreeProperties(treeId, ctx)),
                             );
                         },
                         linkedAttributes(versionProfile: IVersionProfile, _, ctx: IQueryInfos) {
                             return versionProfileDomain.getAttributesUsingProfile({id: versionProfile.id, ctx});
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

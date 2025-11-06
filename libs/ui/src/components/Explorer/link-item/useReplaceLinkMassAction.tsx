@@ -21,7 +21,7 @@ export const useReplaceLinkMassAction = ({
     linkAttributeId,
     linkId,
     onReplace,
-    closeModal
+    closeModal,
 }: {
     store: {
         view: IViewSettingsState;
@@ -42,20 +42,20 @@ export const useReplaceLinkMassAction = ({
             const values = data.records.list.map(({id}) => ({
                 attribute: linkAttributeId,
                 idValue: linkId,
-                value: id
+                value: id,
             }));
 
             const replaceValuesResult = await saveValues(
                 {
                     id: entrypoint.parentRecordId,
                     library: {
-                        id: entrypoint.parentLibraryId
-                    }
+                        id: entrypoint.parentLibraryId,
+                    },
                 },
-                values
+                values,
             );
             onReplace?.(replaceValuesResult);
             closeModal();
-        }
+        },
     };
 };

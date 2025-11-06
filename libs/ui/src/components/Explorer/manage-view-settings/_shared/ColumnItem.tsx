@@ -94,13 +94,13 @@ export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
     title,
     visible,
     onVisibilityClick,
-    locked = false
+    locked = false,
 }) => {
     const {t} = useSharedTranslation();
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: itemId});
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition
+        transition,
     };
 
     const _handleClick = () => onVisibilityClick?.();

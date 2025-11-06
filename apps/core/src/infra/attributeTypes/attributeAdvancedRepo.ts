@@ -27,7 +27,7 @@ export default function ({
     'core.infra.db.dbService': dbService,
     'core.infra.db.dbUtils': dbUtils,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper
+    'core.infra.record.helpers.filterTypes': filterTypesHelper,
 }: IAttributeAdvancedRepoDeps): IAttributeAdvancedRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
@@ -51,14 +51,14 @@ export default function ({
 
             // Create new value entity
             const valueData = {
-                value: value.payload
+                value: value.payload,
             };
             const resVal = await dbService.execute({
                 query: aql`
                     INSERT ${valueData}
                     IN ${valCollec}
                     RETURN NEW`,
-                ctx
+                ctx,
             });
             const savedVal: Partial<IDbDocument> = resVal.length ? resVal[0] : {};
 
@@ -71,7 +71,7 @@ export default function ({
                 created_at: value.created_at,
                 modified_by: String(ctx.userId),
                 created_by: String(ctx.userId),
-                version: value.version ?? null
+                version: value.version ?? null,
             };
 
             if (value.metadata) {
@@ -83,7 +83,7 @@ export default function ({
                     INSERT ${edgeData}
                     IN ${edgeCollec}
                     RETURN NEW`,
-                ctx
+                ctx,
             });
             const savedEdge: Partial<IDbEdge> = resEdge.length ? resEdge[0] : {};
             const res: IStandardValue = {
@@ -95,7 +95,7 @@ export default function ({
                 modified_by: savedEdge.modified_by,
                 created_by: savedEdge.created_by,
                 metadata: savedEdge.metadata,
-                version: savedEdge.version ?? null
+                version: savedEdge.version ?? null,
             };
 
             return res;
@@ -106,7 +106,7 @@ export default function ({
 
             // Save value entity
             const valueData = {
-                value: value.payload
+                value: value.payload,
             };
 
             const resVal = await dbService.execute({
@@ -115,7 +115,7 @@ export default function ({
                     WITH ${valueData}
                     IN ${valCollec}
                     RETURN NEW`,
-                ctx
+                ctx,
             });
             const savedVal: Partial<IDbDocument> = resVal.length ? resVal[0] : {};
 
@@ -130,7 +130,7 @@ export default function ({
                 created_at: value.created_at,
                 modified_by: String(ctx.userId),
                 created_by: value.created_by,
-                version: value.version ?? null
+                version: value.version ?? null,
             };
 
             if (value.metadata) {
@@ -145,7 +145,7 @@ export default function ({
                         WITH ${edgeData}
                         IN ${edgeCollec}
                     RETURN NEW`,
-                ctx
+                ctx,
             });
             const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
@@ -158,7 +158,7 @@ export default function ({
                 modified_by: savedEdge.modified_by,
                 created_by: savedEdge.created_by,
                 metadata: savedEdge.metadata,
-                version: savedEdge.version ?? null
+                version: savedEdge.version ?? null,
             };
 
             return res;
@@ -172,7 +172,7 @@ export default function ({
             // Delete the link record<->value and add some metadata on it
             const edgeData = {
                 _from: library + '/' + recordId,
-                _to: deletedVal._id
+                _to: deletedVal._id,
             };
 
             const deletedEdge: IRecord = await edgeCollec.removeByExample(edgeData);
@@ -186,7 +186,7 @@ export default function ({
                 modified_by: deletedEdge.modified_by,
                 created_by: deletedEdge.created_by,
                 metadata: deletedEdge.metadata,
-                version: deletedEdge.version ?? null
+                version: deletedEdge.version ?? null,
             };
         },
         async getValues({
@@ -195,7 +195,7 @@ export default function ({
             attribute,
             forceGetAllValues = false,
             options,
-            ctx
+            ctx,
         }): Promise<IStandardValue[]> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
@@ -205,7 +205,7 @@ export default function ({
                 IN 1 OUTBOUND ${library + '/' + recordId}
                 ${edgeCollec}
                 FILTER edge.attribute == ${attribute.id}
-                `
+                `,
             ];
 
             if (!forceGetAllValues) {
@@ -233,7 +233,7 @@ export default function ({
                 modified_by: r.edge.modified_by,
                 created_by: r.edge.created_by,
                 metadata: r.edge.metadata,
-                version: r.edge.version ?? null
+                version: r.edge.version ?? null,
             }));
         },
         async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<IStandardValue[][]> {
@@ -271,7 +271,7 @@ export default function ({
 
             const resArr = await dbService.execute<Array<{recordId: string; value: any; edge: IValueEdge}>>({
                 query,
-                ctx
+                ctx,
             });
 
             const valuesByRecordId: Map<string, IStandardValue[]> = new Map(recordIds.map(recordId => [recordId, []]));
@@ -288,7 +288,7 @@ export default function ({
                         modified_by: res.edge.modified_by,
                         created_by: res.edge.created_by,
                         metadata: res.edge.metadata,
-                        version: res.edge.version ?? null
+                        version: res.edge.version ?? null,
                     });
                 }
             }
@@ -322,7 +322,7 @@ export default function ({
                 modified_at: valueLinks[0].modified_at,
                 created_at: valueLinks[0].created_at,
                 modified_by: valueLinks[0].modified_by,
-                created_by: valueLinks[0].created_by
+                created_by: valueLinks[0].created_by,
             };
         },
         sortQueryPart({attributes, order}) {
@@ -361,6 +361,6 @@ export default function ({
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
-        }
+        },
     };
 }

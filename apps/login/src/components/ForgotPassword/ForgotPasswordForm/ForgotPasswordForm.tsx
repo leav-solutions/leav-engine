@@ -23,7 +23,7 @@ const ForgotPasswordForm = ({
     onSubmit,
     loading,
     forgotPasswordError,
-    forgotPasswordSuccess
+    forgotPasswordSuccess,
 }: IForgotPasswordFormProps): JSX.Element => {
     const {t} = useTranslation();
     const [email, setEmail] = useState('');
@@ -46,7 +46,7 @@ const ForgotPasswordForm = ({
                     name="email"
                     rules={[
                         {type: 'email', message: t('forgotPassword.email_not_valid')},
-                        {required: true, message: t('forgotPassword.email_required')}
+                        {required: true, message: t('forgotPassword.email_required')},
                     ]}
                 >
                     <KitInput

@@ -39,7 +39,7 @@ export default function ({
     'core.domain.tree': treeDomain,
     'core.domain.value.helpers.formatLogValue': formatLogValue,
     'core.domain.versionProfile': versionProfileDomain,
-    'core.domain.application': applicationDomain
+    'core.domain.application': applicationDomain,
 }: IDeps): ICoreLogApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -148,7 +148,7 @@ export default function ({
                         logs: async (
                             _,
                             args: {filters: ILogFilters; sort: ILogSort; pagination: ILogPagination},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<ILogResponse> => {
                             const {filters, sort, pagination} = args;
 
@@ -160,23 +160,23 @@ export default function ({
                             }
 
                             return logDomain.getLogs({filters, sort, pagination}, ctx);
-                        }
+                        },
                     },
                     Log: {
                         user: async (log: Log, _, ctx: IQueryInfos) => ({
                             id: log.userId,
-                            library: USERS_LIBRARY
+                            library: USERS_LIBRARY,
                         }),
                         time: (log: Log) => Math.trunc(log.time / 1000),
                         before: (log: Log): ILogData => (log.before ? {...log, rawData: log.before} : null),
-                        after: (log: Log): ILogData => (log.after ? {...log, rawData: log.after} : null)
+                        after: (log: Log): ILogData => (log.after ? {...log, rawData: log.after} : null),
                     },
                     LogTopic: {
                         record: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
                             topic.record
                                 ? {
                                       id: topic.record.id,
-                                      library: topic.record.libraryId
+                                      library: topic.record.libraryId,
                                   }
                                 : null,
                         library: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
@@ -195,13 +195,13 @@ export default function ({
                             topic.permission
                                 ? {
                                       type: topic.permission.type,
-                                      applyTo: topic.permission.applyTo
+                                      applyTo: topic.permission.applyTo,
                                   }
                                 : null,
                         application: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
                             topic.application
                                 ? applicationDomain.getApplicationProperties({id: topic.application, ctx})
-                                : null
+                                : null,
                     },
                     LogData: {
                         raw: (logData: ILogData) => logData.rawData || null,
@@ -216,18 +216,18 @@ export default function ({
                                     return formatLogValue.formatAsString(
                                         log,
                                         rawData as IDBPayloadData<EventAction.VALUE_DELETE | EventAction.VALUE_SAVE>,
-                                        ctx
+                                        ctx,
                                     );
                                 default:
                                     return null;
                             }
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-        }
+        },
     };
 }
 

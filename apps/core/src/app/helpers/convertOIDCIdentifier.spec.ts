@@ -10,7 +10,7 @@ describe('convertOIDCIdentifier', () => {
             const randomIdentifier = '123456789';
 
             expect(convertOIDCIdentifier.encodeIdentifierToBase64Url(randomIdentifier)).toBe(
-                convertOIDCIdentifier.encodeIdentifierToBase64Url(randomIdentifier)
+                convertOIDCIdentifier.encodeIdentifierToBase64Url(randomIdentifier),
             );
             expect(convertOIDCIdentifier.encodeIdentifierToBase64Url(randomIdentifier)).toBe('MTIzNDU2Nzg5');
         });
@@ -21,7 +21,7 @@ describe('convertOIDCIdentifier', () => {
             const randomIdentifierEncoded = 'MTIzNDU2Nzg5';
 
             expect(convertOIDCIdentifier.decodeIdentifierFromBase64Url(randomIdentifierEncoded)).toBe(
-                convertOIDCIdentifier.decodeIdentifierFromBase64Url(randomIdentifierEncoded)
+                convertOIDCIdentifier.decodeIdentifierFromBase64Url(randomIdentifierEncoded),
             );
             expect(convertOIDCIdentifier.decodeIdentifierFromBase64Url(randomIdentifierEncoded)).toBe('123456789');
         });
@@ -31,8 +31,8 @@ describe('convertOIDCIdentifier', () => {
         const randomIdentifier = '123456789';
         expect(
             convertOIDCIdentifier.decodeIdentifierFromBase64Url(
-                convertOIDCIdentifier.encodeIdentifierToBase64Url(randomIdentifier)
-            )
+                convertOIDCIdentifier.encodeIdentifierToBase64Url(randomIdentifier),
+            ),
         ).toBe(randomIdentifier);
     });
 });

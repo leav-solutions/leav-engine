@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function Routes() {
             return <div>Routes</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function Header() {
             return <div>Header</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -26,11 +26,11 @@ jest.mock(
     () =>
         function AppMenu() {
             return <div>AppMenu</div>;
-        }
+        },
 );
 
 jest.mock('../../../constants', () => ({
-    APP_BASE_URL: ''
+    APP_BASE_URL: '',
 }));
 
 describe('Home', () => {

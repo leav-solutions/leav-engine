@@ -6,7 +6,7 @@ import {type QueryResult, useQuery} from '@apollo/client';
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import {
     type GET_LIBRARY_DETAIL_EXTENDED,
-    type GET_LIBRARY_DETAIL_EXTENDEDVariables
+    type GET_LIBRARY_DETAIL_EXTENDEDVariables,
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 
 export interface IUseGetLibraryDetailExtendedQueryHookParams {
@@ -16,14 +16,14 @@ export interface IUseGetLibraryDetailExtendedQueryHookParams {
 const DEPTH_EMBEDDED_FIELDS = 100;
 
 export const useGetLibraryDetailExtendedQuery = ({
-    library
+    library,
 }: IUseGetLibraryDetailExtendedQueryHookParams): QueryResult<GET_LIBRARY_DETAIL_EXTENDED> =>
     useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
         getLibraryDetailExtendedQuery(DEPTH_EMBEDDED_FIELDS),
         {
             variables: {
-                libId: [library]
+                libId: [library],
             },
-            skip: !library
-        }
+            skip: !library,
+        },
     );

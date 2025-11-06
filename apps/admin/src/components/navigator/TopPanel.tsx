@@ -20,29 +20,29 @@ export default function TopPanel({state, dispatch}: IListProps) {
             clearRoot: () => {
                 dispatch({
                     type: ActionTypes.SET_SELECTED_ROOT,
-                    data: null
+                    data: null,
                 });
             },
             toggleFilters: () => {
                 dispatch({
                     type: ActionTypes.TOGGLE_FILTERS,
-                    data: null
+                    data: null,
                 });
             },
             makeOnFilterRemove: i => e => {
                 e.stopPropagation();
                 dispatch({
                     type: ActionTypes.FILTER_REMOVE,
-                    data: i
+                    data: i,
                 });
                 return false;
             },
             selectedRootAttributesById: state.selectedRootAttributes.reduce((acc, a) => {
                 acc[a.id] = a;
                 return acc;
-            }, {})
+            }, {}),
         }),
-        [dispatch, state.selectedRootAttributes]
+        [dispatch, state.selectedRootAttributes],
     );
 
     const _createNewRecord = () => {
@@ -53,7 +53,7 @@ export default function TopPanel({state, dispatch}: IListProps) {
         setCreateRecordOpen(false);
         dispatch({
             type: ActionTypes.SET_FILTERS,
-            data: state.filters
+            data: state.filters,
         });
     };
 

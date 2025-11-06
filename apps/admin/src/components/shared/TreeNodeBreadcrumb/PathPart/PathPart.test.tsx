@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function RecordCard({record}) {
             return <div data-test-id={`record_card_${record.id}`} />;
-        }
+        },
 );
 
 describe('PathPart', () => {
@@ -19,12 +19,12 @@ describe('PathPart', () => {
         library: {
             id: 'test_lib',
             label: {
-                fr: 'Test Lib'
-            }
+                fr: 'Test Lib',
+            },
         },
         label: 'TestLabel',
         color: null,
-        preview: null
+        preview: null,
     };
 
     test('Display element record card', async () => {
@@ -39,14 +39,14 @@ describe('PathPart', () => {
                 text: 'Some action',
                 icon: 'trash',
                 action: jest.fn(),
-                displayFilter: () => true
+                displayFilter: () => true,
             },
             {
                 text: 'Some action 2',
                 icon: 'trash',
                 action: jest.fn(),
-                displayFilter: () => true
-            }
+                displayFilter: () => true,
+            },
         ];
 
         const comp = shallow(<PathPart record={record} actions={actions} />);
@@ -61,14 +61,14 @@ describe('PathPart', () => {
                 text: 'Some action',
                 icon: 'trash',
                 action: jest.fn(),
-                displayFilter: r => r.id !== '1'
+                displayFilter: r => r.id !== '1',
             },
             {
                 text: 'Some action 2',
                 icon: 'trash',
                 action: jest.fn(),
-                displayFilter: () => true
-            }
+                displayFilter: () => true,
+            },
         ];
 
         const comp = shallow(<PathPart record={record} actions={actions} />);

@@ -11,14 +11,14 @@ describe('InheritedFieldLabel', () => {
                 version={{
                     lang: {
                         id: '1337',
-                        label: 'Français'
+                        label: 'Français',
                     },
                     region: {
                         id: '42',
-                        label: 'Isère'
-                    }
+                        label: 'Isère',
+                    },
                 }}
-            />
+            />,
         );
 
         expect(screen.getByText(/inherited_from/)).toBeInTheDocument();

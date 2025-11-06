@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function EditRecordComp() {
             return <div>Edit record</div>;
-        }
+        },
 );
 
 describe('EditRecordModal', () => {

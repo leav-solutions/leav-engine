@@ -9,32 +9,32 @@ const mockCalculationsVariableFunctions = {
             {
                 recordId: '1',
                 library: 'meh',
-                payload: 42
-            }
+                payload: 42,
+            },
         ],
-        after: []
+        after: [],
     },
     test2: {
         run: async (_, initialValues: any[]): Promise<IVariableValue[]> => [
             {
                 recordId: '1',
                 library: 'meh',
-                payload: initialValues[0].payload + 10
-            }
+                payload: initialValues[0].payload + 10,
+            },
         ],
-        after: []
-    }
+        after: [],
+    },
 };
 
 describe('calculationVariable', () => {
     const calculation = calculationVariable({
-        'core.domain.helpers.calculationsVariableFunctions': mockCalculationsVariableFunctions
+        'core.domain.helpers.calculationsVariableFunctions': mockCalculationsVariableFunctions,
     });
 
     const ctx = {
         userId: 'test',
         recordId: '1',
-        library: 'meh'
+        library: 'meh',
     };
 
     test('empty variable', async () => {

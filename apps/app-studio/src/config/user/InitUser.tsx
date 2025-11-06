@@ -13,12 +13,12 @@ export const InitUser: FunctionComponent = ({children}) => {
             return {
                 userData: {
                     userId: userData.me.whoAmI.id,
-                    userWhoAmI: userData.me.whoAmI
-                }
+                    userWhoAmI: userData.me.whoAmI,
+                },
             };
         }
         return {
-            userData: null
+            userData: null,
         };
     }, [userData]);
 

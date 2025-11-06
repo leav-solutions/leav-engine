@@ -47,17 +47,17 @@ export default function (redisClient: RedisClientType): ICacheService {
                             if (res.keys?.length) {
                                 // Prefer UNLINK when available; chunk to avoid very large payloads
                                 const patternDeletionPromises = chunk(res.keys, deleteBatchSize).map(batch =>
-                                    redisClient.DEL(batch)
+                                    redisClient.DEL(batch),
                                 );
                                 await Promise.all(patternDeletionPromises);
                             }
                         } while (cursor !== 0);
-                    })
+                    }),
                 );
             }
         },
         async deleteAll(): Promise<void> {
             await redisClient.FLUSHDB();
-        }
+        },
     };
 }

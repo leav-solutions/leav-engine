@@ -26,12 +26,12 @@ const depsBase: ToAny<IRecordRepoDeps> = {
     'core.infra.record.helpers.getSearchVariablesQueryPart': jest.fn(),
     'core.infra.record.helpers.getSearchVariableName': jest.fn(),
     'core.infra.record.helpers.filterTypes': jest.fn(),
-    'core.infra.indexation.helpers.getSearchQuery': jest.fn()
+    'core.infra.indexation.helpers.getSearchQuery': jest.fn(),
 };
 
 describe('RecordRepo', () => {
     const ctx: IQueryInfos = {
-        userId: '0'
+        userId: '0',
     };
     describe('createRecord', () => {
         test('Should create a new record', async function () {
@@ -42,19 +42,19 @@ describe('RecordRepo', () => {
                     _rev: '_WSywvyC--_',
                     _key: 222435651,
                     created_at: 1519303348,
-                    modified_at: 1519303348
-                }
+                    modified_at: 1519303348,
+                },
             };
 
             const cleanCreatedRecordData = {
                 id: '222435651',
                 library: 'users',
                 created_at: 1519303348,
-                modified_at: 1519303348
+                modified_at: 1519303348,
             };
 
             const mockDbCollec = {
-                save: global.__mockPromise(createdRecordData)
+                save: global.__mockPromise(createdRecordData),
             };
 
             const mockDb = new Database();
@@ -63,13 +63,13 @@ describe('RecordRepo', () => {
             const mockDbServ = {db: mockDb};
 
             const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData)
+                cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData),
             } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const createdRecord = await recRepo.createRecord({libraryId: 'test', recordData, ctx});
@@ -91,29 +91,29 @@ describe('RecordRepo', () => {
                 _rev: '_WSywvyC--_',
                 _key: 222435651,
                 created_at: 1519303348,
-                modified_at: 1519303348
+                modified_at: 1519303348,
             };
 
             const cleanUpdatedRecordData = {
                 id: '222435651',
                 library: 'users',
                 created_at: 1519303348,
-                modified_at: 1519303348
+                modified_at: 1519303348,
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([{old: updatedRecordData, new: updatedRecordData}])
+                execute: global.__mockPromise([{old: updatedRecordData, new: updatedRecordData}]),
             };
 
             const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData)
+                cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData),
             } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const res = await recRepo.updateRecord({libraryId: 'test', recordData, ctx: mockCtx});
@@ -138,11 +138,11 @@ describe('RecordRepo', () => {
                 _rev: '_WSywvyC--_',
                 _key: 222435651,
                 created_at: 1519303348,
-                modified_at: 1519303348
+                modified_at: 1519303348,
             };
 
             const mockDbCollec = {
-                remove: global.__mockPromise(deletedRecordData)
+                remove: global.__mockPromise(deletedRecordData),
             };
 
             const mockDbServ = {
@@ -156,7 +156,7 @@ describe('RecordRepo', () => {
                         _rev: '_Wf3oPWC--_',
                         attribute: 'label',
                         modified_at: 1521047926,
-                        created_at: 1521047926
+                        created_at: 1521047926,
                     },
                     {
                         _key: '223188816',
@@ -166,9 +166,9 @@ describe('RecordRepo', () => {
                         _rev: '_WlGSULm--_',
                         attribute: 'linkedUb',
                         modified_at: 1522936384,
-                        created_at: 1522936384
-                    }
-                ])
+                        created_at: 1522936384,
+                    },
+                ]),
             };
             mockDbServ.db.collection = jest.fn().mockReturnValue(mockDbCollec);
 
@@ -177,7 +177,7 @@ describe('RecordRepo', () => {
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const deleteRes = await recRepo.deleteRecord({libraryId: 'users', recordId: recordData.id, ctx});
@@ -203,7 +203,7 @@ describe('RecordRepo', () => {
                         created_at: 1520931427,
                         modified_at: 1520931427,
                         ean: '9876543219999999',
-                        visual_simple: '222713677'
+                        visual_simple: '222713677',
                     },
                     {
                         _key: '222536515',
@@ -211,14 +211,14 @@ describe('RecordRepo', () => {
                         _rev: '_WgFARB6--_',
                         created_at: 1520931648,
                         modified_at: 1520931648,
-                        ean: '9876543219999999'
-                    }
-                ]
+                        ean: '9876543219999999',
+                    },
+                ],
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
@@ -227,24 +227,24 @@ describe('RecordRepo', () => {
                     created_at: 1520931427,
                     modified_at: 1520931427,
                     ean: '9876543219999999',
-                    visual_simple: '222713677'
+                    visual_simple: '222713677',
                 },
                 {
                     id: '222536515',
                     created_at: 1520931648,
                     modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
+                    ean: '9876543219999999',
+                },
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const records = await recRepo.find({
@@ -252,7 +252,7 @@ describe('RecordRepo', () => {
                 filters: [],
                 pagination: null,
                 withCount: true,
-                ctx
+                ctx,
             });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
@@ -261,7 +261,7 @@ describe('RecordRepo', () => {
             expect(records).toEqual({
                 cursor: null,
                 totalCount: 2,
-                list: mockCleanupRes
+                list: mockCleanupRes,
             });
         });
 
@@ -276,7 +276,7 @@ describe('RecordRepo', () => {
                         created_at: 1520931427,
                         modified_at: 1520931427,
                         ean: '9876543219999999',
-                        visual_simple: '222713677'
+                        visual_simple: '222713677',
                     },
                     {
                         _key: '222536515',
@@ -284,14 +284,14 @@ describe('RecordRepo', () => {
                         _rev: '_WgFARB6--_',
                         created_at: 1520931648,
                         modified_at: 1520931648,
-                        ean: '9876543219999999'
-                    }
-                ]
+                        ean: '9876543219999999',
+                    },
+                ],
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
@@ -300,24 +300,24 @@ describe('RecordRepo', () => {
                     created_at: 1520931427,
                     modified_at: 1520931427,
                     ean: '9876543219999999',
-                    visual_simple: '222713677'
+                    visual_simple: '222713677',
                 },
                 {
                     id: '222536515',
                     created_at: 1520931648,
                     modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
+                    ean: '9876543219999999',
+                },
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const records = await recRepo.find({
@@ -325,7 +325,7 @@ describe('RecordRepo', () => {
                 filters: [],
                 pagination: {limit: 2, offset: 0},
                 withCount: true,
-                ctx
+                ctx,
             });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
@@ -344,7 +344,7 @@ describe('RecordRepo', () => {
                     created_at: 1520931427,
                     modified_at: 1520931427,
                     ean: '9876543219999999',
-                    visual_simple: '222713677'
+                    visual_simple: '222713677',
                 },
                 {
                     _key: '222536515',
@@ -352,13 +352,13 @@ describe('RecordRepo', () => {
                     _rev: '_WgFARB6--_',
                     created_at: 1520931648,
                     modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
+                    ean: '9876543219999999',
+                },
             ];
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
@@ -367,31 +367,31 @@ describe('RecordRepo', () => {
                     created_at: 1520931427,
                     modified_at: 1520931427,
                     ean: '9876543219999999',
-                    visual_simple: '222713677'
+                    visual_simple: '222713677',
                 },
                 {
                     id: '222536515',
                     created_at: 1520931648,
                     modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
+                    ean: '9876543219999999',
+                },
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const records = await recRepo.find({
                 libraryId: 'test_lib',
                 filters: [],
                 pagination: {limit: 2, cursor: 'bmV4dDoyOjEzNDYzNDQ0'},
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -409,29 +409,29 @@ describe('RecordRepo', () => {
                     _id: 'ubs/222536283',
                     _rev: '_WgM_51a--_',
                     created_at: 1520931427,
-                    modified_at: 1520931427
-                }
+                    modified_at: 1520931427,
+                },
             ];
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = {
                 id: '222536283',
                 created_at: 1520931427,
-                modified_at: 1520931427
+                modified_at: 1520931427,
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes)
+                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             beforeEach(() => jest.clearAllMocks());
@@ -443,7 +443,7 @@ describe('RecordRepo', () => {
                     pagination: null,
                     withCount: false,
                     retrieveInactive: false,
-                    ctx
+                    ctx,
                 });
                 expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('active == true');
             });
@@ -455,7 +455,7 @@ describe('RecordRepo', () => {
                     pagination: null,
                     withCount: false,
                     retrieveInactive: true,
-                    ctx
+                    ctx,
                 });
                 expect(mockDbServ.execute.mock.calls[0][0].query.query).not.toMatch('active == true');
             });
@@ -472,7 +472,7 @@ describe('RecordRepo', () => {
                         created_at: 1520931427,
                         modified_at: 1520931427,
                         ean: '9876543219999999',
-                        visual_simple: '222713677'
+                        visual_simple: '222713677',
                     },
                     {
                         _key: '222536515',
@@ -480,14 +480,14 @@ describe('RecordRepo', () => {
                         _rev: '_WgFARB6--_',
                         created_at: 1520931648,
                         modified_at: 1520931648,
-                        ean: '9876543219999999'
-                    }
-                ]
+                        ean: '9876543219999999',
+                    },
+                ],
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
@@ -496,22 +496,22 @@ describe('RecordRepo', () => {
                     created_at: 1520931427,
                     modified_at: 1520931427,
                     ean: '9876543219999999',
-                    visual_simple: '222713677'
+                    visual_simple: '222713677',
                 },
                 {
                     id: '222536515',
                     created_at: 1520931648,
                     modified_at: 1520931648,
-                    ean: '9876543219999999'
-                }
+                    ean: '9876543219999999',
+                },
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getLibraryFullTextAttributes: global.__mockPromise(['id', 'label'])
+                getLibraryFullTextAttributes: global.__mockPromise(['id', 'label']),
             };
 
             const mockGetSearchQuery: Mockify<GetSearchQuery> = jest.fn(() => 'fulltextSearchQuery');
@@ -521,7 +521,7 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                'core.infra.indexation.helpers.getSearchQuery': mockGetSearchQuery as GetSearchQuery
+                'core.infra.indexation.helpers.getSearchQuery': mockGetSearchQuery as GetSearchQuery,
             });
 
             const records = await recRepo.find({
@@ -530,7 +530,7 @@ describe('RecordRepo', () => {
                 pagination: null,
                 withCount: true,
                 fulltextSearch: 'fulltextSearch',
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -540,33 +540,33 @@ describe('RecordRepo', () => {
             expect(records).toEqual({
                 cursor: null,
                 totalCount: 2,
-                list: mockCleanupRes
+                list: mockCleanupRes,
             });
         });
 
         test('Should aggregate sorts', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromise([]),
             };
 
             const mockAttributeTypes: Mockify<IAttributeTypesRepo> = {
                 getTypeRepo: jest.fn(() => ({
                     sortQueryPart: jest.fn(() => ({
-                        query: 'sortQueryPart'
-                    }))
-                }))
+                        query: 'sortQueryPart',
+                    })),
+                })),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn()
+                cleanup: jest.fn(),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-                'core.infra.attributeTypes': mockAttributeTypes as IAttributeTypesRepo
+                'core.infra.attributeTypes': mockAttributeTypes as IAttributeTypesRepo,
             });
 
             await recRepo.find({
@@ -574,14 +574,14 @@ describe('RecordRepo', () => {
                 sort: [
                     {
                         order: SortOrder.DESC,
-                        attributes: [{...mockAttrSimple, reverse_link: undefined, id: 'attribute1'}]
+                        attributes: [{...mockAttrSimple, reverse_link: undefined, id: 'attribute1'}],
                     },
                     {
                         order: SortOrder.ASC,
-                        attributes: [{...mockAttrSimple, reverse_link: undefined, id: 'attribute2'}]
-                    }
+                        attributes: [{...mockAttrSimple, reverse_link: undefined, id: 'attribute2'}],
+                    },
                 ],
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -595,23 +595,23 @@ describe('RecordRepo', () => {
                 attributes: [
                     {
                         id: 'test_attr',
-                        type: null
-                    }
+                        type: null,
+                    },
                 ],
                 condition: AttributeCondition.EQUAL,
-                value: 'test'
+                value: 'test',
             },
             {operator: Operator.AND},
             {
                 attributes: [
                     {
                         id: 'test_attr2',
-                        type: null
-                    }
+                        type: null,
+                    },
                 ],
                 condition: AttributeCondition.EQUAL,
-                value: 'test2'
-            }
+                value: 'test2',
+            },
         ];
 
         test('Should filter records - simple', async function () {
@@ -626,10 +626,10 @@ describe('RecordRepo', () => {
                             _rev: '_WgM_51a--_',
                             created_at: 1520931427,
                             modified_at: 1520931427,
-                            test_attr: 'test'
-                        }
-                    ]
-                })
+                            test_attr: 'test',
+                        },
+                    ],
+                }),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
@@ -637,14 +637,14 @@ describe('RecordRepo', () => {
                     id: '222536515',
                     created_at: 1520931427,
                     modified_at: 1520931427,
-                    test_attr: 'test'
-                })
+                    test_attr: 'test',
+                }),
             };
 
             const mockAttrSimpleRepo: Mockify<IAttributeTypeRepo> = {};
 
             const mockAttrRepo: Mockify<IAttributeTypesRepo> = {
-                getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
+                getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo),
             };
 
             const mockGetSearchVariablesQueryPart = jest.fn().mockReturnValue(aql`<Variables>`);
@@ -653,7 +653,7 @@ describe('RecordRepo', () => {
 
             const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
                 isCountFilter: jest.fn().mockReturnValue(false),
-                isAttributeFilter: jest.fn().mockReturnValue(true)
+                isAttributeFilter: jest.fn().mockReturnValue(true),
             };
 
             const recRepo = recordRepo({
@@ -664,7 +664,7 @@ describe('RecordRepo', () => {
                 'core.infra.record.helpers.getSearchVariablesQueryPart': mockGetSearchVariablesQueryPart,
                 'core.infra.record.helpers.getSearchVariableName': mockGetSearchVariableName,
                 'core.infra.attributeTypes.helpers.getConditionPart': mockGetConditionPart,
-                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
             });
 
             const filters = cloneDeep(mockFilters);
@@ -676,7 +676,7 @@ describe('RecordRepo', () => {
                 filters,
                 pagination: null,
                 withCount: true,
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
@@ -688,9 +688,9 @@ describe('RecordRepo', () => {
                         id: '222536515',
                         created_at: 1520931427,
                         modified_at: 1520931427,
-                        test_attr: 'test'
-                    }
-                ]
+                        test_attr: 'test',
+                    },
+                ],
             });
         });
     });
@@ -707,7 +707,7 @@ describe('RecordRepo', () => {
             created_at: 1520931427,
             modified_at: 1520931427,
             ean: '9876543219999999',
-            visual_simple: '222713677'
+            visual_simple: '222713677',
         };
         const mockRecord2 = {
             _key: '222536515',
@@ -715,26 +715,26 @@ describe('RecordRepo', () => {
             _rev: '_WgFARB6--_',
             created_at: 1520931648,
             modified_at: 1520931648,
-            ean: '9876543219999999'
+            ean: '9876543219999999',
         };
 
         test('Should return records in same order', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockResolvedValue([mockRecord1, mockRecord2])
+                execute: jest.fn().mockResolvedValue([mockRecord1, mockRecord2]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockImplementation(record => ({
                     ...record,
-                    cleanedUp: true
-                }))
+                    cleanedUp: true,
+                })),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const records = await Promise.all(
@@ -742,9 +742,9 @@ describe('RecordRepo', () => {
                     recRepo.getRecord({
                         libraryId: 'test_lib',
                         recordId,
-                        ctx
-                    })
-                )
+                        ctx,
+                    }),
+                ),
             );
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
@@ -757,20 +757,20 @@ describe('RecordRepo', () => {
         test('Should return null for unknown record', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockResolvedValue([mockRecord1, null, mockRecord2])
+                execute: jest.fn().mockResolvedValue([mockRecord1, null, mockRecord2]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockImplementation(record => ({
                     ...record,
-                    cleanedUp: true
-                }))
+                    cleanedUp: true,
+                })),
             };
 
             const recRepo = recordRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const records = await Promise.all(
@@ -778,9 +778,9 @@ describe('RecordRepo', () => {
                     recRepo.getRecord({
                         libraryId: 'test_lib',
                         recordId,
-                        ctx
-                    })
-                )
+                        ctx,
+                    }),
+                ),
             );
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 

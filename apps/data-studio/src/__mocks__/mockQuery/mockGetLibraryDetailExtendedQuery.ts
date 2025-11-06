@@ -5,7 +5,7 @@ import {
     type GET_LIBRARY_DETAIL_EXTENDED,
     type GET_LIBRARY_DETAIL_EXTENDEDVariables,
     type GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
-    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView,
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeFormat, AttributeType, LibraryBehavior, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {mockLabel} from '__mocks__/common/label';
@@ -19,7 +19,7 @@ export const mockGetLibraryDetailExtendedDefaultView: GET_LIBRARY_DETAIL_EXTENDE
     filters: [],
     color: null,
     sort: null,
-    settings: null
+    settings: null,
 };
 
 export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_libraries_list = {
@@ -28,7 +28,7 @@ export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_li
     behavior: LibraryBehavior.standard,
     label: {
         fr: 'label',
-        en: 'label'
+        en: 'label',
     },
     attributes: [
         {
@@ -37,30 +37,30 @@ export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_li
             format: AttributeFormat.text,
             label: {
                 fr: 'Actif',
-                en: 'Active'
+                en: 'Active',
             },
             readonly: false,
             multiple_values: false,
-            system: false
-        }
+            system: false,
+        },
     ],
     permissions: {
         access_library: true,
         access_record: true,
         create_record: true,
         delete_record: true,
-        edit_record: true
+        edit_record: true,
     },
     defaultView: mockGetLibraryDetailExtendedDefaultView,
-    linkedTrees: []
+    linkedTrees: [],
 };
 
 export const mockGetLibraryDetailExtendedQuery: GET_LIBRARY_DETAIL_EXTENDED = {
     libraries: {
-        list: [mockGetLibraryDetailExtendedElement]
-    }
+        list: [mockGetLibraryDetailExtendedElement],
+    },
 };
 
 export const mockGetLibraryDetailExtendedQueryVar: GET_LIBRARY_DETAIL_EXTENDEDVariables = {
-    libId: ['test']
+    libId: ['test'],
 };

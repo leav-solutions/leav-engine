@@ -7,7 +7,7 @@ import {
     type IFilterAttribute,
     type IFilterTree,
     type IQueryFilter,
-    TreeConditionFilter
+    TreeConditionFilter,
 } from '_ui/types/search';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';
 import {mockAttributeWithDetails} from './attribute';
@@ -20,7 +20,7 @@ export const mockFilterAttribute: IFilterAttribute = {
     value: {value: 'test-value'},
     active: true,
     condition: AttributeConditionFilter.CONTAINS,
-    attribute: {...mockAttributeWithDetails, isLink: false, isMultiple: false, library: mockLibrarySimple.id}
+    attribute: {...mockAttributeWithDetails, isLink: false, isMultiple: false, library: mockLibrarySimple.id},
 };
 
 export const mockFilterTree: IFilterTree = {
@@ -30,12 +30,12 @@ export const mockFilterTree: IFilterTree = {
     value: {value: 'test-value'},
     active: true,
     condition: TreeConditionFilter.CLASSIFIED_IN,
-    tree: {id: 'treeId'}
+    tree: {id: 'treeId'},
 };
 
 export const mockQueryFilter: IQueryFilter = {
     field: 'field',
     value: 'value',
     condition: RecordFilterCondition.CONTAINS,
-    operator: RecordFilterOperator.AND
+    operator: RecordFilterOperator.AND,
 };

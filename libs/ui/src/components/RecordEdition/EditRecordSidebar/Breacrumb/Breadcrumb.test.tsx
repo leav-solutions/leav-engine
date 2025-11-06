@@ -8,11 +8,11 @@ import Breadcrumb from './Breadcrumb';
 import {
     EditRecordReducerActionsTypes,
     EditRecordSidebarContentTypeMap,
-    initialState
+    initialState,
 } from '../../editRecordReducer/editRecordReducer';
 import {
     EditRecordReducerContext,
-    type IEditRecordReducerContext
+    type IEditRecordReducerContext,
 } from '../../editRecordReducer/editRecordReducerContext';
 import {render, screen} from '../../../../_tests/testUtils';
 
@@ -21,7 +21,7 @@ describe('Breadcrumb', () => {
 
     const mockReducer: IEditRecordReducerContext = {
         state: {...initialState, record: mockRecord},
-        dispatch: dispatchMock
+        dispatch: dispatchMock,
     };
     const mockReducerWithValue: IEditRecordReducerContext = {
         ...mockReducer,
@@ -29,8 +29,8 @@ describe('Breadcrumb', () => {
             ...mockReducer.state,
             record: mockRecord,
             activeAttribute: mockRecordPropertyWithAttribute,
-            sidebarContent: EditRecordSidebarContentTypeMap.VALUE_DETAILS
-        }
+            sidebarContent: EditRecordSidebarContentTypeMap.VALUE_DETAILS,
+        },
     };
 
     const mockReducerWithoutValue: IEditRecordReducerContext = {
@@ -38,8 +38,8 @@ describe('Breadcrumb', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            sidebarContent: EditRecordSidebarContentTypeMap.NONE
-        }
+            sidebarContent: EditRecordSidebarContentTypeMap.NONE,
+        },
     };
 
     const mockReducerWithSummary: IEditRecordReducerContext = {
@@ -47,15 +47,15 @@ describe('Breadcrumb', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            sidebarContent: EditRecordSidebarContentTypeMap.SUMMARY
-        }
+            sidebarContent: EditRecordSidebarContentTypeMap.SUMMARY,
+        },
     };
 
     it('should not display breadcrumb without sidebarContent', async () => {
         render(
             <EditRecordReducerContext.Provider value={mockReducerWithoutValue}>
                 <Breadcrumb />
-            </EditRecordReducerContext.Provider>
+            </EditRecordReducerContext.Provider>,
         );
 
         expect(screen.queryByText(/record_summary.entity_overview|Test Lib/)).not.toBeInTheDocument();
@@ -66,7 +66,7 @@ describe('Breadcrumb', () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValue}>
                     <Breadcrumb />
-                </EditRecordReducerContext.Provider>
+                </EditRecordReducerContext.Provider>,
             );
 
             expect(screen.getByText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
@@ -77,13 +77,13 @@ describe('Breadcrumb', () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValue}>
                     <Breadcrumb />
-                </EditRecordReducerContext.Provider>
+                </EditRecordReducerContext.Provider>,
             );
 
             await userEvent.click(screen.getByText(/record_summary.entity_overview|Test Lib/));
             expect(dispatchMock).toHaveBeenCalledWith({
                 type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                content: 'summary'
+                content: 'summary',
             });
         });
     });
@@ -93,7 +93,7 @@ describe('Breadcrumb', () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithSummary}>
                     <Breadcrumb />
-                </EditRecordReducerContext.Provider>
+                </EditRecordReducerContext.Provider>,
             );
 
             expect(screen.getByText(/record_summary.entity_overview|Test Lib/)).toBeVisible();

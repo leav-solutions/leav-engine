@@ -13,7 +13,7 @@ function VersionProfilesSelector(fieldProps: FormDropdownProps): JSX.Element {
     const {
         loading,
         error: queryError,
-        data
+        data,
     } = useQuery<GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables>(getVersionProfilesQuery);
 
     if (queryError) {

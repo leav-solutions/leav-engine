@@ -20,7 +20,7 @@ import Navigation from './Navigation';
 
 jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({treeId: 'TreeId'})),
-    useHistory: jest.fn()
+    useHistory: jest.fn(),
 }));
 
 jest.mock('../../hooks/useActiveTree', () => ({
@@ -30,19 +30,19 @@ jest.mock('../../hooks/useActiveTree', () => ({
             behavior: 'standard',
             libraries: ['my_lib'],
             label: 'My Tree Label',
-            permissions: {...mockTreeNodePermissions}
+            permissions: {...mockTreeNodePermissions},
         },
-        jest.fn()
-    ]
+        jest.fn(),
+    ],
 }));
 
 jest.mock('../../hooks/useTreeEventsSubscription', () => ({
-    useTreeEventsSubscription: jest.fn()
+    useTreeEventsSubscription: jest.fn(),
 }));
 
 jest.mock('@leav/ui', () => ({
     ...jest.requireActual('@leav/ui'),
-    useRecordUpdateSubscription: jest.fn()
+    useRecordUpdateSubscription: jest.fn(),
 }));
 
 describe('Navigation', () => {
@@ -54,8 +54,8 @@ describe('Navigation', () => {
         preview: {...mockRecord.preview, __typename: 'Preview'},
         library: {
             ...mockRecord.library,
-            __typename: 'Library'
-        }
+            __typename: 'Library',
+        },
     };
 
     const mockTreeLibrary = {
@@ -65,21 +65,21 @@ describe('Navigation', () => {
             system: false,
             behavior: LibraryBehavior.standard,
             label: {fr: 'My Lib', en: 'My lib'},
-            __typename: 'Library'
+            __typename: 'Library',
         },
         settings: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: ['my_lib']
-        }
+            allowedChildren: ['my_lib'],
+        },
     };
 
     const getTreeListMock = {
         request: {
             query: getTreeListQuery,
             variables: {
-                filters: {id: ['my_tree']}
-            }
+                filters: {id: ['my_tree']},
+            },
         },
         result: {
             data: {
@@ -95,20 +95,20 @@ describe('Navigation', () => {
                             behavior: TreeBehavior.standard,
                             system: false,
                             permissions: mockTreeNodePermissions,
-                            libraries: [mockTreeLibrary]
-                        }
-                    ]
-                }
-            }
-        }
+                            libraries: [mockTreeLibrary],
+                        },
+                    ],
+                },
+            },
+        },
     };
 
     const getTreeLibrariesMock = {
         request: {
             query: getTreeLibraries,
             variables: {
-                treeId: ['my_tree']
-            }
+                treeId: ['my_tree'],
+            },
         },
         result: {
             data: {
@@ -122,12 +122,12 @@ describe('Navigation', () => {
                             id: 'my_tree',
                             libraries: [mockTreeLibrary],
                             behavior: TreeBehavior.standard,
-                            system: false
-                        }
-                    ]
-                }
-            }
-        }
+                            system: false,
+                        },
+                    ],
+                },
+            },
+        },
     };
 
     const getTreeNodeChildrenMockResultFirstLevel = {
@@ -142,10 +142,10 @@ describe('Navigation', () => {
                             __typename: 'RecordLib',
                             id: '1',
                             active: true,
-                            whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'}
+                            whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'},
                         },
                         childrenCount: 2,
-                        permissions: mockTreeNodePermissions
+                        permissions: mockTreeNodePermissions,
                     },
                     {
                         __typename: 'TreeNode',
@@ -154,14 +154,14 @@ describe('Navigation', () => {
                             __typename: 'RecordLib',
                             id: '2',
                             active: true,
-                            whoAmI: {...mockRecordWithTypenames, id: '2', label: 'second-child'}
+                            whoAmI: {...mockRecordWithTypenames, id: '2', label: 'second-child'},
                         },
                         childrenCount: 2,
-                        permissions: mockTreeNodePermissions
-                    }
-                ]
-            }
-        }
+                        permissions: mockTreeNodePermissions,
+                    },
+                ],
+            },
+        },
     };
 
     const getTreeNodeChildrenMockResultFirstPage = {
@@ -175,13 +175,13 @@ describe('Navigation', () => {
                         __typename: 'RecordLib',
                         id: '1',
                         whoAmI: {...mockRecordWithTypenames, id: '1', label: 'child-first-page'},
-                        active: true
+                        active: true,
                     },
                     childrenCount: 2,
-                    permissions: mockTreeNodePermissions
-                }))
-            }
-        }
+                    permissions: mockTreeNodePermissions,
+                })),
+            },
+        },
     };
 
     const getTreeNodeChildrenMockResultSecondPage = {
@@ -195,13 +195,13 @@ describe('Navigation', () => {
                         __typename: 'RecordLib',
                         id: '1',
                         active: true,
-                        whoAmI: {...mockRecordWithTypenames, id: '1', label: 'child-second-page'}
+                        whoAmI: {...mockRecordWithTypenames, id: '1', label: 'child-second-page'},
                     },
                     childrenCount: 2,
-                    permissions: mockTreeNodePermissions
-                }))
-            }
-        }
+                    permissions: mockTreeNodePermissions,
+                })),
+            },
+        },
     };
 
     const getTreeNodeChildrenMockResultSecondLevel = {
@@ -216,10 +216,10 @@ describe('Navigation', () => {
                             __typename: 'RecordLib',
                             id: '11',
                             whoAmI: {...mockRecordWithTypenames, id: '11', label: 'child-1-1'},
-                            active: true
+                            active: true,
                         },
                         childrenCount: 0,
-                        permissions: mockTreeNodePermissions
+                        permissions: mockTreeNodePermissions,
                     },
                     {
                         __typename: 'TreeNode',
@@ -228,14 +228,14 @@ describe('Navigation', () => {
                             __typename: 'RecordLib',
                             id: '12',
                             whoAmI: {...mockRecordWithTypenames, id: '12', label: 'child-1-2'},
-                            active: true
+                            active: true,
                         },
                         childrenCount: 0,
-                        permissions: mockTreeNodePermissions
-                    }
-                ]
-            }
-        }
+                        permissions: mockTreeNodePermissions,
+                    },
+                ],
+            },
+        },
     };
 
     const mocks: MockedResponse[] = [
@@ -250,11 +250,11 @@ describe('Navigation', () => {
                     node: null,
                     pagination: {
                         limit: treeNavigationPageSize,
-                        offset: 0
-                    }
-                }
+                        offset: 0,
+                    },
+                },
             },
-            result: getTreeNodeChildrenMockResultFirstLevel
+            result: getTreeNodeChildrenMockResultFirstLevel,
         },
         {
             request: {
@@ -264,25 +264,25 @@ describe('Navigation', () => {
                     node: '12345',
                     pagination: {
                         limit: treeNavigationPageSize,
-                        offset: 0
-                    }
-                }
+                        offset: 0,
+                    },
+                },
             },
-            result: getTreeNodeChildrenMockResultSecondLevel
-        }
+            result: getTreeNodeChildrenMockResultSecondLevel,
+        },
     ];
 
     const renderOptions = {
         apolloMocks: mocks,
         cacheSettings: {
             possibleTypes: {
-                Record: ['RecordLib']
-            }
+                Record: ['RecordLib'],
+            },
         },
         currentApp: {
             ...mockApplicationDetails,
-            settings: {...mockApplicationDetails.settings, trees: 'all'}
-        }
+            settings: {...mockApplicationDetails.settings, trees: 'all'},
+        },
     };
 
     test('Render first level of the tree', async () => {
@@ -310,11 +310,11 @@ describe('Navigation', () => {
                         node: null,
                         pagination: {
                             limit: treeNavigationPageSize,
-                            offset: 0
-                        }
-                    }
+                            offset: 0,
+                        },
+                    },
                 },
-                result: getTreeNodeChildrenMockResultFirstPage
+                result: getTreeNodeChildrenMockResultFirstPage,
             },
             {
                 request: {
@@ -324,11 +324,11 @@ describe('Navigation', () => {
                         node: null,
                         pagination: {
                             limit: treeNavigationPageSize,
-                            offset: 20
-                        }
-                    }
+                            offset: 20,
+                        },
+                    },
                 },
-                result: getTreeNodeChildrenMockResultSecondPage
+                result: getTreeNodeChildrenMockResultSecondPage,
             },
             {
                 request: {
@@ -338,11 +338,11 @@ describe('Navigation', () => {
                         node: null,
                         pagination: {
                             limit: treeNavigationPageSize,
-                            offset: 0
-                        }
-                    }
+                            offset: 0,
+                        },
+                    },
                 },
-                result: getTreeNodeChildrenMockResultFirstPage
+                result: getTreeNodeChildrenMockResultFirstPage,
             },
             {
                 request: {
@@ -352,27 +352,27 @@ describe('Navigation', () => {
                         node: null,
                         pagination: {
                             limit: treeNavigationPageSize,
-                            offset: 20
-                        }
-                    }
+                            offset: 20,
+                        },
+                    },
                 },
-                result: getTreeNodeChildrenMockResultSecondPage
+                result: getTreeNodeChildrenMockResultSecondPage,
             },
             {
                 request: {
                     query: getTreeEvents,
-                    variables: {filters: {ignoreOwnEvents: true, treeId: 'my_tree', nodes: [null]}}
+                    variables: {filters: {ignoreOwnEvents: true, treeId: 'my_tree', nodes: [null]}},
                 },
                 result: {
                     data: {
-                        treeEvents: {}
-                    }
-                }
+                        treeEvents: {},
+                    },
+                },
             },
             {
                 request: {
                     query: getTreeLibraries,
-                    variables: {treeId: ['my_tree']}
+                    variables: {treeId: ['my_tree']},
                 },
                 result: {
                     data: {
@@ -386,13 +386,13 @@ describe('Navigation', () => {
                                     id: 'my_tree',
                                     libraries: [mockTreeLibrary],
                                     behavior: TreeBehavior.standard,
-                                    system: false
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    system: false,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<Navigation tree="my_tree" />, {...renderOptions, apolloMocks: mocksForPagination});
@@ -433,17 +433,17 @@ describe('Navigation', () => {
                                         label: 'first-child',
                                         library: {
                                             ...mockRecordWithTypenames.library,
-                                            id: 'my_lib'
-                                        }
+                                            id: 'my_lib',
+                                        },
                                     },
-                                    active: true
+                                    active: true,
                                 },
                                 permissions: mockTreeNodePermissions,
-                                childrenCount: 0
-                            }
-                        ]
-                    }
-                }
+                                childrenCount: 0,
+                            },
+                        ],
+                    },
+                },
             });
         });
 
@@ -482,12 +482,12 @@ describe('Navigation', () => {
                             {
                                 id: '1',
                                 library: 'my_lib',
-                                label: 'first-child'
-                            }
-                        ]
-                    }
-                }
-            }
+                                label: 'first-child',
+                            },
+                        ],
+                    },
+                },
+            },
         });
 
         expect(screen.getByTestId('loading')).toBeInTheDocument();
@@ -519,15 +519,15 @@ describe('Navigation', () => {
                                     label: 'first-child',
                                     library: {
                                         ...mockRecordWithTypenames.library,
-                                        id: 'my_lib'
-                                    }
+                                        id: 'my_lib',
+                                    },
                                 },
-                                active: true
+                                active: true,
                             },
                             permissions: mockTreeNodePermissions,
-                            childrenCount: 0
-                        }
-                    ]
+                            childrenCount: 0,
+                        },
+                    ],
                 },
                 selection: {
                     searchSelection: null,
@@ -538,12 +538,12 @@ describe('Navigation', () => {
                             {
                                 id: '1',
                                 library: 'my_lib',
-                                label: 'first-child'
-                            }
-                        ]
-                    }
-                }
-            }
+                                label: 'first-child',
+                            },
+                        ],
+                    },
+                },
+            },
         });
 
         expect(screen.getByTestId('loading')).toBeInTheDocument();
@@ -576,15 +576,15 @@ describe('Navigation', () => {
                                     label: 'first-child',
                                     library: {
                                         ...mockRecordWithTypenames.library,
-                                        id: 'my_lib'
-                                    }
+                                        id: 'my_lib',
+                                    },
                                 },
-                                active: true
+                                active: true,
                             },
                             permissions: mockTreeNodePermissions,
-                            childrenCount: 0
-                        }
-                    ]
+                            childrenCount: 0,
+                        },
+                    ],
                 },
                 selection: {
                     searchSelection: null,
@@ -595,12 +595,12 @@ describe('Navigation', () => {
                             {
                                 id: '1',
                                 library: 'my_lib',
-                                label: 'first-child'
-                            }
-                        ]
-                    }
-                }
-            }
+                                label: 'first-child',
+                            },
+                        ],
+                    },
+                },
+            },
         });
 
         expect(screen.getByTestId('loading')).toBeInTheDocument();

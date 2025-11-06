@@ -7,7 +7,7 @@ import {PreviewSize} from '_ui/constants';
 const itemPreviewSize = {
     [PreviewSize.SMALL]: '100px',
     [PreviewSize.MEDIUM]: '200px',
-    [PreviewSize.BIG]: '300px'
+    [PreviewSize.BIG]: '300px',
 };
 
 export default (size: PreviewSize): string => itemPreviewSize[size];

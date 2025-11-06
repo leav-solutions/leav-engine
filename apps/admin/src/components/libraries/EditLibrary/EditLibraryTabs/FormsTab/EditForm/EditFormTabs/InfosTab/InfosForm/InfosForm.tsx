@@ -44,8 +44,8 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
         dependencyAttributes: [],
         sidePanel: {
             enable: true,
-            isOpenByDefault: false
-        }
+            isOpenByDefault: false,
+        },
     };
 
     const [formValues, setFormValues] = useState<FormValues>(defaultForm);
@@ -61,7 +61,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
             <Button key={buttonKey} type="submit" primary icon labelPosition="left" onClick={submitFunc.current}>
                 <Icon name="save" />
                 {t('admin.submit')}
-            </Button>
+            </Button>,
         );
 
         return () => removeButton(buttonKey);
@@ -74,7 +74,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
 
         setFormValues({
             ...pick(form as GET_FORM_forms_list, ['id', 'system', 'label', 'sidePanel']),
-            dependencyAttributes: arrayPick(form?.dependencyAttributes || [], 'id')
+            dependencyAttributes: arrayPick(form?.dependencyAttributes || [], 'id'),
         });
     }, [form]);
 
@@ -85,9 +85,9 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
             library,
             ...(values?.sidePanel && {
                 sidePanel: omit(values.sidePanel, [
-                    '__typename' as keyof typeof values.sidePanel
-                ]) as typeof values.sidePanel
-            })
+                    '__typename' as keyof typeof values.sidePanel,
+                ]) as typeof values.sidePanel,
+            }),
         };
 
         return onSubmit(valuesToSubmit);
@@ -100,7 +100,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
         submitForm,
         errors: inputErrors,
         values,
-        touched
+        touched,
     }: FormikProps<FormValues>) => {
         submitFunc.current = handleSubmit;
 
@@ -215,12 +215,12 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                                 options={[
                                     {
                                         text: t('forms.side_panel.open'),
-                                        value: true
+                                        value: true,
                                     },
                                     {
                                         text: t('forms.side_panel.close'),
-                                        value: false
-                                    }
+                                        value: false,
+                                    },
                                 ]}
                                 value={sidePanel.isOpenByDefault}
                             />

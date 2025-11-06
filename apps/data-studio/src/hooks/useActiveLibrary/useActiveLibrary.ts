@@ -7,7 +7,7 @@ import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {
     getActiveLibrary,
     type IActiveLibrary,
-    type IGetActiveLibrary
+    type IGetActiveLibrary,
 } from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 
 export const initialActiveLibrary: IActiveLibrary = {
@@ -21,8 +21,8 @@ export const initialActiveLibrary: IActiveLibrary = {
         access_record: true,
         create_record: true,
         edit_record: true,
-        delete_record: true
-    }
+        delete_record: true,
+    },
 };
 
 export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibrary: IActiveLibrary) => void] => {
@@ -37,12 +37,12 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
                 data: {
                     activeLib: {
                         ...newActiveLibrary,
-                        trees: newActiveLibrary.trees.filter(tree => tree.permissions.access_tree)
-                    }
-                }
+                        trees: newActiveLibrary.trees.filter(tree => tree.permissions.access_tree),
+                    },
+                },
             });
         },
-        [client]
+        [client],
     );
 
     return [activeLibrary, updateActiveLibrary];

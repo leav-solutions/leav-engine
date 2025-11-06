@@ -12,12 +12,12 @@ describe('useQueryParams', () => {
                 <MemoryRouter initialEntries={['/?param1=value1&param2=value2']}>
                     {children as JSX.Element}
                 </MemoryRouter>
-            )
+            ),
         });
 
         expect(result.current).toEqual({
             param1: 'value1',
-            param2: 'value2'
+            param2: 'value2',
         });
     });
 });

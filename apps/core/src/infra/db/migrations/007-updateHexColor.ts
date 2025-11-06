@@ -15,7 +15,7 @@ interface IDeps {
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.attribute': attributeRepo = null
+    'core.infra.attribute': attributeRepo = null,
 }: IDeps = {}): IMigration {
     const _isValueHexColorWithoutPrefix = (value: string): boolean => /^[0-9A-Fa-f]{6}$/.test(value);
 
@@ -23,10 +23,10 @@ export default function ({
         const colorAttributes = await attributeRepo.getAttributes({
             params: {
                 filters: {
-                    format: [AttributeFormats.COLOR]
-                }
+                    format: [AttributeFormats.COLOR],
+                },
             },
-            ctx
+            ctx,
         });
 
         const colorAttributesIds = colorAttributes.list.map(attribute => attribute.id);
@@ -37,12 +37,12 @@ export default function ({
                     colorAttributesIds.map(async colorAttributeId => {
                         const libraries = await attributeRepo.getAttributeLibraries({
                             attributeId: colorAttributeId,
-                            ctx
+                            ctx,
                         });
                         return libraries.map(library => library.id);
-                    })
+                    }),
                 )
-            ).flat()
+            ).flat(),
         );
 
         for (const libraryId of librariesIdsUsingColorAttributes) {
@@ -52,7 +52,7 @@ export default function ({
                         FOR record IN ${libraryCollection}
                             RETURN record
                     `,
-                ctx
+                ctx,
             });
 
             for (const record of records) {
@@ -64,7 +64,7 @@ export default function ({
                                     ${colorAttributeId}: CONCAT('#', ${record[colorAttributeId]})
                                 } IN ${libraryCollection}
                             `,
-                            ctx
+                            ctx,
                         });
                     }
                 }
@@ -78,9 +78,9 @@ export default function ({
                         FILTER link.attribute IN @colorAttributesIds
                         RETURN link
                 `,
-                bindVars: {colorAttributesIds}
+                bindVars: {colorAttributesIds},
             },
-            ctx
+            ctx,
         });
 
         for (const linkedValue of linkedValues) {
@@ -90,7 +90,7 @@ export default function ({
                             FILTER value._id == ${linkedValue._to}
                             RETURN value
                     `,
-                ctx
+                ctx,
             });
 
             const record = result?.[0] || null;
@@ -105,12 +105,12 @@ export default function ({
                         value: CONCAT('#', ${record.value})
                     } IN 'core_values'
                 `,
-                ctx
+                ctx,
             });
         }
     };
 
     return {
-        run: _addHexPrefix
+        run: _addHexPrefix,
     };
 }

@@ -9,7 +9,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 
 const depsBase: ToAny<IIfLibraryJoinLinkDeps> = {
     'core.domain.attribute': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn()
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
 };
 describe('ifLibraryJoinLinkAttribute', () => {
     const callback = jest.fn();
@@ -24,82 +24,82 @@ describe('ifLibraryJoinLinkAttribute', () => {
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
-                    type: AttributeTypes.SIMPLE
+                    type: AttributeTypes.SIMPLE,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
-                    type: AttributeTypes.ADVANCED
+                    type: AttributeTypes.ADVANCED,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
         expect(callback).not.toHaveBeenCalled();
     });
 
     it('[-] should not call callback if linked library has not join behavior', async () => {
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
-            behavior: LibraryBehavior.STANDARD
+            behavior: LibraryBehavior.STANDARD,
         } as ILibrary);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: 'structure_items'
+                    linked_library: 'structure_items',
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
 
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
-            behavior: LibraryBehavior.FILES
+            behavior: LibraryBehavior.FILES,
         } as ILibrary);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: 'structure_items'
+                    linked_library: 'structure_items',
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
 
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
-            behavior: LibraryBehavior.DIRECTORIES
+            behavior: LibraryBehavior.DIRECTORIES,
         } as ILibrary);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: 'structure_items'
+                    linked_library: 'structure_items',
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
         expect(callback).not.toHaveBeenCalled();
     });
 
     it('[-] should not call callback if linked library has join behavior but not mandatory attribut', async () => {
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
-            behavior: LibraryBehavior.JOIN
+            behavior: LibraryBehavior.JOIN,
         } as ILibrary);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: 'structure_items'
+                    linked_library: 'structure_items',
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
         expect(callback).not.toHaveBeenCalled();
     });
@@ -109,22 +109,22 @@ describe('ifLibraryJoinLinkAttribute', () => {
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.TREE,
             id: 'structure_item_categories_category',
-            multiple_values: true
+            multiple_values: true,
         };
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
             behavior: LibraryBehavior.JOIN,
-            mandatoryAttribute: joinAttributeProps.id
+            mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
         depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: joinLibraryId
+                    linked_library: joinLibraryId,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
         expect(callback).not.toHaveBeenCalled();
     });
@@ -133,22 +133,22 @@ describe('ifLibraryJoinLinkAttribute', () => {
         const joinLibraryId = 'structure_item_advanced_links';
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.ADVANCED_LINK,
-            id: 'structure_item_advanced_links_link'
+            id: 'structure_item_advanced_links_link',
         };
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
             behavior: LibraryBehavior.JOIN,
-            mandatoryAttribute: joinAttributeProps.id
+            mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
         depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: joinLibraryId
+                    linked_library: joinLibraryId,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toBeUndefined();
         expect(callback).not.toHaveBeenCalled();
     });
@@ -157,11 +157,11 @@ describe('ifLibraryJoinLinkAttribute', () => {
         const joinLibraryId = 'structure_items';
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.SIMPLE_LINK,
-            id: 'structure_item_thematic'
+            id: 'structure_item_thematic',
         };
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
             behavior: LibraryBehavior.JOIN,
-            mandatoryAttribute: joinAttributeProps.id
+            mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
         depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
         callback.mockResolvedValue(42);
@@ -169,11 +169,11 @@ describe('ifLibraryJoinLinkAttribute', () => {
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: joinLibraryId
+                    linked_library: joinLibraryId,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toEqual(42);
         expect(callback).toHaveBeenCalledTimes(1);
         expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
@@ -184,11 +184,11 @@ describe('ifLibraryJoinLinkAttribute', () => {
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.ADVANCED_LINK,
             id: 'structure_item_thematic',
-            multiple_values: false
+            multiple_values: false,
         };
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
             behavior: LibraryBehavior.JOIN,
-            mandatoryAttribute: joinAttributeProps.id
+            mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
         depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
         callback.mockResolvedValue({some: 'values'});
@@ -196,11 +196,11 @@ describe('ifLibraryJoinLinkAttribute', () => {
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: joinLibraryId
+                    linked_library: joinLibraryId,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toEqual({some: 'values'});
         expect(callback).toHaveBeenCalledTimes(1);
         expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
@@ -211,11 +211,11 @@ describe('ifLibraryJoinLinkAttribute', () => {
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.TREE,
             id: 'structure_item_categories_category',
-            multiple_values: false
+            multiple_values: false,
         };
         depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
             behavior: LibraryBehavior.JOIN,
-            mandatoryAttribute: joinAttributeProps.id
+            mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
         depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
         callback.mockResolvedValue({some: 'values'});
@@ -223,11 +223,11 @@ describe('ifLibraryJoinLinkAttribute', () => {
             _ifLibraryJoinLinkAttribute(
                 {
                     type: AttributeTypes.ADVANCED_LINK,
-                    linked_library: joinLibraryId
+                    linked_library: joinLibraryId,
                 },
                 callback,
-                ctx
-            )
+                ctx,
+            ),
         ).resolves.toEqual({some: 'values'});
         expect(callback).toHaveBeenCalledTimes(1);
         expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);

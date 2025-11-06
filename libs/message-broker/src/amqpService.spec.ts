@@ -19,16 +19,16 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     }),
     waitForConfirms: jest.fn(),
     prefetch: jest.fn(),
-    close: jest.fn()
+    close: jest.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
 };
 
 jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection),
 }));
 
 describe('amqp', () => {
@@ -36,7 +36,7 @@ describe('amqp', () => {
 
     beforeAll(async () => {
         amqpServ = await amqpService({
-            config: amqpMockConfig as IAmqp
+            config: amqpMockConfig as IAmqp,
         });
     });
 

@@ -10,7 +10,7 @@ import {
     type IPermission,
     type ITreePermissionsConf,
     PermissionsRelations,
-    PermissionTypes
+    PermissionTypes,
 } from '../../../_types/permissions';
 import {type IInheritedPermissionsQueryParams} from './_types';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
@@ -30,7 +30,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.permission': permissionDomain = null,
-    'core.domain.attribute': attributeDomain = null
+    'core.domain.attribute': attributeDomain = null,
 }: IDeps = {}): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
     // TODO: use a custom scalar type?
@@ -39,8 +39,8 @@ export default function ({
             ...permData,
             actions: Object.keys(permData.actions).map(actionName => ({
                 name: actionName,
-                allowed: permData.actions[actionName]
-            }))
+                allowed: permData.actions[actionName],
+            })),
         };
     }
 
@@ -52,9 +52,9 @@ export default function ({
         const actions = types.reduce(
             (acc, type): string[] => [
                 ...acc,
-                ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name)
+                ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name),
             ],
-            []
+            [],
         );
 
         return [...new Set(actions)].join(' ');
@@ -200,11 +200,11 @@ export default function ({
                                         userId,
                                         applyTo,
                                         target,
-                                        ctx
+                                        ctx,
                                     });
 
                                     return {name: action, allowed: perm};
-                                })
+                                }),
                             );
                         },
                         async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}, ctx) {
@@ -214,7 +214,7 @@ export default function ({
                                 actions,
                                 usersGroupNodeId: usersGroup,
                                 permissionTreeTarget,
-                                ctx
+                                ctx,
                             });
 
                             return Object.keys(perms).reduce((permByActions, action) => {
@@ -229,9 +229,9 @@ export default function ({
                                 applyTo,
                                 actions,
                                 userGroupNodeId,
-                                permissionTreeTarget
+                                permissionTreeTarget,
                             }: IInheritedPermissionsQueryParams,
-                            ctx
+                            ctx,
                         ) {
                             return Promise.all(
                                 actions.map(async action => {
@@ -241,19 +241,19 @@ export default function ({
                                         action,
                                         userGroupId: userGroupNodeId,
                                         permissionTreeTarget,
-                                        ctx
+                                        ctx,
                                     });
 
                                     return {name: action, allowed: perm};
-                                })
+                                }),
                             );
                         },
                         permissionsActionsByType(
                             _,
-                            {type, applyOn}: {type: PermissionTypes; applyOn?: string}
+                            {type, applyOn}: {type: PermissionTypes; applyOn?: string},
                         ): ILabeledPermissionsAction[] {
                             return permissionDomain.getActionsByType({type, applyOn});
-                        }
+                        },
                     },
                     Mutation: {
                         async savePermission(parent, {permission}, ctx): Promise<IPermission> {
@@ -262,36 +262,36 @@ export default function ({
                                 actions: permission.actions.reduce((permActions, action) => {
                                     permActions[action.name] = action.allowed;
                                     return permActions;
-                                }, {})
+                                }, {}),
                             };
 
                             const savedPerm = await permissionDomain.savePermission(formattedPerm, ctx);
 
                             return _formatPerm(savedPerm);
-                        }
+                        },
                     },
                     PermissionsActions: {
                         __resolveType(obj: IPermission) {
                             const typesMapping = {
                                 [PermissionTypes.RECORD]: 'RecordPermissions',
-                                [PermissionTypes.RECORD_ATTRIBUTE]: 'AttributePermissions'
+                                [PermissionTypes.RECORD_ATTRIBUTE]: 'AttributePermissions',
                             };
 
                             return typesMapping[obj.type];
-                        }
+                        },
                     },
                     Treepermissions_conf: {
                         permissionTreeAttributes(parent: ITreePermissionsConf, _, ctx) {
                             return parent.permissionTreeAttributes
                                 ? Promise.all(
                                       parent.permissionTreeAttributes.map(attrId =>
-                                          attributeDomain.getAttributeProperties({id: attrId, ctx})
-                                      )
+                                          attributeDomain.getAttributeProperties({id: attrId, ctx}),
+                                      ),
                                   )
                                 : [];
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -299,7 +299,7 @@ export default function ({
         extensionPoints: {
             registerPermissionActions(type: PermissionTypes, actions: string[], applyOn?: string[]) {
                 permissionDomain.registerActions(type, actions, applyOn);
-            }
-        }
+            },
+        },
     };
 }

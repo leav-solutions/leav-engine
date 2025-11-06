@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 
 describe('EditTree', () => {
@@ -26,7 +26,7 @@ describe('EditTree', () => {
                         <EditTree match={mockMatch} />
                     </MockedUserContextProvider>
                 </MockedLangContextProvider>
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         expect(comp).toMatchSnapshot();

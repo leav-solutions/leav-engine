@@ -14,21 +14,21 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 
 describe('AttributesTab', () => {
     test('Snapshot test', async () => {
         const lib: Mockify<GET_LIB_BY_ID_libraries_list> = {
             id: 'test_lib',
-            system: false
+            system: false,
         };
         const comp = create(
             <MockedProvider>
                 <MockedLangContextProvider>
                     <AttributesTab library={lib as GET_LIB_BY_ID_libraries_list} readonly={false} />
                 </MockedLangContextProvider>
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         expect(comp).toMatchSnapshot();

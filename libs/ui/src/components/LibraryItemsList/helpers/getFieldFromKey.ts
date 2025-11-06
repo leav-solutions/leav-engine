@@ -21,7 +21,7 @@ export default (fieldKey: string, library: ILibraryDetailExtended, attributes: I
         if (parentAttribute) {
             parentAttributeData = {
                 id: parentAttribute.id,
-                type: parentAttribute.type
+                type: parentAttribute.type,
             };
 
             recordLibrary = splitKey[1];
@@ -43,7 +43,7 @@ export default (fieldKey: string, library: ILibraryDetailExtended, attributes: I
         type: attribute.type,
         multipleValues: attribute.isMultiple,
         parentAttributeData,
-        recordLibrary
+        recordLibrary,
     };
 
     return field;

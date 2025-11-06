@@ -17,11 +17,11 @@ export default function ({'core.app.auth': authApp}: IValidateRequestTokenDeps):
         authApp.validateRequestToken(
             {
                 ...(req.query[API_KEY_PARAM_NAME] && {
-                    apiKey: String(req.query[API_KEY_PARAM_NAME])
+                    apiKey: String(req.query[API_KEY_PARAM_NAME]),
                 }),
                 headers: req.headers,
-                cookies: req.cookies
+                cookies: req.cookies,
             },
-            res
+            res,
         );
 }

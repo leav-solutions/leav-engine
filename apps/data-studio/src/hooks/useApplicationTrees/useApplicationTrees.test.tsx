@@ -15,8 +15,8 @@ describe('useApplicationTrees', () => {
         ...mockTree,
         permissions: {
             access_tree: true,
-            edit_children: true
-        }
+            edit_children: true,
+        },
     };
 
     test('If app is configured on "all trees", retrieve all trees', async () => {
@@ -24,10 +24,10 @@ describe('useApplicationTrees', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    trees: 'all'
-                }
+                    trees: 'all',
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -35,8 +35,8 @@ describe('useApplicationTrees', () => {
                 request: {
                     query: getTreeListQuery,
                     variables: {
-                        filters: {id: []}
-                    }
+                        filters: {id: []},
+                    },
                 },
                 result: {
                     data: {
@@ -44,17 +44,17 @@ describe('useApplicationTrees', () => {
                             list: [
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeA'
+                                    id: 'treeA',
                                 },
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeB'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'treeB',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationTrees(), {
@@ -64,7 +64,7 @@ describe('useApplicationTrees', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({error: null, loading: true, trees: []});
@@ -77,13 +77,13 @@ describe('useApplicationTrees', () => {
             trees: [
                 {
                     ...mockTreeBase,
-                    id: 'treeA'
+                    id: 'treeA',
                 },
                 {
                     ...mockTreeBase,
-                    id: 'treeB'
-                }
-            ]
+                    id: 'treeB',
+                },
+            ],
         });
     });
 
@@ -92,10 +92,10 @@ describe('useApplicationTrees', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    trees: ['treeA']
-                }
+                    trees: ['treeA'],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -103,8 +103,8 @@ describe('useApplicationTrees', () => {
                 request: {
                     query: getTreeListQuery,
                     variables: {
-                        filters: {id: ['treeA']}
-                    }
+                        filters: {id: ['treeA']},
+                    },
                 },
                 result: {
                     data: {
@@ -112,13 +112,13 @@ describe('useApplicationTrees', () => {
                             list: [
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeA'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'treeA',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationTrees(), {
@@ -128,7 +128,7 @@ describe('useApplicationTrees', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({error: null, loading: true, trees: []});
@@ -141,9 +141,9 @@ describe('useApplicationTrees', () => {
             trees: [
                 {
                     ...mockTreeBase,
-                    id: 'treeA'
-                }
-            ]
+                    id: 'treeA',
+                },
+            ],
         });
     });
 
@@ -152,10 +152,10 @@ describe('useApplicationTrees', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    trees: []
-                }
+                    trees: [],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const {result} = renderHook(() => useApplicationTrees(), {
@@ -165,13 +165,13 @@ describe('useApplicationTrees', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({
             error: null,
             loading: false,
-            trees: []
+            trees: [],
         });
     });
 
@@ -180,10 +180,10 @@ describe('useApplicationTrees', () => {
             currentApp: {
                 ...mockApplicationDetails,
                 settings: {
-                    trees: 'none'
-                }
+                    trees: 'none',
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const {result} = renderHook(() => useApplicationTrees(), {
@@ -193,13 +193,13 @@ describe('useApplicationTrees', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         expect(result.current).toMatchObject({
             error: null,
             loading: false,
-            trees: []
+            trees: [],
         });
     });
 
@@ -209,10 +209,10 @@ describe('useApplicationTrees', () => {
                 ...mockApplicationDetails,
                 settings: {
                     trees: ['treeA', 'treeB', 'treeC'],
-                    treesOrder: ['treeC', 'treeA', 'treeB']
-                }
+                    treesOrder: ['treeC', 'treeA', 'treeB'],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -220,8 +220,8 @@ describe('useApplicationTrees', () => {
                 request: {
                     query: getTreeListQuery,
                     variables: {
-                        filters: {id: ['treeA', 'treeB', 'treeC']}
-                    }
+                        filters: {id: ['treeA', 'treeB', 'treeC']},
+                    },
                 },
                 result: {
                     data: {
@@ -229,21 +229,21 @@ describe('useApplicationTrees', () => {
                             list: [
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeA'
+                                    id: 'treeA',
                                 },
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeB'
+                                    id: 'treeB',
                                 },
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeC'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'treeC',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationTrees(), {
@@ -253,7 +253,7 @@ describe('useApplicationTrees', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -264,17 +264,17 @@ describe('useApplicationTrees', () => {
             trees: [
                 {
                     ...mockTreeBase,
-                    id: 'treeC'
+                    id: 'treeC',
                 },
                 {
                     ...mockTreeBase,
-                    id: 'treeA'
+                    id: 'treeA',
                 },
                 {
                     ...mockTreeBase,
-                    id: 'treeB'
-                }
-            ]
+                    id: 'treeB',
+                },
+            ],
         });
     });
 
@@ -284,10 +284,10 @@ describe('useApplicationTrees', () => {
                 ...mockApplicationDetails,
                 settings: {
                     trees: ['treeA', 'treeB', 'treeC'],
-                    treesOrder: ['treeB', 'treeC']
-                }
+                    treesOrder: ['treeB', 'treeC'],
+                },
             },
-            globalSettings: null
+            globalSettings: null,
         };
 
         const mocks = [
@@ -295,8 +295,8 @@ describe('useApplicationTrees', () => {
                 request: {
                     query: getTreeListQuery,
                     variables: {
-                        filters: {id: ['treeA', 'treeB', 'treeC']}
-                    }
+                        filters: {id: ['treeA', 'treeB', 'treeC']},
+                    },
                 },
                 result: {
                     data: {
@@ -304,21 +304,21 @@ describe('useApplicationTrees', () => {
                             list: [
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeA'
+                                    id: 'treeA',
                                 },
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeB'
+                                    id: 'treeB',
                                 },
                                 {
                                     ...mockTreeBase,
-                                    id: 'treeC'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'treeC',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useApplicationTrees(), {
@@ -328,7 +328,7 @@ describe('useApplicationTrees', () => {
                         {children as JSX.Element}
                     </ApplicationContext.Provider>
                 </MockedProviderWithFragments>
-            )
+            ),
         });
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -339,17 +339,17 @@ describe('useApplicationTrees', () => {
             trees: [
                 {
                     ...mockTreeBase,
-                    id: 'treeB'
+                    id: 'treeB',
                 },
                 {
                     ...mockTreeBase,
-                    id: 'treeC'
+                    id: 'treeC',
                 },
                 {
                     ...mockTreeBase,
-                    id: 'treeA'
-                }
-            ]
+                    id: 'treeA',
+                },
+            ],
         });
     });
 });

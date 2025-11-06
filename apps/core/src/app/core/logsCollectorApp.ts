@@ -13,6 +13,6 @@ interface IDeps {
 
 export default function ({'core.domain.logsCollector': logsCollector}: IDeps): ILogsCollectorApp {
     return {
-        init: logsCollector.init
+        init: logsCollector.init,
     };
 }

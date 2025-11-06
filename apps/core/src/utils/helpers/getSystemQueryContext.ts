@@ -22,6 +22,6 @@ export default function ({config = null}: IDeps): GetSystemQueryContext {
         queryId: uuidv4(),
         groupsId: [adminsGroupId, filesAdminsGroupId],
         errors: [],
-        trigger
+        trigger,
     });
 }

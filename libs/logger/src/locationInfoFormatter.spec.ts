@@ -22,7 +22,7 @@ describe('addLocationInfo', () => {
         const logger = winston.createLogger({
             level: 'info',
             format: winston.format.combine(addLocationInfoInLog(), fakeFormat),
-            transports: [new winston.transports.Console({silent: true})]
+            transports: [new winston.transports.Console({silent: true})],
         });
 
         logger.info('Test log');
@@ -31,9 +31,9 @@ describe('addLocationInfo', () => {
             expect.objectContaining({
                 level: 'info',
                 message: 'Test log',
-                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`))
+                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`)),
             }),
-            {}
+            {},
         );
     });
 
@@ -41,7 +41,7 @@ describe('addLocationInfo', () => {
         const logger = winston.createLogger({
             level: 'info',
             format: winston.format.combine(addLocationInfoInLog(), fakeFormat),
-            transports: [new winston.transports.Console({silent: true})]
+            transports: [new winston.transports.Console({silent: true})],
         });
 
         logger.info('Test log 1');
@@ -51,17 +51,17 @@ describe('addLocationInfo', () => {
             expect.objectContaining({
                 level: 'info',
                 message: 'Test log 1',
-                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`))
+                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`)),
             }),
-            {}
+            {},
         );
         expect(fakeFormatTransformSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 level: 'info',
                 message: 'Test log 2',
-                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`))
+                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`)),
             }),
-            {}
+            {},
         );
     });
 });

@@ -33,6 +33,6 @@ export const getSvgCommand = async (input: string, output: string, size: number)
 
     return {
         command: COMMAND,
-        args
+        args,
     };
 };

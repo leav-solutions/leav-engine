@@ -11,7 +11,7 @@ export type IfLibraryJoinLinkAttributeCallback<R> = (joinLibId: string, joinAttr
 export type IfLibraryJoinLinkAttribute = <R = unknown>(
     attributeProps: IAttribute,
     callback: IfLibraryJoinLinkAttributeCallback<R>,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => Promise<R | void>;
 
 export interface IIfLibraryJoinLinkDeps {
@@ -21,12 +21,12 @@ export interface IIfLibraryJoinLinkDeps {
 
 export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-    'core.domain.attribute': attributeDomain
+    'core.domain.attribute': attributeDomain,
 }: IIfLibraryJoinLinkDeps): IfLibraryJoinLinkAttribute {
     return async <R>(
         attributeProps: IAttribute,
         callback: IfLibraryJoinLinkAttributeCallback<R>,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<R | void> => {
         if (![AttributeTypes.ADVANCED_LINK, AttributeTypes.SIMPLE_LINK].includes(attributeProps.type)) {
             return;
@@ -41,7 +41,7 @@ export default function ({
 
         const joinAttributeProps = await attributeDomain.getAttributeProperties({
             id: joinLibProps.mandatoryAttribute, // e.g. structure_item_thematic
-            ctx
+            ctx,
         });
         if (
             joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||

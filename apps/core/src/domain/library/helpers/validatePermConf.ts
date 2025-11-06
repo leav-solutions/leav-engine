@@ -11,7 +11,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 export default async (
     permissionsConf: ITreePermissionsConf,
     deps: {attributeDomain: IAttributeDomain},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<ILibrary>> => {
     const errors: ErrorFieldDetail<ILibrary> = {};
 
@@ -22,13 +22,13 @@ export default async (
     const availableTreeAttributes = await deps.attributeDomain.getAttributes({ctx});
     const unknownTreeAttributes = difference(
         permissionsConf.permissionTreeAttributes,
-        availableTreeAttributes.list.map(treeAttr => treeAttr.id)
+        availableTreeAttributes.list.map(treeAttr => treeAttr.id),
     );
 
     if (unknownTreeAttributes.length) {
         errors.permissions_conf = {
             msg: Errors.UNKNOWN_ATTRIBUTES,
-            vars: {attributes: unknownTreeAttributes.join(', ')}
+            vars: {attributes: unknownTreeAttributes.join(', ')},
         };
     }
 

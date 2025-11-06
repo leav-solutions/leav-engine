@@ -7,7 +7,7 @@ import {
     useExplorerAttributesQuery,
     useExplorerLinkAttributeQuery,
     useGetViewsListQuery,
-    ViewSizes
+    ViewSizes,
 } from '_ui/_gqlTypes';
 import {type DefaultViewSettings, type Entrypoint, type IEntrypointLink} from './_types';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
@@ -15,12 +15,12 @@ import {
     type IViewSettingsState,
     useEditSettings,
     viewSettingsInitialState,
-    viewSettingsReducer
+    viewSettingsReducer,
 } from './manage-view-settings';
 import {
     type AttributesById,
     isLinkAttributeDetails,
-    useTransformFilters
+    useTransformFilters,
 } from '_ui/components/Filters/useTransformFilters';
 
 const _areDifferents = <T extends object>(object1: T, object2: T) =>
@@ -29,7 +29,7 @@ const _areDifferents = <T extends object>(object1: T, object2: T) =>
 export const useViewSettingsReducer = (
     entrypoint: Entrypoint,
     defaultViewSettings: DefaultViewSettings = {},
-    ignoreViewByDefault: boolean
+    ignoreViewByDefault: boolean,
 ) => {
     /**
      * Should be `true` during all the warm up, until we `RESET` the view.
@@ -63,7 +63,7 @@ export const useViewSettingsReducer = (
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
+            id: (entrypoint as IEntrypointLink).linkAttributeId,
         },
         onCompleted: data => {
             const attributeData = data?.attributes?.list?.[0];
@@ -71,7 +71,7 @@ export const useViewSettingsReducer = (
                 throw new Error('Unknown link attribute');
             }
             setLibraryId(isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
-        }
+        },
     });
 
     const {
@@ -80,12 +80,12 @@ export const useViewSettingsReducer = (
          */
         data: viewData,
         loading: viewsLoading,
-        error: viewError
+        error: viewError,
     } = useGetViewsListQuery({
         skip: libraryId === null,
         variables: {
-            libraryId: libraryId as string
-        }
+            libraryId: libraryId as string,
+        },
     });
 
     let userView: GetViewsListQuery['views']['list'][number] | undefined;
@@ -102,7 +102,7 @@ export const useViewSettingsReducer = (
         : [
               ...userViewFilters,
               ...(userView?.sort ?? []),
-              ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? [])
+              ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? []),
           ];
 
     const preparedDefaultFilters = toValidFilters(defaultViewSettings.filters ?? []);
@@ -113,20 +113,20 @@ export const useViewSettingsReducer = (
                 ...(preparedDefaultFilters ?? []),
                 ...(defaultViewSettings.sort ?? []),
                 ...userAttributesToHydrate,
-                ...(defaultViewSettings?.attributesIds?.map(attributeId => ({field: attributeId})) ?? [])
-            ].map(({field}) => field)
-        )
+                ...(defaultViewSettings?.attributesIds?.map(attributeId => ({field: attributeId})) ?? []),
+            ].map(({field}) => field),
+        ),
     ];
 
     const {
         data: attributesData,
         loading: attributesLoading,
-        error: attributesError
+        error: attributesError,
     } = useExplorerAttributesQuery({
         variables: {
-            ids: attributesToHydrate
+            ids: attributesToHydrate,
         },
-        skip: libraryId === null || viewsLoading || attributesToHydrate.length === 0
+        skip: libraryId === null || viewsLoading || attributesToHydrate.length === 0,
     });
 
     const attributesDataById = useMemo(
@@ -137,7 +137,7 @@ export const useViewSettingsReducer = (
                 }
                 return acc;
             }, {}),
-        [attributesData]
+        [attributesData],
     );
 
     useEffect(() => {
@@ -151,8 +151,8 @@ export const useViewSettingsReducer = (
                     display: {type: display.type, size: display.size || ViewSizes.MEDIUM},
                     filters: toValidFilters(filters ?? []),
                     sort: sort ?? [],
-                    attributes: attributes?.map(attribute => attribute.id) ?? []
-                })
+                    attributes: attributes?.map(attribute => attribute.id) ?? [],
+                }),
             );
             /**
              * Filters merged from `<Explorer />` props and `view`.
@@ -161,7 +161,7 @@ export const useViewSettingsReducer = (
             const defaultSorts = defaultViewSettings?.sort ?? [];
             const userViewSorts = ignoreViewByDefault ? [] : (userView?.sort ?? []);
             const defaultAttributesIds = (defaultViewSettings?.attributesIds ?? []).filter(
-                attr => attributesDataById[attr]
+                attr => attributesDataById[attr],
             );
             const userViewAttributesIds = ignoreViewByDefault
                 ? []
@@ -174,7 +174,7 @@ export const useViewSettingsReducer = (
                     viewLabels: userView?.label ?? {},
                     viewType: userView?.display
                         ? mapViewTypeFromLegacyToExplorer[userView.display.type]
-                        : viewSettingsInitialState.viewType
+                        : viewSettingsInitialState.viewType,
                 };
             }
 
@@ -189,9 +189,9 @@ export const useViewSettingsReducer = (
                 sort: (defaultSorts.length > 0 ? defaultSorts : userViewSorts)
                     .map(s => ({
                         field: s.field,
-                        order: s.order
+                        order: s.order,
                     }))
-                    .filter(s => attributesDataById[s.field])
+                    .filter(s => attributesDataById[s.field]),
             };
             dispatch({
                 type: 'RESET',
@@ -201,14 +201,14 @@ export const useViewSettingsReducer = (
                         viewType: hydratedSettings.viewType,
                         attributesIds: hydratedSettings.attributesIds,
                         sort: hydratedSettings.sort,
-                        pageSize: hydratedSettings.pageSize
+                        pageSize: hydratedSettings.pageSize,
                     },
                     defaultViewSettings: {
                         viewType: defaultViewSettings.viewType ?? 'table',
                         attributesIds: defaultViewSettings.attributesIds ?? [],
-                        sort: defaultViewSettings.sort ?? []
-                    }
-                }
+                        sort: defaultViewSettings.sort ?? [],
+                    },
+                },
             });
             setLoading(false);
         }
@@ -218,6 +218,6 @@ export const useViewSettingsReducer = (
         loading,
         error: viewError ?? attributesError,
         view,
-        dispatch
+        dispatch,
     };
 };

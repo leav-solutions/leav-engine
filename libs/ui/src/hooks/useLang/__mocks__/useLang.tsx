@@ -5,7 +5,7 @@
 const mockUseLang = () => ({
     lang: ['fr', 'en'],
     availableLangs: ['fr', 'en'],
-    defaultLang: 'fr'
+    defaultLang: 'fr',
 });
 
 export default mockUseLang;

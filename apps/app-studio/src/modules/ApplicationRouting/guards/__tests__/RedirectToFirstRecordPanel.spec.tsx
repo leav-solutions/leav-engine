@@ -8,14 +8,14 @@ import {type Application} from '../../types';
 import {RedirectToFirstRecordPanel} from '../RedirectToFirstRecordPanel';
 
 jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
     Navigate: jest.fn(),
-    generatePath: jest.fn()
+    generatePath: jest.fn(),
 }));
 
 describe('RedirectToFirstRecordPanel component guard', () => {
@@ -35,11 +35,11 @@ describe('RedirectToFirstRecordPanel component guard', () => {
                 icon: 'fa-layer-group',
                 title: {
                     fr: 'PACs',
-                    en: 'Roadmap'
+                    en: 'Roadmap',
                 },
                 type: 'library',
-                libraryId: 'map'
-            }
+                libraryId: 'map',
+            },
         ],
         libraries: {
             map: {
@@ -48,7 +48,7 @@ describe('RedirectToFirstRecordPanel component guard', () => {
                         id: currentPanelId,
                         name: {
                             fr: 'Gestion des PACs',
-                            en: 'MAPs Management'
+                            en: 'MAPs Management',
                         },
                         type: 'explorer',
                         viewId: '885451776',
@@ -58,21 +58,21 @@ describe('RedirectToFirstRecordPanel component guard', () => {
                                 what: 'record',
                                 label: {
                                     en: 'Open PAC',
-                                    fr: 'Ouvrir le PAC'
-                                }
-                            }
-                        ]
-                    }
+                                    fr: 'Ouvrir le PAC',
+                                },
+                            },
+                        ],
+                    },
                 ],
                 recordPanels: [
                     {
                         id: panelToReach,
                         type: 'editionForm',
-                        formId: 'edition'
-                    }
-                ]
-            }
-        }
+                        formId: 'edition',
+                    },
+                ],
+            },
+        },
     };
 
     beforeEach(() => {
@@ -92,7 +92,7 @@ describe('RedirectToFirstRecordPanel component guard', () => {
             panelId: currentPanelId,
             recordId: currentRecordId,
             where: 'fullpage',
-            recordPanelId: panelToReach
+            recordPanelId: panelToReach,
         });
 
         expect(spyNavigate).toHaveBeenCalledTimes(1);

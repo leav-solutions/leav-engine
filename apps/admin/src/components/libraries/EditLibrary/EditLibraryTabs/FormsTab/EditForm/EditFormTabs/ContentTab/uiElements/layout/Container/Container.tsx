@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import {
     defaultContainerId,
     FormBuilderActionTypes,
-    type IFormBuilderStateAndDispatch
+    type IFormBuilderStateAndDispatch,
 } from '../../../formBuilderReducer/formBuilderReducer';
 import FormElementWrapper from '../../../FormLayout/FormLayoutElementWrapper/FormElementWrapper';
 import {DraggableElementTypes, type IFormBuilderDragObject, type IFormElement} from '../../../_types';
@@ -43,11 +43,11 @@ function Container({elementData, state, dispatch}: IContainerProps): JSX.Element
         accept: [
             DraggableElementTypes.ATTRIBUTE,
             DraggableElementTypes.FORM_ELEMENT,
-            DraggableElementTypes.RESERVE_LAYOUT_ELEMENT
+            DraggableElementTypes.RESERVE_LAYOUT_ELEMENT,
         ],
         drop: monitor => ({containerId: elementData?.id || defaultContainerId}),
         collect: monitor => ({
-            isOver: monitor.isOver({shallow: true})
+            isOver: monitor.isOver({shallow: true}),
         }),
         hover: (item, monitor) => {
             const isOverCurrent = monitor.isOver({shallow: true});
@@ -88,20 +88,20 @@ function Container({elementData, state, dispatch}: IContainerProps): JSX.Element
                 dispatch({
                     type: FormBuilderActionTypes.ADD_ELEMENT,
                     element: {...item.element},
-                    position
+                    position,
                 });
             } else {
                 dispatch({
                     type: FormBuilderActionTypes.MOVE_ELEMENT,
                     elementId: item.element.id,
                     from: item.currentPos ?? {order: item.element.order, containerId: item.element.containerId},
-                    to: position
+                    to: position,
                 });
             }
             item.dropAtPos = position;
             item.currentPos = position;
             item.index = position.order;
-        }
+        },
     });
 
     if (!state || !dispatch || !elementData) {

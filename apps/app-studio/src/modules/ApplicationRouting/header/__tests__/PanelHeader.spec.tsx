@@ -14,22 +14,22 @@ import {PanelHeader} from '../PanelHeader';
 import {MockedLangContextProvider} from '@leav/ui';
 
 jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
     useNavigate: jest.fn(),
-    generatePath: jest.fn()
+    generatePath: jest.fn(),
 }));
 
 jest.mock('../LibraryIdCard', () => ({
-    LibraryIdCard: jest.fn()
+    LibraryIdCard: jest.fn(),
 }));
 
 jest.mock('../RecordIdCard', () => ({
-    RecordIdCard: jest.fn()
+    RecordIdCard: jest.fn(),
 }));
 
 describe('PanelHeader', () => {
@@ -43,7 +43,7 @@ describe('PanelHeader', () => {
 
     const emptyApplication: Application = {
         workspaces: [],
-        libraries: {}
+        libraries: {},
     };
 
     beforeEach(() => {
@@ -63,9 +63,9 @@ describe('PanelHeader', () => {
             {
                 libraryId: 'test',
                 currentRecordId: '1234567890',
-                avatarSize: 'l'
+                avatarSize: 'l',
             },
-            {}
+            {},
         );
     });
 
@@ -81,9 +81,9 @@ describe('PanelHeader', () => {
             {
                 libraryId: 'test',
                 currentRecordId: '1234567890',
-                avatarSize: 'l'
+                avatarSize: 'l',
             },
-            {}
+            {},
         );
     });
 
@@ -94,11 +94,11 @@ describe('PanelHeader', () => {
             currentPanel: {
                 id: '1',
                 name: {
-                    fr: 'un'
+                    fr: 'un',
                 },
                 type: 'explorer',
-                actions: []
-            }
+                actions: [],
+            },
         });
         spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
 
@@ -110,9 +110,9 @@ describe('PanelHeader', () => {
             {
                 libraryId: 'test',
                 title: 'un',
-                avatarSize: 'l'
+                avatarSize: 'l',
             },
-            {}
+            {},
         );
     });
 
@@ -123,11 +123,11 @@ describe('PanelHeader', () => {
             currentPanel: {
                 id: '1',
                 name: {
-                    fr: 'un'
+                    fr: 'un',
                 },
                 type: 'explorer',
-                actions: []
-            }
+                actions: [],
+            },
         });
         spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
 
@@ -139,7 +139,7 @@ describe('PanelHeader', () => {
         const {container} = renderRTL(
             <MockedLangContextProvider>
                 <PanelHeader enabled={false} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(container.firstChild).toBeNull();
@@ -151,7 +151,7 @@ describe('PanelHeader', () => {
         spyUseParams.mockReturnValue({
             recordId: '1234567890',
             recordPanelId: 'panel123',
-            where: 'modal'
+            where: 'modal',
         });
         spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
         spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
@@ -168,7 +168,7 @@ describe('PanelHeader', () => {
 
         expect(spyGeneratePath).toHaveBeenCalledWith('../../../:recordId/fullpage/:recordPanelId', {
             recordId: '1234567890',
-            recordPanelId: 'panel123'
+            recordPanelId: 'panel123',
         });
         expect(mockNavigate).toHaveBeenCalledWith('../../../1234567890/fullpage/panel123', {relative: 'path'});
     });
@@ -177,7 +177,7 @@ describe('PanelHeader', () => {
         spyUseParams.mockReturnValue({
             recordId: '1234567890',
             recordPanelId: 'panel123',
-            where: 'fullpage'
+            where: 'fullpage',
         });
         spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
         spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);

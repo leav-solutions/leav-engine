@@ -16,13 +16,13 @@ export type UpdateTaskProgress = (
     taskId: string,
     currPercent: number,
     ctx: IQueryInfos,
-    upData: {position?: {index: number; total: number}; translationKey: string}
+    upData: {position?: {index: number; total: number}; translationKey: string},
 ) => Promise<number>;
 
 export default function ({
     'core.domain.tasksManager': tasksManagerDomain,
     config,
-    translator
+    translator,
 }: IDeps): UpdateTaskProgress {
     // return new percent of progress
     return async (taskId, currPercent, ctx, upData) => {
@@ -37,10 +37,10 @@ export default function ({
                         description: config.lang.available.reduce((labels, lang) => {
                             labels[lang] = `${translator.t(upData.translationKey, {lng: lang})}`;
                             return labels;
-                        }, {})
-                    })
+                        }, {}),
+                    }),
                 },
-                ctx
+                ctx,
             );
         }
 

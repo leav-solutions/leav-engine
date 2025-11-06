@@ -38,5 +38,5 @@ export interface IHandleFileSystemEventResources {
 export type HandleFileSystemEventFunc = (
     scanMsg: IFileEventData,
     resources: IHandleFileSystemEventResources,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => Promise<void>;

@@ -19,25 +19,25 @@ describe('DeactivateRecordBtn', () => {
                     query: DeactivateRecordsDocument,
                     variables: {
                         libraryId: mockRecord.library.id,
-                        recordsIds: [mockRecord.id]
-                    }
+                        recordsIds: [mockRecord.id],
+                    },
                 },
                 result: () => {
                     mutationCalled = true;
                     return {
                         data: {
-                            deactivateRecords: [{id: '1'}, {id: '2'}]
-                        }
+                            deactivateRecords: [{id: '1'}, {id: '2'}],
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(
             <SearchContext.Provider value={{state: initialSearchState, dispatch: jest.fn()}}>
                 <DeactivateRecordBtn record={mockRecord} />
             </SearchContext.Provider>,
-            {mocks}
+            {mocks},
         );
 
         await act(async () => {

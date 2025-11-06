@@ -8,17 +8,17 @@ import {
     mockFormElementContainer,
     mockFormElementInput,
     mockFormElementTabs,
-    mockFormElementTextBlock
+    mockFormElementTextBlock,
 } from '_ui/__mocks__/common/form';
 import Container from './Container';
 
 jest.mock('../../hooks/useRecordEditionContext', () => ({
     useRecordEditionContext: () => ({
         elements: {
-            container: [mockFormElementContainer, mockFormElementInput, mockFormElementTabs, mockFormElementTextBlock]
+            container: [mockFormElementContainer, mockFormElementInput, mockFormElementTabs, mockFormElementTextBlock],
         },
-        readonly: false
-    })
+        readonly: false,
+    }),
 }));
 
 describe('Container', () => {
@@ -29,7 +29,7 @@ describe('Container', () => {
                 element={mockFormElementContainer}
                 isFormCreationMode={false}
                 computedValues={null}
-            />
+            />,
         );
 
         const children = await screen.findAllByTestId('container-child-element');

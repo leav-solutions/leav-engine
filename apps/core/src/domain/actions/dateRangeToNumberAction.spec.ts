@@ -12,39 +12,39 @@ describe('dateRangeToNumberAction', () => {
     test('dateRangeToNumberAction', async () => {
         expect(action([{...mockStandardValue, payload: {from: 12345, to: 12346}}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, payload: {from: 12345, to: 12346}}]
+            values: [{...mockStandardValue, payload: {from: 12345, to: 12346}}],
         });
         expect(
             action(
                 [
                     {...mockStandardValue, payload: {from: 12345, to: 12346}},
-                    {...mockStandardValue, payload: {from: 654321, to: 654320}}
+                    {...mockStandardValue, payload: {from: 654321, to: 654320}},
                 ],
                 {},
-                ctx
-            )
+                ctx,
+            ),
         ).toEqual({
             errors: [],
             values: [
                 {...mockStandardValue, payload: {from: 12345, to: 12346}},
-                {...mockStandardValue, payload: {from: 654321, to: 654320}}
-            ]
+                {...mockStandardValue, payload: {from: 654321, to: 654320}},
+            ],
         });
         expect(action([{...mockStandardValue, payload: {from: '12345', to: '12346'}}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, payload: {from: 12345, to: 12346}}]
+            values: [{...mockStandardValue, payload: {from: 12345, to: 12346}}],
         });
         expect(action([{...mockStandardValue, payload: {to: '12346'}}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, payload: {from: 0, to: 12346}}]
+            values: [{...mockStandardValue, payload: {from: 0, to: 12346}}],
         });
         expect(action([{...mockStandardValue, payload: {from: '12345'}}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, payload: {from: 12345, to: 0}}]
+            values: [{...mockStandardValue, payload: {from: 12345, to: 0}}],
         });
         expect(action([{...mockStandardValue, payload: 'bad value'}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, payload: {from: 0, to: 0}}]
+            values: [{...mockStandardValue, payload: {from: 0, to: 0}}],
         });
     });
 });

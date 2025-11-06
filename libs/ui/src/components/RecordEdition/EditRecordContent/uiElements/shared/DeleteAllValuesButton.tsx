@@ -14,7 +14,7 @@ interface IDeleteAllValuesButtonProps {
 export const DeleteAllValuesButton: FunctionComponent<IDeleteAllValuesButtonProps> = ({
     handleDelete,
     disabled,
-    danger
+    danger,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -29,7 +29,7 @@ export const DeleteAllValuesButton: FunctionComponent<IDeleteAllValuesButtonProp
             type: 'confirm',
             okText: t('global.confirm'),
             cancelText: t('global.cancel'),
-            onOk: handleDelete
+            onOk: handleDelete,
         });
     };
 

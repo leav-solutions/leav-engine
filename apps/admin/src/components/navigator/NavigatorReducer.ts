@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     type GET_LIB_BY_ID_libraries_list,
-    type GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../_gqlTypes/GET_LIB_BY_ID';
 import {type RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
 import {type IGenericValue} from '../../_types/records';
@@ -63,7 +63,7 @@ export enum ActionTypes {
     SELECTION_ADD = 'SELECTION_ADD',
     SELECTION_REMOVE = 'SELECTION_REMOVE',
     SET_OFFSET = 'SET_OFFSET',
-    SET_LIMIT = 'SET_LIMIT'
+    SET_LIMIT = 'SET_LIMIT',
 }
 
 export const initialState = {
@@ -83,7 +83,7 @@ export const initialState = {
     list: [],
     execSearch: true,
     availableOffsets: [5, 10, 15, 20, 50, 100],
-    selectedOffset: 10
+    selectedOffset: 10,
 };
 
 const reducer = (state: IReducerState, action: IReducerAction): IReducerState => {
@@ -95,13 +95,13 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 selectedRoot: action.data.restrictToRoots.length === 1 ? action.data.restrictToRoots[0] : null,
                 onSelectionChanged: action.data.onSelectionChanged,
                 multipleSelection: action.data.multipleSelection,
-                selectable: action.data.selectable
+                selectable: action.data.selectable,
             };
         case ActionTypes.SET_RESTRICT_ROOTS:
             return {
                 ...state,
                 restrictToRoots: action.data,
-                selectedRoot: action.data.length === 1 ? action.data[0] : null
+                selectedRoot: action.data.length === 1 ? action.data[0] : null,
             };
         case ActionTypes.SET_SELECTED_ROOT:
             return {
@@ -110,18 +110,18 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 selectedRootAttributes: [],
                 list: [],
                 filters: [],
-                execSearch: true
+                execSearch: true,
             };
         case ActionTypes.SET_ROOTS:
             return {
                 ...state,
-                rootsList: action.data
+                rootsList: action.data,
             };
         case ActionTypes.SET_ROOT_INFOS:
             return {
                 ...state,
                 selectedRootLabel: action.data.label,
-                selectedRootAttributes: action.data.attributes
+                selectedRootAttributes: action.data.attributes,
             };
         case ActionTypes.SET_FILTERS:
             return {
@@ -129,18 +129,18 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 filters: action.data,
                 list: [],
                 showFilters: false,
-                execSearch: true
+                execSearch: true,
             };
         case ActionTypes.FILTER_REMOVE:
             return {
                 ...state,
                 filters: state.filters.filter((f, i) => i !== action.data),
-                execSearch: true
+                execSearch: true,
             };
         case ActionTypes.TOGGLE_FILTERS:
             return {
                 ...state,
-                showFilters: !state.showFilters
+                showFilters: !state.showFilters,
             };
         case ActionTypes.SET_LIST:
             return {
@@ -152,14 +152,14 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 availableOffsets:
                     state.availableOffsets.length < 7
                         ? [...state.availableOffsets, action.data.all]
-                        : state.availableOffsets
+                        : state.availableOffsets,
             };
         case ActionTypes.SET_OFFSET:
             return {
                 ...state,
                 offset: action.data.offset,
                 currentPage: action.data.page,
-                execSearch: true
+                execSearch: true,
             };
         case ActionTypes.SET_LIMIT:
             if (typeof action.data.limit === 'string') {
@@ -168,7 +168,7 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                     selectedOffset: null,
                     offset: 0,
                     currentPage: 1,
-                    execSearch: true
+                    execSearch: true,
                 };
             }
             return {
@@ -176,7 +176,7 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 selectedOffset: action.data.limit,
                 offset: 0,
                 currentPage: 1,
-                execSearch: true
+                execSearch: true,
             };
         case ActionTypes.SELECTION_ADD:
             const addedSelection = state.multipleSelection
@@ -188,7 +188,7 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
             }
             return {
                 ...state,
-                selection: addedSelection
+                selection: addedSelection,
             };
         case ActionTypes.SELECTION_REMOVE:
             const substractedSelection = state.selection.filter(e => e.id !== action.data.id);
@@ -198,7 +198,7 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
             }
             return {
                 ...state,
-                selection: substractedSelection
+                selection: substractedSelection,
             };
         default:
             return state;

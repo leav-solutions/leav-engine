@@ -12,5 +12,5 @@ export const mockInitialState = {
     navigation: navigationInitialState,
     info: infosInitialState,
     tasks: tasksInitialState,
-    notifications: notificationsInitialState
+    notifications: notificationsInitialState,
 };

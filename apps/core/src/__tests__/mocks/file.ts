@@ -14,7 +14,7 @@ export const mockFileMetadataRaw = {
     ColorSpace: 'sRGB',
     FileSize: 421377,
     ClippingPathName: 'My Path',
-    ICCProfileName: 'Some Profile'
+    ICCProfileName: 'Some Profile',
 };
 
 export const mockFileMetadata: IFileMetadata = {
@@ -28,7 +28,7 @@ export const mockFileMetadata: IFileMetadata = {
     [FilesAttributes.COLOR_SPACE]: 'sRGB',
     [FilesAttributes.FILE_SIZE]: 421377,
     [FilesAttributes.HAS_CLIPPING_PATH]: true,
-    [FilesAttributes.COLOR_PROFILE]: 'Some Profile'
+    [FilesAttributes.COLOR_PROFILE]: 'Some Profile',
 };
 
 export const mockFileMetadataPdfRaw = {
@@ -42,7 +42,7 @@ export const mockFileMetadataPdfRaw = {
     ColorSpace: null,
     FileSize: 421377,
     ClippingPathName: 'My Path',
-    ICCProfileName: null
+    ICCProfileName: null,
 };
 
 export const mockFileMetadataPdf: IFileMetadata = {
@@ -56,5 +56,5 @@ export const mockFileMetadataPdf: IFileMetadata = {
     [FilesAttributes.COLOR_SPACE]: null,
     [FilesAttributes.FILE_SIZE]: 421377,
     [FilesAttributes.HAS_CLIPPING_PATH]: true,
-    [FilesAttributes.COLOR_PROFILE]: null
+    [FilesAttributes.COLOR_PROFILE]: null,
 };

@@ -23,7 +23,7 @@ function ValueDetailsBtn({value, attribute, basic = false, ...buttonProps}: IVal
     const _handleClick = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute
+            attribute,
         });
     };
 

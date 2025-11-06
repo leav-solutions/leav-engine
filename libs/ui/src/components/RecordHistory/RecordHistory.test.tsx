@@ -8,26 +8,26 @@ import {type LogEntry} from './_types';
 
 const useFetchRecordHistoryMock = jest.fn();
 jest.mock('./hooks/useFetchRecordHistory', () => ({
-    useFetchRecordHistory: (...args) => useFetchRecordHistoryMock(...args)
+    useFetchRecordHistory: (...args) => useFetchRecordHistoryMock(...args),
 }));
 
 jest.mock('./RecordHistoryLogEntry', () => ({
-    RecordHistoryLogEntry: () => <div data-testid="log-entry">log</div>
+    RecordHistoryLogEntry: () => <div data-testid="log-entry">log</div>,
 }));
 
 jest.mock('./RecordHistoryGoUpButton', () => ({
-    RecordHistoryGoUpButton: ({children}) => <div>{children}</div>
+    RecordHistoryGoUpButton: ({children}) => <div>{children}</div>,
 }));
 
 jest.mock('../ShowMore', () => ({
-    ShowMore: () => <div data-testid="show-more" />
+    ShowMore: () => <div data-testid="show-more" />,
 }));
 
 describe('RecordHistory', () => {
     beforeEach(() => {
         useFetchRecordHistoryMock.mockReturnValue({
             loading: false,
-            logs: []
+            logs: [],
         });
     });
 
@@ -40,7 +40,7 @@ describe('RecordHistory', () => {
 
         expect(useFetchRecordHistoryMock).toHaveBeenCalledWith({
             record: {id: 'record-1', libraryId: 'lib-1'},
-            attributeId: undefined
+            attributeId: undefined,
         });
     });
 
@@ -49,7 +49,7 @@ describe('RecordHistory', () => {
 
         expect(useFetchRecordHistoryMock).toHaveBeenCalledWith({
             record: {id: 'record-1', libraryId: 'lib-1'},
-            attributeId: 'attribute-1'
+            attributeId: 'attribute-1',
         });
     });
 
@@ -57,7 +57,7 @@ describe('RecordHistory', () => {
         useFetchRecordHistoryMock.mockReturnValue({
             loading: false,
             inError: true,
-            logs: []
+            logs: [],
         });
 
         render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
@@ -68,7 +68,7 @@ describe('RecordHistory', () => {
     it('Should display empty history message when no log', async () => {
         useFetchRecordHistoryMock.mockReturnValue({
             loading: false,
-            logs: []
+            logs: [],
         });
 
         render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
@@ -81,11 +81,11 @@ describe('RecordHistory', () => {
             loading: false,
             logs: [
                 {
-                    action: 'VALUE_SAVE'
-                }
+                    action: 'VALUE_SAVE',
+                },
             ] as LogEntry[],
             total: 1,
-            hasMore: false
+            hasMore: false,
         });
 
         render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
@@ -102,11 +102,11 @@ describe('RecordHistory', () => {
             loading: false,
             logs: [
                 {
-                    action: 'VALUE_SAVE'
-                }
+                    action: 'VALUE_SAVE',
+                },
             ] as LogEntry[],
             total: 5,
-            hasMore: true
+            hasMore: true,
         });
 
         const {rerender} = render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
@@ -121,17 +121,17 @@ describe('RecordHistory', () => {
             loading: false,
             logs: [
                 {
-                    action: 'VALUE_SAVE'
+                    action: 'VALUE_SAVE',
                 },
                 {
-                    action: 'VALUE_SAVE'
+                    action: 'VALUE_SAVE',
                 },
                 {
-                    action: 'VALUE_SAVE'
-                }
+                    action: 'VALUE_SAVE',
+                },
             ] as LogEntry[],
             total: 5,
-            hasMore: true
+            hasMore: true,
         });
         await userEvent.click(showMoreToggleButton);
 
@@ -145,23 +145,23 @@ describe('RecordHistory', () => {
             loading: false,
             logs: [
                 {
-                    action: 'VALUE_SAVE'
+                    action: 'VALUE_SAVE',
                 },
                 {
-                    action: 'VALUE_SAVE'
+                    action: 'VALUE_SAVE',
                 },
                 {
-                    action: 'VALUE_SAVE'
+                    action: 'VALUE_SAVE',
                 },
                 {
-                    action: 'VALUE_SAVE'
+                    action: 'VALUE_SAVE',
                 },
                 {
-                    action: 'VALUE_SAVE'
-                }
+                    action: 'VALUE_SAVE',
+                },
             ] as LogEntry[],
             total: 5,
-            hasMore: false
+            hasMore: false,
         });
         // force rerender to simulate showMore trigger fetchMore !
         rerender(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);

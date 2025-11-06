@@ -12,7 +12,7 @@ export default async (
     libraryData: ILibrary,
     attributes: string[],
     deps: {attributeDomain: IAttributeDomain},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<ILibrary>> => {
     const errors: ErrorFieldDetail<ILibrary> = {};
 
@@ -30,7 +30,7 @@ export default async (
     // Ignore default attributes here. We consider they exist or are created somewhere else
     const unknownAttrs = difference(
         attributes.filter(a => !defaultAttributes.includes(a)),
-        Object.keys(attributesById)
+        Object.keys(attributesById),
     );
 
     if (unknownAttrs.length) {

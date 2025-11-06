@@ -28,7 +28,7 @@ import {
     type ISaveValue,
     type IStandardValue,
     type IValue,
-    type IValuesOptions
+    type IValuesOptions,
 } from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -75,7 +75,7 @@ export interface IValueDomain {
         recordId,
         attribute,
         options,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -93,7 +93,7 @@ export interface IValueDomain {
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -176,7 +176,7 @@ const valueDomain = function ({
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo,
     'core.utils': utils,
-    'core.utils.logger': logger
+    'core.utils.logger': logger,
 }: IValueDomainDeps): IValueDomain {
     /**
      * Run actions list on a value
@@ -194,7 +194,7 @@ const valueDomain = function ({
         attribute: attrProps,
         record,
         library,
-        ctx
+        ctx,
     }) => {
         const valuesToProcess = utils.isStandardAttribute(attrProps)
             ? values.map(value => ({...value, raw_payload: value.payload}))
@@ -207,7 +207,7 @@ const valueDomain = function ({
                           ...ctx,
                           attribute: attrProps,
                           recordId: record?.id,
-                          library
+                          library,
                       })
                     : valuesToProcess;
             return processedValues;
@@ -217,7 +217,7 @@ const valueDomain = function ({
                 e.context = {
                     attribute: attrProps.id,
                     values,
-                    recordId: record?.id
+                    recordId: record?.id,
                 };
             }
             throw e;
@@ -227,7 +227,7 @@ const valueDomain = function ({
     const _formatValue = async ({
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         attribute: IAttribute;
         value: IValue;
@@ -252,7 +252,7 @@ const valueDomain = function ({
                     try {
                         const metadataAttributeProps = await attributeDomain.getAttributeProperties({
                             id: metadataField,
-                            ctx
+                            ctx,
                         });
 
                         allValues[metadataField] =
@@ -260,7 +260,7 @@ const valueDomain = function ({
                                 ? await _formatValue({
                                       attribute: metadataAttributeProps,
                                       value: {payload: value.metadata?.[metadataField]},
-                                      ctx
+                                      ctx,
                                   })
                                 : null;
                     } catch (err) {
@@ -270,7 +270,7 @@ const valueDomain = function ({
 
                     return allValues;
                 },
-                Promise.resolve({})
+                Promise.resolve({}),
             );
             processedValue.metadata = metadataValuesFormatted;
         }
@@ -291,7 +291,7 @@ const valueDomain = function ({
             library,
             recordId,
             attribute: {...attribute, reverse_link: reverseLink},
-            ctx
+            ctx,
         });
 
         return values.length === 1;
@@ -314,7 +314,7 @@ const valueDomain = function ({
                     library,
                     recordId,
                     attribute: {...attribute, reverse_link: reverseLink},
-                    ctx
+                    ctx,
                 })
             ).pop();
         } else if (
@@ -325,7 +325,7 @@ const valueDomain = function ({
                 library,
                 recordId,
                 attribute: {...attribute, reverse_link: reverseLink},
-                ctx
+                ctx,
             });
 
             v = values.filter(val => val.id_value === value.id_value).pop();
@@ -335,7 +335,7 @@ const valueDomain = function ({
                 recordId,
                 attribute,
                 valueId: value.id_value,
-                ctx
+                ctx,
             });
         }
 
@@ -346,7 +346,7 @@ const valueDomain = function ({
         validationErrors: ErrorFieldDetail<IValue>,
         attributeProps: IAttribute,
         value: IValue,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<string | void> => {
         const errorType: Errors = validationErrors[attributeProps.id]?.msg;
         if (errorType === Errors.UNKNOWN_LINKED_RECORD || errorType === Errors.ELEMENT_NOT_IN_TREE) {
@@ -356,11 +356,11 @@ const valueDomain = function ({
                     const joinRecord = await createRecordHelper({
                         library: joinLibId,
                         ctx,
-                        active: true
+                        active: true,
                     });
 
                     logger.debug(
-                        `Created join record ${joinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`
+                        `Created join record ${joinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`,
                     );
                     await saveValue({
                         library: joinLibId,
@@ -369,14 +369,14 @@ const valueDomain = function ({
                         value: {
                             // simple link from join record to "thematic"
                             // or tree link from join record to "category" node
-                            payload: value.payload
+                            payload: value.payload,
                         },
-                        ctx
+                        ctx,
                     });
 
                     return joinRecord.id;
                 },
-                ctx
+                ctx,
             );
         }
     };
@@ -384,7 +384,7 @@ const valueDomain = function ({
     const _maybeDeleteJoinRecord = async (
         attributeProps: IAttribute,
         deletedValues: IValue[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void> =>
         ifLibraryJoinLinkAttribute(
             attributeProps,
@@ -393,19 +393,19 @@ const valueDomain = function ({
                     deletedValues.map(async deletedValue => {
                         const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
                         logger.debug(
-                            `Deleted join record ${deleteJoinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`
+                            `Deleted join record ${deleteJoinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`,
                         );
-                    })
+                    }),
                 );
             },
-            ctx
+            ctx,
         );
 
     const _maybeDeactivateLinkedRecord = async (
         attributeProps: IAttribute,
         reverseLink: IAttribute | undefined,
         deletedValues: IValue[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void> => {
         if (attributeProps.type === AttributeTypes.ADVANCED_LINK && reverseLink?.type === AttributeTypes.SIMPLE_LINK) {
             await saveValue({
@@ -413,7 +413,7 @@ const valueDomain = function ({
                 recordId: deletedValues[0].payload.id,
                 attribute: 'active',
                 value: {payload: false},
-                ctx
+                ctx,
             });
         }
     };
@@ -425,7 +425,7 @@ const valueDomain = function ({
             userId: ctx.userId,
             library,
             recordId,
-            ctx
+            ctx,
         });
 
         if (!canUpdateRecord) {
@@ -438,7 +438,7 @@ const valueDomain = function ({
             attribute,
             library,
             recordId,
-            ctx
+            ctx,
         );
 
         if (!isAllowedToDelete) {
@@ -451,7 +451,7 @@ const valueDomain = function ({
         if (!!attributeProps.reverse_link) {
             reverseLink = await attributeDomain.getAttributeProperties({
                 id: attributeProps.reverse_link as string,
-                ctx
+                ctx,
             });
         }
 
@@ -467,7 +467,7 @@ const valueDomain = function ({
                     library,
                     recordId,
                     ctx,
-                    reverseLink
+                    reverseLink,
                 }));
 
             const attributeLabel =
@@ -478,19 +478,19 @@ const valueDomain = function ({
             const inCreationBypass = await recordInCreationBypassHelper.recordInCreationBypassById(
                 library,
                 recordId,
-                ctx
+                ctx,
             );
 
             if (attributeProps.readonly) {
                 throw new ValidationError<IValue>({
-                    [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}}
+                    [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}},
                 });
             } else if (attributeProps.required && !inCreationBypass && deletingLastValue) {
                 throw new ValidationError<IValue>({
                     [attribute]: {
                         msg: Errors.REQUIRED_ATTRIBUTE,
-                        vars: {attribute: attributeLabel}
-                    }
+                        vars: {attribute: attributeLabel},
+                    },
                 });
             }
         }
@@ -501,7 +501,7 @@ const valueDomain = function ({
             library,
             recordId,
             reverseLink,
-            ctx
+            ctx,
         });
 
         if (value && !existingValue) {
@@ -516,7 +516,7 @@ const valueDomain = function ({
                   ...ctx,
                   attribute: attributeProps,
                   recordId,
-                  library
+                  library,
               })
             : [existingValue];
 
@@ -527,7 +527,7 @@ const valueDomain = function ({
                     recordId,
                     attribute: {...attributeProps, reverse_link: reverseLink},
                     value: actionsListResValue,
-                    ctx
+                    ctx,
                 });
 
                 // Make sure attribute is returned here
@@ -540,19 +540,19 @@ const valueDomain = function ({
                             library,
                             record: {
                                 id: recordId,
-                                libraryId: library
+                                libraryId: library,
                             },
-                            attribute: attributeProps.id
+                            attribute: attributeProps.id,
                         },
-                        before: deletedValue
+                        before: deletedValue,
                     },
-                    ctx
+                    ctx,
                 );
 
                 sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: deletedValue}], ctx);
 
                 return deletedValue;
-            })
+            }),
         );
 
         await _maybeDeactivateLinkedRecord(attributeProps, reverseLink, deletedValues, ctx);
@@ -567,14 +567,14 @@ const valueDomain = function ({
         record: IRecord,
         attribute: IAttribute,
         value: ISaveValue,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) => {
         const valueBefore = await _getExistingValue({
             value,
             attribute,
             library,
             recordId: record.id,
-            ctx
+            ctx,
         });
 
         const valueBeforeToCheck =
@@ -600,9 +600,9 @@ const valueDomain = function ({
                     getDefaultElementHelper,
                     actionsListDomain,
                     attributeDomain,
-                    versionProfileDomain
+                    versionProfileDomain,
                 },
-                ctx
+                ctx,
             );
         }
 
@@ -616,14 +616,14 @@ const valueDomain = function ({
                         library,
                         record: {
                             id: record.id,
-                            libraryId: library
+                            libraryId: library,
                         },
-                        attribute: attribute.id
+                        attribute: attribute.id,
                     },
                     before: valueBefore,
-                    after: savedValue
+                    after: savedValue,
                 },
-                ctx
+                ctx,
             );
 
             if (valueBefore) {
@@ -640,7 +640,7 @@ const valueDomain = function ({
         attribute: IAttribute,
         value: IValue,
         ctx: IQueryInfos,
-        record: IRecord = null
+        record: IRecord = null,
     ) => {
         let processedValues = await _runActionsList({
             listName: ActionsListEvents.GET_VALUE,
@@ -648,7 +648,7 @@ const valueDomain = function ({
             attribute,
             record,
             library,
-            ctx
+            ctx,
         });
 
         processedValues = await Promise.all(
@@ -656,7 +656,7 @@ const valueDomain = function ({
                 const formattedValue = await _formatValue({
                     attribute,
                     value: processedValue,
-                    ctx
+                    ctx,
                 });
 
                 // Runs actionsList on metadata values as well
@@ -671,7 +671,7 @@ const valueDomain = function ({
 
                         const metadataAttributeProps = await attributeDomain.getAttributeProperties({
                             id: metadataField,
-                            ctx
+                            ctx,
                         });
 
                         const resActionList = await _runActionsList({
@@ -680,13 +680,13 @@ const valueDomain = function ({
                             attribute: metadataAttributeProps,
                             record,
                             library,
-                            ctx
+                            ctx,
                         });
                         formattedValue.metadata[metadataField] = resActionList[0];
                     }
                 }
                 return formattedValue;
-            })
+            }),
         );
 
         return processedValues;
@@ -699,7 +699,7 @@ const valueDomain = function ({
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }): Promise<IValue[]> => {
         await validate.validateLibrary(library, ctx);
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
@@ -712,12 +712,12 @@ const valueDomain = function ({
             recordId,
             value,
             keepEmpty: false,
-            infos: ctx
+            infos: ctx,
         };
 
         if (attributeProps.readonly) {
             throw new ValidationError<IValue>({
-                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}},
             });
         }
 
@@ -725,15 +725,15 @@ const valueDomain = function ({
         const {
             canSave,
             reason: forbiddenSaveReason,
-            fields
+            fields,
         } = await canSaveRecordValue({
             ...valueChecksParams,
             ctx,
             deps: {
                 recordPermissionDomain,
                 recordAttributePermissionDomain,
-                config
-            }
+                config,
+            },
         });
 
         if (!canSave) {
@@ -743,7 +743,7 @@ const valueDomain = function ({
 
             throw new PermissionError(
                 forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
-                fields
+                fields,
             );
         }
 
@@ -755,9 +755,9 @@ const valueDomain = function ({
                 attributeDomain,
                 recordRepo,
                 valueRepo,
-                treeRepo
+                treeRepo,
             },
-            ctx
+            ctx,
         });
 
         if (Object.keys(validationErrors).length) {
@@ -776,9 +776,9 @@ const valueDomain = function ({
             deps: {
                 actionsListDomain,
                 attributeDomain,
-                utils
+                utils,
             },
-            ctx
+            ctx,
         });
 
         const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
@@ -789,7 +789,7 @@ const valueDomain = function ({
                     record,
                     attributeProps,
                     valueToSave,
-                    ctx
+                    ctx,
                 );
 
                 if (!identicalValues) {
@@ -799,7 +799,7 @@ const valueDomain = function ({
                 acc.allSavedValues.push(...savedValues);
                 return acc;
             },
-            Promise.resolve({allSavedValues: [], areValuesIdentical: true})
+            Promise.resolve({allSavedValues: [], areValuesIdentical: true}),
         );
 
         if (!areValuesIdentical) {
@@ -832,7 +832,7 @@ const valueDomain = function ({
             ) {
                 const getValOptions = {
                     ...options,
-                    version: attr?.versions_conf?.versionable ? options.version : null
+                    version: attr?.versions_conf?.versionable ? options.version : null,
                 };
 
                 values = await valueRepo.getValues({
@@ -841,7 +841,7 @@ const valueDomain = function ({
                     attribute: {...attr, reverse_link: reverseLink},
                     forceGetAllValues: false,
                     options: getValOptions,
-                    ctx
+                    ctx,
                 });
             } else {
                 // Get all values, no matter the version.
@@ -851,11 +851,11 @@ const valueDomain = function ({
                     attribute: {...attr, reverse_link: reverseLink},
                     forceGetAllValues: true,
                     options,
-                    ctx
+                    ctx,
                 });
                 const versionProfile = await versionProfileDomain.getVersionProfileProperties({
                     id: attr.versions_conf.profile,
-                    ctx
+                    ctx,
                 });
 
                 // Get trees ancestors
@@ -870,7 +870,7 @@ const valueDomain = function ({
                                   await elementAncestors.getCachedElementAncestors({
                                       treeId: treeName,
                                       nodeId: treeElem,
-                                      ctx
+                                      ctx,
                                   })
                               ).reverse() // We want the leaves first
                             : [];
@@ -878,9 +878,9 @@ const valueDomain = function ({
                         return {
                             name: treeName,
                             currentIndex: 0,
-                            elements: ancestors
+                            elements: ancestors,
                         };
-                    })
+                    }),
                 );
 
                 // Retrieve appropriate value among all values
@@ -893,7 +893,7 @@ const valueDomain = function ({
                 attribute: attr,
                 record: {id: recordId},
                 library,
-                ctx
+                ctx,
             });
         },
         saveValue,
@@ -903,7 +903,7 @@ const valueDomain = function ({
             values,
             ctx,
             keepEmpty = false,
-            skipPermission = false
+            skipPermission = false,
         }): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
 
@@ -916,7 +916,7 @@ const valueDomain = function ({
             const saveRes: ISaveBatchValueResult = await values.reduce(
                 async (
                     promPrevRes: Promise<ISaveBatchValueResult>,
-                    value: ISaveValue
+                    value: ISaveValue,
                 ): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
@@ -926,7 +926,7 @@ const valueDomain = function ({
                                 value,
                                 recordId,
                                 attribute: value.attribute,
-                                ctx
+                                ctx,
                             });
 
                             prevRes.values.push(...deletedValues);
@@ -941,12 +941,12 @@ const valueDomain = function ({
                             library,
                             recordId,
                             value,
-                            keepEmpty
+                            keepEmpty,
                         };
 
                         if (attributeProps.readonly) {
                             throw new ValidationError<IValue>({
-                                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+                                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}},
                             });
                         }
 
@@ -958,13 +958,13 @@ const valueDomain = function ({
                                 deps: {
                                     recordPermissionDomain,
                                     recordAttributePermissionDomain,
-                                    config
-                                }
+                                    config,
+                                },
                             });
 
                             if (!canSave) {
                                 throw new PermissionError(
-                                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions
+                                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
                                 );
                             }
                         }
@@ -976,9 +976,9 @@ const valueDomain = function ({
                                 attributeDomain,
                                 recordRepo,
                                 valueRepo,
-                                treeRepo
+                                treeRepo,
                             },
-                            ctx
+                            ctx,
                         });
 
                         if (Object.keys(validationErrors).length) {
@@ -987,7 +987,7 @@ const valueDomain = function ({
                                 validationErrors,
                                 attributeProps,
                                 value,
-                                ctx
+                                ctx,
                             );
                             if (joinRecordPayload) {
                                 value.payload = joinRecordPayload;
@@ -1002,9 +1002,9 @@ const valueDomain = function ({
                             deps: {
                                 actionsListDomain,
                                 attributeDomain,
-                                utils
+                                utils,
                             },
-                            ctx
+                            ctx,
                         });
 
                         const saveResult = await valuesToSave.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
@@ -1016,7 +1016,7 @@ const valueDomain = function ({
                                           value: valueToSave,
                                           recordId,
                                           attribute: valueToSave.attribute,
-                                          ctx
+                                          ctx,
                                       })
                                     : (await _executeSaveValue(library, record, attributeProps, valueToSave, ctx))
                                           .values;
@@ -1046,13 +1046,13 @@ const valueDomain = function ({
                                     : e.fields[value.attribute]
                                 : e.message,
                             input: value.payload as string,
-                            attribute: value.attribute
+                            attribute: value.attribute,
                         });
                     }
 
                     return prevRes;
                 },
-                Promise.resolve({values: [], errors: null})
+                Promise.resolve({values: [], errors: null}),
             );
 
             if (saveRes.values.length) {
@@ -1061,9 +1061,9 @@ const valueDomain = function ({
                     record,
                     saveRes.values.map(savedValue => ({
                         attribute: savedValue.attribute,
-                        value: savedValue
+                        value: savedValue,
                     })),
-                    ctx
+                    ctx,
                 );
             }
 
@@ -1075,7 +1075,7 @@ const valueDomain = function ({
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
         },
         formatValue: _formatValue,
-        runActionsList: _runActionsList
+        runActionsList: _runActionsList,
     };
 };
 

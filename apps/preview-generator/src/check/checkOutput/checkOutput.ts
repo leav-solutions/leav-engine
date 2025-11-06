@@ -14,7 +14,7 @@ export const checkOutput = async (output: string, size: number, name: string, co
     const pathExist = await new Promise(r =>
         access(dirOutput, e => {
             r(!e);
-        })
+        }),
     );
     if (!pathExist) {
         const pathList = dirOutput.split('/');
@@ -30,8 +30,8 @@ export const checkOutput = async (output: string, size: number, name: string, co
                     output,
                     size,
                     name,
-                    errorId
-                }
+                    errorId,
+                },
             });
         }
     }
@@ -45,8 +45,8 @@ export const checkOutput = async (output: string, size: number, name: string, co
             params: {
                 output,
                 size,
-                name
-            }
+                name,
+            },
         });
     }
 };
@@ -62,7 +62,7 @@ export const createDirectoryRecursively = async (pathList: string[], output: str
             const errDirCreated: NodeJS.ErrnoException = await new Promise(r =>
                 mkdir(allPath, e => {
                     r(e);
-                })
+                }),
             );
 
             // ignore error -17: folder already exists

@@ -16,7 +16,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
         [LibraryBehavior.files]: 'images outline',
         [LibraryBehavior.join]: 'table',
         [LibraryBehavior.directories]: 'folder outline',
-        [LibraryBehavior.standard]: 'file alternate outline'
+        [LibraryBehavior.standard]: 'file alternate outline',
     };
 
     const behavior = library?.behavior ?? LibraryBehavior.standard;

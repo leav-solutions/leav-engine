@@ -5,7 +5,7 @@ import {LoggerCallStack} from './LoggerCallStack';
 import winston from 'winston';
 
 export function catchErrorFormatter(
-    onErrorLog?: (message: string, meta: any, getCallStackTrace: () => string) => void
+    onErrorLog?: (message: string, meta: any, getCallStackTrace: () => string) => void,
 ): winston.Logform.FormatWrap | null {
     if (typeof onErrorLog === 'function') {
         const callStackForErrorStack = new LoggerCallStack();
@@ -19,7 +19,7 @@ export function catchErrorFormatter(
                     version: undefined,
                     level: undefined,
                     message: undefined,
-                    splat: undefined
+                    splat: undefined,
                 };
 
                 onErrorLog(info.message as string, meta, () => callStackForErrorStack.getCallStackTrace() || '');

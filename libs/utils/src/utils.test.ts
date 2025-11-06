@@ -15,7 +15,7 @@ import {
     objectToNameValueArray,
     omit,
     slugifyString,
-    stringToColor
+    stringToColor,
 } from './utils';
 
 describe('utils', () => {
@@ -87,13 +87,13 @@ describe('utils', () => {
             expect(extractArgsFromString('-library product -type link -key')).toEqual({
                 library: 'product',
                 type: 'link',
-                key: true
+                key: true,
             });
 
             expect(extractArgsFromString('-library product -type link -library users -answer 42')).toEqual({
                 type: 'link',
                 library: 'users',
-                answer: '42'
+                answer: '42',
             });
         });
     });
@@ -102,7 +102,7 @@ describe('utils', () => {
         test('Convert object to name/value array', async () => {
             expect(objectToNameValueArray({a: 'b', c: 'd'})).toEqual([
                 {name: 'a', value: 'b'},
-                {name: 'c', value: 'd'}
+                {name: 'c', value: 'd'},
             ]);
         });
     });
@@ -112,25 +112,25 @@ describe('utils', () => {
             expect(
                 nameValArrayToObj([
                     {name: 'a', value: 'b'},
-                    {name: 'c', value: 'd'}
-                ])
+                    {name: 'c', value: 'd'},
+                ]),
             ).toEqual({
                 a: 'b',
-                c: 'd'
+                c: 'd',
             });
 
             expect(
                 nameValArrayToObj(
                     [
                         {foo: 'a', bar: 'b'},
-                        {foo: 'c', bar: 'd'}
+                        {foo: 'c', bar: 'd'},
                     ],
                     'foo',
-                    'bar'
-                )
+                    'bar',
+                ),
             ).toEqual({
                 a: 'b',
-                c: 'd'
+                c: 'd',
             });
         });
     });

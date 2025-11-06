@@ -17,7 +17,7 @@ function AppIcon({size, style}: IAppIconProps): JSX.Element {
         small: 128,
         medium: 256,
         big: 512,
-        huge: 1024
+        huge: 1024,
     };
 
     return (

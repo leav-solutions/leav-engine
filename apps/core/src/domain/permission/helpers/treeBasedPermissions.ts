@@ -29,7 +29,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         'core.domain.attribute': attributeDomain,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper,
-        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper
+        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
     } = deps;
 
     /**
@@ -59,7 +59,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                     const targetPath = await elementAncestorsHelper.getCachedElementAncestors({
                         treeId: permTreeId,
                         nodeId: value,
-                        ctx
+                        ctx,
                     });
 
                     return permByUserGroupsHelper.getPermissionByUserGroups({
@@ -69,13 +69,13 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                         applyTo,
                         treeTarget: {
                             path: [{id: null}, ...targetPath],
-                            tree: permTreeId
+                            tree: permTreeId,
                         },
                         getDefaultPermission,
-                        ctx
+                        ctx,
                     });
-                }
-            )
+                },
+            ),
         );
 
         return reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
@@ -83,7 +83,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
 
     const getTreeBasedPermission = async (
         params: IGetTreeBasedPermissionParams,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<boolean> => {
         const {type, action, userId, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
 
@@ -97,9 +97,9 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                       elementAncestorsHelper.getCachedElementAncestors({
                           treeId: 'users_groups',
                           nodeId: groupId,
-                          ctx
-                      })
-                  )
+                          ctx,
+                      }),
+                  ),
               )
             : [];
 
@@ -115,9 +115,9 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                     permTreeId: permTreeAttrProps.linked_tree,
                     permTreeValues: treeValues[permTreeAttr],
                     getDefaultPermission: () => getDefaultPermission({action, applyTo, userId}),
-                    ctx
+                    ctx,
                 });
-            })
+            }),
         );
 
         return treePerms.reduce((globalPerm, treePerm) => {
@@ -133,7 +133,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
 
     const getInheritedTreeBasedPermission = async (
         params: IGetInheritedTreeBasedPermissionParams,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<boolean> => {
         const {type, action, userGroupId, applyTo, permissionTreeTarget, getDefaultPermission} = params;
 
@@ -141,14 +141,14 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
             treeId: 'users_groups',
             nodeId: userGroupId,
-            ctx
+            ctx,
         });
 
         // get tree target path
         const treeTargetPath = await elementAncestorsHelper.getCachedElementAncestors({
             treeId: permissionTreeTarget.tree,
             nodeId: permissionTreeTarget.nodeId,
-            ctx
+            ctx,
         });
 
         const inheritedGroupTargetPermission = await permByUserGroupsHelper.getPermissionByUserGroups({
@@ -158,7 +158,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             applyTo,
             treeTarget: {tree: permissionTreeTarget.tree, path: [{id: permissionTreeTarget.nodeId}]},
             getDefaultPermission: () => null,
-            ctx
+            ctx,
         });
 
         if (inheritedGroupTargetPermission !== null) {
@@ -172,10 +172,10 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             applyTo,
             treeTarget: {
                 tree: permissionTreeTarget.tree,
-                path: [{id: null}, ...treeTargetPath.slice(0, -1)]
+                path: [{id: null}, ...treeTargetPath.slice(0, -1)],
             },
             getDefaultPermission: () => null,
-            ctx
+            ctx,
         });
 
         if (inheritedTargetPathPermission !== null) {
@@ -187,6 +187,6 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
 
     return {
         getTreeBasedPermission,
-        getInheritedTreeBasedPermission
+        getInheritedTreeBasedPermission,
     };
 }

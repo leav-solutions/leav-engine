@@ -50,7 +50,7 @@ const RecordPreviewComp = React.memo(function RecordPreview({
     label,
     color,
     image,
-    style
+    style,
 }: IRecordPreviewProps): JSX.Element {
     if (image) {
         return (

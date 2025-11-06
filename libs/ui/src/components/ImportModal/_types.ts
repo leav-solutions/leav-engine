@@ -6,7 +6,7 @@ import {
     type AttributesByLibAttributeLinkAttributeFragment,
     type AttributesByLibAttributeTreeAttributeFragment,
     type ImportMode,
-    type ImportType
+    type ImportType,
 } from '_ui/_gqlTypes';
 
 export interface ISheet {
@@ -30,7 +30,7 @@ export enum ImportSteps {
     SELECT_FILE = 0,
     CONFIG = 1,
     PROCESSING = 2,
-    DONE = 3
+    DONE = 3,
 }
 
 export enum SheetSettingsError {
@@ -40,5 +40,5 @@ export enum SheetSettingsError {
     MAPPING = 'MAPPING',
     LINK_ATTRIBUTE = 'LINK_ATTRIBUTE',
     KEY_TO = 'KEY_TO',
-    KEY = 'KEY'
+    KEY = 'KEY',
 }

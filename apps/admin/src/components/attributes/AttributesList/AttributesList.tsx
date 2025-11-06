@@ -27,7 +27,7 @@ const AttributesList = ({
     filters = {},
     onRowClick,
     actions,
-    onFiltersUpdate
+    onFiltersUpdate,
 }: IAttributesListProps): JSX.Element => {
     const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
@@ -48,13 +48,13 @@ const AttributesList = ({
     const types = Object.keys(AttributeType).map(type => ({
         key: type,
         value: type,
-        text: t('attributes.types.' + type)
+        text: t('attributes.types.' + type),
     }));
 
     const formats = Object.keys(AttributeFormat).map(format => ({
         key: format,
         value: format,
-        text: t('attributes.formats.' + format)
+        text: t('attributes.formats.' + format),
     }));
 
     return (
@@ -150,8 +150,8 @@ const AttributesList = ({
                         .toSorted((a, b) =>
                             localizedLabel(a.label, availableLanguages).localeCompare(
                                 localizedLabel(b.label, availableLanguages),
-                                availableLanguages
-                            )
+                                availableLanguages,
+                            ),
                         )
                         .map(a => {
                             const onClick = () => onRowClick(a);
@@ -170,7 +170,7 @@ const AttributesList = ({
                                     </Table.Cell>
                                     <Table.Cell textAlign="right" width={1} className="actions">
                                         {actionsList.map(child =>
-                                            React.cloneElement(child as React.ReactElement<any>, {attribute: a})
+                                            React.cloneElement(child as React.ReactElement<any>, {attribute: a}),
                                         )}
                                     </Table.Cell>
                                 </Table.Row>

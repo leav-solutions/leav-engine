@@ -11,7 +11,7 @@ export type GetConditionPart = (
     condition: AttributeCondition,
     value: string | number | boolean,
     attribute: IAttribute,
-    isCountFilter: boolean
+    isCountFilter: boolean,
 ) => GeneratedAqlQuery;
 
 export default function (): GetConditionPart {
@@ -20,7 +20,7 @@ export default function (): GetConditionPart {
         condition: AttributeCondition,
         value: string | number | boolean | IDateFilterValue,
         attribute: IAttribute,
-        isCountFilter: boolean
+        isCountFilter: boolean,
     ): GeneratedAqlQuery => {
         const valueField = typeof valueIdentifier === 'string' ? literal(valueIdentifier) : valueIdentifier;
 

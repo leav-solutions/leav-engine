@@ -43,7 +43,7 @@ interface IPreviewsSettingsListProps {
 function PreviewsSettingsList({
     previewsSettings,
     readOnly,
-    onChange: onChangePreviewSettings
+    onChange: onChangePreviewSettings,
 }: IPreviewsSettingsListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -69,8 +69,8 @@ function PreviewsSettingsList({
                         onClick: () => {
                             setEditModalDataIndex(index);
                             setIsEditModalOpen(true);
-                        }
-                    }
+                        },
+                    },
                 ];
 
                 return (
@@ -79,7 +79,7 @@ function PreviewsSettingsList({
                         <FloatingMenu actions={menuActions} />
                     </LabelCellWrapper>
                 );
-            }
+            },
         },
         {
             title: t('libraries.previews_settings.background'),
@@ -100,14 +100,14 @@ function PreviewsSettingsList({
                         {bgLabel}
                     </Tag>
                 );
-            }
+            },
         },
         {
             title: t('libraries.previews_settings.density'),
             dataIndex: ['versions', 'density'],
             key: 'density',
             width: '150px',
-            render: value => (value ? `${value} dpi` : null)
+            render: value => (value ? `${value} dpi` : null),
         },
         {
             title: t('libraries.previews_settings.sizes'),
@@ -121,8 +121,8 @@ function PreviewsSettingsList({
                         </Tooltip>
                     ))}
                 </Space>
-            )
-        }
+            ),
+        },
     ];
 
     if (!readOnly) {
@@ -159,7 +159,7 @@ function PreviewsSettingsList({
                         />
                     </Popconfirm>
                 );
-            }
+            },
         });
     }
 
@@ -198,7 +198,7 @@ function PreviewsSettingsList({
         })
         .map((previewSetting, index) => ({
             ...previewSetting,
-            key: index
+            key: index,
         }));
 
     const _handleSubmit = async (previewSetting: LibraryPreviewsSettingsFragment) => {

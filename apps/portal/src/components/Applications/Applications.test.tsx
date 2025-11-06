@@ -17,8 +17,8 @@ jest.mock('hooks/useApplicationsPermissions', () => ({
         loading: false,
         canCreate: true,
         canDelete: true,
-        error: null
-    })
+        error: null,
+    }),
 }));
 
 describe('Applications', () => {
@@ -41,7 +41,7 @@ describe('Applications', () => {
         {
             request: {
                 query: getApplicationsQuery,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
@@ -50,53 +50,53 @@ describe('Applications', () => {
                             {
                                 ...mockApplication,
                                 label: {
-                                    en: 'My first app'
+                                    en: 'My first app',
                                 },
                                 description: {
-                                    en: 'My first description'
-                                }
+                                    en: 'My first description',
+                                },
                             },
                             {
                                 ...mockApplication,
                                 id: 'my-other-app',
                                 label: {
-                                    en: 'My second app'
+                                    en: 'My second app',
                                 },
                                 description: {
-                                    en: 'My second description'
-                                }
+                                    en: 'My second description',
+                                },
                             },
                             {
                                 ...mockApplication,
                                 id: 'my-third-app',
                                 label: {
-                                    en: 'My third app'
+                                    en: 'My third app',
                                 },
                                 description: {
-                                    en: 'My third description'
-                                }
+                                    en: 'My third description',
+                                },
                             },
                             {
                                 ...mockApplication,
                                 id: 'my-fourth-app',
                                 label: {
-                                    en: 'My fourth app'
+                                    en: 'My fourth app',
                                 },
                                 description: {
-                                    en: 'My fourth description'
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
+                                    en: 'My fourth description',
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getUserDataQuery,
                 variables: {
-                    keys: [FAVORITES_APPS_KEY, CONSULTED_APPS_KEY]
-                }
+                    keys: [FAVORITES_APPS_KEY, CONSULTED_APPS_KEY],
+                },
             },
             result: {
                 data: {
@@ -104,12 +104,12 @@ describe('Applications', () => {
                         global: false,
                         data: {
                             applications_consultation: ['my-other-app'],
-                            favorites_applications_ids: ['my-third-app', 'my-fourth-app']
+                            favorites_applications_ids: ['my-third-app', 'my-fourth-app'],
                         },
-                        __typename: 'UserData'
-                    }
-                }
-            }
+                        __typename: 'UserData',
+                    },
+                },
+            },
         },
         {
             request: {
@@ -117,20 +117,20 @@ describe('Applications', () => {
                 variables: {
                     key: 'favorites_applications_ids',
                     value: ['my-third-app', 'my-app'],
-                    global: false
-                }
+                    global: false,
+                },
             },
             result: {
                 data: {
                     saveUserData: {
                         global: false,
                         data: {
-                            favorites_applications_ids: ['my-third-app', 'my-app']
+                            favorites_applications_ids: ['my-third-app', 'my-app'],
                         },
-                        __typename: 'UserData'
-                    }
-                }
-            }
+                        __typename: 'UserData',
+                    },
+                },
+            },
         },
         {
             request: {
@@ -138,28 +138,28 @@ describe('Applications', () => {
                 variables: {
                     key: 'favorites_applications_ids',
                     value: ['my-third-app', 'my-fourth-app', 'my-app'],
-                    global: false
-                }
+                    global: false,
+                },
             },
             result: {
                 data: {
                     saveUserData: {
                         global: false,
                         data: {
-                            favorites_applications_ids: ['my-third-app', 'my-fourth-app', 'my-app']
+                            favorites_applications_ids: ['my-third-app', 'my-fourth-app', 'my-app'],
                         },
-                        __typename: 'UserData'
-                    }
-                }
-            }
-        }
+                        __typename: 'UserData',
+                    },
+                },
+            },
+        },
     ];
 
     test('Display list of applications, open app on click', async () => {
         render(
             <MockedProvider mocks={[...mocks]}>
                 <Applications />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         await screen.findByText('My first app');
@@ -181,7 +181,7 @@ describe('Applications', () => {
         render(
             <MockedProvider mocks={[...mocks]}>
                 <Applications />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         await screen.findByText('My first app');
@@ -204,7 +204,7 @@ describe('Applications', () => {
             loading: false,
             canCreate: false,
             canDelete: true,
-            error: null
+            error: null,
         }));
 
         render(<Applications />, {apolloMocks: mocks});

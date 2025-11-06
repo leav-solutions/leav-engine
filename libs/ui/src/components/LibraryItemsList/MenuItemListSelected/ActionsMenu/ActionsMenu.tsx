@@ -36,9 +36,9 @@ function ActionsMenu(): JSX.Element {
             modalProps: {
                 library: searchState.library.id,
                 selection: searchState.selection,
-                filters: searchState.filters
+                filters: searchState.filters,
             },
-            display: true
+            display: true,
         },
         {
             key: 'generate_previews',
@@ -49,9 +49,9 @@ function ActionsMenu(): JSX.Element {
             modalProps: {
                 libraryId: searchState.library.id,
                 recordIds: selectedIds,
-                filters
-            }
-        }
+                filters,
+            },
+        },
     ].filter(a => a.display);
 
     const _handleClick = (actionKey: string) => () => {
@@ -69,8 +69,8 @@ function ActionsMenu(): JSX.Element {
                         key: a.key,
                         title: a.title,
                         label: a.title,
-                        onClick: _handleClick(a.key)
-                    }))
+                        onClick: _handleClick(a.key),
+                    })),
                 }}
             >
                 <Button>

@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function AttributesSelectionList() {
             return <div>AttributesSelectionList</div>;
-        }
+        },
 );
 
 describe('AttributesSelection', () => {
@@ -24,7 +24,7 @@ describe('AttributesSelection', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery
+                    query: getAttributesQuery,
                 },
                 result: {
                     data: {
@@ -36,25 +36,25 @@ describe('AttributesSelection', () => {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 1'
+                                        fr: 'Attr 1',
                                     },
                                     id: 'test_tree_attr',
-                                    versions_conf: null
+                                    versions_conf: null,
                                 },
                                 {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 2'
+                                        fr: 'Attr 2',
                                     },
                                     id: 'other_test_tree_attr',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
         const onSubmit = jest.fn();
         const onClose = jest.fn();
@@ -65,7 +65,7 @@ describe('AttributesSelection', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <AttributesSelectionModal onSubmit={onSubmit} onClose={onClose} openModal selection={selection} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -83,10 +83,10 @@ describe('AttributesSelection', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery
+                    query: getAttributesQuery,
                 },
-                error: new Error('Boom!')
-            }
+                error: new Error('Boom!'),
+            },
         ];
         const onSubmit = jest.fn();
         const onClose = jest.fn();
@@ -97,7 +97,7 @@ describe('AttributesSelection', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <AttributesSelectionModal onSubmit={onSubmit} onClose={onClose} openModal selection={selection} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -111,14 +111,14 @@ describe('AttributesSelection', () => {
 
     test('Apply filters', async () => {
         const filter = {
-            type: [AttributeType.simple]
+            type: [AttributeType.simple],
         };
 
         const mocks = [
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: filter
+                    variables: filter,
                 },
                 result: {
                     data: {
@@ -130,25 +130,25 @@ describe('AttributesSelection', () => {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 1'
+                                        fr: 'Attr 1',
                                     },
                                     id: 'test_tree_attr',
-                                    versions_conf: null
+                                    versions_conf: null,
                                 },
                                 {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 2'
+                                        fr: 'Attr 2',
                                     },
                                     id: 'other_test_tree_attr',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
         const onSubmit = jest.fn();
         const onClose = jest.fn();
@@ -165,7 +165,7 @@ describe('AttributesSelection', () => {
                         selection={selection}
                         filter={filter}
                     />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

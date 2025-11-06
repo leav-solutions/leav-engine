@@ -28,7 +28,7 @@ import {
     type IRecordIdentity,
     type IRecordUpdateEvent,
     type IRecordUpdateEventFilters,
-    TreeCondition
+    TreeCondition,
 } from '../../../_types/record';
 import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
 import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
@@ -64,7 +64,7 @@ export default function ({
     'core.app.graphql': graphqlApp,
     'core.app.core.indexationManager': indexationManagerApp,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
-    'core.app.core.subscriptionsHelper': subscriptionsHelper
+    'core.app.core.subscriptionsHelper': subscriptionsHelper,
 }: IDeps): ICoreRecordApp {
     const _getPropertyValues = async (parent: IRecord, attributeId: string, ctx: IQueryInfos) => {
         try {
@@ -74,9 +74,9 @@ export default function ({
                 attributeId,
                 options: {
                     version: ctx.version,
-                    forceArray: true
+                    forceArray: true,
                 },
-                ctx
+                ctx,
             });
         } catch (error) {
             if (error instanceof LeavError) {
@@ -88,8 +88,8 @@ export default function ({
                 fields: {[attributeId]: error.message},
                 record: {
                     id: parent.id,
-                    library: parent.library
-                }
+                    library: parent.library,
+                },
             });
             ctx.errors = [...(ctx.errors ?? []), leavErr];
             return [];
@@ -287,10 +287,10 @@ export default function ({
                                 version,
                                 pagination,
                                 retrieveInactive = false,
-                                searchQuery
+                                searchQuery,
                             }: IRecordsQueryVariables,
                             ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
+                            info: GraphQLResolveInfo,
                         ): Promise<IListWithCursor<IRecord>> {
                             const fields = graphqlApp.getQueryFields(info).map(f => f.name);
                             if (
@@ -318,7 +318,7 @@ export default function ({
                                     : (pagination as IPaginationParams),
                                 withCount: fields.includes('totalCount'),
                                 retrieveInactive,
-                                fulltextSearch: searchQuery
+                                fulltextSearch: searchQuery,
                             };
 
                             if (formattedVersion) {
@@ -328,21 +328,21 @@ export default function ({
 
                             return recordDomain.find({
                                 params,
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         async createEmptyRecord(_, {library}: ICreateRecordParams, ctx: IQueryInfos) {
                             const record = await recordDomain.createEmptyRecord({
                                 library,
-                                ctx
+                                ctx,
                             });
 
                             return {
                                 record,
                                 // TODO : remove valuesErrors after all fronts are updated
-                                valuesErrors: null
+                                valuesErrors: null,
                             };
                         },
                         async activateNewRecord(_, {library, recordId, formId}, ctx: IQueryInfos) {
@@ -350,7 +350,7 @@ export default function ({
                                 library,
                                 recordId,
                                 formId,
-                                ctx
+                                ctx,
                             });
                         },
                         async createRecord(_, {library, data}: ICreateRecordParams, ctx: IQueryInfos) {
@@ -360,7 +360,7 @@ export default function ({
                                       ...value,
                                       payload: value.payload ?? value.value,
                                       version: valuesVersion,
-                                      metadata: utils.nameValArrayToObj(value.metadata)
+                                      metadata: utils.nameValArrayToObj(value.metadata),
                                   }))
                                 : null;
 
@@ -368,20 +368,20 @@ export default function ({
                                 library,
                                 values: valuesToSave,
                                 verifyRequiredAttributes: true,
-                                ctx
+                                ctx,
                             });
                         },
                         async deleteRecord(
                             parent,
                             {library, id}: {library: string; id: string},
-                            ctx
+                            ctx,
                         ): Promise<IRecord> {
                             return recordDomain.deleteRecord({library, id, ctx});
                         },
                         async indexRecords(
                             parent,
                             {libraryId, records}: {libraryId: string; records: string[]},
-                            ctx
+                            ctx,
                         ): Promise<boolean> {
                             await indexationManagerApp.indexDatabase(ctx, libraryId, records);
 
@@ -398,7 +398,7 @@ export default function ({
                         },
                         async purgeRecord(parent, {libraryId, recordId}, ctx): Promise<IRecord> {
                             return recordDomain.purgeRecord({libraryId, recordId, ctx});
-                        }
+                        },
                     },
                     Subscription: {
                         recordUpdate: {
@@ -407,7 +407,7 @@ export default function ({
                                 (
                                     event: PublishedEvent<{recordUpdate: IRecordUpdateEvent}>,
                                     {filters}: {filters: ICommonSubscriptionFilters & IRecordUpdateEventFilters},
-                                    ctx: IQueryInfos
+                                    ctx: IQueryInfos,
                                 ) => {
                                     if (filters?.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
                                         return false;
@@ -424,19 +424,19 @@ export default function ({
                                     }
 
                                     return mustReturn;
-                                }
-                            )
-                        }
+                                },
+                            ),
+                        },
                     },
                     RecordProperty: {
                         attributeProperties: async (
                             parent: {record: IRecord; attributeId: string},
                             _,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ) =>
                             attributeDomain.getAttributeProperties({
                                 id: parent.attributeId,
-                                ctx
+                                ctx,
                             }),
                         values: async (parent: {record: IRecord; attributeId: string}, _, ctx: IQueryInfos) =>
                             _getPropertyValues(parent.record, parent.attributeId, ctx),
@@ -444,7 +444,7 @@ export default function ({
                             parent: {record: IRecord; attributeId: string},
                             _,
                             ctx: IQueryInfos,
-                            graphqlInfo: GraphQLResolveInfo
+                            graphqlInfo: GraphQLResolveInfo,
                         ) => {
                             const requestedPermissionsActions =
                                 graphqlApp.getQueryFields(graphqlInfo).map(field => field.name) ?? [];
@@ -459,15 +459,15 @@ export default function ({
                                             action: action as AttributePermissionsActions,
                                             target: {
                                                 recordId: parent.record.id,
-                                                attributeId: parent.attributeId
+                                                attributeId: parent.attributeId,
                                             },
                                             userId: ctx.userId,
-                                            ctx
-                                        })
-                                    ])
-                                )
+                                            ctx,
+                                        }),
+                                    ]),
+                                ),
                             );
-                        }
+                        },
                     },
                     Record: {
                         library: async (record: IRecord, _, ctx: IQueryInfos) =>
@@ -478,13 +478,13 @@ export default function ({
                         properties: (parent: IRecord, {attributeIds}: {attributeIds: string[]}) =>
                             attributeIds.map(attributeId => ({
                                 record: parent,
-                                attributeId
+                                attributeId,
                             })),
                         permissions: (
                             record: IRecord,
                             _,
                             ctx: IQueryInfos,
-                            infos: GraphQLResolveInfo
+                            infos: GraphQLResolveInfo,
                         ): Promise<IKeyValue<boolean>> => {
                             const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
 
@@ -497,14 +497,14 @@ export default function ({
                                     action: action as RecordPermissionsActions,
                                     userId: ctx.userId,
                                     target: {
-                                        recordId: record.id
+                                        recordId: record.id,
                                     },
-                                    ctx
+                                    ctx,
                                 });
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
-                        }
+                        },
                     },
                     RecordFilter: {
                         tree: async (recordFilter: IRecordFilterLight, _, ctx: IQueryInfos): Promise<ITree | null> => {
@@ -513,7 +513,7 @@ export default function ({
                             }
 
                             return treeDomain.getTreeProperties(recordFilter.treeId, ctx);
-                        }
+                        },
                     },
                     RecordIdentity: {
                         label: async (recordIdentity: IRecordIdentity): Promise<string> => recordIdentity.getLabel?.(),
@@ -522,19 +522,19 @@ export default function ({
                         color: async (recordIdentity: IRecordIdentity): Promise<string | null> =>
                             recordIdentity.getColor?.(),
                         preview: async (recordIdentity: IRecordIdentity): Promise<IPreview | null> =>
-                            recordIdentity.getPreview?.()
+                            recordIdentity.getPreview?.(),
                     },
                     Preview: new GraphQLScalarType({
                         name: 'Preview',
                         description: 'Object containing all previews available for a record',
                         serialize: val => val,
                         parseValue: val => val,
-                        parseLiteral: ast => ast
-                    })
-                }
+                        parseLiteral: ast => ast,
+                    }),
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-        }
+        },
     };
 }

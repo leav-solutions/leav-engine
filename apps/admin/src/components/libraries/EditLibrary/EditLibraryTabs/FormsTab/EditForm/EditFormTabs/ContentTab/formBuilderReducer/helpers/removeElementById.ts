@@ -7,7 +7,7 @@ import {type ElementsByContainer, type IFormBuilderState} from '../formBuilderRe
 
 const _cleanContainerChildren = (
     element: Pick<IFormElement, 'id'>,
-    fieldsByContainer: ElementsByContainer
+    fieldsByContainer: ElementsByContainer,
 ): ElementsByContainer => {
     let fields = cloneDeep(fieldsByContainer);
 
@@ -27,7 +27,7 @@ const removeElementById = (
     elemId: string,
     depAttribute: string,
     depValue: string,
-    containerId: string
+    containerId: string,
 ): IFormBuilderState => {
     const newElemsByDeps = cloneDeep(state.elements);
     const _filterElem = el => el.id !== elemId;
@@ -37,9 +37,9 @@ const removeElementById = (
         newElemsByDeps[depAttribute][depValue][containerId].filter(_filterElem);
     newElemsByDeps[depAttribute][depValue] = _cleanContainerChildren(
         {
-            id: elemId
+            id: elemId,
         },
-        newElemsByDeps[depAttribute][depValue]
+        newElemsByDeps[depAttribute][depValue],
     );
 
     let newActiveElems = cloneDeep(state.activeElements);
@@ -47,9 +47,9 @@ const removeElementById = (
 
     newActiveElems = _cleanContainerChildren(
         {
-            id: elemId
+            id: elemId,
         },
-        newActiveElems
+        newActiveElems,
     );
 
     return {...state, elements: newElemsByDeps, activeElements: newActiveElems};

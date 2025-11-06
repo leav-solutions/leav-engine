@@ -19,7 +19,7 @@ export default function useAppLang() {
                     res.status === 404
                         ? 'Unable to connect to server. Please check your Internet connection.'
                         : res.statusText,
-                    {cause: res}
+                    {cause: res},
                 );
             }
 

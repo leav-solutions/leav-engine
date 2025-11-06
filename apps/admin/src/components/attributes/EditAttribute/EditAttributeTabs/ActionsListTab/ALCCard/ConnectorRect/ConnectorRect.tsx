@@ -37,7 +37,7 @@ function ConnectorRect({size, types, colorTypeDictionnary}: IConnectorRectProps)
                                 background: `${
                                     bgColor ? `rgb(${bgColor[0]}, ${bgColor[1]}, ${bgColor[2]})` : 'rgb(255, 255, 255)'
                                 }`,
-                                color
+                                color,
                             }}
                             title={type}
                         >

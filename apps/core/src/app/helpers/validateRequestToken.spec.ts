@@ -31,34 +31,34 @@ describe('validateRequestToken', () => {
             key: 'key',
             cookie: {
                 sameSite: 'lax',
-                secure: false
+                secure: false,
             },
             oidc: {enable: false},
             algorithm: 'HS256',
             tokenExpiration: '15m',
-            refreshTokenExpiration: '2h'
+            refreshTokenExpiration: '2h',
         },
         lang: {
-            default: 'en'
-        }
+            default: 'en',
+        },
     };
 
     const mockRecordDomain: Mockify<IRecordDomain> = {
         find: global.__mockPromise({
             cursor: {},
             totalCount: 1,
-            list: [{id: '1'}]
-        })
+            list: [{id: '1'}],
+        }),
     };
 
     const mockSessionRepo: Mockify<ISessionRepo> = {
         getData: global.__mockPromise(['id']),
         storeData: global.__mockPromise(),
-        deleteData: global.__mockPromise()
+        deleteData: global.__mockPromise(),
     };
 
     const mockValueDomain: Mockify<IValueDomain> = {
-        getValues: global.__mockPromise([{payload: {id: '1'}}])
+        getValues: global.__mockPromise([{payload: {id: '1'}}]),
     };
 
     const authAppdepsBase: ToAny<IAuthAppDeps> = {
@@ -73,59 +73,65 @@ describe('validateRequestToken', () => {
         'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
         'core.app.helpers.convertOIDCIdentifier': jest.fn(),
         'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
-        config: {}
+        config: {},
     };
 
     describe('With accessToken', () => {
         it('Should throw an error if access token is invalid', async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
 
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
-                    accessToken: invalidAccessToken
+                    accessToken: invalidAccessToken,
                 },
                 query: {
-                    [API_KEY_PARAM_NAME]: '123456'
-                }
+                    [API_KEY_PARAM_NAME]: '123456',
+                },
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             await expect(
-                validateRequestToken(requestMock as unknown as IRequestWithContext, responseMock as unknown as Response)
+                validateRequestToken(
+                    requestMock as unknown as IRequestWithContext,
+                    responseMock as unknown as Response,
+                ),
             ).rejects.toThrow('Invalid accessToken');
         });
 
         it("Should throw an error if access token payload doesn't contain userId", async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
 
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
-                    accessToken: validAccessTokenWithoutUserId
+                    accessToken: validAccessTokenWithoutUserId,
                 },
                 query: {
-                    [API_KEY_PARAM_NAME]: '123456'
-                }
+                    [API_KEY_PARAM_NAME]: '123456',
+                },
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             await expect(
-                validateRequestToken(requestMock as unknown as IRequestWithContext, responseMock as unknown as Response)
+                validateRequestToken(
+                    requestMock as unknown as IRequestWithContext,
+                    responseMock as unknown as Response,
+                ),
             ).rejects.toThrow('Invalid accessToken');
         });
     });
@@ -134,52 +140,58 @@ describe('validateRequestToken', () => {
         it('Should throw an error if refresh token is invalid', async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
 
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
-                    refreshToken: invalidRefreshToken
+                    refreshToken: invalidRefreshToken,
                 },
                 query: {
-                    [API_KEY_PARAM_NAME]: '123456'
-                }
+                    [API_KEY_PARAM_NAME]: '123456',
+                },
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             await expect(
-                validateRequestToken(requestMock as unknown as IRequestWithContext, responseMock as unknown as Response)
+                validateRequestToken(
+                    requestMock as unknown as IRequestWithContext,
+                    responseMock as unknown as Response,
+                ),
             ).rejects.toThrow('Invalid refreshToken');
         });
 
         it("Should throw an error if refresh token payload doesn't contain userId", async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
 
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
-                    accessToken: validRefreshTokenWithoutUserId
+                    accessToken: validRefreshTokenWithoutUserId,
                 },
                 query: {
-                    [API_KEY_PARAM_NAME]: '123456'
-                }
+                    [API_KEY_PARAM_NAME]: '123456',
+                },
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             await expect(
-                validateRequestToken(requestMock as unknown as IRequestWithContext, responseMock as unknown as Response)
+                validateRequestToken(
+                    requestMock as unknown as IRequestWithContext,
+                    responseMock as unknown as Response,
+                ),
             ).rejects.toThrow('Invalid accessToken');
         });
 
@@ -189,27 +201,27 @@ describe('validateRequestToken', () => {
                 'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
 
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
-                    refreshToken: validRefreshToken
+                    refreshToken: validRefreshToken,
                 },
                 query: {
-                    [API_KEY_PARAM_NAME]: '123456'
+                    [API_KEY_PARAM_NAME]: '123456',
                 },
                 headers: {
                     host: 'host',
                     'user-agent': 'test',
-                    'x-forwarded-for': '1'
-                }
+                    'x-forwarded-for': '1',
+                },
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn()
+                cookie: jest.fn(),
             };
 
             const mockedVerify = jest.spyOn(jwt, 'verify');
@@ -217,7 +229,7 @@ describe('validateRequestToken', () => {
             mockedVerify.mockImplementation(() => ({
                 userId: '1',
                 ip: '1',
-                agent: 'test'
+                agent: 'test',
             }));
 
             const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
@@ -228,7 +240,7 @@ describe('validateRequestToken', () => {
 
             await validateRequestToken(
                 requestMock as unknown as IRequestWithContext,
-                responseMock as unknown as Response
+                responseMock as unknown as Response,
             );
 
             expect(responseMock.cookie).toHaveBeenCalledWith('accessToken', 'new_mocked_access_token', {
@@ -236,7 +248,7 @@ describe('validateRequestToken', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
 
             expect(responseMock.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
@@ -244,7 +256,7 @@ describe('validateRequestToken', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host'
+                domain: 'host',
             });
         });
     });
@@ -255,7 +267,7 @@ describe('validateRequestToken', () => {
             'core.infra.session': mockSessionRepo as ISessionRepo,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            config: mockConfig as IConfig
+            config: mockConfig as IConfig,
         });
 
         const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
@@ -263,20 +275,20 @@ describe('validateRequestToken', () => {
         const requestMock: Mockify<IRequestWithContext> = {
             cookies: {
                 accessToken: 'expired_access_token',
-                refreshToken: validRefreshToken
+                refreshToken: validRefreshToken,
             },
             query: {
-                [API_KEY_PARAM_NAME]: '123456'
+                [API_KEY_PARAM_NAME]: '123456',
             },
             headers: {
                 host: 'host',
                 'user-agent': 'test',
-                'x-forwarded-for': '1'
-            }
+                'x-forwarded-for': '1',
+            },
         };
 
         const responseMock: Mockify<Response> = {
-            cookie: jest.fn()
+            cookie: jest.fn(),
         };
 
         const mockedVerify = jest.spyOn(jwt, 'verify');
@@ -289,7 +301,7 @@ describe('validateRequestToken', () => {
             return {
                 userId: '1',
                 ip: '1',
-                agent: 'test'
+                agent: 'test',
             };
         });
 
@@ -300,7 +312,7 @@ describe('validateRequestToken', () => {
 
         const result = await validateRequestToken(
             requestMock as unknown as IRequestWithContext,
-            responseMock as unknown as Response
+            responseMock as unknown as Response,
         );
 
         expect(responseMock.cookie).toHaveBeenCalledWith('accessToken', 'new_mocked_access_token_2', {
@@ -308,19 +320,19 @@ describe('validateRequestToken', () => {
             httpOnly: true,
             sameSite: 'lax',
             secure: false,
-            domain: 'host'
+            domain: 'host',
         });
         expect(responseMock.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token_2', {
             expires: expect.any(Date),
             httpOnly: true,
             sameSite: 'lax',
             secure: false,
-            domain: 'host'
+            domain: 'host',
         });
 
         expect(result).toEqual({
             userId: '1',
-            groupsId: ['1']
+            groupsId: ['1'],
         });
     });
 
@@ -330,27 +342,27 @@ describe('validateRequestToken', () => {
             'core.infra.session': mockSessionRepo as ISessionRepo,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            config: mockConfig as IConfig
+            config: mockConfig as IConfig,
         });
 
         const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
 
         const requestMock: Mockify<IRequestWithContext> = {
             cookies: {
-                refreshToken: validRefreshToken
+                refreshToken: validRefreshToken,
             },
             query: {
-                [API_KEY_PARAM_NAME]: '123456'
+                [API_KEY_PARAM_NAME]: '123456',
             },
             headers: {
                 host: 'host',
                 'user-agent': 'test',
-                'x-forwarded-for': '1'
-            }
+                'x-forwarded-for': '1',
+            },
         };
 
         const responseMock: Mockify<Response> = {
-            cookie: jest.fn()
+            cookie: jest.fn(),
         };
 
         const mockedVerify = jest.spyOn(jwt, 'verify');
@@ -359,7 +371,7 @@ describe('validateRequestToken', () => {
             userId: '1',
             groupsId: ['1'],
             ip: '1',
-            agent: 'test'
+            agent: 'test',
         }));
 
         const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
@@ -370,12 +382,12 @@ describe('validateRequestToken', () => {
 
         const result = await validateRequestToken(
             requestMock as unknown as IRequestWithContext,
-            responseMock as unknown as Response
+            responseMock as unknown as Response,
         );
 
         expect(result).toEqual({
             userId: '1',
-            groupsId: ['1']
+            groupsId: ['1'],
         });
     });
 });

@@ -7,9 +7,9 @@ import {type TFunction, type i18n} from 'i18next';
 const mockI18n: Mockify<i18n> = {
     language: 'fr',
     options: {
-        fallbackLng: ['en']
+        fallbackLng: ['en'],
     },
-    changeLanguage: jest.fn()
+    changeLanguage: jest.fn(),
 };
 
 const mockT = (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`;

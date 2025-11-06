@@ -40,13 +40,13 @@ const FormTabs: FunctionComponent<IFormElementProps<IFormTabsSettings>> = ({elem
             uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER],
             uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
             valueError: null,
-            values: null
+            values: null,
         };
 
         return {
             label: localizedTranslation(label, lang),
             key: id,
-            children: <tabContainer.uiElement {...elementProps} element={tabContainer} />
+            children: <tabContainer.uiElement {...elementProps} element={tabContainer} />,
         };
     });
 

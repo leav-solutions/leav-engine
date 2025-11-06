@@ -11,7 +11,7 @@ import {
     type LinkAttributeDetailsFragment,
     RecordFilterCondition,
     type StandardAttributeDetailsFragment,
-    type ViewDetailsFilterFragment
+    type ViewDetailsFilterFragment,
 } from '_ui/_gqlTypes';
 import {
     type UIFilter,
@@ -26,7 +26,7 @@ import {
     type ValidFieldFilterLinkValuesList,
     type ValidFieldFilterStandardValuesList,
     type ValidFieldFilterThrough,
-    type ValidFilter
+    type ValidFilter,
 } from './_types';
 import {ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/attributeType';
@@ -43,7 +43,7 @@ const _isValidFieldFilterThrough = (filter: ValidFilter): filter is ValidFieldFi
 
 const _isValidFieldFilterStandardValuesList = (
     filter: ValidFilter,
-    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
+    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number],
 ): filter is ValidFieldFilterStandardValuesList & {attribute: StandardAttributeDetailsFragment} =>
     valueListTextConditions.includes(filter.condition) &&
     [AttributeType.simple, AttributeType.advanced].includes(attribute.type) &&
@@ -52,7 +52,7 @@ const _isValidFieldFilterStandardValuesList = (
 
 const _isValidFieldFilterLinkValuesList = (
     filter: ValidFilter,
-    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
+    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number],
 ): filter is ValidFieldFilterLinkValuesList & {attribute: LinkAttributeDetailsFragment} =>
     valueListTextConditions.includes(filter.condition) &&
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) &&
@@ -71,7 +71,7 @@ type AttributeDetailsTreeAttributeWithPermissionsFragment = AttributeDetailsTree
 };
 
 export const isLinkAttributeDetails = (
-    linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
+    linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number],
 ): linkAttributeData is LinkAttributeDetailsFragment & {
     id: string;
     multiple_values: boolean;
@@ -103,7 +103,7 @@ export const useTransformFilters = () => {
                     value: filter.value ?? null,
                     hidden: filter.hidden ?? false,
                     condition: ThroughConditionFilter.THROUGH,
-                    subCondition: filter.condition
+                    subCondition: filter.condition,
                 };
                 acc.push(throughFilter);
             } else {
@@ -115,7 +115,7 @@ export const useTransformFilters = () => {
 
     const toUIFilters = ({
         filters,
-        attributesDataById
+        attributesDataById,
     }: {
         filters: ValidFilter[];
         attributesDataById: AttributesById;
@@ -129,7 +129,7 @@ export const useTransformFilters = () => {
             const filterAttributeBase: IUIFilterBaseAttribute = {
                 id: attributesDataById[filter.field].id,
                 label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                type: attributesDataById[filter.field].type
+                type: attributesDataById[filter.field].type,
             };
 
             // filter is standardFilter
@@ -146,8 +146,8 @@ export const useTransformFilters = () => {
                         attribute: {
                             ...filterAttributeBase,
                             format: attributeData.format!,
-                            valuesList: (attributeData as StandardAttributeDetailsFragment).valuesList!
-                        }
+                            valuesList: (attributeData as StandardAttributeDetailsFragment).valuesList!,
+                        },
                     };
                     acc.push(newFilter);
                 } else {
@@ -159,8 +159,8 @@ export const useTransformFilters = () => {
                         condition: (filter.condition as RecordFilterCondition) ?? null,
                         attribute: {
                             ...filterAttributeBase,
-                            format: attributeData.format!
-                        }
+                            format: attributeData.format!,
+                        },
                     };
                     acc.push(newFilter);
                 }
@@ -179,10 +179,10 @@ export const useTransformFilters = () => {
                         condition: filter.condition,
                         attribute: {
                             ...filterAttributeBase,
-                            linkedLibrary: attributeData.linked_library!
+                            linkedLibrary: attributeData.linked_library!,
                         },
                         subCondition: filter.subCondition ?? null,
-                        subField: filter.subField
+                        subField: filter.subField,
                     };
                     acc.push(newFilter);
                 } else if (_isValidFieldFilterLinkValuesList(filter, attributeData)) {
@@ -196,8 +196,8 @@ export const useTransformFilters = () => {
                         attribute: {
                             ...filterAttributeBase,
                             linkedLibrary: attributeData.linked_library!,
-                            valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!
-                        }
+                            valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!,
+                        },
                     };
 
                     acc.push(newFilter);
@@ -210,8 +210,8 @@ export const useTransformFilters = () => {
                         condition: filter.condition,
                         attribute: {
                             ...filterAttributeBase,
-                            linkedLibrary: attributeData.linked_library!
-                        }
+                            linkedLibrary: attributeData.linked_library!,
+                        },
                     };
 
                     acc.push(newFilter);
@@ -230,9 +230,9 @@ export const useTransformFilters = () => {
                     id: uuid(),
                     attribute: {
                         ...filterAttributeBase,
-                        linkedTree: attributeData.linked_tree!
+                        linkedTree: attributeData.linked_tree!,
                     },
-                    condition: filter.condition ?? RecordFilterCondition.EQUAL
+                    condition: filter.condition ?? RecordFilterCondition.EQUAL,
                 };
                 acc.push(newFilter);
             }
@@ -242,6 +242,6 @@ export const useTransformFilters = () => {
 
     return {
         toValidFilters,
-        toUIFilters
+        toUIFilters,
     };
 };

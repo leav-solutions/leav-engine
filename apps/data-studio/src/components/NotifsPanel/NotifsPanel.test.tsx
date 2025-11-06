@@ -25,7 +25,7 @@ export const mockTask: GET_TASKS_tasks_list = {
     startedAt: null,
     completedAt: null,
     link: null,
-    canceledBy: null
+    canceledBy: null,
 };
 
 describe('Notifs panel', () => {
@@ -33,21 +33,21 @@ describe('Notifs panel', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: cancelTaskMutation
-                }
+                    query: cancelTaskMutation,
+                },
             },
             {
                 request: {
-                    query: deleteTasksMutation
+                    query: deleteTasksMutation,
                 },
                 result: {
                     data: {
                         tasks: {
-                            list: [{id: 'deletedTaskId'}]
-                        }
-                    }
-                }
-            }
+                            list: [{id: 'deletedTaskId'}],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -61,14 +61,14 @@ describe('Notifs panel', () => {
                         tasks: {
                             tasks: {
                                 Task1: {...mockTask, id: 'Task1', status: TaskStatus.DONE},
-                                Task2: {...mockTask, id: 'Task2'}
-                            }
+                                Task2: {...mockTask, id: 'Task2'},
+                            },
                         },
                         notifications: {
-                            isPanelOpen: true
-                        }
-                    }
-                }
+                            isPanelOpen: true,
+                        },
+                    },
+                },
             );
         });
 

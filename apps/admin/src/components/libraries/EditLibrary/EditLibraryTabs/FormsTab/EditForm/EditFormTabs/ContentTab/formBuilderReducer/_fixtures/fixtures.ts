@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     type GET_FORM_forms_list,
-    type GET_FORM_forms_list_elements_elements
+    type GET_FORM_forms_list_elements_elements,
 } from '../../../../../../../../../../_gqlTypes/GET_FORM';
 import {FormElementTypes} from '../../../../../../../../../../_gqlTypes/globalTypes';
 import {FieldTypes, type IFormElement, UIElementTypes} from '../../_types';
@@ -14,92 +14,92 @@ const commonFieldData1 = {
     id: '987654',
     order: 0,
     type: FormElementTypes.field,
-    containerId: '123456'
+    containerId: '123456',
 };
 export const field1: GET_FORM_forms_list_elements_elements = {
     ...commonFieldData1,
     settings: [
         {key: 'label', value: 'My Field'},
-        {key: 'attribute', value: 'price'}
+        {key: 'attribute', value: 'price'},
     ],
-    uiElementType: FieldTypes.TEXT_INPUT
+    uiElementType: FieldTypes.TEXT_INPUT,
 };
 export const formElem1: IFormElement = {
     ...commonFieldData1,
     settings: {
         label: 'My Field',
-        attribute: 'price'
+        attribute: 'price',
     },
-    uiElement: formElements[field1.uiElementType]
+    uiElement: formElements[field1.uiElementType],
 };
 
 const commonFieldData2 = {
     id: '987653',
     order: 0,
     type: FormElementTypes.field,
-    containerId: '123457'
+    containerId: '123457',
 };
 export const field2: GET_FORM_forms_list_elements_elements = {
     ...commonFieldData2,
     uiElementType: FieldTypes.TEXT_INPUT,
     settings: [
         {key: 'label', value: 'Other Field'},
-        {key: 'attribute', value: 'label'}
-    ]
+        {key: 'attribute', value: 'label'},
+    ],
 };
 export const formElem2: IFormElement = {
     ...commonFieldData2,
     settings: {
         label: 'Other Field',
-        attribute: 'label'
+        attribute: 'label',
     },
-    uiElement: formElements[field2.uiElementType]
+    uiElement: formElements[field2.uiElementType],
 };
 
 const commonFieldData3 = {
     id: '987652',
     order: 3,
     type: FormElementTypes.field,
-    containerId: '123456'
+    containerId: '123456',
 };
 export const field3: GET_FORM_forms_list_elements_elements = {
     ...commonFieldData3,
     settings: [
         {key: 'label', value: 'My Field for categ'},
-        {key: 'attribute', value: 'price'}
+        {key: 'attribute', value: 'price'},
     ],
-    uiElementType: FieldTypes.TEXT_INPUT
+    uiElementType: FieldTypes.TEXT_INPUT,
 };
 export const formElem3: IFormElement = {
     ...commonFieldData3,
     settings: {
         label: 'My Field for categ',
-        attribute: 'price'
+        attribute: 'price',
     },
-    uiElement: formElements[field3.uiElementType]
+    uiElement: formElements[field3.uiElementType],
 };
 
 const commonFieldData4 = {
     id: '987652',
     order: 1,
     type: FormElementTypes.field,
-    containerId: '123456'
+    containerId: '123456',
 };
 export const field4: GET_FORM_forms_list_elements_elements = {
     ...commonFieldData4,
     settings: [
         {key: 'label', value: 'My Field for categ 2'},
-        {key: 'attribute', value: 'price'}
+        {key: 'attribute', value: 'price'},
     ],
-    uiElementType: FieldTypes.TEXT_INPUT
+    uiElementType: FieldTypes.TEXT_INPUT,
 };
 export const formElem4: IFormElement = {
     ...commonFieldData4,
     settings: {
         label: 'My Field for categ 2',
-        attribute: 'price'
+        attribute: 'price',
     },
-    uiElement: formElements[field4.uiElementType]
+    uiElement: formElements[field4.uiElementType],
 };
 
 export const formData: GET_FORM_forms_list = {
@@ -108,11 +108,11 @@ export const formData: GET_FORM_forms_list = {
     dependencyAttributes: [{id: 'category', label: {fr: 'Category'}, linked_tree: {id: 'categories'}}],
     label: {
         en: 'OK!',
-        fr: 'Formulaire édition'
+        fr: 'Formulaire édition',
     },
     sidePanel: {
         enable: true,
-        isOpenByDefault: true
+        isOpenByDefault: true,
     },
     elements: [
         {
@@ -124,7 +124,7 @@ export const formData: GET_FORM_forms_list = {
                     type: FormElementTypes.layout,
                     uiElementType: UIElementTypes.FIELDS_CONTAINER,
                     containerId: defaultContainerId,
-                    settings: []
+                    settings: [],
                 },
                 {
                     id: '456',
@@ -135,9 +135,9 @@ export const formData: GET_FORM_forms_list = {
                     settings: [
                         {
                             key: 'title',
-                            value: 'divide'
-                        }
-                    ]
+                            value: 'divide',
+                        },
+                    ],
                 },
                 {
                     id: '789',
@@ -145,13 +145,13 @@ export const formData: GET_FORM_forms_list = {
                     type: FormElementTypes.layout,
                     uiElementType: UIElementTypes.FIELDS_CONTAINER,
                     containerId: defaultContainerId,
-                    settings: []
+                    settings: [],
                 },
                 {
-                    ...field1
+                    ...field1,
                 },
                 {
-                    ...field2
+                    ...field2,
                 },
                 {
                     id: '999',
@@ -166,24 +166,24 @@ export const formData: GET_FORM_forms_list = {
                                 {
                                     id: 'col1',
                                     label: {
-                                        fr: 'Ma colonne'
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                        fr: 'Ma colonne',
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         },
         {
             dependencyValue: {attribute: 'category', value: '12345'},
             elements: [
                 {
-                    ...field3
-                }
-            ]
-        }
-    ]
+                    ...field3,
+                },
+            ],
+        },
+    ],
 };
 
 export const formDataWithTypename = {
@@ -201,7 +201,7 @@ export const formDataWithTypename = {
                     type: 'layout',
                     uiElementType: 'divider',
                     settings: [],
-                    __typename: 'FormElement'
+                    __typename: 'FormElement',
                 },
                 {
                     id: 'd0a785a2-ff60-40fe-86b0-cfd13c51d567',
@@ -211,23 +211,23 @@ export const formDataWithTypename = {
                     uiElementType: 'checkbox',
                     settings: [
                         {key: 'attribute', value: 'active', __typename: 'FormElementSettings'},
-                        {key: 'label', value: 'Actif', __typename: 'FormElementSettings'}
+                        {key: 'label', value: 'Actif', __typename: 'FormElementSettings'},
                     ],
-                    __typename: 'FormElement'
-                }
+                    __typename: 'FormElement',
+                },
             ],
-            __typename: 'FormElementsByDeps'
-        }
+            __typename: 'FormElementsByDeps',
+        },
     ],
     dependencyAttributes: [
         {
             id: 'category',
             label: {fr: 'Catégorie'},
             linked_tree: {id: 'categories', __typename: 'Tree'},
-            __typename: 'TreeAttribute'
-        }
+            __typename: 'TreeAttribute',
+        },
     ],
-    __typename: 'Form'
+    __typename: 'Form',
 };
 
 export const mockInitialState: IFormBuilderState = {
@@ -246,7 +246,7 @@ export const mockInitialState: IFormBuilderState = {
                         type: FormElementTypes.layout,
                         order: 0,
                         settings: {},
-                        uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
+                        uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
                     },
                     {
                         id: '456',
@@ -254,9 +254,9 @@ export const mockInitialState: IFormBuilderState = {
                         type: FormElementTypes.layout,
                         order: 1,
                         settings: {
-                            title: 'divide'
+                            title: 'divide',
                         },
-                        uiElement: layoutElements[UIElementTypes.DIVIDER]
+                        uiElement: layoutElements[UIElementTypes.DIVIDER],
                     },
                     {
                         id: '123457',
@@ -264,33 +264,33 @@ export const mockInitialState: IFormBuilderState = {
                         type: FormElementTypes.layout,
                         order: 2,
                         settings: {},
-                        uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
-                    }
+                        uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
+                    },
                 ],
                 '123456': [
                     {
-                        ...formElem1
+                        ...formElem1,
                     },
                     {
-                        ...formElem4
-                    }
+                        ...formElem4,
+                    },
                 ],
                 '123457': [
                     {
-                        ...formElem2
-                    }
-                ]
-            }
+                        ...formElem2,
+                    },
+                ],
+            },
         },
         category: {
             'category/12345': {
                 '123456': [
                     {
-                        ...formElem3
-                    }
-                ]
-            }
-        }
+                        ...formElem3,
+                    },
+                ],
+            },
+        },
     },
     activeElements: {
         [defaultContainerId]: [
@@ -300,7 +300,7 @@ export const mockInitialState: IFormBuilderState = {
                 type: FormElementTypes.layout,
                 order: 0,
                 settings: {},
-                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
+                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
             },
             {
                 id: '456',
@@ -308,9 +308,9 @@ export const mockInitialState: IFormBuilderState = {
                 type: FormElementTypes.layout,
                 order: 1,
                 settings: {
-                    title: 'divide'
+                    title: 'divide',
                 },
-                uiElement: layoutElements[UIElementTypes.DIVIDER]
+                uiElement: layoutElements[UIElementTypes.DIVIDER],
             },
             {
                 id: '123457',
@@ -318,24 +318,24 @@ export const mockInitialState: IFormBuilderState = {
                 type: FormElementTypes.layout,
                 order: 2,
                 settings: {},
-                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
-            }
+                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
+            },
         ],
         '123456': [
             {
                 ...formElem1,
-                herited: false
+                herited: false,
             },
             {
                 ...formElem4,
-                herited: false
-            }
+                herited: false,
+            },
         ],
         '123457': [
             {
                 ...formElem2,
-                herited: false
-            }
-        ]
-    }
+                herited: false,
+            },
+        ],
+    },
 };

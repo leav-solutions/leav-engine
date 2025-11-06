@@ -11,7 +11,7 @@ import {
     Kind,
     type NameNode,
     type SelectionSetNode,
-    type StringValueNode
+    type StringValueNode,
 } from 'graphql';
 import graphqlApp from './graphqlApp';
 
@@ -29,51 +29,51 @@ describe('GraphqlApp', () => {
             fragments: null,
             rootValue: null,
             operation: null,
-            variableValues: null
+            variableValues: null,
         };
 
         const mockFieldNode: FieldNode = {
             kind: Kind.FIELD,
             name: null,
-            selectionSet: null
+            selectionSet: null,
         };
 
         const mockNameNode: NameNode = {
             kind: Kind.NAME,
-            value: null
+            value: null,
         };
 
         const mockInlineFragment: InlineFragmentNode = {
             kind: Kind.INLINE_FRAGMENT,
-            selectionSet: null
+            selectionSet: null,
         };
 
         const mockFragmentSpread: FragmentSpreadNode = {
             kind: Kind.FRAGMENT_SPREAD,
-            name: {...mockNameNode, value: 'frag spread name'}
+            name: {...mockNameNode, value: 'frag spread name'},
         };
 
         const mockFragmentDef: FragmentDefinitionNode = {
             kind: Kind.FRAGMENT_DEFINITION,
             name: {...mockNameNode, value: 'frag name'},
             typeCondition: null,
-            selectionSet: null
+            selectionSet: null,
         };
 
         const mockSelectionSet: SelectionSetNode = {
             kind: Kind.SELECTION_SET,
-            selections: null
+            selections: null,
         };
 
         const mockArgumentNode: ArgumentNode = {
             kind: Kind.ARGUMENT,
             name: null,
-            value: null
+            value: null,
         };
 
         const mockValueNode: StringValueNode = {
             kind: Kind.STRING,
-            value: null
+            value: null,
         };
 
         test('should handle simple fields', () => {
@@ -88,16 +88,16 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'label'}
+                                    name: {...mockNameNode, value: 'label'},
                                 },
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'id'}
-                                }
-                            ]
-                        }
-                    }
-                ]
+                                    name: {...mockNameNode, value: 'id'},
+                                },
+                            ],
+                        },
+                    },
+                ],
             };
 
             const res = gqlApp.getQueryFields(info);
@@ -105,13 +105,13 @@ describe('GraphqlApp', () => {
                 {
                     name: 'label',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: 'id',
                     fields: [],
-                    arguments: {}
-                }
+                    arguments: {},
+                },
             ]);
         });
 
@@ -126,16 +126,16 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: '__typename'}
+                                    name: {...mockNameNode, value: '__typename'},
                                 },
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'id'}
-                                }
-                            ]
-                        }
-                    }
-                ]
+                                    name: {...mockNameNode, value: 'id'},
+                                },
+                            ],
+                        },
+                    },
+                ],
             };
 
             const res = gqlApp.getQueryFields(info);
@@ -143,8 +143,8 @@ describe('GraphqlApp', () => {
                 {
                     name: 'id',
                     fields: [],
-                    arguments: {}
-                }
+                    arguments: {},
+                },
             ]);
         });
 
@@ -167,30 +167,30 @@ describe('GraphqlApp', () => {
                                             ...mockArgumentNode,
                                             name: {
                                                 ...mockNameNode,
-                                                value: 'unit'
+                                                value: 'unit',
                                             },
                                             value: {
                                                 ...mockValueNode,
-                                                value: 'meter'
-                                            }
+                                                value: 'meter',
+                                            },
                                         },
                                         {
                                             ...mockArgumentNode,
                                             name: {
                                                 ...mockNameNode,
-                                                value: 'precision'
+                                                value: 'precision',
                                             },
                                             value: {
                                                 ...mockValueNode,
-                                                value: '2'
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                ]
+                                                value: '2',
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                ],
             };
 
             const res = gqlApp.getQueryFields(info);
@@ -200,9 +200,9 @@ describe('GraphqlApp', () => {
                     fields: [],
                     arguments: {
                         unit: 'meter',
-                        precision: '2'
-                    }
-                }
+                        precision: '2',
+                    },
+                },
             ]);
         });
 
@@ -218,11 +218,11 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'label'}
+                                    name: {...mockNameNode, value: 'label'},
                                 },
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'id'}
+                                    name: {...mockNameNode, value: 'id'},
                                 },
                                 {
                                     ...mockFieldNode,
@@ -232,11 +232,11 @@ describe('GraphqlApp', () => {
                                         selections: [
                                             {
                                                 ...mockFieldNode,
-                                                name: {...mockNameNode, value: 'label'}
+                                                name: {...mockNameNode, value: 'label'},
                                             },
                                             {
                                                 ...mockFieldNode,
-                                                name: {...mockNameNode, value: 'price'}
+                                                name: {...mockNameNode, value: 'price'},
                                             },
                                             {
                                                 ...mockFieldNode,
@@ -246,22 +246,22 @@ describe('GraphqlApp', () => {
                                                     selections: [
                                                         {
                                                             ...mockFieldNode,
-                                                            name: {...mockNameNode, value: 'label'}
+                                                            name: {...mockNameNode, value: 'label'},
                                                         },
                                                         {
                                                             ...mockFieldNode,
-                                                            name: {...mockNameNode, value: 'price'}
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                ]
+                                                            name: {...mockNameNode, value: 'price'},
+                                                        },
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
             };
 
             const res = gqlApp.getQueryFields(info);
@@ -270,12 +270,12 @@ describe('GraphqlApp', () => {
                 {
                     name: 'label',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: 'id',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: 'upsell',
@@ -284,12 +284,12 @@ describe('GraphqlApp', () => {
                         {
                             name: 'label',
                             fields: [],
-                            arguments: {}
+                            arguments: {},
                         },
                         {
                             name: 'price',
                             fields: [],
-                            arguments: {}
+                            arguments: {},
                         },
                         {
                             name: 'crosssell',
@@ -298,17 +298,17 @@ describe('GraphqlApp', () => {
                                 {
                                     name: 'label',
                                     fields: [],
-                                    arguments: {}
+                                    arguments: {},
                                 },
                                 {
                                     name: 'price',
                                     fields: [],
-                                    arguments: {}
-                                }
-                            ]
-                        }
-                    ]
-                }
+                                    arguments: {},
+                                },
+                            ],
+                        },
+                    ],
+                },
             ]);
         });
 
@@ -324,30 +324,30 @@ describe('GraphqlApp', () => {
                                 {
                                     ...mockFieldNode,
                                     name: {...mockNameNode, value: 'label'},
-                                    selectionSet: null
+                                    selectionSet: null,
                                 },
                                 {
                                     ...mockFieldNode,
                                     name: {...mockNameNode, value: 'id'},
-                                    selectionSet: null
+                                    selectionSet: null,
                                 },
                                 {
                                     ...mockFragmentSpread,
                                     name: {
                                         ...mockNameNode,
-                                        value: 'firstFragment'
-                                    }
+                                        value: 'firstFragment',
+                                    },
                                 },
                                 {
                                     ...mockFragmentSpread,
                                     name: {
                                         ...mockNameNode,
-                                        value: 'otherFragment'
-                                    }
-                                }
-                            ]
-                        }
-                    }
+                                        value: 'otherFragment',
+                                    },
+                                },
+                            ],
+                        },
+                    },
                 ],
                 fragments: {
                     firstFragment: {
@@ -358,10 +358,10 @@ describe('GraphqlApp', () => {
                                 {
                                     ...mockFieldNode,
                                     name: {...mockNameNode, value: 'label'},
-                                    selectionSet: null
-                                }
-                            ]
-                        }
+                                    selectionSet: null,
+                                },
+                            ],
+                        },
                     },
                     otherFragment: {
                         ...mockFragmentDef,
@@ -371,12 +371,12 @@ describe('GraphqlApp', () => {
                                 {
                                     ...mockFieldNode,
                                     name: {...mockNameNode, value: '_key'},
-                                    selectionSet: null
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    selectionSet: null,
+                                },
+                            ],
+                        },
+                    },
+                },
             };
 
             const res = gqlApp.getQueryFields(info);
@@ -384,23 +384,23 @@ describe('GraphqlApp', () => {
                 {
                     name: 'label',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: 'id',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: 'label',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: '_key',
                     fields: [],
-                    arguments: {}
-                }
+                    arguments: {},
+                },
             ]);
         });
 
@@ -415,15 +415,15 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFragmentSpread,
-                                    name: {...mockNameNode, value: 'firstFragment'}
+                                    name: {...mockNameNode, value: 'firstFragment'},
                                 },
                                 {
                                     ...mockFragmentSpread,
-                                    name: {...mockNameNode, value: 'otherFragment'}
-                                }
-                            ]
-                        }
-                    }
+                                    name: {...mockNameNode, value: 'otherFragment'},
+                                },
+                            ],
+                        },
+                    },
                 ],
                 fragments: {
                     firstFragment: {
@@ -433,10 +433,10 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'label'}
-                                }
-                            ]
-                        }
+                                    name: {...mockNameNode, value: 'label'},
+                                },
+                            ],
+                        },
                     },
                     otherFragment: {
                         ...mockFragmentDef,
@@ -445,14 +445,14 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: '_key'}
+                                    name: {...mockNameNode, value: '_key'},
                                 },
                                 {
                                     ...mockFragmentSpread,
-                                    name: {...mockNameNode, value: 'nestedFragment'}
-                                }
-                            ]
-                        }
+                                    name: {...mockNameNode, value: 'nestedFragment'},
+                                },
+                            ],
+                        },
                     },
                     nestedFragment: {
                         ...mockFragmentDef,
@@ -461,12 +461,12 @@ describe('GraphqlApp', () => {
                             selections: [
                                 {
                                     ...mockFieldNode,
-                                    name: {...mockNameNode, value: 'nestedFragField'}
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    name: {...mockNameNode, value: 'nestedFragField'},
+                                },
+                            ],
+                        },
+                    },
+                },
             };
 
             const res = gqlApp.getQueryFields(info);
@@ -474,18 +474,18 @@ describe('GraphqlApp', () => {
                 {
                     name: 'label',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: '_key',
                     fields: [],
-                    arguments: {}
+                    arguments: {},
                 },
                 {
                     name: 'nestedFragField',
                     fields: [],
-                    arguments: {}
-                }
+                    arguments: {},
+                },
             ]);
         });
     });

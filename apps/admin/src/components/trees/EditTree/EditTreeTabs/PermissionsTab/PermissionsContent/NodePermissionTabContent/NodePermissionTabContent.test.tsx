@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function DefineTreePermissionsView() {
             return <div>DefineTreePermissionsView</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -19,7 +19,7 @@ jest.mock(
     () =>
         function DefinePermByUserGroupView() {
             return <div>DefinePermByUserGroupView</div>;
-        }
+        },
 );
 
 jest.mock('../../../../../../../hooks/useLang');
@@ -34,7 +34,7 @@ describe('NodePermissionTabContent', () => {
                 treeLibraries={{...mockTreeWithPermConf.libraries[0]}}
                 onSubmitSettings={onSubmit}
                 readonly={false}
-            />
+            />,
         );
 
         expect(comp).toMatchSnapshot();

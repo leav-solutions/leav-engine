@@ -10,7 +10,7 @@ describe('MenuItemListSelected', () => {
         render(
             <MockSearchContextProvider>
                 <MenuItemListSelected active />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();

@@ -24,7 +24,7 @@ export interface IMessagesHandlerDeps {
 export default function ({
     'core.utils.logger': logger,
     'core.domain.filesManager.helpers.handleFileSystemEvent': handleFileSystemEvent,
-    config
+    config,
 }: IMessagesHandlerDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
     let _isWorking = false;
@@ -54,6 +54,6 @@ export default function ({
             _messagesQueue.push(message);
 
             _processMessage(ctx);
-        }
+        },
     };
 }

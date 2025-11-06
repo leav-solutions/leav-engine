@@ -29,9 +29,9 @@ export const OpenInFullpageButton: FunctionComponent<IOpenInFullpageButtonProps>
                     navigate(
                         generatePath(RelativePaths.openCurrentPanelInFullpage, {
                             recordId,
-                            recordPanelId
+                            recordPanelId,
                         }),
-                        {relative: 'path'}
+                        {relative: 'path'},
                     );
                 }}
             />

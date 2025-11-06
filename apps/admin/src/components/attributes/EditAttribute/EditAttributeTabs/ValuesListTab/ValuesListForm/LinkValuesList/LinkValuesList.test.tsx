@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function SelectRecordModal() {
             return <div>SelectRecordModal</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function EditRecordModal() {
             return <div>EditRecordModal</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -29,7 +29,7 @@ jest.mock(
     () =>
         function RecordCard() {
             return <div>RecordCard</div>;
-        }
+        },
 );
 
 describe('LinkValuesList', () => {
@@ -39,22 +39,22 @@ describe('LinkValuesList', () => {
         label: 'My record',
         preview: null,
         color: null,
-        library: {id: 'test_lib', label: {fr: 'Test Lib'}}
+        library: {id: 'test_lib', label: {fr: 'Test Lib'}},
     };
 
     const mockValues: ILinkValuesList[] = [
         {
             whoAmI: {
                 ...baseWhoAmI,
-                id: '132456'
-            }
+                id: '132456',
+            },
         },
         {
             whoAmI: {
                 ...baseWhoAmI,
-                id: '132457'
-            }
-        }
+                id: '132457',
+            },
+        },
     ];
 
     beforeEach(() => {
@@ -63,7 +63,7 @@ describe('LinkValuesList', () => {
 
     test('Render existing list', async () => {
         const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />
+            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
         );
 
         expect(comp.find('[data-test-id="values-list-value"]')).toHaveLength(2);
@@ -71,7 +71,7 @@ describe('LinkValuesList', () => {
 
     test('Open record creation modal', async () => {
         const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />
+            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
         );
 
         act(() => {
@@ -89,8 +89,8 @@ describe('LinkValuesList', () => {
                 onCloseFunc({
                     whoAmI: {
                         ...baseWhoAmI,
-                        id: '99999'
-                    }
+                        id: '99999',
+                    },
                 });
             }
         });
@@ -103,7 +103,7 @@ describe('LinkValuesList', () => {
 
     test("When selecting a record, don't add a record already present in values", async () => {
         const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />
+            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
         );
 
         act(() => {
@@ -119,7 +119,7 @@ describe('LinkValuesList', () => {
             if (onSelectFunc) {
                 onSelectFunc({
                     ...baseWhoAmI,
-                    id: '132456'
+                    id: '132456',
                 });
             }
         });
@@ -131,7 +131,7 @@ describe('LinkValuesList', () => {
 
     test('Delete a value', async () => {
         const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />
+            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
         );
 
         act(() => {
@@ -146,7 +146,7 @@ describe('LinkValuesList', () => {
 
     test('Edit record when clicking on a value', async () => {
         const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />
+            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
         );
 
         act(() => {

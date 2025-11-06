@@ -56,7 +56,7 @@ const PluginsList = ({plugins, loading}: IPluginsListProps): JSX.Element => {
 
 PluginsList.defaultProps = {
     loading: false,
-    plugins: []
+    plugins: [],
 };
 
 export default PluginsList;

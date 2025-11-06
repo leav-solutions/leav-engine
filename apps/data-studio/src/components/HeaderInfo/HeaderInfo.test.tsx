@@ -18,7 +18,7 @@ describe('HeaderInfo', () => {
                     <MockStore>
                         <HeaderInfo />
                     </MockStore>
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -30,11 +30,11 @@ describe('HeaderInfo', () => {
 
         const mockBaseInfo: IBaseInfo = {
             content: 'base info',
-            type: InfoType.BASIC
+            type: InfoType.BASIC,
         };
 
         const mockState = {
-            info: {...infosInitialState, base: mockBaseInfo}
+            info: {...infosInitialState, base: mockBaseInfo},
         };
 
         await act(async () => {
@@ -43,7 +43,7 @@ describe('HeaderInfo', () => {
                     <MockStore state={mockState}>
                         <HeaderInfo />
                     </MockStore>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -58,11 +58,11 @@ describe('HeaderInfo', () => {
             type: InfoType.BASIC,
             time: 1234567890,
             priority: InfoPriority.LOW,
-            channel: InfoChannel.PASSIVE
+            channel: InfoChannel.PASSIVE,
         };
 
         const mockState = {
-            info: {...infosInitialState, stack: [mockInfo]}
+            info: {...infosInitialState, stack: [mockInfo]},
         };
 
         await act(async () => {
@@ -71,7 +71,7 @@ describe('HeaderInfo', () => {
                     <MockStore state={mockState}>
                         <HeaderInfo />
                     </MockStore>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

@@ -52,7 +52,7 @@ function SelectedAttributesList(): JSX.Element {
         dispatch({
             type: AttributesSelectionListActionTypes.MOVE_SELECTED_ATTRIBUTE,
             from: result.source.index,
-            to: result.destination.index
+            to: result.destination.index,
         });
     };
 
@@ -82,7 +82,7 @@ function SelectedAttributesList(): JSX.Element {
                                                 </CustomCard>
                                             )}
                                         </Draggable>
-                                    )
+                                    ),
                             )}
                             {provided.placeholder}
                         </div>

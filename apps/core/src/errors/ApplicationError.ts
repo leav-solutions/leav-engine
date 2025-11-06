@@ -5,7 +5,7 @@ import LeavError from './LeavError';
 
 export enum ApplicationErrorType {
     UNKNOWN_APP_ERROR = 'unknown_app',
-    FORBIDDEN_ERROR = 'forbidden'
+    FORBIDDEN_ERROR = 'forbidden',
 }
 
 export default class ApplicationError extends LeavError<{}, ApplicationErrorType> {
@@ -15,7 +15,7 @@ export default class ApplicationError extends LeavError<{}, ApplicationErrorType
 
     private _statusCodeByType: {[key in ApplicationErrorType]: number} = {
         [ApplicationErrorType.UNKNOWN_APP_ERROR]: 404,
-        [ApplicationErrorType.FORBIDDEN_ERROR]: 403
+        [ApplicationErrorType.FORBIDDEN_ERROR]: 403,
     };
 
     public constructor(type: ApplicationErrorType, appEndpoint: string) {

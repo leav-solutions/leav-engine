@@ -15,12 +15,12 @@ const checkConfig = (conf: IConfig) => {
             .keys({
                 uri: Joi.string().required(),
                 apiKey: Joi.string().required(),
-                treeId: Joi.string().required()
+                treeId: Joi.string().required(),
             })
             .required(),
         filesystem: Joi.object()
             .keys({
-                absolutePath: Joi.string().required()
+                absolutePath: Joi.string().required(),
             })
             .required(),
         amqp: Joi.object()
@@ -31,7 +31,7 @@ const checkConfig = (conf: IConfig) => {
                         hostname: Joi.string().required(),
                         port: Joi.number().required(),
                         username: Joi.string().required(),
-                        password: Joi.string().required()
+                        password: Joi.string().required(),
                     })
                     .required(),
                 exchange: Joi.string().required(),
@@ -39,10 +39,10 @@ const checkConfig = (conf: IConfig) => {
                 routingKey: Joi.string().required(),
                 rootKey: Joi.string().required(),
                 prefetch: Joi.number(),
-                queue: Joi.string()
+                queue: Joi.string(),
             })
             .required(),
-        env: Joi.string().required()
+        env: Joi.string().required(),
     });
 
     const isValid: Joi.ValidationResult<IConfig> = configSchema.validate(conf);

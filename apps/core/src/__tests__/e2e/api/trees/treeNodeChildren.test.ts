@@ -7,7 +7,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 import {PermissionTypes, RecordPermissionsActions} from '../../../../_types/permissions';
 import {AttributeTypes} from '../../../../_types/attribute';
@@ -32,7 +32,7 @@ describe('Trees', () => {
             type: AttributeTypes.TREE,
             multipleValues: false,
             label: 'Tree attribute',
-            linkedTree: testTreeName
+            linkedTree: testTreeName,
         });
 
         await gqlSaveLibrary(testLibName, 'Test Lib', [treeAttributeId]);

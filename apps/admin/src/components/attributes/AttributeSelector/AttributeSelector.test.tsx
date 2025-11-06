@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function AttributeSelectorField() {
             return <div>AttributeSelectorField</div>;
-        }
+        },
 );
 
 describe('AttributeSelector', () => {
@@ -23,8 +23,8 @@ describe('AttributeSelector', () => {
                 request: {
                     query: getAttributesQuery,
                     variables: {
-                        type: [AttributeType.tree]
-                    }
+                        type: [AttributeType.tree],
+                    },
                 },
                 result: {
                     data: {
@@ -36,25 +36,25 @@ describe('AttributeSelector', () => {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 1'
+                                        fr: 'Attr 1',
                                     },
                                     id: 'test_tree_attr',
-                                    versions_conf: null
+                                    versions_conf: null,
                                 },
                                 {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 2'
+                                        fr: 'Attr 2',
                                     },
                                     id: 'other_test_tree_attr',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<AttributeSelector filters={{type: [AttributeType.tree]}} />, {apolloMocks: mocks});
@@ -68,11 +68,11 @@ describe('AttributeSelector', () => {
                 request: {
                     query: getAttributesQuery,
                     variables: {
-                        type: [AttributeType.tree]
-                    }
+                        type: [AttributeType.tree],
+                    },
                 },
-                error: new Error('Boom!')
-            }
+                error: new Error('Boom!'),
+            },
         ];
 
         render(<AttributeSelector filters={{type: [AttributeType.tree]}} />, {apolloMocks: mocks});

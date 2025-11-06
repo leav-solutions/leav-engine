@@ -6,7 +6,7 @@ import {
     CheckApplicationExistenceDocument,
     GetApplicationByIdDocument,
     GetApplicationModulesDocument,
-    SaveApplicationDocument
+    SaveApplicationDocument,
 } from '_ui/_gqlTypes';
 import {mockApplication} from '_ui/__mocks__/common/application';
 import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
@@ -20,7 +20,7 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
@@ -34,7 +34,7 @@ describe('EditApplication', () => {
         {
             request: {
                 query: GetApplicationModulesDocument,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
@@ -42,38 +42,38 @@ describe('EditApplication', () => {
                         {
                             id: 'module1',
                             description: 'Module 1',
-                            version: 'v1.0'
-                        }
-                    ]
-                }
-            }
+                            version: 'v1.0',
+                        },
+                    ],
+                },
+            },
         },
         {
             request: {
                 query: CheckApplicationExistenceDocument,
                 variables: {
-                    id: 'test_app_fr_edited'
-                }
+                    id: 'test_app_fr_edited',
+                },
             },
             result: {
                 data: {
-                    applications: []
-                }
-            }
+                    applications: [],
+                },
+            },
         },
         {
             request: {
                 query: CheckApplicationExistenceDocument,
                 variables: {
-                    endpoint: 'test-app-fr-edited'
-                }
+                    endpoint: 'test-app-fr-edited',
+                },
             },
             result: {
                 data: {
-                    applications: []
-                }
-            }
-        }
+                    applications: [],
+                },
+            },
+        },
     ];
 
     describe('Create new app', () => {
@@ -131,18 +131,18 @@ describe('EditApplication', () => {
                 request: {
                     query: GetApplicationByIdDocument,
                     variables: {
-                        id: mockApplication.id
-                    }
+                        id: mockApplication.id,
+                    },
                 },
                 result: {
                     data: {
                         applications: {
                             __typename: 'ApplicationsList',
-                            list: [{...mockApplication}]
-                        }
-                    }
-                }
-            }
+                            list: [{...mockApplication}],
+                        },
+                    },
+                },
+            },
         ];
 
         test('Display tabs', async () => {
@@ -155,7 +155,7 @@ describe('EditApplication', () => {
 
         test('Can select default active tab', async () => {
             render(<EditApplication applicationId={mockApplication.id} activeTab="info" />, {
-                mocks
+                mocks,
             });
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
@@ -168,15 +168,15 @@ describe('EditApplication', () => {
                 {
                     key: 'custom',
                     label: 'Custom',
-                    tabContent: <div>Custom tab</div>
-                }
+                    tabContent: <div>Custom tab</div>,
+                },
             ];
 
             render(
                 <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
                 {
-                    mocks
-                }
+                    mocks,
+                },
             );
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
@@ -190,15 +190,15 @@ describe('EditApplication', () => {
                 {
                     key: 'custom',
                     label: 'Custom',
-                    tabContent: <div>Custom tab</div>
-                }
+                    tabContent: <div>Custom tab</div>,
+                },
             ];
 
             render(
                 <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
                 {
-                    mocks
-                }
+                    mocks,
+                },
             );
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
@@ -220,10 +220,10 @@ describe('EditApplication', () => {
                                     id: mockApplication.id,
                                     label: {
                                         ...mockApplication.label,
-                                        fr: mockApplication.label.fr + 'updated'
-                                    }
-                                }
-                            }
+                                        fr: mockApplication.label.fr + 'updated',
+                                    },
+                                },
+                            },
                         },
                         result: () => {
                             saveCalled = true;
@@ -233,17 +233,17 @@ describe('EditApplication', () => {
                                         ...mockApplication,
                                         label: {
                                             ...mockApplication.label,
-                                            fr: mockApplication.label.fr + 'updated'
-                                        }
-                                    }
-                                }
+                                            fr: mockApplication.label.fr + 'updated',
+                                        },
+                                    },
+                                },
                             };
-                        }
-                    }
+                        },
+                    },
                 ];
 
                 render(<EditApplication applicationId={mockApplication.id} />, {
-                    mocks: [...mocks, ...mockSave]
+                    mocks: [...mocks, ...mockSave],
                 });
 
                 await waitFor(() => expect(screen.getByRole('form')).toBeInTheDocument());
@@ -271,8 +271,8 @@ describe('EditApplication', () => {
                         request: {
                             query: GetApplicationByIdDocument,
                             variables: {
-                                id: mockApplication.id
-                            }
+                                id: mockApplication.id,
+                            },
                         },
                         result: {
                             data: {
@@ -283,18 +283,18 @@ describe('EditApplication', () => {
                                             ...mockApplication,
                                             permissions: {
                                                 ...mockApplication.permissions,
-                                                admin_application: false
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    }
+                                                admin_application: false,
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
                 ];
 
                 render(<EditApplication applicationId={mockApplication.id} />, {
-                    mocks: mocksNotAllowed
+                    mocks: mocksNotAllowed,
                 });
 
                 await waitFor(() => expect(screen.getByRole('form')).toBeInTheDocument());

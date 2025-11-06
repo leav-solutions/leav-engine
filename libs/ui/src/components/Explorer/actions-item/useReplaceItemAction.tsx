@@ -24,7 +24,7 @@ export const useReplaceItemAction = ({
     isEnabled,
     onReplace,
     isMultivalue,
-    canReplaceLinkValues
+    canReplaceLinkValues,
 }: FeatureHook<{
     isMultivalue: boolean;
     onReplace?: (replaceValuesResult: ISubmitMultipleResult) => void;
@@ -42,9 +42,9 @@ export const useReplaceItemAction = ({
             callback: item => {
                 setLinkIdSelected(item.id_value);
                 setIsReplaceModalOpen(!isReplaceModalOpen);
-            }
+            },
         }),
-        [canReplaceLinkValues]
+        [canReplaceLinkValues],
     );
 
     const replaceAction = useMemo(
@@ -61,9 +61,9 @@ export const useReplaceItemAction = ({
                             setIsReplaceModalOpen(false);
                         }}
                     />
-                ) : null
+                ) : null,
         }),
-        [isEnabled, isReplaceModalOpen, _replaceItemAction]
+        [isEnabled, isReplaceModalOpen, _replaceItemAction],
     );
 
     return replaceAction;

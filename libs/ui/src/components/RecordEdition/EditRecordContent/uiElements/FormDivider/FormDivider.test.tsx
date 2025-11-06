@@ -17,7 +17,7 @@ describe('FormDivider', () => {
             <FormDivider
                 {...mockCommonFormElementProps}
                 element={{...mockFormElementDivider, settings: {title: 'divider title'}}}
-            />
+            />,
         );
 
         expect(screen.getByText('divider title')).toBeInTheDocument();

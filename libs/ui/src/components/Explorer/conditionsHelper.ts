@@ -6,7 +6,7 @@ import {AttributeConditionFilter} from '_ui/types';
 
 export const hasOnlyNoValueConditions = (attributeFormat: string): boolean =>
     [AttributeFormat.color, AttributeFormat.date_range, AttributeFormat.encrypted, AttributeFormat.extended].includes(
-        attributeFormat
+        attributeFormat,
     );
 
 export const nullValueConditions = [
@@ -16,5 +16,5 @@ export const nullValueConditions = [
     AttributeConditionFilter.TOMORROW,
     AttributeConditionFilter.YESTERDAY,
     AttributeConditionFilter.LAST_MONTH,
-    AttributeConditionFilter.NEXT_MONTH
+    AttributeConditionFilter.NEXT_MONTH,
 ];

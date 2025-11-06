@@ -16,7 +16,7 @@ import {
     type ITreeLinkValue,
     type IValue,
     type RecordData,
-    type RecordEdition
+    type RecordEdition,
 } from '../../../../_types/records';
 import FormFieldWrapper from '../../../shared/FormFieldWrapper';
 import LinksField from '../../FormFields/LinksField';
@@ -38,7 +38,7 @@ const _getVirginValue = (attribute): IValue | ILinkValue | ITreeLinkValue => {
         id_value: null,
         modified_at: null,
         created_at: null,
-        version: null
+        version: null,
     };
 
     switch (attribute.type) {
@@ -57,7 +57,7 @@ const CreateRecordForm = ({
     attributes,
     setSubmitFuncRef,
     errors = {},
-    inModal = false
+    inModal = false,
 }: ICreateRecordFormProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
@@ -103,7 +103,7 @@ const CreateRecordForm = ({
             const newFieldValues = values[fieldName].map(v => ({...v}));
             newFieldValues.push({
                 value: '',
-                id_value: null
+                id_value: null,
             });
 
             setFieldValue(fieldName, newFieldValues);
@@ -112,7 +112,7 @@ const CreateRecordForm = ({
         const _renderValueField = (
             attr: GET_LIB_BY_ID_libraries_list_attributes,
             fieldValues: IGenericValue[],
-            readonly: boolean
+            readonly: boolean,
         ) => {
             if (isLinkAttribute(attr, false)) {
                 return (
@@ -174,7 +174,7 @@ const CreateRecordForm = ({
                         {_renderValueField(
                             attributes[attrId],
                             values[attrId],
-                            _isAttributeReadOnly(attributes[attrId])
+                            _isAttributeReadOnly(attributes[attrId]),
                         )}
                     </FormFieldWrapper>
                 ))}

@@ -14,7 +14,7 @@ describe('DefineTreePermissionsView', () => {
         const mockTree = {
             id: 'test_tree_attr',
             linked_tree: {id: 'test_tree'},
-            label: {fr: 'Test'}
+            label: {fr: 'Test'},
         };
 
         const comp = render(
@@ -24,7 +24,7 @@ describe('DefineTreePermissionsView', () => {
                     permissionType={PermissionTypes.record}
                     applyTo="test_lib"
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         expect(comp).toMatchSnapshot();

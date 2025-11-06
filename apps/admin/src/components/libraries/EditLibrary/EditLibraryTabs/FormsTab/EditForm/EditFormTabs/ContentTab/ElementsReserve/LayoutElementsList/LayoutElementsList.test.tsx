@@ -9,7 +9,7 @@ import LayoutElementsList from './LayoutElementsList';
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
-    useLayoutEffect: jest.requireActual('react').useEffect
+    useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 describe('LayoutElementsList', () => {
@@ -17,7 +17,7 @@ describe('LayoutElementsList', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <LayoutElementsList />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

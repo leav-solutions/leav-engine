@@ -23,7 +23,7 @@ describe('MenuItemList', () => {
                     refetch={jest.fn()}
                     library={mockGetLibraryDetailExtendedElement}
                 />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('MenuView')).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe('MenuItemList', () => {
                     refetch={jest.fn()}
                     library={mockGetLibraryDetailExtendedElement}
                 />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('MenuSelection')).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('MenuItemList', () => {
                     refetch={jest.fn()}
                     library={mockGetLibraryDetailExtendedElement}
                 />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(await screen.findByText('SearchItems')).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('MenuItemList', () => {
                     refetch={jest.fn()}
                     library={mockGetLibraryDetailExtendedElement}
                 />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('DisplayOptions')).toBeInTheDocument();

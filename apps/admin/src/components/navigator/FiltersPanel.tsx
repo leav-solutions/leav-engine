@@ -10,7 +10,7 @@ import {ActionTypes, type IFilter} from './NavigatorReducer';
 const emptyFilter: IFilter = {
     attribute: '',
     value: '',
-    operator: '='
+    operator: '=',
 };
 
 enum LocalActionTypes {
@@ -18,7 +18,7 @@ enum LocalActionTypes {
     REMOVE_FILTER = 'REMOVE_FILTER',
     CHANGE_VALUE = 'CHANGE_VALUE',
     CHANGE_ATTRIBUTE = 'CHANGE_ATTRIBUTE',
-    RESET = 'RESET'
+    RESET = 'RESET',
 }
 
 const localReducer = (state, action) => {
@@ -50,18 +50,18 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
     const toggleFilters = () => {
         localDispatch({
             type: LocalActionTypes.RESET,
-            data: state.filters
+            data: state.filters,
         });
         dispatch({
             type: ActionTypes.TOGGLE_FILTERS,
-            data: null
+            data: null,
         });
     };
     useEffect(() => {
         if (state.showFilters) {
             localDispatch({
                 type: LocalActionTypes.RESET,
-                data: state.filters
+                data: state.filters,
             });
         }
     }, [state.filters, state.showFilters]);
@@ -71,23 +71,23 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
             state.selectedRootAttributes.map(attribute => ({
                 key: attribute.id,
                 text: attribute.label?.fr,
-                value: attribute.id
+                value: attribute.id,
             })),
-        [state.selectedRootAttributes]
+        [state.selectedRootAttributes],
     );
 
     const applyFilters = () => {
         const goodFilters = localState.filter(f => f.attribute !== '' && f.operator !== '' && f.value !== '');
         dispatch({
             type: ActionTypes.SET_FILTERS,
-            data: goodFilters
+            data: goodFilters,
         });
     };
 
     const addFilter = () => {
         localDispatch({
             type: LocalActionTypes.ADD_FILTER,
-            data: null
+            data: null,
         });
     };
     const memoizedFunctions = useMemo(
@@ -95,7 +95,7 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
             removeFilter: (i: number) => {
                 localDispatch({
                     type: LocalActionTypes.REMOVE_FILTER,
-                    data: i
+                    data: i,
                 });
             },
             changeValue: (i: number, value: string) => {
@@ -103,8 +103,8 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                     type: LocalActionTypes.CHANGE_VALUE,
                     data: {
                         index: i,
-                        value
-                    }
+                        value,
+                    },
                 });
             },
             changeAttribute: (i: number, value: string) => {
@@ -112,12 +112,12 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                     type: LocalActionTypes.CHANGE_ATTRIBUTE,
                     data: {
                         index: i,
-                        value
-                    }
+                        value,
+                    },
                 });
-            }
+            },
         }),
-        [localDispatch]
+        [localDispatch],
     );
 
     const renderFilter = useMemo(
@@ -163,7 +163,7 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                 </Input>
             );
         },
-        [attributesDropDownOptions, memoizedFunctions]
+        [attributesDropDownOptions, memoizedFunctions],
     );
     const onSubmit = e => {
         e.preventDefault();
@@ -179,7 +179,7 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                 width: '75%',
                 bottom: 0,
                 textAlign: 'left',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
             }}
         >
             <h4 className="ui right floated header">

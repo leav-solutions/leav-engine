@@ -43,8 +43,8 @@ export const handleDocument = async ({input, output, size, name, version, rootPa
         error: 0,
         params: {
             output: pdfOutput.replace(rootPaths.output, ''),
-            name: 'pdf'
-        }
+            name: 'pdf',
+        },
     };
 
     results.push(result);
@@ -66,8 +66,8 @@ export const handleDocument = async ({input, output, size, name, version, rootPa
                         size,
                         output,
                         name,
-                        errorId
-                    }
+                        errorId,
+                    },
                 });
             }
         }
@@ -81,7 +81,7 @@ const _createDocumentPdf = async (input: string, output: string, size: number, n
     const error = await new Promise(r =>
         execFile(command, args, {}, e => {
             r(e);
-        })
+        }),
     );
 
     if (error) {
@@ -93,8 +93,8 @@ const _createDocumentPdf = async (input: string, output: string, size: number, n
                 output,
                 size,
                 name,
-                errorId
-            }
+                errorId,
+            },
         });
     }
 

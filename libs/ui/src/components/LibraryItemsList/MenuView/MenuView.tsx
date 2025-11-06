@@ -57,7 +57,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
             sidebarType: SidebarContentType.VIEW,
-            visible
+            visible,
         });
     };
 
@@ -66,7 +66,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
             sidebarType: SidebarContentType.FILTERS,
-            visible
+            visible,
         });
     };
 
@@ -75,21 +75,21 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
             sidebarType: SidebarContentType.VERSIONS,
-            visible
+            visible,
         });
     };
 
     const _resetView = () => {
         searchDispatch({
             type: SearchActionTypes.CHANGE_VIEW,
-            view: searchState.view.current
+            view: searchState.view.current,
         });
     };
 
     const _getNewViewFromSearchState = (): ViewInput => ({
         library: library.id,
         label: {
-            [defaultLang]: t('view.add-view.title', {lng: defaultLang})
+            [defaultLang]: t('view.add-view.title', {lng: defaultLang}),
         },
         display: searchState.display,
         shared: false,
@@ -99,11 +99,11 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
             ? objectToNameValueArray(searchState.valuesVersions)
                   .map(version => ({
                       treeId: version?.name ?? null,
-                      treeNode: version?.value?.id ?? null
+                      treeNode: version?.value?.id ?? null,
                   }))
                   .filter(v => v.treeId !== null && v.treeNode !== null)
             : null,
-        attributes: searchState.fields?.map(f => f.key) ?? []
+        attributes: searchState.fields?.map(f => f.key) ?? [],
     });
 
     const _saveView = async () => {
@@ -117,13 +117,13 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     description: searchState.view.current.description,
                     shared: searchState.view.current.shared,
                     color: searchState.view.current.color,
-                    sort: searchState.sort ?? null
-                }
+                    sort: searchState.sort ?? null,
+                },
             });
 
             searchDispatch({
                 type: SearchActionTypes.SET_VIEW_SYNC,
-                sync: true
+                sync: true,
             });
         }
     };
@@ -131,18 +131,18 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const _handleAddView = async (viewType: ViewTypes) => {
         const newView: ViewInput = {
             ..._getNewViewFromSearchState(),
-            display: {...searchState.display, type: viewType}
+            display: {...searchState.display, type: viewType},
         };
 
         // save view in backend
         const newViewRes = await addView({
-            view: newView
+            view: newView,
         });
 
         await updateViewsOrder({
             key: PREFIX_USER_VIEWS_ORDER_KEY + newView.library,
             value: [...searchState.userViewsOrder, newViewRes.data.saveView.id],
-            global: false
+            global: false,
         });
 
         searchDispatch({
@@ -151,8 +151,8 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                 newViewRes.data.saveView,
                 searchState.attributes,
                 searchState.library.id,
-                userData?.userId
-            )
+                userData?.userId,
+            ),
         });
     };
 
@@ -167,17 +167,17 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                         key: 'list',
                         onClick: () => _handleAddView(ViewTypes.list),
                         icon: <MenuOutlined />,
-                        label: t('view.type-list')
+                        label: t('view.type-list'),
                     },
                     {
                         key: 'cards',
                         onClick: () => _handleAddView(ViewTypes.cards),
                         icon: <AppstoreFilled />,
-                        label: t('view.type-cards')
-                    }
-                ]
-            }
-        ]
+                        label: t('view.type-cards'),
+                    },
+                ],
+            },
+        ],
     };
 
     return (

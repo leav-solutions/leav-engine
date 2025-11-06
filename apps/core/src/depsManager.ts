@@ -8,7 +8,7 @@ import {
     createContainer,
     InjectionMode,
     listModules,
-    type ModuleDescriptor
+    type ModuleDescriptor,
 } from 'awilix';
 import {getConfig} from './config';
 import path from 'path';
@@ -18,12 +18,12 @@ const _registerModules = async (
     container: AwilixContainer,
     folder: string,
     glob: string,
-    prefix = ''
+    prefix = '',
 ): Promise<AwilixContainer> => {
     // We only consider index files so that we explicity declare what we want to make available
     // in dependency injector. This allows to have some helper files kept private inside a module.
     const modulesList: ModuleDescriptor[] = listModules(glob, {
-        cwd: folder
+        cwd: folder,
     });
 
     for (const mod of modulesList) {
@@ -52,7 +52,7 @@ const _registerModules = async (
                 [nameParts.join('.')]:
                     typeof importedMod[modExport] === 'function'
                         ? asFunction(importedMod[modExport]).singleton()
-                        : asValue(importedMod[modExport])
+                        : asValue(importedMod[modExport]),
             });
         }
     }
@@ -75,7 +75,7 @@ export async function initDI(additionalModulesToRegister?: {
 
     /*** CORE ***/
     const coreContainer = createContainer({
-        injectionMode: InjectionMode.PROXY
+        injectionMode: InjectionMode.PROXY,
     });
 
     await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
@@ -91,8 +91,8 @@ export async function initDI(additionalModulesToRegister?: {
 
     await Promise.all(
         pluginsFolder.map(pluginFolder =>
-            _registerModules(pluginsContainer, pluginFolder, modulesGlob, path.basename(pluginFolder))
-        )
+            _registerModules(pluginsContainer, pluginFolder, modulesGlob, path.basename(pluginFolder)),
+        ),
     );
 
     // Register this at the very end because we don't want plugins to access the deps manager

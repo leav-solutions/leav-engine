@@ -22,11 +22,11 @@ describe('dbUtils', () => {
     const mockConf: Partial<IConfig> = {
         lang: {available: ['fr', 'en'], default: 'fr'},
         defaultUserId: '1',
-        pluginsPath: []
+        pluginsPath: [],
     };
     const ctx = {
         userId: '0',
-        queryId: '123456'
+        queryId: '123456',
     };
     afterAll(() => {
         jest.clearAllMocks();
@@ -41,7 +41,7 @@ describe('dbUtils', () => {
                 _id: 'testId',
                 _rev: 'testRev',
                 _randomSystemKey: 'test',
-                normalKey: 'shouldBeKept'
+                normalKey: 'shouldBeKept',
             };
 
             const res = testDbUtils.cleanup(testObj);
@@ -64,7 +64,7 @@ describe('dbUtils', () => {
 
             const testObj = {
                 id: 'testId',
-                normalKey: 'shouldBeKept'
+                normalKey: 'shouldBeKept',
             };
 
             const res = testDbUtils.convertToDoc(testObj);
@@ -85,35 +85,35 @@ describe('dbUtils', () => {
                         _id: 'core_trees/categories',
                         _rev: '_Wm_Qdtu--_',
                         label: {
-                            fr: 'Arbre des catégories'
+                            fr: 'Arbre des catégories',
                         },
                         libraries: ['categories'],
-                        system: false
-                    }
-                ])
+                        system: false,
+                    },
+                ]),
             };
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
             testDbUtils.cleanup = jest.fn().mockReturnValue({
                 id: 'categories',
                 system: false,
                 label: {
-                    fr: 'Arbre des catégories'
-                }
+                    fr: 'Arbre des catégories',
+                },
             });
             testDbUtils.convertToDoc = jest.fn().mockReturnValue({
                 _key: 'categories',
                 system: false,
-                label: 'Arbre des catégories'
+                label: 'Arbre des catégories',
             });
         });
 
         test('Find core entity without filters', async () => {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
-                ctx
+                ctx,
             });
 
             expect(res.list).toHaveLength(1);
@@ -128,8 +128,8 @@ describe('dbUtils', () => {
                 id: 'categories',
                 system: false,
                 label: {
-                    fr: 'Arbre des catégories'
-                }
+                    fr: 'Arbre des catégories',
+                },
             });
         });
 
@@ -137,7 +137,7 @@ describe('dbUtils', () => {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 filters: {id: 'test'},
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/(FILTER LIKE){1}/);
@@ -149,7 +149,7 @@ describe('dbUtils', () => {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 filters: {label: 'test'},
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/(LIKE(.*)label\.(.*)OR LIKE(.*)label\.)/);
@@ -166,22 +166,22 @@ describe('dbUtils', () => {
                         _id: 'core_trees/categories',
                         _rev: '_Wm_Qdtu--_',
                         label: {
-                            fr: 'Arbre des catégories'
+                            fr: 'Arbre des catégories',
                         },
                         libraries: ['categories'],
-                        system: false
-                    }
-                ])
+                        system: false,
+                    },
+                ]),
             };
             const testDbUtilsLimit = dbUtils({
                 'core.infra.db.dbService': mockDbServLimit,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
                 pagination: {limit: 5, offset: 0},
-                ctx
+                ctx,
             });
 
             expect(mockDbServLimit.execute.mock.calls[0][0].query.query).toMatch(/LIMIT/);
@@ -198,25 +198,25 @@ describe('dbUtils', () => {
                         _id: 'core_trees/categories',
                         _rev: '_Wm_Qdtu--_',
                         label: {
-                            fr: 'Arbre des catégories'
+                            fr: 'Arbre des catégories',
                         },
                         libraries: ['categories'],
-                        system: false
-                    }
-                ])
+                        system: false,
+                    },
+                ]),
             };
             const testDbUtilsLimit = dbUtils({
                 'core.infra.db.dbService': mockDbServLimit,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
                 sort: {
                     field: 'system',
-                    order: SortOrder.ASC
+                    order: SortOrder.ASC,
                 },
-                ctx
+                ctx,
             });
 
             expect(mockDbServLimit.execute.mock.calls[0][0].query.query).toMatch(/SORT/);
@@ -233,25 +233,25 @@ describe('dbUtils', () => {
                         _id: 'core_trees/categories',
                         _rev: '_Wm_Qdtu--_',
                         label: {
-                            fr: 'Arbre des catégories'
+                            fr: 'Arbre des catégories',
                         },
                         libraries: ['categories'],
-                        system: false
-                    }
-                ])
+                        system: false,
+                    },
+                ]),
             };
             const testDbUtilsLimit = dbUtils({
                 'core.infra.db.dbService': mockDbServLimit,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
             const res = await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
                 sort: {
                     field: 'id',
-                    order: SortOrder.ASC
+                    order: SortOrder.ASC,
                 },
-                ctx
+                ctx,
             });
 
             expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars.value1).toBe('_key');
@@ -261,7 +261,7 @@ describe('dbUtils', () => {
             mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn();
@@ -269,7 +269,7 @@ describe('dbUtils', () => {
             mockDbServ = {execute: global.__mockPromise([])};
             const res = await testDbUtils.findCoreEntity<ITree>({
                 collectionName: TREES_COLLECTION_NAME,
-                ctx
+                ctx,
             });
 
             expect(res.list).toBeInstanceOf(Array);
@@ -285,18 +285,18 @@ describe('dbUtils', () => {
                         _id: 'core_attributes/test_attr',
                         _rev: '_Wm_Qdtu--_',
                         label: {
-                            fr: 'Test'
-                        }
-                    }
-                ])
+                            fr: 'Test',
+                        },
+                    },
+                ]),
             };
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServCustom,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn().mockReturnValue({
-                libraries: ['test']
+                libraries: ['test'],
             });
 
             const customFilter = jest.fn(() => aql`CUSTOM FILTER`);
@@ -305,7 +305,7 @@ describe('dbUtils', () => {
                 collectionName: ATTRIB_COLLECTION_NAME,
                 filters,
                 customFilterConditions: {libraries: customFilter},
-                ctx
+                ctx,
             });
 
             expect(customFilter).toBeCalled();
@@ -318,14 +318,14 @@ describe('dbUtils', () => {
             const mockRun1 = jest.fn();
             const file1 = {
                 default: () => ({
-                    run: mockRun1
-                })
+                    run: mockRun1,
+                }),
             };
             const mockRun2 = jest.fn();
             const file2 = {
                 default: () => ({
-                    run: mockRun2
-                })
+                    run: mockRun2,
+                }),
             };
             (loadMigrationFile as jest.FunctionLike) = global.__mockPromiseMultiple([file1, file2]);
 
@@ -345,34 +345,34 @@ describe('dbUtils', () => {
                 collection: () =>
                     ({
                         create: jest.fn(),
-                        save: mockCollecSave
-                    }) as unknown as DocumentCollection
+                        save: mockCollecSave,
+                    }) as unknown as DocumentCollection,
             };
             const mockDbServ: Mockify<IDbService> = {
                 db: mockDb as unknown as Database,
-                execute: global.__mockPromise([])
+                execute: global.__mockPromise([]),
             };
 
             const mockCacheService: Mockify<ICachesService> = {
                 getCache: jest.fn(() => ({
-                    deleteAll: jest.fn()
-                }))
+                    deleteAll: jest.fn(),
+                })),
             };
 
             const mockDepsManager = {
-                build: depDefault => depDefault()
+                build: depDefault => depDefault(),
             };
             (asFunction as jest.FunctionLike) = m => m;
 
             const mockLogger: Mockify<ILogger> = {
-                info: jest.fn()
+                info: jest.fn(),
             };
 
             const testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.cache.cacheService': mockCacheService as ICachesService,
                 'core.utils.logger': mockLogger as ILogger,
-                config: mockConf as IConfig
+                config: mockConf as IConfig,
             });
 
             await testDbUtils.migrate(mockDepsManager as AwilixContainer);

@@ -8,7 +8,7 @@ import {
     type LinkAttributeDetailsFragment,
     type RecordFilterCondition,
     type StandardAttributeDetailsFragment,
-    type ViewDetailsFilterFragment
+    type ViewDetailsFilterFragment,
 } from '_ui/_gqlTypes';
 import {ThroughConditionFilter} from '_ui/types/search';
 

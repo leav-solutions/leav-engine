@@ -9,7 +9,7 @@ import getSearchVariableName from './getSearchVariableName';
 describe('getSearchVariableName', () => {
     const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
         isAttributeFilter: jest.fn().mockImplementation(filter => !!filter.attributes),
-        isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId)
+        isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId),
     };
 
     test('Return variable for standard filter (simple or advanced attribute)', async () => {
@@ -17,15 +17,15 @@ describe('getSearchVariableName', () => {
             attributes: [
                 {
                     ...mockAttrSimple,
-                    reverse_link: null
-                }
+                    reverse_link: null,
+                },
             ],
             condition: AttributeCondition.EQUAL,
-            value: 'foo'
+            value: 'foo',
         };
 
         const func = getSearchVariableName({
-            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
         });
 
         const variableName = func(filter);
@@ -38,19 +38,19 @@ describe('getSearchVariableName', () => {
             attributes: [
                 {
                     ...mockAttrAdvLink,
-                    reverse_link: null
+                    reverse_link: null,
                 },
                 {
                     ...mockAttrAdv,
-                    reverse_link: null
-                }
+                    reverse_link: null,
+                },
             ],
             condition: AttributeCondition.EQUAL,
-            value: 'bax'
+            value: 'bax',
         };
 
         const func = getSearchVariableName({
-            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
         });
 
         const variableName = func(filter);
@@ -62,11 +62,11 @@ describe('getSearchVariableName', () => {
         const filter = {
             condition: TreeCondition.CLASSIFIED_IN,
             treeId: 'my_tree',
-            value: '123456'
+            value: '123456',
         };
 
         const func = getSearchVariableName({
-            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
         });
 
         const variableName = func(filter);

@@ -12,5 +12,5 @@ export type PluginRegisterRoute<T = any> = [
     path: string,
     method: ExpressAppMethod,
     handlers: Array<RequestHandler<T>>,
-    isProtected?: boolean
+    isProtected?: boolean,
 ];

@@ -45,15 +45,15 @@ export interface IGetTasksArgs {
 export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
-    'core.domain.eventsManager': eventsManager = null
+    'core.domain.eventsManager': eventsManager = null,
 }: IDeps): ITasksManagerApp {
     const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
         const record = await recordDomain.find({
             params: {
                 library: USERS_LIBRARY,
-                filters: [{field: 'id', value: userId, condition: AttributeCondition.EQUAL}]
+                filters: [{field: 'id', value: userId, condition: AttributeCondition.EQUAL}],
             },
-            ctx
+            ctx,
         });
 
         return record.list.length ? record.list[0] : null;
@@ -153,25 +153,25 @@ export default function ({
                             }
 
                             return _getUser(task.canceledBy, ctx);
-                        }
+                        },
                     },
                     Query: {
                         async tasks(
                             _,
                             {filters, pagination, sort}: IGetTasksArgs,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IList<ITask>> {
                             return tasksManagerDomain.getTasks({
                                 params: {filters, pagination, sort, withCount: true},
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         async deleteTasks(
                             _,
                             {tasks}: {tasks: Array<{id: string; archive: boolean}>},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<boolean> {
                             await tasksManagerDomain.deleteTasks(tasks, ctx);
                             return true;
@@ -179,7 +179,7 @@ export default function ({
                         async cancelTask(_, {taskId}: {taskId: string}, ctx: IQueryInfos): Promise<boolean> {
                             await tasksManagerDomain.cancelTask({id: taskId}, ctx);
                             return true;
-                        }
+                        },
                     },
                     Subscription: {
                         task: {
@@ -209,16 +209,16 @@ export default function ({
                                     }
 
                                     return toReturn;
-                                }
-                            )
-                        }
-                    }
-                }
+                                },
+                            ),
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

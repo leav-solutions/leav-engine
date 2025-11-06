@@ -12,7 +12,7 @@ export const mockTask: GET_TASKS_tasks_list = {
     modified_at: Date.now(),
     created_at: Date.now(),
     created_by: {
-        ...mockModifier
+        ...mockModifier,
     },
     startAt: Date.now(),
     progress: {description: null, percent: 0},
@@ -22,7 +22,7 @@ export const mockTask: GET_TASKS_tasks_list = {
     completedAt: null,
     link: null,
     canceledBy: {
-        ...mockModifier
+        ...mockModifier,
     },
-    archive: false
+    archive: false,
 };

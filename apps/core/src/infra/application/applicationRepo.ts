@@ -35,7 +35,7 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.utils.logger': logger = null,
-    config = null
+    config = null,
 }: IDeps = {}): IApplicationRepo {
     return {
         async getApplications({params, ctx}): Promise<IList<IApplication>> {
@@ -44,7 +44,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
 
             const initializedParams = {...defaultParams, ...params};
@@ -53,7 +53,7 @@ export default function ({
                 ...initializedParams,
                 collectionName: APPLICATIONS_COLLECTION_NAME,
                 nonStrictFields: ['label', 'id', 'endpoint'],
-                ctx
+                ctx,
             });
         },
         async updateApplication({applicationData, ctx}): Promise<IApplication> {
@@ -62,7 +62,7 @@ export default function ({
             const col = dbService.db.collection(APPLICATIONS_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`UPDATE ${docToInsert} IN ${col} OPTIONS { mergeObjects: false } RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -73,7 +73,7 @@ export default function ({
             const col = dbService.db.collection(APPLICATIONS_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -84,7 +84,7 @@ export default function ({
 
             const res = await dbService.execute({
                 query: aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             // Return deleted attribute
@@ -116,11 +116,11 @@ export default function ({
                     acc.push({
                         id: appManifestJson.name,
                         description: appManifestJson.description,
-                        version: appManifestJson.version
+                        version: appManifestJson.version,
                     });
 
                     return acc;
                 }, Promise.resolve([]));
-        }
+        },
     };
 }

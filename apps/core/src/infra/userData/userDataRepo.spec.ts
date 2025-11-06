@@ -7,17 +7,17 @@ import userDataRepo from './userDataRepo';
 describe('UserDataRepo', () => {
     const ctx = {
         userId: '1',
-        requestId: 'userDataRepoTest'
+        requestId: 'userDataRepoTest',
     };
 
     test('save user data', async function () {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([{data: {test: 'value'}}])
+            execute: global.__mockPromise([{data: {test: 'value'}}]),
         };
 
         const udr = userDataRepo({
-            'core.infra.db.dbService': mockDbServ
+            'core.infra.db.dbService': mockDbServ,
         });
 
         const res = await udr.saveUserData({key: 'test', value: 'value', global: false, ctx});
@@ -37,11 +37,11 @@ describe('UserDataRepo', () => {
     test('get user data', async function () {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([{test: 'data'}])
+            execute: global.__mockPromise([{test: 'data'}]),
         };
 
         const udr = userDataRepo({
-            'core.infra.db.dbService': mockDbServ
+            'core.infra.db.dbService': mockDbServ,
         });
 
         const res = await udr.getUserData(['test'], false, ctx);

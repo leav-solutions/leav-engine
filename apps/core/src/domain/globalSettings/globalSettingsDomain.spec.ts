@@ -14,7 +14,7 @@ import {mockCachesService, mockCacheService} from '../../__tests__/mocks/cache';
 import {type IUtils} from '../../utils/utils';
 
 const mockUtils: Mockify<IUtils> = {
-    getGlobalSettingsCacheKey: jest.fn(() => 'globalSettingsCacheKey')
+    getGlobalSettingsCacheKey: jest.fn(() => 'globalSettingsCacheKey'),
 };
 
 const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
@@ -22,18 +22,18 @@ const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.globalSettings': jest.fn(),
     'core.infra.cache.cacheService': mockCachesService,
-    'core.utils': mockUtils
+    'core.utils': mockUtils,
 };
 
 describe('getSettingsRepo', () => {
     describe('saveSettings', () => {
         const mockGlobalSettingsRepo = {
             saveSettings: global.__mockPromise(mockGlobalSettings),
-            getSettings: global.__mockPromise(mockGlobalSettings)
+            getSettings: global.__mockPromise(mockGlobalSettings),
         } satisfies Mockify<IGlobalSettingsRepo>;
 
         const mockEventsManager: Mockify<IEventsManagerDomain> = {
-            sendDatabaseEvent: global.__mockPromise()
+            sendDatabaseEvent: global.__mockPromise(),
         };
 
         beforeEach(() => {
@@ -42,14 +42,14 @@ describe('getSettingsRepo', () => {
 
         test('Should save settings', async () => {
             const mockAdminPermissionDomain: Mockify<IAdminPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(true)
+                getAdminPermission: global.__mockPromise(true),
             };
 
             const domain = globalSettingsDomain({
                 ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager,
-                'core.infra.globalSettings': mockGlobalSettingsRepo
+                'core.infra.globalSettings': mockGlobalSettingsRepo,
             } as ToAny<IGlobalSettingsDomainDeps>);
 
             const savedSettings = await domain.saveSettings({settings: mockGlobalSettings, ctx: mockCtx});
@@ -61,31 +61,31 @@ describe('getSettingsRepo', () => {
 
         test('Should throw if no permission', async () => {
             const mockAdminPermissionDomain: Mockify<IAdminPermissionDomain> = {
-                getAdminPermission: global.__mockPromise(false)
+                getAdminPermission: global.__mockPromise(false),
             };
 
             const domain = globalSettingsDomain({
                 ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
+                'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo,
             });
 
             expect(() => domain.saveSettings({settings: mockGlobalSettings, ctx: mockCtx})).rejects.toThrow(
-                PermissionError
+                PermissionError,
             );
         });
     });
 
     describe('getSettings', () => {
         const mockGlobalSettingsRepo = {
-            getSettings: global.__mockPromise(mockGlobalSettings)
+            getSettings: global.__mockPromise(mockGlobalSettings),
         } satisfies Mockify<IGlobalSettingsRepo>;
 
         test('Should return settings', async () => {
             const domain = globalSettingsDomain({
                 ...depsBase,
-                'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
+                'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo,
             });
 
             const settings = await domain.getSettings(mockCtx);

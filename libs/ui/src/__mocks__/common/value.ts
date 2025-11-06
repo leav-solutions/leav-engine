@@ -14,11 +14,11 @@ export const mockModifier: IRecordPropertyModifier = {
         subLabel: 'admin',
         library: {
             id: 'users',
-            label: {fr: 'Utilisateurs'}
+            label: {fr: 'Utilisateurs'},
         },
         preview: mockPreviews,
-        color: '#123456'
-    }
+        color: '#123456',
+    },
 };
 
 export const mockRecordPropertyWithAttribute: IRecordPropertyWithAttribute = {
@@ -26,12 +26,12 @@ export const mockRecordPropertyWithAttribute: IRecordPropertyWithAttribute = {
         ...mockAttributeSimple,
         description: {
             fr: 'Ma description',
-            en: 'My description'
+            en: 'My description',
         },
         multiple_values: false,
         readonly: false,
         required: false,
         permissions: {access_attribute: true, edit_value: true},
-        compute: false
-    }
+        compute: false,
+    },
 };

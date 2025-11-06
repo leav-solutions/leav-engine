@@ -12,5 +12,5 @@ export const mockApiKey = {
     modifiedAt: 123456789,
     modifiedBy: '42',
     expiresAt: 0,
-    userId: '42'
+    userId: '42',
 } satisfies MandatoryId<IApiKey>;

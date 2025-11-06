@@ -12,7 +12,7 @@ import {
     type Operation,
     type PossibleTypesMap,
     type ServerError,
-    split
+    split,
 } from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -30,7 +30,7 @@ import {API_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../consta
 const gqlPossibleTypes: PossibleTypesMap = {
     Attribute: ['StandardAttribute', 'LinkAttribute', 'TreeAttribute'],
     StandardValuesListConf: ['StandardStringValuesListConf', 'StandardDateRangeValuesListConf'],
-    GenericValue: ['Value', 'LinkValue', 'TreeValue']
+    GenericValue: ['Value', 'LinkValue', 'TreeValue'],
 };
 
 const ApolloHandler: FunctionComponent = ({children}) => {
@@ -52,7 +52,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                         forward(operation).subscribe({
                             next: observer.next.bind(observer),
                             error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer)
+                            complete: observer.complete.bind(observer),
                         });
                     } catch (err) {
                         observer.error(err);
@@ -66,7 +66,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         });
 
         const isMutation = operation.query.definitions.some(
-            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
+            def => def.kind === 'OperationDefinition' && def.operation === 'mutation',
         );
         if (isMutation) {
             dispatch(endMutation());
@@ -75,7 +75,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
 
     const _mutationsWatcherLink = new ApolloLink((operation, forward) => {
         const isMutation = operation.query.definitions.some(
-            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
+            def => def.kind === 'OperationDefinition' && def.operation === 'mutation',
         );
         operation.setContext({isMutation});
 
@@ -96,8 +96,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         createClient({
             url: `${WS_URL}/${API_ENDPOINT}`,
             retryAttempts: Infinity,
-            shouldRetry: () => true
-        })
+            shouldRetry: () => true,
+        }),
     );
 
     const splitLink = split(
@@ -105,7 +105,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             const definition = getMainDefinition(query);
             return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
         },
-        wsLink as unknown as ApolloLink
+        wsLink as unknown as ApolloLink,
     );
 
     const gqlClient = new ApolloClient({
@@ -116,8 +116,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             new HttpLink({
                 uri: (operation: Operation) =>
                     `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`,
-                fetch
-            })
+                fetch,
+            }),
         ]),
         connectToDevTools: process.env.NODE_ENV === 'development',
         cache: new InMemoryCache({
@@ -137,45 +137,45 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                 Query: {
                     fields: {
                         attributes: {
-                            merge: true
-                        }
-                    }
+                            merge: true,
+                        },
+                    },
                 },
                 RecordIdentity: {
-                    keyFields: ['id', 'library', ['id']]
+                    keyFields: ['id', 'library', ['id']],
                 },
                 Library: {
                     fields: {
                         attributes: {
                             merge(existing, incoming) {
                                 return incoming;
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 VersionProfile: {
                     fields: {
                         linkedAttributes: {
                             merge(existing, incoming) {
                                 return incoming;
-                            }
-                        }
-                    }
-                }
+                            },
+                        },
+                    },
+                },
             },
-            possibleTypes: gqlPossibleTypes
-        })
+            possibleTypes: gqlPossibleTypes,
+        }),
     });
 
     // Load yup messages translations
     yup.setLocale({
         string: {matches: t('admin.validation_errors.matches')},
         array: {
-            min: t('admin.validation_errors.min')
+            min: t('admin.validation_errors.min'),
         },
         mixed: {
-            required: t('admin.validation_errors.required')
-        }
+            required: t('admin.validation_errors.required'),
+        },
     });
 
     return <ApolloProvider client={gqlClient}>{children}</ApolloProvider>;

@@ -18,7 +18,7 @@ export const ToggleSidebarButton: FunctionComponent = () => {
     const toggleSidebar = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
-            isOpen: !isOpen
+            isOpen: !isOpen,
         });
     };
 

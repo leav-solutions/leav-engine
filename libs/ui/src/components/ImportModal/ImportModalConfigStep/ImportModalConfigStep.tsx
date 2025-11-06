@@ -17,7 +17,7 @@ import {
     AttributeType,
     type ImportMode,
     ImportType,
-    type LibraryLightFragment
+    type LibraryLightFragment,
 } from '_ui/_gqlTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
@@ -33,7 +33,7 @@ interface IImportModalConfigStepProps {
 
 enum KeysValues {
     IMPORT = 'import_key',
-    LINK = 'link_key'
+    LINK = 'link_key',
 }
 
 const SheetWrapper = styled.div`
@@ -61,7 +61,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             attributes: attrs,
             mapping: [],
             linkAttribute: null,
-            keyToAttributes: null
+            keyToAttributes: null,
         });
     };
 
@@ -69,7 +69,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         _changeSheetProperty(sheetIndex, {
             type,
             linkAttribute: null,
-            keyToAttributes: null
+            keyToAttributes: null,
         });
     };
 
@@ -107,7 +107,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                           .includes(sheet.treeLinkLibrary)
                         ? sheet.treeLinkLibrary
                         : null
-                    : null
+                    : null,
         });
     };
 
@@ -175,8 +175,8 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                 background:
                     rowIndex === displayedRows.length // Set background color on last row (= mapping row)
                         ? themeVars.secondaryBg
-                        : themeVars.defaultBg
-            }
+                        : themeVars.defaultBg,
+            },
         });
 
         const selectKeyOptions = [
@@ -186,8 +186,8 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                     <>
                         <KeyOutlined /> {t('import.import_key')}
                     </>
-                )
-            }
+                ),
+            },
         ];
 
         if (sheet.type === ImportType.LINK) {
@@ -197,7 +197,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                     <>
                         <LinkOutlined /> {t('import.link_key')}
                     </>
-                )
+                ),
             });
         }
 
@@ -207,14 +207,14 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             onCell: _setStyleOnMappingRow,
             render: value => (
                 <KitTypography.AdvancedParagraph ellipsis={{rows: 2}}>{value}</KitTypography.AdvancedParagraph>
-            )
+            ),
         }));
 
         sheetColumns.unshift({
             title: <></>,
             dataIndex: '__root',
             onCell: _setStyleOnMappingRow,
-            width: '250px'
+            width: '250px',
         });
 
         const sheetData = displayedRows.map((row, index) => ({...row, key: index}));
@@ -229,12 +229,12 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                         sheet.keyToColumnIndex === idx
                             ? (sheet?.keyToAttributes ?? [])
                             : (sheet?.attributes ?? []).filter(
-                                  a => a?.type === AttributeType.simple || a?.type === AttributeType.advanced
+                                  a => a?.type === AttributeType.simple || a?.type === AttributeType.advanced,
                               )
                     ).map(a => ({
                         value: a.id,
                         key: a.id,
-                        label: localizedTranslation(a.label, lang) || a.id
+                        label: localizedTranslation(a.label, lang) || a.id,
                     }));
 
                     allCols[col] = (
@@ -253,7 +253,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                     );
 
                     return allCols;
-                }, {})
+                }, {}),
             };
             sheetData.push(mappingRow);
         }
@@ -285,7 +285,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                         />
                     )}
                 </SheetWrapper>
-            )
+            ),
         };
     });
 

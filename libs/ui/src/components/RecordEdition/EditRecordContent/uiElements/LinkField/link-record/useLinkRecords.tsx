@@ -50,7 +50,7 @@ export const useLinkRecords = ({
     isReadOnly,
     isFieldInError,
     hasNoValue,
-    onDeleteMultipleValues
+    onDeleteMultipleValues,
 }: ILinkRecords) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
@@ -61,12 +61,12 @@ export const useLinkRecords = ({
         handleExplorerCreateValue,
         handleExplorerLinkValue,
         handleExplorerMassDeactivateValues,
-        handleExplorerRemoveValue
+        handleExplorerRemoveValue,
     } = useExplorerLinkRecords({
         attribute,
         backendValues,
         setBackendValues,
-        onDeleteMultipleValues
+        onDeleteMultipleValues,
     });
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
@@ -74,7 +74,7 @@ export const useLinkRecords = ({
             setExplorerActions({
                 createAction: ref?.createAction,
                 linkAction: ref?.linkAction,
-                totalCount: ref?.totalCount
+                totalCount: ref?.totalCount,
             });
         }
     };
@@ -119,25 +119,25 @@ export const useLinkRecords = ({
                     <Explorer
                         ref={_handleExplorerRef}
                         defaultViewSettings={{
-                            attributesIds: columnsToDisplay
+                            attributesIds: columnsToDisplay,
                         }}
                         entrypoint={{
                             type: 'link',
                             parentLibraryId: libraryId,
                             parentRecordId: recordId,
-                            linkAttributeId: attribute.id
+                            linkAttributeId: attribute.id,
                         }}
                         defaultCallbacks={{
                             item: {
-                                remove: handleExplorerRemoveValue
+                                remove: handleExplorerRemoveValue,
                             },
                             mass: {
-                                deactivate: handleExplorerMassDeactivateValues
+                                deactivate: handleExplorerMassDeactivateValues,
                             },
                             primary: {
                                 link: handleExplorerLinkValue,
-                                create: handleExplorerCreateValue
-                            }
+                                create: handleExplorerCreateValue,
+                            },
                         }}
                         showTitle={false}
                         showSearch={false}
@@ -161,12 +161,12 @@ export const useLinkRecords = ({
                                             label: item.whoAmI?.label,
                                             subLabel: item.whoAmI?.subLabel,
                                             color: item.whoAmI?.color,
-                                            library: {id: item.libraryId}
+                                            library: {id: item.libraryId},
                                         },
-                                        editionFormId
+                                        editionFormId,
                                     });
-                                }
-                            }
+                                },
+                            },
                         ]}
                         joinLibraryContext={joinLibraryContext}
                         hidePrimaryActions
@@ -192,6 +192,6 @@ export const useLinkRecords = ({
                 )}
                 {EditRecordModal}
             </>
-        )
+        ),
     };
 };

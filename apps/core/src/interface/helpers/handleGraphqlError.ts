@@ -21,7 +21,7 @@ interface IDeps {
 export default function ({
     config,
     'core.utils': utils,
-    'core.utils.logger': logger = null
+    'core.utils.logger': logger = null,
 }: IDeps): HandleGraphqlErrorFunc {
     return (err, context) => {
         const newError = {...err};

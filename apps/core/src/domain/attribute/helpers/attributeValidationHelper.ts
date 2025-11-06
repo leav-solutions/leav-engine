@@ -23,7 +23,7 @@ const _validateSettings = (
         attributeRepo: IAttributeRepo;
         actionsListDomain: IActionsListDomain;
     },
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): ErrorFieldDetail<IAttribute> => {
     const errors: ErrorFieldDetail<IAttribute> = {};
 
@@ -52,7 +52,7 @@ const _validateSettings = (
  */
 const _validateInputType = (
     attrData: IAttribute,
-    deps: {actionsListDomain: IActionsListDomain}
+    deps: {actionsListDomain: IActionsListDomain},
 ): ErrorFieldDetail<IAttribute> => {
     const inputTypeErrors: ErrorFieldDetail<IAttribute> = {};
     if (!attrData.actions_list) {
@@ -73,7 +73,7 @@ const _validateInputType = (
         if (!intersection(lastActionDetails.output_types, allowedOutputTypes[event]).length) {
             inputTypeErrors[`actions_list.${event}`] = {
                 msg: Errors.INVALID_ACTION_TYPE,
-                vars: {expected: allowedOutputTypes[event], received: lastActionDetails.output_types}
+                vars: {expected: allowedOutputTypes[event], received: lastActionDetails.output_types},
             };
         }
     }
@@ -90,7 +90,7 @@ const _validateRequiredActions = (
     attrData: IAttribute,
     deps: {
         utils: IUtils;
-    }
+    },
 ): ErrorFieldDetail<IAttribute> => {
     const requiredActionsErrors: ErrorFieldDetail<IAttribute> = {};
     if (!attrData.actions_list) {
@@ -113,7 +113,7 @@ const _validateRequiredActions = (
     if (missingActions.length) {
         requiredActionsErrors.actions_list = {
             msg: Errors.MISSING_REQUIRED_ACTION,
-            vars: {actions: missingActions.join(', ')}
+            vars: {actions: missingActions.join(', ')},
         };
     }
 
@@ -129,7 +129,7 @@ const _validateRequiredActions = (
 const _validateMetadataFields = async (
     attrData: IAttribute,
     deps: {attributeRepo: IAttributeRepo},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const metadataFieldsErrors: ErrorFieldDetail<IAttribute> = {};
     // Check metadata fields
@@ -142,20 +142,20 @@ const _validateMetadataFields = async (
         const metadatableAttrs = await deps.attributeRepo.getAttributes({
             params: {
                 filters,
-                strictFilters: true
+                strictFilters: true,
             },
-            ctx
+            ctx,
         });
 
         const invalidAttributes = difference(
             attrData.metadata_fields,
-            metadatableAttrs.list.map(a => a.id)
+            metadatableAttrs.list.map(a => a.id),
         );
 
         if (invalidAttributes.length) {
             metadataFieldsErrors.metadata_fields = {
                 msg: Errors.INVALID_ATTRIBUTES,
-                vars: {attributes: invalidAttributes.join(', ')}
+                vars: {attributes: invalidAttributes.join(', ')},
             };
         }
     }
@@ -228,7 +228,7 @@ const _validateRequiredFields = (attrData: IAttribute, deps: {config: any}): Err
 const _validateVersionProfile = async (
     attrData: IAttribute,
     deps: {versionProfileDomain: IVersionProfileDomain},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     if (!attrData?.versions_conf?.profile) {
         return {};
@@ -238,13 +238,13 @@ const _validateVersionProfile = async (
 
     const versionProfile = await deps.versionProfileDomain.getVersionProfiles({
         params: {filters: {id: attrData.versions_conf.profile}},
-        ctx
+        ctx,
     });
 
     if (!versionProfile.list.length) {
         versionProfileErrors.versions_conf = {
             msg: Errors.UNKNOWN_VERSION_PROFILE,
-            vars: {profile: attrData.versions_conf.profile}
+            vars: {profile: attrData.versions_conf.profile},
         };
     }
 
@@ -261,7 +261,7 @@ export const validateAttributeData = async (
         actionsListDomain: IActionsListDomain;
         versionProfileDomain: IVersionProfileDomain;
     },
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const validationFuncs = [
         _validateSettings(attrData, deps, ctx),
@@ -270,7 +270,7 @@ export const validateAttributeData = async (
         _validateMetadataFields(attrData, deps, ctx),
         _validateInputType(attrData, deps),
         _validateRequiredActions(attrData, deps),
-        _validateVersionProfile(attrData, deps, ctx)
+        _validateVersionProfile(attrData, deps, ctx),
     ];
 
     const validationRes = await Promise.all(validationFuncs);

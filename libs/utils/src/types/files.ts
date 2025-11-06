@@ -6,7 +6,7 @@ export enum FileType {
     VIDEO = 'video',
     AUDIO = 'audio',
     DOCUMENT = 'document',
-    OTHER = 'other'
+    OTHER = 'other',
 }
 
 export type FileRecord = Record<string, any> & {

@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function ValuesListForm() {
             return <div>ValuesListForm</div>;
-        }
+        },
 );
 
 describe('ValuesListTab', () => {
@@ -24,7 +24,7 @@ describe('ValuesListTab', () => {
             {
                 request: {
                     query: getAttributeValuesListQuery,
-                    variables: {attrId: 'test_attr'}
+                    variables: {attrId: 'test_attr'},
                 },
                 result: {
                     data: {
@@ -40,15 +40,15 @@ describe('ValuesListTab', () => {
                                         enable: true,
                                         allowFreeEntry: false,
                                         allowListUpdate: false,
-                                        values: ['value 1', 'value 2']
+                                        values: ['value 1', 'value 2'],
                                     },
-                                    __typename: 'Attribute'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    __typename: 'Attribute',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         let comp;
@@ -57,7 +57,7 @@ describe('ValuesListTab', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
                     <ValuesListTab attributeId="test_attr" />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -76,10 +76,10 @@ describe('ValuesListTab', () => {
             {
                 request: {
                     query: getAttributeValuesListQuery,
-                    variables: {attrId: 'test_attr'}
+                    variables: {attrId: 'test_attr'},
                 },
-                error: new Error('boom!')
-            }
+                error: new Error('boom!'),
+            },
         ];
 
         let comp;
@@ -88,7 +88,7 @@ describe('ValuesListTab', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
                     <ValuesListTab attributeId="test_attr" />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

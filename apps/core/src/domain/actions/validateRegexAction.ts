@@ -22,10 +22,10 @@ export default function (): IActionsListFunction<{regex: true}> {
                     }
                     return errors;
                 },
-                []
+                [],
             );
 
             return {values, errors: allErrors};
-        }
+        },
     };
 }

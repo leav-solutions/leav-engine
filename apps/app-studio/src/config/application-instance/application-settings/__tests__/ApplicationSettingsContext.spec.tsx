@@ -17,9 +17,9 @@ describe('ApplicationSettingsContext component', () => {
         useGetApplicationDataByEndpointQuerySpy.mockReturnValue({
             data: {
                 applications: {
-                    list: []
-                }
-            }
+                    list: [],
+                },
+            },
         });
 
         render(<InitApplicationSettingProvider />);
@@ -36,11 +36,11 @@ describe('ApplicationSettingsContext component', () => {
                         icon: 'fa-layer-group',
                         title: {
                             fr: 'PACs',
-                            en: 'Roadmap'
+                            en: 'Roadmap',
                         },
                         type: 'library',
-                        libraryId: 'map'
-                    }
+                        libraryId: 'map',
+                    },
                 ],
                 libraries: {
                     map: {
@@ -49,28 +49,28 @@ describe('ApplicationSettingsContext component', () => {
                                 id: 'maps',
                                 name: {
                                     fr: 'Gestion des PACs',
-                                    en: 'MAPs Management'
+                                    en: 'MAPs Management',
                                 },
                                 type: 'explorer',
                                 viewId: '885451776',
-                                actions: []
-                            }
+                                actions: [],
+                            },
                         ],
-                        recordPanels: []
-                    }
-                }
-            }
+                        recordPanels: [],
+                    },
+                },
+            },
         };
         useGetApplicationDataByEndpointQuerySpy.mockReturnValue({
             data: {
                 applications: {
                     list: [
                         {
-                            settings: valideApplication
-                        }
-                    ]
-                }
-            }
+                            settings: valideApplication,
+                        },
+                    ],
+                },
+            },
         });
         const FakeComponent: FunctionComponent = () => {
             const [application] = useApplicationSettingsContext();
@@ -81,7 +81,7 @@ describe('ApplicationSettingsContext component', () => {
         render(
             <InitApplicationSettingProvider>
                 <FakeComponent />
-            </InitApplicationSettingProvider>
+            </InitApplicationSettingProvider>,
         );
 
         expect(screen.getByText(valideApplication.application.workspaces[0].id)).toBeVisible();

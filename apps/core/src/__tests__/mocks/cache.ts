@@ -7,10 +7,10 @@ import {type ICacheService, type ICachesService} from '../../infra/cache/cacheSe
 export const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise(),
-    deleteData: global.__mockPromise()
+    deleteData: global.__mockPromise(),
 };
 
 export const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService),
-    memoize: jest.fn().mockImplementation(({func}) => func())
+    memoize: jest.fn().mockImplementation(({func}) => func()),
 };

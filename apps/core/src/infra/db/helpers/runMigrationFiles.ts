@@ -34,7 +34,7 @@ export default async (params: IExecuteMigrationParams): Promise<void> => {
         // Check if it's been run before
         if (
             !executedMigrations.find(
-                executedFileKey => executedFileKey.replace(FILE_EXTENSION_REGEX, '') === fileKeyWithoutExtension
+                executedFileKey => executedFileKey.replace(FILE_EXTENSION_REGEX, '') === fileKeyWithoutExtension,
             )
         ) {
             const importedFile = await loadMigrationFile(migrationsDir + '/' + file);
@@ -54,7 +54,7 @@ export default async (params: IExecuteMigrationParams): Promise<void> => {
                 const collection = deps.dbService.db.collection(MIGRATIONS_COLLECTION_NAME);
                 await collection.save({
                     file: fileKeyWithoutExtension,
-                    date: Date.now()
+                    date: Date.now(),
                 });
             } catch (err) {
                 err.message = `[DB Migration Error] ${fileKey}: } ${err.message}`;

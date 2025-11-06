@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function LibrariesList() {
             return <div>LibrariesList</div>;
-        }
+        },
 );
 describe('Libraries', () => {
     test('Snapshot test', async () => {
@@ -24,16 +24,16 @@ describe('Libraries', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: getLibsQuery
+                    query: getLibsQuery,
                 },
                 result: {
                     data: {
                         attributes: {
-                            list: [mockLibrary]
-                        }
-                    }
-                }
-            }
+                            list: [mockLibrary],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -41,7 +41,7 @@ describe('Libraries', () => {
                 <Router>
                     <Libraries history={mockHistory as History} />
                 </Router>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 

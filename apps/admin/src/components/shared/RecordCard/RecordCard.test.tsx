@@ -14,11 +14,11 @@ describe('RecordCard', () => {
         id: '12345',
         library: {
             id: 'test_lib',
-            label: {fr: 'Test Lib'}
+            label: {fr: 'Test Lib'},
         },
         label: 'Test Record',
         color: null,
-        preview: null
+        preview: null,
     };
 
     test('Snapshot test', async () => {

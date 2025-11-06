@@ -7,7 +7,7 @@ import {AbsolutePaths} from '../router/paths';
 export const useDisplayConditions = () => {
     const location = useLocation();
     const {
-        params: {'*': nextLevelPaths}
+        params: {'*': nextLevelPaths},
     } = useMatch(AbsolutePaths.panel);
     const {recordId, where, recordPanelId} = useParams();
 

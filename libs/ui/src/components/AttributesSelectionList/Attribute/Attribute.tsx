@@ -42,8 +42,8 @@ function Attribute({attribute, path, library, parentAttribute}: ICommonAttribute
             attribute: attributeToSelectedAttribute(attribute, {
                 path: attributePath,
                 library,
-                parentAttributeData: parentAttribute
-            })
+                parentAttributeData: parentAttribute,
+            }),
         });
     };
 

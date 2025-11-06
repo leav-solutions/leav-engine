@@ -6,7 +6,7 @@ import {
     type RecordFormElementAttribute,
     type RecordFormElementsValue,
     type RecordFormElementsValueLinkValue,
-    type RecordFormElementsValueStandardValue
+    type RecordFormElementsValueStandardValue,
 } from '_ui/hooks/useGetRecordForm';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {type IDateRangeValue} from '@leav/utils';
@@ -25,14 +25,14 @@ const getUserInputValue = values =>
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,
-    attribute: RecordFormElementAttribute
+    attribute: RecordFormElementAttribute,
 ): value is RecordFormElementsValueLinkValue =>
     attribute.type === AttributeType.simple_link ||
     (attribute.type === AttributeType.advanced_link && attribute.multiple_values === false);
 
 const isRecordFormElementsValueLinkValues = (
     values: RecordFormElementsValue[],
-    attribute: RecordFormElementAttribute
+    attribute: RecordFormElementAttribute,
 ): values is RecordFormElementsValueLinkValue[] =>
     attribute.type === AttributeType.advanced_link && attribute.multiple_values === true;
 
@@ -41,7 +41,7 @@ const isRecordFormElementsMultipleValues = (attribute: RecordFormElementAttribut
 
 const formatStandardInitialValue = (
     standardValue: RecordFormElementsValueStandardValue,
-    attribute: RecordFormElementAttribute
+    attribute: RecordFormElementAttribute,
 ) => {
     if (!standardValue?.raw_payload) {
         return getEmptyInitialValue(attribute);
@@ -61,7 +61,7 @@ const formatStandardInitialValue = (
             if (hasDateRangeValues(standardValue.raw_payload)) {
                 return [
                     dayjs.unix(Number(standardValue.raw_payload.from)),
-                    dayjs.unix(Number(standardValue.raw_payload.to))
+                    dayjs.unix(Number(standardValue.raw_payload.to)),
                 ];
             } else if (typeof standardValue.raw_payload === 'string') {
                 const convertedFieldValue = JSON.parse(standardValue.raw_payload) as any;
@@ -82,11 +82,11 @@ export const getEmptyInitialValue = (attribute: RecordFormElementAttribute) => {
 
 export const getAntdDisplayedValue = (
     values: RecordFormElementsValueStandardValue[],
-    attribute: RecordFormElementAttribute
+    attribute: RecordFormElementAttribute,
 ) =>
     formatStandardInitialValue(
         getUserInputValue(values) ?? getInheritedValue(values) ?? getCalculatedValue(values) ?? null,
-        attribute
+        attribute,
     );
 
 export const getAntdFormInitialValues = (recordForm: IRecordForm) =>

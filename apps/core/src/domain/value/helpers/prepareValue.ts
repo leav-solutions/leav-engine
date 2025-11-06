@@ -34,7 +34,7 @@ export default async (params: IPrepareValueParams): Promise<ISaveValue[]> => {
               ...ctx,
               attribute: attributeProps,
               recordId,
-              library
+              library,
           })) as ISaveValue[])
         : [value];
 
@@ -53,8 +53,8 @@ export default async (params: IPrepareValueParams): Promise<ISaveValue[]> => {
                                 ...ctx,
                                 attribute: metaFieldProps,
                                 recordId,
-                                library
-                            }
+                                library,
+                            },
                         );
                         preparedValue.metadata[metaFieldName] = processedMetaValue[0].payload;
                     }

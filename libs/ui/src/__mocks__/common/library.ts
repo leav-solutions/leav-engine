@@ -6,21 +6,21 @@ import {
     AttributeType,
     type GetLibraryByIdQuery,
     LibraryBehavior,
-    type LibraryLightFragment
+    type LibraryLightFragment,
 } from '_ui/_gqlTypes';
 
 export const mockLibrarySimple: LibraryLightFragment = {
     id: 'my_library',
     label: {
         fr: 'Ma bibliothèque',
-        en: 'My library'
+        en: 'My library',
     },
     icon: {
         id: '123456789',
         whoAmI: {
             id: '123456789',
             library: {
-                id: 'files'
+                id: 'files',
             },
             preview: {
                 file: null,
@@ -29,17 +29,17 @@ export const mockLibrarySimple: LibraryLightFragment = {
                 big: 'icon/path.png',
                 medium: 'icon/path.png',
                 small: 'icon/path.png',
-                tiny: 'icon/path.png'
-            }
-        }
-    }
+                tiny: 'icon/path.png',
+            },
+        },
+    },
 };
 
 export const mockLibraryWithDetails: GetLibraryByIdQuery['libraries']['list'][0] = {
     id: 'my_library',
     label: {
         fr: 'Ma bibliothèque',
-        en: 'My library'
+        en: 'My library',
     },
     behavior: LibraryBehavior.standard,
     fullTextAttributes: [{id: 'id', label: {fr: 'id', en: 'id'}}],
@@ -49,12 +49,12 @@ export const mockLibraryWithDetails: GetLibraryByIdQuery['libraries']['list'][0]
             id: 'my_attribute',
             label: {
                 fr: 'Mon attribut',
-                en: 'My attribute'
+                en: 'My attribute',
             },
             system: false,
             type: AttributeType.simple,
-            format: AttributeFormat.text
-        }
+            format: AttributeFormat.text,
+        },
     ],
     permissions: {
         access_library: true,
@@ -62,8 +62,8 @@ export const mockLibraryWithDetails: GetLibraryByIdQuery['libraries']['list'][0]
         access_record: true,
         create_record: true,
         delete_record: true,
-        edit_record: true
-    }
+        edit_record: true,
+    },
 };
 
 export const mockLibraryWithPreviewsSettings = {
@@ -79,14 +79,14 @@ export const mockLibraryWithPreviewsSettings = {
                 sizes: [
                     {
                         name: 'my_size',
-                        size: 200
+                        size: 200,
                     },
                     {
                         name: 'my_size2',
-                        size: 42
-                    }
-                ]
-            }
+                        size: 42,
+                    },
+                ],
+            },
         },
         {
             label: {en: 'Other settings'},
@@ -98,14 +98,14 @@ export const mockLibraryWithPreviewsSettings = {
                 sizes: [
                     {
                         name: 'other_size',
-                        size: 1024
+                        size: 1024,
                     },
                     {
                         name: 'other_size2',
-                        size: 1337
-                    }
-                ]
-            }
-        }
-    ]
+                        size: 1337,
+                    },
+                ],
+            },
+        },
+    ],
 };

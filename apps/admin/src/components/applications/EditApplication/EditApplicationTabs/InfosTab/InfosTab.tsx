@@ -34,8 +34,8 @@ function InfosTab(): JSX.Element {
                 if (isNewApp) {
                     cache.evict({fieldName: 'applications'});
                 }
-            }
-        }
+            },
+        },
     );
 
     const _handleSubmit = async (submitData: ApplicationInfosFormValues) => {
@@ -51,14 +51,14 @@ function InfosTab(): JSX.Element {
                 icon: submitData.icon?.whoAmI
                     ? {
                           libraryId: submitData.icon.whoAmI.library.id,
-                          recordId: submitData.icon.whoAmI.id
+                          recordId: submitData.icon.whoAmI.id,
                       }
-                    : null
-            }
+                    : null,
+            },
         };
 
         await saveApplication({
-            variables: dataToSave
+            variables: dataToSave,
         });
     };
 
@@ -72,7 +72,7 @@ function InfosTab(): JSX.Element {
             const res = await apolloClient.query<GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables>({
                 query: getApplicationByIdQuery,
                 fetchPolicy: 'no-cache',
-                variables: {id: value}
+                variables: {id: value},
             });
 
             // No result means id is unique

@@ -22,7 +22,7 @@ jest.mock(
     () =>
         function AttributesSelectionModal() {
             return <div>AttributesSelectionModal</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -30,17 +30,17 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 
 describe('EditVersionProfile', () => {
     type MatchType = match<IEditVersionProfileMatchParams>;
     const mockMatch: Mockify<MatchType> = {
-        params: {id: mockVersionProfile.id}
+        params: {id: mockVersionProfile.id},
     };
 
     const mockMatchNoId: Mockify<MatchType> = {
-        params: {}
+        params: {},
     };
 
     const mocks = [
@@ -48,8 +48,8 @@ describe('EditVersionProfile', () => {
             request: {
                 query: getVersionProfileByIdQuery,
                 variables: {
-                    id: mockVersionProfile.id
-                }
+                    id: mockVersionProfile.id,
+                },
             },
             result: {
                 data: {
@@ -60,13 +60,13 @@ describe('EditVersionProfile', () => {
                                 description: {fr: ''},
                                 trees: [],
                                 linkedAttributes: [],
-                                __typename: 'VersionProfile'
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                __typename: 'VersionProfile',
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     beforeEach(() => jest.clearAllMocks());
@@ -93,7 +93,7 @@ describe('EditVersionProfile', () => {
             id: '1',
             name: 'Test',
             whoAmI: mockRecord,
-            permissions: {admin_edit_version_profile: false}
+            permissions: {admin_edit_version_profile: false},
         }));
 
         render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocks});
@@ -115,19 +115,19 @@ describe('EditVersionProfile', () => {
                             id: 'my_profile',
                             label: {fr: 'Mon profil', en: 'My profile'},
                             description: {fr: ''},
-                            trees: []
-                        }
-                    }
+                            trees: [],
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
                     return {
                         data: {
-                            saveVersionProfiles: mockVersionProfile
-                        }
+                            saveVersionProfiles: mockVersionProfile,
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithSave});
@@ -152,7 +152,7 @@ describe('EditVersionProfile', () => {
             id: '1',
             name: 'Test',
             whoAmI: mockRecord,
-            permissions: {admin_edit_version_profile: true}
+            permissions: {admin_edit_version_profile: true},
         }));
 
         const mocksWithIdCheck = [
@@ -160,16 +160,16 @@ describe('EditVersionProfile', () => {
             {
                 request: {
                     query: getVersionProfilesQuery,
-                    variables: {filters: {id: 'a'}}
+                    variables: {filters: {id: 'a'}},
                 },
                 result: {
                     data: {
                         versionProfiles: {
-                            list: [mockVersionProfile]
-                        }
-                    }
-                }
-            }
+                            list: [mockVersionProfile],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<EditVersionProfile match={mockMatchNoId as MatchType} />, {apolloMocks: mocksWithIdCheck});
@@ -187,7 +187,7 @@ describe('EditVersionProfile', () => {
             {
                 request: {
                     query: getVersionProfileByIdQuery,
-                    variables: {id: mockVersionProfile.id}
+                    variables: {id: mockVersionProfile.id},
                 },
                 result: {
                     data: {
@@ -202,20 +202,20 @@ describe('EditVersionProfile', () => {
                                         {
                                             id: 'attribute_1',
                                             label: {fr: 'Attribut 1', en: 'Attribute 1'},
-                                            __typename: 'Attribute'
+                                            __typename: 'Attribute',
                                         },
                                         {
                                             id: 'attribute_2',
                                             label: {fr: 'Attribut 2', en: 'Attribute 2'},
-                                            __typename: 'Attribute'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                            __typename: 'Attribute',
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
         test('Display list of linked attributes', async () => {
             render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithLinkedAttributes});
@@ -230,10 +230,10 @@ describe('EditVersionProfile', () => {
                 {
                     request: {
                         query: getAttributesQuery,
-                        variables: {type: ['advanced', 'advanced_link', 'tree']}
+                        variables: {type: ['advanced', 'advanced_link', 'tree']},
                     },
-                    result: {data: {attributes: {list: [{mockAttrAdv}]}}}
-                }
+                    result: {data: {attributes: {list: [{mockAttrAdv}]}}},
+                },
             ];
 
             render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithAttributesList});
@@ -250,21 +250,21 @@ describe('EditVersionProfile', () => {
                 {
                     request: {
                         query: saveAttributeQuery,
-                        variables: {attrData: {id: 'attribute_1', versions_conf: {versionable: true, profile: null}}}
+                        variables: {attrData: {id: 'attribute_1', versions_conf: {versionable: true, profile: null}}},
                     },
                     result: () => {
                         saveAttributeCalled = true;
                         return {
                             data: {
-                                saveAttribute: {mockAttrAdv}
-                            }
+                                saveAttribute: {mockAttrAdv},
+                            },
                         };
-                    }
-                }
+                    },
+                },
             ];
 
             render(<EditVersionProfile match={mockMatch as MatchType} />, {
-                apolloMocks: mocksWithLinkedAttributesAndDelete
+                apolloMocks: mocksWithLinkedAttributesAndDelete,
             });
 
             await waitFor(() => expect(screen.getAllByRole('button', {name: /unlink/})).toBeTruthy());

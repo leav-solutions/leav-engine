@@ -13,7 +13,7 @@ describe('monitoringServer', () => {
         jest.resetAllMocks();
         process.env.MONITORING_SERVER_PORT = port.toString();
         server = monitoringServer({
-            healthCheckFunction
+            healthCheckFunction,
         });
         healthCheckFunction.mockResolvedValue(true);
         await server.init();

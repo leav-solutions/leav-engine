@@ -11,12 +11,12 @@ export const handleCreate = async (
     inode: number,
     params: IParams,
     isDirectory: boolean,
-    hashFile?: string
+    hashFile?: string,
 ) => {
     await updateData(path, inode);
     sendToRabbitMQ(
         generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, params.rootKey, hashFile),
-        params.amqp
+        params.amqp,
     );
     if (params.verbose) {
         logger.info(`CREATE ${path}`);
@@ -38,12 +38,12 @@ export const handleUpdate = async (
     inode: number,
     params: IParams,
     isDirectory: boolean,
-    hashFile?: string
+    hashFile?: string,
 ) => {
     await updateData(path, inode);
     sendToRabbitMQ(
         generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, params.rootKey, hashFile),
-        params.amqp
+        params.amqp,
     );
     if (params.verbose) {
         logger.info(`UPDATE ${path}`);
@@ -56,7 +56,7 @@ export const handleMove = async (
     pathAfter: string,
     inode: number,
     params: IParams,
-    isDirectory: boolean
+    isDirectory: boolean,
 ) => {
     await updateData(pathAfter, inode, pathBefore);
     sendToRabbitMQ(generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, params.rootKey), params.amqp);

@@ -21,43 +21,43 @@ const depsBase: ToAny<IRecordPermissionDomainDeps> = {
     'core.infra.value': jest.fn(),
     'core.infra.tree': jest.fn(),
     'core.domain.permission.helpers.recordInCreationBypass': jest.fn(),
-    'core.infra.record': jest.fn()
+    'core.infra.record': jest.fn(),
 };
 
 describe('recordPermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'recordPermissionDomainTest'
+        queryId: 'recordPermissionDomainTest',
     };
 
     const defaultPerm = false;
 
     describe('getRecordPermission', () => {
         const mockTreeBasedPerm = {
-            getTreeBasedPermission: global.__mockPromise(true)
+            getTreeBasedPermission: global.__mockPromise(true),
         } satisfies Mockify<ITreeBasedPermissionHelper>;
 
         const mockLibPermDomain: Mockify<ILibraryPermissionDomain> = {
-            getLibraryPermission: jest.fn().mockReturnValue(defaultPerm)
+            getLibraryPermission: jest.fn().mockReturnValue(defaultPerm),
         };
 
         const mockLibSimplePerms = {
             system: false,
             permissions_conf: {
                 relation: 'AND',
-                permissionTreeAttributes: ['category']
-            }
+                permissionTreeAttributes: ['category'],
+            },
         };
 
         const mockAttrProps = {
             category: {
                 id: 'category',
                 type: 'tree',
-                linked_tree: 'categories'
-            }
+                linked_tree: 'categories',
+            },
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id]))
+            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id])),
         };
 
         const mockValueRepo = {
@@ -70,9 +70,9 @@ describe('recordPermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'category'
-                                }
-                            }
+                                    library: 'category',
+                                },
+                            },
                         };
                         break;
                     case 'user_groups':
@@ -81,15 +81,15 @@ describe('recordPermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'users_groups'
-                                }
-                            }
+                                    library: 'users_groups',
+                                },
+                            },
                         };
                         break;
                 }
 
                 return Promise.resolve([val]);
-            })
+            }),
         } satisfies Mockify<IValueRepo>;
 
         test('Return record permission', async () => {
@@ -101,7 +101,7 @@ describe('recordPermissionDomain', () => {
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as any
+                'core.infra.value': mockValueRepo as any,
             });
 
             const perm = await recordPermDomain.getRecordPermission({
@@ -109,7 +109,7 @@ describe('recordPermissionDomain', () => {
                 userId: '987654',
                 library: 'test_lib',
                 recordId: '123456',
-                ctx
+                ctx,
             });
 
             expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
@@ -126,7 +126,7 @@ describe('recordPermissionDomain', () => {
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as any
+                'core.infra.value': mockValueRepo as any,
             });
 
             const perm = await recordPermDomain.getRecordPermission({
@@ -134,7 +134,7 @@ describe('recordPermissionDomain', () => {
                 userId: '987654',
                 library: 'test_lib',
                 recordId: '123456',
-                ctx
+                ctx,
             });
 
             expect(mockLibPermDomain.getLibraryPermission).toBeCalled();
@@ -145,18 +145,18 @@ describe('recordPermissionDomain', () => {
     describe('getInheritedRecordPermission', () => {
         test('Return herited record permission', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(true)
+                getPermissionByUserGroups: global.__mockPromise(true),
             };
 
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
-                getInheritedTreeBasedPermission: global.__mockPromise(true)
+                getInheritedTreeBasedPermission: global.__mockPromise(true),
             };
 
             const recordPermDomain = recordPermissionDomain({
                 ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
+                'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
             });
 
             const perm = await recordPermDomain.getInheritedRecordPermission({
@@ -165,7 +165,7 @@ describe('recordPermissionDomain', () => {
                 library: 'test_lib',
                 permTree: 'test_tree',
                 permTreeNode: '54321',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(true);

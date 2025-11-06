@@ -40,12 +40,12 @@ describe('inheritanceCalculationAction', () => {
                             params: [
                                 {
                                     name: 'Formula',
-                                    value: `getValue(${linkAttributeId}).getValue(${sourceSimpleAttributeId})`
-                                }
-                            ]
-                        }
-                    ]
-                }
+                                    value: `getValue(${linkAttributeId}).getValue(${sourceSimpleAttributeId})`,
+                                },
+                            ],
+                        },
+                    ],
+                },
             }),
             gqlSaveAttribute({
                 id: advancedAttributeId,
@@ -59,12 +59,12 @@ describe('inheritanceCalculationAction', () => {
                             params: [
                                 {
                                     name: 'Formula',
-                                    value: `getValue(${linkAttributeId}).getValue(${sourceSimpleAttributeId})`
-                                }
-                            ]
-                        }
-                    ]
-                }
+                                    value: `getValue(${linkAttributeId}).getValue(${sourceSimpleAttributeId})`,
+                                },
+                            ],
+                        },
+                    ],
+                },
             }),
             gqlSaveAttribute({
                 id: simpleLinkAttributeId,
@@ -79,12 +79,12 @@ describe('inheritanceCalculationAction', () => {
                             params: [
                                 {
                                     name: 'Formula',
-                                    value: `getValue(${linkAttributeId}).getValue(${sourceAdvancedLinkAttributeId})`
-                                }
-                            ]
-                        }
-                    ]
-                }
+                                    value: `getValue(${linkAttributeId}).getValue(${sourceAdvancedLinkAttributeId})`,
+                                },
+                            ],
+                        },
+                    ],
+                },
             }),
             gqlSaveAttribute({
                 id: advancedLinkAttributeId,
@@ -99,12 +99,12 @@ describe('inheritanceCalculationAction', () => {
                             params: [
                                 {
                                     name: 'Formula',
-                                    value: `getValue(${linkAttributeId}).getValue(${sourceAdvancedLinkAttributeId})`
-                                }
-                            ]
-                        }
-                    ]
-                }
+                                    value: `getValue(${linkAttributeId}).getValue(${sourceAdvancedLinkAttributeId})`,
+                                },
+                            ],
+                        },
+                    ],
+                },
             }),
             gqlSaveAttribute({
                 id: treeAttributeId,
@@ -119,36 +119,36 @@ describe('inheritanceCalculationAction', () => {
                             params: [
                                 {
                                     name: 'Formula',
-                                    value: `getValue(${linkAttributeId}).getValue(${sourceTreeAttributeId})`
-                                }
-                            ]
-                        }
-                    ]
-                }
+                                    value: `getValue(${linkAttributeId}).getValue(${sourceTreeAttributeId})`,
+                                },
+                            ],
+                        },
+                    ],
+                },
             }),
             gqlSaveAttribute({
                 id: linkAttributeId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'LINK',
-                linkedLibrary: libraryId
+                linkedLibrary: libraryId,
             }),
             gqlSaveAttribute({
                 id: sourceSimpleAttributeId,
                 type: AttributeTypes.SIMPLE,
-                label: 'SIMPLE SOURCE'
+                label: 'SIMPLE SOURCE',
             }),
             gqlSaveAttribute({
                 id: sourceAdvancedLinkAttributeId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'SOURCE LINK',
-                linkedLibrary: 'users'
+                linkedLibrary: 'users',
             }),
             gqlSaveAttribute({
                 id: sourceTreeAttributeId,
                 type: AttributeTypes.TREE,
                 label: 'SOURCE TREE',
-                linkedTree: 'users_groups'
-            })
+                linkedTree: 'users_groups',
+            }),
         ]);
 
         // Create a library
@@ -161,14 +161,14 @@ describe('inheritanceCalculationAction', () => {
             linkAttributeId,
             sourceSimpleAttributeId,
             sourceAdvancedLinkAttributeId,
-            sourceTreeAttributeId
+            sourceTreeAttributeId,
         ]);
 
         // Create a record
         [recordIdToInheritFrom, recordIdForGetValues, recordIdWithNoValues] = await Promise.all([
             gqlCreateRecord(libraryId),
             gqlCreateRecord(libraryId),
-            gqlCreateRecord(libraryId)
+            gqlCreateRecord(libraryId),
         ]);
 
         // Add values on this record: 1 simple, 1 link and 1 tree
@@ -176,7 +176,7 @@ describe('inheritanceCalculationAction', () => {
             gqlSaveValue(sourceSimpleAttributeId, libraryId, recordIdToInheritFrom, 'text value'),
             gqlSaveValue(sourceAdvancedLinkAttributeId, libraryId, recordIdToInheritFrom, '1'), // link to admin
             gqlSaveValue(sourceTreeAttributeId, libraryId, recordIdToInheritFrom, '2'), // default users group
-            gqlSaveValue(linkAttributeId, libraryId, recordIdForGetValues, recordIdToInheritFrom) // link between records
+            gqlSaveValue(linkAttributeId, libraryId, recordIdForGetValues, recordIdToInheritFrom), // link between records
         ]);
     });
 

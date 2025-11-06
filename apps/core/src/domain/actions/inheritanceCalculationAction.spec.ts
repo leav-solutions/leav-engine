@@ -14,18 +14,18 @@ const mockCalculationsVariable = {
             payload: `${variable}Value`,
             raw_payload: 'testRawValue',
             recordId: '1',
-            library: 'meh'
-        }
-    ]
+            library: 'meh',
+        },
+    ],
 };
 
 const mockAttributeDomain: Mockify<IAttributeDomain> = {
-    getAttributeProperties: global.__mockPromise({type: 'meh'})
+    getAttributeProperties: global.__mockPromise({type: 'meh'}),
 };
 
 const action = inheritanceCalculationAction({
     'core.domain.helpers.calculationVariable': mockCalculationsVariable,
-    'core.domain.attribute': mockAttributeDomain as IAttributeDomain
+    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
 }).action;
 
 describe('inheritanceCalculationAction', () => {
@@ -33,18 +33,18 @@ describe('inheritanceCalculationAction', () => {
         const ctx: IActionsListContext = {
             attribute: {
                 id: 'meh',
-                type: AttributeTypes.SIMPLE
+                type: AttributeTypes.SIMPLE,
             },
-            userId: 'test'
+            userId: 'test',
         };
 
         const res = await action(
             null,
             {
                 Description: 'test',
-                Formula: '42'
+                Formula: '42',
             },
-            ctx
+            ctx,
         );
 
         expect(res.values[0].payload).toBe('42Value');
@@ -55,17 +55,17 @@ describe('inheritanceCalculationAction', () => {
         const ctx: IActionsListContext = {
             attribute: {
                 id: 'meh',
-                type: AttributeTypes.SIMPLE
+                type: AttributeTypes.SIMPLE,
             },
-            userId: 'test'
+            userId: 'test',
         };
         const res = await action(
             null,
             {
                 Description: 'test',
-                Formula: ''
+                Formula: '',
             },
-            ctx
+            ctx,
         );
 
         expect(res.values[0].payload).toBe('Value');
@@ -73,27 +73,27 @@ describe('inheritanceCalculationAction', () => {
 
     test('Inherit from link', async () => {
         const mockAttributeDomain2: Mockify<IAttributeDomain> = {
-            getAttributeProperties: global.__mockPromise({type: AttributeTypes.SIMPLE_LINK, linked_library: 'meh'})
+            getAttributeProperties: global.__mockPromise({type: AttributeTypes.SIMPLE_LINK, linked_library: 'meh'}),
         };
         const action2 = inheritanceCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable,
-            'core.domain.attribute': mockAttributeDomain2 as IAttributeDomain
+            'core.domain.attribute': mockAttributeDomain2 as IAttributeDomain,
         }).action;
         const ctx: IActionsListContext = {
             attribute: {
                 id: 'bla',
-                type: AttributeTypes.SIMPLE_LINK
+                type: AttributeTypes.SIMPLE_LINK,
             },
-            userId: 'test'
+            userId: 'test',
         };
 
         const res = await action2(
             null,
             {
                 Description: 'test',
-                Formula: ''
+                Formula: '',
             },
-            ctx
+            ctx,
         );
 
         const resultValue = res.values[0].payload;

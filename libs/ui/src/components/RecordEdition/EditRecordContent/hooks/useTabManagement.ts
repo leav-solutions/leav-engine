@@ -34,7 +34,7 @@ export const useTabManagement = (elements: RecordFormElement[]) => {
 
     return {
         tabIdVisible,
-        handleTabClick
+        handleTabClick,
     };
 };
 

@@ -7,18 +7,18 @@ import {InfoType, WorkspacePanels} from '_types/types';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import {
     mockGetLibraryDetailExtendedQuery,
-    mockGetLibraryDetailExtendedQueryVar
+    mockGetLibraryDetailExtendedQueryVar,
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 
 jest.mock('@leav/ui', () => ({
     ...jest.requireActual('@leav/ui'),
-    LibraryItemsList: () => <div>LibraryItemsList</div>
+    LibraryItemsList: () => <div>LibraryItemsList</div>,
 }));
 
 const mockUpdateActiveLib = jest.fn();
 
 jest.mock('hooks/useActiveLibrary', () => ({
-    useActiveLibrary: () => [mockActiveLibrary, mockUpdateActiveLib]
+    useActiveLibrary: () => [mockActiveLibrary, mockUpdateActiveLib],
 }));
 
 describe('LibraryHome', () => {
@@ -26,23 +26,23 @@ describe('LibraryHome', () => {
         info: {
             base: {
                 content: 'base info',
-                type: InfoType.BASIC
+                type: InfoType.BASIC,
             },
-            stack: []
+            stack: [],
         },
-        activePanel: WorkspacePanels.LIBRARY
+        activePanel: WorkspacePanels.LIBRARY,
     };
 
     const mocks = [
         {
             request: {
                 query: getLibraryDetailExtendedQuery,
-                variables: mockGetLibraryDetailExtendedQueryVar
+                variables: mockGetLibraryDetailExtendedQueryVar,
             },
             result: {
-                data: mockGetLibraryDetailExtendedQuery
-            }
-        }
+                data: mockGetLibraryDetailExtendedQuery,
+            },
+        },
     ];
 
     beforeEach(() => jest.clearAllMocks());

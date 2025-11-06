@@ -15,7 +15,7 @@ describe('DefinePermissionsViewLoadTree', () => {
         const comp = render(
             <MockedProvider>
                 <DefinePermissionsViewLoadTree treeId="test_tree" onClick={onClick} selectedNode={selectedNode} />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         expect(comp).toMatchSnapshot();

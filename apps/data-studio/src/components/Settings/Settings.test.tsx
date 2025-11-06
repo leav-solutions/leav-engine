@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function ApplicationSettings() {
             return <div>ApplicationSettings</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function LibrariesSettings() {
             return <div>LibrariesSettings</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -29,7 +29,7 @@ jest.mock(
     () =>
         function TreesSettings() {
             return <div>TreesSettings</div>;
-        }
+        },
 );
 
 describe('Settings', () => {
@@ -39,31 +39,31 @@ describe('Settings', () => {
                 query: isAllowedQuery,
                 variables: {
                     type: PermissionTypes.admin,
-                    actions: [PermissionsActions.admin_access_libraries, PermissionsActions.admin_access_trees]
-                }
+                    actions: [PermissionsActions.admin_access_libraries, PermissionsActions.admin_access_trees],
+                },
             },
             result: {
                 data: {
                     isAllowed: [
                         {
                             name: PermissionsActions.admin_access_libraries,
-                            allowed: true
+                            allowed: true,
                         },
                         {
                             name: PermissionsActions.admin_access_trees,
-                            allowed: true
-                        }
-                    ]
-                }
-            }
-        }
+                            allowed: true,
+                        },
+                    ],
+                },
+            },
+        },
     ];
     test('Render tabs for each sections', async () => {
         render(
             <MemoryRouter>
                 <Settings />
             </MemoryRouter>,
-            {apolloMocks: mocks}
+            {apolloMocks: mocks},
         );
 
         expect(await screen.findByText('app_settings.application')).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('Settings', () => {
                     <Route path="/settings/:tabId?" element={<Settings />} />
                 </Routes>
             </MemoryRouter>,
-            {apolloMocks: mocks}
+            {apolloMocks: mocks},
         );
 
         expect(await screen.findByText('app_settings.application')).toBeInTheDocument();

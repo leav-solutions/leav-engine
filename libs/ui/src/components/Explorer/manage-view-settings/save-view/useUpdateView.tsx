@@ -44,11 +44,11 @@ export const useUpdateView = () => {
         const mappedView = {
             ...prepareViewForRequest(view, filtersData.filters, view.viewLabels),
             id: view.viewId,
-            shared: currentView.current?.shared ?? false
+            shared: currentView.current?.shared ?? false,
         };
 
         const {data} = await updateView({
-            view: mappedView
+            view: mappedView,
         });
 
         if (data) {
@@ -63,18 +63,18 @@ export const useUpdateView = () => {
                     filters: validFilters,
                     sort: data.updateView.sort ?? [],
                     display: (data.updateView.display as IViewDisplay) ?? {
-                        type: mapViewTypeFromExplorerToLegacy[view.viewType]
+                        type: mapViewTypeFromExplorerToLegacy[view.viewType],
                     },
-                    attributes: data.updateView?.attributes?.map(({id}) => id) ?? []
-                }
+                    attributes: data.updateView?.attributes?.map(({id}) => id) ?? [],
+                },
             });
             filtersDispatch({
                 type: FiltersActionTypes.UPDATE_VIEWS,
                 payload: {
                     ...filtersData,
                     viewId: data.updateView.id,
-                    filters: data.updateView.filters as UIFilter[]
-                }
+                    filters: data.updateView.filters as UIFilter[],
+                },
             });
         }
     };
@@ -85,6 +85,6 @@ export const useUpdateView = () => {
                 <KitButton type="action" icon={<FaSave />} onClick={_updateView}>
                     {t('global.save')}
                 </KitButton>
-            )
+            ),
     };
 };

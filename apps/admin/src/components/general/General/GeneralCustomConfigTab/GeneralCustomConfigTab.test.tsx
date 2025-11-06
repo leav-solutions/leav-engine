@@ -8,7 +8,7 @@ import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQu
 jest.mock('jsoneditor-react', () => ({
     JsonEditor() {
         return <div>JsonEditor</div>;
-    }
+    },
 }));
 
 describe('GeneralCustomConfigTab', () => {
@@ -16,22 +16,22 @@ describe('GeneralCustomConfigTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getGlobalSettingsQuery
+                    query: getGlobalSettingsQuery,
                 },
                 result: {
                     loading: false,
                     data: {
                         globalSettings: {
                             settings: {
-                                foo: 'bar'
-                            }
-                        }
-                    }
-                }
-            }
+                                foo: 'bar',
+                            },
+                        },
+                    },
+                },
+            },
         ];
         render(<GeneralCustomConfigTab />, {
-            apolloMocks: mocks
+            apolloMocks: mocks,
         });
         expect(screen.getByText('admin.loading')).toBeInTheDocument();
         await waitFor(() => expect(screen.getByText('JsonEditor')).toBeInTheDocument());

@@ -11,7 +11,7 @@ export const mockPreviews: IPreviewScalar = {
     big: '/fake/url/big.jpg',
     huge: '/fake/url/huge.jpg',
     original: '/fake/url/original.jpg',
-    file: null
+    file: null,
 };
 
 export const mockRecord = {
@@ -20,8 +20,8 @@ export const mockRecord = {
     subLabel: 'record_subLabel',
     library: {
         id: 'record_lib',
-        label: {fr: 'Test Lib'}
+        label: {fr: 'Test Lib'},
     },
     preview: mockPreviews,
-    color: 'blue'
+    color: 'blue',
 } satisfies IRecordIdentityWhoAmI;

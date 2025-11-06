@@ -12,16 +12,16 @@ describe('TasksList', () => {
     const tasks = [
         {
             ...mockTask,
-            id: 'test'
+            id: 'test',
         },
         {
             ...mockTask,
-            id: 'test2'
+            id: 'test2',
         },
         {
             ...mockTask,
-            id: 'test3'
-        }
+            id: 'test3',
+        },
     ];
 
     test('Render tasks list', async () => {
@@ -41,12 +41,12 @@ describe('TasksList', () => {
                                 'completedAt',
                                 'progress.percent',
                                 'progress.description',
-                                'duration'
+                                'duration',
                             ]}
                             tasks={tasks}
                         />
                     </MockedUserContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -73,14 +73,14 @@ describe('TasksList', () => {
                                 'completedAt',
                                 'progress.percent',
                                 'progress.description',
-                                'duration'
+                                'duration',
                             ]}
                             tasks={tasks}
                             actionsBtn={() => [mockBtn('mockActnBtn')]}
                             footerBtn={[mockBtn('mockFooterBtn')]}
                         />
                     </MockedUserContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

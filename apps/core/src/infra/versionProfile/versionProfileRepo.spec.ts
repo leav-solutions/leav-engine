@@ -11,31 +11,31 @@ describe('versionProfileRepo', () => {
     const docProfileData = {
         _key: 'test_profile',
         label: {fr: 'Test'},
-        trees: ['treeA', 'treeB']
+        trees: ['treeA', 'treeB'],
     };
 
     const profileData = {
         id: 'test_profile',
         label: {fr: 'Test'},
-        trees: ['treeA', 'treeB']
+        trees: ['treeA', 'treeB'],
     };
 
     const mockDbUtils = {
         cleanup: jest.fn().mockReturnValue(profileData),
         convertToDoc: jest.fn().mockReturnValue(docProfileData),
-        findCoreEntity: global.__mockPromise([profileData])
+        findCoreEntity: global.__mockPromise([profileData]),
     } satisfies Mockify<IDbUtils>;
 
     describe('createVersionProfile', () => {
         test('Should create a new version profile', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docProfileData])
+                execute: global.__mockPromise([docProfileData]),
             };
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const createdProfile = await repo.createVersionProfile({profileData, ctx: mockCtx});
@@ -53,12 +53,12 @@ describe('versionProfileRepo', () => {
         test('Should update an existing version profile', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docProfileData])
+                execute: global.__mockPromise([docProfileData]),
             };
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const updatedProfile = await repo.updateVersionProfile({profileData, ctx: mockCtx});
@@ -78,7 +78,7 @@ describe('versionProfileRepo', () => {
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const profiles = await repo.getVersionProfiles({ctx: mockCtx});
@@ -92,12 +92,12 @@ describe('versionProfileRepo', () => {
         test('Should delete a version profile', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docProfileData])
+                execute: global.__mockPromise([docProfileData]),
             };
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const deletedProfile = await repo.deleteVersionProfile({id: profileData.id, ctx: mockCtx});
@@ -116,16 +116,16 @@ describe('versionProfileRepo', () => {
         test('Should return a list of attributes using a profile', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([mockAttrAdvVersionable])
+                execute: global.__mockPromise([mockAttrAdvVersionable]),
             };
 
             const mockDbUtilsAttribute: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockAttrAdvVersionable)
+                cleanup: jest.fn().mockReturnValue(mockAttrAdvVersionable),
             };
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtilsAttribute as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtilsAttribute as IDbUtils,
             });
 
             const attributes = await repo.getAttributesUsingProfile({id: 'my_profile', ctx: mockCtx});

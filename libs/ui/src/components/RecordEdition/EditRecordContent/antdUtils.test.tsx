@@ -4,14 +4,14 @@
 import {
     getAntdDisplayedValue,
     getAntdFormInitialValues,
-    getEmptyInitialValue
+    getEmptyInitialValue,
 } from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {type RecordFormElementAttribute, type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 jest.mock('dayjs', () => ({
-    unix: jest.fn(t => t)
+    unix: jest.fn(t => t),
 }));
 
 describe('getAntdDisplayedValue', () => {
@@ -27,7 +27,7 @@ describe('getAntdDisplayedValue', () => {
         async ({
             values,
             attribute,
-            result
+            result,
         }: {
             values: RecordFormElementsValueStandardValue[];
             attribute: RecordFormElementAttribute;
@@ -35,7 +35,7 @@ describe('getAntdDisplayedValue', () => {
         }) => {
             const antdFormInitialValues = getAntdDisplayedValue(values, attribute);
             expect(antdFormInitialValues).toEqual(result);
-        }
+        },
     );
 });
 
@@ -65,14 +65,14 @@ describe('getAntdFormInitialValues', () => {
                 const linkAttributeId = 'linkAttributeId';
                 const linkElement = {
                     attribute: {...attributeProperties, id: linkAttributeId},
-                    values: [{linkValue: {id: elementFormId}}]
+                    values: [{linkValue: {id: elementFormId}}],
                 };
                 const recordForm = {elements: [linkElement]};
 
                 const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
                 expect(antdFormInitialValues).toEqual({
-                    [linkAttributeId]: elementFormId
+                    [linkAttributeId]: elementFormId,
                 });
             });
 
@@ -80,17 +80,17 @@ describe('getAntdFormInitialValues', () => {
                 const linkAttributeId = 'linkAttributeId';
                 const linkElement = {
                     attribute: {...attributeProperties, id: linkAttributeId},
-                    values: [{}]
+                    values: [{}],
                 };
                 const recordForm = {elements: [linkElement]};
 
                 const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
                 expect(antdFormInitialValues).toEqual({
-                    [linkAttributeId]: undefined
+                    [linkAttributeId]: undefined,
                 });
             });
-        }
+        },
     );
 
     describe('Advanced link with multiple values', () => {
@@ -100,14 +100,14 @@ describe('getAntdFormInitialValues', () => {
             const linkAttributeId = 'linkAttributeId';
             const linkElement = {
                 attribute: {type: AttributeType.advanced_link, multiple_values: true, id: linkAttributeId},
-                values: [{linkValue: {id: elementFormId}}, {linkValue: {id: yetAnotherElementFormId}}]
+                values: [{linkValue: {id: elementFormId}}, {linkValue: {id: yetAnotherElementFormId}}],
             };
             const recordForm = {elements: [linkElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [linkAttributeId]: [elementFormId, yetAnotherElementFormId]
+                [linkAttributeId]: [elementFormId, yetAnotherElementFormId],
             });
         });
 
@@ -115,14 +115,14 @@ describe('getAntdFormInitialValues', () => {
             const linkAttributeId = 'linkAttributeId';
             const linkElement = {
                 attribute: {type: AttributeType.advanced_link, multiple_values: true, id: linkAttributeId},
-                values: [{}]
+                values: [{}],
             };
             const recordForm = {elements: [linkElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [linkAttributeId]: []
+                [linkAttributeId]: [],
             });
         });
     });
@@ -137,19 +137,19 @@ describe('getAntdFormInitialValues', () => {
                     type: AttributeType.advanced,
                     format: AttributeFormat.text,
                     multiple_values: true,
-                    id: standardAttributeId
+                    id: standardAttributeId,
                 },
                 values: [
                     {raw_payload: elementFormId, id_value: '12'},
-                    {raw_payload: yetAnotherElementFormId, id_value: '13'}
-                ]
+                    {raw_payload: yetAnotherElementFormId, id_value: '13'},
+                ],
             };
             const recordForm = {elements: [standardElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [standardAttributeId]: [elementFormId, yetAnotherElementFormId]
+                [standardAttributeId]: [elementFormId, yetAnotherElementFormId],
             });
         });
 
@@ -160,16 +160,16 @@ describe('getAntdFormInitialValues', () => {
                     type: AttributeType.advanced,
                     format: AttributeFormat.text,
                     multiple_values: true,
-                    id: standardAttributeId
+                    id: standardAttributeId,
                 },
-                values: []
+                values: [],
             };
             const recordForm = {elements: [standardElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [standardAttributeId]: ['']
+                [standardAttributeId]: [''],
             });
         });
     });
@@ -180,14 +180,14 @@ describe('getAntdFormInitialValues', () => {
             const textAttributeId = 'textAttributeId';
             const textElement = {
                 attribute: {format: AttributeFormat.text, id: textAttributeId},
-                values: [{raw_payload: rawValue}]
+                values: [{raw_payload: rawValue}],
             };
             const recordForm = {elements: [textElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [textAttributeId]: rawValue
+                [textAttributeId]: rawValue,
             });
         });
 
@@ -195,14 +195,14 @@ describe('getAntdFormInitialValues', () => {
             const textAttributeId = 'textAttributeId';
             const textElement = {
                 attribute: {format: AttributeFormat.text, id: textAttributeId},
-                values: [{}]
+                values: [{}],
             };
             const recordForm = {elements: [textElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [textAttributeId]: ''
+                [textAttributeId]: '',
             });
         });
     });
@@ -211,7 +211,7 @@ describe('getAntdFormInitialValues', () => {
         test('Should skip when raw_value is not set', async () => {
             const dateRangeElementWithoutRawValue = {
                 attribute: {format: AttributeFormat.date_range},
-                values: [{}]
+                values: [{}],
             };
             const recordForm = {elements: [dateRangeElementWithoutRawValue]};
 
@@ -226,14 +226,14 @@ describe('getAntdFormInitialValues', () => {
             const dateRangeAttributeId = 'dateRangeAttributeId';
             const strcturedDateRangeElement = {
                 attribute: {format: AttributeFormat.date_range, id: dateRangeAttributeId},
-                values: [{raw_payload: {from, to}}]
+                values: [{raw_payload: {from, to}}],
             };
             const recordForm = {elements: [strcturedDateRangeElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [dateRangeAttributeId]: [Number(from), Number(to)]
+                [dateRangeAttributeId]: [Number(from), Number(to)],
             });
         });
 
@@ -243,14 +243,14 @@ describe('getAntdFormInitialValues', () => {
             const dateRangeAttributeId = 'dateRangeAttributeId';
             const strcturedDateRangeElement = {
                 attribute: {format: AttributeFormat.date_range, id: dateRangeAttributeId},
-                values: [{raw_payload: JSON.stringify({from, to})}]
+                values: [{raw_payload: JSON.stringify({from, to})}],
             };
             const recordForm = {elements: [strcturedDateRangeElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [dateRangeAttributeId]: [Number(from), Number(to)]
+                [dateRangeAttributeId]: [Number(from), Number(to)],
             });
         });
     });
@@ -259,7 +259,7 @@ describe('getAntdFormInitialValues', () => {
         test('Should skip when raw_value is not set', async () => {
             const colorElementWithoutRawValue = {
                 attribute: {format: AttributeFormat.color},
-                values: [{}]
+                values: [{}],
             };
             const recordForm = {elements: [colorElementWithoutRawValue]};
 
@@ -273,14 +273,14 @@ describe('getAntdFormInitialValues', () => {
             const colorAttributeId = 'colorAttributeId';
             const colorElement = {
                 attribute: {format: AttributeFormat.color, id: colorAttributeId},
-                values: [{raw_payload: rawValue}]
+                values: [{raw_payload: rawValue}],
             };
             const recordForm = {elements: [colorElement]};
 
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [colorAttributeId]: rawValue
+                [colorAttributeId]: rawValue,
             });
         });
     });

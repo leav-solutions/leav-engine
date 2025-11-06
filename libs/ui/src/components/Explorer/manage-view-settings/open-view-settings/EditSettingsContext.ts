@@ -31,5 +31,5 @@ export const EditSettingsContext = createContext<IEditSettingsContext>({
     panelElement: null,
     closeSettingsPanel: () => {
         throw new Error('Element must be wrapped into EditSettingsContextProvider');
-    }
+    },
 });

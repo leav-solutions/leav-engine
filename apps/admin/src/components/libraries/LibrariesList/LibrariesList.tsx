@@ -30,7 +30,7 @@ const LibrariesList = ({
     onRowClick,
     onFiltersUpdate,
     loading,
-    filters
+    filters,
 }: ILibrariesListProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
@@ -128,7 +128,7 @@ const LibrariesList = ({
 LibrariesList.defaultProps = {
     loading: false,
     libraries: [],
-    filters: {}
+    filters: {},
 };
 
 export default LibrariesList;

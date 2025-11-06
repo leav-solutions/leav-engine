@@ -9,7 +9,7 @@ export enum FormUIElementTypes {
     TAB_FIELDS_CONTAINER = 'tab_fields_container',
     TEXT_BLOCK = 'text_block',
     TABS = 'tabs',
-    FRAME = 'frame'
+    FRAME = 'frame',
 }
 
 export enum FormFieldTypes {
@@ -19,12 +19,12 @@ export enum FormFieldTypes {
     ENCRYPTED = 'encrypted',
     DROPDOWN = 'dropdown',
     LINK = 'link',
-    TREE = 'tree'
+    TREE = 'tree',
 }
 
 export enum TabsDirection {
     HORIZONTAL = 'horizontal',
-    VERTICAL = 'vertical'
+    VERTICAL = 'vertical',
 }
 
 export interface ICommonFieldsSettings {

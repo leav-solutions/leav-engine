@@ -5,7 +5,7 @@ import {
     type FullTree,
     type OnMovePreviousAndNextLocation,
     type OnVisibilityToggleData,
-    type TreePath
+    type TreePath,
 } from 'react-sortable-tree';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {type ITreeNode, type ITreeNodeData} from '_types/trees';

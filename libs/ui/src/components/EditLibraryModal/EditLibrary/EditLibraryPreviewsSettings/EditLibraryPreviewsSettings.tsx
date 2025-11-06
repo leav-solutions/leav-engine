@@ -4,7 +4,7 @@
 import {
     type LibraryDetailsFragment,
     type LibraryPreviewsSettingsFragment,
-    useSaveLibraryMutation
+    useSaveLibraryMutation,
 } from '../../../../_gqlTypes';
 import {PreviewsSettingsList} from './PreviewsSettingsList';
 
@@ -27,8 +27,8 @@ function EditLibraryPreviewsSettings({library, readOnly}: IEditLibraryPreviewsSe
                     density: previewSetting.versions.density,
                     sizes: previewSetting.versions.sizes
                         .filter(({name, size}) => name && size) // Remove empty sizes
-                        .map(({name, size}) => ({name, size}))
-                }
+                        .map(({name, size}) => ({name, size})),
+                },
             }));
 
     const _handleChange = async (newPreviewsSettings: LibraryPreviewsSettingsFragment[]) => {
@@ -36,9 +36,9 @@ function EditLibraryPreviewsSettings({library, readOnly}: IEditLibraryPreviewsSe
             variables: {
                 library: {
                     id: library.id,
-                    previewsSettings: _cleanPreviewsSettings(newPreviewsSettings)
-                }
-            }
+                    previewsSettings: _cleanPreviewsSettings(newPreviewsSettings),
+                },
+            },
         });
     };
 

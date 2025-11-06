@@ -10,27 +10,27 @@ describe('StandardValuesReducer', () => {
         raw_value: 'test_val',
         modified_at: null,
         created_at: null,
-        version: null
+        version: null,
     };
     const initialState = {
         values: [
             {
-                ...testVal
-            }
+                ...testVal,
+            },
         ],
         initialValues: [
             {
-                ...testVal
-            }
-        ]
+                ...testVal,
+            },
+        ],
     };
 
     test('Action REINIT', () => {
         const newState = reducer(initialState, {
             type: StandardValuesActionTypes.REINIT,
             data: {
-                values: [{id_value: '98765', value: 'test'}]
-            }
+                values: [{id_value: '98765', value: 'test'}],
+            },
         });
 
         expect(newState.values).toHaveLength(1);
@@ -39,7 +39,7 @@ describe('StandardValuesReducer', () => {
 
     test('Action ADD', () => {
         const newState = reducer(initialState, {
-            type: StandardValuesActionTypes.ADD
+            type: StandardValuesActionTypes.ADD,
         });
 
         expect(newState.values).toHaveLength(2);
@@ -50,8 +50,8 @@ describe('StandardValuesReducer', () => {
             type: StandardValuesActionTypes.CHANGE,
             data: {
                 valueIndex: 0,
-                newValue: 'new_val'
-            }
+                newValue: 'new_val',
+            },
         });
 
         expect(newState.values[0].value).toBe('new_val');
@@ -63,9 +63,9 @@ describe('StandardValuesReducer', () => {
             {
                 type: StandardValuesActionTypes.SUBMIT,
                 data: {
-                    valueIndex: 0
-                }
-            }
+                    valueIndex: 0,
+                },
+            },
         );
 
         expect(newState.initialValues[0].value).toBe('submitted_val');
@@ -76,8 +76,8 @@ describe('StandardValuesReducer', () => {
             {...initialState, values: [{...testVal}, {...testVal}]},
             {
                 type: StandardValuesActionTypes.DELETE,
-                data: {valueIndex: 1}
-            }
+                data: {valueIndex: 1},
+            },
         );
 
         expect(newState.values).toHaveLength(1);
@@ -85,7 +85,7 @@ describe('StandardValuesReducer', () => {
 
     test('Action DELETE: delete value and insert new one if empty', () => {
         const newState = reducer(initialState, {
-            type: StandardValuesActionTypes.DELETE
+            type: StandardValuesActionTypes.DELETE,
         });
 
         expect(newState.values).toHaveLength(1);
@@ -98,9 +98,9 @@ describe('StandardValuesReducer', () => {
             {
                 type: StandardValuesActionTypes.CANCEL,
                 data: {
-                    valueIndex: 0
-                }
-            }
+                    valueIndex: 0,
+                },
+            },
         );
 
         expect(newState.values[0].value).toBe('test_val');

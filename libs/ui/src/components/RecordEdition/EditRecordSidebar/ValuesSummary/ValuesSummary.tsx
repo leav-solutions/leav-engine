@@ -43,7 +43,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
     record,
     attributeId,
     globalValues = [],
-    calculatedValue
+    calculatedValue,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -61,8 +61,8 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                 from: value.from,
                 to: value.to,
                 interpolation: {
-                    escapeValue: false
-                }
+                    escapeValue: false,
+                },
             });
         }
 
@@ -96,7 +96,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                     style={{
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        justifyContent: 'space-between'
+                                                        justifyContent: 'space-between',
                                                     }}
                                                 >
                                                     <span>
@@ -113,9 +113,9 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                     key: `${calculatedValueKey}-0`,
                                                     title: stripedCalculatedValue ?? (
                                                         <i>{t('record_summary.no_value')}</i>
-                                                    )
-                                                }
-                                            ]
+                                                    ),
+                                                },
+                                            ],
                                         },
                                         {
                                             key: globalValueKey,
@@ -124,7 +124,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                     style={{
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        justifyContent: 'space-between'
+                                                        justifyContent: 'space-between',
                                                     }}
                                                 >
                                                     <span>
@@ -137,25 +137,25 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                 stripedGlobalValues.length > 0
                                                     ? stripedGlobalValues.map((value, index) => ({
                                                           key: `${globalValueKey}-${index}`,
-                                                          title: value
+                                                          title: value,
                                                       }))
                                                     : [
                                                           {
                                                               key: `${globalValueKey}-${0}`,
-                                                              title: <i>{t('record_summary.no_value')}</i>
-                                                          }
-                                                      ]
-                                        }
+                                                              title: <i>{t('record_summary.no_value')}</i>,
+                                                          },
+                                                      ],
+                                        },
                                     ]}
                                 />
                             </InformationsWrapper>
-                        )
+                        ),
                     },
                     {
                         key: 'history',
                         label: t('record_summary.history'),
-                        tabContent: <RecordHistory record={record} attributeId={attributeId} />
-                    }
+                        tabContent: <RecordHistory record={record} attributeId={attributeId} />,
+                    },
                 ]}
             />
         </StyledDivContentWrapper>

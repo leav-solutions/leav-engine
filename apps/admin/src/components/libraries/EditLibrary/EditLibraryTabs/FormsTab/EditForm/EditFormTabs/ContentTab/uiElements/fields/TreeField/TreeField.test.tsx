@@ -11,7 +11,7 @@ describe('TreeField', () => {
         const comp = render(
             <MockedLangContextProvider>
                 <TreeField settings={{}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(comp).toMatchSnapshot();

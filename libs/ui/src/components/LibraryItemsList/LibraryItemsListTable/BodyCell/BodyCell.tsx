@@ -46,12 +46,12 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
             flex: '1 0 auto',
             maxWidth: INFOS_COLUMN_WIDTH,
             minWidth: INFOS_COLUMN_WIDTH,
-            zIndex: 3
+            zIndex: 3,
         };
     }
 
     const cellError = searchReducer.state.errors.find(
-        err => err.extensions.record?.id === cell.row.original.record.id && err.extensions.fields[cell.column.id]
+        err => err.extensions.record?.id === cell.row.original.record.id && err.extensions.fields[cell.column.id],
     );
 
     const data = {
@@ -61,7 +61,7 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
         label: cell?.value?.label,
         value: cell?.value?.value,
         type: cell?.value?.type,
-        format: cell?.value?.format
+        format: cell?.value?.format,
     };
 
     if (cellError) {

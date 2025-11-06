@@ -10,5 +10,5 @@ export const filtersInitialState: IUIFiltersState = {
     filters: [],
     initialFilters: [],
     attributesDataById: {},
-    loading: false
+    loading: false,
 };

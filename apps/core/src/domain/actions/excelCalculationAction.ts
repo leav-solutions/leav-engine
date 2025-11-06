@@ -10,7 +10,7 @@ import {
     ActionsListIOTypes,
     type ActionsListValueType,
     type IActionsListContext,
-    type IActionsListFunction
+    type IActionsListFunction,
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 import {type IConfig} from '_types/config';
@@ -26,12 +26,12 @@ type ActionsListExcelValueType = string | number | boolean | {};
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable,
     'core.utils.logger': logger,
-    config
+    config,
 }: IDeps): IActionsListFunction<{Formula: true; Description: true}> {
     const _processReplacement = async (
         context: IActionsListContext,
         initialValues: ActionsListValueType[],
-        variable: string
+        variable: string,
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
         return variableValues.flatMap(v => v.raw_payload ?? v.payload ?? []).join(' ');
@@ -42,7 +42,7 @@ export default function ({
         regex: RegExp,
         asyncFn: (...args: any[]) => Promise<any>,
         context: IActionsListContext,
-        values: ActionsListValueType[]
+        values: ActionsListValueType[],
     ): Promise<string> => {
         if (!str) {
             return '';
@@ -63,7 +63,7 @@ export default function ({
     const _replaceVariables = async (
         formula: string,
         context: IActionsListContext,
-        values: ActionsListValueType[]
+        values: ActionsListValueType[],
     ): Promise<string> => {
         const regExp = /{([^{}]*)}/g;
         return _replaceAsync(formula, regExp, _processReplacement, context, values);
@@ -73,7 +73,7 @@ export default function ({
     const actionWithHyperformula: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
         values,
         params,
-        ctx
+        ctx,
     ) => {
         const {Formula: formula} = params;
 
@@ -89,10 +89,10 @@ export default function ({
                         created_at: null,
                         created_by: null,
                         payload: '',
-                        raw_payload: ''
-                    }
+                        raw_payload: '',
+                    },
                 ],
-                errors: []
+                errors: [],
             };
         }
 
@@ -100,12 +100,12 @@ export default function ({
         const finalFormula = await _replaceVariables(
             `=${formula}`,
             ctx,
-            values.map(v => v.payload)
+            values.map(v => v.payload),
         );
 
         // Simulate a sheet with only one cell containing the formula
         const hfInstance = HyperFormula.buildFromArray([[finalFormula]], {
-            licenseKey: 'gpl-v3'
+            licenseKey: 'gpl-v3',
         });
 
         const result = hfInstance.getCellValue({sheet: 0, col: 0, row: 0});
@@ -118,9 +118,9 @@ export default function ({
                     {
                         errorType: Errors.EXCEL_CALCULATION_ERROR,
                         attributeValue: null,
-                        message: `Error: ${result.message} in formula: -- ${finalFormula} --`
-                    }
-                ]
+                        message: `Error: ${result.message} in formula: -- ${finalFormula} --`,
+                    },
+                ],
             };
         }
         debug && logger.debug(`Excel calculation with hyperformula: ${finalFormula} => ${result}`);
@@ -133,7 +133,7 @@ export default function ({
             created_at: null,
             created_by: null,
             payload: String(result),
-            raw_payload: String(result)
+            raw_payload: String(result),
         };
 
         return {values: [...values, finalResult], errors: []};
@@ -142,14 +142,14 @@ export default function ({
     const actionWithHotFormulaParser: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
         values,
         params,
-        ctx
+        ctx,
     ) => {
         const {Formula: formula} = params;
 
         const finalFormula = await _replaceVariables(
             formula,
             ctx,
-            values.map(v => v.payload)
+            values.map(v => v.payload),
         );
 
         const parser = new Parser();
@@ -164,9 +164,9 @@ export default function ({
                     {
                         errorType: Errors.EXCEL_CALCULATION_ERROR,
                         attributeValue: null,
-                        message: `Error: ${error} in formula: -- ${finalFormula} --`
-                    }
-                ]
+                        message: `Error: ${error} in formula: -- ${finalFormula} --`,
+                    },
+                ],
             };
         }
         debug && logger.debug(`Excel calculation with hot-formula-parser: ${finalFormula} => ${result}`);
@@ -179,7 +179,7 @@ export default function ({
             created_at: null,
             created_by: null,
             payload: String(result),
-            raw_payload: String(result)
+            raw_payload: String(result),
         };
 
         return {values: [...values, finalResult], errors: []};
@@ -198,16 +198,16 @@ export default function ({
                 type: 'string',
                 description: 'Quick description of your calculation',
                 required: true,
-                helper_value: 'Your description'
+                helper_value: 'Your description',
             },
             {
                 name: 'Formula',
                 type: 'string',
                 description: 'Excel formula to perform, place variables like so : {attribute_identifier}',
                 required: true,
-                helper_value: '21*2'
-            }
+                helper_value: '21*2',
+            },
         ],
-        action: config.actions.excel.useNewHyperformula ? actionWithHyperformula : actionWithHotFormulaParser
+        action: config.actions.excel.useNewHyperformula ? actionWithHyperformula : actionWithHotFormulaParser,
     };
 }

@@ -16,12 +16,12 @@ export const mustIncludeElement = async (
     libraryId: string,
     {
         'core.domain.record': recordDomain = null,
-        'core.domain.tree': treeDomain = null
+        'core.domain.tree': treeDomain = null,
     }: {
         'core.domain.record'?: IRecordDomain;
         'core.domain.tree'?: ITreeDomain;
     },
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<boolean> => {
     if (!element.dependencyValue) {
         return true;
@@ -34,9 +34,9 @@ export const mustIncludeElement = async (
               attributeId: element.dependencyValue.attribute,
               record: {
                   id: recordId,
-                  library: libraryId
+                  library: libraryId,
               },
-              ctx
+              ctx,
           })
         : [];
 
@@ -52,7 +52,7 @@ export const mustIncludeElement = async (
         const ancestors = await treeDomain.getElementAncestors({
             treeId: depValue.treeId,
             nodeId: depValue.payload.id,
-            ctx
+            ctx,
         });
         isFound = ancestors.some(ancestor => ancestor.id === element.dependencyValue.value);
         if (isFound) {

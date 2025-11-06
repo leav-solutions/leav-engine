@@ -30,6 +30,6 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
     return {
         async run(ctx) {
             await _deleteInstallApps(ctx);
-        }
+        },
     };
 }

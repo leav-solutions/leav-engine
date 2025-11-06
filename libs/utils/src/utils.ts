@@ -149,7 +149,7 @@ export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: strin
 export const nameValArrayToObj = (
     arr: Array<{}> = [],
     keyFieldName = 'name',
-    valueFieldName = 'value'
+    valueFieldName = 'value',
 ): {[key: string]: any} =>
     Array.isArray(arr) && arr.length
         ? arr.reduce((formattedElem, elem) => {
@@ -275,7 +275,7 @@ export const getFlagByLang = (lang: string): string => {
         ru: '🇷🇺', // Russian
         pt: '🇵🇹', // Portuguese
         ja: '🇯🇵', // Japanese
-        ko: '🇰🇷' // Korean
+        ko: '🇰🇷', // Korean
     };
 
     return flagsByLang[lang] ?? '';
@@ -285,7 +285,7 @@ export const getLogsIndexName = (indexPrefix: string, instanceId: string): strin
 
 export const waitFor = async (
     predicate: () => Promise<boolean> | boolean,
-    options: {timeout?: number; interval?: number} = {}
+    options: {timeout?: number; interval?: number} = {},
 ): Promise<boolean> => {
     const {timeout = 5000, interval = 250} = options;
     const startTime = Date.now();

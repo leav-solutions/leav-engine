@@ -16,7 +16,7 @@ describe('endpointApp', () => {
         path: '/test',
         handlers: [jest.fn()],
         method: 'get',
-        isProtected: true
+        isProtected: true,
     } satisfies IPluginRoute;
 
     beforeEach(() => {
@@ -26,7 +26,7 @@ describe('endpointApp', () => {
     it('Should expose an extensionPoints.registerRoutes', async () => {
         const endpointApp = createEndpointApp({
             'core.app.helpers.initQueryContext': initQueryContext({}),
-            'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+            'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
         });
 
         expect(endpointApp.extensionPoints?.registerRoutes).toBeDefined();
@@ -35,11 +35,11 @@ describe('endpointApp', () => {
     it('Should register all methods in ExpressApp provided in extensionPoints', async () => {
         const endpointApp = createEndpointApp({
             'core.app.helpers.initQueryContext': initQueryContext({}),
-            'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+            'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
         });
         endpointApp.extensionPoints.registerRoutes([
             ['/test', 'get', [jest.fn()]],
-            ['/mock', 'post', [jest.fn()]]
+            ['/mock', 'post', [jest.fn()]],
         ]);
 
         endpointApp.registerRoute(expressApp as unknown as Express);
@@ -58,14 +58,14 @@ describe('endpointApp', () => {
                 lang: 'fr',
                 queryId: 'requestId',
                 groupsId: [],
-                errors: []
+                errors: [],
             });
         });
 
         it('Should call extends request and call next() if user is authenticated', async () => {
             const endpointApp = createEndpointApp({
                 'core.app.helpers.initQueryContext': mockInitQueryContext,
-                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
             });
             endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers]]);
 
@@ -79,18 +79,18 @@ describe('endpointApp', () => {
 
             expect(request).toEqual({
                 body: {
-                    requestId: 'requestId'
+                    requestId: 'requestId',
                 },
                 ctx: {
                     errors: [],
                     groupsId: 'groupsId',
                     lang: 'fr',
                     queryId: 'requestId',
-                    userId: 'userId'
+                    userId: 'userId',
                 },
                 query: {
-                    lang: 'fr'
-                }
+                    lang: 'fr',
+                },
             });
             expect(nextMock).toHaveBeenCalledTimes(1);
             expect(nextMock).toHaveBeenCalledWith();
@@ -99,7 +99,7 @@ describe('endpointApp', () => {
         it('Should call extends request and call next() with error if user is not authenticated', async () => {
             const endpointApp = createEndpointApp({
                 'core.app.helpers.initQueryContext': mockInitQueryContext,
-                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
             });
             endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers]]);
 
@@ -113,18 +113,18 @@ describe('endpointApp', () => {
 
             expect(request).toEqual({
                 body: {
-                    requestId: 'requestId'
+                    requestId: 'requestId',
                 },
                 ctx: {
                     errors: [],
                     groupsId: [],
                     lang: 'fr',
                     queryId: 'requestId',
-                    userId: null
+                    userId: null,
                 },
                 query: {
-                    lang: 'fr'
-                }
+                    lang: 'fr',
+                },
             });
 
             expect(nextMock).toHaveBeenCalledTimes(1);
@@ -136,21 +136,21 @@ describe('endpointApp', () => {
                 getValues: global.__mockPromise([
                     {
                         payload: {
-                            id: '123456'
-                        }
-                    }
-                ])
+                            id: '123456',
+                        },
+                    },
+                ]),
             };
 
             const mockConfig: Partial<IConfig> = {
-                defaultUserId: '2'
+                defaultUserId: '2',
             };
 
             const endpointApp = createEndpointApp({
                 'core.app.helpers.initQueryContext': mockInitQueryContext,
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
                 'core.domain.value': mockValueDomain as IValueDomain,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers, false]]);
@@ -166,18 +166,18 @@ describe('endpointApp', () => {
 
             expect(request).toEqual({
                 body: {
-                    requestId: 'requestId'
+                    requestId: 'requestId',
                 },
                 ctx: {
                     userId: mockConfig.defaultUserId, // default user id
                     groupsId: ['123456'],
                     errors: [],
                     lang: 'fr',
-                    queryId: 'requestId'
+                    queryId: 'requestId',
                 },
                 query: {
-                    lang: 'fr'
-                }
+                    lang: 'fr',
+                },
             });
             expect(nextMock).toHaveBeenCalledTimes(1);
             expect(nextMock).toHaveBeenCalledWith();

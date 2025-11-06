@@ -17,13 +17,13 @@ jest.mock(
     () =>
         function MetadataList() {
             return <div>MetadataList</div>;
-        }
+        },
 );
 
 describe('MetadataTab', () => {
     const attribute = {
         ...mockAttrAdv,
-        label: {fr: 'Test 1', en: null}
+        label: {fr: 'Test 1', en: null},
     };
 
     test('Render list', async () => {
@@ -41,8 +41,8 @@ describe('MetadataTab', () => {
                 request: {
                     query: saveAttributeQuery,
                     variables: {
-                        attrData: {id: attribute.id, metadata_fields: ['field1', 'field2']}
-                    }
+                        attrData: {id: attribute.id, metadata_fields: ['field1', 'field2']},
+                    },
                 },
                 result: () => {
                     saveQueryCalled = true;
@@ -59,7 +59,7 @@ describe('MetadataTab', () => {
                                         format: AttributeFormat.text,
                                         label: {fr: 'field1'},
                                         description: {fr: 'field1'},
-                                        __typename: 'Attribute'
+                                        __typename: 'Attribute',
                                     },
                                     {
                                         id: 'field2',
@@ -67,18 +67,18 @@ describe('MetadataTab', () => {
                                         format: AttributeFormat.text,
                                         label: {fr: 'field2'},
                                         description: {fr: 'field1'},
-                                        __typename: 'Attribute'
-                                    }
-                                ]
-                            }
-                        }
+                                        __typename: 'Attribute',
+                                    },
+                                ],
+                            },
+                        },
                     };
-                }
+                },
             },
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: {id: attribute.id}
+                    variables: {id: attribute.id},
                 },
                 result: {
                     data: {
@@ -97,7 +97,7 @@ describe('MetadataTab', () => {
                                             format: AttributeFormat.text,
                                             label: {fr: 'field1'},
                                             description: {fr: 'field1'},
-                                            __typename: 'Attribute'
+                                            __typename: 'Attribute',
                                         },
                                         {
                                             id: 'field2',
@@ -105,15 +105,15 @@ describe('MetadataTab', () => {
                                             format: AttributeFormat.text,
                                             label: {fr: 'field2'},
                                             description: {fr: 'field2'},
-                                            __typename: 'Attribute'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                            __typename: 'Attribute',
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         let comp;
@@ -121,7 +121,7 @@ describe('MetadataTab', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
                     <MetadataTab attribute={attribute} readonly={false} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

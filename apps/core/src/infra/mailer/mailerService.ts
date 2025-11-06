@@ -30,7 +30,7 @@ interface ISendMailParams {
 export default function ({
     config,
     'core.domain.globalSettings': globalSettingsDomain,
-    'core.infra.mailer': mailer
+    'core.infra.mailer': mailer,
 }: IDeps): IMailerService {
     return {
         mailer,
@@ -46,8 +46,8 @@ export default function ({
                 subject,
                 text,
                 html,
-                attachments: attachments as Attachment[]
+                attachments: attachments as Attachment[],
             });
-        }
+        },
     };
 }

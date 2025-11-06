@@ -12,7 +12,7 @@ import {Icon} from 'semantic-ui-react';
 import {
     type GET_ATTRIBUTES,
     type GET_ATTRIBUTESVariables,
-    type GET_ATTRIBUTES_attributes_list
+    type GET_ATTRIBUTES_attributes_list,
 } from '_gqlTypes/GET_ATTRIBUTES';
 import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
@@ -27,7 +27,7 @@ interface IPermissionsAttributeSelectorProps {
 function PermissionsAttributeSelector({
     library,
     selectedAttributes,
-    onSelectAttribute
+    onSelectAttribute,
 }: IPermissionsAttributeSelectorProps): JSX.Element {
     const {t} = useTranslation();
     const [isListExpanded, setIsListExpanded] = useState(false);
@@ -36,9 +36,9 @@ function PermissionsAttributeSelector({
         {
             variables: {
                 libraries: library ? [library.id] : null,
-                type: [AttributeType.tree]
-            }
-        }
+                type: [AttributeType.tree],
+            },
+        },
     );
 
     useEffect(() => {
@@ -59,7 +59,7 @@ function PermissionsAttributeSelector({
     };
 
     const attributesList = (data?.attributes?.list ?? []).filter(
-        attribute => !selectedAttributes.includes(attribute.id)
+        attribute => !selectedAttributes.includes(attribute.id),
     );
 
     return (

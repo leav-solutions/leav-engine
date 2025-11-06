@@ -8,7 +8,7 @@ const fetchMock = jest.fn();
 global.fetch = fetchMock;
 
 jest.mock('_ui/constants', () => ({
-    GLOBAL_BASE_URL: '/global-base'
+    GLOBAL_BASE_URL: '/global-base',
 }));
 
 describe('useLoginChecker', () => {
@@ -17,18 +17,18 @@ describe('useLoginChecker', () => {
             const {result} = renderHook(() => useLoginChecker());
             const failedResponse = {
                 ok: false,
-                statusText: 'statusText'
+                statusText: 'statusText',
             };
             fetchMock.mockResolvedValueOnce(failedResponse);
 
             await expect(result.current.loginChecker()).rejects.toThrow(
-                new Error(failedResponse.statusText, {cause: failedResponse})
+                new Error(failedResponse.statusText, {cause: failedResponse}),
             );
 
             expect(fetchMock).toHaveBeenCalledTimes(1);
             expect(fetchMock).toHaveBeenCalledWith('/global-base/auth/login-checker', {
                 headers: {'Content-Type': 'application/json'},
-                method: 'POST'
+                method: 'POST',
             });
         });
     });

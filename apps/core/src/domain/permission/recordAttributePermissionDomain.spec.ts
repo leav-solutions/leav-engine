@@ -9,7 +9,7 @@ import {type IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/defaultPermission';
 import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import recordAttributePermissionDomain, {
-    type IRecordAttributePermissionDomainDeps
+    type IRecordAttributePermissionDomainDeps,
 } from './recordAttributePermissionDomain';
 import {type ToAny} from 'utils/utils';
 
@@ -21,17 +21,17 @@ const depsBase: ToAny<IRecordAttributePermissionDomainDeps> = {
     'core.domain.permission.helpers.recordInCreationBypass': jest.fn(),
     'core.domain.attribute': jest.fn(),
     'core.infra.record': jest.fn(),
-    'core.infra.value': jest.fn()
+    'core.infra.value': jest.fn(),
 };
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'attributePermissionDomainTest'
+        queryId: 'attributePermissionDomainTest',
     };
     describe('getAttributePermission', () => {
         const mockTreeBasedPerm = {
-            getTreeBasedPermission: global.__mockPromise(true)
+            getTreeBasedPermission: global.__mockPromise(true),
         } satisfies Mockify<ITreeBasedPermissionHelper>;
 
         const defaultPerm = false;
@@ -41,9 +41,9 @@ describe('AttributePermissionDomain', () => {
                 id: 'test_attr',
                 permissions_conf: {
                     permissionTreeAttributes: ['category'],
-                    relation: PermissionsRelations.AND
-                }
-            })
+                    relation: PermissionsRelations.AND,
+                },
+            }),
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
@@ -56,9 +56,9 @@ describe('AttributePermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'category'
-                                }
-                            }
+                                    library: 'category',
+                                },
+                            },
                         };
                         break;
                     case 'test_attr':
@@ -67,9 +67,9 @@ describe('AttributePermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'category'
-                                }
-                            }
+                                    library: 'category',
+                                },
+                            },
                         };
                         break;
                     case 'user_groups':
@@ -78,15 +78,15 @@ describe('AttributePermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'users_groups'
-                                }
-                            }
+                                    library: 'users_groups',
+                                },
+                            },
                         };
                         break;
                 }
 
                 return Promise.resolve([val]);
-            })
+            }),
         };
 
         test('Return permission', async () => {
@@ -96,7 +96,7 @@ describe('AttributePermissionDomain', () => {
                 ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as IValueRepo,
             });
 
             const perm = await recordAttrPermDomain.getRecordAttributePermission(
@@ -105,7 +105,7 @@ describe('AttributePermissionDomain', () => {
                 'test_attr',
                 'test_lib',
                 '987654',
-                ctx
+                ctx,
             );
 
             expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
@@ -117,12 +117,12 @@ describe('AttributePermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default');
             const mockAttrNoPermsDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
-                    id: 'test_attr'
-                })
+                    id: 'test_attr',
+                }),
             };
 
             const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(defaultPerm)
+                getAttributePermission: global.__mockPromise(defaultPerm),
             };
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
@@ -130,7 +130,7 @@ describe('AttributePermissionDomain', () => {
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as IValueRepo,
             });
 
             const perm = await recordAttrPermDomain.getRecordAttributePermission(
@@ -139,7 +139,7 @@ describe('AttributePermissionDomain', () => {
                 'test_attr',
                 'test_lib',
                 '987654',
-                ctx
+                ctx,
             );
 
             expect(mockAttrPermDomain.getAttributePermission).toBeCalled();

@@ -87,6 +87,6 @@ export const defaultLoggerConfig: ILoggerConfig & Required<Omit<ILoggerConfig, '
         app: process.env.LOG_ADDITIONAL_META_APP,
         client: process.env.LOG_ADDITIONAL_META_CLIENT,
         env: process.env.LOG_ADDITIONAL_META_ENV,
-        version: process.env.LOG_ADDITIONAL_META_VERSION
-    }
+        version: process.env.LOG_ADDITIONAL_META_VERSION,
+    },
 };

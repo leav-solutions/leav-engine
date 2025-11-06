@@ -18,7 +18,7 @@ describe('getPermissionCacheKey', () => {
         expect(cacheKey).toBe(
             `${PERMISSIONS_CACHE_HEADER}:${groupsId
                 .sort()
-                .join('+')}:${permissionType}:${applyTo}:${permissionAction}:${key}`
+                .join('+')}:${permissionType}:${applyTo}:${permissionAction}:${key}`,
         );
     });
 
@@ -42,7 +42,7 @@ describe('getPermissionCacheKey', () => {
         const cacheKey = getPermissionCachePatternKey({groupsId, applyTo, permissionAction, key});
 
         expect(cacheKey).toBe(
-            `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:*:${applyTo}:${permissionAction}:${key}`
+            `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:*:${applyTo}:${permissionAction}:${key}`,
         );
     });
 
@@ -55,7 +55,7 @@ describe('getPermissionCacheKey', () => {
         const cacheKey = getPermissionCachePatternKey({groupsId, permissionType, permissionAction, key});
 
         expect(cacheKey).toBe(
-            `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:${permissionType}:*:${permissionAction}:${key}`
+            `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:${permissionType}:*:${permissionAction}:${key}`,
         );
     });
 
@@ -68,7 +68,7 @@ describe('getPermissionCacheKey', () => {
         const cacheKey = getPermissionCachePatternKey({groupsId, permissionType, applyTo, key});
 
         expect(cacheKey).toBe(
-            `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:${permissionType}:${applyTo}:*:${key}`
+            `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:${permissionType}:${applyTo}:*:${key}`,
         );
     });
 
@@ -84,7 +84,7 @@ describe('getPermissionCacheKey', () => {
         expect(cacheKey).toBe(
             `${PERMISSIONS_CACHE_HEADER}:${groupsId
                 .sort()
-                .join('+')}:${permissionType}:${applyTo}:${permissionAction}:*`
+                .join('+')}:${permissionType}:${applyTo}:${permissionAction}:*`,
         );
     });
 });

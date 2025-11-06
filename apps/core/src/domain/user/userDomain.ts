@@ -38,7 +38,7 @@ export interface IUserDomain {
         browser: string,
         os: string,
         lang: 'fr' | 'en',
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void>;
 }
 
@@ -55,7 +55,7 @@ export interface IUserDomainDeps {
 }
 
 export enum UserCoreDataKeys {
-    CONSULTED_APPS = 'applications_consultation'
+    CONSULTED_APPS = 'applications_consultation',
 }
 
 export default function ({
@@ -66,14 +66,14 @@ export default function ({
     'core.infra.mailer.mailerService': mailerService,
     'core.domain.globalSettings': globalSettingsDomain,
     'core.utils': utils,
-    translator
+    translator,
 }: IUserDomainDeps): IUserDomain {
     const getUserEmail = async (userId: string, ctx: IQueryInfos): Promise<string | null> => {
         const values = await valueDomain.getValues({
             library: USERS_LIBRARY,
             recordId: userId,
             attribute: 'email',
-            ctx
+            ctx,
         });
         if (!values?.[0].payload) {
             throw new Error(`User ${userId} has no email defined`);
@@ -85,7 +85,7 @@ export default function ({
         async getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity> {
             return {
                 id: userId,
-                getEmail: () => getUserEmail(userId, ctx)
+                getEmail: () => getUserEmail(userId, ctx),
             };
         },
         async sendResetPasswordEmail(
@@ -95,7 +95,7 @@ export default function ({
             browser: string,
             os: string,
             lang: 'fr' | 'en', // FIXME: temporary
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<void> {
             const html = await readFile(__dirname + `/resetPassword_${lang}.html`, {encoding: 'utf-8'});
             const template = handlebars.compile(html);
@@ -108,16 +108,16 @@ export default function ({
                 resetPasswordUrl: `${config.server.publicUrl}/${loginAppEndpoint}/reset-password/${token}`,
                 supportEmail: config.server.supportEmail,
                 browser,
-                appName: globalSettings.name
+                appName: globalSettings.name,
             });
 
             await mailerService.sendEmail(
                 {
                     to: email,
                     subject: translator.t('mailer.reset_password_subject', {lng: lang}),
-                    html: htmlWithData
+                    html: htmlWithData,
                 },
-                ctx
+                ctx,
             );
         },
         async saveUserData({key, value, global, isCoreData = false, ctx}: ISaveUserDataParams): Promise<IUserData> {
@@ -131,7 +131,7 @@ export default function ({
                     type: PermissionTypes.ADMIN,
                     action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
                     userId: ctx.userId,
-                    ctx
+                    ctx,
                 }))
             ) {
                 throw new PermissionError(AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
@@ -144,7 +144,7 @@ export default function ({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (global && !isAllowed) {
@@ -163,6 +163,6 @@ export default function ({
             }
 
             return res;
-        }
+        },
     };
 }

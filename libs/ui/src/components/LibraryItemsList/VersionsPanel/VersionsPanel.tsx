@@ -56,14 +56,14 @@ function VersionsPanel(): JSX.Element {
 
     const _handleHidePanel = () => {
         searchDispatch({
-            type: SearchActionTypes.TOGGLE_SIDEBAR
+            type: SearchActionTypes.TOGGLE_SIDEBAR,
         });
     };
 
     const _handleVersionChange = (version: IValueVersion) => {
         searchDispatch({
             type: SearchActionTypes.SET_VALUES_VERSIONS,
-            valuesVersions: version
+            valuesVersions: version,
         });
     };
 

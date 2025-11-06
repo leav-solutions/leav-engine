@@ -18,12 +18,12 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 jest.mock('react-router-dom', () => ({
     ...(jest.requireActual('react-router-dom') as {}),
-    useParams: () => ({token: '123456'})
+    useParams: () => ({token: '123456'}),
 }));
 
 const _renderComponent = (url = '/') =>
@@ -32,7 +32,7 @@ const _renderComponent = (url = '/') =>
             <MemoryRouter initialEntries={[url]}>
                 <ResetPassword />
             </MemoryRouter>
-        </KitApp>
+        </KitApp>,
     );
 
 const _enterPasswordsAndSubmit = () => {
@@ -61,7 +61,7 @@ describe('ResetPassword', () => {
     test('Type passwords in form and redirects to root', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 200,
-            ok: true
+            ok: true,
         });
 
         await act(async () => {
@@ -78,7 +78,7 @@ describe('ResetPassword', () => {
     test('Display message if token is invalid', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 401,
-            ok: false
+            ok: false,
         });
 
         await act(async () => {
@@ -96,7 +96,7 @@ describe('ResetPassword', () => {
     test('Display message if password is not valid', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 422,
-            ok: false
+            ok: false,
         });
 
         await act(async () => {

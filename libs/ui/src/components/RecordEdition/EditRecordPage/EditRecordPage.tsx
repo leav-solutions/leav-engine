@@ -70,7 +70,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     enableSidebar,
     showSidebar,
     sidebarContainer,
-    isSubmitButtonsPortal = false
+    isSubmitButtonsPortal = false,
 }) => {
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
@@ -80,7 +80,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
     const [purgeRecordMutation] = usePurgeRecordMutation();
     const [formId, setFormId] = useState<string>(
-        isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition')
+        isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition'),
     );
 
     const [formCreateButtonsContainer, setFormCreateButtonsContainer] = useState<HTMLElement>();
@@ -118,8 +118,8 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             errorPolicy: 'ignore',
             variables: {
                 libraryId: currentRecord?.library?.id,
-                recordId: currentRecord?.id
-            }
+                recordId: currentRecord?.id,
+            },
         });
 
     const _closeAfterConfirm = async () => {
@@ -135,7 +135,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         submitButtons,
         formElementId.current,
         isCreation,
-        _handleClickSubmit
+        _handleClickSubmit,
     );
     const [antdForm] = useForm();
 

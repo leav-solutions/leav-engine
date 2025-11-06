@@ -14,8 +14,8 @@ export const dataMock = [
             query: getLibraryByIdWithAttributes,
             variables: {
                 id: 'test',
-                lang
-            }
+                lang,
+            },
         },
         result: {
             data: {
@@ -24,7 +24,7 @@ export const dataMock = [
                         {
                             id: '1',
                             label: {
-                                fr: 'l1'
+                                fr: 'l1',
                             },
                             attributes: [
                                 {
@@ -32,23 +32,23 @@ export const dataMock = [
                                     type: '',
                                     format: '',
                                     label: {
-                                        fr: 'labela1'
-                                    }
+                                        fr: 'labela1',
+                                    },
                                 },
                                 {
                                     id: 'a2',
                                     type: '',
                                     format: '',
                                     label: {
-                                        fr: 'labela2'
-                                    }
-                                }
-                            ]
+                                        fr: 'labela2',
+                                    },
+                                },
+                            ],
                         },
                         {
                             id: '2',
                             label: {
-                                fr: 'l2'
+                                fr: 'l2',
                             },
                             attributes: [
                                 {
@@ -56,24 +56,24 @@ export const dataMock = [
                                     type: '',
                                     format: '',
                                     label: {
-                                        fr: 'labela1'
-                                    }
+                                        fr: 'labela1',
+                                    },
                                 },
                                 {
                                     id: 'a2',
                                     type: '',
                                     format: '',
                                     label: {
-                                        fr: 'labela2'
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
-            }
-        }
-    }
+                                        fr: 'labela2',
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+        },
+    },
 ];
 
 const errorText = 'too bad';
@@ -83,11 +83,11 @@ const errorMocks = [
             query: getLibraryByIdWithAttributes,
             variables: {
                 id: 'test',
-                lang
-            }
+                lang,
+            },
         },
-        error: new Error(errorText)
-    }
+        error: new Error(errorText),
+    },
 ];
 
 jest.mock(
@@ -95,7 +95,7 @@ jest.mock(
     () =>
         function TopPanel() {
             return <div>TopPanel</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -103,7 +103,7 @@ jest.mock(
     () =>
         function FiltersPanel() {
             return <div>FiltersPanel</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -111,7 +111,7 @@ jest.mock(
     () =>
         function ListPanel() {
             return <div>ListPanel</div>;
-        }
+        },
 );
 
 describe('<MainPanel />', () => {
@@ -119,7 +119,7 @@ describe('<MainPanel />', () => {
         const state = {
             ...initialState,
             selectedRoot: 'test',
-            lang
+            lang,
         };
         const dispatch = () => undefined;
         test('loading renders a loader', async () => {
@@ -162,14 +162,14 @@ describe('<MainPanel />', () => {
                     ...mockAttrSimple,
                     id: 'a1',
                     label: {
-                        fr: 'labela1'
+                        fr: 'labela1',
                     },
                     description: {
-                        fr: 'description'
-                    }
-                }
+                        fr: 'description',
+                    },
+                },
             ],
-            lang
+            lang,
         };
 
         render(<MainPanel state={state} dispatch={dispatch} />, {apolloMocks: dataMock});

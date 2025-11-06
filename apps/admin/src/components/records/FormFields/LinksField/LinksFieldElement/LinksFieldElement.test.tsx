@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function RecordCard() {
             return <div data-test-id="record_card" />;
-        }
+        },
 );
 
 jest.mock(
@@ -19,7 +19,7 @@ jest.mock(
     () =>
         function EditRecordModal() {
             return <div data-test-id="edit_record_modal" />;
-        }
+        },
 );
 
 describe('EditRecordFormLinksElement', () => {
@@ -33,17 +33,17 @@ describe('EditRecordFormLinksElement', () => {
                 library: {
                     id: 'test_lib',
                     label: {
-                        fr: 'Test Lib'
-                    }
+                        fr: 'Test Lib',
+                    },
                 },
                 label: 'TestLabel',
                 color: null,
-                preview: null
-            }
+                preview: null,
+            },
         },
         modified_at: 1234567890,
         created_at: 1234567890,
-        version: null
+        version: null,
     };
 
     test('Display record data', async () => {

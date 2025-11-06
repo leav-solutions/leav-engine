@@ -4,7 +4,7 @@
 import {
     type ValueDetailsLinkValueFragment,
     type ValueDetailsTreeValueFragment,
-    type ValueDetailsValueFragment
+    type ValueDetailsValueFragment,
 } from '_ui/_gqlTypes';
 import {type ITableCell} from '_ui/types';
 

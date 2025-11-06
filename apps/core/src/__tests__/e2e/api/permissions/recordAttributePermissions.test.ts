@@ -10,7 +10,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('RecordAttributePermissions', () => {
@@ -29,7 +29,7 @@ describe('RecordAttributePermissions', () => {
             id: permAttrName,
             type: AttributeTypes.SIMPLE,
             label: 'Test attr',
-            format: AttributeFormats.TEXT
+            format: AttributeFormats.TEXT,
         });
         await gqlSaveLibrary(permTreeLibName, 'Test Lib');
         await gqlSaveTree(permTreeName, 'Test tree', [permTreeLibName]);
@@ -88,7 +88,7 @@ describe('RecordAttributePermissions', () => {
             expect(resGetAttrPerm.status).toBe(200);
             expect(resGetAttrPerm.data.data.permissions).toEqual([
                 {name: 'access_attribute', allowed: true},
-                {name: 'edit_value', allowed: false}
+                {name: 'edit_value', allowed: false},
             ]);
             expect(resGetAttrPerm.data.errors).toBeUndefined();
         });
@@ -110,7 +110,7 @@ describe('RecordAttributePermissions', () => {
             nodeGroup2 = await gqlAddElemToTree(
                 'users_groups',
                 {id: userGroupId2, library: 'users_groups'},
-                nodeGroup1
+                nodeGroup1,
             );
 
             // User groups tree: [ROOT] -> group 1 -> group 2

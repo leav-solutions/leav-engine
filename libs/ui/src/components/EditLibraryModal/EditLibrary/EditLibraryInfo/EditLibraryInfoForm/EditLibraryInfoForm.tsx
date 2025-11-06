@@ -12,7 +12,7 @@ import {
     AttributeType,
     type GetLibraryByIdQuery,
     LibraryBehavior,
-    type LibraryLinkAttributeDetailsFragment
+    type LibraryLinkAttributeDetailsFragment,
 } from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
@@ -38,7 +38,7 @@ function EditLibraryInfoForm({
     onSubmitField,
     onCheckLibraryUniqueness,
     loading,
-    readOnly
+    readOnly,
 }: IEditLibraryInfoFormProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang, availableLangs, defaultLang} = useLang();
@@ -52,7 +52,7 @@ function EditLibraryInfoForm({
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
             interpolation: {escapeValue: false},
-            fieldName: t(`libraries.${field}`)
+            fieldName: t(`libraries.${field}`),
         });
 
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +119,7 @@ function EditLibraryInfoForm({
               ...availableLangs.reduce((acc, availableLang) => {
                   acc[`label_${availableLang}`] = library.label[availableLang] ?? '';
                   return acc;
-              }, {})
+              }, {}),
           }
         : {};
 
@@ -128,16 +128,16 @@ function EditLibraryInfoForm({
         .reduce(
             (acc, confKey) => ({
                 ...acc,
-                [`recordIdentityConf_${confKey}`]: libRecordIdentityConf[confKey] ?? null
+                [`recordIdentityConf_${confKey}`]: libRecordIdentityConf[confKey] ?? null,
             }),
-            {}
+            {},
         );
 
     const formInitValues = {
         behavior: LibraryBehavior.standard,
         ...librarySettings,
         ...label,
-        ...recordIdentityConf
+        ...recordIdentityConf,
     };
 
     const _getFieldState = (field: string) => {
@@ -155,13 +155,13 @@ function EditLibraryInfoForm({
     const _toAttributeSelectOption = a => ({
         key: a.id,
         value: a.id,
-        label: localizedTranslation(a.label, lang) || a.id
+        label: localizedTranslation(a.label, lang) || a.id,
     });
 
     const behaviorOptions = Object.values(LibraryBehavior).map(b => ({
         key: b,
         value: b,
-        label: t(`libraries.behavior_${b}`)
+        label: t(`libraries.behavior_${b}`),
     }));
 
     const attributesOptions = (library?.attributes ?? []).map(_toAttributeSelectOption);
@@ -170,7 +170,7 @@ function EditLibraryInfoForm({
         .filter(
             a =>
                 (a.type === AttributeType.simple_link || a.type === AttributeType.advanced_link) &&
-                (a as LibraryLinkAttributeDetailsFragment).linked_library?.behavior === LibraryBehavior.files
+                (a as LibraryLinkAttributeDetailsFragment).linked_library?.behavior === LibraryBehavior.files,
         )
         .map(_toAttributeSelectOption);
 
@@ -181,24 +181,24 @@ function EditLibraryInfoForm({
     const recordIdentityFields = [
         {
             fieldName: 'label',
-            options: attributesOptions
+            options: attributesOptions,
         },
         {
             fieldName: 'subLabel',
-            options: attributesOptions
+            options: attributesOptions,
         },
         {
             fieldName: 'preview',
-            options: filesLinkAttributesOptions
+            options: filesLinkAttributesOptions,
         },
         {
             fieldName: 'color',
-            options: attributesOptions
+            options: attributesOptions,
         },
         {
             fieldName: 'treeColorPreview',
-            options: treeAttributesOptions
-        }
+            options: treeAttributesOptions,
+        },
     ];
 
     return (
@@ -220,7 +220,7 @@ function EditLibraryInfoForm({
                         labelCol={{span: 2}}
                         wrapperCol={{span: 22}}
                         rules={[
-                            {required: availableLang === defaultLang, message: t('errors.default_language_required')}
+                            {required: availableLang === defaultLang, message: t('errors.default_language_required')},
                         ]}
                         style={{marginBottom: '0.5rem'}}
                     >
@@ -246,8 +246,8 @@ function EditLibraryInfoForm({
                     {
                         validateTrigger: ['onBlur', 'onSubmit'],
                         validator: _handleLibraryUniquenessValidation,
-                        message: t('errors.id_already_exists')
-                    }
+                        message: t('errors.id_already_exists'),
+                    },
                 ]}
                 hasFeedback
             >
@@ -279,7 +279,7 @@ function EditLibraryInfoForm({
                                         position: 'absolute',
                                         right: '35px',
                                         top: '0',
-                                        transform: 'translateY(6px)'
+                                        transform: 'translateY(6px)',
                                     }}
                                     aria-label=""
                                 />

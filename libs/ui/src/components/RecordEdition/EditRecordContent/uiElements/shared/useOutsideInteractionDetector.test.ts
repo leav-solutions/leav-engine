@@ -5,7 +5,7 @@ import {renderHook} from '@testing-library/react';
 import {useOutsideInteractionDetector} from './useOutsideInteractionDetector';
 import {
     EditRecordReducerActionsTypes,
-    type IRecordPropertyWithAttribute
+    type IRecordPropertyWithAttribute,
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 import userEvent from '@testing-library/user-event';
@@ -14,7 +14,7 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 describe('useOutsideInteractionDetector', () => {
     const mockBackendValues: RecordFormElementsValue[] = [
-        {id_value: 'backend-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}}
+        {id_value: 'backend-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}},
     ];
 
     let mockDispatch: jest.Mock;
@@ -38,8 +38,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const targetElement = document.createElement('div');
@@ -51,7 +51,7 @@ describe('useOutsideInteractionDetector', () => {
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             attribute: mockFormAttribute,
-            values: mockBackendValues
+            values: mockBackendValues,
         });
     });
 
@@ -63,8 +63,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const otherElement = document.createElement('div');
@@ -78,7 +78,7 @@ describe('useOutsideInteractionDetector', () => {
 
     it('should set null as active value when clicking outside and there is an active attribute', async () => {
         mockActiveAttribute = {
-            attribute: mockFormAttribute
+            attribute: mockFormAttribute,
         };
 
         renderHook(() =>
@@ -88,8 +88,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const otherElement = document.createElement('div');
@@ -100,13 +100,13 @@ describe('useOutsideInteractionDetector', () => {
 
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute: null
+            attribute: null,
         });
     });
 
     it('should not set null as active value when clicking inside sidebar', async () => {
         mockActiveAttribute = {
-            attribute: mockFormAttribute
+            attribute: mockFormAttribute,
         };
 
         renderHook(() =>
@@ -116,8 +116,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const sidebarElement = document.createElement('div');
@@ -128,13 +128,13 @@ describe('useOutsideInteractionDetector', () => {
 
         expect(mockDispatch).not.toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute: null
+            attribute: null,
         });
     });
 
     it('should not set null as active value when clicking on allowed selector', async () => {
         mockActiveAttribute = {
-            attribute: mockFormAttribute
+            attribute: mockFormAttribute,
         };
 
         renderHook(() =>
@@ -144,8 +144,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: ['#allowed-element'],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const allowedElement = document.createElement('div');
@@ -156,7 +156,7 @@ describe('useOutsideInteractionDetector', () => {
 
         expect(mockDispatch).not.toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute: null
+            attribute: null,
         });
     });
 
@@ -168,8 +168,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const targetElement = document.createElement('div');
@@ -181,7 +181,7 @@ describe('useOutsideInteractionDetector', () => {
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             attribute: mockFormAttribute,
-            values: mockBackendValues
+            values: mockBackendValues,
         });
     });
 
@@ -193,8 +193,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         const otherElement = document.createElement('div');
@@ -216,8 +216,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         expect(addEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
@@ -234,8 +234,8 @@ describe('useOutsideInteractionDetector', () => {
                 dispatch: mockDispatch,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
+                attributePrefix: 'standardfield-',
+            }),
         );
 
         unmount();

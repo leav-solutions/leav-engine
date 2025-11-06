@@ -9,7 +9,7 @@ describe('deleteRecordPanelFromURL method', () => {
         const recordPanel = {
             recordId: 'recordId',
             where: 'where',
-            recordPanelId: 'recordPanelId'
+            recordPanelId: 'recordPanelId',
         };
         const emptyPathname = '/42/firstFullpagePanelId';
 
@@ -22,7 +22,7 @@ describe('deleteRecordPanelFromURL method', () => {
         const recordPanel = {
             recordId: 'recordId',
             where: 'where',
-            recordPanelId: 'recordPanelId'
+            recordPanelId: 'recordPanelId',
         };
         const middlePathname = `/42/firstFullpagePanelId/${recordPanel.recordId}/${recordPanel.where}/${recordPanel.recordPanelId}/thirdRecordId/thirdWhere/thirdRecordPanelId`;
 
@@ -35,7 +35,7 @@ describe('deleteRecordPanelFromURL method', () => {
         const recordPanel = {
             recordId: 'recordId',
             where: 'where',
-            recordPanelId: 'recordPanelId'
+            recordPanelId: 'recordPanelId',
         };
         const endPathname = `/42/firstFullpagePanelId/secondRecordId/secondWhere/secondRecordPanelId/${recordPanel.recordId}/${recordPanel.where}/${recordPanel.recordPanelId}`;
 

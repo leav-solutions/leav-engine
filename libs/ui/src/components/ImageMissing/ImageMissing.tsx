@@ -28,7 +28,7 @@ function ImageMissing({style}: IImageMissingProps): JSX.Element {
                     justifyContent: 'center',
                     fontSize: style.height ? `calc(${style.height} * 0.6)` : '120px',
                     color: themeVars.secondaryTextColor,
-                    ...style
+                    ...style,
                 }}
             />
         </Wrapper>

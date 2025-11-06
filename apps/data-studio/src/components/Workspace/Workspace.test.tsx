@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function Home() {
             return <div>Home</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function LibraryHome() {
             return <div>LibraryHome</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -26,7 +26,7 @@ jest.mock(
     () =>
         function Navigation() {
             return <div>Navigation</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -34,7 +34,7 @@ jest.mock(
     () =>
         function RouteNotFound() {
             return <div>RouteNotFound</div>;
-        }
+        },
 );
 
 describe('Workspace', () => {
@@ -44,7 +44,7 @@ describe('Workspace', () => {
                 <Routes>
                     <Route path="/:panel" element={<Workspace />} />
                 </Routes>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
 
         expect(await screen.findByText('Home')).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe('Workspace', () => {
                 <Routes>
                     <Route path="/:panel" element={<Workspace />} />
                 </Routes>
-            </MemoryRouter>
+            </MemoryRouter>,
         );
 
         await act(async () => {

@@ -13,7 +13,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type ExplorerSelectionIdsQuery,
     type JoinLibraryContextFragment,
-    useExplorerSelectionIdsLazyQuery
+    useExplorerSelectionIdsLazyQuery,
 } from '_ui/_gqlTypes';
 import {Explorer} from '_ui/components/Explorer';
 import {useEditRecordModal} from '../RecordEdition/EditRecordModal/useEditRecordModal';
@@ -82,7 +82,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
     joinLibraryContext,
     hideSelectAllAction,
     onSelectionCompleted,
-    onClose
+    onClose,
 }) => {
     const {t} = useSharedTranslation();
     const explorerContainerRef = useRef<HTMLDivElement>(null);
@@ -111,7 +111,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
 
     const [getRecordIdsFromFilters] = useExplorerSelectionIdsLazyQuery({
         fetchPolicy: 'no-cache',
-        onCompleted: onSelectionCompleted
+        onCompleted: onSelectionCompleted,
     });
 
     const {EditRecordModal, openEditRecordModal} = useEditRecordModal();
@@ -137,7 +137,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                             type: 'library',
                             libraryId: childLibraryId,
                             valuesList,
-                            allowFreeEntry
+                            allowFreeEntry,
                         }}
                         showCreateOnNoResultOnly
                         selectionMode={selectionMode}
@@ -152,11 +152,11 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                                     await getRecordIdsFromFilters({
                                         variables: {
                                             libraryId: childLibraryId,
-                                            filters: massSelectionFilter
-                                        }
+                                            filters: massSelectionFilter,
+                                        },
                                     });
-                                }
-                            }
+                                },
+                            },
                         ]}
                         primaryActions={[]}
                         defaultActionsForItem={[]}
@@ -174,12 +174,12 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                                             label: item.whoAmI?.label,
                                             subLabel: item.whoAmI?.subLabel,
                                             color: item.whoAmI?.color,
-                                            library: {id: item.libraryId}
+                                            library: {id: item.libraryId},
                                         },
-                                        editionFormId: 'edition'
+                                        editionFormId: 'edition',
                                     });
-                                }
-                            }
+                                },
+                            },
                         ]}
                         defaultPrimaryActions={['create']}
                         joinLibraryContext={joinLibraryContext}

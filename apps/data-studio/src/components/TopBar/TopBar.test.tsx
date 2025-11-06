@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function HeaderInfo() {
             return <div>HeaderInfo</div>;
-        }
+        },
 );
 
 describe('TopBar', () => {
@@ -18,7 +18,7 @@ describe('TopBar', () => {
         render(
             <MockedProviderWithFragments>
                 <TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} nbNotifs={0} />
-            </MockedProviderWithFragments>
+            </MockedProviderWithFragments>,
         );
 
         expect(screen.getByText('HeaderInfo')).toBeInTheDocument();
