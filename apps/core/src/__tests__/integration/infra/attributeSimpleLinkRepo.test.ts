@@ -28,7 +28,7 @@ describe('attributeSimpleLinkRepo', () => {
     const libraryId = 'test_lib_attribute_simple_link_repo';
     const remoteLibraryId = 'test_lib_attribute_remote_simple_link_repo';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
@@ -38,15 +38,15 @@ describe('attributeSimpleLinkRepo', () => {
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
         await libraryRepo.createLibrary({
             libData: {
-                id: remoteLibraryId
+                id: remoteLibraryId,
             },
-            ctx
+            ctx,
         });
     });
 
@@ -54,29 +54,29 @@ describe('attributeSimpleLinkRepo', () => {
         recordRepo.createRecord({
             libraryId: remoteLibraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createRecord = (recordData: Record<string, any>): Promise<IRecord> =>
         recordRepo.createRecord({
             libraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createValue = async (
         attribute: IAttributeWithRevLink,
         recordId: string,
-        payload: string
+        payload: string,
     ): Promise<ILinkValue> =>
         attributeSimpleLinkRepo.createValue({
             library: libraryId,
             attribute,
             recordId,
             value: {
-                payload
+                payload,
             },
-            ctx
+            ctx,
         });
 
     describe('2 remote records exists,', () => {
@@ -87,9 +87,9 @@ describe('attributeSimpleLinkRepo', () => {
             [remoteRecord1, remoteRecord2] = await Promise.all(
                 Array.from({length: 2}).map((_, index) =>
                     createRemoteRecord({
-                        [`attr_data_${index + 1}`]: index + 1
-                    })
-                )
+                        [`attr_data_${index + 1}`]: index + 1,
+                    }),
+                ),
             );
         });
 
@@ -97,7 +97,7 @@ describe('attributeSimpleLinkRepo', () => {
             const simpleLinkAttribute: IAttributeWithRevLink = {
                 id: 'simple_link_attr',
                 type: AttributeTypes.SIMPLE_LINK,
-                linked_library: remoteLibraryId
+                linked_library: remoteLibraryId,
             };
 
             let record1: IRecord;
@@ -116,14 +116,14 @@ describe('attributeSimpleLinkRepo', () => {
                     payload: remoteRecord1,
                     attribute: simpleLinkAttribute.id,
                     modified_by: null,
-                    created_by: null
+                    created_by: null,
                 });
                 expect(record2Value).toMatchObject({
                     id_value: null,
                     payload: remoteRecord2,
                     attribute: simpleLinkAttribute.id,
                     modified_by: null,
-                    created_by: null
+                    created_by: null,
                 });
             });
 
@@ -133,7 +133,7 @@ describe('attributeSimpleLinkRepo', () => {
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordIds: [record1.id, record2.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value]]);
@@ -144,7 +144,7 @@ describe('attributeSimpleLinkRepo', () => {
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordIds: [record1.id, record2.id, 'no-exists'],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -157,7 +157,7 @@ describe('attributeSimpleLinkRepo', () => {
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -170,7 +170,7 @@ describe('attributeSimpleLinkRepo', () => {
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1Value]);
@@ -181,7 +181,7 @@ describe('attributeSimpleLinkRepo', () => {
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -194,7 +194,7 @@ describe('attributeSimpleLinkRepo', () => {
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);

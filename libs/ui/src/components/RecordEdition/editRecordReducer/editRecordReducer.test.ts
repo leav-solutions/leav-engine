@@ -8,13 +8,13 @@ import editRecordReducer, {
     EditRecordReducerActionsTypes,
     EditRecordSidebarContentTypeMap,
     type IEditRecordReducerState,
-    initialState
+    initialState,
 } from './editRecordReducer';
 
 describe('editRecordReducer', () => {
     const mockInitialState: IEditRecordReducerState = {
         ...initialState,
-        record: mockRecord
+        record: mockRecord,
     };
 
     test('SET_ACTIVE_VALUE', async () => {
@@ -31,7 +31,7 @@ describe('editRecordReducer', () => {
                     id_value: null,
                     attribute: mockAttributeSimple,
                     metadata: null,
-                    version: null
+                    version: null,
                 },
                 {
                     isCalculated: true,
@@ -42,20 +42,20 @@ describe('editRecordReducer', () => {
                     id_value: null,
                     attribute: mockAttributeSimple,
                     metadata: null,
-                    version: null
-                }
-            ]
+                    version: null,
+                },
+            ],
         });
         expect(newState.activeAttribute).toEqual({
             ...mockRecordPropertyWithAttribute,
             globalValues: ['simple'],
-            calculatedValue: 'calculated'
+            calculatedValue: 'calculated',
         });
         expect(newState.sidebarContent).toBe('valueDetails');
 
         const newState2 = editRecordReducer(mockInitialState, {
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute: null
+            attribute: null,
         });
         expect(newState2.sidebarContent).toBe('summary');
     });
@@ -64,8 +64,8 @@ describe('editRecordReducer', () => {
         expect(
             editRecordReducer(mockInitialState, {
                 type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                content: EditRecordSidebarContentTypeMap.VALUE_DETAILS
-            }).sidebarContent
+                content: EditRecordSidebarContentTypeMap.VALUE_DETAILS,
+            }).sidebarContent,
         ).toBe('valueDetails');
     });
 
@@ -78,7 +78,7 @@ describe('editRecordReducer', () => {
             modified_at: null,
             modified_by: null,
             version: null,
-            metadata: null
+            metadata: null,
         };
 
         test('Multiple updates from different modifiers', async () => {
@@ -92,10 +92,10 @@ describe('editRecordReducer', () => {
                             ...baseValue,
                             value: 'test',
                             raw_value: 'test',
-                            attribute: {...mockAttributeSimple, id: 'attribute1'}
-                        }
-                    }
-                ]
+                            attribute: {...mockAttributeSimple, id: 'attribute1'},
+                        },
+                    },
+                ],
             });
 
             const newState2 = editRecordReducer(newState, {
@@ -108,10 +108,10 @@ describe('editRecordReducer', () => {
                             ...baseValue,
                             value: 'test2',
                             raw_value: 'test2',
-                            attribute: {...mockAttributeSimple, id: 'attribute2'}
-                        }
-                    }
-                ]
+                            attribute: {...mockAttributeSimple, id: 'attribute2'},
+                        },
+                    },
+                ],
             });
 
             expect(newState2.externalUpdate).toEqual({
@@ -122,18 +122,18 @@ describe('editRecordReducer', () => {
                             ...baseValue,
                             value: 'test',
                             raw_value: 'test',
-                            attribute: {...mockAttributeSimple, id: 'attribute1'}
-                        }
+                            attribute: {...mockAttributeSimple, id: 'attribute1'},
+                        },
                     ],
                     attribute2: [
                         {
                             ...baseValue,
                             value: 'test2',
                             raw_value: 'test2',
-                            attribute: {...mockAttributeSimple, id: 'attribute2'}
-                        }
-                    ]
-                }
+                            attribute: {...mockAttributeSimple, id: 'attribute2'},
+                        },
+                    ],
+                },
             });
         });
 
@@ -148,10 +148,10 @@ describe('editRecordReducer', () => {
                             ...baseValue,
                             value: 'test',
                             raw_value: 'test',
-                            attribute: {...mockAttributeSimple, id: 'attribute1'}
-                        }
-                    }
-                ]
+                            attribute: {...mockAttributeSimple, id: 'attribute1'},
+                        },
+                    },
+                ],
             });
 
             const newState2 = editRecordReducer(newState, {
@@ -164,10 +164,10 @@ describe('editRecordReducer', () => {
                             ...baseValue,
                             value: 'test2',
                             raw_value: 'test2',
-                            attribute: {...mockAttributeSimple, id: 'attribute2'}
-                        }
-                    }
-                ]
+                            attribute: {...mockAttributeSimple, id: 'attribute2'},
+                        },
+                    },
+                ],
             });
 
             expect(newState2.externalUpdate).toEqual({
@@ -178,25 +178,25 @@ describe('editRecordReducer', () => {
                             ...baseValue,
                             value: 'test',
                             raw_value: 'test',
-                            attribute: {...mockAttributeSimple, id: 'attribute1'}
-                        }
+                            attribute: {...mockAttributeSimple, id: 'attribute1'},
+                        },
                     ],
                     attribute2: [
                         {
                             ...baseValue,
                             value: 'test2',
                             raw_value: 'test2',
-                            attribute: {...mockAttributeSimple, id: 'attribute2'}
-                        }
-                    ]
-                }
+                            attribute: {...mockAttributeSimple, id: 'attribute2'},
+                        },
+                    ],
+                },
             });
         });
     });
 
     test('CLEAR_EXTERNAL_UPDATE', async () => {
         const newState = editRecordReducer(mockInitialState, {
-            type: EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE
+            type: EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE,
         });
         expect(newState.externalUpdate).toEqual(initialState.externalUpdate);
     });

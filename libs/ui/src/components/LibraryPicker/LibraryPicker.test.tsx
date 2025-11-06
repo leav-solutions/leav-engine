@@ -15,11 +15,11 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 jest.mock('../EditLibraryModal', () => ({
-    EditLibraryModal: () => <div>EditLibrary</div>
+    EditLibraryModal: () => <div>EditLibrary</div>,
 }));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
@@ -28,52 +28,52 @@ describe('LibraryPicker', () => {
     const mockLibA = {
         __typename: 'Library',
         ...mockLibrarySimple,
-        id: 'libA'
+        id: 'libA',
     };
     const mockLibB = {
         __typename: 'Library',
         ...mockLibrarySimple,
-        id: 'libB'
+        id: 'libB',
     };
     const mockLibC = {
         __typename: 'Library',
         ...mockLibrarySimple,
-        id: 'libC'
+        id: 'libC',
     };
 
     const mocks = [
         {
             request: {
                 query: GetLibrariesDocument,
-                variables: {}
+                variables: {},
             },
             result: {
                 data: {
                     libraries: {
-                        list: [mockLibA, mockLibB, mockLibC]
-                    }
-                }
-            }
+                        list: [mockLibA, mockLibB, mockLibC],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: IsAllowedDocument,
                 variables: {
                     type: PermissionTypes.admin,
-                    actions: [PermissionsActions.admin_create_library]
-                }
+                    actions: [PermissionsActions.admin_create_library],
+                },
             },
             result: {
                 data: {
                     isAllowed: [
                         {
                             name: PermissionsActions.admin_create_library,
-                            allowed: true
-                        }
-                    ]
-                }
-            }
-        }
+                            allowed: true,
+                        },
+                    ],
+                },
+            },
+        },
     ];
 
     test('Display libraries', async () => {
@@ -175,20 +175,20 @@ describe('LibraryPicker', () => {
                     query: IsAllowedDocument,
                     variables: {
                         type: PermissionTypes.admin,
-                        actions: [PermissionsActions.admin_create_library]
-                    }
+                        actions: [PermissionsActions.admin_create_library],
+                    },
                 },
                 result: {
                     data: {
                         isAllowed: [
                             {
                                 name: PermissionsActions.admin_create_library,
-                                allowed: false
-                            }
-                        ]
-                    }
-                }
-            }
+                                allowed: false,
+                            },
+                        ],
+                    },
+                },
+            },
         ];
 
         const mockHandleSubmit = jest.fn();

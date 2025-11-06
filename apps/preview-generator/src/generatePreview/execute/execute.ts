@@ -30,7 +30,7 @@ export const execute = async ({
     type,
     results,
     config,
-    first = false
+    first = false,
 }: IExecute) => {
     if (type === 'document') {
         await handleDocument({
@@ -40,7 +40,7 @@ export const execute = async ({
             name: size.name,
             version,
             rootPaths,
-            results
+            results,
         });
     } else {
         const commands = await getArgs(type, absInput, absOutput, size.size, size.name, version, first);
@@ -51,7 +51,7 @@ export const execute = async ({
                 const error = await new Promise(r =>
                     execFile(command, args, {}, e => {
                         r(e);
-                    })
+                    }),
                 );
                 if (error) {
                     const errorId = handleError(error);
@@ -64,8 +64,8 @@ export const execute = async ({
                             name: size.name,
                             background: version.background,
                             density: version.density,
-                            errorId
-                        }
+                            errorId,
+                        },
                     });
                 }
             }
@@ -81,8 +81,8 @@ export const execute = async ({
             size: size.size,
             name: size.name,
             density: version.density,
-            background: version.background
-        }
+            background: version.background,
+        },
     });
 
     if (config.verbose) {

@@ -10,7 +10,7 @@ import libraryRepo from './libraryRepo';
 describe('LibraryRepo', () => {
     const ctx = {
         userId: '0',
-        queryId: '123456'
+        queryId: '123456',
     };
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function () {
@@ -21,15 +21,15 @@ describe('LibraryRepo', () => {
                         id: 'users',
                         system: false,
                         label: {
-                            fr: 'users'
-                        }
-                    }
-                ])
+                            fr: 'users',
+                        },
+                    },
+                ]),
             } satisfies Mockify<IDbUtils>;
 
             const repo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const trees = await repo.getLibraries({ctx});
@@ -40,9 +40,9 @@ describe('LibraryRepo', () => {
                     id: 'users',
                     system: false,
                     label: {
-                        fr: 'users'
-                    }
-                }
+                        fr: 'users',
+                    },
+                },
             ]);
         });
     });
@@ -50,28 +50,28 @@ describe('LibraryRepo', () => {
     describe('createLibrary', () => {
         const docLibData = {
             _key: 'test_library',
-            system: true
+            system: true,
         };
         const libData = {
             id: 'test_library',
-            system: true
+            system: true,
         };
         test('Should insert a library and create a new collection', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([docLibData]),
-                createCollection: global.__mockPromise()
+                createCollection: global.__mockPromise(),
             };
 
             const mockCleanupRes = libData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docLibData)
+                convertToDoc: jest.fn().mockReturnValue(docLibData),
             };
 
             const libRepo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const createdLib = await libRepo.createLibrary({libData, ctx});
@@ -94,17 +94,17 @@ describe('LibraryRepo', () => {
         test('Should update library', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docLibData])
+                execute: global.__mockPromise([docLibData]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(libData),
-                convertToDoc: jest.fn().mockReturnValue(docLibData)
+                convertToDoc: jest.fn().mockReturnValue(docLibData),
             };
 
             const libRepo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const updatedLib = await libRepo.updateLibrary({libData, ctx});
@@ -128,7 +128,7 @@ describe('LibraryRepo', () => {
             _id: 'core_libraries/test_lib',
             _rev: '_WSgDYea--_',
             label: {en: 'Test', fr: 'Test'},
-            system: false
+            system: false,
         };
 
         test('Should delete a library and return deleted library', async function () {
@@ -136,28 +136,28 @@ describe('LibraryRepo', () => {
                 getAttributes: global.__mockPromise({
                     list: [
                         {id: 'attr1', type: AttributeTypes.SIMPLE},
-                        {id: 'attr2', type: AttributeTypes.SIMPLE}
+                        {id: 'attr2', type: AttributeTypes.SIMPLE},
                     ],
-                    totalCount: 0
+                    totalCount: 0,
                 }),
-                deleteAttribute: global.__mockPromise({})
+                deleteAttribute: global.__mockPromise({}),
             } satisfies Mockify<IAttributeRepo>;
 
             const mockDbServ = {
                 db: new Database(),
                 dropCollection: global.__mockPromise(),
-                execute: global.__mockPromiseMultiple([[], [docLibData]])
+                execute: global.__mockPromiseMultiple([[], [docLibData]]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(libData),
-                convertToDoc: jest.fn().mockReturnValue(docLibData)
+                convertToDoc: jest.fn().mockReturnValue(docLibData),
             };
 
             const libRepo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
             });
             libRepo.getLibraries = global.__mockPromise([libData]);
 
@@ -184,19 +184,19 @@ describe('LibraryRepo', () => {
                     _id: 'core_edge_libraries_attributes/222400216',
                     _from: 'core_libraries/users',
                     _to: 'core_attributes/id',
-                    _rev: '_WSse-um--_'
+                    _rev: '_WSse-um--_',
                 },
                 {
                     _key: '222400220',
                     _id: 'core_edge_libraries_attributes/222400220',
                     _from: 'core_libraries/users',
                     _to: 'core_attributes/my_attr',
-                    _rev: '_WSse-um--B'
-                }
+                    _rev: '_WSse-um--B',
+                },
             ];
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
@@ -206,34 +206,34 @@ describe('LibraryRepo', () => {
                         format: 'text',
                         label: {en: 'ID'},
                         system: true,
-                        type: 'link'
+                        type: 'link',
                     },
                     {
                         id: 'other_attr',
                         format: 'numeric',
                         label: {en: 'Attr'},
                         system: false,
-                        type: 'index'
+                        type: 'index',
                     },
                     {
                         id: 'created_at',
                         format: 'numeric',
                         label: {en: 'Modification date'},
                         system: true,
-                        type: 'index'
-                    }
-                ])
+                        type: 'index',
+                    },
+                ]),
             };
 
             const libRepo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
             });
 
             const createdAttrs = await libRepo.saveLibraryAttributes({
                 libId: 'users',
                 attributes: ['id', 'my_attr'],
-                ctx
+                ctx,
             });
             expect(mockDbServ.execute.mock.calls.length).toBe(2);
 
@@ -259,17 +259,17 @@ describe('LibraryRepo', () => {
         test('Should set full text attributes of a library and return full text attributes', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn()
+                execute: jest.fn(),
             };
 
             const libRepo = libraryRepo({
-                'core.infra.db.dbService': mockDbServ
+                'core.infra.db.dbService': mockDbServ,
             });
 
             await libRepo.saveLibraryFullTextAttributes({
                 libId: 'users',
                 fullTextAttributes: ['id'],
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);

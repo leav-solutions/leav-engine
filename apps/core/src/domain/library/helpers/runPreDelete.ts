@@ -18,7 +18,7 @@ export type RunPreDeleteFunc = (library: ILibrary, ctx: IQueryInfos) => Promise<
 export default ({
     'core.domain.tree': treeDomain,
     'core.infra.tree': treeRepo = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
 }: IDeps): RunPreDeleteFunc => {
     const _filesBehavior = (library: ILibrary, ctx: IQueryInfos): Promise<any> =>
         treeRepo.deleteTree({id: utils.getLibraryTreeId(library.id), ctx});
@@ -28,10 +28,10 @@ export default ({
         const libraryTrees = await treeDomain.getTrees({
             params: {
                 filters: {
-                    library: library.id
-                }
+                    library: library.id,
+                },
             },
-            ctx
+            ctx,
         });
         for (const tree of libraryTrees.list) {
             const newTreeLibraries = {...tree.libraries};
@@ -40,15 +40,15 @@ export default ({
             await treeDomain.saveTree(
                 {
                     ...tree,
-                    libraries: newTreeLibraries
+                    libraries: newTreeLibraries,
                 },
-                ctx
+                ctx,
             );
         }
 
         // Run action by behavior
         const actionByBehavior = {
-            [LibraryBehavior.FILES]: () => _filesBehavior(library, ctx)
+            [LibraryBehavior.FILES]: () => _filesBehavior(library, ctx),
         };
 
         if (actionByBehavior[library.behavior]) {

@@ -34,9 +34,9 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
     const {loading, inError, logs, total, hasMore, fetchMore} = useFetchRecordHistory({
         record: {
             id: record.id,
-            libraryId: record.library.id
+            libraryId: record.library.id,
         },
-        attributeId
+        attributeId,
     });
 
     if (loading && logs.length === 0) {

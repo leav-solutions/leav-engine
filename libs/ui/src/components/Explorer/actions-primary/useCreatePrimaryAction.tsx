@@ -12,7 +12,7 @@ import {
     AttributeType,
     type JoinLibraryContextFragment,
     LibraryBehavior,
-    useExplorerLibraryDetailsQuery
+    useExplorerLibraryDetailsQuery,
 } from '_ui/_gqlTypes';
 import {type FeatureHook, type Entrypoint, type IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
@@ -46,7 +46,7 @@ export const useCreatePrimaryAction = ({
     onCreate,
     formId,
     joinLibraryContext,
-    refetch
+    refetch,
 }: FeatureHook<{
     libraryId: string;
     entrypoint: Entrypoint;
@@ -55,7 +55,7 @@ export const useCreatePrimaryAction = ({
     isMultivalue: boolean;
     onCreate?: ({
         recordIdCreated,
-        saveValuesResultOnLink
+        saveValuesResultOnLink,
     }: {
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
@@ -78,7 +78,7 @@ export const useCreatePrimaryAction = ({
 
     const {data, loading, error} = useExplorerLibraryDetailsQuery({
         variables: {libraryId: _getLibraryId()},
-        skip: !isEnabled
+        skip: !isEnabled,
     });
 
     const hasCreateRecordPermission = data?.libraries?.list[0]?.permissions?.create_record ?? false;
@@ -102,7 +102,7 @@ export const useCreatePrimaryAction = ({
         },
         icon: <FaPlus />,
         disabled: !canCreateRecord,
-        label: t('explorer.create-one')
+        label: t('explorer.create-one'),
     };
 
     const _notifyNewCreation = (label?: string | null) => {
@@ -112,15 +112,15 @@ export const useCreatePrimaryAction = ({
             message: t('items_list.created_in_success.message', {
                 libName:
                     localizedTranslation(data?.libraries?.list[0]?.label, lang) ||
-                    t('items_list.created_in_success.item')
+                    t('items_list.created_in_success.item'),
             }),
             description: t('items_list.created_in_success.description', {
                 libName:
                     localizedTranslation(data?.libraries?.list[0]?.label, lang) ||
                     t('items_list.created_in_success.item'),
-                itemName: label || t('items_list.created_in_success.item')
+                itemName: label || t('items_list.created_in_success.item'),
             }),
-            closable: true
+            closable: true,
         });
     };
 
@@ -173,21 +173,21 @@ export const useCreatePrimaryAction = ({
                                 {
                                     id: entrypoint.parentRecordId,
                                     library: {
-                                        id: entrypoint.parentLibraryId
-                                    }
+                                        id: entrypoint.parentLibraryId,
+                                    },
                                 },
                                 [
                                     {
                                         attribute: entrypoint.linkAttributeId,
                                         idValue: null,
-                                        value: newRecord.id
-                                    }
-                                ]
+                                        value: newRecord.id,
+                                    },
+                                ],
                             ).then(async saveValuesResult =>
                                 onCreate?.({
                                     recordIdCreated: newRecord.id,
-                                    saveValuesResultOnLink: saveValuesResult
-                                })
+                                    saveValuesResultOnLink: saveValuesResult,
+                                }),
                             );
                         } else {
                             await Promise.resolve(onCreate?.({recordIdCreated: newRecord.id}));
@@ -202,6 +202,6 @@ export const useCreatePrimaryAction = ({
 
     return {
         createPrimaryAction: isEnabled ? _createPrimaryAction : null,
-        createModal: isModalCreationVisible ? _createModal : null
+        createModal: isModalCreationVisible ? _createModal : null,
     };
 };

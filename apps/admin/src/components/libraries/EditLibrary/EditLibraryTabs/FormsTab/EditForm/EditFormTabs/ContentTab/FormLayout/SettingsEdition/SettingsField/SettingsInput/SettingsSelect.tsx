@@ -14,13 +14,13 @@ export interface ISettingsFieldSelectProps extends ISettingsFieldCommonProps {
 function SettingsSelect({onChange, fieldName, options, disabled}: ISettingsFieldSelectProps): JSX.Element {
     const {t} = useTranslation();
     const {
-        state: {elementInSettings}
+        state: {elementInSettings},
     } = useFormBuilderReducer();
 
     const dropdownOptions: DropdownItemProps[] = options.map(optionValue => ({
         key: optionValue,
         value: optionValue,
-        text: t(`forms.settings.select_options.${optionValue}`)
+        text: t(`forms.settings.select_options.${optionValue}`),
     }));
 
     const _handleChange = (_, data) => onChange(data.name, data.value);

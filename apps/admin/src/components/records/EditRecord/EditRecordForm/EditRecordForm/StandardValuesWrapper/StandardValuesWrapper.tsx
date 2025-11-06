@@ -45,7 +45,7 @@ function StandardValuesWrapper({
     values,
     readonly,
     onSubmit,
-    onDelete
+    onDelete,
 }: IStandardValuesWrapperProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
@@ -54,7 +54,7 @@ function StandardValuesWrapper({
     const initialValues = _prepareValues(values);
     const [state, dispatch] = useReducer(reducer, {
         values: initialValues,
-        initialValues
+        initialValues,
     });
     const {values: valuesToDisplay} = state;
 
@@ -70,7 +70,7 @@ function StandardValuesWrapper({
         const val: IValue = state.values[index];
         return {
             id_value: val.id_value,
-            value: String(val.value)
+            value: String(val.value),
         };
     };
 

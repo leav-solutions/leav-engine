@@ -6,7 +6,7 @@ import {
     defaultDepAttribute,
     defaultDepValue,
     type IFormBuilderActionMoveElement,
-    type IFormBuilderState
+    type IFormBuilderState,
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';
@@ -52,7 +52,7 @@ export default function moveElement(state: IFormBuilderState, action: IFormBuild
             .sort(sortByOrder);
     } else {
         const indexInActiveFields = state.activeElements[action.from.containerId].findIndex(
-            el => el.id === action.elementId
+            el => el.id === action.elementId,
         );
 
         if (indexInActiveFields === -1) {
@@ -61,7 +61,7 @@ export default function moveElement(state: IFormBuilderState, action: IFormBuild
 
         const newElement = {
             ...state.activeElements[action.from.containerId][indexInActiveFields],
-            ...action.to
+            ...action.to,
         };
 
         // Remove from source container
@@ -78,9 +78,9 @@ export default function moveElement(state: IFormBuilderState, action: IFormBuild
         const elementToMerge = {
             [depAttributeKey]: {
                 [depValueKey]: {
-                    [action.to.containerId]: [newElement]
-                }
-            }
+                    [action.to.containerId]: [newElement],
+                },
+            },
         };
         newFieldsByDeps = mergeConcat(newFieldsByDeps, elementToMerge);
         newFieldsByDeps[depAttributeKey][depValueKey][action.to.containerId] = newFieldsByDeps[depAttributeKey][
@@ -88,7 +88,7 @@ export default function moveElement(state: IFormBuilderState, action: IFormBuild
         ][action.to.containerId]
             .map(el => ({
                 ...el,
-                order: el.order >= action.to.order && el.id !== action.elementId ? el.order + 1 : el.order
+                order: el.order >= action.to.order && el.id !== action.elementId ? el.order + 1 : el.order,
             }))
             .sort(sortByOrder);
 
@@ -102,13 +102,13 @@ export default function moveElement(state: IFormBuilderState, action: IFormBuild
 
         // Add to destination
         const elemToMerge = {
-            [action.to.containerId]: [newElement]
+            [action.to.containerId]: [newElement],
         };
         newActiveFields = mergeConcat(newActiveFields, elemToMerge);
         newActiveFields[action.to.containerId] = newActiveFields[action.to.containerId]
             .map(el => ({
                 ...el,
-                order: el.order >= action.to.order && el.id !== action.elementId ? el.order + 1 : el.order
+                order: el.order >= action.to.order && el.id !== action.elementId ? el.order + 1 : el.order,
             }))
             .sort(sortByOrder);
     }

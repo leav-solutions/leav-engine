@@ -12,7 +12,7 @@ import {
     isUIFilterThrough,
     isUIFilterTree,
     isUIFilterValueList,
-    type FiltersOperator
+    type FiltersOperator,
 } from '../_types';
 import {hasOnlyNoValueConditions, nullValueConditions} from '../conditionsHelper';
 import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';
@@ -31,7 +31,7 @@ export const FiltersActionTypes = {
     LOAD_VIEW: 'LOAD_VIEW',
     RESET: 'RESET',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
-    UPDATE_VIEWS: 'UPDATE_VIEWS'
+    UPDATE_VIEWS: 'UPDATE_VIEWS',
 } as const;
 
 export interface IUIFiltersState {
@@ -95,7 +95,7 @@ type Reducer<
     PAYLOAD extends {
         type: keyof typeof FiltersActionTypes;
         payload?: unknown;
-    } = {type: any; payload: 'no_payload'}
+    } = {type: any; payload: 'no_payload'},
 > = PAYLOAD['payload'] extends 'no_payload'
     ? (state: IUIFiltersState) => IUIFiltersState
     : (state: IUIFiltersState, payload: PAYLOAD['payload']) => IUIFiltersState;
@@ -129,7 +129,7 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
               condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
                   ? null
                   : (getFirstConditionByFilterType(payload as UIFilter) as RecordFilterCondition[])[0],
-              value: null
+              value: null,
           }
         : {
               ...payload,
@@ -137,12 +137,12 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
               id: uuid(),
               condition,
               value: null,
-              valuesList: hasValueList ? payload.attribute.valuesList : undefined
+              valuesList: hasValueList ? payload.attribute.valuesList : undefined,
           };
     return {
         ...state,
         filters: [...state.filters, filterToAdd],
-        viewModified: true
+        viewModified: true,
     };
 };
 
@@ -160,7 +160,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                 return {
                     ...filter,
                     condition: null,
-                    value: null
+                    value: null,
                 };
             }
 
@@ -170,7 +170,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                     condition: hasOnlyNoValueConditions(filter.attribute.format)
                         ? null
                         : conditionsByFormat[filter.attribute.format][0],
-                    value: null
+                    value: null,
                 };
             }
 
@@ -178,7 +178,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                 return {
                     ...filter,
                     condition: ThroughConditionFilter.THROUGH,
-                    value: null
+                    value: null,
                 };
             }
 
@@ -186,7 +186,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                 return {
                     ...filter,
                     condition: conditionsByFormat[AttributeFormat.text][0],
-                    value: null
+                    value: null,
                 };
             }
 
@@ -194,18 +194,18 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                 return {
                     ...filter,
                     condition: null,
-                    value: null
+                    value: null,
                 };
             }
         }
         return filter;
-    })
+    }),
 });
 
 const removeFilter: Reducer<IUIFiltersActionRemoveFilter> = (state, payload) => ({
     ...state,
     filters: state.filters.filter(({id}) => id !== payload.id),
-    viewModified: true
+    viewModified: true,
 });
 
 const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, payload) => ({
@@ -222,7 +222,7 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
         }
         return {...filter, ...payload};
     }),
-    viewModified: true
+    viewModified: true,
 });
 
 const moveFilter: Reducer<IUIFiltersActionMoveFilter> = (state, payload) => {
@@ -232,7 +232,7 @@ const moveFilter: Reducer<IUIFiltersActionMoveFilter> = (state, payload) => {
     return {
         ...state,
         filters: attributesUsedToFilter,
-        viewModified: true
+        viewModified: true,
     };
 };
 
@@ -241,12 +241,12 @@ const reset: Reducer<IUIFiltersActionReset> = (_, payload) => payload;
 const loadView: Reducer<IUIFiltersActionLoadView> = (state, payload) => ({
     ...state,
     ...payload,
-    initialFilters: payload.filters
+    initialFilters: payload.filters,
 });
 
 const restoreInitialViewSettings: Reducer = state => ({
     ...state,
-    filters: state.initialFilters
+    filters: state.initialFilters,
 });
 
 export const filtersReducer =

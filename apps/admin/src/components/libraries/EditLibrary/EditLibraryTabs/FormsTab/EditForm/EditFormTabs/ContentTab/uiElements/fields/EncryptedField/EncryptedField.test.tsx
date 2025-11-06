@@ -9,12 +9,12 @@ describe('EncryptedField', () => {
     it('should display encrypted field with fr label', async () => {
         const label = {
             fr: 'tata',
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <EncryptedField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.fr)).toBeVisible();
@@ -23,12 +23,12 @@ describe('EncryptedField', () => {
 
     it('should display encrypted field with fallback lang label', async () => {
         const label = {
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <EncryptedField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.en)).toBeVisible();
@@ -39,7 +39,7 @@ describe('EncryptedField', () => {
         const comp = render(
             <MockedLangContextProvider>
                 <EncryptedField settings={{}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(comp).toMatchSnapshot();

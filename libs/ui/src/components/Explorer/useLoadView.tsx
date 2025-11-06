@@ -21,7 +21,7 @@ export const useLoadView = () => {
     const currentView = useRef<IUserView | null>(null);
 
     const [fetchAttributes] = useExplorerAttributesLazyQuery({
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'network-only',
     });
 
     const {data} = useMeQuery();
@@ -37,7 +37,7 @@ export const useLoadView = () => {
                     display: {type: mapViewTypeFromExplorerToLegacy[view.viewType]},
                     label: {},
                     shared: false,
-                    filters: view.defaultViewSettings.filters as ValidFilter[]
+                    filters: view.defaultViewSettings.filters as ValidFilter[],
                 };
             } else {
                 viewData = view.savedViews.find(v => v.id === viewId) ?? null;
@@ -50,13 +50,13 @@ export const useLoadView = () => {
             currentView.current = viewData;
 
             const attributesToHydrate = [
-                ...new Set([...(viewData?.filters ?? []), ...(viewData?.sort ?? [])].map(({field}) => field))
+                ...new Set([...(viewData?.filters ?? []), ...(viewData?.sort ?? [])].map(({field}) => field)),
             ];
 
             const fetchAttributesResult = await fetchAttributes({
                 variables: {
-                    ids: attributesToHydrate
-                }
+                    ids: attributesToHydrate,
+                },
             });
 
             closeSettingsPanel();
@@ -75,22 +75,22 @@ export const useLoadView = () => {
                 attributesIds: currentView.current?.attributes ?? [],
                 sort: (currentView.current?.sort ?? []).map(s => ({
                     field: s.field,
-                    order: s.order
-                }))
+                    order: s.order,
+                })),
             };
 
             dispatch({
                 type: ViewSettingsActionTypes.LOAD_VIEW,
-                payload: viewSettings
+                payload: viewSettings,
             });
             filtersDispatch({
                 type: FiltersActionTypes.LOAD_VIEW,
                 payload: {
                     viewId: currentView.current?.id ?? null,
                     filters: [],
-                    attributesDataById
-                }
+                    attributesDataById,
+                },
             });
-        }
+        },
     };
 };

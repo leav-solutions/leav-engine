@@ -7,7 +7,7 @@ export const AVAILABLE_ACTIONS_MOCK = [
     {
         request: {
             query: getAvailableActionsQuery,
-            variables: {}
+            variables: {},
         },
         result: {
             data: {
@@ -18,7 +18,7 @@ export const AVAILABLE_ACTIONS_MOCK = [
                         description: 'Check if value matches attribute format',
                         input_types: ['string', 'number', 'boolean', 'object'],
                         output_types: ['string', 'number', 'boolean', 'object'],
-                        params: null
+                        params: null,
                     },
                     {
                         id: 'maskValue',
@@ -26,19 +26,19 @@ export const AVAILABLE_ACTIONS_MOCK = [
                         description: 'Mask any value by replacing with dots or empty string if no value',
                         input_types: ['string', 'number', 'boolean', 'object'],
                         output_types: ['string', 'number', 'boolean', 'object'],
-                        params: null
-                    }
-                ]
-            }
-        }
-    }
+                        params: null,
+                    },
+                ],
+            },
+        },
+    },
 ];
 
 export const ONE_AVAILABLE_ACTION_MOCK = [
     {
         request: {
             query: getAvailableActionsQuery,
-            variables: {}
+            variables: {},
         },
         result: {
             data: {
@@ -48,24 +48,24 @@ export const ONE_AVAILABLE_ACTION_MOCK = [
                         description: 'Check if value matches attribute format',
                         input_types: ['string', 'number', 'boolean', 'object'],
                         output_types: ['string', 'number', 'boolean', 'object'],
-                        params: null
-                    }
-                ]
-            }
-        }
-    }
+                        params: null,
+                    },
+                ],
+            },
+        },
+    },
 ];
 
 export const NO_AVAILABLE_ACTION_MOCK = [
     {
         request: {
             query: getAvailableActionsQuery,
-            variables: {}
+            variables: {},
         },
         result: {
             data: {
-                availableActions: []
-            }
-        }
-    }
+                availableActions: [],
+            },
+        },
+    },
 ];

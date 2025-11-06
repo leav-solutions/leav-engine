@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function DefinePermByUserGroupView() {
             return <div>DefinePermByUserGroupView</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -24,7 +24,7 @@ jest.mock(
     () =>
         function DefineTreePermissionsView() {
             return <div>DefineTreePermissionsView</div>;
-        }
+        },
 );
 
 describe('PermissionsContent', () => {
@@ -38,12 +38,12 @@ describe('PermissionsContent', () => {
                     ...mockAttrTree,
                     id: 'tree2',
                     label: {
-                        fr: 'Mon Attribut2'
-                    }
-                }
+                        fr: 'Mon Attribut2',
+                    },
+                },
             ],
-            relation: PermissionsRelation.and
-        }
+            relation: PermissionsRelation.and,
+        },
     };
     const onSubmit = jest.fn();
 

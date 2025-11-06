@@ -16,7 +16,7 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
@@ -24,15 +24,15 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: newValue
-    }
+        raw_payload: newValue,
+    },
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
@@ -40,8 +40,8 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: newValue
-    }
+        raw_payload: newValue,
+    },
 };
 
 const notReadonly = false;
@@ -80,7 +80,7 @@ describe('DSRichTextWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -101,7 +101,7 @@ describe('DSRichTextWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -123,7 +123,7 @@ describe('DSRichTextWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -146,7 +146,7 @@ describe('DSRichTextWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -166,7 +166,7 @@ describe('DSRichTextWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -194,7 +194,7 @@ describe('DSRichTextWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         expect(screen.getByText('13 / 15')).toBeInTheDocument();
@@ -214,7 +214,7 @@ describe('DSRichTextWrapper', () => {
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             const input = screen.getByRole('textbox');
@@ -237,7 +237,7 @@ describe('DSRichTextWrapper', () => {
             'Should submit empty value on clear and call onChange with inherited value',
             async ({
                 calculatedValue,
-                inheritedValue
+                inheritedValue,
             }: {
                 calculatedValue: string | null;
                 inheritedValue: string | null;
@@ -263,7 +263,7 @@ describe('DSRichTextWrapper', () => {
                                 onChange={mockOnChange}
                             />
                         </AntForm.Item>
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const input = screen.getByRole('textbox');
@@ -273,7 +273,7 @@ describe('DSRichTextWrapper', () => {
 
                 expect(mockOnChange).toHaveBeenCalledWith(newValue);
                 expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
-            }
+            },
         );
     });
 });

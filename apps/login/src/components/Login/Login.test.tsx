@@ -18,7 +18,7 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 jest.mock('react-router-dom', () => ({
@@ -28,7 +28,7 @@ jest.mock('react-router-dom', () => ({
         .mockReturnValueOnce({dest: '/'})
         .mockReturnValueOnce({dest: '/'})
         .mockReturnValueOnce({dest: '/my-app'})
-        .mockReturnValue({})
+        .mockReturnValue({}),
 }));
 
 const _renderComponent = (url = '/') =>
@@ -37,7 +37,7 @@ const _renderComponent = (url = '/') =>
             <MemoryRouter initialEntries={[url]}>
                 <Login />
             </MemoryRouter>
-        </KitApp>
+        </KitApp>,
     );
 
 const _enterCredentialsAndSubmit = () => {
@@ -68,8 +68,8 @@ describe('Login', () => {
             status: 200,
             ok: true,
             json: async () => ({
-                refreshToken: 'refreshToken'
-            })
+                refreshToken: 'refreshToken',
+            }),
         });
 
         await act(async () => {
@@ -88,8 +88,8 @@ describe('Login', () => {
             status: 200,
             ok: true,
             json: async () => ({
-                refreshToken: 'refreshToken'
-            })
+                refreshToken: 'refreshToken',
+            }),
         });
 
         await act(async () => {
@@ -106,7 +106,7 @@ describe('Login', () => {
     test('Display message if bad credentials', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 401,
-            ok: false
+            ok: false,
         });
 
         await act(async () => {
@@ -124,7 +124,7 @@ describe('Login', () => {
     test('Display message if server is down', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 500,
-            ok: false
+            ok: false,
         });
 
         await act(async () => {

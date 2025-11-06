@@ -73,8 +73,8 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                                     <>
                                         {moreAction.icon} {moreAction.title}
                                     </>
-                                )
-                            }))
+                                ),
+                            })),
                         }}
                     >
                         <Button

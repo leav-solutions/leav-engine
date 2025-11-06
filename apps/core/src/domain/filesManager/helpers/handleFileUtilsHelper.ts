@@ -19,7 +19,7 @@ export const getRecord = async (
     {recordLibrary, recordId}: {recordLibrary: string; recordId?: string},
     retrieveInactive: boolean,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<IRecord | null> =>
     deps.filesManagerRepo.getRecord({fileName, filePath, fileInode}, {recordLibrary, recordId}, retrieveInactive, ctx);
 
@@ -27,14 +27,14 @@ export const getParentRecord = async (
     fullParentPath: string,
     library: string,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<IRecord | null> => deps.filesManagerRepo.getParentRecord(fullParentPath, library, ctx);
 
 export const createRecordFile = async (
     recordData: IFileMetadata,
     library: string,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => {
     let newRecord: IRecord;
 
@@ -55,7 +55,7 @@ export const createRecordFile = async (
             await deps.recordDomain.updateRecord({
                 library,
                 recordData: dataToSave,
-                ctx
+                ctx,
             });
         } catch (e) {
             deps.logger.warn(`[FilesManager] Error when saving values for new record ${newRecord.id}: ${e.message}`);
@@ -77,7 +77,7 @@ export const updateRecordFile = async (
         config: Config.IConfig;
         logger: ILogger;
     },
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => {
     // Update record file attributes
     const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
@@ -90,7 +90,7 @@ export const updateRecordFile = async (
         const updatedRecord = await deps.recordRepo.updateRecord({
             libraryId: library,
             recordData: dataToSave,
-            ctx
+            ctx,
         });
 
         await deps.updateRecordLastModif(library, recordId, ctx);
@@ -106,9 +106,9 @@ export const updateRecordFile = async (
                 created_at: null,
                 created_by: null,
                 version: null,
-                metadata: null
+                metadata: null,
             })),
-            ctx
+            ctx,
         );
     } catch (e) {
         deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}, ${e.stack}`);
@@ -127,7 +127,7 @@ export const createFilesTreeElement = async (
     parentRecord: IRecord,
     filesLibraryId: string,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => {
     try {
         const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
@@ -136,7 +136,7 @@ export const createFilesTreeElement = async (
                   await deps.treeDomain.getNodesByRecord({
                       treeId,
                       record: {id: parentRecord.id, library: parentRecord.library},
-                      ctx
+                      ctx,
                   })
               )[0]
             : null;
@@ -145,14 +145,14 @@ export const createFilesTreeElement = async (
             treeId,
             element: {
                 id: record.id,
-                library: record.library
+                library: record.library,
             },
             parent: parentNode,
-            ctx
+            ctx,
         });
     } catch (e) {
         deps.logger.error(
-            `[${ctx.queryId}] Error on tree element creation, record id: ${record.id}, error: ${e.stack}`
+            `[${ctx.queryId}] Error on tree element creation, record id: ${record.id}, error: ${e.stack}`,
         );
     }
 };
@@ -162,7 +162,7 @@ export const deleteFilesTreeElement = async (
     filesLibraryId: string,
     recordLibrary: string,
     deps: IHandleFileSystemEventDeps,
-    ctx
+    ctx,
 ) => {
     try {
         const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
@@ -170,7 +170,7 @@ export const deleteFilesTreeElement = async (
             await deps.treeDomain.getNodesByRecord({
                 treeId,
                 record: {id: recordId, library: recordLibrary},
-                ctx
+                ctx,
             })
         )[0];
 
@@ -178,7 +178,7 @@ export const deleteFilesTreeElement = async (
             treeId,
             nodeId: recordNode,
             deleteChildren: true,
-            ctx
+            ctx,
         });
     } catch (e) {
         deps.logger.warn(`[${ctx.queryId}] Error on tree element deletion, record id: ${recordId}, error: ${e.stack}`);
@@ -194,7 +194,7 @@ export const getPreviewsDefaultData = (previewVersions: ILibrary['previewsSettin
             // previewsStatus default value
             previewsStatus[size.name] = {
                 status: -1,
-                message: 'waiting for creation'
+                message: 'waiting for creation',
             };
 
             // previews default value
@@ -204,7 +204,7 @@ export const getPreviewsDefaultData = (previewVersions: ILibrary['previewsSettin
         if (previewSettings.versions.pdf) {
             previewsStatus.pdf = {
                 status: -1,
-                message: 'waiting for creation'
+                message: 'waiting for creation',
             };
             previews.pdf = '';
         }
@@ -212,6 +212,6 @@ export const getPreviewsDefaultData = (previewVersions: ILibrary['previewsSettin
 
     return {
         previewsStatus,
-        previews
+        previews,
     };
 };

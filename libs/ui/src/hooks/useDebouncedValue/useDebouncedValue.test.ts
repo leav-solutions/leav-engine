@@ -22,7 +22,7 @@ describe('useDebouncedValue', () => {
 
     test('should update the debounced value after the delay', () => {
         const {result, rerender} = renderHook(({value, delay}) => useDebouncedValue(value, delay), {
-            initialProps: {value: 'initial', delay: 500}
+            initialProps: {value: 'initial', delay: 500},
         });
 
         expect(result.current).toBe('initial');
@@ -42,7 +42,7 @@ describe('useDebouncedValue', () => {
 
     test('should cancel the previous timeout when value changes', () => {
         const {result, rerender} = renderHook(({value, delay}) => useDebouncedValue(value, delay), {
-            initialProps: {value: 'initial', delay: 500}
+            initialProps: {value: 'initial', delay: 500},
         });
 
         expect(result.current).toBe('initial');

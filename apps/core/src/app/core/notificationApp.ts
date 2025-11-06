@@ -66,16 +66,16 @@ export default function ({'core.domain.eventsManager': eventsManager = null}: ID
                                     }
 
                                     return false;
-                                }
-                            )
-                        }
-                    }
-                }
+                                },
+                            ),
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

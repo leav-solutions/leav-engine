@@ -15,7 +15,7 @@ const formatedDates = (date: dayjs.Dayjs) => ({
     formated: date.format('YYYY-MM-DD'),
     timestamp: date.unix().toString(),
     atNoon: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0),
-    atNoonTimestamp: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0).unix()
+    atNoonTimestamp: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0).unix(),
 });
 const todayDateFormated = formatedDates(todayDate);
 const tomorrowDateFormated = formatedDates(tomorrowDate);
@@ -26,7 +26,7 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
@@ -34,15 +34,15 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: {from: todayDateFormated.timestamp, to: tomorrowDateFormated.timestamp}
-    }
+        raw_payload: {from: todayDateFormated.timestamp, to: tomorrowDateFormated.timestamp},
+    },
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
@@ -50,8 +50,8 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: {from: todayDateFormated.timestamp, to: tomorrowDateFormated.timestamp}
-    }
+        raw_payload: {from: todayDateFormated.timestamp, to: tomorrowDateFormated.timestamp},
+    },
 };
 
 const notReadonly = false;
@@ -85,7 +85,7 @@ describe('DSRangePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         expect(screen.getAllByRole('textbox')[0]).toHaveValue(presentationDate);
@@ -106,7 +106,7 @@ describe('DSRangePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         const textInput = screen.getAllByRole('textbox')[0];
@@ -131,7 +131,7 @@ describe('DSRangePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         expect(screen.getAllByRole('textbox')[0]).toBeDisabled();
@@ -150,7 +150,7 @@ describe('DSRangePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         const textInput = screen.getAllByRole('textbox')[0];
@@ -161,15 +161,15 @@ describe('DSRangePickerWrapper', () => {
 
         expect(mockOnChange).toHaveBeenCalledWith(
             [todayDateFormated.atNoon, tomorrowDateFormated.atNoon],
-            [todayDateFormated.formated, tomorrowDateFormated.formated]
+            [todayDateFormated.formated, tomorrowDateFormated.formated],
         );
 
         expect(mockHandleSubmit).toHaveBeenCalledWith(
             JSON.stringify({
                 from: todayDateFormated.atNoonTimestamp,
-                to: tomorrowDateFormated.atNoonTimestamp
+                to: tomorrowDateFormated.atNoonTimestamp,
             }),
-            mockFormAttribute.id
+            mockFormAttribute.id,
         );
     });
 
@@ -186,7 +186,7 @@ describe('DSRangePickerWrapper', () => {
                         handleSubmit={mockHandleSubmit}
                     />
                 </Form.Item>
-            </Form>
+            </Form>,
         );
 
         const textInput = screen.getAllByRole('textbox')[0];
@@ -212,7 +212,7 @@ describe('DSRangePickerWrapper', () => {
             render(
                 <Form
                     initialValues={{
-                        rangePickerTest: [todayDate, tomorrowDate]
+                        rangePickerTest: [todayDate, tomorrowDate],
                     }}
                 >
                     <Form.Item name="rangePickerTest">
@@ -227,7 +227,7 @@ describe('DSRangePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             const clearButton = screen.getByRole('button');
@@ -236,7 +236,7 @@ describe('DSRangePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(
                 expect.any(Object),
-                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload
+                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload,
             );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
@@ -255,7 +255,7 @@ describe('DSRangePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             expect(screen.queryByRole('button')).toBeNull();
@@ -267,7 +267,7 @@ describe('DSRangePickerWrapper', () => {
             render(
                 <Form
                     initialValues={{
-                        rangePickerTest: todayDate
+                        rangePickerTest: todayDate,
                     }}
                 >
                     <Form.Item name="rangePickerTest">
@@ -282,7 +282,7 @@ describe('DSRangePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             const clearButton = screen.getByRole('button');
@@ -291,7 +291,7 @@ describe('DSRangePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(
                 expect.any(Object),
-                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload
+                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload,
             );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
@@ -310,7 +310,7 @@ describe('DSRangePickerWrapper', () => {
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
-                </Form>
+                </Form>,
             );
 
             expect(screen.queryByRole('button')).toBeNull();

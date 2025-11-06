@@ -8,7 +8,7 @@ import {act, render, screen, waitFor} from '../../_tests/testUtils';
 import ValuesVersionConfigurator from './ValuesVersionConfigurator';
 
 jest.mock('_ui/components/SelectTreeNodeModalOld', () => ({
-    SelectTreeNodeModalOld: () => <div>SelectTreeNodeModalOld</div>
+    SelectTreeNodeModalOld: () => <div>SelectTreeNodeModalOld</div>,
 }));
 
 describe('VersionsPanel', () => {
@@ -19,17 +19,17 @@ describe('VersionsPanel', () => {
             {
                 request: {
                     query: getVersionableAttributesByLibraryQuery,
-                    variables: {libraryId: 'test_lib'}
+                    variables: {libraryId: 'test_lib'},
                 },
                 result: {
                     data: {
                         attributes: {
                             list: [mockAttributeVersionable],
-                            __typename: 'AttributesList'
-                        }
-                    }
-                }
-            }
+                            __typename: 'AttributesList',
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -41,13 +41,13 @@ describe('VersionsPanel', () => {
                     onVersionChange={jest.fn()}
                 />,
                 {
-                    mocks
-                }
+                    mocks,
+                },
             );
         });
 
         expect(
-            await screen.findByText(mockAttributeVersionable.versions_conf.profile.trees[0].label.fr)
+            await screen.findByText(mockAttributeVersionable.versions_conf.profile.trees[0].label.fr),
         ).toBeInTheDocument();
 
         await act(async () => {
@@ -62,17 +62,17 @@ describe('VersionsPanel', () => {
             {
                 request: {
                     query: getVersionableAttributesByLibraryQuery,
-                    variables: {libraryId: 'test_lib'}
+                    variables: {libraryId: 'test_lib'},
                 },
                 result: {
                     data: {
                         attributes: {
                             list: [mockAttributeVersionable],
-                            __typename: 'AttributesList'
-                        }
-                    }
-                }
-            }
+                            __typename: 'AttributesList',
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -84,15 +84,15 @@ describe('VersionsPanel', () => {
                     onVersionChange={jest.fn()}
                 />,
                 {
-                    mocks
-                }
+                    mocks,
+                },
             );
         });
 
         await waitFor(async () =>
             expect(
-                await screen.findByText(mockAttributeVersionable.versions_conf.profile.trees[0].label.fr)
-            ).toBeInTheDocument()
+                await screen.findByText(mockAttributeVersionable.versions_conf.profile.trees[0].label.fr),
+            ).toBeInTheDocument(),
         );
 
         // expect(

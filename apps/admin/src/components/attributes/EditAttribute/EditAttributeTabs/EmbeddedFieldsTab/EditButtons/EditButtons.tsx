@@ -26,7 +26,7 @@ function EditButtons({id, format, flatItem, isRoot, expend, add, remove, t}: IEd
             style={{
                 position: 'relative',
                 left: '1rem',
-                top: '-1rem'
+                top: '-1rem',
             }}
         >
             {!isRoot && (

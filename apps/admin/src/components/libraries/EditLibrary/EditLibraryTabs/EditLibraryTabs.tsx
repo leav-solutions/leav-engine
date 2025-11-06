@@ -40,7 +40,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const isCreationMode = library === null;
 
     const [indexRecords, {loading: indexLoading}] = useMutation<INDEX_RECORDS, INDEX_RECORDSVariables>(
-        indexRecordsMutation
+        indexRecordsMutation,
     );
 
     const label = isCreationMode ? t('libraries.new') : library!.label?.fr || library!.label?.en || library!.id;
@@ -54,7 +54,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                 <Tab.Pane key="infos" className="grow">
                     <InfosTab library={library} readonly={readOnly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'permissions',
@@ -64,7 +64,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                 <Tab.Pane key="permissions" className="grow flex-col height100">
                     <PermissionsTab library={library as GET_LIB_BY_ID_libraries_list} readonly={readOnly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'attributes',
@@ -74,7 +74,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                 <Tab.Pane key="attributes" className="grow">
                     <AttributesTab library={library} readonly={readOnly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'forms',
@@ -84,7 +84,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                 <Tab.Pane key="forms" className="height100" style={{padding: '0', border: '0px none'}}>
                     <FormsTab libraryId={library!.id} readonly={readOnly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'purge',
@@ -94,7 +94,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                 <Tab.Pane key="purge" className="height100" style={{padding: '0', border: '0px none'}}>
                     <PurgeTab library={library} readonly={readOnly} />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             key: 'custom-config',
@@ -104,13 +104,13 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                     <CustomConfigTab library={library} />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ].filter(p => p.mustBeDisplayed);
 
     const tabName = location ? location.hash.replace('#', '') : undefined;
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
-        tabName ? panes.findIndex(p => tabName === p.key) : 0
+        tabName ? panes.findIndex(p => tabName === p.key) : 0,
     );
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
@@ -123,8 +123,8 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const _handleIndex = async () => {
         await indexRecords({
             variables: {
-                libraryId: library.id
-            }
+                libraryId: library.id,
+            },
         });
     };
 

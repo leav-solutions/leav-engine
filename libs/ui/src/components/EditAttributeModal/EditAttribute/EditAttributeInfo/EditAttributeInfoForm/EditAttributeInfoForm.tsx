@@ -14,7 +14,7 @@ import {
     type AttributeDetailsTreeAttributeFragment,
     AttributeFormat,
     AttributeType,
-    ValueVersionMode
+    ValueVersionMode,
 } from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
@@ -69,7 +69,7 @@ function EditAttributeInfoForm({
     onSubmitField,
     onCheckAttributeUniqueness,
     loading,
-    readOnly: isReadOnly
+    readOnly: isReadOnly,
 }: IEditAttributeInfoFormProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
@@ -87,7 +87,7 @@ function EditAttributeInfoForm({
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
             interpolation: {escapeValue: false},
-            fieldName: t(`attributes.${field}`)
+            fieldName: t(`attributes.${field}`),
         });
 
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,7 +167,7 @@ function EditAttributeInfoForm({
               ...availableLangs.reduce((acc, availableLang) => {
                   acc[`label_${availableLang}`] = attribute.label[availableLang] ?? '';
                   return acc;
-              }, {})
+              }, {}),
           }
         : {};
 
@@ -176,7 +176,7 @@ function EditAttributeInfoForm({
               ...availableLangs.reduce((acc, availableLang) => {
                   acc[`description_${availableLang}`] = attribute.description[availableLang] ?? '';
                   return acc;
-              }, {})
+              }, {}),
           }
         : {};
 
@@ -191,20 +191,20 @@ function EditAttributeInfoForm({
         versions_conf: {
             versionable: attribute?.versions_conf?.versionable ?? false,
             mode: attribute?.versions_conf?.mode ?? ValueVersionMode.smart,
-            profile: attribute?.versions_conf?.profile?.id ?? null
-        }
+            profile: attribute?.versions_conf?.profile?.id ?? null,
+        },
     };
 
     const typeSelectOptions = Object.values(AttributeType).map(b => ({
         key: b,
         value: b,
-        label: t(`attributes.type_${b}`)
+        label: t(`attributes.type_${b}`),
     }));
 
     const formatSelectOptions = Object.values(AttributeFormat).map(b => ({
         key: b,
         value: b,
-        label: t(`attributes.format_${b}`)
+        label: t(`attributes.format_${b}`),
     }));
 
     const _getFieldState = (field: string) => {
@@ -238,7 +238,7 @@ function EditAttributeInfoForm({
                         labelCol={{span: 2}}
                         wrapperCol={{span: 22}}
                         rules={[
-                            {required: availableLang === defaultLang, message: t('errors.default_language_required')}
+                            {required: availableLang === defaultLang, message: t('errors.default_language_required')},
                         ]}
                         style={{marginBottom: '0.5rem'}}
                     >
@@ -289,8 +289,8 @@ function EditAttributeInfoForm({
                     {
                         validateTrigger: ['onBlur', 'onSubmit'],
                         validator: _handleAttributeUniquenessValidation,
-                        message: t('errors.id_already_exists')
-                    }
+                        message: t('errors.id_already_exists'),
+                    },
                 ]}
                 hasFeedback
             >

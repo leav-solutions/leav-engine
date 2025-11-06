@@ -17,7 +17,7 @@ import * as crypto from 'node:crypto';
 export interface IEventsManagerDomain {
     sendDatabaseEvent<DBPayloadAction extends EventAction>(
         payload: IDbPayloadInternal<DBPayloadAction>,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
@@ -25,7 +25,7 @@ export interface IEventsManagerDomain {
     initCustomConsumer(
         queueName: string,
         routinKey: string,
-        onMessage: (msg: amqp.ConsumeMessage, channel: amqp.ConfirmChannel) => Promise<void>
+        onMessage: (msg: amqp.ConsumeMessage, channel: amqp.ConfirmChannel) => Promise<void>,
     ): Promise<void>;
     registerEventActions(actions: string[], prefix: string, ctx: IQueryInfos): void;
     getActions(): string[];
@@ -42,7 +42,7 @@ export default function ({
     config,
     'core.infra.amqpService': amqpService,
     'core.utils.logger': logger,
-    'core.utils': utils
+    'core.utils': utils,
 }: IEventsManagerDomainDeps): IEventsManagerDomain {
     const _customEventActions = new Set<string>(); // Using a Set to avoid duplicates
     const pubsub = new PubSub();
@@ -57,8 +57,8 @@ export default function ({
             trigger: Joi.string(),
             payload: Joi.object().keys({
                 triggerName: Joi.string().required(),
-                data: Joi.any().required()
-            })
+                data: Joi.any().required(),
+            }),
         });
 
         const isValid = msgBodySchema.validate(msg);
@@ -84,7 +84,7 @@ export default function ({
         const publishedPayload = {
             time: pubSubEvent.time,
             userId: pubSubEvent.userId,
-            ...pubSubEvent.payload.data
+            ...pubSubEvent.payload.data,
         };
 
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
@@ -102,8 +102,8 @@ export default function ({
                     queryId: ctx.queryId,
                     emitter: utils.getProcessIdentifier(),
                     trigger: ctx.trigger,
-                    payload
-                })
+                    payload,
+                }),
             )
             .catch(e => {
                 logger.error(`Error while sending event to rabbitMQ: ${e.stack}`);
@@ -119,13 +119,13 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 uniqueQueueName,
                 config.amqp.exchange,
-                config.eventsManager.routingKeys.pubsub_events
+                config.eventsManager.routingKeys.pubsub_events,
             );
 
             await amqpService.consume(
                 uniqueQueueName,
                 config.eventsManager.routingKeys.pubsub_events,
-                _onPubSubMessage
+                _onPubSubMessage,
             );
         },
         async initCustomConsumer(queue, routingKey, onMessage) {
@@ -137,7 +137,7 @@ export default function ({
         },
         sendDatabaseEvent<DBPayloadAction extends EventAction>(
             payload: IDbPayloadInternal<DBPayloadAction>,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ) {
             return _send(config.eventsManager.routingKeys.data_events, payload, ctx);
         },
@@ -154,7 +154,7 @@ export default function ({
                 throw utils.generateExplicitValidationError(
                     'action',
                     {msg: Errors.MISSING_ACTION_PREFIX, vars: {actions: invalidActions.join(', ')}},
-                    ctx.lang
+                    ctx.lang,
                 );
             }
 
@@ -163,6 +163,6 @@ export default function ({
         getActions() {
             // Return the list of all actions: the custom actions and system action
             return [...Array.from(_customEventActions), ...Object.values(EventAction)];
-        }
+        },
     };
 }

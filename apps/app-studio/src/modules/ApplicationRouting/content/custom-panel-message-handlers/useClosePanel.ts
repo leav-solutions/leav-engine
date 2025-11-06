@@ -20,6 +20,6 @@ export const useClosePanel = (): {
 
     return {
         closePanel: ({recordId, where, recordPanelId}) =>
-            navigate(deleteRecordPanelFromURL(location.pathname, {recordId, where, recordPanelId}))
+            navigate(deleteRecordPanelFromURL(location.pathname, {recordId, where, recordPanelId})),
     };
 };

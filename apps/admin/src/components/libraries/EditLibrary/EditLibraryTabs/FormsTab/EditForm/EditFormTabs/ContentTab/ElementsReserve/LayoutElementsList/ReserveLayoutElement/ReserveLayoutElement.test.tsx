@@ -11,7 +11,7 @@ import ReserveLayoutElement from './ReserveLayoutElement';
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
-    useLayoutEffect: jest.requireActual('react').useEffect
+    useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
@@ -21,7 +21,7 @@ describe('ReserveLayoutElement', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <ReserveLayoutElement element={layoutElements[UIElementTypes.DIVIDER]} />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

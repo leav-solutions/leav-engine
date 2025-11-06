@@ -10,7 +10,7 @@ import {
     gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 import {adminUserId} from '../../../../_constants/users';
 import {usersLibraryId} from '../../../../_constants/libraries';
@@ -33,21 +33,21 @@ describe('Records', () => {
                 type: AttributeTypes.SIMPLE,
                 format: AttributeFormats.TEXT,
                 required: true,
-                label: 'test'
+                label: 'test',
             });
             await gqlSaveAttribute({
                 id: testLinkAttributeId,
                 type: AttributeTypes.SIMPLE_LINK,
                 linkedLibrary: testLibLink,
                 required: true,
-                label: 'test_link'
+                label: 'test_link',
             });
             await gqlSaveAttribute({
                 id: testTreeAttributeId,
                 type: AttributeTypes.TREE,
                 multipleValues: false,
                 label: 'Test Tree attribute',
-                linkedTree: testTreeName
+                linkedTree: testTreeName,
             });
 
             await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
@@ -67,14 +67,14 @@ describe('Records', () => {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
                         payload: "test value"
                     }) { id_value }
-                }`
+                }`,
             );
             await makeGraphQlCall(
                 `mutation {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
                         payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
                     }) { id_value }
-                }`
+                }`,
             );
             await makeGraphQlCall(`mutation {
                 a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
@@ -138,7 +138,7 @@ describe('Records', () => {
             expect(resActivation.data.errors).toBeUndefined();
             expect(resActivation.data.data.recordActivated.record).toBe(null);
             expect(resActivation.data.data.recordActivated.valuesErrors[0].message).toBe(
-                'Attribute test_link is required'
+                'Attribute test_link is required',
             );
             expect(resActivation.data.data.recordActivated.valuesErrors[1].message).toBe('Attribute test is required');
         });
@@ -164,7 +164,7 @@ describe('Records', () => {
                 }) {
                     id_value
                 }
-            }`
+            }`,
             );
             // Fill required link attribute
             await makeGraphQlCall(
@@ -174,7 +174,7 @@ describe('Records', () => {
                 }) {
                     id_value
                 }
-            }`
+            }`,
             );
             // Try to activate the record, expecting success (no validation errors)
             const resActivation = await makeGraphQlCall(`mutation {
@@ -193,7 +193,7 @@ describe('Records', () => {
 
             expect(resActivation.data.errors).toBeUndefined();
             expect(resActivation.data.data.recordActivated.record).toEqual({
-                id: resCreation.data.data.recordCreated.record.id
+                id: resCreation.data.data.recordCreated.record.id,
             });
             expect(resActivation.data.data.recordActivated.valuesErrors).toEqual(null);
         });
@@ -203,7 +203,7 @@ describe('Records', () => {
             const createEmptyRecordResult = await makeGraphQlCall(
                 `mutation {
                     recordCreated: createEmptyRecord(library: "${testLibName}") { record { id } },
-                }`
+                }`,
             );
 
             const recordId = createEmptyRecordResult.data.data.recordCreated.record.id;
@@ -216,7 +216,7 @@ describe('Records', () => {
                 }) {
                     id_value
                 }
-            }`
+            }`,
             );
 
             const deleteValueResult = await makeGraphQlCall(`mutation {
@@ -241,13 +241,13 @@ describe('Records', () => {
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
                     required: true,
-                    label: 'dependent required'
+                    label: 'dependent required',
                 });
                 await gqlSaveLibrary(testLibName, 'Test', [
                     testAttributeId,
                     testLinkAttributeId,
                     testTreeAttributeId,
-                    dependentAttrId
+                    dependentAttrId,
                 ]);
 
                 // Create a form with a dependent element that is never triggered (dependencyValue never set)
@@ -281,7 +281,7 @@ describe('Records', () => {
             });
             afterAll(async () => {
                 await makeGraphQlCall(
-                    `mutation { deleteForm(library: "${testLibName}", id: "${formWithDependency}") { id } }`
+                    `mutation { deleteForm(library: "${testLibName}", id: "${formWithDependency}") { id } }`,
                 );
 
                 await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]); // remove dependentAttrId attribute from lib before delete
@@ -310,7 +310,7 @@ describe('Records', () => {
                 expect(resActivation.status).toBe(200);
                 expect(resActivation.data.errors).toBeUndefined();
                 expect(resActivation.data.data.recordActivated.record).toEqual({
-                    id: resCreation.data.data.recordCreated.record.id
+                    id: resCreation.data.data.recordCreated.record.id,
                 });
                 expect(resActivation.data.data.recordActivated.valuesErrors).toEqual(null);
             });
@@ -369,21 +369,21 @@ describe('Records', () => {
                 type: AttributeTypes.SIMPLE,
                 format: AttributeFormats.TEXT,
                 required: false,
-                label: 'test'
+                label: 'test',
             });
             await gqlSaveAttribute({
                 id: testLinkAttributeId,
                 type: AttributeTypes.SIMPLE_LINK,
                 linkedLibrary: testLibLink,
                 required: false,
-                label: 'test_link'
+                label: 'test_link',
             });
             await gqlSaveAttribute({
                 id: testTreeAttributeId,
                 type: AttributeTypes.TREE,
                 multipleValues: false,
                 label: 'Test Tree attribute',
-                linkedTree: testTreeName
+                linkedTree: testTreeName,
             });
 
             await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
@@ -403,14 +403,14 @@ describe('Records', () => {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
                         payload: "test value"
                     }) { id_value }
-                }`
+                }`,
             );
             await makeGraphQlCall(
                 `mutation {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
                         payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
                     }) { id_value }
-                }`
+                }`,
             );
             await makeGraphQlCall(`mutation {
                 a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
@@ -465,7 +465,7 @@ describe('Records', () => {
                     }`);
                     expect(activateRes.status).toBe(200);
                     expect(activateRes.data.data[`a${idx}`].valuesErrors).toEqual(null);
-                })
+                }),
             );
         });
 
@@ -552,57 +552,57 @@ describe('Records', () => {
                 {
                     attributeId: 'created_at',
                     attributeProperties: {
-                        id: 'created_at'
+                        id: 'created_at',
                     },
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: true,
-                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,
                     },
                     values: [
                         {
                             id_value: null,
-                            valuePayload: expect.any(Number)
-                        }
-                    ]
+                            valuePayload: expect.any(Number),
+                        },
+                    ],
                 },
                 {
                     attributeId: 'created_by',
                     attributeProperties: {
-                        id: 'created_by'
+                        id: 'created_by',
                     },
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: true,
-                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,
                     },
                     values: [
                         {
                             id_value: null,
                             linkPayload: {
                                 whoAmI: {
-                                    label: 'system'
-                                }
-                            }
-                        }
-                    ]
+                                    label: 'system',
+                                },
+                            },
+                        },
+                    ],
                 },
                 {
                     attributeId: 'user_groups',
                     attributeProperties: {
-                        id: 'user_groups'
+                        id: 'user_groups',
                     },
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: true,
-                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,
                     },
                     values: [
                         {
                             id_value: expect.any(String),
                             treePayload: {
-                                id: '1'
-                            }
-                        }
-                    ]
-                }
+                                id: '1',
+                            },
+                        },
+                    ],
+                },
             ]);
         });
 
@@ -666,9 +666,9 @@ describe('Records', () => {
                     attributeId: testAttributeId,
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: false,
-                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
-                    }
-                }
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,
+                    },
+                },
             ]);
         });
 
@@ -710,7 +710,7 @@ describe('Records', () => {
             expect(firstCallRes.status).toBe(200);
             expect(firstCallRes.data.data.records.list.length).toBe(3);
             expect(firstCallRes.data.data.records.totalCount).toBeGreaterThan(
-                firstCallRes.data.data.records.list.length
+                firstCallRes.data.data.records.list.length,
             );
             expect(firstCallRes.data.data.records.cursor.next).toBeTruthy();
 
@@ -736,7 +736,7 @@ describe('Records', () => {
         test('Delete a record', async () => {
             const res = await makeGraphQlCall(
                 `mutation {deleteRecord(library: "${testLibName}", id: "${recordId}") { id }}
-        `
+        `,
             );
 
             expect(res.status).toBe(200);
@@ -794,13 +794,13 @@ describe('Records', () => {
                 id: testSimpleAttrId,
                 type: AttributeTypes.SIMPLE,
                 label: 'test',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             });
             await gqlSaveAttribute({
                 id: testSimpleAttrId2,
                 type: AttributeTypes.SIMPLE,
                 label: 'test 2',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             });
             await gqlSaveAttribute({
                 id: testSimpleExtAttrId,
@@ -810,53 +810,53 @@ describe('Records', () => {
                 embeddedFields: [
                     {
                         id: 'name',
-                        format: AttributeFormats.TEXT
-                    }
-                ]
+                        format: AttributeFormats.TEXT,
+                    },
+                ],
             });
             await gqlSaveAttribute({
                 id: testSimpleLinkAttrId,
                 type: AttributeTypes.SIMPLE_LINK,
                 label: 'test',
-                linkedLibrary: sfTestLibLinkId
+                linkedLibrary: sfTestLibLinkId,
             });
             await gqlSaveAttribute({
                 id: testAdvAttrId,
                 type: AttributeTypes.ADVANCED,
                 label: 'test',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             });
             await gqlSaveAttribute({
                 id: testAdvLinkAttrId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'test',
-                linkedLibrary: sfTestLibLinkId
+                linkedLibrary: sfTestLibLinkId,
             });
             await gqlSaveAttribute({
                 id: testAdvRevLinkAttrId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'test',
                 linkedLibrary: sfTestLibId,
-                reverseLink: testAdvLinkAttrId
+                reverseLink: testAdvLinkAttrId,
             });
             await gqlSaveAttribute({
                 id: testAdvRevLinkToSimpleLinkAttrId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'test',
                 linkedLibrary: sfTestLibId,
-                reverseLink: testSimpleLinkAttrId
+                reverseLink: testSimpleLinkAttrId,
             });
             await gqlSaveAttribute({
                 id: testTreeAttrId,
                 type: AttributeTypes.TREE,
                 label: 'test',
-                linkedTree: testTreeId
+                linkedTree: testTreeId,
             });
             await gqlSaveAttribute({
                 id: testAdvThroughLinkAttrId,
                 type: AttributeTypes.ADVANCED,
                 label: 'test',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             });
 
             // Save attributes on libs
@@ -867,13 +867,13 @@ describe('Records', () => {
                 testAdvAttrId,
                 testSimpleLinkAttrId,
                 testAdvLinkAttrId,
-                testTreeAttrId
+                testTreeAttrId,
             ]);
             await gqlSaveLibrary(sfTestLibLinkId, 'Test', [
                 testSimpleAttrId,
                 testAdvThroughLinkAttrId,
                 testAdvRevLinkAttrId,
-                testAdvRevLinkToSimpleLinkAttrId
+                testAdvRevLinkToSimpleLinkAttrId,
             ]);
             await gqlSaveLibrary(sfTestLibTreeId, 'Test', [testSimpleAttrId]);
 
@@ -948,7 +948,7 @@ describe('Records', () => {
             nodeTreeRecord5 = await gqlAddElemToTree(
                 testTreeId,
                 {id: sfTreeRecord5, library: sfTestLibTreeId},
-                nodeTreeRecord4
+                nodeTreeRecord4,
             );
             await gqlAddElemToTree(testTreeId, {id: sfTreeRecord6, library: sfTestLibTreeId}, nodeTreeRecord5);
         });
@@ -958,7 +958,7 @@ describe('Records', () => {
             await gqlSaveLibrary(sfTestLibLinkId, 'Test', [
                 testAdvThroughLinkAttrId,
                 testAdvRevLinkAttrId,
-                testAdvRevLinkToSimpleLinkAttrId
+                testAdvRevLinkToSimpleLinkAttrId,
             ]);
             await gqlSaveLibrary(sfTestLibTreeId, 'Test', []);
 
@@ -1057,7 +1057,7 @@ describe('Records', () => {
 
                 const _makeCall = async (
                     testSimpleAttrId2Order: 'asc' | 'desc',
-                    testSimpleAttrIdOrder: 'asc' | 'desc'
+                    testSimpleAttrIdOrder: 'asc' | 'desc',
                 ) =>
                     makeGraphQlCall(`{
                     records(
@@ -1080,7 +1080,7 @@ describe('Records', () => {
                     expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
                         sfRecord2,
                         sfRecord1,
-                        sfRecord3
+                        sfRecord3,
                     ]);
                 });
 
@@ -1091,7 +1091,7 @@ describe('Records', () => {
                     expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
                         sfRecord3,
                         sfRecord2,
-                        sfRecord1
+                        sfRecord1,
                     ]);
                 });
 
@@ -1102,7 +1102,7 @@ describe('Records', () => {
                     expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
                         sfRecord1,
                         sfRecord2,
-                        sfRecord3
+                        sfRecord3,
                     ]);
                 });
 
@@ -1113,7 +1113,7 @@ describe('Records', () => {
                     expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
                         sfRecord3,
                         sfRecord1,
-                        sfRecord2
+                        sfRecord2,
                     ]);
                 });
             });

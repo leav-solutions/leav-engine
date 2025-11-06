@@ -31,20 +31,20 @@ export default function ({
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypes = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
 }: IDeps = {}): IAttributeTreeRepo {
     const _buildTreeValue = (
         treeId: string,
         nodeId: string,
         linkedRecord: IRecord,
-        valueEdge: IValueEdge
+        valueEdge: IValueEdge,
     ): ITreeValue => ({
         id_value: valueEdge._key,
         payload:
             linkedRecord && nodeId
                 ? {
                       id: nodeId,
-                      record: linkedRecord
+                      record: linkedRecord,
                   }
                 : null,
         attribute: valueEdge.attribute,
@@ -54,13 +54,13 @@ export default function ({
         created_by: valueEdge.created_by,
         version: valueEdge.version ?? null,
         metadata: valueEdge.metadata,
-        treeId
+        treeId,
     });
 
     const _buildRemoteRecord = (remoteRecord: IRecord & IDbDocument): IRecord =>
         dbUtils.cleanup({
             ...remoteRecord,
-            library: remoteRecord?._id?.split('/')[0]
+            library: remoteRecord?._id?.split('/')[0],
         });
 
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
@@ -94,7 +94,7 @@ export default function ({
                 created_at: value.created_at,
                 created_by: String(ctx.userId),
                 modified_by: String(ctx.userId),
-                version: value.version ?? null
+                version: value.version ?? null,
             };
 
             if (value.metadata) {
@@ -109,7 +109,7 @@ export default function ({
                     INSERT ${edgeData} IN ${edgeCollec}
                     RETURN {newEdge: NEW, linkedRecord}
                 `,
-                ctx
+                ctx,
             });
             if (!resEdge.length) {
                 return null;
@@ -120,7 +120,7 @@ export default function ({
                 attribute.linked_tree,
                 nodeId,
                 _buildRemoteRecord(savedValue.linkedRecord),
-                savedValue.newEdge
+                savedValue.newEdge,
             );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
@@ -137,7 +137,7 @@ export default function ({
                 modified_at: value.modified_at,
                 created_by: value.created_by,
                 modified_by: String(ctx.userId),
-                version: value.version ?? null
+                version: value.version ?? null,
             };
 
             if (value.metadata) {
@@ -152,7 +152,7 @@ export default function ({
                     UPDATE ${{_key: String(value.id_value)}} WITH ${edgeData} IN ${edgeCollec}
                     RETURN {newEdge: NEW, linkedRecord}
                 `,
-                ctx
+                ctx,
             });
 
             if (!resEdge.length) {
@@ -165,7 +165,7 @@ export default function ({
                 attribute.linked_tree,
                 nodeId,
                 _buildRemoteRecord(savedValue.linkedRecord),
-                savedValue.newEdge
+                savedValue.newEdge,
             );
         },
         async deleteValue({attribute, value, library, recordId, ctx}): Promise<ITreeValue> {
@@ -180,7 +180,7 @@ export default function ({
                         REMOVE edge IN ${edgeCollec}
                         RETURN {edge: OLD, linkedRecord}
                 `,
-                ctx
+                ctx,
             });
             const deletedValue = resEdge?.[0] ?? null;
 
@@ -193,7 +193,7 @@ export default function ({
                 attribute.linked_tree,
                 nodeId,
                 _buildRemoteRecord(deletedValue.linkedRecord),
-                deletedValue.edge
+                deletedValue.edge,
             );
         },
         async getValues({
@@ -202,7 +202,7 @@ export default function ({
             attribute,
             forceGetAllValues = false,
             options,
-            ctx
+            ctx,
         }): Promise<ITreeValue[]> {
             if (!attribute.linked_tree) {
                 return [];
@@ -219,7 +219,7 @@ export default function ({
                         vertex.${literal(NODE_RECORD_ID_FIELD)}
                     )
                     FILTER edge.attribute == ${attribute.id}
-                `
+                `,
             ];
 
             if (!forceGetAllValues) {
@@ -263,7 +263,7 @@ export default function ({
                     FOR recordKey IN ${recordsList}
                         FOR vertex, edge IN 1 OUTBOUND recordKey ${valuesLinksCollec}, ${treeEdgeCollec}
                             FILTER edge.attribute == ${attribute.id}
-                `
+                `,
             ];
 
             if (!options?.forceGetAllValues) {
@@ -319,7 +319,7 @@ export default function ({
                 const record = treeElements.find(r => r.recordId === recordId);
                 return (
                     record?.values.map(r =>
-                        _buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge)
+                        _buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge),
                     ) || []
                 );
             });
@@ -349,7 +349,7 @@ export default function ({
                 attribute.linked_tree,
                 res[0].linkedNode._key,
                 _buildRemoteRecord(res[0].linkedRecord),
-                res[0].edge
+                res[0].edge,
             );
         },
         sortQueryPart({attributes, order}) {
@@ -422,7 +422,7 @@ export default function ({
                 ? aql`LET ${literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
                       [...attributes].splice(1),
                       filter,
-                      recordIdentifierStr
+                      recordIdentifierStr,
                   )})`
                 : null;
             const linkedValue = join([literal('FLATTEN('), retrieveValue, linkValueQuery, returnValue, literal(')')]);
@@ -433,6 +433,6 @@ export default function ({
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
-        }
+        },
     };
 }

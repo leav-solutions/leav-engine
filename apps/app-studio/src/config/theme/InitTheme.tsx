@@ -27,7 +27,7 @@ export const InitTheme: FunctionComponent = ({children}) => {
                 // TODO: get lang from context
                 locale: lang[0] === 'fr' ? 'frFR' : 'enUS',
                 ItemList: null,
-                Image: null
+                Image: null,
             }}
         >
             {children}

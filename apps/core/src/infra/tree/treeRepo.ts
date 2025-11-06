@@ -13,7 +13,7 @@ import {
     type ITreeElement,
     type ITreeNode,
     type ITreeNodeLight,
-    type TreePath
+    type TreePath,
 } from '_types/tree';
 import {type IDbDocument, type IDbEdge, type IExecuteWithCount, isExecuteWithCount} from '../db/_types';
 import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
@@ -24,7 +24,7 @@ import {
     getFullNodeId,
     getLibraryFromDbId,
     getNodesCollectionName,
-    getRootId
+    getRootId,
 } from './helpers/utils';
 import {type IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
 import DataLoader from 'dataloader';
@@ -173,7 +173,7 @@ export interface ITreeRepoDeps {
 }
 export default function ({
     'core.infra.db.dbService': dbService,
-    'core.infra.db.dbUtils': dbUtils
+    'core.infra.db.dbUtils': dbUtils,
 }: ITreeRepoDeps): ITreeRepo {
     const computeGetRecordByNodeIdDataLoaderKey = (treeId: string): string => `treeRepo.getRecordByNodeId-${treeId}`;
 
@@ -189,19 +189,19 @@ export default function ({
                         getRecordsByNodeIds({
                             treeId,
                             nodeIds: keys as string[],
-                            ctx
+                            ctx,
                         }),
                     {
-                        cache: false
-                    }
-                )
+                        cache: false,
+                    },
+                ),
         );
     };
 
     const getRecordsByNodeIds = async ({
         treeId,
         nodeIds,
-        ctx
+        ctx,
     }: {
         treeId: string;
         nodeIds: string[];
@@ -239,7 +239,7 @@ export default function ({
 
             const treeRes = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             await dbService.createCollection(getEdgesCollectionName(treeData.id), CollectionType.EDGE_COLLECTION);
@@ -251,7 +251,7 @@ export default function ({
             await nodesCollection.ensureIndex({
                 fields: [NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD],
                 sparse: true,
-                type: 'persistent'
+                type: 'persistent',
             });
 
             return dbUtils.cleanup(treeRes.pop());
@@ -263,7 +263,7 @@ export default function ({
 
             const treeRes = await dbService.execute({
                 query: aql`UPDATE ${docToSave} IN ${collec} OPTIONS { mergeObjects: false } RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(treeRes.pop());
@@ -277,7 +277,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
 
             const initializedParams = {...defaultParams, ...params};
@@ -286,14 +286,14 @@ export default function ({
                 ...initializedParams,
                 collectionName: TREES_COLLECTION_NAME,
                 customFilterConditions: {library: _generateLibraryFilter},
-                ctx
+                ctx,
             });
         },
         async deleteTree({id, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`REMOVE ${{_key: id}} IN ${collec} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             await dbService.dropCollection(getEdgesCollectionName(id), CollectionType.EDGE_COLLECTION);
@@ -313,7 +313,7 @@ export default function ({
                         ${NODE_LIBRARY_ID_FIELD}: ${element.library},
                         ${NODE_RECORD_ID_FIELD}: ${element.id}
                     } IN ${nodeCollec} RETURN NEW`,
-                    ctx
+                    ctx,
                 })
             )[0];
 
@@ -327,13 +327,13 @@ export default function ({
                         _to: ${nodeEntity._id},
                         order: ${order}
                     } IN ${edgeCollec} RETURN NEW`,
-                    ctx
+                    ctx,
                 })
             )[0];
 
             return {
                 id: nodeEntity._key,
-                order: res.order
+                order: res.order,
             };
         },
         async moveElement({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
@@ -351,13 +351,13 @@ export default function ({
                         IN ${edgeCollec}
                         RETURN NEW
                 `,
-                    ctx
+                    ctx,
                 })
             )[0];
 
             return {
                 id: nodeId,
-                order: res.order
+                order: res.order,
             };
         },
         async deleteElement({treeId, nodeId, deleteChildren = true, ctx}): Promise<ITreeNodeLight> {
@@ -379,7 +379,7 @@ export default function ({
                             REMOVE ed IN ${edgeCollec}
                             RETURN OLD
                     `,
-                    ctx
+                    ctx,
                 });
             } else {
                 const parentId = (
@@ -389,7 +389,7 @@ export default function ({
                         ${edgeCollec}
                         RETURN v._id
                     `,
-                        ctx
+                        ctx,
                     })
                 )[0];
 
@@ -399,7 +399,7 @@ export default function ({
                         ${edgeCollec}
                         RETURN v
                     `,
-                    ctx
+                    ctx,
                 });
 
                 // Move children to element's parent
@@ -409,9 +409,9 @@ export default function ({
                             treeId,
                             nodeId: child._key,
                             parentTo: parentId,
-                            ctx
-                        })
-                    )
+                            ctx,
+                        }),
+                    ),
                 );
             }
 
@@ -423,14 +423,14 @@ export default function ({
                         REMOVE e IN ${edgeCollec}
                         RETURN OLD
                 `,
-                ctx
+                ctx,
             });
 
             // Remove node entity
             const removedEntity = (
                 await dbService.execute({
                     query: aql`REMOVE {_id: ${fullNodeId}, _key: ${nodeId}} IN ${nodesCollec} RETURN OLD`,
-                    ctx
+                    ctx,
                 })
             )[0];
 
@@ -467,7 +467,7 @@ export default function ({
             startingNode,
             depth = MAX_TREE_DEPTH,
             childrenCount = false,
-            ctx
+            ctx,
         }): Promise<ITreeNode[]> {
             const rootId = getRootId(treeId);
 
@@ -494,7 +494,7 @@ export default function ({
                         RETURN pv._key
                     )
                     LET nodeOrder = TO_NUMBER(p.edges[-1].order)
-                `
+                `,
             ];
 
             if (childrenCount) {
@@ -524,7 +524,7 @@ export default function ({
                 childrenCount?: number;
             }> = await dbService.execute({
                 query: join(queryParts),
-                ctx
+                ctx,
             });
 
             /**
@@ -562,7 +562,7 @@ export default function ({
                     id: elem.id,
                     order: elem.order,
                     record: dbUtils.cleanup(elem.record),
-                    children: []
+                    children: [],
                 };
 
                 if (childrenCount) {
@@ -579,7 +579,7 @@ export default function ({
             childrenCount = false,
             withTotalCount,
             pagination,
-            ctx
+            ctx,
         }): Promise<IList<ITreeNode>> {
             const rootId = getRootId(treeId);
             const nodeFrom = nodeId ? getFullNodeId(nodeId, treeId) : rootId;
@@ -620,7 +620,7 @@ export default function ({
             const res = await dbService.execute<IExecuteWithCount<IChildrenResultNode> | IChildrenResultNode[]>({
                 query,
                 withTotalCount,
-                ctx
+                ctx,
             });
 
             const list = isExecuteWithCount(res) ? res.results : res;
@@ -632,9 +632,9 @@ export default function ({
                         id: elem.id,
                         order: elem.order,
                         record: dbUtils.cleanup(elem.record),
-                        childrenCount: elem.childrenCount ?? null
+                        childrenCount: elem.childrenCount ?? null,
                     };
-                })
+                }),
             };
         },
         async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePath> {
@@ -688,7 +688,7 @@ export default function ({
         async getNodesByRecord({
             treeId,
             record,
-            ctx
+            ctx,
         }: {
             treeId: string;
             record: ITreeElement;
@@ -714,6 +714,6 @@ export default function ({
             `;
 
             return dbService.execute<string[]>({query, ctx});
-        }
+        },
     };
 }

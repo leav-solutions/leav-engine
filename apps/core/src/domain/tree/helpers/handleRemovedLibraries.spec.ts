@@ -9,7 +9,7 @@ import handleRemovedLibraries from './handleRemovedLibraries';
 describe('handleRemovedLibraries', () => {
     const mockTreeRepo: Mockify<ITreeRepo> = {
         deleteElement: jest.fn(),
-        getNodesByLibrary: global.__mockPromise(['123456', '987654'])
+        getNodesByLibrary: global.__mockPromise(['123456', '987654']),
     };
 
     beforeEach(() => {
@@ -24,14 +24,14 @@ describe('handleRemovedLibraries', () => {
                 lib1: {
                     allowMultiplePositions: false,
                     allowedAtRoot: true,
-                    allowedChildren: ['__all__']
+                    allowedChildren: ['__all__'],
                 },
                 lib2: {
                     allowMultiplePositions: false,
                     allowedAtRoot: true,
-                    allowedChildren: ['__all__']
-                }
-            }
+                    allowedChildren: ['__all__'],
+                },
+            },
         };
 
         const treeDataAfter = {
@@ -40,9 +40,9 @@ describe('handleRemovedLibraries', () => {
                 lib1: {
                     allowMultiplePositions: false,
                     allowedAtRoot: true,
-                    allowedChildren: ['__all__']
-                }
-            }
+                    allowedChildren: ['__all__'],
+                },
+            },
         };
 
         await handleRemovedLibrariesFunc(treeDataBefore, treeDataAfter, mockCtx);

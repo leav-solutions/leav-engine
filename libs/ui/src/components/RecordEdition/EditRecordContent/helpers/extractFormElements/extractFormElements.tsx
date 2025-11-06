@@ -14,7 +14,7 @@ const isComputeValueInError = (computeErrors: QueryResult['error'], attributeId:
 export const extractFormElements = (
     form: IRecordForm,
     computedValues: GetRecordColumnsValuesRecord,
-    computeErrors: QueryResult['error']
+    computeErrors: QueryResult['error'],
 ): IFormElementsByContainer =>
     form.elements.reduce((allElements, element) => {
         if (typeof allElements[element.containerId] === 'undefined') {
@@ -36,7 +36,7 @@ export const extractFormElements = (
             if (curSettings.key === 'label') {
                 return {
                     ...allSettings,
-                    label: useAttributeLabel ? element.attribute.label : curSettings.value
+                    label: useAttributeLabel ? element.attribute.label : curSettings.value,
                 };
             }
             return {...allSettings, [curSettings.key]: curSettings.value};
@@ -45,7 +45,7 @@ export const extractFormElements = (
         allElements[element.containerId].push({
             ...element,
             uiElement,
-            settings
+            settings,
         });
 
         return allElements;

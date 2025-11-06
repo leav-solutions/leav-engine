@@ -4,18 +4,18 @@
 
 export const AbsolutePaths = {
     panel: '/:workspaceId/:panelId/*',
-    recordPanel: '/:workspaceId/:panelId/:recordId/:where/:recordPanelId/*'
+    recordPanel: '/:workspaceId/:panelId/:recordId/:where/:recordPanelId/*',
 };
 
 export const UnreachablePaths = {
     workspace: '/:workspaceId/*',
     record: ':recordId',
-    recordWherePanel: ':recordId/:where/:recordPanelId/*'
+    recordWherePanel: ':recordId/:where/:recordPanelId/*',
 };
 
 export const RelativePaths = {
     nextLevelPanel: ':recordId/:where/:recordPanelId',
     closeCurrentPanel: '../../..',
     changeLastRecordPanel: '../:recordPanelId',
-    openCurrentPanelInFullpage: '../../../:recordId/fullpage/:recordPanelId'
+    openCurrentPanelInFullpage: '../../../:recordId/fullpage/:recordPanelId',
 };

@@ -33,7 +33,7 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
         order: 0,
         containerId: defaultContainerId,
         type: FormElementTypes.layout,
-        uiElement: element
+        uiElement: element,
     };
 
     const [{isDragging}, drag] = useDrag<
@@ -44,10 +44,10 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
         item: {
             type: DraggableElementTypes.RESERVE_LAYOUT_ELEMENT,
             element: formElement,
-            index: -1
+            index: -1,
         },
         collect: monitor => ({
-            isDragging: !!monitor.isDragging()
+            isDragging: !!monitor.isDragging(),
         }),
         canDrag: !readonly,
         end: (_, monitor) => {
@@ -59,23 +59,23 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
 
                 const position = {
                     order: monitor.getItem().dropAtPos?.order || 0,
-                    containerId: monitor.getDropResult().containerId
+                    containerId: monitor.getDropResult().containerId,
                 };
 
                 dispatch({
                     type: FormBuilderActionTypes.ADD_ELEMENT,
                     element: {...monitor.getItem().element, containerId: position.containerId},
-                    position
+                    position,
                 });
             } else {
                 const containerId = monitor.getItem().dropAtPos?.containerId || defaultContainerId;
 
                 dispatch({
                     type: FormBuilderActionTypes.REMOVE_ELEMENT,
-                    element: {...monitor.getItem().element, containerId}
+                    element: {...monitor.getItem().element, containerId},
                 });
             }
-        }
+        },
     });
 
     return (

@@ -31,7 +31,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
     isMultivalue,
     onLink,
     onReplace,
-    onClose
+    onClose,
 }) => {
     const {t} = useSharedTranslation();
     const {view} = useViewSettingsContext();
@@ -49,15 +49,15 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
     const {data: attributeData} = useExplorerLinkAttributeQuery({
         skip: view.entrypoint.type !== 'link',
         variables: {
-            id: (view.entrypoint as IEntrypointLink).linkAttributeId
-        }
+            id: (view.entrypoint as IEntrypointLink).linkAttributeId,
+        },
     });
 
     const {createLinks} = useAddLinkMassAction({
         store: {view},
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
         onLink,
-        closeModal: onClose
+        closeModal: onClose,
     });
 
     const {replaceLink} = useReplaceLinkMassAction({
@@ -65,7 +65,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
         linkId,
         onReplace,
-        closeModal: onClose
+        closeModal: onClose,
     });
 
     const linkAttributeData = attributeData?.attributes?.list[0];
@@ -74,11 +74,11 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
 
     const valuesList = useMemo(
         () => (isValuesListEnabled ? linkAttributeData.valuesList?.linkedValues?.map(value => value.id) : undefined),
-        [isValuesListEnabled, linkAttributeData]
+        [isValuesListEnabled, linkAttributeData],
     );
     const allowFreeEntry = useMemo(
         () => (isValuesListEnabled ? Boolean(linkAttributeData.valuesList?.allowFreeEntry) : true),
-        [isValuesListEnabled, linkAttributeData]
+        [isValuesListEnabled, linkAttributeData],
     );
 
     return linkedTreeId ? (
@@ -87,8 +87,8 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
             attribute={{
                 multiple_values: isMultivalue,
                 linked_tree: {
-                    id: linkedTreeId
-                }
+                    id: linkedTreeId,
+                },
             }}
             title={t(isMultivalue ? 'tree-node-selection.title_many' : 'tree-node-selection.title')}
             // We can select new node(s), ignoring current value(s).
@@ -100,14 +100,14 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
                 if (isReplacement) {
                     replaceLink({
                         records: {
-                            list: nodeIds.map(id => ({id}))
-                        }
+                            list: nodeIds.map(id => ({id})),
+                        },
                     });
                 } else {
                     createLinks({
                         records: {
-                            list: nodeIds.map(id => ({id}))
-                        }
+                            list: nodeIds.map(id => ({id})),
+                        },
                     });
                 }
             }}

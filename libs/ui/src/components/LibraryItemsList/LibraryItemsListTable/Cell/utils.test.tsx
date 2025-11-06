@@ -8,12 +8,12 @@ const nullValue = {value: null, isInherited: null, attribute: mockAttributeSimpl
 
 const inheritedValues = [
     {value: 'inherited_value_1', isInherited: true, attribute: mockAttributeSimple},
-    {value: 'inherited_value_2', isInherited: true, attribute: mockAttributeSimple}
+    {value: 'inherited_value_2', isInherited: true, attribute: mockAttributeSimple},
 ];
 
 const overrideValues = [
     {value: 'override_value_1', isInherited: false, attribute: mockAttributeSimple},
-    {value: 'override_value_2', isInherited: false, attribute: mockAttributeSimple}
+    {value: 'override_value_2', isInherited: false, attribute: mockAttributeSimple},
 ];
 
 describe('utils', () => {

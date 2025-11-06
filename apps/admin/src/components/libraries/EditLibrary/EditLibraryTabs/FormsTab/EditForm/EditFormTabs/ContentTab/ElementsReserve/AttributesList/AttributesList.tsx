@@ -6,7 +6,7 @@ import React from 'react';
 import {getAttributesQuery} from '../../../../../../../../../../queries/attributes/getAttributesQuery';
 import {
     type GET_ATTRIBUTES,
-    type GET_ATTRIBUTESVariables
+    type GET_ATTRIBUTESVariables,
 } from '../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
@@ -16,7 +16,7 @@ function AttributesList(): JSX.Element {
     // Get library attributes
     const {state} = useFormBuilderReducer();
     const {error, loading, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
-        variables: {libraries: [state.library]}
+        variables: {libraries: [state.library]},
     });
 
     if (loading) {

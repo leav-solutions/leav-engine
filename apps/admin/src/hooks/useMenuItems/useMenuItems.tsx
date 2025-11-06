@@ -21,7 +21,7 @@ export interface IMenuItem {
 
 const iconSize: {[size in IUseMenuItemsProps['size']]: string} = {
     small: '1.5rem',
-    big: '3rem'
+    big: '3rem',
 };
 
 interface IUseMenuItemsProps {
@@ -37,44 +37,44 @@ function useMenuItems({size}: IUseMenuItemsProps): IMenuItem[] {
             id: 'libraries',
             label: t('libraries.title'),
             icon: <AiOutlineDatabase size={iconSize[size]} />,
-            protected: true
+            protected: true,
         },
         {
             id: 'attributes',
             label: t('attributes.title'),
             icon: <BiSpreadsheet size={iconSize[size]} />,
-            protected: true
+            protected: true,
         },
         {
             id: 'trees',
             label: t('trees.title'),
             icon: <RiNodeTree size={iconSize[size]} />,
-            protected: true
+            protected: true,
         },
         {
             id: 'applications',
             label: t('applications.title'),
             icon: <AiOutlineAppstore size={iconSize[size]} />,
-            protected: true
+            protected: true,
         },
         {
             id: 'version_profiles',
             label: t('version_profiles.title'),
             icon: <VscLayers size={iconSize[size]} />,
-            protected: true
+            protected: true,
         },
         {
             id: 'tasks',
             label: t('tasks.title'),
             icon: <Icon name="tasks" style={{fontSize: `calc(${iconSize[size]} - 2px)`}} />,
-            protected: true
+            protected: true,
         },
         {
             id: 'general',
             label: t('general.title'),
             icon: <AiOutlineSetting size={iconSize[size]} />,
-            protected: false
-        }
+            protected: false,
+        },
     ];
 
     const filteredItems = userData.permissions

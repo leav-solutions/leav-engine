@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function Navigator(props) {
             return <div>MOCK Navigator</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -26,7 +26,7 @@ jest.mock(
     () =>
         function EditRecordModal(props) {
             return <div>MOCK EditRecordModal</div>;
-        }
+        },
 );
 
 const mockRecord = {
@@ -35,7 +35,7 @@ const mockRecord = {
     label: null,
     library: mockLibrary,
     preview: null,
-    __typename: ''
+    __typename: '',
 };
 
 describe('EditableNavigator', () => {
@@ -43,7 +43,7 @@ describe('EditableNavigator', () => {
         const comp = mount(
             <MockedLangContextProvider>
                 <NavigatorTab library={mockLibrary} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         await act(async () => {
@@ -59,7 +59,7 @@ describe('EditableNavigator', () => {
         const comp = mount(
             <MockedLangContextProvider>
                 <NavigatorTab library={mockLibrary} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         await act(async () => {

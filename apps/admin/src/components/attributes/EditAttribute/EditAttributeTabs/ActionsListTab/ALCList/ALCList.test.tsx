@@ -28,15 +28,15 @@ const oneActionMock = {
             input_types: ['string', 'number', 'boolean', 'object'],
             output_types: ['string', 'number', 'boolean', 'object'],
             isSystem: false,
-            params: []
-        }
+            params: [],
+        },
     },
     getValue: {
-        higherId: 0
+        higherId: 0,
     },
     deleteValue: {
-        higherId: 0
-    }
+        higherId: 0,
+    },
 };
 
 const twoActionsMock = {
@@ -57,9 +57,9 @@ const twoActionsMock = {
                     description: 'a float or integer to add',
                     required: true,
                     helper_value: '0',
-                    value: '4'
-                }
-            ]
+                    value: '4',
+                },
+            ],
         },
         1: {
             id: 'sub',
@@ -76,17 +76,17 @@ const twoActionsMock = {
                     description: 'a float or integer to substract',
                     required: true,
                     helper_value: '0',
-                    value: '0.5'
-                }
-            ]
-        }
+                    value: '0.5',
+                },
+            ],
+        },
     },
     getValue: {
-        higherId: 0
+        higherId: 0,
     },
     deleteValue: {
-        higherId: 0
-    }
+        higherId: 0,
+    },
 };
 
 const twoIncompatibleActionsMock = {
@@ -107,9 +107,9 @@ const twoIncompatibleActionsMock = {
                     description: 'a float or integer to add',
                     required: true,
                     helper_value: '0',
-                    value: '4'
-                }
-            ]
+                    value: '4',
+                },
+            ],
         },
         1: {
             id: 'sub',
@@ -126,17 +126,17 @@ const twoIncompatibleActionsMock = {
                     description: 'a float or integer to substract',
                     required: true,
                     helper_value: '0',
-                    value: '0.5'
-                }
-            ]
-        }
+                    value: '0.5',
+                },
+            ],
+        },
     },
     getValue: {
-        higherId: 0
+        higherId: 0,
     },
     deleteValue: {
-        higherId: 0
-    }
+        higherId: 0,
+    },
 };
 
 function onSelectorChangeMock(event) {
@@ -148,7 +148,7 @@ jest.mock(
     () =>
         function ALCCard() {
             return <div>Card</div>;
-        }
+        },
 );
 
 describe('ALCList', () => {
@@ -173,7 +173,7 @@ describe('ALCList', () => {
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
                 />
-            </DndProvider>
+            </DndProvider>,
         );
         const cards = container.find('ALCCard');
         expect(cards).toHaveLength(1);
@@ -201,7 +201,7 @@ describe('ALCList', () => {
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
                 />
-            </DndProvider>
+            </DndProvider>,
         );
         const cards = container.find('ALCCard');
         expect(cards).toHaveLength(2);
@@ -234,7 +234,7 @@ describe('ALCList', () => {
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
                 />
-            </DndProvider>
+            </DndProvider>,
         );
         container.find('button').simulate('click');
         expect(mockSave).toHaveLength(1);
@@ -268,7 +268,7 @@ describe('ALCList', () => {
                     currentActionListName="saveValue"
                     onSelectorChange={onSelectorChangeMock}
                 />
-            </DndProvider>
+            </DndProvider>,
         );
 
         await act(async () => {

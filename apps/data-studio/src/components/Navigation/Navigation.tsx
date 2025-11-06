@@ -32,9 +32,9 @@ function Navigation({tree}: INavigationProps): JSX.Element {
 
     const {data, loading, error} = useQuery<GET_TREES, GET_TREESVariables>(getTreeListQuery, {
         variables: {
-            filters: {id: [tree]}
+            filters: {id: [tree]},
         },
-        skip: !tree
+        skip: !tree,
     });
 
     const treeData = data?.trees?.list[0];
@@ -43,7 +43,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
 
     useGetRecordUpdatesSubscription(
         {libraries: (treeData?.libraries ?? []).map(lib => lib.library.id)},
-        !treeData || !isInApp
+        !treeData || !isInApp,
     );
 
     useEffect(() => {
@@ -60,16 +60,16 @@ function Navigation({tree}: INavigationProps): JSX.Element {
                 label: treeName,
                 behavior: currentTree.behavior,
                 libraries: currentTree.libraries.map(lib => ({id: lib.library.id, behavior: lib.library.behavior})),
-                permissions: currentTree.permissions
+                permissions: currentTree.permissions,
             });
 
             const baseInfo: IBaseInfo = {
                 content: t('info.active-tree', {
                     tree: treeName,
                     appLabel: localizedTranslation(appData.currentApp.label, lang),
-                    interpolation: {escapeValue: false}
+                    interpolation: {escapeValue: false},
                 }),
-                type: InfoType.BASIC
+                type: InfoType.BASIC,
             };
 
             dispatch(setInfoBase(baseInfo));

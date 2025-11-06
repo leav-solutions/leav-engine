@@ -15,7 +15,7 @@ import {
     FormElementSettingsInputTypes,
     type IFormElementSettings,
     type ISettingsFieldCommonProps,
-    type SettingsOnChangeFunc
+    type SettingsOnChangeFunc,
 } from '../../../_types';
 import SettingsAttribute, {type ISettingsAttributeProps} from './SettingsInput/SettingsAttribute';
 import SettingsCheckbox from './SettingsInput/SettingsCheckbox';
@@ -32,13 +32,13 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
     const {readonly} = useEditFormContext();
     const {
         state: {elementInSettings, library},
-        dispatch
+        dispatch,
     } = useFormBuilderReducer();
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
         variables: {
-            id: String(elementInSettings.settings?.attribute)
-        }
+            id: String(elementInSettings.settings?.attribute),
+        },
     });
 
     if (loading) {
@@ -54,8 +54,8 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
         dispatch({
             type: FormBuilderActionTypes.SAVE_SETTINGS,
             settings: {
-                [name]: value
-            }
+                [name]: value,
+            },
         });
     };
 
@@ -68,7 +68,7 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
         onChange: _handleChange,
         disabled: readonly,
         fieldName: settingsField.name,
-        ...(settingsField.getInputSettings ? settingsField.getInputSettings(attributeProps) : null)
+        ...(settingsField.getInputSettings ? settingsField.getInputSettings(attributeProps) : null),
     };
 
     switch (settingsField.inputType) {

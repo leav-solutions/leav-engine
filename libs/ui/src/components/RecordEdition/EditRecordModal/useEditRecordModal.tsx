@@ -27,6 +27,6 @@ export const useEditRecordModal = () => {
                 }}
             />
         ),
-        openEditRecordModal: (props: EditRecordModalProps) => setEditRecordModalProps(props)
+        openEditRecordModal: (props: EditRecordModalProps) => setEditRecordModalProps(props),
     };
 };

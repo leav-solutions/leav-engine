@@ -21,7 +21,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     readonly,
     handleSubmit,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSRichTextWrapper should be used inside a antd Form.Item');

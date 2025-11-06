@@ -10,7 +10,7 @@ import {
     TreeBehavior,
     useCreateDirectoryMutation,
     useDoesFileExistAsChildLazyQuery,
-    useGetTreeLibrariesQuery
+    useGetTreeLibrariesQuery,
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '../SelectTreeNode';
 
@@ -32,7 +32,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     const {modal} = App.useApp();
 
     const [runDoesFileExistAsChild] = useDoesFileExistAsChildLazyQuery({
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
     });
 
     const _checkDirectoryExists = async (parentNode: string, name: string): Promise<boolean> => {
@@ -40,8 +40,8 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
             variables: {
                 treeId,
                 parentNode: parentNode !== treeId ? parentNode : null,
-                filename: name
-            }
+                filename: name,
+            },
         });
 
         return isFileExists.data.doesFileExistAsChild;
@@ -49,15 +49,15 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
 
     useGetTreeLibrariesQuery({
         variables: {
-            library: libraryId
+            library: libraryId,
         },
         onCompleted: getTreeLibrariesData => {
             const linkedTree = getTreeLibrariesData.trees.list.filter(
-                tree => tree.system && tree.behavior === TreeBehavior.files
+                tree => tree.system && tree.behavior === TreeBehavior.files,
             )[0];
 
             setTreeId(linkedTree.id);
-        }
+        },
     });
 
     const [runCreateDirectory, {loading}] = useCreateDirectoryMutation({
@@ -71,7 +71,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
         },
         onError: err => {
             setStatus('error');
-        }
+        },
     });
 
     const _handleCreateClick = async () => {
@@ -86,8 +86,8 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
             variables: {
                 library: libraryId,
                 nodeId: selectedNodeKey,
-                name: directoryName
-            }
+                name: directoryName,
+            },
         });
 
         _onClose();
@@ -99,7 +99,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     };
 
     const contentStyle: React.CSSProperties = {
-        marginTop: 16
+        marginTop: 16,
     };
 
     const next = () => {
@@ -128,7 +128,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
             open: true,
             title: t('create_directory.duplicate_modal.title'),
             okText: t('global.ok'),
-            content: <p>{t('create_directory.duplicate_modal.message', {directoryName})}</p>
+            content: <p>{t('create_directory.duplicate_modal.message', {directoryName})}</p>,
         });
     };
 
@@ -140,7 +140,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                     data-testid="select-tree-node"
                     style={{
                         borderRadius: token.borderRadiusLG,
-                        border: `1px dashed ${token.colorBorder}`
+                        border: `1px dashed ${token.colorBorder}`,
                     }}
                 >
                     {treeId && libraryId && (
@@ -153,7 +153,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                         />
                     )}
                 </div>
-            )
+            ),
         },
         {
             title: t('create_directory.choose_name_step_title'),
@@ -164,8 +164,8 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                     value={directoryName}
                     onChange={e => setDirectoryName(e.target.value)}
                 />
-            )
-        }
+            ),
+        },
     ];
 
     const items = steps.map(item => ({key: item.title, title: item.title}));

@@ -24,12 +24,12 @@ function DefinePermByUserGroupView({applyTo, readOnly, type, actions}: IDefinePe
     const [selectedGroupNode, setSelectedGroupNode] = useState<ITreeNodeData | null>({
         node: {id: fakeRootId},
         path: [],
-        treeIndex: 0
+        treeIndex: 0,
     });
 
     // Select first group by default
     const [selectedPermissionsGroup, setSelectedPermissionsGroup] = useState<string>(
-        actions ? Object.keys(actions)[0] : null
+        actions ? Object.keys(actions)[0] : null,
     );
 
     const _selectGroupNode = (nodeData: ITreeNodeData) =>
@@ -49,7 +49,7 @@ function DefinePermByUserGroupView({applyTo, readOnly, type, actions}: IDefinePe
                 type={type}
                 selectedGroup={selectedPermissionsGroup}
                 onSelect={_handleSelectPermissionsGroup}
-            />
+            />,
         );
     }
 
@@ -60,7 +60,7 @@ function DefinePermByUserGroupView({applyTo, readOnly, type, actions}: IDefinePe
                 treeId={usersGroupsTreeId}
                 onClick={_selectGroupNode}
                 selectedNode={selectedGroupNode}
-            />
+            />,
         ]);
     }
 
@@ -71,10 +71,10 @@ function DefinePermByUserGroupView({applyTo, readOnly, type, actions}: IDefinePe
                     type,
                     actions: actions?.[selectedPermissionsGroup],
                     applyTo,
-                    usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null
+                    usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
                 }}
                 readOnly={readOnly}
-            />
+            />,
         );
     }
 

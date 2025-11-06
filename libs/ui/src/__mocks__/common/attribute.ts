@@ -9,7 +9,7 @@ import {
     type GetAttributesQuery,
     type LibraryAttributesFragment,
     type RecordFormAttributeFragment,
-    type RecordFormAttributeTreeAttributeFragment
+    type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
 
 export const mockLibraryAttribute: LibraryAttributesFragment = {
@@ -18,38 +18,38 @@ export const mockLibraryAttribute: LibraryAttributesFragment = {
     format: AttributeFormat.text,
     label: {
         fr: 'Mon attribut',
-        en: 'My attribute'
+        en: 'My attribute',
     },
-    system: false
+    system: false,
 };
 
 export const mockAttributeSimple: GetAttributesQuery['attributes']['list'][0] = {
     id: 'my_attribute',
     label: {
         fr: 'Mon attribut',
-        en: 'My attribute'
+        en: 'My attribute',
     },
     type: AttributeType.simple,
     format: AttributeFormat.text,
-    system: false
+    system: false,
 };
 
 export const mockAttributeWithDetails: AttributeDetailsFragment = {
     id: 'my_attribute',
     label: {
         fr: 'Mon attribut',
-        en: 'My attribute'
+        en: 'My attribute',
     },
     format: AttributeFormat.text,
     type: AttributeType.simple,
     system: false,
     description: {
         fr: 'Ma description',
-        en: 'My description'
+        en: 'My description',
     },
     unique: false,
     readonly: false,
-    multiple_values: false
+    multiple_values: false,
 };
 
 export const mockAttributeLink: AttributeDetailsFragment = {
@@ -59,9 +59,9 @@ export const mockAttributeLink: AttributeDetailsFragment = {
         id: 'my_linked_library',
         label: {
             fr: 'Ma biblio',
-            en: 'My library'
-        }
-    }
+            en: 'My library',
+        },
+    },
 };
 
 export const mockAttributeTree: AttributeDetailsFragment = {
@@ -71,9 +71,9 @@ export const mockAttributeTree: AttributeDetailsFragment = {
         id: 'my_linked_tree',
         label: {
             fr: 'Mon arbre',
-            en: 'My tree'
-        }
-    }
+            en: 'My tree',
+        },
+    },
 };
 
 export const mockAttributeVersionable: AttributeDetailsFragment = {
@@ -84,19 +84,19 @@ export const mockAttributeVersionable: AttributeDetailsFragment = {
             id: 'my_profile',
             label: {
                 fr: 'Mon profil',
-                en: 'My profile'
+                en: 'My profile',
             },
             trees: [
                 {
                     id: 'my_tree',
                     label: {
                         fr: 'Mon arbre',
-                        en: 'My tree'
-                    }
-                }
-            ]
-        }
-    }
+                        en: 'My tree',
+                    },
+                },
+            ],
+        },
+    },
 };
 
 export const mockFormAttribute: RecordFormAttributeFragment = {
@@ -105,11 +105,11 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
     format: AttributeFormat.extended,
     label: {
         fr: 'test',
-        en: 'test'
+        en: 'test',
     },
     description: {
         fr: 'Mon attribut',
-        en: 'My attribute'
+        en: 'My attribute',
     },
     system: false,
     readonly: false,
@@ -119,37 +119,37 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
         enable: false,
         allowFreeEntry: false,
         allowListUpdate: false,
-        values: []
+        values: [],
     },
     permissions: {
         access_attribute: true,
-        edit_value: true
+        edit_value: true,
     },
     metadata_fields: [
         {
             ...mockAttributeWithDetails,
             permissions: {
                 access_attribute: true,
-                edit_value: true
-            }
-        }
+                edit_value: true,
+            },
+        },
     ],
     versions_conf: null,
-    compute: false
+    compute: false,
 };
 
 export const mockFormAttributeCompute: RecordFormAttributeFragment = {
     ...mockFormAttribute,
     id: 'test_compute_attribute',
     format: AttributeFormat.text,
-    compute: true
+    compute: true,
 };
 
 export const mockFormAttributeTree: RecordFormAttributeTreeAttributeFragment = {
     ...mockFormAttribute,
     ...mockAttributeTree,
     metadata_fields: null,
-    treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
+    treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []},
 };
 
 export const mockSelectedAttributeA: ISelectedAttribute = {
@@ -158,17 +158,17 @@ export const mockSelectedAttributeA: ISelectedAttribute = {
     path: 'A',
     library: 'test_lib',
     label: {fr: 'My attribute'},
-    multiple_values: false
+    multiple_values: false,
 };
 
 export const mockSelectedAttributeB: ISelectedAttribute = {
     ...mockSelectedAttributeA,
     id: 'B',
-    path: 'B'
+    path: 'B',
 };
 
 export const mockSelectedAttributeC: ISelectedAttribute = {
     ...mockSelectedAttributeA,
     id: 'C',
-    path: 'C'
+    path: 'C',
 };

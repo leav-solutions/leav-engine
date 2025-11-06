@@ -12,12 +12,12 @@ import DisplayInfo from './DisplayInfo';
 describe('DisplayInfo', () => {
     const mockMessage: IInfo = {
         content: 'test message',
-        type: InfoType.BASIC
+        type: InfoType.BASIC,
     };
 
     const mockActiveTimeouts: {info: any; base: any} = {
         info: 'timeoutInfo',
-        base: null
+        base: null,
     };
 
     const mockTriggerInfo: IInfo[] = [];
@@ -33,7 +33,7 @@ describe('DisplayInfo', () => {
                     cancelInfo={jest.fn()}
                     triggerInfos={mockTriggerInfo}
                     setTriggerInfos={mockSetTriggerInfo}
-                />
+                />,
             );
         });
 
@@ -44,8 +44,8 @@ describe('DisplayInfo', () => {
         const mockInfo: IInfo[] = [
             {
                 content: 'test is a text',
-                type: InfoType.BASIC
-            }
+                type: InfoType.BASIC,
+            },
         ];
         const mockSetTriggerInfo = jest.fn();
 
@@ -57,7 +57,7 @@ describe('DisplayInfo', () => {
                     cancelInfo={jest.fn()}
                     triggerInfos={mockInfo}
                     setTriggerInfos={mockSetTriggerInfo}
-                />
+                />,
             );
         });
 

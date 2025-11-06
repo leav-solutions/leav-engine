@@ -11,7 +11,7 @@ const MockSearchContextProvider = ({state, children}: PropsWithChildren<{state?:
     <SearchContext.Provider
         value={{
             state: {...initialSearchState, library: mockGetLibraryDetailExtendedElement, ...state},
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         }}
     >
         {children}

@@ -21,9 +21,9 @@ function EditLibraryAttributes({library, readOnly}: IEditLibraryAttributesProps)
                 variables: {
                     library: {
                         id: library.id,
-                        attributes: newAttributes
-                    }
-                }
+                        attributes: newAttributes,
+                    },
+                },
             });
         } catch (e) {
             console.error(e);
@@ -37,9 +37,9 @@ function EditLibraryAttributes({library, readOnly}: IEditLibraryAttributesProps)
             variables: {
                 library: {
                     id: library.id,
-                    attributes: newAttributes
-                }
-            }
+                    attributes: newAttributes,
+                },
+            },
         });
     };
 

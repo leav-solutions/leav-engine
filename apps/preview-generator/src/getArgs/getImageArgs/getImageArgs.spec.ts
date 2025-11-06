@@ -6,19 +6,19 @@ import {type IVersion} from '../../types/types';
 import {getImageArgs} from './getImageArgs';
 
 jest.mock('./helpers/getColorspace', () => ({
-    getColorspace: jest.fn(() => Promise.resolve(Colorspaces.CMYK))
+    getColorspace: jest.fn(() => Promise.resolve(Colorspaces.CMYK)),
 }));
 
 jest.mock('./helpers/hasClippingPath', () => ({
-    hasClippingPath: () => Promise.resolve(true)
+    hasClippingPath: () => Promise.resolve(true),
 }));
 
 jest.mock('./helpers/hasTransparency', () => ({
-    hasTransparency: () => Promise.resolve(true)
+    hasTransparency: () => Promise.resolve(true),
 }));
 
 jest.mock('../../getConfig/getConfig', () => ({
-    getConfig: async () => ({})
+    getConfig: async () => ({}),
 }));
 
 describe('getImageArgs', () => {
@@ -30,7 +30,7 @@ describe('getImageArgs', () => {
         const name = 'medium';
 
         const version: IVersion = {
-            sizes: [{output, size, name}]
+            sizes: [{output, size, name}],
         };
 
         const args = await getImageArgs(ext, input, output, size, name, version);

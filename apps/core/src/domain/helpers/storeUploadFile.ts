@@ -10,7 +10,7 @@ export type StoreUploadFileFunc = (
     fileData: FileUpload,
     path: string,
     onProgress?: (progress: Progress) => Promise<void>,
-    size?: number
+    size?: number,
 ) => Promise<void>;
 
 export default function () {
@@ -18,7 +18,7 @@ export default function () {
         fileData: FileUpload,
         path: string,
         onProgress?: (progress: Progress) => void,
-        size?: number
+        size?: number,
     ): Promise<void> => {
         const {createReadStream, filename} = fileData;
         const readStream = createReadStream();
@@ -26,7 +26,7 @@ export default function () {
 
         const str = progress({
             length: size,
-            time: 100 /* ms */
+            time: 100 /* ms */,
         });
 
         await new Promise((resolve, reject) => {

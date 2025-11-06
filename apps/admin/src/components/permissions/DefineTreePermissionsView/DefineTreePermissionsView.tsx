@@ -21,18 +21,18 @@ const DefineTreePermissionsView = ({
     treeAttribute: tree,
     permissionType,
     applyTo,
-    readOnly
+    readOnly,
 }: IDefineTreePermissionsViewProps): JSX.Element => {
     const usersGroupsTreeId = 'users_groups';
     const [selectedTreeNode, setSelectedTreeNode] = React.useState<ITreeNodeData | null>({
         node: {id: fakeRootId},
         path: [],
-        treeIndex: 0
+        treeIndex: 0,
     });
     const [selectedGroupNode, setSelectedGroupNode] = React.useState<ITreeNodeData | null>({
         node: {id: fakeRootId},
         path: [],
-        treeIndex: 0
+        treeIndex: 0,
     });
     const _selectTreeNode = (nodeData: ITreeNodeData) =>
         setSelectedTreeNode(getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedTreeNode) ? nodeData : null);
@@ -50,7 +50,7 @@ const DefineTreePermissionsView = ({
             treeId={tree.linked_tree.id}
             onClick={_selectTreeNode}
             selectedNode={selectedTreeNode}
-        />
+        />,
     ];
 
     if (selectedTreeNode) {
@@ -59,7 +59,7 @@ const DefineTreePermissionsView = ({
                 treeId={usersGroupsTreeId}
                 onClick={_selectGroupNode}
                 selectedNode={selectedGroupNode}
-            />
+            />,
         );
 
         if (selectedGroupNode) {
@@ -71,11 +71,11 @@ const DefineTreePermissionsView = ({
                         usersGroup: selectedGroupNode.node.id !== fakeRootId ? selectedGroupNode.node.id : null,
                         permissionTreeTarget: {
                             tree: tree.linked_tree.id,
-                            nodeId: selectedTreeNode.node.id !== fakeRootId ? selectedTreeNode.node.id : null
-                        }
+                            nodeId: selectedTreeNode.node.id !== fakeRootId ? selectedTreeNode.node.id : null,
+                        },
                     }}
                     readOnly={readOnly}
-                />
+                />,
             );
         }
     }
@@ -84,7 +84,7 @@ const DefineTreePermissionsView = ({
 };
 
 DefineTreePermissionsView.defaultProps = {
-    readOnly: false
+    readOnly: false,
 };
 
 export default DefineTreePermissionsView;

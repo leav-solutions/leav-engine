@@ -27,9 +27,9 @@ export const useApplicationTrees = (params: IUseApplicationTreesParams = {}): IU
             (Array.isArray(currentApp?.settings?.trees) && !currentApp.settings.trees.length), // Skip if no trees are selected
         variables: {
             filters: {
-                id: Array.isArray(currentApp?.settings?.trees) ? currentApp.settings.trees.filter(t => !!t) : []
-            }
-        }
+                id: Array.isArray(currentApp?.settings?.trees) ? currentApp.settings.trees.filter(t => !!t) : [],
+            },
+        },
     });
 
     let trees = data?.trees.list ? [...data?.trees.list] : [];

@@ -11,7 +11,7 @@ const initialState: IFormBuilderState = {
     activeDependency: null,
     elementInSettings: null,
     elements: {},
-    activeElements: {}
+    activeElements: {},
 };
 
 export const FormBuilderReducerContext = React.createContext<{

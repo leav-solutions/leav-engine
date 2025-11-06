@@ -29,7 +29,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     libraryId,
     panelType,
     currentPanelId,
-    className
+    className,
 }) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
@@ -44,7 +44,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
                   .filter(panel => !panel.isStandalone)
                   .map(panel => ({
                       key: panel.id,
-                      label: localizedTranslation(panel.name, lang)
+                      label: localizedTranslation(panel.name, lang),
                   }));
 
     const onChangeTab: ComponentProps<typeof KitTabs>['onChange'] = key => {
@@ -54,9 +54,9 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
                 return navigate(
                     // Navigation between record panels should be historized in url
                     generatePath(RelativePaths.changeLastRecordPanel, {
-                        recordPanelId: currentTab.key
+                        recordPanelId: currentTab.key,
                     }),
-                    {relative: 'path'}
+                    {relative: 'path'},
                 );
             } else {
                 // Navigation between library panels should not be historized in url

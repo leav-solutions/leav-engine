@@ -7,7 +7,7 @@ import {
     type SaveViewMutationVariables,
     type GetViewsListQuery,
     type GetViewsListQueryVariables,
-    useSaveViewMutation
+    useSaveViewMutation,
 } from '_ui/_gqlTypes';
 import {getViewsListQuery} from '_ui/_queries/views/getViewsListQuery';
 
@@ -30,8 +30,8 @@ export default function useExecuteSaveViewMutation(): IUseSaveViewMutationHook {
                     const queryToUpdate = {
                         query: getViewsListQuery,
                         variables: {
-                            libraryId: options.variables.view.library
-                        }
+                            libraryId: options.variables.view.library,
+                        },
                     };
 
                     const cacheData = cache.readQuery<GetViewsListQuery, GetViewsListQueryVariables>(queryToUpdate);
@@ -42,14 +42,14 @@ export default function useExecuteSaveViewMutation(): IUseSaveViewMutationHook {
                             data: {
                                 views: {
                                     list: [...cacheData.views.list, mutationResult.data.saveView],
-                                    totalCount: cacheData.views.totalCount + 1
-                                }
+                                    totalCount: cacheData.views.totalCount + 1,
+                                },
                             },
-                            overwrite: true
+                            overwrite: true,
                         });
                     }
-                }
+                },
             });
-        }
+        },
     };
 }

@@ -17,6 +17,6 @@ export const sendResponse = async (channel: Channel, {exchange, routingKey}: IPr
     const buffer = Buffer.from(JSON.stringify({...response, results: resultsWithErrorReason}));
 
     return channel.publish(exchange, routingKey, buffer, {
-        persistent: true
+        persistent: true,
     });
 };

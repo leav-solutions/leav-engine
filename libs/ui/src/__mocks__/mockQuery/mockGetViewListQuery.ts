@@ -17,14 +17,14 @@ const views: Array<WithTypename<ViewDetailsFragment>> = [
                 id: '1',
                 label: 'name',
                 library: {
-                    id: 'users'
-                }
-            }
+                    id: 'users',
+                },
+            },
         },
         filters: [] as any,
         valuesVersions: null,
-        attributes: null
-    }
+        attributes: null,
+    },
 ];
 
 const mocksGetViewsListQuery = (libraryId: string) => {
@@ -33,18 +33,18 @@ const mocksGetViewsListQuery = (libraryId: string) => {
             request: {
                 query: getViewsListQuery,
                 variables: {
-                    libraryId
-                }
+                    libraryId,
+                },
             },
             result: {
                 data: {
                     views: {
                         totalCount: 1,
-                        list: views
-                    }
-                }
-            }
-        }
+                        list: views,
+                    },
+                },
+            },
+        },
     ];
 
     return mocks;

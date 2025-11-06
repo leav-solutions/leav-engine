@@ -20,6 +20,6 @@ export default function ({'core.infra.plugins': pluginsRepo}: IDeps): IPluginsDo
         },
         getRegisteredPlugins(): IRegisteredPlugin[] {
             return pluginsRepo.getRegisteredPlugins();
-        }
+        },
     };
 }

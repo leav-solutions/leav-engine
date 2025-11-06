@@ -9,7 +9,7 @@ import {
     type IFilter,
     type IFilterAttribute,
     OperatorFilter,
-    TreeConditionFilter
+    TreeConditionFilter,
 } from '_ui/types/search';
 import {AttributeFormat, type RecordFilterCondition} from '_ui/_gqlTypes';
 
@@ -28,7 +28,7 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.BEGIN_WITH,
         AttributeConditionFilter.END_WITH,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.extended]: [
         AttributeConditionFilter.CONTAINS,
@@ -38,7 +38,7 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.BEGIN_WITH,
         AttributeConditionFilter.END_WITH,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.encrypted]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
     [AttributeFormat.numeric]: [
@@ -47,7 +47,7 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.GREATER_THAN,
         AttributeConditionFilter.LESS_THAN,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.boolean]: [AttributeConditionFilter.EQUAL, AttributeConditionFilter.NOT_EQUAL],
     [AttributeFormat.date]: [
@@ -62,7 +62,7 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.YESTERDAY,
         AttributeConditionFilter.LAST_MONTH,
         AttributeConditionFilter.NEXT_MONTH,
-        AttributeConditionFilter.BETWEEN
+        AttributeConditionFilter.BETWEEN,
     ],
     [AttributeFormat.date_range]: [
         AttributeConditionFilter.CONTAINS,
@@ -73,7 +73,7 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.END_AFTER,
         AttributeConditionFilter.END_BEFORE,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.color]: [
         AttributeConditionFilter.CONTAINS,
@@ -81,14 +81,14 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.EQUAL,
         AttributeConditionFilter.NOT_EQUAL,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
+        AttributeConditionFilter.IS_NOT_EMPTY,
     ],
     [AttributeFormat.rich_text]: [
         AttributeConditionFilter.CONTAINS,
         AttributeConditionFilter.NOT_CONTAINS,
         AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
-    ]
+        AttributeConditionFilter.IS_NOT_EMPTY,
+    ],
 };
 
 export function getAttributeConditionOptions(t: TFunction): Array<IFilterConditionOption<AttributeConditionType>> {
@@ -102,12 +102,12 @@ export function getAttributeConditionOptions(t: TFunction): Array<IFilterConditi
         {
             text: t('filters.less-than'),
             textByFormat: {[AttributeFormat.date]: t('filters.before')},
-            value: AttributeConditionFilter.LESS_THAN
+            value: AttributeConditionFilter.LESS_THAN,
         },
         {
             text: t('filters.greater-than'),
             textByFormat: {[AttributeFormat.date]: t('filters.after')},
-            value: AttributeConditionFilter.GREATER_THAN
+            value: AttributeConditionFilter.GREATER_THAN,
         },
         {text: t('filters.today'), value: AttributeConditionFilter.TODAY},
         {text: t('filters.tomorrow'), value: AttributeConditionFilter.TOMORROW},
@@ -126,34 +126,34 @@ export function getAttributeConditionOptions(t: TFunction): Array<IFilterConditi
         {text: t('filters.values-count-equal'), value: AttributeConditionFilter.VALUES_COUNT_EQUAL},
         {text: t('filters.values-count-greater-than'), value: AttributeConditionFilter.VALUES_COUNT_GREATER_THAN},
         {text: t('filters.values-count-lower-than'), value: AttributeConditionFilter.VALUES_COUNT_LOWER_THAN},
-        {text: t('filters.through'), value: AttributeConditionFilter.THROUGH}
+        {text: t('filters.through'), value: AttributeConditionFilter.THROUGH},
     ];
 }
 
 export function getTreeConditionOptions(t: TFunction): Array<IFilterConditionOption<TreeConditionFilter>> {
     return [
         {text: t('filters.classified-in'), value: TreeConditionFilter.CLASSIFIED_IN},
-        {text: t('filters.not-classified-in'), value: TreeConditionFilter.NOT_CLASSIFIED_IN}
+        {text: t('filters.not-classified-in'), value: TreeConditionFilter.NOT_CLASSIFIED_IN},
     ];
 }
 
 export function getOperatorOptions(t: TFunction): Array<IFilterConditionOption<OperatorFilter>> {
     return [
         {text: t('filters.and'), value: OperatorFilter.AND},
-        {text: t('filters.or'), value: OperatorFilter.OR}
+        {text: t('filters.or'), value: OperatorFilter.OR},
     ];
 }
 
 export const getConditionOptionsByType = (
     filter: IFilter,
     showThroughCondition: boolean,
-    t: TFunction
+    t: TFunction,
 ): Array<IFilterConditionOption<AttributeConditionType>> => {
     const _isValuesCountCondition = (condition: AttributeConditionType): boolean =>
         [
             AttributeConditionFilter.VALUES_COUNT_EQUAL,
             AttributeConditionFilter.VALUES_COUNT_GREATER_THAN,
-            AttributeConditionFilter.VALUES_COUNT_LOWER_THAN
+            AttributeConditionFilter.VALUES_COUNT_LOWER_THAN,
         ].includes(condition as RecordFilterCondition);
 
     const attributeConditionOptions = getAttributeConditionOptions(t);

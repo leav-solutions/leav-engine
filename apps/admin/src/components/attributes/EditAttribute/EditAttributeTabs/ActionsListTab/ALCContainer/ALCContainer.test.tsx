@@ -32,8 +32,8 @@ const actionsMock = [
         name: 'encrypt',
         id: 'encrypt',
         output_types: ['string'],
-        params: null
-    }
+        params: null,
+    },
 ];
 
 // function placeholder() {
@@ -50,7 +50,7 @@ jest.mock(
     () =>
         function ALCList() {
             return <></>;
-        }
+        },
 );
 
 describe('ALCContainer', () => {
@@ -60,7 +60,7 @@ describe('ALCContainer', () => {
                 <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
                     <ALCContainer attribute={mockAttrSimple} availableActions={[]} />
                 </MockedProvider>
-            </DndProvider>
+            </DndProvider>,
         );
         expect(container.find('ALCReserve')).toHaveLength(0);
         expect(container.find('ALCList')).toHaveLength(0);
@@ -75,7 +75,7 @@ describe('ALCContainer', () => {
                     <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
                         <ALCContainer attribute={mockAttrSimple} availableActions={actionsMock} />
                     </MockedProvider>
-                </DndProvider>
+                </DndProvider>,
             );
         });
 

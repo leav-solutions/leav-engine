@@ -24,7 +24,7 @@ export interface IApiKeyRepoDeps {
 
 export default function ({
     'core.infra.db.dbService': dbService,
-    'core.infra.db.dbUtils': dbUtils
+    'core.infra.db.dbUtils': dbUtils,
 }: IApiKeyRepoDeps): IApiKeyRepo {
     return {
         async getApiKeys({params, ctx}) {
@@ -33,7 +33,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
 
             const initializedParams = {...defaultParams, ...params};
@@ -41,7 +41,7 @@ export default function ({
             return dbUtils.findCoreEntity<IApiKey>({
                 ...initializedParams,
                 collectionName: API_KEY_COLLECTION_NAME,
-                ctx
+                ctx,
             });
         },
         async createApiKey({keyData, ctx}) {
@@ -50,7 +50,7 @@ export default function ({
             const col = dbService.db.collection(API_KEY_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -62,7 +62,7 @@ export default function ({
             const col = dbService.db.collection(API_KEY_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`UPDATE ${docToUpdate} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(res.pop());
@@ -72,11 +72,11 @@ export default function ({
 
             const res = await dbService.execute({
                 query: aql`REMOVE ${{_key: id}} IN ${col} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             // Return deleted attribute
             return dbUtils.cleanup(res.pop());
-        }
+        },
     };
 }

@@ -42,7 +42,7 @@ export const SearchModal: FunctionComponent<ISearchModalProps> = ({visible, setV
             width="95vw"
             styles={{body: {height: '90vh', overflow: 'hidden'}}}
             style={{
-                top: '1rem'
+                top: '1rem',
             }}
             onOk={_handleOk}
             okText={t('global.apply')}
@@ -78,7 +78,7 @@ export const SearchModal: FunctionComponent<ISearchModalProps> = ({visible, setV
                 style={{height: 'calc(100vh - 11rem)'}}
                 onSelectChange={_handleSelectionChange}
             />
-        </div>
+        </div>,
     );
 };
 

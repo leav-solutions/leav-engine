@@ -117,27 +117,27 @@ function ViewPanel(): JSX.Element {
 
     const getViewsList = useGetViewsListQuery({
         variables: {
-            libraryId: searchState?.library?.id || ''
-        }
+            libraryId: searchState?.library?.id || '',
+        },
     });
 
     const getOrderDataQuery = useGetUserDataQuery({
         variables: {
             keys: [
                 PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id,
-                PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id
-            ]
+                PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id,
+            ],
         },
         onCompleted: d => {
             searchDispatch({
                 type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                userViewsOrder: d.userData?.data[PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id] || []
+                userViewsOrder: d.userData?.data[PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id] || [],
             });
             searchDispatch({
                 type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
-                sharedViewsOrder: d.userData?.data[PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id] || []
+                sharedViewsOrder: d.userData?.data[PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id] || [],
             });
-        }
+        },
     });
 
     if (getViewsList.loading) {
@@ -162,7 +162,7 @@ function ViewPanel(): JSX.Element {
 
             return {...acc, userViews: [...acc.userViews, v]};
         },
-        {sharedViews: [], userViews: []}
+        {sharedViews: [], userViews: []},
     ) ?? {sharedViews: [], userViews: []};
 
     if (getViewsList.error || getOrderDataQuery.error) {
@@ -202,7 +202,7 @@ function ViewPanel(): JSX.Element {
         await updateViewsOrder({
             key: keyToUpdate,
             value: orderedViews,
-            global: false
+            global: false,
         });
     };
 

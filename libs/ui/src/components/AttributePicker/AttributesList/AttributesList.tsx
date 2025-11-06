@@ -13,7 +13,7 @@ import {
     defaultPaginationPageSize,
     PreviewSize,
     tagColorByAttributeFormat,
-    tagColorByAttributeType
+    tagColorByAttributeType,
 } from '../../../constants';
 import {useLang} from '../../../hooks';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
@@ -28,7 +28,7 @@ import {
     PermissionTypes,
     SortOrder,
     useGetAttributesQuery,
-    useIsAllowedQuery
+    useIsAllowedQuery,
 } from '../../../_gqlTypes';
 import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
 import {extractPermissionFromQuery} from '../../../_utils';
@@ -62,7 +62,7 @@ function AttributesList({
     selected = [],
     multiple = true,
     showCreateButton = true,
-    baseFilters
+    baseFilters,
 }: IAttributesListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -79,22 +79,22 @@ function AttributesList({
         variables: {
             pagination: {
                 limit: pageSize,
-                offset: (currentPage - 1) * pageSize
+                offset: (currentPage - 1) * pageSize,
             },
             sort,
             filters: {
                 ...filters,
-                ...baseFilters
-            }
-        }
+                ...baseFilters,
+            },
+        },
     });
 
     const isAllowedQueryResult = useIsAllowedQuery({
         fetchPolicy: 'cache-and-network',
         variables: {
             type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_create_attribute]
-        }
+            actions: [PermissionsActions.admin_create_attribute],
+        },
     });
     const canCreate =
         showCreateButton && extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_attribute);
@@ -124,7 +124,7 @@ function AttributesList({
     const _handleSearchSubmit = (e: React.SyntheticEvent<HTMLInputElement>) => {
         setFilters({
             ...filters,
-            label: `%${e.currentTarget.value}%`
+            label: `%${e.currentTarget.value}%`,
         });
     };
 
@@ -149,9 +149,9 @@ function AttributesList({
                 data: {
                     attributes: {
                         ...allAttributesData.attributes,
-                        list: [newAttribute, ...allAttributesData.attributes.list]
-                    }
-                }
+                        list: [newAttribute, ...allAttributesData.attributes.list],
+                    },
+                },
             });
         }
         const newSelection = [...selectedRowKeys, newAttribute.id];
@@ -162,7 +162,7 @@ function AttributesList({
     const _handleChange = (
         pagination: TablePaginationConfig,
         filter: Record<string, FilterValue | null>,
-        sorter: SorterResult<ListAttributeType> | Array<SorterResult<ListAttributeType>>
+        sorter: SorterResult<ListAttributeType> | Array<SorterResult<ListAttributeType>>,
     ) => {
         setCurrentPage(pagination.current);
         setPageSize(pagination.pageSize);
@@ -171,7 +171,7 @@ function AttributesList({
         if (relevantSorter.column && relevantSorter.order) {
             const newSort = {
                 field: AttributesSortableFields[relevantSorter.columnKey],
-                order: relevantSorter.order === 'ascend' ? SortOrder.asc : SortOrder.desc
+                order: relevantSorter.order === 'ascend' ? SortOrder.asc : SortOrder.desc,
             };
             setSort(newSort);
         }
@@ -198,10 +198,10 @@ function AttributesList({
                     label: attribute.label,
                     subLabel: attribute.id,
                     preview: null,
-                    color: null
+                    color: null,
                 };
                 return <EntityCard entity={attributeIdentity} size={PreviewSize.SMALL} />;
-            }
+            },
         },
         {
             title: t('attributes.type'),
@@ -212,16 +212,16 @@ function AttributesList({
                 <KitTag
                     style={{
                         borderColor: tagColorByAttributeType[type][0],
-                        backgroundColor: tagColorByAttributeType[type][1]
+                        backgroundColor: tagColorByAttributeType[type][1],
                     }}
                     idCardProps={{
-                        description: t(`attributes.type_${type}`)
+                        description: t(`attributes.type_${type}`),
                     }}
                 />
             ),
             filters: Object.values(AttributeType).map(type => ({
                 text: t(`attributes.type_${type}`),
-                value: type
+                value: type,
             })),
             onFilter: (value, record) => record.type === value,
             sorter: (a, b) => {
@@ -229,7 +229,7 @@ function AttributesList({
                 const bTypeLabel = t(`attributes.type_${b.type}`);
 
                 return aTypeLabel.localeCompare(bTypeLabel);
-            }
+            },
         },
         {
             title: t('attributes.format'),
@@ -241,16 +241,16 @@ function AttributesList({
                     <KitTag
                         style={{
                             borderColor: tagColorByAttributeFormat[format][0],
-                            backgroundColor: tagColorByAttributeFormat[format][1]
+                            backgroundColor: tagColorByAttributeFormat[format][1],
                         }}
                         idCardProps={{
-                            description: t(`attributes.format_${format}`)
+                            description: t(`attributes.format_${format}`),
                         }}
                     />
                 ) : null,
             filters: Object.values(AttributeFormat).map(format => ({
                 text: t(`attributes.format_${format}`),
-                value: format
+                value: format,
             })),
             onFilter: (value, record) => record.format === value,
             sorter: (a, b) => {
@@ -258,8 +258,8 @@ function AttributesList({
                 const bFormatLabel = t(`attributes.format_${b.format}`);
 
                 return aFormatLabel.localeCompare(bFormatLabel);
-            }
-        }
+            },
+        },
     ];
 
     useEffect(() => {
@@ -272,7 +272,7 @@ function AttributesList({
             ? [...data.attributes.list].map(attribute => ({
                   ...attribute,
                   key: attribute.id,
-                  label: localizedTranslation(attribute.label, lang)
+                  label: localizedTranslation(attribute.label, lang),
               }))
             : [];
 
@@ -312,7 +312,7 @@ function AttributesList({
                 rowSelection={{
                     type: multiple ? 'checkbox' : 'radio',
                     selectedRowKeys,
-                    onChange: _handleSelectionChange
+                    onChange: _handleSelectionChange,
                 }}
                 columns={columns}
                 dataSource={tableData}
@@ -322,12 +322,12 @@ function AttributesList({
                     pageSize,
                     current: currentPage,
                     total: data?.attributes?.totalCount ?? 0,
-                    showTotal: total => t('global.total_count', {total})
+                    showTotal: total => t('global.total_count', {total}),
                 }}
                 scroll={{y: 'calc(95vh - 20rem)'}}
                 title={() => tableHeader}
                 onRow={record => ({
-                    onClick: () => _handleRowClick(record)
+                    onClick: () => _handleRowClick(record),
                 })}
                 onChange={_handleChange}
             />

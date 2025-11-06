@@ -16,7 +16,7 @@ import Home from './Home';
 
 jest.mock('@leav/ui', () => ({
     ...jest.requireActual('@leav/ui'),
-    ImportModal: () => <div>ImportModal</div>
+    ImportModal: () => <div>ImportModal</div>,
 }));
 
 describe('Home', () => {
@@ -24,7 +24,7 @@ describe('Home', () => {
         {
             request: {
                 query: getLibrariesListQuery,
-                variables: {filters: {id: []}}
+                variables: {filters: {id: []}},
             },
             result: {
                 data: {
@@ -43,15 +43,15 @@ describe('Home', () => {
                                     id: 'string',
                                     type: 'string',
                                     format: 'string',
-                                    label: {}
+                                    label: {},
                                 },
                                 permissions: {
                                     access_library: true,
                                     access_record: true,
                                     edit_record: true,
                                     create_record: true,
-                                    delete_record: true
-                                }
+                                    delete_record: true,
+                                },
                             },
                             {
                                 __typename: 'Library',
@@ -65,42 +65,42 @@ describe('Home', () => {
                                     id: 'string',
                                     type: 'string',
                                     format: 'string',
-                                    label: {}
+                                    label: {},
                                 },
                                 permissions: {
                                     access_library: true,
                                     access_record: true,
                                     edit_record: true,
                                     create_record: true,
-                                    delete_record: true
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
+                                    delete_record: true,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getUserDataQuery,
-                variables: {keys: [FAVORITE_LIBRARIES_KEY]}
+                variables: {keys: [FAVORITE_LIBRARIES_KEY]},
             },
             result: {
                 data: {
                     userData: {
                         __typename: 'UserData',
                         global: false,
-                        data: {[FAVORITE_LIBRARIES_KEY]: ['libB']}
-                    }
-                }
-            }
+                        data: {[FAVORITE_LIBRARIES_KEY]: ['libB']},
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getTreeListQuery,
                 variables: {
-                    filters: {id: []}
-                }
+                    filters: {id: []},
+                },
             },
             result: {
                 data: {
@@ -114,15 +114,15 @@ describe('Home', () => {
                                 libraries: [
                                     {
                                         library: {
-                                            ...mockLibrary
-                                        }
-                                    }
+                                            ...mockLibrary,
+                                        },
+                                    },
                                 ],
                                 permissions: {
                                     access_tree: true,
                                     detach: true,
-                                    edit_children: true
-                                }
+                                    edit_children: true,
+                                },
                             },
                             {
                                 ...mockTree,
@@ -132,41 +132,41 @@ describe('Home', () => {
                                 libraries: [
                                     {
                                         library: {
-                                            ...mockLibrary
-                                        }
-                                    }
+                                            ...mockLibrary,
+                                        },
+                                    },
                                 ],
                                 permissions: {
                                     access_tree: true,
                                     detach: true,
-                                    edit_children: true
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
+                                    edit_children: true,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getUserDataQuery,
-                variables: {keys: [FAVORITE_TREES_KEY]}
+                variables: {keys: [FAVORITE_TREES_KEY]},
             },
             result: {
                 data: {
                     userData: {
                         __typename: 'UserData',
                         global: false,
-                        data: {[FAVORITE_TREES_KEY]: ['treeB']}
-                    }
-                }
-            }
-        }
+                        data: {[FAVORITE_TREES_KEY]: ['treeB']},
+                    },
+                },
+            },
+        },
     ];
 
     const currentApp = {
         ...mockApplicationDetails,
-        settings: {libraries: 'all', trees: 'all'}
+        settings: {libraries: 'all', trees: 'all'},
     };
 
     beforeEach(() => {
@@ -178,7 +178,7 @@ describe('Home', () => {
             <MemoryRouter>
                 <Home />
             </MemoryRouter>,
-            {apolloMocks: mocks, currentApp}
+            {apolloMocks: mocks, currentApp},
         );
 
         const librariesListBlock = await screen.findByTestId('libraries-list');
@@ -196,7 +196,7 @@ describe('Home', () => {
             <MemoryRouter>
                 <Home />
             </MemoryRouter>,
-            {apolloMocks: mocks, currentApp}
+            {apolloMocks: mocks, currentApp},
         );
 
         const librariesListBlock = await screen.findByTestId('libraries-list');
@@ -222,7 +222,7 @@ describe('Home', () => {
             <MemoryRouter>
                 <Home />
             </MemoryRouter>,
-            {apolloMocks: mocks, currentApp}
+            {apolloMocks: mocks, currentApp},
         );
 
         const treesListBlock = await screen.findByTestId('trees-list');
@@ -247,7 +247,7 @@ describe('Home', () => {
             <MemoryRouter>
                 <Home />
             </MemoryRouter>,
-            {apolloMocks: mocks, currentApp}
+            {apolloMocks: mocks, currentApp},
         );
 
         const librariesListBlock = await screen.findByTestId('libraries-list');
@@ -277,9 +277,9 @@ describe('Home', () => {
                 apolloMocks: mocks,
                 currentApp: {
                     ...currentApp,
-                    settings: {...currentApp.settings, libraries: 'none', trees: 'all'}
-                }
-            }
+                    settings: {...currentApp.settings, libraries: 'none', trees: 'all'},
+                },
+            },
         );
 
         const librariesListBlock = screen.queryByTestId('libraries-list');
@@ -298,9 +298,9 @@ describe('Home', () => {
                 apolloMocks: mocks,
                 currentApp: {
                     ...currentApp,
-                    settings: {...currentApp.settings, trees: 'none', libraries: 'all'}
-                }
-            }
+                    settings: {...currentApp.settings, trees: 'none', libraries: 'all'},
+                },
+            },
         );
 
         const librariesListBlock = await screen.findByTestId('libraries-list');
@@ -319,9 +319,9 @@ describe('Home', () => {
                 apolloMocks: mocks,
                 currentApp: {
                     ...currentApp,
-                    settings: {libraries: 'none', trees: 'none'}
-                }
-            }
+                    settings: {libraries: 'none', trees: 'none'},
+                },
+            },
         );
 
         expect(screen.getByText(/no_libraries_or_trees/)).toBeInTheDocument();

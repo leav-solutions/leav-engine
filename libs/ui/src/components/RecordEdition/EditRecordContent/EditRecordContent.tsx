@@ -52,7 +52,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
-    readonly
+    readonly,
 }) => {
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
@@ -61,7 +61,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     const {data: recordUpdateData} = useGetRecordUpdatesSubscription(
         {records: [record?.id], ignoreOwnEvents: true},
-        !record?.id
+        !record?.id,
     );
 
     useEffect(() => {
@@ -69,7 +69,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             dispatch({
                 type: EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE,
                 modifier: recordUpdateData?.recordUpdate?.record?.modified_by?.[0]?.value?.whoAmI,
-                updatedValues: recordUpdateData?.recordUpdate?.updatedValues
+                updatedValues: recordUpdateData?.recordUpdate?.updatedValues,
             });
         }
     }, [recordUpdateData]);
@@ -78,7 +78,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         libraryId: library,
         recordId: record?.id,
         formId,
-        version: state.valuesVersion
+        version: state.valuesVersion,
     });
 
     useEffect(() => {
@@ -86,7 +86,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             dispatch({
                 type: EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR,
                 enabled: recordForm.sidePanel.enable,
-                isOpenByDefault: recordForm.sidePanel.isOpenByDefault
+                isOpenByDefault: recordForm.sidePanel.isOpenByDefault,
             });
         }
     }, [recordForm, loading]);
@@ -94,14 +94,14 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {
         data: computeFieldsData,
         error: computeFieldsError,
-        refetch: refetchComputeFields
+        refetch: refetchComputeFields,
     } = useGetRecordValuesQuery(
         library,
         recordForm
             ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
             : [],
         [record?.id],
-        true
+        true,
     );
 
     useEffect(() => {
@@ -119,7 +119,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     if (error) {
         const message =
             Object.values((error.graphQLErrors[0]?.extensions?.exception as {fields: string})?.fields ?? {}).join(
-                '\n'
+                '\n',
             ) ?? error?.message;
 
         return <ErrorDisplay message={message ?? t('record_edition.no_form_error')} />;
@@ -162,7 +162,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         attribute: null,
         valueError: null,
         values: null,
-        uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
+        uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER],
     };
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
     const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
@@ -175,7 +175,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             initialValues={antdFormInitialValues}
             onFinish={() =>
                 onRecordSubmit(
-                    recordForm.elements.filter(element => element.attribute?.id).map(element => element.attribute)
+                    recordForm.elements.filter(element => element.attribute?.id).map(element => element.attribute),
                 )
             }
         >
@@ -183,7 +183,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 value={{
                     elements: elementsByContainer,
                     readOnly: readonly,
-                    record
+                    record,
                 }}
             >
                 <rootElement.uiElement

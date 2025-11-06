@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function DefinePermByUserGroupView() {
             return <div>DefinePermByUserGroupView</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function DefineTreePermissionsView() {
             return <div>DefineTreePermissionsView</div>;
-        }
+        },
 );
 
 describe('PermissionsContent', () => {
@@ -29,7 +29,7 @@ describe('PermissionsContent', () => {
 
     test('Display 1 tab per library + "tree" tab', async () => {
         const comp = shallow(
-            <PermissionsContent tree={{...mockTreeWithPermConf}} readonly={false} onSubmitSettings={onSubmit} />
+            <PermissionsContent tree={{...mockTreeWithPermConf}} readonly={false} onSubmitSettings={onSubmit} />,
         );
 
         expect(comp.find('Tab').prop('panes')).toHaveLength(3);

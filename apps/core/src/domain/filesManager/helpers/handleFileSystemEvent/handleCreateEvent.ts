@@ -12,7 +12,7 @@ import {
     getParentRecord,
     getPreviewsDefaultData,
     getRecord,
-    updateRecordFile
+    updateRecordFile,
 } from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
 import {type IHandleFileSystemEventDeps, type IHandleFileSystemEventResources} from './_types';
@@ -21,7 +21,7 @@ export const handleCreateEvent = async (
     scanMsg: IFileEventData,
     resources: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<void> => {
     const pathAfter = scanMsg.pathAfter ?? '';
     const {filePath, fileName} = getInputData(pathAfter);
@@ -51,7 +51,7 @@ export const handleCreateEvent = async (
                 [deps.utils.getPreviewsStatusAttributeName(filesLibraryId)]: previewsStatus,
                 [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews,
                 [FilesAttributes.HASH]: scanMsg.hash,
-                ...fileMetadata
+                ...fileMetadata,
             };
             await updateRecordFile(recordData, record.id!, recordLibrary, deps, ctx);
         } catch (e) {
@@ -66,7 +66,7 @@ export const handleCreateEvent = async (
             [FilesAttributes.HASH]: scanMsg.hash,
             [deps.utils.getPreviewsStatusAttributeName(filesLibraryId)]: previewsStatus,
             [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews,
-            ...fileMetadata
+            ...fileMetadata,
         };
 
         try {
@@ -89,7 +89,7 @@ export const handleCreateEvent = async (
             pathAfter,
             libraryId: recordLibrary,
             versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings ?? []),
-            deps: {...deps}
+            deps: {...deps},
         });
     }
 };

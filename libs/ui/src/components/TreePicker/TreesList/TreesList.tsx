@@ -14,7 +14,7 @@ import {
     PermissionTypes,
     type TreeLightFragment,
     useGetTreesQuery,
-    useIsAllowedQuery
+    useIsAllowedQuery,
 } from '_ui/_gqlTypes';
 import {getTreesQuery} from '_ui/_queries/trees/getTreesQuery';
 import {extractPermissionFromQuery} from '_ui/_utils';
@@ -54,8 +54,8 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
         fetchPolicy: 'cache-and-network',
         variables: {
             type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_create_tree]
-        }
+            actions: [PermissionsActions.admin_create_tree],
+        },
     });
     const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_tree);
 
@@ -107,9 +107,9 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
                 data: {
                     trees: {
                         ...allTreesData.trees,
-                        list: newTreesList
-                    }
-                }
+                        list: newTreesList,
+                    },
+                },
             });
         }
 
@@ -136,11 +136,11 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
                     label: tree.label,
                     subLabel: tree.id,
                     preview: null,
-                    color: null
+                    color: null,
                 };
                 return <EntityCard entity={treeIdentity} size={PreviewSize.SMALL} />;
-            }
-        }
+            },
+        },
     ];
 
     const tableData: TreeType[] = ([...data?.trees?.list] ?? [])
@@ -160,7 +160,7 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
         .map(tree => ({
             ...tree,
             key: tree.id,
-            label: localizedTranslation(tree.label, lang)
+            label: localizedTranslation(tree.label, lang),
         }));
 
     const tableHeader = (
@@ -181,7 +181,7 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
                 rowSelection={{
                     type: multiple ? 'checkbox' : 'radio',
                     selectedRowKeys,
-                    onChange: _handleSelectionChange
+                    onChange: _handleSelectionChange,
                 }}
                 columns={columns}
                 dataSource={tableData}
@@ -190,7 +190,7 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
                 scroll={{y: 'calc(95vh - 20rem)'}}
                 title={() => tableHeader}
                 onRow={record => ({
-                    onClick: () => _handleRowClick(record)
+                    onClick: () => _handleRowClick(record),
                 })}
             />
             {isNewTreeModalOpen && (

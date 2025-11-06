@@ -24,14 +24,14 @@ function EditFormTabs(): JSX.Element {
             key: 'infos',
             mustBeDisplayed: true,
             menuItem: t('forms.informations'),
-            render: () => <InfosTab />
+            render: () => <InfosTab />,
         },
         {
             key: 'content',
             mustBeDisplayed: !!form,
             menuItem: t('forms.content'),
-            render: () => <ContentTab />
-        }
+            render: () => <ContentTab />,
+        },
     ].filter(p => p.mustBeDisplayed);
 
     return (

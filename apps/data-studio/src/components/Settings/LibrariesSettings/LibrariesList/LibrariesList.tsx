@@ -38,7 +38,7 @@ function LibrariesList({
     onMoveLibrary,
     onRemoveLibrary,
     onAddLibraries,
-    onClearLibraries
+    onClearLibraries,
 }: ILibrariesListProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
@@ -119,7 +119,7 @@ function LibrariesList({
 
     const _handlePostCreate = async (newLibrary: any) => {
         updateQuery(data => ({
-            libraries: {__typename: 'LibrariesList', list: [...(data?.libraries?.list || []), newLibrary]}
+            libraries: {__typename: 'LibrariesList', list: [...(data?.libraries?.list || []), newLibrary]},
         }));
     };
 
@@ -167,7 +167,7 @@ function LibrariesList({
                                             </Draggable>
                                         ) : (
                                             _getLibraryBlock(lib)
-                                        )
+                                        ),
                                     )}
                                     {provided.placeholder}
                                 </div>
@@ -180,7 +180,7 @@ function LibrariesList({
                 <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                     imageStyle={{
-                        height: 60
+                        height: 60,
                     }}
                     description={<span>{t('app_settings.libraries_settings.no_libraries')}.</span>}
                 >

@@ -9,9 +9,9 @@ const apiUrl = 'http://core.leav.localhost';
 const config: CodegenConfig = {
     schema: [
         {
-            [`${apiUrl}/graphql?key=${apiKey}`]: {}
+            [`${apiUrl}/graphql?key=${apiKey}`]: {},
         },
-        './src/graphQL/queries/cache/clientSchema.graphql'
+        './src/graphQL/queries/cache/clientSchema.graphql',
     ],
     documents: ['src/graphQL/**/*.ts'],
     generates: {
@@ -22,15 +22,15 @@ const config: CodegenConfig = {
                 'typescript-react-apollo',
                 {
                     add: {
-                        content: "import {IPreviewScalar} from '@leav/utils'"
-                    }
-                }
+                        content: "import {IPreviewScalar} from '@leav/utils'",
+                    },
+                },
             ],
             config: {
                 namingConvention: {
                     typeNames: 'change-case-all#pascalCase',
                     enumValues: 'keep',
-                    transformUnderscore: true
+                    transformUnderscore: true,
                 },
                 onlyOperationTypes: true,
                 skipTypename: true,
@@ -39,11 +39,11 @@ const config: CodegenConfig = {
                 exportFragmentSpreadSubTypes: true,
                 mergeFragmentTypes: true,
                 scalars: {
-                    Preview: 'IPreviewScalar'
-                }
-            }
-        }
-    }
+                    Preview: 'IPreviewScalar',
+                },
+            },
+        },
+    },
 };
 
 export default config;

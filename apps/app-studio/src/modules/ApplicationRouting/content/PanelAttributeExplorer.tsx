@@ -27,7 +27,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     viewId,
     explorerProps,
     actions,
-    recordId
+    recordId,
 }) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useLang();
@@ -53,18 +53,18 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             attribute: {
                                 id: attributeSource,
                                 type: AttributeType.simple_link, // because it can be only mono-valued
-                                label: 'SHOULD BE HIDDEN'
+                                label: 'SHOULD BE HIDDEN',
                             },
                             condition: ThroughConditionFilter.THROUGH,
                             subCondition: RecordFilterCondition.EQUAL,
-                            value: recordId
-                        }
+                            value: recordId,
+                        },
                     ],
-                    ...commonExplorerProps.defaultViewSettings
+                    ...commonExplorerProps.defaultViewSettings,
                 }}
                 entrypoint={{
                     type: 'library',
-                    libraryId
+                    libraryId,
                 }}
                 itemActions={itemActions}
                 hideFirstActionLabel
@@ -76,18 +76,18 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                                 {
                                     id: recordIdCreated,
                                     library: {
-                                        id: libraryId
-                                    }
+                                        id: libraryId,
+                                    },
                                 },
                                 [
                                     {
                                         attribute: attributeSource,
                                         idValue: null,
-                                        value: recordId
-                                    }
-                                ]
-                            )
-                    }
+                                        value: recordId,
+                                    },
+                                ],
+                            ),
+                    },
                 }}
             />
         </div>

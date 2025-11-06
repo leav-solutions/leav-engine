@@ -19,7 +19,7 @@ describe('Dataloader', () => {
             const loader = getOrCreateDataLoaderInCtx(
                 ctx,
                 'loaderA',
-                () => new DataLoader(async keys => keys.map(() => 42))
+                () => new DataLoader(async keys => keys.map(() => 42)),
             );
             expect(loader).toBeInstanceOf(DataLoader);
         });
@@ -29,12 +29,12 @@ describe('Dataloader', () => {
             const loader1 = getOrCreateDataLoaderInCtx(
                 ctx,
                 'loaderB',
-                () => new DataLoader(async keys => keys.map(() => 43))
+                () => new DataLoader(async keys => keys.map(() => 43)),
             );
             const loader2 = getOrCreateDataLoaderInCtx(
                 ctx,
                 'loaderB',
-                () => new DataLoader(async keys => keys.map(() => 44))
+                () => new DataLoader(async keys => keys.map(() => 44)),
             );
             expect(loader1).toBe(loader2);
         });
@@ -44,12 +44,12 @@ describe('Dataloader', () => {
             const loaderA = getOrCreateDataLoaderInCtx(
                 ctx,
                 'loaderA',
-                () => new DataLoader(async keys => keys.map(() => 45))
+                () => new DataLoader(async keys => keys.map(() => 45)),
             );
             const loaderB = getOrCreateDataLoaderInCtx(
                 ctx,
                 'loaderB',
-                () => new DataLoader(async keys => keys.map(() => 46))
+                () => new DataLoader(async keys => keys.map(() => 46)),
             );
             expect(loaderA).not.toBe(loaderB);
         });

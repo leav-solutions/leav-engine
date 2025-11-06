@@ -21,7 +21,7 @@ export const useDeleteLinkValues = ({
     pagination,
     allVisibleKeys,
     onDelete,
-    refetch
+    refetch,
 }: FeatureHook<{
     pagination: null | {limit: number; offset: number};
     store: {
@@ -46,7 +46,7 @@ export const useDeleteLinkValues = ({
         sorts: view.sort,
         filtersOperator,
         filters,
-        skip: !isLink
+        skip: !isLink,
     });
 
     const _unlinkMassAction: IMassActions = useMemo(
@@ -61,11 +61,11 @@ export const useDeleteLinkValues = ({
                     icon: false,
                     title:
                         t('explorer.delete_link', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
                         }) ?? undefined,
                     content:
                         t('explorer.delete_link_description', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
                         }) +
                         BREAK_TWO_LINES +
                         t('global.are_you_sure'),
@@ -82,7 +82,7 @@ export const useDeleteLinkValues = ({
                                 (linkData?.records ?? []).map(({id_value}) => ({
                                     attribute: entrypoint.linkAttributeId,
                                     idValue: id_value ?? null,
-                                    value: null
+                                    value: null,
                                 })) ?? [];
                         } else {
                             values = (linkData?.records ?? []).reduce<IValueToSubmit[]>((acc, {id_value, key}) => {
@@ -90,7 +90,7 @@ export const useDeleteLinkValues = ({
                                     acc.push({
                                         attribute: entrypoint.linkAttributeId,
                                         idValue: id_value ?? null,
-                                        value: null
+                                        value: null,
                                     });
                                 }
                                 return acc;
@@ -102,32 +102,32 @@ export const useDeleteLinkValues = ({
                                 {
                                     id: entrypoint.parentRecordId,
                                     library: {
-                                        id: entrypoint.parentLibraryId
-                                    }
+                                        id: entrypoint.parentLibraryId,
+                                    },
                                 },
                                 values,
                                 undefined,
-                                true
+                                true,
                             );
 
                             onDelete?.(
                                 massSelectionFilter,
-                                values.map(({idValue}) => idValue as Key)
+                                values.map(({idValue}) => idValue as Key),
                             );
                             await refetch();
                         }
                         dispatch({
                             type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                            payload: []
+                            payload: [],
                         });
-                    }
+                    },
                 });
-            }
+            },
         }),
-        [t, saveValues, view.massSelection, dispatch, view.libraryId, allVisibleKeys]
+        [t, saveValues, view.massSelection, dispatch, view.libraryId, allVisibleKeys],
     );
 
     return {
-        unlinkMassAction: isEnabled && canUnlinkValues ? _unlinkMassAction : null
+        unlinkMassAction: isEnabled && canUnlinkValues ? _unlinkMassAction : null,
     };
 };

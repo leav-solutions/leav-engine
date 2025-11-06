@@ -6,7 +6,7 @@ import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 import {
     useGetAttributesByLibWithPermissionsQuery,
     type GetAttributesByLibWithPermissionsQuery,
-    type AttributeDetailsFragment
+    type AttributeDetailsFragment,
 } from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
@@ -25,7 +25,7 @@ const sanitize = (str: string) =>
 
 const _mapping = (
     data: GetAttributesByLibWithPermissionsQuery | undefined,
-    availableLanguages: string[]
+    availableLanguages: string[],
 ): IColumnsById =>
     data?.attributes?.list.reduce<IColumnsById>((acc, {permissions, ...attribute}) => {
         if (permissions.access_attribute) {
@@ -33,7 +33,7 @@ const _mapping = (
             acc[attribute.id] = {
                 ...attribute,
                 label,
-                index: `${sanitize(attribute.id)} ${sanitize(label)}`
+                index: `${sanitize(attribute.id)} ${sanitize(label)}`,
             };
         }
         return acc;
@@ -46,8 +46,8 @@ export const useAttributeDetailsData = (libraryId: string) => {
     const {lang: availableLanguages} = useLang();
     const {data} = useGetAttributesByLibWithPermissionsQuery({
         variables: {
-            library: libraryId
-        }
+            library: libraryId,
+        },
     });
     const attributeDetailsById = _mapping(data, availableLanguages);
 
@@ -87,6 +87,6 @@ export const useAttributeDetailsData = (libraryId: string) => {
     return {
         attributeDetailsById,
         searchFilteredColumnsIds,
-        onSearchChanged
+        onSearchChanged,
     };
 };

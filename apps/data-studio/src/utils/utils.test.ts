@@ -41,13 +41,13 @@ describe('utils', () => {
                 libraries: [
                     {
                         id: 'directories_library_id',
-                        behavior: LibraryBehavior.directories
+                        behavior: LibraryBehavior.directories,
                     },
                     {
                         id: 'files_library_id',
-                        behavior: LibraryBehavior.files
-                    }
-                ]
+                        behavior: LibraryBehavior.files,
+                    },
+                ],
             };
 
             expect(getFilesLibraryId(activeTree)).toBe('files_library_id');
@@ -55,7 +55,7 @@ describe('utils', () => {
 
         test('If no files library, return null', async () => {
             const activeTree: IActiveTree = {
-                ...mockActiveTree
+                ...mockActiveTree,
             };
 
             expect(getFilesLibraryId(activeTree)).toBe(null);

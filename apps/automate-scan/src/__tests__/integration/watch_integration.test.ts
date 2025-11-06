@@ -232,7 +232,7 @@ const initRabbitMQ = async (callback: (channel: any, msg: string) => void) => {
         protocol: config.amqp.protocol,
         hostname: config.amqp.hostname,
         username: config.amqp.username,
-        password: config.amqp.password
+        password: config.amqp.password,
     };
 
     amqp.connect(amqpConfig, async (error0, connection) => {
@@ -252,7 +252,7 @@ const initRabbitMQ = async (callback: (channel: any, msg: string) => void) => {
                     callback(channel, msgText);
                     channel.close(() => undefined);
                 },
-                {noAck: true}
+                {noAck: true},
             );
         });
     });

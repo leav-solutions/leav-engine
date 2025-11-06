@@ -21,7 +21,7 @@ describe('Files', () => {
         const workDir = join(rootPath, dirName);
 
         const res = await makeGraphQlCall(
-            `mutation { createDirectory(library: "${directoriesLibrary}", nodeId: "${filesTree}", name: "${dirName}") { id }}`
+            `mutation { createDirectory(library: "${directoriesLibrary}", nodeId: "${filesTree}", name: "${dirName}") { id }}`,
         );
 
         expect(res.data.errors).toBeUndefined();

@@ -8,12 +8,12 @@ describe('PropertiesList', () => {
     const items = [
         {
             title: 'fieldA',
-            value: 'valueA'
+            value: 'valueA',
         },
         {
             title: 'fieldB',
-            value: 'valueB'
-        }
+            value: 'valueB',
+        },
     ];
 
     it('should render items', () => {

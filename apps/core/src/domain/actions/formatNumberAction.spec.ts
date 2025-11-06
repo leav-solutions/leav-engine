@@ -14,22 +14,22 @@ describe('formatNumberAction', () => {
                 await action(
                     [{payload: 123456.781}],
                     {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, prefix: '=> ', suffix: ' €'},
-                    ctx
+                    ctx,
                 )
-            ).values[0].payload
+            ).values[0].payload,
         ).toBe('=> 123 456,78 €');
         expect(
             (
                 await action(
                     [{payload: 123456.786}],
                     {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, suffix: ' €'},
-                    ctx
+                    ctx,
                 )
-            ).values[0].payload
+            ).values[0].payload,
         ).toBe('123 456,79 €');
         expect(
             (await action([{payload: 123456.78}], {thousandsSeparator: '.', decimalsSeparator: ',', decimals: 4}, ctx))
-                .values[0].payload
+                .values[0].payload,
         ).toBe('123.456,7800');
         expect((await action([{payload: 'aaa'}], {decimals: 2}, ctx)).values[0].payload).toBe('');
         expect((await action([{payload: null}], {decimals: 2}, ctx)).values[0].payload).toBe(null);

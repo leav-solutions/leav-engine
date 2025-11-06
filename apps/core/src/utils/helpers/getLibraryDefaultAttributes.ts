@@ -7,12 +7,12 @@ import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './getPre
 
 export default (behavior: LibraryBehavior, libraryId: string): string[] => {
     const libraryCommonAttributes = {
-        [USERS_LIBRARY]: ['user_groups', 'password', 'login', 'email']
+        [USERS_LIBRARY]: ['user_groups', 'password', 'login', 'email'],
     };
 
     const commonAttributes = [
         ...['id', 'created_at', 'created_by', 'modified_at', 'modified_by', 'active'],
-        ...(libraryCommonAttributes[libraryId] ? libraryCommonAttributes[libraryId] : [])
+        ...(libraryCommonAttributes[libraryId] ? libraryCommonAttributes[libraryId] : []),
     ];
 
     if (!behavior) {
@@ -25,15 +25,15 @@ export default (behavior: LibraryBehavior, libraryId: string): string[] => {
         [LibraryBehavior.FILES]: [
             ...Object.values(FilesAttributes),
             getPreviewsAttributeName(libraryId),
-            getPreviewsStatusAttributeName(libraryId)
+            getPreviewsStatusAttributeName(libraryId),
         ],
         [LibraryBehavior.DIRECTORIES]: [
             FilesAttributes.ROOT_KEY,
             FilesAttributes.FILE_PATH,
             FilesAttributes.FILE_NAME,
             FilesAttributes.INODE,
-            FilesAttributes.ACTIVE
-        ]
+            FilesAttributes.ACTIVE,
+        ],
     };
 
     // Using a Set to prevent duplicates

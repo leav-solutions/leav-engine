@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function GeneralInfosTab() {
             return <div>GeneralInfosTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -19,7 +19,7 @@ jest.mock(
     () =>
         function GeneralAdminPermissionsTab() {
             return <div>GeneralAdminPermissionsTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -27,7 +27,7 @@ jest.mock(
     () =>
         function GeneralApiKeysTab() {
             return <div>GeneralApiKeysTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -35,12 +35,12 @@ jest.mock(
     () =>
         function GeneralCustomConfigTab() {
             return <div>GeneralCustomConfigTab</div>;
-        }
+        },
 );
 
 jest.mock('react-router-v5', () => ({
     ...jest.requireActual('react-router-v5'),
-    useLocation: () => ({hash: ''})
+    useLocation: () => ({hash: ''}),
 }));
 
 describe('General', () => {
@@ -49,7 +49,7 @@ describe('General', () => {
             render(
                 <MemoryRouter>
                     <General />
-                </MemoryRouter>
+                </MemoryRouter>,
             );
         });
 

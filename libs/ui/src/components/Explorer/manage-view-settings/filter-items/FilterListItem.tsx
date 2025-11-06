@@ -38,12 +38,12 @@ export const FilterListItem: FunctionComponent<IActiveFilterListItemProps> = ({
     attributeId,
     isDraggable,
     visibilityButtonProps,
-    children
+    children,
 }) => {
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: attributeId});
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition
+        transition,
     };
 
     return (

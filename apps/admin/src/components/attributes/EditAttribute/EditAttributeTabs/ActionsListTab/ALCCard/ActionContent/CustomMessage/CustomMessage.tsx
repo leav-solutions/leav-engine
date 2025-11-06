@@ -23,7 +23,7 @@ function CustomMessage({
     lang,
     actionId,
     onChangeCustomMessage,
-    setBlockCard
+    setBlockCard,
 }: ICustomMessageProps): JSX.Element {
     const [currentValue, setCurrentValue] = useState(customMessage ? customMessage : '');
 
@@ -45,7 +45,7 @@ function CustomMessage({
     const labelStyle: React.CSSProperties = {
         width: '60px',
         textAlign: 'center',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     };
 
     return (

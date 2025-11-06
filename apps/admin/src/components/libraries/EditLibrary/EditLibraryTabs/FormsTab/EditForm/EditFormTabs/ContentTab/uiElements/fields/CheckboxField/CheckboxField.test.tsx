@@ -9,12 +9,12 @@ describe('CheckboxField', () => {
     it('should display checkbox with fr label', async () => {
         const label = {
             fr: 'tata',
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <CheckboxField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.fr)).toBeVisible();
@@ -23,12 +23,12 @@ describe('CheckboxField', () => {
 
     it('should display checkbox with fallback lang label', async () => {
         const label = {
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <CheckboxField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.en)).toBeVisible();
@@ -39,7 +39,7 @@ describe('CheckboxField', () => {
         const comp = render(
             <MockedLangContextProvider>
                 <CheckboxField settings={{}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(comp).toMatchSnapshot();

@@ -31,7 +31,7 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.globalSettings': globalSettingsRepo,
     'core.infra.cache.cacheService': cacheService,
-    'core.utils': utils
+    'core.utils': utils,
 }: IGlobalSettingsDomainDeps): IGlobalSettingsDomain {
     const globalSettingsCacheKey = utils.getGlobalSettingsCacheKey();
 
@@ -44,7 +44,7 @@ export default function ({
                 icon: settings.icon,
                 favicon: settings.favicon,
                 defaultApp: settings.defaultApp ?? DEFAULT_APPLICATION,
-                settings: settings.settings
+                settings: settings.settings,
             };
         };
 
@@ -56,7 +56,7 @@ export default function ({
             const canSave = await adminPermissionDomain.getAdminPermission({
                 action: AdminPermissionsActions.EDIT_GLOBAL_SETTINGS,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!canSave) {
@@ -75,13 +75,13 @@ export default function ({
                     action: EventAction.GLOBAL_SETTINGS_SAVE,
                     topic: null,
                     before: settingsBefore,
-                    after: savedSettings
+                    after: savedSettings,
                 },
-                ctx
+                ctx,
             );
 
             return savedSettings;
         },
-        getSettings: _getSettings
+        getSettings: _getSettings,
     };
 }

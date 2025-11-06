@@ -29,7 +29,7 @@ function ErrorDisplay({
     actionButton,
     showActionButton = true,
     type = ErrorDisplayTypes.ERROR,
-    size
+    size,
 }: IErrorDisplayProps): JSX.Element {
     const {t} = useTranslation();
     const history = useHistory();
@@ -41,7 +41,7 @@ function ErrorDisplay({
             title: t('errors.error_occurred'),
             icon: 'cancel',
             message: '',
-            actionButton: null
+            actionButton: null,
         },
         [ErrorDisplayTypes.PERMISSION_ERROR]: {
             title: t('errors.access_denied'),
@@ -51,8 +51,8 @@ function ErrorDisplay({
                 <Button primary onClick={_handleBackHomeClick}>
                     {t('admin.go_back_home')}
                 </Button>
-            ) : null
-        }
+            ) : null,
+        },
     };
 
     return (

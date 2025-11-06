@@ -13,7 +13,7 @@ export const mockLibrary: WithTypename<GET_LIB_BY_ID_libraries_list> = {
     system: false,
     label: {
         en: 'Products',
-        fr: 'Produits'
+        fr: 'Produits',
     },
     behavior: LibraryBehavior.standard,
     mandatoryAttribute: null,
@@ -25,13 +25,13 @@ export const mockLibrary: WithTypename<GET_LIB_BY_ID_libraries_list> = {
         {
             ...mockAttrSimple,
             versions_conf: null,
-            __typename: 'Attribute'
+            __typename: 'Attribute',
         },
         {
             ...mockAttrSimpleLink,
             versions_conf: null,
-            __typename: 'Attribute'
-        }
+            __typename: 'Attribute',
+        },
     ],
     settings: {},
     permissions: {
@@ -41,11 +41,11 @@ export const mockLibrary: WithTypename<GET_LIB_BY_ID_libraries_list> = {
         access_record: true,
         create_record: true,
         edit_record: true,
-        delete_record: true
+        delete_record: true,
     },
     icon: {
         whoAmI: {
-            ...mockRecord
-        }
-    }
+            ...mockRecord,
+        },
+    },
 };

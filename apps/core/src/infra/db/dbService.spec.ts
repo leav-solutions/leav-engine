@@ -9,19 +9,19 @@ import dbService, {type IDbServiceDeps} from './dbService';
 const depsBase: ToAny<IDbServiceDeps> = {
     'core.infra.db': jest.fn(),
     'core.utils': jest.fn(),
-    config: {}
+    config: {},
 };
 
 describe('dbService', () => {
     const ctx = {
         userId: '0',
-        queryId: 'testDbService'
+        queryId: 'testDbService',
     };
 
     const mockConfig = {
         dbProfiler: {
-            enable: false
-        }
+            enable: false,
+        },
     };
 
     describe('collectionExists', () => {
@@ -37,7 +37,7 @@ describe('dbService', () => {
     });
     describe('execute', () => {
         const mockDbCursor = {
-            all: jest.fn()
+            all: jest.fn(),
         };
 
         test('Should run query', async () => {
@@ -46,7 +46,7 @@ describe('dbService', () => {
             const mockUtils: Mockify<IUtils> = {
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
-                })
+                }),
             };
 
             mockDb.query = global.__mockPromise({all: jest.fn()});
@@ -54,12 +54,12 @@ describe('dbService', () => {
             const dbServ = dbService({
                 'core.infra.db': mockDb,
                 'core.utils': mockUtils as IUtils,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const res = await dbServ.execute({
                 query: 'FOR e in elems RETURN e',
-                ctx
+                ctx,
             });
 
             expect(mockDb.query).toBeCalled();
@@ -71,7 +71,7 @@ describe('dbService', () => {
             const mockUtils: Mockify<IUtils> = {
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
-                })
+                }),
             };
 
             /* eslint-disable no-throw-literal */
@@ -88,12 +88,12 @@ describe('dbService', () => {
             const dbServ = dbService({
                 'core.infra.db': mockDb,
                 'core.utils': mockUtils as IUtils,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const res = await dbServ.execute({
                 query: 'FOR e in elems RETURN e',
-                ctx
+                ctx,
             });
 
             expect(mockDb.query).toBeCalledTimes(3);
@@ -105,7 +105,7 @@ describe('dbService', () => {
             const mockUtils: Mockify<IUtils> = {
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw new Error();
-                })
+                }),
             };
 
             mockDb.query = jest.fn().mockImplementation(q => {
@@ -115,14 +115,14 @@ describe('dbService', () => {
             const dbServ = dbService({
                 'core.infra.db': mockDb,
                 'core.utils': mockUtils as IUtils,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await expect(
                 dbServ.execute({
                     query: 'FOR e in elems RETURN e',
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow();
             expect(mockDb.query).toBeCalledTimes(11);
         });

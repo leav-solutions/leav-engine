@@ -13,23 +13,23 @@ describe('addRecordPanelToApplication method', () => {
                 id: '1',
                 title: {
                     fr: 'un',
-                    en: 'one'
+                    en: 'one',
                 },
                 type: 'library',
-                libraryId: 'home'
-            }
+                libraryId: 'home',
+            },
         ],
         libraries: {
             home: {
                 libraryPanels: [],
-                recordPanels: []
-            }
-        }
+                recordPanels: [],
+            },
+        },
     };
 
     it('should add panel to existing recordPanel list library', () => {
         const newApplication = addRecordPanelToApplication(mockPanel, emptyApplication, {
-            libraryId: 'home'
+            libraryId: 'home',
         });
 
         expect(newApplication.libraries.home.recordPanels).toEqual([mockPanel]);
@@ -37,7 +37,7 @@ describe('addRecordPanelToApplication method', () => {
 
     it('should create and insert panel structure on new library', () => {
         const newApplication = addRecordPanelToApplication(mockPanel, emptyApplication, {
-            libraryId: 'unknown'
+            libraryId: 'unknown',
         });
 
         expect(newApplication.libraries.unknown.recordPanels).toEqual([mockPanel]);
@@ -48,17 +48,17 @@ describe('addRecordPanelToApplication method', () => {
             ...emptyApplication,
             libraries: {
                 ...emptyApplication.libraries,
-                home: {...emptyApplication.libraries.home, recordPanels: [mockPanel]}
-            }
+                home: {...emptyApplication.libraries.home, recordPanels: [mockPanel]},
+            },
         };
         const newPanel: Panel = {
             id: mockPanel.id,
             isStandalone: true,
             type: 'custom',
-            iframeSource: 'https://fakeurl.aristid.com'
+            iframeSource: 'https://fakeurl.aristid.com',
         };
         const newApplication = addRecordPanelToApplication(newPanel, baseApplication, {
-            libraryId: 'home'
+            libraryId: 'home',
         });
 
         expect(newApplication.libraries.home.recordPanels).toEqual([newPanel]);

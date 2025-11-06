@@ -23,7 +23,7 @@ jest.mock('../EditRecord', () => ({
                 <button onClick={() => onCreate(mockRecord)}>simulate_create_record</button>
             </Form>
         );
-    }
+    },
 }));
 
 const mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
@@ -34,20 +34,20 @@ const mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
                 whoAmI: {
                     id: 'new_record_id',
                     label: 'New Record',
-                    library: {id: 'test_lib'}
-                }
-            }
-        }
-    }
+                    library: {id: 'test_lib'},
+                },
+            },
+        },
+    },
 });
 const mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
     data: {
         purgeRecord: {
             record: {
-                id: 'new_record_id'
-            }
-        }
-    }
+                id: 'new_record_id',
+            },
+        },
+    },
 });
 
 describe('EditRecordPage', () => {
@@ -55,11 +55,11 @@ describe('EditRecordPage', () => {
         user = userEvent.setup();
         jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
             mockUseCreateEmptyRecordMutation,
-            {loading: false, called: false, client: null, reset: null, error: null}
+            {loading: false, called: false, client: null, reset: null, error: null},
         ]);
         jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
             mockUsePurgeRecordMutation,
-            {loading: false, called: false, client: null, reset: null, error: null}
+            {loading: false, called: false, client: null, reset: null, error: null},
         ]);
     });
 
@@ -82,7 +82,7 @@ describe('EditRecordPage', () => {
                     onClose={jest.fn()}
                     record={null}
                     submitButtons={['create', 'createAndEdit']}
-                />
+                />,
             );
 
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe('EditRecordPage', () => {
                     onClose={jest.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
-                />
+                />,
             );
 
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe('EditRecordPage', () => {
             render(<EditRecordPage library="test_lib" onClose={mockOnClose} record={null} />);
 
             expect(
-                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
+                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'}),
             ).not.toBeInTheDocument();
             await userEvent.type(screen.getByDisplayValue('CreateRecord'), 'Something');
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
@@ -159,7 +159,7 @@ describe('EditRecordPage', () => {
                     record={mockRecord}
                     title="Custom title"
                     showRefreshButton={false}
-                />
+                />,
             );
 
             expect(screen.queryByLabelText('refresh')).not.toBeInTheDocument();
@@ -176,7 +176,7 @@ describe('EditRecordPage', () => {
                     submitButtons={['createAndEdit']}
                     onCreate={onCreate}
                     onCreateAndEdit={onCreateAndEdit}
-                />
+                />,
             );
 
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
@@ -196,7 +196,7 @@ describe('EditRecordPage', () => {
                 record={mockRecord}
                 title="Custom title"
                 showRefreshButton={false}
-            />
+            />,
         );
 
         expect(screen.queryByLabelText('refresh')).not.toBeInTheDocument();
@@ -213,13 +213,13 @@ describe('EditRecordPage', () => {
                     record={null}
                     title="Custom title"
                     showRefreshButton={false}
-                />
+                />,
             );
 
             expect(editRecordFn).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    formId: 'creation-form'
-                })
+                    formId: 'creation-form',
+                }),
             );
         });
 
@@ -233,13 +233,13 @@ describe('EditRecordPage', () => {
                     record={mockRecord}
                     title="Custom title"
                     showRefreshButton={false}
-                />
+                />,
             );
 
             expect(editRecordFn).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    formId: 'edition-form'
-                })
+                    formId: 'edition-form',
+                }),
             );
         });
     });

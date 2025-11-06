@@ -15,13 +15,13 @@ describe('linkFieldReducer', () => {
             values: [
                 {
                     ...mockLinkValue,
-                    id_value: '1'
+                    id_value: '1',
                 },
                 {
                     ...mockLinkValue,
-                    id_value: '2'
-                }
-            ]
+                    id_value: '2',
+                },
+            ],
         });
 
         const activeValues = getActiveFieldValues(newState);
@@ -41,28 +41,28 @@ describe('linkFieldReducer', () => {
                         values: [
                             {
                                 ...mockLinkValue,
-                                id_value: '1'
+                                id_value: '1',
                             },
                             {
                                 ...mockLinkValue,
-                                id_value: '2'
-                            }
-                        ]
-                    }
-                }
+                                id_value: '2',
+                            },
+                        ],
+                    },
+                },
             },
             {
                 type: LinkFieldReducerActionsType.DELETE_VALUE,
-                idValue: '1'
-            }
+                idValue: '1',
+            },
         );
 
         const activeValues = getActiveFieldValues(newState);
         expect(activeValues).toEqual([
             {
                 ...mockLinkValue,
-                id_value: '2'
-            }
+                id_value: '2',
+            },
         ]);
     });
 
@@ -77,19 +77,19 @@ describe('linkFieldReducer', () => {
                         values: [
                             {
                                 ...mockLinkValue,
-                                id_value: '1'
+                                id_value: '1',
                             },
                             {
                                 ...mockLinkValue,
-                                id_value: '2'
-                            }
-                        ]
-                    }
-                }
+                                id_value: '2',
+                            },
+                        ],
+                    },
+                },
             },
             {
-                type: LinkFieldReducerActionsType.DELETE_ALL_VALUES
-            }
+                type: LinkFieldReducerActionsType.DELETE_ALL_VALUES,
+            },
         );
 
         const activeValues = getActiveFieldValues(newState);
@@ -98,7 +98,7 @@ describe('linkFieldReducer', () => {
     test('SET_ERROR_MESSAGE', () => {
         const newState = linkFieldReducer(initialLinkFieldState, {
             type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-            errorMessage: 'error'
+            errorMessage: 'error',
         });
 
         expect(newState.errorMessage).toBe('error');
@@ -108,8 +108,8 @@ describe('linkFieldReducer', () => {
         const newState = linkFieldReducer(
             {...initialLinkFieldState, errorMessage: 'error'},
             {
-                type: LinkFieldReducerActionsType.CLEAR_ERROR_MESSAGE
-            }
+                type: LinkFieldReducerActionsType.CLEAR_ERROR_MESSAGE,
+            },
         );
 
         expect(newState.errorMessage).toBe('');
@@ -118,7 +118,7 @@ describe('linkFieldReducer', () => {
     test('SET_IS_VALUES_ADD_VISIBLE', () => {
         const newState = linkFieldReducer(initialLinkFieldState, {
             type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
-            isValuesAddVisible: true
+            isValuesAddVisible: true,
         });
 
         expect(newState.isValuesAddVisible).toBe(true);
@@ -127,7 +127,7 @@ describe('linkFieldReducer', () => {
     test('CHANGE_ACTIVE_SCOPE', () => {
         const newState = linkFieldReducer(initialLinkFieldState, {
             type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE,
-            scope: VersionFieldScope.INHERITED
+            scope: VersionFieldScope.INHERITED,
         });
 
         expect(newState.activeScope).toBe(VersionFieldScope.INHERITED);
@@ -137,15 +137,15 @@ describe('linkFieldReducer', () => {
         const formVersion = {
             lang: {
                 id: '1337',
-                label: 'English'
-            }
+                label: 'English',
+            },
         };
 
         const valuesVersion = {
             lang: {
                 id: '42',
-                label: 'Français'
-            }
+                label: 'Français',
+            },
         };
 
         const newState = linkFieldReducer(
@@ -158,10 +158,10 @@ describe('linkFieldReducer', () => {
                         ...mockLinkValue,
                         id_value: '123456',
                         version: valuesVersion,
-                        metadata: null
-                    }
-                ]
-            }
+                        metadata: null,
+                    },
+                ],
+            },
         );
 
         expect(newState.activeScope).toBe(VersionFieldScope.INHERITED);

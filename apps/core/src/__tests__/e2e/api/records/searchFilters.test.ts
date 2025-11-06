@@ -12,7 +12,7 @@ import {
     gqlSaveTree,
     gqlSaveValue,
     makeGraphQlCall,
-    toCleanJSON
+    toCleanJSON,
 } from '../e2eUtils';
 
 /**
@@ -77,33 +77,33 @@ describe('searchFilters', () => {
                 id: simpleAttributeId,
                 label: 'simpleAttributeId',
                 type: AttributeTypes.SIMPLE,
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: textAdvancedAttributeId,
                 label: 'textAdvancedAttributeId',
                 type: AttributeTypes.ADVANCED,
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: textAdvancedMultivalAttributeId,
                 label: 'textAdvancedMultivalAttributeId',
                 type: AttributeTypes.ADVANCED,
                 format: AttributeFormats.TEXT,
-                multipleValues: true
+                multipleValues: true,
             },
             {
                 id: numberAttributeId,
                 label: 'numberAttributeId',
                 type: AttributeTypes.SIMPLE,
-                format: AttributeFormats.NUMERIC
+                format: AttributeFormats.NUMERIC,
             },
             {id: dateAttributeId, label: 'dateAttributeId', type: AttributeTypes.SIMPLE, format: AttributeFormats.DATE},
             {
                 id: booleanAttributeId,
                 label: 'booleanAttributeId',
                 type: AttributeTypes.SIMPLE,
-                format: AttributeFormats.BOOLEAN
+                format: AttributeFormats.BOOLEAN,
             },
             {
                 id: embeddedAttributeId,
@@ -118,50 +118,50 @@ describe('searchFilters', () => {
                             {
                                 id: 'field11',
                                 format: AttributeFormats.TEXT,
-                                embedded_fields: []
-                            }
-                        ]
-                    }
-                ]
+                                embedded_fields: [],
+                            },
+                        ],
+                    },
+                ],
             },
             {
                 id: simpleLinkAttributeId,
                 type: AttributeTypes.SIMPLE_LINK,
                 label: 'linkAttributeId',
-                linkedLibrary: linkedLibraryId
+                linkedLibrary: linkedLibraryId,
             },
             {
                 id: advancedLinkAttributeId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'advancedLinkAttributeId',
-                linkedLibrary: linkedLibraryId
+                linkedLibrary: linkedLibraryId,
             },
             {
                 id: advancedLinkMultivalAttributeId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'advancedLinkMultivalAttributeId',
                 linkedLibrary: linkedLibraryId,
-                multipleValues: true
+                multipleValues: true,
             },
             {
                 id: treeAttributeId,
                 type: AttributeTypes.TREE,
                 label: 'treeAttributeId',
-                linkedTree: treeId
+                linkedTree: treeId,
             },
             {
                 id: treeMultivalAttributeId,
                 type: AttributeTypes.TREE,
                 label: 'treeMultivalAttributeId',
                 linkedTree: treeId,
-                multipleValues: true
+                multipleValues: true,
             },
             {
                 id: dateRangeAttributeId,
                 label: 'dateRangeAttributeId',
                 format: AttributeFormats.DATE_RANGE,
-                type: AttributeTypes.SIMPLE
-            }
+                type: AttributeTypes.SIMPLE,
+            },
         ];
 
         // Create library with no attributes first so that the graphql is available
@@ -174,7 +174,7 @@ describe('searchFilters', () => {
         await gqlSaveLibrary(
             treeLibraryId,
             'Test lib',
-            attributesToCreate.map(a => a.id).filter(id => id !== treeAttributeId)
+            attributesToCreate.map(a => a.id).filter(id => id !== treeAttributeId),
         );
         await gqlSaveTree(treeId, 'Tree', [treeLibraryId]);
 
@@ -183,19 +183,19 @@ describe('searchFilters', () => {
             'Test lib',
             attributesToCreate
                 .map(a => a.id)
-                .filter(id => ![simpleLinkAttributeId, advancedLinkAttributeId].includes(id))
+                .filter(id => ![simpleLinkAttributeId, advancedLinkAttributeId].includes(id)),
         );
 
         await gqlSaveLibrary(
             libraryId,
             'Test lib',
-            attributesToCreate.map(a => a.id)
+            attributesToCreate.map(a => a.id),
         );
 
         await gqlSaveLibrary(
             libraryForOperatorsId,
             'Test lib',
-            attributesToCreate.map(a => a.id)
+            attributesToCreate.map(a => a.id),
         );
 
         await gqlSaveLibrary(libraryDateId, 'Test lib', [dateAttributeId]);
@@ -472,31 +472,31 @@ describe('searchFilters', () => {
                     dateAttributeId,
                     libraryDateId,
                     recordDateId3,
-                    String(Math.floor(new Date().getTime() / 1000) - 60)
+                    String(Math.floor(new Date().getTime() / 1000) - 60),
                 ); // now - We remove 60 seconds to avoid issue with racing conditions on last/next month
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdYesterday,
-                    String(moment().subtract(1, 'days').unix()) // yesterday
+                    String(moment().subtract(1, 'days').unix()), // yesterday
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdTomorrow,
-                    String(moment().add(1, 'days').unix()) // tomorrow
+                    String(moment().add(1, 'days').unix()), // tomorrow
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdNextMonth,
-                    String(moment().add(29, 'days').unix()) // next month (= next 31 days)
+                    String(moment().add(29, 'days').unix()), // next month (= next 31 days)
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdLastMonth,
-                    String(moment().subtract(29, 'days').unix()) // last month (= last 31 days)
+                    String(moment().subtract(29, 'days').unix()), // last month (= last 31 days)
                 );
             });
 
@@ -720,7 +720,7 @@ describe('searchFilters', () => {
                     embeddedAttributeId,
                     libraryId,
                     recordId1,
-                    toCleanJSON({field1: {field11: 'nested value'}})
+                    toCleanJSON({field1: {field11: 'nested value'}}),
                 );
             });
 
@@ -750,21 +750,21 @@ describe('searchFilters', () => {
                     dateRangeAttributeId,
                     libraryId,
                     recordId1,
-                    toCleanJSON({from: moment('1987-06-07 12:00:00').unix(), to: moment('1987-06-09 12:00:00').unix()})
+                    toCleanJSON({from: moment('1987-06-07 12:00:00').unix(), to: moment('1987-06-09 12:00:00').unix()}),
                 );
 
                 await gqlSaveValue(
                     dateRangeAttributeId,
                     libraryId,
                     recordId2,
-                    toCleanJSON({from: moment('2021-12-20 12:00:00').unix(), to: moment('2021-12-20 16:00:00').unix()})
+                    toCleanJSON({from: moment('2021-12-20 12:00:00').unix(), to: moment('2021-12-20 16:00:00').unix()}),
                 );
 
                 await gqlSaveValue(
                     dateRangeAttributeId,
                     libraryId,
                     recordId3,
-                    toCleanJSON({from: moment('2021-12-25 12:00:00').unix(), to: moment('2021-12-25 16:00:00').unix()})
+                    toCleanJSON({from: moment('2021-12-25 12:00:00').unix(), to: moment('2021-12-25 16:00:00').unix()}),
                 );
             });
 

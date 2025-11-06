@@ -11,8 +11,8 @@ export const formField: IFormElement = {
     uiElementType: FormFieldTypes.TEXT_INPUT,
     containerId: '987654',
     settings: {
-        attribute: 'test_attribute'
-    }
+        attribute: 'test_attribute',
+    },
 };
 
 export const formLayoutElement: IFormElement = {
@@ -21,7 +21,7 @@ export const formLayoutElement: IFormElement = {
     type: FormElementTypes.LAYOUT,
     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
     containerId: FORM_ROOT_CONTAINER_ID,
-    settings: {}
+    settings: {},
 };
 
 export const mockForm: IFormStrict = {
@@ -33,6 +33,6 @@ export const mockForm: IFormStrict = {
     elements: [{elements: [formField, formLayoutElement]}],
     sidePanel: {
         enable: false,
-        isOpenByDefault: false
-    }
+        isOpenByDefault: false,
+    },
 };

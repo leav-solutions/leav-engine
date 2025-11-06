@@ -40,13 +40,13 @@ const UserPanel: FunctionComponent<IUserPanelProps> = ({isVisible, onClose}) => 
             closeIcon={false}
             closable={false}
             styles={{
-                body: {padding: 0}
+                body: {padding: 0},
             }}
             data-testid="user-panel"
         >
             <CustomMenu
                 style={{
-                    height: '100%'
+                    height: '100%',
                 }}
                 mode="inline"
                 items={[
@@ -71,7 +71,7 @@ const UserPanel: FunctionComponent<IUserPanelProps> = ({isVisible, onClose}) => 
                                     ))}
                                 </div>
                             </Wrapper>
-                        )
+                        ),
                     },
                     {
                         onClick: _handleLogout,
@@ -81,8 +81,8 @@ const UserPanel: FunctionComponent<IUserPanelProps> = ({isVisible, onClose}) => 
                                 <LogoutOutlined />
                                 {t('logout')}
                             </>
-                        )
-                    }
+                        ),
+                    },
                 ]}
             />
         </Drawer>

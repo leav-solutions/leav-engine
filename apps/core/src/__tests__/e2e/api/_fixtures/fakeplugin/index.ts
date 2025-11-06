@@ -11,7 +11,7 @@ interface IDeps {
 
 enum FakePluginActions {
     FAKE_PLUGIN_ACTION = 'fakeplugin_FAKE_PLUGIN_ACTION',
-    FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2'
+    FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2',
 }
 
 export default function ({translator}: IDeps): IPluginInitModule {
@@ -28,14 +28,14 @@ export default function ({translator}: IDeps): IPluginInitModule {
                 resolvers: {
                     Query: {
                         fakePluginQuery: () => 'ok!',
-                        fakePluginTranslation: () => translator.t('fakeplugin.testtranslation', {lng: 'fr'})
-                    }
-                }
+                        fakePluginTranslation: () => translator.t('fakeplugin.testtranslation', {lng: 'fr'}),
+                    },
+                },
             });
 
             extensionPoints.registerPermissionActions(PermissionTypes.LIBRARY, ['fake_plugin_permission']);
 
             extensionPoints.registerEventActions(Object.values(FakePluginActions), 'fakeplugin');
-        }
+        },
     };
 }

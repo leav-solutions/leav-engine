@@ -9,7 +9,7 @@ describe('TabContentWrapper', () => {
         render(
             <TabContentWrapper>
                 <div>Foo</div>
-            </TabContentWrapper>
+            </TabContentWrapper>,
         );
 
         expect(screen.getByText('Foo')).toBeInTheDocument();

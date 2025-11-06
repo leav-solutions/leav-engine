@@ -19,7 +19,7 @@ describe('TreeStructure', () => {
             <DndProvider backend={TestBackend}>
                 <TreeStructure tree={tree} readOnly={readOnly} />
             </DndProvider>,
-            {apolloMocks: mocks}
+            {apolloMocks: mocks},
         );
     };
 
@@ -28,17 +28,17 @@ describe('TreeStructure', () => {
         libraries: [
             {
                 library: {id: 'test_lib', label: {fr: 'Test Lib'}, attributes: [{...mockAttrTree}]},
-                settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']}
+                settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']},
             },
             {
                 library: {id: 'test_lib2', label: {fr: 'Test Lib 2'}, attributes: [{...mockAttrTree}]},
-                settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['test_lib3']}
+                settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['test_lib3']},
             },
             {
                 library: {id: 'test_lib3', label: {fr: 'Test Lib 3'}, attributes: [{...mockAttrTree}]},
-                settings: {allowMultiplePositions: false, allowedAtRoot: false, allowedChildren: []}
-            }
-        ]
+                settings: {allowMultiplePositions: false, allowedAtRoot: false, allowedChildren: []},
+            },
+        ],
     };
 
     test('Render tree structure with tree libraries and dependencies', async () => {
@@ -93,24 +93,28 @@ describe('TreeStructure', () => {
                                     settings: {
                                         allowMultiplePositions: false,
                                         allowedAtRoot: true,
-                                        allowedChildren: ['__all__']
-                                    }
+                                        allowedChildren: ['__all__'],
+                                    },
                                 },
                                 {
                                     library: 'test_lib2',
                                     settings: {
                                         allowMultiplePositions: false,
                                         allowedAtRoot: false,
-                                        allowedChildren: ['test_lib3']
-                                    }
+                                        allowedChildren: ['test_lib3'],
+                                    },
                                 },
                                 {
                                     library: 'test_lib3',
-                                    settings: {allowMultiplePositions: false, allowedAtRoot: false, allowedChildren: []}
-                                }
-                            ]
-                        }
-                    }
+                                    settings: {
+                                        allowMultiplePositions: false,
+                                        allowedAtRoot: false,
+                                        allowedChildren: [],
+                                    },
+                                },
+                            ],
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
@@ -123,59 +127,59 @@ describe('TreeStructure', () => {
                                         library: {
                                             id: 'test_lib',
                                             label: {
-                                                fr: 'test_lib!'
+                                                fr: 'test_lib!',
                                             },
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: true,
-                                            allowedChildren: ['__all__']
+                                            allowedChildren: ['__all__'],
                                         },
-                                        __typename: 'TreeLibrary'
+                                        __typename: 'TreeLibrary',
                                     },
                                     {
                                         library: {
                                             id: 'test_lib2',
                                             label: {
                                                 en: '',
-                                                fr: 'test_lib2'
+                                                fr: 'test_lib2',
                                             },
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: false,
-                                            allowedChildren: ['test_lib3']
+                                            allowedChildren: ['test_lib3'],
                                         },
-                                        __typename: 'TreeLibrary'
+                                        __typename: 'TreeLibrary',
                                     },
                                     {
                                         library: {
                                             id: 'test_lib3',
                                             label: {
                                                 en: '',
-                                                fr: 'test_lib3'
+                                                fr: 'test_lib3',
                                             },
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: false,
-                                            allowedChildren: []
+                                            allowedChildren: [],
                                         },
-                                        __typename: 'TreeLibrary'
-                                    }
+                                        __typename: 'TreeLibrary',
+                                    },
                                 ],
-                                __typename: 'Tree'
-                            }
-                        }
+                                __typename: 'Tree',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         _renderTreeStructure(tree, false, mocks);
@@ -206,24 +210,24 @@ describe('TreeStructure', () => {
                                     settings: {
                                         allowMultiplePositions: false,
                                         allowedAtRoot: true,
-                                        allowedChildren: ['__all__']
-                                    }
+                                        allowedChildren: ['__all__'],
+                                    },
                                 },
                                 {
                                     library: 'test_lib2',
                                     settings: {
                                         allowMultiplePositions: false,
                                         allowedAtRoot: true,
-                                        allowedChildren: ['test_lib3']
-                                    }
+                                        allowedChildren: ['test_lib3'],
+                                    },
                                 },
                                 {
                                     library: 'test_lib3',
-                                    settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: []}
-                                }
-                            ]
-                        }
-                    }
+                                    settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: []},
+                                },
+                            ],
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
@@ -236,59 +240,59 @@ describe('TreeStructure', () => {
                                         library: {
                                             id: 'test_lib',
                                             label: {
-                                                fr: 'test_lib!'
+                                                fr: 'test_lib!',
                                             },
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: true,
-                                            allowedChildren: ['__all__']
+                                            allowedChildren: ['__all__'],
                                         },
-                                        __typename: 'TreeLibrary'
+                                        __typename: 'TreeLibrary',
                                     },
                                     {
                                         library: {
                                             id: 'test_lib2',
                                             label: {
                                                 en: '',
-                                                fr: 'test_lib2'
+                                                fr: 'test_lib2',
                                             },
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: true,
-                                            allowedChildren: ['test_lib3']
+                                            allowedChildren: ['test_lib3'],
                                         },
-                                        __typename: 'TreeLibrary'
+                                        __typename: 'TreeLibrary',
                                     },
                                     {
                                         library: {
                                             id: 'test_lib3',
                                             label: {
                                                 en: '',
-                                                fr: 'test_lib3'
+                                                fr: 'test_lib3',
                                             },
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: true,
-                                            allowedChildren: []
+                                            allowedChildren: [],
                                         },
-                                        __typename: 'TreeLibrary'
-                                    }
+                                        __typename: 'TreeLibrary',
+                                    },
                                 ],
-                                __typename: 'Tree'
-                            }
-                        }
+                                __typename: 'Tree',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         _renderTreeStructure(tree, false, mocks);

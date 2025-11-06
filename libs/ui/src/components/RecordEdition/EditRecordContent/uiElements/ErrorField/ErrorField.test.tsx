@@ -16,15 +16,15 @@ describe('ErrorField', () => {
             valueError: 'Boom!',
             values: null,
             settings: {
-                label: {fr: 'Un champ', en: 'Some field'}
+                label: {fr: 'Un champ', en: 'Some field'},
             },
             uiElement: null,
-            uiElementType: null
+            uiElementType: null,
         };
         render(
             <MockedLangContextProvider>
                 <ErrorField element={formElement} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText('Un champ')).toBeInTheDocument();
@@ -39,15 +39,15 @@ describe('ErrorField', () => {
             valueError: 'Boom!',
             values: null,
             settings: {
-                label: {en: 'Some field'}
+                label: {en: 'Some field'},
             },
             uiElement: null,
-            uiElementType: null
+            uiElementType: null,
         };
         render(
             <MockedLangContextProvider>
                 <ErrorField element={formElement} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText('Some field')).toBeInTheDocument();

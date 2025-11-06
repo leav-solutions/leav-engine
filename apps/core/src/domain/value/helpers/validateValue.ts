@@ -37,7 +37,7 @@ const _validateLinkedRecord = async (
     value: ISaveLinkValue,
     attribute: IAttribute,
     deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ILinkRecordValidationResult> => {
     if (typeof value.payload !== 'string') {
         throw new Error('Link attribute value must be a string representing the linked record ID.');
@@ -45,7 +45,7 @@ const _validateLinkedRecord = async (
     const record = await deps.recordRepo.getRecord({
         libraryId: attribute.linked_library,
         recordId: value.payload,
-        ctx
+        ctx,
     });
 
     return !!record
@@ -54,8 +54,8 @@ const _validateLinkedRecord = async (
               isValid: false,
               reason: {
                   msg: Errors.UNKNOWN_LINKED_RECORD,
-                  vars: {record: value.payload, library: attribute.linked_library}
-              }
+                  vars: {record: value.payload, library: attribute.linked_library},
+              },
           };
 };
 
@@ -63,7 +63,7 @@ const _validateTreeLinkedRecord = async (
     value: ISaveTreeValue,
     attribute: IAttribute,
     deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo; treeRepo: ITreeRepo},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ILinkRecordValidationResult> => {
     if (typeof value.payload !== 'string') {
         throw new Error('Tree attribute value must be a string representing the linked node ID.');
@@ -73,13 +73,13 @@ const _validateTreeLinkedRecord = async (
     const isElementInTree = await deps.treeRepo.isNodePresent({
         treeId: attribute.linked_tree,
         nodeId,
-        ctx
+        ctx,
     });
 
     if (!isElementInTree) {
         return {
             isValid: false,
-            reason: {msg: Errors.ELEMENT_NOT_IN_TREE, vars: {element: value.payload, tree: attribute.linked_tree}}
+            reason: {msg: Errors.ELEMENT_NOT_IN_TREE, vars: {element: value.payload, tree: attribute.linked_tree}},
         };
     }
 
@@ -95,7 +95,7 @@ const _mustCheckLinkedRecord = (attribute: IAttribute): boolean => {
 const _validateVersion = async (
     value: ISaveValue,
     deps: {treeRepo: ITreeRepo},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<IValueVersion>> => {
     const trees = Object.keys(value.version);
     const existingTrees = await deps.treeRepo.getTrees({ctx});
@@ -114,13 +114,13 @@ const _validateVersion = async (
             const isPresent = await deps.treeRepo.isNodePresent({
                 treeId: treeName,
                 nodeId: value.version[treeName],
-                ctx
+                ctx,
             });
 
             if (!isPresent) {
                 errors[treeName] = {
                     msg: Errors.ELEMENT_NOT_IN_TREE,
-                    vars: {element: value.version[treeName], tree: treeName}
+                    vars: {element: value.version[treeName], tree: treeName},
                 };
             }
         }
@@ -179,7 +179,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IS
             excludedRecordId: recordId,
             attribute: attributeProps,
             value,
-            ctx
+            ctx,
         });
 
         if (isValueUsed) {
@@ -194,7 +194,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IS
             recordId,
             attribute: attributeProps,
             valueId: value.id_value,
-            ctx
+            ctx,
         });
 
         if (existingVal === null) {
@@ -220,19 +220,19 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IS
                 value: ISaveLinkValue | ISaveTreeValue,
                 attribute: IAttribute,
                 deps: any,
-                ctx: IQueryInfos
+                ctx: IQueryInfos,
             ) => Promise<ILinkRecordValidationResult>;
         } = {
             [AttributeTypes.SIMPLE_LINK]: _validateLinkedRecord,
             [AttributeTypes.ADVANCED_LINK]: _validateLinkedRecord,
-            [AttributeTypes.TREE]: _validateTreeLinkedRecord
+            [AttributeTypes.TREE]: _validateTreeLinkedRecord,
         };
 
         const isValidLink = await linkedRecordValidationHandler[attributeProps.type](
             value as ISaveLinkValue | ISaveTreeValue,
             attributeProps,
             deps,
-            ctx
+            ctx,
         );
 
         if (!isValidLink.isValid) {

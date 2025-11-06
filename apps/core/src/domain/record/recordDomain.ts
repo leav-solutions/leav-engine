@@ -30,7 +30,7 @@ import {
     LibraryPermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
-    RecordPermissionsActions
+    RecordPermissionsActions,
 } from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
@@ -43,7 +43,7 @@ import {
     type IRecordIdentityConf,
     type IRecordSort,
     Operator,
-    TreeCondition
+    TreeCondition,
 } from '../../_types/record';
 import {type TreePath} from '../../_types/tree';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -79,7 +79,7 @@ const allowedTypeOperator = {
         AttributeCondition.END_BEFORE,
         AttributeCondition.END_AFTER,
         TreeCondition.CLASSIFIED_IN,
-        TreeCondition.NOT_CLASSIFIED_IN
+        TreeCondition.NOT_CLASSIFIED_IN,
     ],
     number: [
         AttributeCondition.EQUAL,
@@ -94,7 +94,7 @@ const allowedTypeOperator = {
         AttributeCondition.END_AFTER,
         AttributeCondition.VALUES_COUNT_EQUAL,
         AttributeCondition.VALUES_COUNT_GREATER_THAN,
-        AttributeCondition.VALUES_COUNT_LOWER_THAN
+        AttributeCondition.VALUES_COUNT_LOWER_THAN,
     ],
     boolean: [AttributeCondition.EQUAL, AttributeCondition.NOT_EQUAL],
     null: [
@@ -106,9 +106,9 @@ const allowedTypeOperator = {
         AttributeCondition.YESTERDAY,
         AttributeCondition.TOMORROW,
         AttributeCondition.LAST_MONTH,
-        AttributeCondition.NEXT_MONTH
+        AttributeCondition.NEXT_MONTH,
     ],
-    object: [AttributeCondition.BETWEEN]
+    object: [AttributeCondition.BETWEEN],
 };
 
 export const ATTRIBUTE_ACTIVE = 'active';
@@ -142,7 +142,7 @@ export interface IRecordDomain {
     updateRecord({
         library,
         recordData,
-        ctx
+        ctx,
     }: {
         library: string;
         recordData: IRecord;
@@ -175,7 +175,7 @@ export interface IRecordDomain {
         record,
         attributeId,
         options,
-        ctx
+        ctx,
     }: {
         library: string;
         record: IRecord;
@@ -258,7 +258,7 @@ export default function ({
     'core.infra.cache.cacheService': cacheService,
     'core.utils.logger': logger,
     'core.utils': utils,
-    translator
+    translator,
 }: IRecordDomainDeps): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
@@ -274,7 +274,7 @@ export default function ({
         attribute: IAttribute,
         library: string,
         options: IValuesOptions,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IValue[]> => {
         let values: IValue[];
 
@@ -285,8 +285,8 @@ export default function ({
                     payload:
                         attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
                             ? {id: record[attribute.id]}
-                            : record[attribute.id]
-                }
+                            : record[attribute.id],
+                },
             ];
 
             // Apply actionsList
@@ -296,7 +296,7 @@ export default function ({
                 attribute,
                 record,
                 library,
-                ctx
+                ctx,
             });
         } else {
             values = await valueDomain.getValues({
@@ -304,7 +304,7 @@ export default function ({
                 recordId: record.id,
                 attribute: attribute.id,
                 options,
-                ctx
+                ctx,
             });
         }
 
@@ -399,7 +399,7 @@ export default function ({
         lib,
         record,
         visitedLibraries = [],
-        ctx
+        ctx,
     }: {
         conf: IRecordIdentityConf;
         lib: ILibrary;
@@ -431,7 +431,7 @@ export default function ({
                 record,
                 attributeId: previewAttribute,
                 options: {forceArray: true, version: ctx.version},
-                ctx
+                ctx,
             });
 
             previewValues = getValuesToDisplay(previewValues);
@@ -444,7 +444,7 @@ export default function ({
             try {
                 previewAttributeLibraryProps = await validateHelper.validateLibrary(
                     previewAttributeProps.linked_library,
-                    ctx
+                    ctx,
                 );
             } catch (e) {
                 return null;
@@ -462,7 +462,7 @@ export default function ({
                           lib: previewAttributeLibraryProps,
                           conf: previewAttributeLibraryProps.recordIdentityConf,
                           visitedLibraries,
-                          ctx
+                          ctx,
                       })
                     : null;
             }
@@ -477,7 +477,7 @@ export default function ({
             record: previewRecord,
             attributeId: previewsAttributeId,
             options: {forceArray: true},
-            ctx
+            ctx,
         });
 
         if (!filePreviewsValue[0] || !TypeGuards.isIStandardValue(filePreviewsValue[0])) {
@@ -522,9 +522,9 @@ export default function ({
             const libraryIconRecord = await ret.find({
                 params: {
                     library: libraryIcon.libraryId,
-                    filters: [{condition: AttributeCondition.EQUAL, field: 'id', value: libraryIcon.recordId}]
+                    filters: [{condition: AttributeCondition.EQUAL, field: 'id', value: libraryIcon.recordId}],
                 },
-                ctx
+                ctx,
             });
 
             if (!libraryIconRecord?.list?.length) {
@@ -536,7 +536,7 @@ export default function ({
                 conf: libraryIconLib.recordIdentityConf,
                 lib: libraryIconLib,
                 record: libraryIconRecord.list[0],
-                ctx
+                ctx,
             });
         };
 
@@ -553,7 +553,7 @@ export default function ({
 
         const conf = lib.recordIdentityConf || {};
         const valuesOptions: IValuesOptions = {
-            version: ctx.version ?? null
+            version: ctx.version ?? null,
         };
 
         let label: string = null;
@@ -565,7 +565,7 @@ export default function ({
                 recordId: record.id,
                 attribute: conf.label,
                 options: valuesOptions,
-                ctx
+                ctx,
             });
 
             if (!labelValues.length) {
@@ -600,7 +600,7 @@ export default function ({
     const _getColor = async (
         record: IRecord,
         visitedLibraries: string[] = [],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<string | null> => {
         if (!record) {
             return null;
@@ -611,7 +611,7 @@ export default function ({
 
         const conf = lib.recordIdentityConf || {};
         const valuesOptions: IValuesOptions = {
-            version: ctx.version ?? null
+            version: ctx.version ?? null,
         };
 
         let color: string | null = null;
@@ -623,7 +623,7 @@ export default function ({
                 recordId: record.id,
                 attribute: conf.color,
                 options: valuesOptions,
-                ctx
+                ctx,
             });
 
             colorValues = getValuesToDisplay(colorValues);
@@ -657,7 +657,7 @@ export default function ({
     const _getSubLabel = async (
         record: IRecord,
         visitedLibraries: string[] = [],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<string | null> => {
         if (!record) {
             return null;
@@ -668,7 +668,7 @@ export default function ({
 
         const conf = lib.recordIdentityConf || {};
         const valuesOptions: IValuesOptions = {
-            version: ctx.version ?? null
+            version: ctx.version ?? null,
         };
         let subLabel: string | null = null;
         if (conf.subLabel) {
@@ -679,7 +679,7 @@ export default function ({
                 recordId: record.id,
                 attribute: conf.subLabel,
                 options: valuesOptions,
-                ctx
+                ctx,
             });
 
             subLabelValues = getValuesToDisplay(subLabelValues);
@@ -721,7 +721,7 @@ export default function ({
             from: dateRange.from,
             to: dateRange.to,
             lng: lang,
-            interpolation: {escapeValue: false}
+            interpolation: {escapeValue: false},
         });
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
@@ -733,7 +733,7 @@ export default function ({
 
         const conf = lib.recordIdentityConf || {};
         const valuesOptions: IValuesOptions = {
-            version: ctx.version ?? null
+            version: ctx.version ?? null,
         };
 
         const getLabel = conf.label ? () => _getLabel(record, [], ctx) : null;
@@ -752,19 +752,19 @@ export default function ({
                     recordId: record.id,
                     attribute: conf.treeColorPreview,
                     options: valuesOptions,
-                    ctx
+                    ctx,
                 });
 
                 if (treeValues.length) {
                     // for now, we look through first element (discard others if linked to multiple leaves of tree)
                     const treeAttrProps = await attributeDomain.getAttributeProperties({
                         id: conf.treeColorPreview,
-                        ctx
+                        ctx,
                     });
                     return elementAncestorsHelper.getCachedElementAncestors({
                         treeId: treeAttrProps.linked_tree,
                         nodeId: treeValues[0].payload.id,
-                        ctx
+                        ctx,
                     });
                 }
                 return null;
@@ -811,7 +811,7 @@ export default function ({
 
                         return ancestorIdentity.getPreview?.();
                     },
-                    null
+                    null,
                 );
 
                 // If no preview found, or preview is not available, use library icon if any
@@ -829,7 +829,7 @@ export default function ({
             getLabel,
             getSubLabel,
             getColor,
-            getPreview
+            getPreview,
         };
     };
 
@@ -838,7 +838,7 @@ export default function ({
             return createRecordHelper({
                 library,
                 ctx,
-                active: false
+                active: false,
             });
         },
         async activateNewRecord({library, recordId, formId, skipVerifyRequiredAttributes, ctx}) {
@@ -848,7 +848,7 @@ export default function ({
                 const creationForm = (
                     await formRepo.getForms({
                         params: {filters: {id: formId ?? 'creation', library}, strictFilters: true, withCount: false},
-                        ctx
+                        ctx,
                     })
                 ).list[0];
 
@@ -858,7 +858,7 @@ export default function ({
                               libraryId: library,
                               formId: formId ?? 'creation',
                               checkDependency: false,
-                              ctx
+                              ctx,
                           })
                         : libraryAttributes
                 ).filter(attribute => attribute.required);
@@ -870,7 +870,7 @@ export default function ({
                             library,
                             record: {id: recordId, library},
                             attributeId: attr.id ?? '',
-                            ctx
+                            ctx,
                         });
                         if (values?.length) {
                             if (!valuesByAttribute[attr.id]) {
@@ -878,13 +878,13 @@ export default function ({
                             }
                             valuesByAttribute[attr.id].push(...values);
                         }
-                    })
+                    }),
                 );
 
                 const missingAttributes = requiredAttributes.filter(
                     attribute =>
                         !Object.keys(valuesByAttribute).includes(attribute.id) ||
-                        !valuesByAttribute[attribute.id]?.length
+                        !valuesByAttribute[attribute.id]?.length,
                 );
 
                 if (missingAttributes.length) {
@@ -899,16 +899,16 @@ export default function ({
                                         attribute:
                                             typeof attribute.label === 'string'
                                                 ? attribute.label
-                                                : localizedTranslation(attribute.label, [ctx.lang]) || attribute.id
-                                    }
+                                                : localizedTranslation(attribute.label, [ctx.lang]) || attribute.id,
+                                    },
                                 },
-                                ctx.lang
-                            )
-                        })
+                                ctx.lang,
+                            ),
+                        }),
                     );
                     return {
                         record: null,
-                        valuesErrors
+                        valuesErrors,
                     };
                 }
             }
@@ -918,7 +918,7 @@ export default function ({
                 recordId,
                 attribute: ATTRIBUTE_ACTIVE,
                 value: {payload: true},
-                ctx
+                ctx,
             });
 
             // The record is not in creation anymore
@@ -926,14 +926,14 @@ export default function ({
                 libraryId: library,
                 recordData: {
                     id: recordId,
-                    [CORE_IN_CREATION_BY]: null
+                    [CORE_IN_CREATION_BY]: null,
                 },
-                ctx
+                ctx,
             });
 
             return {
                 record,
-                valuesErrors: null
+                valuesErrors: null,
             };
         },
         async createRecord({library, values, verifyRequiredAttributes, ctx}): Promise<ICreateRecordResult> {
@@ -948,16 +948,16 @@ export default function ({
                     library,
                     recordId: createdRecord.id,
                     values: cleanValues,
-                    ctx
+                    ctx,
                 });
                 if (errors?.length) {
                     logger.error(`Error during save values batch for record ${createdRecord.id} in createRecord`, {
-                        errors
+                        errors,
                     });
                     await this.deleteRecord({
                         library,
                         id: createdRecord.id,
-                        ctx
+                        ctx,
                     }).catch(err => {
                         logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
                     });
@@ -971,20 +971,20 @@ export default function ({
                                 valueError.message ||
                                 utils.translateError(
                                     {msg: valueError.type, vars: {attribute: valueError.attribute}},
-                                    ctx.lang
-                                )
-                        }))
+                                    ctx.lang,
+                                ),
+                        })),
                     };
                 }
                 const {valuesErrors} = await this.activateNewRecord({
                     library,
                     recordId: createdRecord.id,
                     skipVerifyRequiredAttributes: !verifyRequiredAttributes,
-                    ctx
+                    ctx,
                 });
                 if (valuesErrors?.length) {
                     logger.error(`Error during activate new record ${createdRecord.id} in createRecord`, {
-                        valuesErrors
+                        valuesErrors,
                     });
                     await this.deleteRecord({library, id: createdRecord.id, ctx}).catch(err => {
                         logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
@@ -992,7 +992,7 @@ export default function ({
 
                     return {
                         record: null,
-                        valuesErrors
+                        valuesErrors,
                     };
                 }
                 return {record: createdRecord, valuesErrors: null};
@@ -1009,9 +1009,9 @@ export default function ({
                         {
                             type: error?.type ?? ErrorTypes.INTERNAL_ERROR,
                             attribute: null,
-                            message: error && typeof error.message === 'string' ? error.message : String(error)
-                        }
-                    ]
+                            message: error && typeof error.message === 'string' ? error.message : String(error),
+                        },
+                    ],
                 };
             }
         },
@@ -1019,7 +1019,7 @@ export default function ({
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({
                 libraryId: library,
                 recordData,
-                ctx
+                ctx,
             });
 
             await eventsManager.sendDatabaseEvent<EventAction.RECORD_SAVE>(
@@ -1028,13 +1028,13 @@ export default function ({
                     topic: {
                         record: {
                             id: savedRecord.id,
-                            libraryId: savedRecord.library
-                        }
+                            libraryId: savedRecord.library,
+                        },
                     },
                     before: oldRecord,
-                    after: recordData
+                    after: recordData,
                 },
-                ctx
+                ctx,
             );
 
             if (isRecordWithId(recordData)) {
@@ -1060,7 +1060,7 @@ export default function ({
                 libraryId: params.library,
                 userId: ctx.userId,
                 action: LibraryPermissionsActions.ACCESS_LIBRARY,
-                ctx
+                ctx,
             });
 
             if (!isLibraryAccessible) {
@@ -1082,9 +1082,9 @@ export default function ({
                         deps: {
                             'core.domain.attribute': attributeDomain,
                             'core.infra.library': libraryRepo,
-                            'core.infra.tree': treeRepo
+                            'core.infra.tree': treeRepo,
                         },
-                        ctx
+                        ctx,
                     });
 
                     // Set reverse links if necessary.
@@ -1095,11 +1095,11 @@ export default function ({
                                       ...a,
                                       reverse_link: await attributeDomain.getAttributeProperties({
                                           id: a.reverse_link as string,
-                                          ctx
-                                      })
+                                          ctx,
+                                      }),
                                   }
-                                : a
-                        )
+                                : a,
+                        ),
                     )) as IAttributeWithRevLink[];
 
                     let value: any = f.value ?? null;
@@ -1155,9 +1155,9 @@ export default function ({
                             deps: {
                                 'core.domain.attribute': attributeDomain,
                                 'core.infra.library': libraryRepo,
-                                'core.infra.tree': treeRepo
+                                'core.infra.tree': treeRepo,
                             },
-                            ctx
+                            ctx,
                         });
 
                         const sortAttributesRepo = (await Promise.all(
@@ -1167,18 +1167,18 @@ export default function ({
                                           ...a,
                                           reverse_link: await attributeDomain.getAttributeProperties({
                                               id: a.reverse_link as string,
-                                              ctx
-                                          })
+                                              ctx,
+                                          }),
                                       }
-                                    : a
-                            )
+                                    : a,
+                            ),
                         )) as IAttributeWithRevLink[];
 
                         return {
                             attributes: sortAttributesRepo,
-                            order: s.order
+                            order: s.order,
                         };
-                    }, [])
+                    }, []),
                 );
             }
 
@@ -1191,7 +1191,7 @@ export default function ({
                     const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
                         treeId: USERS_GROUP_TREE_NAME,
                         nodeId: groupId,
-                        ctx
+                        ctx,
                     });
                     const ancestorsId = ancestors.map(a => a.id).reverse(); // reverse to have list from leaf to root
                     groupsWithAncestorsId.push(ancestorsId);
@@ -1209,9 +1209,9 @@ export default function ({
                         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
                         'core.infra.tree': treeRepo,
                         'core.infra.permission': permissionRepo,
-                        'core.domain.permission.helpers.defaultPermission': defaultPermHelper
+                        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
                     },
-                    ctx
+                    ctx,
                 );
             }
 
@@ -1224,7 +1224,7 @@ export default function ({
                 retrieveInactive,
                 fulltextSearch,
                 accessPermissionFilters,
-                ctx
+                ctx,
             });
         },
         getRecordIdentity: _getRecordIdentity,
@@ -1232,7 +1232,7 @@ export default function ({
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
             if (!libraryAttributes.map(a => a.id).includes(attributeId)) {
                 throw new ValidationError({
-                    [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}}
+                    [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}},
                 });
             }
 
@@ -1242,7 +1242,7 @@ export default function ({
                 attributeId,
                 library,
                 record.id,
-                ctx
+                ctx,
             );
 
             if (!perm) {
@@ -1256,8 +1256,8 @@ export default function ({
             if (hasNoValue) {
                 values = [
                     {
-                        payload: null
-                    }
+                        payload: null,
+                    },
                 ];
             }
 
@@ -1268,7 +1268,7 @@ export default function ({
                         value: v,
                         record,
                         library,
-                        ctx
+                        ctx,
                     });
 
                     if (attrProps.metadata_fields && formattedValue.metadata) {
@@ -1279,7 +1279,7 @@ export default function ({
 
                             const metadataAttributeProps = await attributeDomain.getAttributeProperties({
                                 id: metadataField,
-                                ctx
+                                ctx,
                             });
 
                             const computedMetadata = await valueDomain.runActionsList({
@@ -1287,7 +1287,7 @@ export default function ({
                                 attribute: metadataAttributeProps,
                                 library,
                                 values: [formattedValue.metadata[metadataField] as IStandardValue],
-                                ctx
+                                ctx,
                             });
 
                             formattedValue.metadata[metadataField] = computedMetadata[0];
@@ -1295,7 +1295,7 @@ export default function ({
                     }
 
                     return formattedValue;
-                })
+                }),
             );
 
             // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
@@ -1305,8 +1305,8 @@ export default function ({
                         ...acc,
                         ...v.payload.map(vpart => ({
                             value: vpart,
-                            attribute: v.attribute
-                        }))
+                            attribute: v.attribute,
+                        })),
                     ];
                 } else {
                     acc.push(v);
@@ -1322,7 +1322,7 @@ export default function ({
                         typeof v.payload !== 'undefined' &&
                         typeof v.payload === 'object' &&
                         v.payload.hasOwnProperty('id') &&
-                        v.payload.hasOwnProperty('library')
+                        v.payload.hasOwnProperty('library'),
                 );
             }
             return formattedValues;
@@ -1333,7 +1333,7 @@ export default function ({
                 recordId: record.id,
                 attribute: ATTRIBUTE_ACTIVE,
                 value: {payload: false},
-                ctx
+                ctx,
             });
 
             return {...record, active: savedValues[0].payload};
@@ -1344,7 +1344,7 @@ export default function ({
                 recordId: record.id,
                 attribute: ATTRIBUTE_ACTIVE,
                 value: {payload: true},
-                ctx
+                ctx,
             });
 
             return {...record, active: savedValues[0].payload};
@@ -1359,9 +1359,9 @@ export default function ({
                         filters,
                         options: {forceArray: true, forceGetAllValues: true},
                         retrieveInactive: true,
-                        withCount: false
+                        withCount: false,
                     },
-                    ctx
+                    ctx,
                 });
                 recordsToActivate = records.list.map(record => record.id);
             }
@@ -1373,17 +1373,17 @@ export default function ({
                         userId: ctx.userId,
                         library: libraryId,
                         recordId,
-                        ctx
+                        ctx,
                     });
 
                     return hasCreatePermission ? recordId : null;
-                })
+                }),
             );
 
             recordsToActivate = recordsToActivate.filter(recordId => recordId !== null);
 
             return Promise.all(
-                recordsToActivate.map(recordId => this.activateRecord({id: recordId, library: libraryId}, ctx))
+                recordsToActivate.map(recordId => this.activateRecord({id: recordId, library: libraryId}, ctx)),
             );
         },
         async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
@@ -1396,9 +1396,9 @@ export default function ({
                         filters,
                         options: {forceArray: true, forceGetAllValues: true},
                         retrieveInactive: false,
-                        withCount: false
+                        withCount: false,
                     },
-                    ctx
+                    ctx,
                 });
                 recordsToDeactivate = records.list.map(record => record.id);
             }
@@ -1410,24 +1410,24 @@ export default function ({
                         userId: ctx.userId,
                         library: libraryId,
                         recordId,
-                        ctx
+                        ctx,
                     });
                     return hasDeletePermission ? recordId : null;
-                })
+                }),
             );
             recordsToDeactivate = recordsToDeactivate.filter(recordId => recordId !== null);
 
             return Promise.all(
-                recordsToDeactivate.map(recordId => this.deactivateRecord({id: recordId, library: libraryId}, ctx))
+                recordsToDeactivate.map(recordId => this.deactivateRecord({id: recordId, library: libraryId}, ctx)),
             );
         },
         async purgeInactiveRecords({libraryId, ctx}): Promise<IRecord[]> {
             const inactiveRecords = await this.find({
                 params: {
                     library: libraryId,
-                    filters: [{field: ATTRIBUTE_ACTIVE, condition: AttributeCondition.EQUAL, value: 'false'}]
+                    filters: [{field: ATTRIBUTE_ACTIVE, condition: AttributeCondition.EQUAL, value: 'false'}],
                 },
-                ctx
+                ctx,
             });
 
             const purgedRecords: IRecord[] = [];
@@ -1436,8 +1436,8 @@ export default function ({
                     await this.deleteRecord({
                         library: libraryId,
                         id: record.id,
-                        ctx
-                    })
+                        ctx,
+                    }),
                 );
             }
 
@@ -1467,9 +1467,9 @@ export default function ({
             return this.deleteRecord({
                 library: libraryId,
                 id: recordId,
-                ctx
+                ctx,
             });
-        }
+        },
     };
 
     return ret;

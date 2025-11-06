@@ -25,7 +25,7 @@ describe('SystemTranslation', () => {
         test('Convert value', async () => {
             const mockAst: StringValueNode = {
                 kind: Kind.STRING,
-                value: 'toto'
+                value: 'toto',
             };
 
             const mockObj: ObjectValueNode = {
@@ -35,14 +35,14 @@ describe('SystemTranslation', () => {
                         kind: Kind.OBJECT_FIELD,
                         name: {
                             kind: Kind.NAME,
-                            value: 'toto'
+                            value: 'toto',
                         },
                         value: {
                             kind: Kind.STRING,
-                            value: 'tata'
-                        }
-                    }
-                ]
+                            value: 'tata',
+                        },
+                    },
+                ],
             };
 
             expect(scalar.parseLiteral(mockAst, null)).toBe('toto');

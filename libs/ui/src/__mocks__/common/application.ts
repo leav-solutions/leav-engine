@@ -8,12 +8,12 @@ export const mockApplication: WithTypename<GetApplicationByIdQuery['applications
     id: 'my_app',
     label: {
         fr: 'Mon application',
-        en: 'My application'
+        en: 'My application',
     },
     type: ApplicationType.internal,
     description: {
         fr: 'Description de mon application',
-        en: 'My application description'
+        en: 'My application description',
     },
     endpoint: 'my-app',
     url: null,
@@ -24,7 +24,7 @@ export const mockApplication: WithTypename<GetApplicationByIdQuery['applications
     permissions: {
         access_application: true,
         admin_application: true,
-        __typename: 'ApplicationPermissions'
+        __typename: 'ApplicationPermissions',
     },
-    __typename: 'Application'
+    __typename: 'Application',
 };

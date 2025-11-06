@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function BreadcrumbSection() {
             return <div>BreadcrumbSection</div>;
-        }
+        },
 );
 
 describe('BreadcrumbNavigatorView', () => {

@@ -10,6 +10,6 @@ export default function useRedirectToLogin() {
                 return window.location.replace(`${window.location.origin}/app/login/?dest=${window.location.pathname}`);
             }
             return window.location.reload();
-        }
+        },
     };
 }

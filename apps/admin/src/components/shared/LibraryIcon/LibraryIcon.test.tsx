@@ -16,7 +16,7 @@ describe('LibraryIcon', () => {
                     id: '123465',
                     library: {
                         id: 'files',
-                        label: {en: 'Files'}
+                        label: {en: 'Files'},
                     },
                     label: null,
                     color: null,
@@ -28,10 +28,10 @@ describe('LibraryIcon', () => {
                         huge: 'path/to/file.png',
                         pdf: 'path/to/file.pdf',
                         file: null,
-                        original: 'path/to/file.png'
-                    }
-                }
-            }
+                        original: 'path/to/file.png',
+                    },
+                },
+            },
         };
 
         render(<LibraryIcon library={mockLibrary} />);
@@ -43,7 +43,7 @@ describe('LibraryIcon', () => {
         const mockLibrary = {
             id: '123456',
             behavior: LibraryBehavior.files,
-            icon: null
+            icon: null,
         };
 
         render(<LibraryIcon library={mockLibrary} />);

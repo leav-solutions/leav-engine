@@ -9,7 +9,7 @@ export const mockCtx: IQueryInfos = {
     userId: '1',
     queryId: '123456',
     lang: 'fr',
-    errors: []
+    errors: [],
 };
 
 export const mockSystemQueryContext: IQueryInfos = {
@@ -17,5 +17,5 @@ export const mockSystemQueryContext: IQueryInfos = {
     lang: 'en',
     queryId: uuidv4(),
     groupsId: [adminsGroupId, filesAdminsGroupId],
-    errors: []
+    errors: [],
 };

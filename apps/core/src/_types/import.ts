@@ -7,20 +7,20 @@ import {type IValueMetadata, IValueVersion} from './value';
 export enum ImportType {
     IGNORE = 'IGNORE',
     STANDARD = 'STANDARD',
-    LINK = 'LINK'
+    LINK = 'LINK',
 }
 
 export enum ImportMode {
     INSERT = 'insert',
     UPDATE = 'update',
-    UPSERT = 'upsert'
+    UPSERT = 'upsert',
 }
 
 export enum Action {
     ADD = 'add',
     REPLACE = 'replace',
     UPDATE = 'update',
-    REMOVE = 'remove'
+    REMOVE = 'remove',
 }
 
 export interface IMatch {

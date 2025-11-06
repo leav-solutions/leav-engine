@@ -10,7 +10,7 @@ import {act, render, screen} from '../../_tests/testUtils';
 import RecordCard from './RecordCard';
 
 jest.mock('../EntityPreview', () => ({
-    EntityPreview: () => <div>EntityPreview</div>
+    EntityPreview: () => <div>EntityPreview</div>,
 }));
 
 describe('RecordCard', () => {
@@ -20,9 +20,9 @@ describe('RecordCard', () => {
         library: {
             ...mockRecord.library,
             id: 'test_lib',
-            label: {fr: 'Test Lib', en: 'test lib'}
+            label: {fr: 'Test Lib', en: 'test lib'},
         },
-        label: 'Test Record'
+        label: 'Test Record',
     };
 
     test('should display label', async () => {

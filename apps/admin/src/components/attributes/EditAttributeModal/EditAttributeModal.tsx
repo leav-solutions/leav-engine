@@ -27,7 +27,7 @@ function EditAttributeModal({
     open,
     onClose,
     onPostSave,
-    redirectAfterCreate
+    redirectAfterCreate,
 }: IEditAttributeModalProps): JSX.Element {
     const {t} = useTranslation();
 

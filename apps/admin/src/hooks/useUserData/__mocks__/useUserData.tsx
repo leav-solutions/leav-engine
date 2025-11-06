@@ -12,7 +12,7 @@ const mockUseUserData = () => ({
             perms[p] = true;
 
             return perms;
-        }, {})
+        }, {}),
 });
 
 export default mockUseUserData;

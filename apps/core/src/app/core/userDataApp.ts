@@ -40,26 +40,26 @@ export default function ({'core.domain.user': userDomain}: IDeps): ICoreImportAp
                         async userData(
                             parent,
                             {keys, global}: {keys: string[]; global: boolean},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IUserData> {
                             return userDomain.getUserData(keys, global, ctx);
-                        }
+                        },
                     },
                     Mutation: {
                         async saveUserData(
                             parent,
                             {key, value, global}: {key: string; value: any; global: boolean},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IUserData> {
                             return userDomain.saveUserData({key, value, global, ctx});
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

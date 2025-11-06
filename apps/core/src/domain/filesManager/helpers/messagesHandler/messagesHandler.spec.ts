@@ -10,7 +10,7 @@ import {type ToAny} from 'utils/utils';
 const depsBase: ToAny<IMessagesHandlerDeps> = {
     'core.utils.logger': jest.fn(),
     'core.domain.filesManager.helpers.handleFileSystemEvent': jest.fn(),
-    config: {}
+    config: {},
 };
 
 describe('MessagesHandler', () => {
@@ -20,15 +20,15 @@ describe('MessagesHandler', () => {
         const mockConfig = {
             filesManager: {
                 rootKeys: {
-                    files1: 'files'
-                }
-            }
+                    files1: 'files',
+                },
+            },
         };
 
         const handler = messagesHandler({
             ...depsBase,
             'core.domain.filesManager.helpers.handleFileSystemEvent': mockHandleEventFileSystem,
-            config: mockConfig as IConfig
+            config: mockConfig as IConfig,
         });
 
         const mockMessage: IFileEventData = {
@@ -39,7 +39,7 @@ describe('MessagesHandler', () => {
             pathBefore: '',
             rootKey: 'root_key',
             time: 123456789,
-            hash: 'hash'
+            hash: 'hash',
         };
 
         try {

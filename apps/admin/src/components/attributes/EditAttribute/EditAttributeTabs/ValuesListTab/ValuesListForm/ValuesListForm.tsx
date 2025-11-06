@@ -7,7 +7,7 @@ import {Divider, Form} from 'semantic-ui-react';
 import {
     type GET_ATTRIBUTES_VALUES_LIST_attributes_list,
     type GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute,
-    type GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute
+    type GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute,
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {AttributeFormat, AttributeType, type ValuesListConfInput} from '../../../../../../_gqlTypes/globalTypes';
 import {
@@ -15,7 +15,7 @@ import {
     type ILinkValuesList,
     type ITreeValuesList,
     type IValuesListConf,
-    type ValuesList
+    type ValuesList,
 } from '../../../../../../_types/attributes';
 import LinkValuesList from './LinkValuesList';
 import StandardValuesList from './StandardValuesList';
@@ -83,7 +83,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
     if (attribute.values_list) {
         initialState.conf = {
             ...attribute.values_list,
-            values: attribute.values_list[_getValuesField(attribute)]
+            values: attribute.values_list[_getValuesField(attribute)],
         };
     }
 
@@ -112,7 +112,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                 case AttributeType.advanced:
                     if (attribute.format === AttributeFormat.date_range) {
                         valuesToSave = ((conf?.values || []) as IDateRangeValue[]).map(v =>
-                            typeof v === 'object' ? JSON.stringify(v) : v
+                            typeof v === 'object' ? JSON.stringify(v) : v,
                         );
                     } else {
                         valuesToSave = (conf?.values || []) as string[];
@@ -132,7 +132,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
 
             return valuesToSave.filter(v => v !== '');
         },
-        [attribute]
+        [attribute],
     );
 
     const _handleValuesChange = (newValues: ValuesList) => {
@@ -146,7 +146,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                 enable: state.conf.enable,
                 allowFreeEntry: state.conf.allowFreeEntry,
                 allowListUpdate: state.conf.allowListUpdate,
-                values: _extractValuesToSave(state.conf)
+                values: _extractValuesToSave(state.conf),
             });
             dispatch({type: 'submit_done'});
         }

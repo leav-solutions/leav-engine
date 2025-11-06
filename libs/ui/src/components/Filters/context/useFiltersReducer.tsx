@@ -22,12 +22,12 @@ export const useFiltersReducer = ({
     viewId,
     filters,
     filtersOperator = 'AND',
-    ignoreViewByDefault = false
+    ignoreViewByDefault = false,
 }: IFiltersProviderProps) => {
     const [refetchViews, setRefetchViews] = useState(false);
     const [filtersData, dispatch] = useReducer(filtersReducer(setRefetchViews), {
         ...filtersInitialState,
-        filtersOperator: filtersOperator ?? filtersInitialState.filtersOperator
+        filtersOperator: filtersOperator ?? filtersInitialState.filtersOperator,
     });
     const {toValidFilters, toUIFilters} = useTransformFilters();
 
@@ -38,12 +38,12 @@ export const useFiltersReducer = ({
          * List of my views and shared views
          */
         data: viewData,
-        loading: viewsLoading
+        loading: viewsLoading,
     } = useGetViewsListQuery({
         skip: libraryId === null && !needToReload,
         variables: {
-            libraryId: libraryId as string
-        }
+            libraryId: libraryId as string,
+        },
     });
 
     let userView: GetViewsListQuery['views']['list'][number] | undefined;
@@ -61,9 +61,9 @@ export const useFiltersReducer = ({
 
     const {data: attributesData, loading: attributesLoading} = useExplorerAttributesQuery({
         variables: {
-            ids: attributesToGet
+            ids: attributesToGet,
         },
-        skip: libraryId === null || viewsLoading || attributesToGet.length === 0
+        skip: libraryId === null || viewsLoading || attributesToGet.length === 0,
     });
 
     const attributesDataById = useMemo(
@@ -74,7 +74,7 @@ export const useFiltersReducer = ({
                 }
                 return acc;
             }, {}),
-        [attributesData]
+        [attributesData],
     );
 
     useEffect(() => {
@@ -90,8 +90,8 @@ export const useFiltersReducer = ({
                     filters: uiFilters,
                     initialFilters: uiFilters,
                     attributesDataById,
-                    loading: viewsLoading || attributesLoading
-                }
+                    loading: viewsLoading || attributesLoading,
+                },
             });
         }
     }, [attributesDataById, viewsLoading]);

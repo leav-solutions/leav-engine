@@ -16,7 +16,7 @@ export const useGetPresentationValues = ({
     values,
     format,
     calculatedValue,
-    inheritedValue
+    inheritedValue,
 }: {
     values: ValueDetailsValueFragment[];
     format: AttributeFormat;
@@ -38,8 +38,8 @@ export const useGetPresentationValues = ({
                         from,
                         to,
                         interpolation: {
-                            escapeValue: false
-                        }
+                            escapeValue: false,
+                        },
                     });
                 } else {
                     presentationValue = '';

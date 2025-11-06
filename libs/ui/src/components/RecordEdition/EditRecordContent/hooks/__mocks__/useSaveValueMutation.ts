@@ -3,6 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export default function useSaveValueMutation() {
     return {
-        saveValue: jest.fn()
+        saveValue: jest.fn(),
     };
 }

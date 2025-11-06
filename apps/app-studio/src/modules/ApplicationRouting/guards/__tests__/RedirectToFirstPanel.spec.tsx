@@ -8,14 +8,14 @@ import {type Application} from '../../types';
 import {RedirectToFirstPanel} from '../RedirectToFirstPanel';
 
 jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
     Navigate: jest.fn(),
-    generatePath: jest.fn()
+    generatePath: jest.fn(),
 }));
 
 describe('RedirectToFirstPanel component guard', () => {
@@ -38,11 +38,11 @@ describe('RedirectToFirstPanel component guard', () => {
                     icon: 'fa-layer-group',
                     title: {
                         fr: 'PACs',
-                        en: 'Roadmap'
+                        en: 'Roadmap',
                     },
                     type: 'library',
-                    libraryId: 'map'
-                }
+                    libraryId: 'map',
+                },
             ],
             libraries: {
                 map: {
@@ -51,7 +51,7 @@ describe('RedirectToFirstPanel component guard', () => {
                             id: firstLibraryPanelId,
                             name: {
                                 fr: 'Gestion des PACs',
-                                en: 'MAPs Management'
+                                en: 'MAPs Management',
                             },
                             type: 'explorer',
                             viewId: '885451776',
@@ -61,15 +61,15 @@ describe('RedirectToFirstPanel component guard', () => {
                                     what: 'record',
                                     label: {
                                         en: 'Open PAC',
-                                        fr: 'Ouvrir le PAC'
-                                    }
-                                }
-                            ]
-                        }
+                                        fr: 'Ouvrir le PAC',
+                                    },
+                                },
+                            ],
+                        },
                     ],
-                    recordPanels: []
-                }
-            }
+                    recordPanels: [],
+                },
+            },
         };
         spyUseParams.mockReturnValue({workspaceId: firstWorkspaceId});
         spyGeneratePath.mockReturnValueOnce(`/${firstWorkspaceId}/${firstLibraryPanelId}`);
@@ -80,13 +80,13 @@ describe('RedirectToFirstPanel component guard', () => {
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);
         expect(spyGeneratePath).toHaveBeenCalledWith('/:workspaceId/:panelId/*', {
             workspaceId: firstWorkspaceId,
-            panelId: firstLibraryPanelId
+            panelId: firstLibraryPanelId,
         });
 
         expect(spyNavigate).toHaveBeenCalledTimes(1);
         expect(spyNavigate).toHaveBeenCalledWith(
             {replace: true, to: `/${firstWorkspaceId}/${firstLibraryPanelId}`},
-            {}
+            {},
         );
     });
 
@@ -100,12 +100,12 @@ describe('RedirectToFirstPanel component guard', () => {
                     icon: 'fa-layer-group',
                     title: {
                         fr: 'PAC de l’année',
-                        en: 'MAP of the year'
+                        en: 'MAP of the year',
                     },
                     type: 'record',
                     recordId: '0123456789',
-                    libraryId: 'map'
-                }
+                    libraryId: 'map',
+                },
             ],
             libraries: {
                 map: {
@@ -114,11 +114,11 @@ describe('RedirectToFirstPanel component guard', () => {
                         {
                             id: firstRecordPanelId,
                             type: 'editionForm',
-                            formId: 'edition'
-                        }
-                    ]
-                }
-            }
+                            formId: 'edition',
+                        },
+                    ],
+                },
+            },
         };
         spyUseParams.mockReturnValue({workspaceId: firstWorkspaceId});
         spyGeneratePath.mockReturnValueOnce(`/${firstWorkspaceId}/${firstRecordPanelId}`);
@@ -129,7 +129,7 @@ describe('RedirectToFirstPanel component guard', () => {
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);
         expect(spyGeneratePath).toHaveBeenCalledWith('/:workspaceId/:panelId/*', {
             workspaceId: firstWorkspaceId,
-            panelId: firstRecordPanelId
+            panelId: firstRecordPanelId,
         });
 
         expect(spyNavigate).toHaveBeenCalledTimes(1);

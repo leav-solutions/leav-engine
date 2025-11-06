@@ -14,7 +14,7 @@ import {deleteFromCache} from 'utils';
 import {
     type DELETE_VERSION_PROFILE,
     type DELETE_VERSION_PROFILEVariables,
-    type DELETE_VERSION_PROFILE_deleteVersionProfile
+    type DELETE_VERSION_PROFILE_deleteVersionProfile,
 } from '_gqlTypes/DELETE_VERSION_PROFILE';
 import {type GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
@@ -34,15 +34,15 @@ const DeleteLibrary = ({profile}: IDeleteProfileProps): JSX.Element | null => {
             update: (cache, {data: {deleteVersionProfile}}) => {
                 deleteFromCache(
                     cache,
-                    deleteVersionProfile as WithTypename<DELETE_VERSION_PROFILE_deleteVersionProfile>
+                    deleteVersionProfile as WithTypename<DELETE_VERSION_PROFILE_deleteVersionProfile>,
                 );
-            }
-        }
+            },
+        },
     );
 
     const _handleDelete = async () =>
         deleteProfile({
-            variables: {id: profile.id}
+            variables: {id: profile.id},
         });
 
     const profileLabel = localizedTranslation(profile.label, lang);

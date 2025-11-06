@@ -34,8 +34,8 @@ function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavig
                 channel: InfoChannel.TRIGGER,
                 type: InfoType.SUCCESS,
                 content: t(tMessageSuccess, {
-                    nb: messages.countValid
-                })
+                    nb: messages.countValid,
+                }),
             };
 
             dispatch(addInfo(info));
@@ -51,10 +51,10 @@ function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavig
                 content: t(tMessageFail, {
                     elements: (messages.errors[error] as string[]).reduce(
                         (acc, elementLabel) => (acc ? `${acc}, ${elementLabel}` : `${elementLabel}`),
-                        ''
+                        '',
                     ),
-                    errorMessage: error
-                })
+                    errorMessage: error,
+                }),
             };
 
             dispatch(addInfo(info));

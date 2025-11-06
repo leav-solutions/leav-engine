@@ -15,7 +15,7 @@ export const useTableScrollableHeight = (withPagination: boolean) => {
             height === null
                 ? '100vh'
                 : `${height - headerTableHeight - (withPagination ? defaultPaginationHeight : 0)}px`,
-        [withPagination, height]
+        [withPagination, height],
     );
 
     return {containerRef, scrollHeight};

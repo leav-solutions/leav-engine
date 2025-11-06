@@ -14,7 +14,7 @@ const dataMock = [
     {
         request: {
             query: getLibsQuery,
-            variables: {}
+            variables: {},
         },
         result: {
             data: {
@@ -26,27 +26,27 @@ const dataMock = [
                             label: 'l1',
                             system: false,
                             behavior: LibraryBehavior.standard,
-                            icon: null
+                            icon: null,
                         },
                         {
                             id: '2',
                             label: 'l2',
                             system: false,
                             behavior: LibraryBehavior.standard,
-                            icon: null
+                            icon: null,
                         },
                         {
                             id: '3',
                             label: 'l3',
                             system: false,
                             behavior: LibraryBehavior.standard,
-                            icon: null
-                        }
-                    ]
-                }
-            }
-        }
-    }
+                            icon: null,
+                        },
+                    ],
+                },
+            },
+        },
+    },
 ];
 
 describe('<RootSelector/>', () => {
@@ -63,7 +63,7 @@ describe('<RootSelector/>', () => {
                 wrapper = mount(
                     <MockedProvider mocks={[]} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={[]} />
-                    </MockedProvider>
+                    </MockedProvider>,
                 );
             });
             expect(wrapper.find('Loading')).toHaveLength(1);
@@ -74,17 +74,17 @@ describe('<RootSelector/>', () => {
             const errorMocks = [
                 {
                     request: {
-                        query: getLibsQuery
+                        query: getLibsQuery,
                     },
-                    error: new Error(errorText)
-                }
+                    error: new Error(errorText),
+                },
             ];
             let wrapper: ReactWrapper;
             await act(async () => {
                 wrapper = mount(
                     <MockedProvider mocks={errorMocks} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={[]} />
-                    </MockedProvider>
+                    </MockedProvider>,
                 );
             });
 
@@ -102,7 +102,7 @@ describe('<RootSelector/>', () => {
                 wrapper = mount(
                     <MockedProvider mocks={dataMock} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={[]} />
-                    </MockedProvider>
+                    </MockedProvider>,
                 );
             });
             await act(async () => {
@@ -119,7 +119,7 @@ describe('<RootSelector/>', () => {
                 wrapper = mount(
                     <MockedProvider mocks={dataMock} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={['1', '2']} />
-                    </MockedProvider>
+                    </MockedProvider>,
                 );
             });
             await act(async () => {

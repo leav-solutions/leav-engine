@@ -10,7 +10,7 @@ import {localizedLabel} from 'utils';
 import {type GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
 import {
     type GET_LIB_BY_ID_libraries_list,
-    type GET_LIB_BY_ID_libraries_list_permissions_conf
+    type GET_LIB_BY_ID_libraries_list_permissions_conf,
 } from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, PermissionsRelation, type Treepermissions_confInput} from '_gqlTypes/globalTypes';
 import SimplisticButton from '../SimplisticButton';
@@ -54,7 +54,7 @@ function PermissionsSettings({
     const {t} = useTranslation();
     const {lang} = useLang();
     const [activeOperator, setActiveOperator] = React.useState<PermissionsRelation>(
-        permissionsSettings?.relation ?? PermissionsRelation.and
+        permissionsSettings?.relation ?? PermissionsRelation.and,
     );
     const permissionsAttributes = permissionsSettings?.permissionTreeAttributes ?? [];
 
@@ -71,14 +71,14 @@ function PermissionsSettings({
         setActiveOperator(operator);
         onChangeSettings({
             permissionTreeAttributes: permissionsSettings.permissionTreeAttributes.map(attr => attr.id),
-            relation: operator
+            relation: operator,
         });
     };
 
     const _handleAttributeSelected = (selectedAttribute: string) => {
         const newSettings = {
             permissionTreeAttributes: [...permissionsAttributes.map(a => a.id), selectedAttribute],
-            relation: permissionsSettings?.relation ?? defaultRelation
+            relation: permissionsSettings?.relation ?? defaultRelation,
         };
 
         onChangeSettings(newSettings);
@@ -89,12 +89,12 @@ function PermissionsSettings({
             permissionTreeAttributes: permissionsAttributes
                 .map(a => a.id)
                 .filter(attributeId => attributeId !== removedAttributeId),
-            relation: permissionsSettings?.relation ?? defaultRelation
+            relation: permissionsSettings?.relation ?? defaultRelation,
         });
     };
 
     const attributeSelectionFilters: GET_ATTRIBUTESVariables = {
-        type: [AttributeType.tree]
+        type: [AttributeType.tree],
     };
 
     if (library) {

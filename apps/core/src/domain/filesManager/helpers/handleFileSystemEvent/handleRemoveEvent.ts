@@ -10,7 +10,7 @@ export const handleRemoveEvent = async (
     scanMsg: IFileEventData,
     {library}: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<boolean> => {
     const {filePath, fileName} = getInputData(scanMsg.pathBefore);
 
@@ -24,12 +24,12 @@ export const handleRemoveEvent = async (
         {recordLibrary, recordId},
         false,
         deps,
-        ctx
+        ctx,
     );
 
     if (!record) {
         deps.logger.error(
-            `[${ctx.queryId}] Event ${scanMsg.event} - Can't find the record to disable - file: ${scanMsg.pathBefore}`
+            `[${ctx.queryId}] Event ${scanMsg.event} - Can't find the record to disable - file: ${scanMsg.pathBefore}`,
         );
         return false;
     }

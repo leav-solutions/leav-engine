@@ -85,7 +85,7 @@ const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement
                 // Parent attribute has multiple values, value is an array
                 if (isArray(item[field.parentAttributeData.id])) {
                     acc[key] = item[field.parentAttributeData.id].map(linkValue =>
-                        _extractValueFromParent(field, linkValue)
+                        _extractValueFromParent(field, linkValue),
                     );
                     return acc;
                 }
@@ -113,7 +113,7 @@ export const manageItems = ({items, fields}: IManageItemsProps): IItem[] => {
         const resultItem: IItem = {
             index: index + 1,
             whoAmI: {...item.whoAmI},
-            fields: itemFields
+            fields: itemFields,
         };
 
         return resultItem;

@@ -20,7 +20,7 @@ jest.mock('react-dnd', () => ({
         const drop = () => true;
         return [{isOver}, drop];
     },
-    DndProvider: ({backend, children}) => children
+    DndProvider: ({backend, children}) => children,
 }));
 
 describe('ALCCard', () => {
@@ -37,12 +37,12 @@ describe('ALCCard', () => {
                         input_types: [],
                         output_types: [],
                         params: [],
-                        isSystem: false
+                        isSystem: false,
                     }}
                     origin="ALCList"
                     colorTypeDictionnary={{int: []}}
                 />
-            </DndProvider>
+            </DndProvider>,
         );
         const header = comp.find('h3');
         expect(header.text()).toBe('action');

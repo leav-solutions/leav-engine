@@ -9,7 +9,7 @@ export enum StandardValuesActionTypes {
     CHANGE = 'CHANGE',
     SUBMIT = 'SUBMIT',
     DELETE = 'DELETE',
-    CANCEL = 'CANCEL'
+    CANCEL = 'CANCEL',
 }
 
 export type IStandardValuesActionData = {
@@ -36,14 +36,14 @@ const reducer = (state: IStandardValuesReducerState, action: IStandardValuesActi
         case StandardValuesActionTypes.REINIT: {
             const newState = {
                 values: action?.data?.values || [],
-                initialValues: action?.data?.values || []
+                initialValues: action?.data?.values || [],
             };
             return newState;
         }
         case StandardValuesActionTypes.ADD: {
             const newState = {
                 ...state,
-                values: [...state.values, {...virginValue}]
+                values: [...state.values, {...virginValue}],
             };
             return newState;
         }

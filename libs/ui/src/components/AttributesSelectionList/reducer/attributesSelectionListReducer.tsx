@@ -19,7 +19,7 @@ export enum AttributesSelectionListActionTypes {
     SET_ATTRIBUTES = 'SET_ATTRIBUTES',
     TOGGLE_ATTRIBUTE_SELECTION = 'TOGGLE_ATTRIBUTE_SELECTION',
     TOGGLE_ATTRIBUTE_EXPAND = 'TOGGLE_ATTRIBUTE_EXPAND',
-    MOVE_SELECTED_ATTRIBUTE = 'MOVE_SELECTED_ATTRIBUTE'
+    MOVE_SELECTED_ATTRIBUTE = 'MOVE_SELECTED_ATTRIBUTE',
 }
 
 export type AttributesSelectionListAction =
@@ -47,12 +47,12 @@ export const initialState: IAttributesSelectionListState = {
     canExpandExtendedAttributes: true,
     selectedAttributes: [],
     expandedAttributePath: '',
-    attributes: []
+    attributes: [],
 };
 
 const attributeSelectionListReducer = (
     state: IAttributesSelectionListState,
-    action: AttributesSelectionListAction
+    action: AttributesSelectionListAction,
 ): IAttributesSelectionListState => {
     switch (action.type) {
         case AttributesSelectionListActionTypes.SET_ATTRIBUTES: {
@@ -86,7 +86,7 @@ const attributeSelectionListReducer = (
 
             return {
                 ...state,
-                selectedAttributes: newSelection
+                selectedAttributes: newSelection,
             };
         }
         case AttributesSelectionListActionTypes.MOVE_SELECTED_ATTRIBUTE: {
@@ -109,7 +109,7 @@ const attributeSelectionListReducer = (
 
             return {
                 ...state,
-                selectedAttributes: newSelection
+                selectedAttributes: newSelection,
             };
         }
     }

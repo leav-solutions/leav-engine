@@ -12,7 +12,7 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
@@ -20,15 +20,15 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: true
-    }
+        raw_payload: true,
+    },
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const inheritedFagsWithInheritedValue: InheritedFlags = {
@@ -36,8 +36,8 @@ const inheritedFagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: true
-    }
+        raw_payload: true,
+    },
 };
 
 const notRequired = false;
@@ -69,7 +69,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         expect(screen.getByText(/yes/)).toBeVisible();
@@ -89,7 +89,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         expect(screen.getByText(/no/)).toBeVisible();
@@ -109,7 +109,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const switchInput = screen.getByRole('switch');
@@ -130,7 +130,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const switchInput = screen.getByRole('switch');
@@ -153,7 +153,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const switchInput = screen.getByRole('switch');
@@ -176,7 +176,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const clearButton = screen.getByRole('button');
@@ -199,7 +199,7 @@ describe('DSBooleanWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const clearButton = screen.getByRole('button');

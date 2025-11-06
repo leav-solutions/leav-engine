@@ -45,5 +45,5 @@ const root = createRoot(document.getElementById('root'));
 root.render(
     <BugsnagErrorBoundary>
         <Index />
-    </BugsnagErrorBoundary>
+    </BugsnagErrorBoundary>,
 );

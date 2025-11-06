@@ -31,7 +31,7 @@ function EmbeddedFieldsForm({
     formValues: values,
     setFormValues: setValues,
     save,
-    isRoot
+    isRoot,
 }: IEmbeddedFieldsFormProps) {
     const {t} = useTranslation();
     const [formValues, setFormValues] = useState<IFormValues>({
@@ -39,7 +39,7 @@ function EmbeddedFieldsForm({
         id,
         label,
         format,
-        validation_regex
+        validation_regex,
     });
 
     const _handleId = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
@@ -55,7 +55,7 @@ function EmbeddedFieldsForm({
 
     const _handleOnChangeValidationRegex = async (
         event: React.ChangeEvent<HTMLInputElement>,
-        data: InputOnChangeData
+        data: InputOnChangeData,
     ) => {
         const newValidationRegex = data.value?.toString() ?? '';
         setFormValues(v => ({...v, validation_regex: newValidationRegex}));

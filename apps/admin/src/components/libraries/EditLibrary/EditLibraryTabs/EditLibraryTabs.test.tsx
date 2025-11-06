@@ -8,7 +8,7 @@ import {mockLibrary} from '__mocks__/libraries';
 import EditLibraryTabs from '.';
 import {
     type GET_LIB_BY_ID_libraries_list,
-    type GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type Mockify} from '../../../../_types/Mockify';
 
@@ -17,8 +17,8 @@ jest.mock('../../../../hooks/useUserData', () => ({
     default: jest.fn(() => ({
         id: 1,
         name: 'Test',
-        permissions: {admin_access_forms: true}
-    }))
+        permissions: {admin_access_forms: true},
+    })),
 }));
 
 jest.mock(
@@ -26,28 +26,28 @@ jest.mock(
     () =>
         function InfosTab() {
             return <div>InfosTab</div>;
-        }
+        },
 );
 jest.mock(
     './PermissionsTab',
     () =>
         function PermissionsTab() {
             return <div>PermissionsTab</div>;
-        }
+        },
 );
 jest.mock(
     './AttributesTab',
     () =>
         function AttributesTab() {
             return <div>AttributesTab</div>;
-        }
+        },
 );
 jest.mock(
     './FormsTab',
     () =>
         function FormsTab() {
             return <div>FormsTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -55,7 +55,7 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 describe('EditLibraryForm', () => {
     const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [
@@ -63,8 +63,8 @@ describe('EditLibraryForm', () => {
             ...mockAttrSimple,
             id: 'test_attr',
             label: {fr: 'Test', en: 'Test'},
-            description: {fr: 'Test', en: 'Test'}
-        }
+            description: {fr: 'Test', en: 'Test'},
+        },
     ];
 
     const library: Mockify<GET_LIB_BY_ID_libraries_list> = {
@@ -73,13 +73,13 @@ describe('EditLibraryForm', () => {
         label: {fr: 'Test', en: null},
         system: false,
         attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
-        recordIdentityConf: {label: null, subLabel: null, color: null, preview: null, treeColorPreview: null}
+        recordIdentityConf: {label: null, subLabel: null, color: null, preview: null, treeColorPreview: null},
     };
 
     beforeAll(() => {
         jest.mock('../../../../utils/utils', () => ({
             formatIDString: jest.fn().mockImplementation(s => s),
-            localizedLabel: jest.fn().mockImplementation(l => l.fr)
+            localizedLabel: jest.fn().mockImplementation(l => l.fr),
         }));
     });
 
@@ -113,8 +113,8 @@ describe('EditLibraryForm', () => {
     test('Should open the tab in anchor', async () => {
         render(<EditLibraryTabs library={library as GET_LIB_BY_ID_libraries_list} readOnly={false} />, {
             routerProps: {
-                initialEntries: ['/libraries/edit/' + library.id + '#permissions']
-            }
+                initialEntries: ['/libraries/edit/' + library.id + '#permissions'],
+            },
         });
 
         expect(screen.getByText('PermissionsTab')).toBeInTheDocument();

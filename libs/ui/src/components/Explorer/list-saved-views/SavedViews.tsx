@@ -85,7 +85,7 @@ export const SavedViews: FunctionComponent = () => {
     const {iconEditLabel, editViewModal} = useEditLabelView();
 
     const [currentView, setCurrentView] = useState<IUserView | undefined>(
-        view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined
+        view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined,
     );
 
     const {data: userData} = useMeQuery();
@@ -97,7 +97,7 @@ export const SavedViews: FunctionComponent = () => {
 
     const _selectedViewClass = (viewId: string | null) =>
         classNames({
-            selected: view.viewId === viewId
+            selected: view.viewId === viewId,
         });
 
     useEffect(() => {
@@ -133,7 +133,7 @@ export const SavedViews: FunctionComponent = () => {
                                                 kitNotification.info({
                                                     message: `Id : ${viewItem?.id}`,
                                                     description: t('explorer.viewList.copied'),
-                                                    duration: 3
+                                                    duration: 3,
                                                 });
                                             }}
                                         >
@@ -171,7 +171,7 @@ export const SavedViews: FunctionComponent = () => {
                                                     kitNotification.info({
                                                         message: `Id : ${viewItem?.id}`,
                                                         description: t('explorer.viewList.copied'),
-                                                        duration: 3
+                                                        duration: 3,
                                                     });
                                                 }}
                                             >

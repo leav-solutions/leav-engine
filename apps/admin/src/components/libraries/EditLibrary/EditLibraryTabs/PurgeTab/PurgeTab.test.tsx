@@ -15,8 +15,8 @@ describe('PurgeTab', () => {
             variables: {
                 library: mockLibrary.id,
                 pagination: {limit: 1, offset: 0},
-                filters: [{field: 'active', condition: 'EQUAL', value: 'false'}]
-            }
+                filters: [{field: 'active', condition: 'EQUAL', value: 'false'}],
+            },
         },
         result: {
             data: {
@@ -36,22 +36,22 @@ describe('PurgeTab', () => {
                                     small: 'path/to/preview.png',
                                     medium: 'path/to/preview.png',
                                     pdf: 'path/to/file.pdf',
-                                    big: 'path/to/preview.png'
+                                    big: 'path/to/preview.png',
                                 },
                                 library: {
                                     __typename: 'Library',
                                     id: 'library-id',
                                     label: {
                                         fr: 'Librairie',
-                                        en: 'Library'
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+                                        en: 'Library',
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+        },
     };
 
     test('Render test', async () => {
@@ -61,8 +61,8 @@ describe('PurgeTab', () => {
                 request: {
                     query: purgeRecordsMutation,
                     variables: {
-                        libraryId: mockLibrary.id
-                    }
+                        libraryId: mockLibrary.id,
+                    },
                 },
                 result: () => {
                     purgeCalled = true;
@@ -71,19 +71,19 @@ describe('PurgeTab', () => {
                             purgeInactiveRecords: [
                                 {
                                     __typename: 'Product',
-                                    id: '1'
-                                }
-                            ]
-                        }
+                                    id: '1',
+                                },
+                            ],
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
         let purgeCalled = false;
 
         render(<PurgeTab readonly={false} library={mockLibrary} />, {
             apolloMocks: mocks,
-            cacheSettings: {possibleTypes: {Record: ['Product']}}
+            cacheSettings: {possibleTypes: {Record: ['Product']}},
         });
 
         expect(screen.getByText(/loading/i)).toBeInTheDocument();
@@ -103,7 +103,7 @@ describe('PurgeTab', () => {
 
         render(<PurgeTab readonly library={mockLibrary} />, {
             apolloMocks: mocks,
-            cacheSettings: {possibleTypes: {Record: ['Product']}}
+            cacheSettings: {possibleTypes: {Record: ['Product']}},
         });
 
         expect(screen.getByText(/loading/i)).toBeInTheDocument();

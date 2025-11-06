@@ -13,7 +13,7 @@ const depsBase: ToAny<IViewDomainDeps> = {
     'core.domain.helpers.validate': jest.fn(),
     'core.domain.tree': jest.fn(),
     'core.infra.view': jest.fn(),
-    'core.utils': jest.fn()
+    'core.utils': jest.fn(),
 };
 
 describe('viewDomain', () => {
@@ -23,21 +23,21 @@ describe('viewDomain', () => {
         updateView: global.__mockPromise({...mockView}),
         createView: global.__mockPromise({...mockView}),
         deleteView: global.__mockPromise({...mockView}),
-        getViews: global.__mockPromise({list: [{...mockView}]})
+        getViews: global.__mockPromise({list: [{...mockView}]}),
     } satisfies Mockify<IViewRepo>;
 
     const mockViewRepoNoView: Mockify<IViewRepo> = {
-        getViews: global.__mockPromise({list: []})
+        getViews: global.__mockPromise({list: []}),
     };
 
     const mockValidationHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn()
+        validateLibrary: jest.fn(),
     };
 
     const mockValidationHelperInvalid: Mockify<IValidateHelper> = {
         validateLibrary: jest.fn().mockImplementation(() => {
             throw new ValidationError({validation: 'Invalid'});
-        })
+        }),
     };
 
     describe('saveView', () => {
@@ -46,7 +46,7 @@ describe('viewDomain', () => {
                 const domain = viewDomain({
                     ...depsBase,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.view': mockViewRepo as IViewRepo
+                    'core.infra.view': mockViewRepo as IViewRepo,
                 });
 
                 const updatedView = await domain.saveView({...mockView}, mockCtx);
@@ -65,7 +65,7 @@ describe('viewDomain', () => {
                 const domain = viewDomain({
                     ...depsBase,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.view': mockViewRepoNoView as IViewRepo
+                    'core.infra.view': mockViewRepoNoView as IViewRepo,
                 });
 
                 await expect(domain.saveView({...mockView}, mockCtx)).rejects.toThrow(ValidationError);
@@ -75,11 +75,11 @@ describe('viewDomain', () => {
                 const domain = viewDomain({
                     ...depsBase,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.view': mockViewRepo as IViewRepo
+                    'core.infra.view': mockViewRepo as IViewRepo,
                 });
 
                 await expect(domain.saveView({...mockView}, {...mockCtx, userId: '42'})).rejects.toThrow(
-                    ValidationError
+                    ValidationError,
                 );
             });
         });
@@ -89,7 +89,7 @@ describe('viewDomain', () => {
                 const domain = viewDomain({
                     ...depsBase,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.view': mockViewRepo as IViewRepo
+                    'core.infra.view': mockViewRepo as IViewRepo,
                 });
 
                 const viewToCreate = {...mockViewBeforeCreation};
@@ -111,7 +111,7 @@ describe('viewDomain', () => {
                 const domain = viewDomain({
                     ...depsBase,
                     'core.domain.helpers.validate': mockValidationHelperInvalid as IValidateHelper,
-                    'core.infra.view': mockViewRepo as IViewRepo
+                    'core.infra.view': mockViewRepo as IViewRepo,
                 });
 
                 const viewToCreate = {...mockViewBeforeCreation};
@@ -126,7 +126,7 @@ describe('viewDomain', () => {
             const domain = viewDomain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                'core.infra.view': mockViewRepo as IViewRepo
+                'core.infra.view': mockViewRepo as IViewRepo,
             });
 
             const views = await domain.getViews('test_lib', mockCtx);
@@ -140,7 +140,7 @@ describe('viewDomain', () => {
             const domain = viewDomain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelperInvalid as IValidateHelper,
-                'core.infra.view': mockViewRepo as IViewRepo
+                'core.infra.view': mockViewRepo as IViewRepo,
             });
 
             await expect(domain.getViews('bad_lib', mockCtx)).rejects.toThrow(ValidationError);
@@ -152,7 +152,7 @@ describe('viewDomain', () => {
         test('Return view by ID', async () => {
             const domain = viewDomain({
                 ...depsBase,
-                'core.infra.view': mockViewRepo as IViewRepo
+                'core.infra.view': mockViewRepo as IViewRepo,
             });
 
             const view = await domain.getViewById('123456', mockCtx);
@@ -165,7 +165,7 @@ describe('viewDomain', () => {
         test('Should throw if unknown view', async () => {
             const domain = viewDomain({
                 ...depsBase,
-                'core.infra.view': mockViewRepoNoView as IViewRepo
+                'core.infra.view': mockViewRepoNoView as IViewRepo,
             });
 
             await expect(domain.getViewById('bad_view', mockCtx)).rejects.toThrow(ValidationError);
@@ -177,7 +177,7 @@ describe('viewDomain', () => {
         test('Should delete a view', async () => {
             const domain = viewDomain({
                 ...depsBase,
-                'core.infra.view': mockViewRepo as IViewRepo
+                'core.infra.view': mockViewRepo as IViewRepo,
             });
 
             const deletedView = await domain.deleteView(mockView.id, mockCtx);
@@ -189,7 +189,7 @@ describe('viewDomain', () => {
         test('Should throw if view does not exist', async () => {
             const domain = viewDomain({
                 ...depsBase,
-                'core.infra.view': mockViewRepoNoView as IViewRepo
+                'core.infra.view': mockViewRepoNoView as IViewRepo,
             });
 
             await expect(domain.deleteView(mockView.id, mockCtx)).rejects.toThrow(ValidationError);
@@ -199,7 +199,7 @@ describe('viewDomain', () => {
         test('Should throw if user is not owner of this view', async () => {
             const domain = viewDomain({
                 ...depsBase,
-                'core.infra.view': mockViewRepo as IViewRepo
+                'core.infra.view': mockViewRepo as IViewRepo,
             });
 
             await expect(domain.deleteView(mockView.id, {...mockCtx, userId: '42'})).rejects.toThrow(ValidationError);

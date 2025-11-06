@@ -25,7 +25,7 @@ export const LibraryItemsList: FunctionComponent<ILibraryItemsListProps> = ({
     style,
     showTransparency,
     mode,
-    onSelectChange
+    onSelectChange,
 }) => {
     const {loading: libraryViewLoading, view: libraryView} = useLibraryView(library);
 

@@ -8,7 +8,7 @@ import {type FunctionComponent} from 'react';
 import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
 import {
     EditRecordReducerActionsTypes,
-    EditRecordSidebarContentTypeMap
+    EditRecordSidebarContentTypeMap,
 } from '../../editRecordReducer/editRecordReducer';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
@@ -28,29 +28,29 @@ export const Breadcrumb: FunctionComponent = () => {
             items = [
                 {
                     title: t('record_summary.entity_overview', {
-                        entity: localizedTranslation(state.libraryLabel, lang)
+                        entity: localizedTranslation(state.libraryLabel, lang),
                     }),
                     href: '',
                     onClick: e => {
                         e.preventDefault();
                         dispatch({
                             type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                            content: EditRecordSidebarContentTypeMap.SUMMARY
+                            content: EditRecordSidebarContentTypeMap.SUMMARY,
                         });
-                    }
+                    },
                 },
                 {
-                    title: t('record_summary.attribute')
-                }
+                    title: t('record_summary.attribute'),
+                },
             ];
             break;
         default:
             items = [
                 {
                     title: t('record_summary.entity_overview', {
-                        entity: localizedTranslation(state.libraryLabel, lang)
-                    })
-                }
+                        entity: localizedTranslation(state.libraryLabel, lang),
+                    }),
+                },
             ];
             break;
     }

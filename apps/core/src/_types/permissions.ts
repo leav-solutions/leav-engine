@@ -12,7 +12,7 @@ export enum PermissionTypes {
     TREE = 'tree',
     TREE_NODE = 'tree_node',
     TREE_LIBRARY = 'tree_library',
-    APPLICATION = 'application'
+    APPLICATION = 'application',
 }
 
 export enum LibraryPermissionsActions {
@@ -21,7 +21,7 @@ export enum LibraryPermissionsActions {
     ACCESS_RECORD = 'access_record',
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
-    DELETE_RECORD = 'delete_record'
+    DELETE_RECORD = 'delete_record',
 }
 
 export enum RecordPermissionsActions {
@@ -31,33 +31,33 @@ export enum RecordPermissionsActions {
     ACCESS_RECORD_BY_DEFAULT = 'access_record_by_default',
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
-    DELETE_RECORD = 'delete_record'
+    DELETE_RECORD = 'delete_record',
 }
 
 export enum RecordAttributePermissionsActions {
     ACCESS_ATTRIBUTE = 'access_attribute',
-    EDIT_VALUE = 'edit_value'
+    EDIT_VALUE = 'edit_value',
 }
 
 export enum AttributePermissionsActions {
     ACCESS_ATTRIBUTE = 'access_attribute',
-    EDIT_VALUE = 'edit_value'
+    EDIT_VALUE = 'edit_value',
 }
 
 export enum TreePermissionsActions {
     ACCESS_TREE = 'access_tree',
-    EDIT_CHILDREN = 'edit_children'
+    EDIT_CHILDREN = 'edit_children',
 }
 
 export enum TreeNodePermissionsActions {
     ACCESS_TREE = 'access_tree',
     DETACH = 'detach',
-    EDIT_CHILDREN = 'edit_children'
+    EDIT_CHILDREN = 'edit_children',
 }
 
 export enum ApplicationPermissionsActions {
     ADMIN_APPLICATION = 'admin_application',
-    ACCESS_APPLICATION = 'access_application'
+    ACCESS_APPLICATION = 'access_application',
 }
 
 export enum AdminPermissionsActions {
@@ -94,7 +94,7 @@ export enum AdminPermissionsActions {
     EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings',
     // Only backend for now, not configurable from the admin UI
     ACCESS_LOGS = 'admin_access_logs',
-    IMPORT_CONFIG_CLEAR_DATABASE = 'admin_import_config_clear_database'
+    IMPORT_CONFIG_CLEAR_DATABASE = 'admin_import_config_clear_database',
 }
 
 export type PermissionsActions =
@@ -114,7 +114,7 @@ export interface ILabeledPermissionsAction {
 
 export enum PermissionsRelations {
     AND = 'and',
-    OR = 'or'
+    OR = 'or',
 }
 
 export interface ITreeNodePermissionsConf {

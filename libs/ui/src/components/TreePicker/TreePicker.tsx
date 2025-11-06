@@ -22,7 +22,7 @@ function TreePicker({
     onSubmit,
     selected = [],
     multiple = true,
-    showSelected = false
+    showSelected = false,
 }: ITreePickerProps): JSX.Element {
     const {t} = useSharedTranslation();
     const [selectedTrees, setSelectedTrees] = useState<TreeLightFragment[]>([]);

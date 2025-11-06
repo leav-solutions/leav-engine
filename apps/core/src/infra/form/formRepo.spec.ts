@@ -14,18 +14,18 @@ describe('FormRepo', () => {
     const mockCleanupRes = {...formData, id: 'my_lib__test_form'};
     const ctx: IQueryInfos = {
         userId: '0',
-        queryId: 'formRepoTest'
+        queryId: 'formRepoTest',
     };
     describe('Get forms', () => {
         test('Retrieve forms list with clean id', async () => {
             const mockDbServ = {execute: global.__mockPromise([])};
             const mockDbUtils = {
-                findCoreEntity: global.__mockPromise({list: [{...mockForm, id: 'my_lib__test_form'}]})
+                findCoreEntity: global.__mockPromise({list: [{...mockForm, id: 'my_lib__test_form'}]}),
             } satisfies Mockify<IDbUtils>;
 
             const repo = formRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const forms = await repo.getForms({ctx});
@@ -37,18 +37,18 @@ describe('FormRepo', () => {
         test('Convert ID filter', async () => {
             const mockDbServ = {execute: global.__mockPromise([])};
             const mockDbUtils = {
-                findCoreEntity: global.__mockPromise({list: [{...mockForm, id: 'my_lib__test_form'}]})
+                findCoreEntity: global.__mockPromise({list: [{...mockForm, id: 'my_lib__test_form'}]}),
             } satisfies Mockify<IDbUtils>;
 
             const repo = formRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const filters: IFormFilterOptions = {library: 'my_lib', id: 'test_form'};
             await repo.getForms({
                 params: {filters},
-                ctx
+                ctx,
             });
 
             expect(mockDbUtils.findCoreEntity.mock.calls[0][0].filters.id).toBe('my_lib__test_form');
@@ -58,17 +58,17 @@ describe('FormRepo', () => {
     test('Update form', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([docFormData])
+            execute: global.__mockPromise([docFormData]),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
             cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docFormData)
+            convertToDoc: jest.fn().mockReturnValue(docFormData),
         };
 
         const repo = formRepo({
             'core.infra.db.dbService': mockDbServ,
-            'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
         });
 
         const updatedForm = await repo.updateForm({formData, ctx});
@@ -84,17 +84,17 @@ describe('FormRepo', () => {
     test('Create form', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([docFormData])
+            execute: global.__mockPromise([docFormData]),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
             cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docFormData)
+            convertToDoc: jest.fn().mockReturnValue(docFormData),
         };
 
         const repo = formRepo({
             'core.infra.db.dbService': mockDbServ,
-            'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
         });
 
         const createdForm = await repo.createForm({formData, ctx});
@@ -110,17 +110,17 @@ describe('FormRepo', () => {
     test('Delete form', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([docFormData])
+            execute: global.__mockPromise([docFormData]),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
             cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docFormData)
+            convertToDoc: jest.fn().mockReturnValue(docFormData),
         };
 
         const repo = formRepo({
             'core.infra.db.dbService': mockDbServ,
-            'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
         });
 
         const deleteRes = await repo.deleteForm({formData, ctx});

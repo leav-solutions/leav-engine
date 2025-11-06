@@ -48,7 +48,7 @@ export default function ({
     'core.app.helpers.validateRequestToken': validateRequestToken,
     'core.domain.filesManager': filesManagerDomain,
     'core.domain.eventsManager': eventsManager,
-    config
+    config,
 }: IDeps): IFilesManagerApp {
     return {
         init: async () => filesManagerDomain.init(),
@@ -121,19 +121,19 @@ export default function ({
                         async doesFileExistAsChild(
                             _,
                             {treeId, parentNode, filename}: {treeId: string; parentNode?: string; filename: string},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<boolean> {
                             return filesManagerDomain.doesFileExistAsChild(
                                 {treeId, filename, parentNodeId: parentNode},
-                                ctx
+                                ctx,
                             );
-                        }
+                        },
                     },
                     Mutation: {
                         async upload(
                             _,
                             {library, nodeId, files}: IUploadParams,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<Array<{uid: string; record: IRecord}>> {
                             // progress before resolver?
                             const filesData = await Promise.all(
@@ -141,8 +141,8 @@ export default function ({
                                     data: await data,
                                     uid,
                                     size,
-                                    replace
-                                }))
+                                    replace,
+                                })),
                             );
 
                             return filesManagerDomain.storeFiles({library, nodeId, files: filesData}, ctx);
@@ -150,7 +150,7 @@ export default function ({
                         async createDirectory(
                             _,
                             {library, nodeId, name}: ICreateDirectoryParams,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IRecord> {
                             return filesManagerDomain.createDirectory({library, nodeId, name}, ctx);
                         },
@@ -161,7 +161,7 @@ export default function ({
                                 recordIds,
                                 filters,
                                 failedOnly,
-                                previewVersionSizeNames
+                                previewVersionSizeNames,
                             }: {
                                 libraryId: string;
                                 recordIds?: string[];
@@ -169,7 +169,7 @@ export default function ({
                                 failedOnly?: boolean;
                                 previewVersionSizeNames?: string[];
                             },
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<boolean> {
                             return filesManagerDomain.forcePreviewsGeneration({
                                 libraryId,
@@ -177,9 +177,9 @@ export default function ({
                                 filters,
                                 failedOnly,
                                 previewVersionSizeNames,
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Subscription: {
                         upload: {
@@ -197,11 +197,11 @@ export default function ({
                                     }
 
                                     return toReturn;
-                                }
-                            )
-                        }
-                    }
-                }
+                                },
+                            ),
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
@@ -231,7 +231,7 @@ export default function ({
                         const originalPath = await filesManagerDomain.getOriginalPath({
                             ctx: req.ctx,
                             libraryId,
-                            fileId
+                            fileId,
                         });
 
                         req.url = '/';
@@ -239,8 +239,8 @@ export default function ({
                     } catch (err) {
                         return next(err);
                     }
-                }
+                },
             );
-        }
+        },
     };
 }

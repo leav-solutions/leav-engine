@@ -75,21 +75,21 @@ function Stats(): JSX.Element {
             label: t('libraries.title'),
             route: 'libraries',
             value: data?.libraries?.totalCount ?? 0,
-            icon: itemsByKey.libraries.icon
+            icon: itemsByKey.libraries.icon,
         },
         {
             label: t('attributes.title'),
             route: 'attributes',
             value: data?.attributes?.totalCount ?? 0,
-            icon: itemsByKey.attributes.icon
+            icon: itemsByKey.attributes.icon,
         },
         {label: t('trees.title'), route: 'trees', value: data?.trees?.totalCount ?? 0, icon: itemsByKey.trees.icon},
         {
             label: t('applications.title'),
             route: 'applications',
             value: data?.applications?.totalCount ?? 0,
-            icon: itemsByKey.applications.icon
-        }
+            icon: itemsByKey.applications.icon,
+        },
     ];
 
     const _handleItemClick = (route: string) => () => {

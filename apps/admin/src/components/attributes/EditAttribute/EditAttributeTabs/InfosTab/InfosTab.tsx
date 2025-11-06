@@ -37,12 +37,12 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
             if (!attribute) {
                 cache.evict({fieldName: 'attributes'});
             }
-        }
+        },
     });
 
     const [getAttrById, {data: dataAttrById}] = useLazyQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(
         getAttributesQuery,
-        {fetchPolicy: 'no-cache'}
+        {fetchPolicy: 'no-cache'},
     );
 
     const _isIdUnique = async val => {
@@ -57,14 +57,14 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
                 id: dataToSave.id,
                 label: {
                     fr: dataToSave.label?.fr ?? '',
-                    en: dataToSave.label?.en ?? ''
+                    en: dataToSave.label?.en ?? '',
                 },
                 description:
                     !dataToSave.description?.fr && !dataToSave.description?.en
                         ? null
                         : {
                               fr: dataToSave.description?.fr ?? '',
-                              en: dataToSave.description?.en ?? ''
+                              en: dataToSave.description?.en ?? '',
                           },
                 type: dataToSave.type,
                 format: dataToSave.format,
@@ -79,15 +79,15 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
                 versions_conf: {
                     versionable: dataToSave?.versions_conf?.versionable ?? false,
                     mode: dataToSave?.versions_conf?.mode,
-                    profile: dataToSave?.versions_conf?.profile
+                    profile: dataToSave?.versions_conf?.profile,
                 },
                 multi_link_display_option: dataToSave.multi_link_display_option,
-                multi_tree_display_option: dataToSave.multi_tree_display_option
-            }
+                multi_tree_display_option: dataToSave.multi_tree_display_option,
+            },
         };
 
         await saveAttribute({
-            variables
+            variables,
         });
 
         if (onPostSave) {

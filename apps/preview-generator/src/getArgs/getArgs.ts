@@ -14,7 +14,7 @@ export const getArgs = async (
     size: number,
     name: string,
     version: IVersion,
-    first = false
+    first = false,
 ): Promise<IExec[]> => {
     const ext = extname(input).toLowerCase().replace('.', '');
 
@@ -29,8 +29,8 @@ export const getArgs = async (
                 params: {
                     output,
                     size,
-                    name
-                }
+                    name,
+                },
             });
     }
 };

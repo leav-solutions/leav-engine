@@ -58,7 +58,7 @@ function DependenciesLibraryItem({
     parentItemId,
     tree,
     readOnly,
-    onMove
+    onMove,
 }: IDependenciesLibraryItemProps): JSX.Element {
     const {lang} = useLang();
     const [isChildrenExpanded, setChildrenExpanded] = useState(false);
@@ -79,7 +79,7 @@ function DependenciesLibraryItem({
         item: {
             type: LIBRARY_DND_TYPE,
             from: parentItemId,
-            library: libraryItem
+            library: libraryItem,
         },
         canDrag: !readOnly,
         end: (item, monitor) => {
@@ -87,7 +87,7 @@ function DependenciesLibraryItem({
             if (dropResult) {
                 onMove(libraryItem.library.id, item.from, dropResult.id);
             }
-        }
+        },
     });
 
     const [{isOverNested, isOverElement}, drop] = useDrop<
@@ -110,14 +110,14 @@ function DependenciesLibraryItem({
         },
         collect: monitor => ({
             isOverElement: monitor.isOver({shallow: true}),
-            isOverNested: monitor.isOver()
-        })
+            isOverNested: monitor.isOver(),
+        }),
     });
 
     const allowedLibraries = tree.libraries.filter(treeLibrary =>
         libraryItem.settings.allowedChildren.some(
-            allowedChildId => allowedChildId === treeLibrary.library.id || allowedChildId === '__all__'
-        )
+            allowedChildId => allowedChildId === treeLibrary.library.id || allowedChildId === '__all__',
+        ),
     );
 
     const mustShowChildren = isChildrenExpanded || isOverNested;

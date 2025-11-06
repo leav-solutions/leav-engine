@@ -62,7 +62,7 @@ function LibrariesList(): JSX.Element {
 
     const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
-        variables: {keys: [FAVORITE_LIBRARIES_KEY]}
+        variables: {keys: [FAVORITE_LIBRARIES_KEY]},
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
@@ -84,7 +84,7 @@ function LibrariesList(): JSX.Element {
             behavior: library.behavior,
             icon: library.icon,
             label: localizedTranslation(library.label, lang),
-            isFavorite: favoriteIds.includes(library.id)
+            isFavorite: favoriteIds.includes(library.id),
         }))
         .sort((a, b) => Number(b.isFavorite) - Number(a.isFavorite));
 
@@ -99,8 +99,8 @@ function LibrariesList(): JSX.Element {
                     {
                         title: t('import.title'),
                         icon: <CloudUploadOutlined size={20} />,
-                        onClick: () => setImportActiveLibrary(item.id)
-                    }
+                        onClick: () => setImportActiveLibrary(item.id),
+                    },
                 ];
 
                 return (
@@ -109,7 +109,7 @@ function LibrariesList(): JSX.Element {
                         <FloatingMenu style={{right: '28px'}} actions={actions} />
                     </LibraryLink>
                 );
-            }
+            },
         },
         {
             title: <></>,
@@ -124,8 +124,8 @@ function LibrariesList(): JSX.Element {
                         variables: {
                             key: FAVORITE_LIBRARIES_KEY,
                             value: wasFavorite ? favoriteIds.filter(e => e !== id) : favoriteIds.concat([id]),
-                            global: false
-                        }
+                            global: false,
+                        },
                     });
                 };
 
@@ -137,8 +137,8 @@ function LibrariesList(): JSX.Element {
                         hoverTrigger=".ant-table-row"
                     />
                 );
-            }
-        }
+            },
+        },
     ];
 
     if (!librariesLoading && !libraries.length) {

@@ -12,7 +12,7 @@ import {localizedLabel} from '../../../../../../../utils';
 import {
     type GET_TREE_BY_ID_trees_list,
     type GET_TREE_BY_ID_trees_list_libraries,
-    type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
+    type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute,
 } from '../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {PermissionTypes, type Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../../permissions/DefinePermByUserGroupView';
@@ -35,7 +35,7 @@ function NodePermissionTabContent({
     readonly,
     treeLibraries,
     tree,
-    onSubmitSettings
+    onSubmitSettings,
 }: INodePermissionTabContentProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
@@ -60,7 +60,7 @@ function NodePermissionTabContent({
                           readOnly={readonly}
                       />
                   </Tab.Pane>
-              )
+              ),
           }))
         : [];
 
@@ -76,7 +76,7 @@ function NodePermissionTabContent({
                     readOnly={readonly}
                 />
             </Tab.Pane>
-        )
+        ),
     });
 
     return (

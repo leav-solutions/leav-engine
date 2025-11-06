@@ -34,7 +34,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
 
     const [filters, setFilters] = useState<any>({});
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
-        variables: {...addWildcardToFilters(filters)}
+        variables: {...addWildcardToFilters(filters)},
     });
 
     const _onFiltersUpdate = (filterElem: any) => {
@@ -47,7 +47,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
 
         setFilters({
             ...filters,
-            [filterElem.name]: newElemState
+            [filterElem.name]: newElemState,
         });
     };
     const onRowClick = library => history.push('/libraries/edit/' + library.id);

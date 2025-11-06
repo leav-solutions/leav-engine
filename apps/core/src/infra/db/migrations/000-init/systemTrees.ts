@@ -7,7 +7,7 @@ export type MigrationTreeToCreate = ITree & {_key: string};
 
 const commonTreeData: Partial<ITree> = {
     system: true,
-    behavior: TreeBehavior.STANDARD
+    behavior: TreeBehavior.STANDARD,
 };
 export const systemTrees: MigrationTreeToCreate[] = [
     {
@@ -18,9 +18,9 @@ export const systemTrees: MigrationTreeToCreate[] = [
             users_groups: {
                 allowedAtRoot: true,
                 allowedChildren: ['users_groups'],
-                allowMultiplePositions: false
-            }
-        }
+                allowMultiplePositions: false,
+            },
+        },
     },
     {
         ...commonTreeData,
@@ -31,13 +31,13 @@ export const systemTrees: MigrationTreeToCreate[] = [
             files: {
                 allowedAtRoot: true,
                 allowedChildren: [],
-                allowMultiplePositions: false
+                allowMultiplePositions: false,
             },
             files_directories: {
                 allowedAtRoot: true,
                 allowedChildren: ['__all__'],
-                allowMultiplePositions: false
-            }
-        }
-    }
+                allowMultiplePositions: false,
+            },
+        },
+    },
 ];

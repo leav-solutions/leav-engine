@@ -9,7 +9,7 @@ import {
     gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('Record identity', () => {
@@ -47,7 +47,7 @@ describe('Record identity', () => {
             id: testColorAttributeId,
             label: 'Test attribute',
             type: AttributeTypes.SIMPLE,
-            format: AttributeFormats.TEXT
+            format: AttributeFormats.TEXT,
         });
 
         // Create label attribute
@@ -55,14 +55,14 @@ describe('Record identity', () => {
             id: testLabelAttributeId,
             label: 'Test attribute',
             type: AttributeTypes.SIMPLE,
-            format: AttributeFormats.TEXT
+            format: AttributeFormats.TEXT,
         });
 
         await gqlSaveAttribute({
             id: testLinkAttributeId,
             label: 'Test attribute',
             type: AttributeTypes.ADVANCED_LINK,
-            linkedLibrary: testLinkedLibraryId
+            linkedLibrary: testLinkedLibraryId,
         });
 
         await makeGraphQlCall(
@@ -76,7 +76,7 @@ describe('Record identity', () => {
                     color: "${testColorAttributeId}",
                 }
             }) { id }
-        }`
+        }`,
         );
 
         await makeGraphQlCall(
@@ -90,7 +90,7 @@ describe('Record identity', () => {
                     color: "${testColorAttributeId}",
                 }
             }) { id }
-        }`
+        }`,
         );
 
         await makeGraphQlCall(
@@ -104,7 +104,7 @@ describe('Record identity', () => {
                     color: "${testLinkAttributeId}",
                 }
             }) { id }
-        }`
+        }`,
         );
 
         await gqlSaveLibrary(testLibraryId, 'Test Lib', [testLinkAttributeId]);
@@ -114,7 +114,7 @@ describe('Record identity', () => {
             id: testTreeAttributeId,
             label: 'Test attribute',
             linkedTree: testTreeId,
-            type: AttributeTypes.TREE
+            type: AttributeTypes.TREE,
         });
 
         await makeGraphQlCall(
@@ -128,7 +128,7 @@ describe('Record identity', () => {
                     color: "${testTreeAttributeId}",
                 }
             }) { id }
-        }`
+        }`,
         );
 
         const resCrea = await makeGraphQlCall(`mutation {
@@ -150,7 +150,7 @@ describe('Record identity', () => {
             testLinkAttributeId,
             testLinkedIdentityLibraryId,
             recordIdLinkIdentity,
-            recordIdInLinkedLibrary
+            recordIdInLinkedLibrary,
         );
         await gqlSaveValue(testLabelAttributeId, testLinkedLibraryId, recordIdInLinkedLibrary, 'my linked label');
         await gqlSaveValue(testColorAttributeId, testLinkedLibraryId, recordIdInLinkedLibrary, '#123456');

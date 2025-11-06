@@ -43,21 +43,21 @@ function ValuesVersions(): JSX.Element {
     const _handleVersionChange = (version: IValueVersion) => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_VALUES_VERSION,
-            valuesVersion: version
+            valuesVersion: version,
         });
     };
 
     const _handleClosePanel = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
-            isOpen: !state.isOpenSidebar
+            isOpen: !state.isOpenSidebar,
         });
     };
 
     const _handleClickReset = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_VALUES_VERSION,
-            valuesVersion: state.originValuesVersion
+            valuesVersion: state.originValuesVersion,
         });
     };
 

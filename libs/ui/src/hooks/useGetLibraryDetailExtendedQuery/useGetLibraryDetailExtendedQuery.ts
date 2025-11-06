@@ -6,7 +6,7 @@ import {useQuery} from '@apollo/client';
 import {
     getLibraryDetailExtendedQuery,
     type IGetLibraryDetailExtendedQuery,
-    type IGetLibraryDetailExtendedVariables
+    type IGetLibraryDetailExtendedVariables,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 
 export interface IUseGetLibraryDetailExtendedQueryHookParams {
@@ -20,10 +20,10 @@ export default function useGetLibraryDetailExtendedQuery({library}: IUseGetLibra
         getLibraryDetailExtendedQuery(DEPTH_EMBEDDED_FIELDS),
         {
             variables: {
-                libId: [library]
+                libId: [library],
             },
-            skip: !library
-        }
+            skip: !library,
+        },
     );
 
     return query;

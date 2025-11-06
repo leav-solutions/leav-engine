@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function AttributeSelector() {
             return <div>AttributeSelector</div>;
-        }
+        },
 );
 
 describe('InfosForm', () => {
@@ -27,13 +27,13 @@ describe('InfosForm', () => {
             form: mockFormFull,
             library: 'test_lib',
             readonly: false,
-            setForm: jest.fn()
+            setForm: jest.fn(),
         }));
 
         render(
             <EditFormModalButtonsContext.Provider value={editFormModalButtonContextValue}>
                 <InfosForm onSubmit={onSubmit} />
-            </EditFormModalButtonsContext.Provider>
+            </EditFormModalButtonsContext.Provider>,
         );
 
         expect(screen.getByRole('textbox', {name: 'id'})).toBeDisabled();
@@ -44,13 +44,13 @@ describe('InfosForm', () => {
             form: null,
             library: 'test_lib',
             readonly: false,
-            setForm: jest.fn()
+            setForm: jest.fn(),
         }));
 
         render(
             <EditFormModalButtonsContext.Provider value={editFormModalButtonContextValue}>
                 <InfosForm onSubmit={onSubmit} />
-            </EditFormModalButtonsContext.Provider>
+            </EditFormModalButtonsContext.Provider>,
         );
 
         expect(screen.getByRole('textbox', {name: 'id'})).not.toBeDisabled();
@@ -61,13 +61,13 @@ describe('InfosForm', () => {
             form: null,
             library: 'test_lib',
             readonly: false,
-            setForm: jest.fn()
+            setForm: jest.fn(),
         }));
 
         render(
             <EditFormModalButtonsContext.Provider value={editFormModalButtonContextValue}>
                 <InfosForm onSubmit={onSubmit} />
-            </EditFormModalButtonsContext.Provider>
+            </EditFormModalButtonsContext.Provider>,
         );
 
         const labelInput = screen.getByRole('textbox', {name: 'label.fr'});

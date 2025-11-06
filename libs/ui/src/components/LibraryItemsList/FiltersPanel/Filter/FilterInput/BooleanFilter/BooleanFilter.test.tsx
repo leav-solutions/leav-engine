@@ -16,8 +16,8 @@ beforeEach(() => {
             removeListener: jest.fn(), // deprecated
             addEventListener: jest.fn(),
             removeEventListener: jest.fn(),
-            dispatchEvent: jest.fn()
-        }))
+            dispatchEvent: jest.fn(),
+        })),
     });
 });
 
@@ -30,7 +30,7 @@ describe('BooleanFilter', () => {
 
     test('Should show switch, unchecked', async () => {
         render(
-            <BooleanFilter filter={{...mockFilterAttribute, value: {value: false}}} updateFilterValue={jest.fn()} />
+            <BooleanFilter filter={{...mockFilterAttribute, value: {value: false}}} updateFilterValue={jest.fn()} />,
         );
 
         expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('false');

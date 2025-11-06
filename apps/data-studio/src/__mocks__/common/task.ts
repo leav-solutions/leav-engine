@@ -20,5 +20,5 @@ export const mockTask: GET_TASKS_tasks_list = {
     startedAt: null,
     completedAt: null,
     link: null,
-    canceledBy: null
+    canceledBy: null,
 };

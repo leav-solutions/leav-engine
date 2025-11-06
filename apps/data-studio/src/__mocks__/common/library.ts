@@ -9,7 +9,7 @@ export const mockLibrary = {
     id: 'libraryId',
     behavior: LibraryBehavior.standard,
     label: mockLabel('libraryLabel'),
-    icon: null
+    icon: null,
 };
 
 export const mockLibraryPermissions: GET_LIBRARY_PERMISSIONS_libraries_list_permissions = {
@@ -17,5 +17,5 @@ export const mockLibraryPermissions: GET_LIBRARY_PERMISSIONS_libraries_list_perm
     access_record: true,
     create_record: true,
     edit_record: true,
-    delete_record: true
+    delete_record: true,
 };

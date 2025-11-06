@@ -42,7 +42,7 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
     const footerButtons = [
         <Button aria-label={t('global.close')} key="close" onClick={onClose}>
             {t('global.close')}
-        </Button>
+        </Button>,
     ];
 
     const footer = <ModalFooter>{footerButtons}</ModalFooter>;

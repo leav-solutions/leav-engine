@@ -11,9 +11,9 @@ describe('EmbeddedFieldsDisplay', () => {
         id: 'test',
         label: {
             fr: 'testFr',
-            en: 'testEn'
+            en: 'testEn',
         },
-        format: 'text'
+        format: 'text',
     };
 
     const comp = mount(<EmbeddedFieldsDisplay attribute={mockAttribute} />);

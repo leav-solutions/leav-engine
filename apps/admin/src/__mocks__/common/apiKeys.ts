@@ -11,16 +11,16 @@ const mockUser = {
             id: 'users',
             label: {
                 en: 'Users',
-                fr: 'Utilisateurs'
+                fr: 'Utilisateurs',
             },
-            __typename: 'Library'
+            __typename: 'Library',
         },
         label: 'admin',
         color: null,
         preview: null,
-        __typename: 'RecordIdentity'
+        __typename: 'RecordIdentity',
     },
-    __typename: 'User'
+    __typename: 'User',
 };
 export const mockApiKey: WithTypename<GET_API_KEYS_apiKeys_list> = {
     __typename: 'ApiKey',
@@ -32,5 +32,5 @@ export const mockApiKey: WithTypename<GET_API_KEYS_apiKeys_list> = {
     createdBy: mockUser,
     createdAt: 1234567890,
     modifiedBy: mockUser,
-    modifiedAt: 1234567890
+    modifiedAt: 1234567890,
 };

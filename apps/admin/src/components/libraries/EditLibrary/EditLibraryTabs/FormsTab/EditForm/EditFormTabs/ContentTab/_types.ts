@@ -13,7 +13,7 @@ export enum UIElementTypes {
     FIELDS_CONTAINER = 'fields_container',
     TEXT_BLOCK = 'text_block',
     TABS = 'tabs',
-    FRAME = 'frame'
+    FRAME = 'frame',
 }
 
 export enum FieldTypes {
@@ -23,18 +23,18 @@ export enum FieldTypes {
     ENCRYPTED = 'encrypted',
     DROPDOWN = 'dropdown',
     LINK = 'link',
-    TREE = 'tree'
+    TREE = 'tree',
 }
 
 export enum DraggableElementTypes {
     RESERVE_LAYOUT_ELEMENT = 'RESERVE_LAYOUT_ELEMENT',
     ATTRIBUTE = 'ATTRIBUTE',
-    FORM_ELEMENT = 'FORM_ELEMENT'
+    FORM_ELEMENT = 'FORM_ELEMENT',
 }
 
 export enum TabsDirection {
     VERTICAL = 'VERTICAL',
-    HORIZONTAL = 'HORIZONTAL'
+    HORIZONTAL = 'HORIZONTAL',
 }
 
 export interface IFormElement {
@@ -55,7 +55,7 @@ export enum FormElementSettingsInputTypes {
     INPUT = 'INPUT',
     CHECKBOX = 'CHECKBOX',
     RTE = 'RTE',
-    SELECT = 'SELECT'
+    SELECT = 'SELECT',
 }
 
 export interface IFormElementSettings {

@@ -27,20 +27,20 @@ export const themeVars = {
     navigationColumnWidth: '20rem',
     inheritedValuesVersionColor: '#FFBA00',
     checkerBoard: 'repeating-conic-gradient(rgb(220,220,220) 0% 25%, rgb(240,240,240) 0% 50%) 50% / 20px 20px',
-    imageDefaultBackground: 'rgb(245, 245, 245)'
+    imageDefaultBackground: 'rgb(245, 245, 245)',
 };
 
 export const customTheme: ThemeConfig = {
     components: {
         Layout: {
             headerBg: themeVars.secondaryBg,
-            controlHeight: 24 // Used by antd to compute the height of the header (2 * controlHeight)
+            controlHeight: 24, // Used by antd to compute the height of the header (2 * controlHeight)
         },
         Menu: {
-            colorActiveBarBorderSize: 0
+            colorActiveBarBorderSize: 0,
         },
         Table: {
-            colorBgContainer: 'transparent' // To avoid issues with border-radius on footer
-        }
-    }
+            colorBgContainer: 'transparent', // To avoid issues with border-radius on footer
+        },
+    },
 };

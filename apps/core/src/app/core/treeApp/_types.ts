@@ -9,7 +9,7 @@ import {
     type ITreeElement,
     type ITreeFilterOptions,
     type ITreeLibrarySettings,
-    type TreeEventTypes
+    type TreeEventTypes,
 } from '_types/tree';
 
 export interface ITreeLibraryForGraphQL {

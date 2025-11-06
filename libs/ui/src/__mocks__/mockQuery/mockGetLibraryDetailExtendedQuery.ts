@@ -6,7 +6,7 @@ import {
     type IGetLibraryDetailExtendedQuery,
     type IGetLibraryDetailExtendedVariables,
     type ILibraryDetailExtended,
-    type ILibraryDetailExtendedDefaultView
+    type ILibraryDetailExtendedDefaultView,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {mockLabel} from '_ui/__mocks__/common/label';
 
@@ -19,7 +19,7 @@ export const mockGetLibraryDetailExtendedDefaultView: ILibraryDetailExtendedDefa
     filters: [],
     color: null,
     sort: null,
-    attributes: []
+    attributes: [],
 };
 
 export const mockGetLibraryDetailExtendedElement: ILibraryDetailExtended = {
@@ -28,7 +28,7 @@ export const mockGetLibraryDetailExtendedElement: ILibraryDetailExtended = {
     behavior: LibraryBehavior.standard,
     label: {
         fr: 'label',
-        en: 'label'
+        en: 'label',
     },
     attributes: [
         {
@@ -37,30 +37,30 @@ export const mockGetLibraryDetailExtendedElement: ILibraryDetailExtended = {
             format: AttributeFormat.text,
             label: {
                 fr: 'Actif',
-                en: 'Active'
+                en: 'Active',
             },
             readonly: false,
             multiple_values: false,
-            system: false
-        }
+            system: false,
+        },
     ],
     permissions: {
         access_library: true,
         access_record: true,
         create_record: true,
         delete_record: true,
-        edit_record: true
+        edit_record: true,
     },
     defaultView: mockGetLibraryDetailExtendedDefaultView,
-    linkedTrees: []
+    linkedTrees: [],
 };
 
 export const mockGetLibraryDetailExtendedQuery: IGetLibraryDetailExtendedQuery = {
     libraries: {
-        list: [mockGetLibraryDetailExtendedElement]
-    }
+        list: [mockGetLibraryDetailExtendedElement],
+    },
 };
 
 export const mockGetLibraryDetailExtendedQueryVar: IGetLibraryDetailExtendedVariables = {
-    libId: ['test']
+    libId: ['test'],
 };

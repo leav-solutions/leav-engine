@@ -61,20 +61,20 @@ function SettingsTab(): JSX.Element {
         saveApplicationMutation,
         {
             // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-            onError: () => undefined
-        }
+            onError: () => undefined,
+        },
     );
 
     const _handleChange = (value: Record<string, any>) => {
         const dataToSave = {
             application: {
                 id: application.id,
-                settings: value
-            }
+                settings: value,
+            },
         };
 
         saveApplication({
-            variables: dataToSave
+            variables: dataToSave,
         });
     };
 

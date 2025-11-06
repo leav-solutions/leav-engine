@@ -12,11 +12,11 @@ import useSaveValueBatchMutation from './useExecuteSaveValueBatchMutation';
 describe('useSaveValueBatchMutation', () => {
     const mockApolloCache: Mockify<apolloClient.ApolloCache<any>> = {modify: jest.fn(), identify: jest.fn()};
     const mockApolloClient: Mockify<apolloClient.ApolloClient<any>> = {
-        cache: mockApolloCache as unknown as apolloClient.ApolloCache<any>
+        cache: mockApolloCache as unknown as apolloClient.ApolloCache<any>,
     };
 
     jest.spyOn(apolloClient, 'useApolloClient').mockImplementation(
-        () => mockApolloClient as unknown as apolloClient.ApolloClient<any>
+        () => mockApolloClient as unknown as apolloClient.ApolloClient<any>,
     );
 
     const mockValue: ValueDetailsValueFragment = {
@@ -28,11 +28,11 @@ describe('useSaveValueBatchMutation', () => {
         version: null,
         attribute: {
             ...mockAttributeSimple,
-            system: false
+            system: false,
         } as unknown as ValueDetailsValueFragment['attribute'],
         value: null,
         raw_value: null,
-        metadata: null
+        metadata: null,
     };
 
     test('If no errors, return values', async () => {
@@ -42,11 +42,11 @@ describe('useSaveValueBatchMutation', () => {
                     data: {
                         saveValueBatch: {
                             values: [mockValue],
-                            errors: []
-                        }
-                    }
+                            errors: [],
+                        },
+                    },
                 }),
-            {loading: false, called: true, client: null, reset: null}
+            {loading: false, called: true, client: null, reset: null},
         ]);
 
         const {saveValues} = useSaveValueBatchMutation();
@@ -54,14 +54,14 @@ describe('useSaveValueBatchMutation', () => {
             {
                 attribute: 'test_attribute',
                 idValue: null,
-                value: 'foo'
-            }
+                value: 'foo',
+            },
         ]);
 
         expect(res).toEqual({
             status: APICallStatus.SUCCESS,
             values: [mockValue],
-            errors: []
+            errors: [],
         });
     });
 
@@ -69,7 +69,7 @@ describe('useSaveValueBatchMutation', () => {
         type: ErrorTypes.VALIDATION_ERROR,
         attribute: 'test_attribute',
         input: 'foo',
-        message: 'error'
+        message: 'error',
     };
 
     test('If errors and no values, return errors', async () => {
@@ -79,11 +79,11 @@ describe('useSaveValueBatchMutation', () => {
                     data: {
                         saveValueBatch: {
                             values: [],
-                            errors: [mockError]
-                        }
-                    }
+                            errors: [mockError],
+                        },
+                    },
                 }),
-            {loading: false, called: true, client: null, reset: null}
+            {loading: false, called: true, client: null, reset: null},
         ]);
 
         const {saveValues} = useSaveValueBatchMutation();
@@ -91,14 +91,14 @@ describe('useSaveValueBatchMutation', () => {
             {
                 attribute: 'test_attribute',
                 idValue: null,
-                value: 'foo'
-            }
+                value: 'foo',
+            },
         ]);
 
         expect(res).toEqual({
             status: APICallStatus.ERROR,
             values: [],
-            errors: [mockError]
+            errors: [mockError],
         });
     });
 
@@ -109,11 +109,11 @@ describe('useSaveValueBatchMutation', () => {
                     data: {
                         saveValueBatch: {
                             values: [mockValue],
-                            errors: [mockError]
-                        }
-                    }
+                            errors: [mockError],
+                        },
+                    },
                 }),
-            {loading: false, called: true, client: null, reset: null}
+            {loading: false, called: true, client: null, reset: null},
         ]);
 
         const {saveValues} = useSaveValueBatchMutation();
@@ -121,14 +121,14 @@ describe('useSaveValueBatchMutation', () => {
             {
                 attribute: 'test_attribute',
                 idValue: null,
-                value: 'foo'
-            }
+                value: 'foo',
+            },
         ]);
 
         expect(res).toEqual({
             status: APICallStatus.PARTIAL,
             values: [mockValue],
-            errors: [mockError]
+            errors: [mockError],
         });
     });
 });

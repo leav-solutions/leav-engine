@@ -10,8 +10,8 @@ describe('formBuilderReducer', () => {
         const newState = formBuilderReducer(
             {...mockInitialState, openSettings: true, elementInSettings: {...formElem1}},
             {
-                type: FormBuilderActionTypes.CLOSE_SETTINGS
-            }
+                type: FormBuilderActionTypes.CLOSE_SETTINGS,
+            },
         );
 
         expect(newState.elementInSettings).toBe(null);

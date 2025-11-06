@@ -5,13 +5,13 @@ import {type RecordFormElementFragment} from '_ui/_gqlTypes';
 import {
     EditRecordReducerActionsTypes,
     type IEditRecordReducerActions,
-    type IRecordPropertyWithAttribute
+    type IRecordPropertyWithAttribute,
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {
     EDIT_RECORD_SIDEBAR_ID,
     type LINK_FIELD_ID_PREFIX,
     type STANDARD_FIELD_ID_PREFIX,
-    type TREE_FIELD_ID_PREFIX
+    type TREE_FIELD_ID_PREFIX,
 } from '_ui/constants';
 import {type RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {type Dispatch, useEffect, useRef} from 'react';
@@ -31,7 +31,7 @@ export const useOutsideInteractionDetector = ({
     attributePrefix,
     dispatch,
     backendValues,
-    allowedSelectors = []
+    allowedSelectors = [],
 }: IUseOutsideInteractionDetectorProps) => {
     // Use a ref to store the current props to access them in the event handlers
     // This will prevent issue when multiple event handlers are attached to the document
@@ -40,7 +40,7 @@ export const useOutsideInteractionDetector = ({
         activeAttribute,
         attributePrefix,
         allowedSelectors,
-        backendValues
+        backendValues,
     });
 
     useEffect(() => {
@@ -49,7 +49,7 @@ export const useOutsideInteractionDetector = ({
             activeAttribute,
             attributePrefix,
             allowedSelectors,
-            backendValues
+            backendValues,
         };
     }, [attribute, activeAttribute, attributePrefix, allowedSelectors, backendValues]);
 
@@ -65,7 +65,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: currentProps.backendValues
+                    values: currentProps.backendValues,
                 });
                 return;
             }
@@ -85,7 +85,7 @@ export const useOutsideInteractionDetector = ({
             ) {
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    attribute: null
+                    attribute: null,
                 });
             }
         };
@@ -101,7 +101,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: currentProps.backendValues
+                    values: currentProps.backendValues,
                 });
             }
         };

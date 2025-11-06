@@ -18,7 +18,7 @@ import {
     type IGetDefaultPermissionParams,
     type IGetInheritedRecordPermissionParams,
     type IGetRecordPermissionParams,
-    type IGetTreeBasedPermissionParams
+    type IGetTreeBasedPermissionParams,
 } from './_types';
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
@@ -54,7 +54,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.value': valueRepo,
         'core.infra.tree': treeRepo,
-        'core.infra.record': recordRepo
+        'core.infra.record': recordRepo,
     } = deps;
 
     return {
@@ -64,18 +64,18 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
             libraryId,
             attributeId,
             nodeId,
-            ctx
+            ctx,
         }): Promise<boolean> {
             const attribute = (await attributeDomain.getLibraryAttributes(libraryId, ctx)).find(
-                a => a.id === attributeId
+                a => a.id === attributeId,
             );
 
             if (!attribute) {
                 throw new ValidationError({
                     [attributeId]: {
                         msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY,
-                        vars: {attribute: attributeId, library: libraryId}
-                    }
+                        vars: {attribute: attributeId, library: libraryId},
+                    },
                 });
             }
 
@@ -90,21 +90,21 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                     userId,
                     applyTo: libraryId,
                     treeValues: {
-                        [attributeId]: [nodeId]
+                        [attributeId]: [nodeId],
                     },
                     permissions_conf: {
                         permissionTreeAttributes: [attributeId],
-                        relation: PermissionsRelations.AND
+                        relation: PermissionsRelations.AND,
                     },
                     getDefaultPermission: () =>
                         libraryPermissionDomain.getLibraryPermission({
                             action: action as unknown as LibraryPermissionsActions,
                             libraryId,
                             userId: ctx.userId,
-                            ctx
-                        })
+                            ctx,
+                        }),
                 },
-                ctx
+                ctx,
             );
         },
         async getRecordPermission({action, userId, library, recordId, ctx}): Promise<boolean> {
@@ -128,7 +128,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                           action: action as unknown as LibraryPermissionsActions,
                           libraryId: library,
                           userId,
-                          ctx
+                          ctx,
                       })
                     : defaultPermHelper.getDefaultPermission();
             }
@@ -140,9 +140,9 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                         library,
                         recordId,
                         attribute: permTreeAttrProps as IAttributeWithRevLink,
-                        ctx
+                        ctx,
                     });
-                })
+                }),
             );
 
             const valuesByAttr: IGetTreeBasedPermissionParams['treeValues'] = treesAttrValues.reduce(
@@ -151,7 +151,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
 
                     return allVal;
                 },
-                {}
+                {},
             );
 
             const treeBasedPermission = await treeBasedPermissionsHelper.getTreeBasedPermission(
@@ -167,10 +167,10 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                             action: params.action,
                             libraryId: params.applyTo,
                             userId: params.userId,
-                            ctx
-                        })
+                            ctx,
+                        }),
                 },
-                ctx
+                ctx,
             );
 
             // If record is in creation and user is the creator, we allow all actions
@@ -187,7 +187,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
             library: recordLibrary,
             permTree,
             permTreeNode,
-            ctx
+            ctx,
         }): Promise<boolean> {
             const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
                 permByUserGroupHelper.getPermissionByUserGroups({
@@ -195,7 +195,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                     action,
                     userGroupsPaths: params.userGroups,
                     applyTo: params.applyTo,
-                    ctx
+                    ctx,
                 });
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
@@ -205,10 +205,10 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                     action,
                     userGroupId,
                     permissionTreeTarget: {tree: permTree, nodeId: permTreeNode},
-                    getDefaultPermission: _getDefaultPermission
+                    getDefaultPermission: _getDefaultPermission,
                 },
-                ctx
+                ctx,
             );
-        }
+        },
     };
 }

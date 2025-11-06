@@ -8,7 +8,7 @@ import {
     type TreeDetailsFragment,
     type TreeInput,
     useCheckTreeExistenceLazyQuery,
-    useSaveTreeMutation
+    useSaveTreeMutation,
 } from '../../../../_gqlTypes';
 import {EditTreeInfoForm} from './EditTreeInfoForm';
 
@@ -28,7 +28,7 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
     const [checkTreeExistence] = useCheckTreeExistenceLazyQuery({
         fetchPolicy: 'no-cache',
         nextFetchPolicy: 'no-cache',
-        partialRefetch: false
+        partialRefetch: false,
     });
 
     useEffect(() => {
@@ -52,7 +52,7 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
             const {__typename, ...settingsToSave} = library.settings;
             return {
                 library: library.library.id,
-                settings: settingsToSave
+                settings: settingsToSave,
             };
         });
 
@@ -63,9 +63,9 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
                         id: values.id,
                         label,
                         behavior: values.behavior,
-                        libraries
-                    }
-                }
+                        libraries,
+                    },
+                },
             });
 
             return res.data.saveTree;
@@ -74,8 +74,8 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
             form.setFields(
                 Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
                     name: fieldName,
-                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                }))
+                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]],
+                })),
             );
 
             throw e;
@@ -97,23 +97,23 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
                 label: availableLangs.reduce((acc, lang) => {
                     acc[lang] = lang === modifiedLang ? value : form.getFieldValue(`label_${lang}`);
                     return acc;
-                }, {})
+                }, {}),
             };
         } else if (field === 'libraries') {
             const librariesToSave: TreeInput['libraries'] = value.map(library => {
                 const {__typename, ...settingsToSave} = library.settings;
                 return {
                     library: library.library.id,
-                    settings: settingsToSave
+                    settings: settingsToSave,
                 };
             });
 
             dataToSave = {
-                libraries: librariesToSave
+                libraries: librariesToSave,
             };
         } else {
             dataToSave = {
-                [field]: value
+                [field]: value,
             };
         }
 
@@ -122,24 +122,24 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
                 variables: {
                     tree: {
                         id: tree.id,
-                        ...dataToSave
-                    }
-                }
+                        ...dataToSave,
+                    },
+                },
             });
 
             form.setFields([
                 {
                     name: field,
-                    touched: false
-                }
+                    touched: false,
+                },
             ]);
         } catch (err) {
             // Display errors in form
             form.setFields([
                 {
                     name: field,
-                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message]
-                }
+                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message],
+                },
             ]);
         }
     };
@@ -147,8 +147,8 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
     const _isTreeUnique = async (value: any) => {
         const {data: treeExistenceData} = await checkTreeExistence({
             variables: {
-                id: value
-            }
+                id: value,
+            },
         });
 
         return !treeExistenceData?.trees?.totalCount;

@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import {
     type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
     type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees,
-    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions,
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {type LibraryBehavior} from '_gqlTypes/globalTypes';
 

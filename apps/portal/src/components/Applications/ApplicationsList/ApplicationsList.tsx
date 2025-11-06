@@ -44,7 +44,7 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
 
     const {loading: userDataLoading} = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {
-            keys: [FAVORITES_APPS_KEY, CONSULTED_APPS_KEY]
+            keys: [FAVORITES_APPS_KEY, CONSULTED_APPS_KEY],
         },
         onCompleted: data => {
             if (data.userData) {
@@ -54,7 +54,7 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
         },
         onError: error => {
             message.error(t('favorites_loading_error', {message: error.message}));
-        }
+        },
     });
 
     const [saveFavorites] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
@@ -75,8 +75,8 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
             variables: {
                 key: FAVORITES_APPS_KEY,
                 value: newFavorites,
-                global: false
-            }
+                global: false,
+            },
         });
     };
 
@@ -86,7 +86,7 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
     const {
         favoriteApps,
         consultedApps,
-        otherApps
+        otherApps,
     }: {
         favoriteApps: GET_APPLICATIONS_applications_list[];
         consultedApps: GET_APPLICATIONS_applications_list[];
@@ -106,13 +106,13 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
         {
             favoriteApps: [],
             consultedApps: [],
-            otherApps: []
-        }
+            otherApps: [],
+        },
     );
 
     const _sortByConsultationIndex = (
         a: GET_APPLICATIONS_applications_list,
-        b: GET_APPLICATIONS_applications_list
+        b: GET_APPLICATIONS_applications_list,
     ): number => {
         const aIndex = consulted.indexOf(a.id);
         const bIndex = consulted.indexOf(b.id);

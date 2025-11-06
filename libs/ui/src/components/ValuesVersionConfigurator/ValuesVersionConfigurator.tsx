@@ -30,7 +30,7 @@ function ValuesVersionConfigurator({
     libraryId,
     selectedVersion,
     readOnly = false,
-    onVersionChange
+    onVersionChange,
 }: IValuesVersionConfiguratorProps): JSX.Element {
     const {loading, error, trees} = useLibraryVersionTrees(libraryId);
 
@@ -45,7 +45,7 @@ function ValuesVersionConfigurator({
     const _handleNodeSelection = (treeId: string) => (selectedNode: ITreeNode) => {
         onVersionChange({
             ...selectedVersion,
-            [treeId]: selectedNode ? {id: selectedNode.id ?? null, label: String(selectedNode.title)} : null
+            [treeId]: selectedNode ? {id: selectedNode.id ?? null, label: String(selectedNode.title)} : null,
         });
     };
 
@@ -59,7 +59,7 @@ function ValuesVersionConfigurator({
                         id: selectedVersion?.[tree.id]?.id,
                         title: selectedVersion?.[tree.id]?.label,
                         key: selectedVersion?.[tree.id]?.id,
-                        children: []
+                        children: [],
                     }}
                     onNodeChange={_handleNodeSelection(tree.id)}
                     readOnly={readOnly}

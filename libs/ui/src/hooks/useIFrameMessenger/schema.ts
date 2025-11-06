@@ -25,7 +25,7 @@ export const ExplorerPropsSchema = z.object({
     defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional(),
     defaultActionsForItem: z
         .array(z.union([z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
-        .optional()
+        .optional(),
 });
 
 export const ItemActionsSchema = z
@@ -35,56 +35,56 @@ export const ItemActionsSchema = z
             what: z.literal('record'),
             icon: FontAwesomeIconSchema,
             label: z.record(LanguageSchema, z.string()),
-            onRowClick: z.boolean().optional()
-        })
+            onRowClick: z.boolean().optional(),
+        }),
     )
     .refine(actions => actions.reduce((acc, action) => (action.onRowClick ? acc + 1 : acc), 0) <= 1, {
-        message: 'At most one action must have onRowClick set to true'
+        message: 'At most one action must have onRowClick set to true',
     });
 
 export const basePanelSchema = z.object({
     id: PanelIdSchema,
     name: z.record(LanguageSchema, z.string()).optional(),
-    isStandalone: z.boolean().optional()
+    isStandalone: z.boolean().optional(),
 });
 
 export const iframePanelSchema = z.object({
     type: z.literal('custom'),
     iframeSource: z.string(),
-    isSelfContaining: z.boolean().optional()
+    isSelfContaining: z.boolean().optional(),
 });
 
 const editionPanelSchema = z.object({
     type: z.literal('editionForm'),
-    formId: z.string()
+    formId: z.string(),
 });
 
 export const creationPanelSchema = z.object({
     type: z.literal('creationForm'),
     formId: z.string(),
-    attributeSource: z.string()
+    attributeSource: z.string(),
 });
 
 const baseExplorerPanelSchema = z.object({
     type: z.literal('explorer'),
     viewId: z.string().optional(),
-    actions: ItemActionsSchema
+    actions: ItemActionsSchema,
 });
 
 const linkExplorerPanelSchema = z.object({
     attributeSource: z.string(),
     libraryId: LibraryIdSchema.optional(),
-    explorerProps: ExplorerPropsSchema.optional()
+    explorerProps: ExplorerPropsSchema.optional(),
 });
 
 const libraryExplorerPanelSchema = z.object({
-    explorerProps: ExplorerPropsSchema.optional()
+    explorerProps: ExplorerPropsSchema.optional(),
 });
 
 const explorerPanelSchema = baseExplorerPanelSchema.and(z.union([linkExplorerPanelSchema, libraryExplorerPanelSchema]));
 
 export const PanelSchema = basePanelSchema.and(
-    z.union([explorerPanelSchema, iframePanelSchema, editionPanelSchema, creationPanelSchema])
+    z.union([explorerPanelSchema, iframePanelSchema, editionPanelSchema, creationPanelSchema]),
 );
 
 export const PanelIFrameSchema = basePanelSchema.and(iframePanelSchema);

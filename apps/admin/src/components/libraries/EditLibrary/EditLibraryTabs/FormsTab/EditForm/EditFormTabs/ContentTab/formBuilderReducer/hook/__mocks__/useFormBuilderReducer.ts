@@ -12,7 +12,7 @@ const initialState: IFormBuilderState = {
     activeDependency: null,
     elementInSettings: null,
     elements: {},
-    activeElements: {}
+    activeElements: {},
 };
 
 export const FormBuilderReducerContext = React.createContext<{
@@ -22,5 +22,5 @@ export const FormBuilderReducerContext = React.createContext<{
 
 export const useFormBuilderReducer = () => ({
     state: mockInitialState,
-    dispatch: jest.fn()
+    dispatch: jest.fn(),
 });

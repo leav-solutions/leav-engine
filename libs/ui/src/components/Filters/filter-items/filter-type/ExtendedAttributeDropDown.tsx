@@ -10,7 +10,7 @@ import {useConditionsOptionsByType} from './useConditionOptionsByType';
 export const ExtendedAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
 

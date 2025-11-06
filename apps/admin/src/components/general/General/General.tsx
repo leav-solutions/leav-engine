@@ -27,8 +27,8 @@ function General(): JSX.Element {
                 <Tab.Pane key="infos" className="grow">
                     <GeneralInfosTab />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ];
 
     if (userData.permissions[PermissionsActions.admin_access_permissions]) {
@@ -39,7 +39,7 @@ function General(): JSX.Element {
                 <Tab.Pane key="permissions" className="grow flex-col height100">
                     <GeneralAdminPermissionsTab />
                 </Tab.Pane>
-            )
+            ),
         });
     }
 
@@ -51,7 +51,7 @@ function General(): JSX.Element {
                 <Tab.Pane key="customization" className="grow flex-col height100">
                     <GeneralCustomizationTab />
                 </Tab.Pane>
-            )
+            ),
         });
     }
 
@@ -63,7 +63,7 @@ function General(): JSX.Element {
                 <Tab.Pane key="api_keys" className="grow flex-col">
                     <GeneralApiKeysTab />
                 </Tab.Pane>
-            )
+            ),
         });
     }
 
@@ -74,15 +74,15 @@ function General(): JSX.Element {
             <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                 <GeneralCustomConfigTab />
             </Tab.Pane>
-        )
+        ),
     });
 
     const tabName = location?.hash?.replace('#', '');
     const [activeIndex, setActiveIndex] = useState<number>(
         Math.max(
             panes.findIndex(p => tabName === p.key),
-            0
-        )
+            0,
+        ),
     );
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {

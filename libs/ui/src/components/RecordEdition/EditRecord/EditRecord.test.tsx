@@ -19,11 +19,11 @@ jest.mock(
         function EditRecordContent(props) {
             editRecordContentFn(props);
             return <div>EditRecordContent</div>;
-        }
+        },
 );
 
 jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
-    useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})
+    useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false}),
 }));
 
 const EditRecordWithForm = props => {
@@ -37,7 +37,7 @@ describe('EditRecord', () => {
         {
             request: {
                 query: getRecordColumnsValues(['created_at', 'created_by', 'modified_at', 'modified_by']),
-                variables: {library: 'record_lib', filters: [{field: 'id', condition: 'EQUAL', value: '123456'}]}
+                variables: {library: 'record_lib', filters: [{field: 'id', condition: 'EQUAL', value: '123456'}]},
             },
             result: {
                 data: {
@@ -49,28 +49,28 @@ describe('EditRecord', () => {
                                 created_at: 1234567980,
                                 created_by: mockRecord,
                                 modified_at: 1234567980,
-                                modified_by: mockRecord
-                            }
-                        ]
-                    }
-                }
-            }
+                                modified_by: mockRecord,
+                            },
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getLibraryByIdQuery,
-                variables: {id: [mockRecord.library.id]}
+                variables: {id: [mockRecord.library.id]},
             },
             result: {
                 data: {
                     libraries: {
                         __typename: 'LibrariesList',
                         totalCount: 0,
-                        list: []
-                    }
-                }
-            }
-        }
+                        list: [],
+                    },
+                },
+            },
+        },
     ];
 
     let user: UserEvent;
@@ -96,7 +96,7 @@ describe('EditRecord', () => {
         };
 
         render(<CompWithButtons />, {
-            mocks: commonMocks
+            mocks: commonMocks,
         });
 
         expect(screen.getByText('EditRecordContent')).toBeVisible();
@@ -121,7 +121,7 @@ describe('EditRecord', () => {
         };
 
         render(<CompWithButtons />, {
-            mocks: commonMocks
+            mocks: commonMocks,
         });
 
         expect(editRecordContentFn).toHaveBeenCalledWith(expect.objectContaining({formId: 'customFormId'}));

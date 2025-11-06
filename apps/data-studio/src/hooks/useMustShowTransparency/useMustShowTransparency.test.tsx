@@ -11,8 +11,8 @@ describe('useMustShowTransparency', () => {
         const app = {
             ...mockApplicationDetails,
             settings: {
-                showTransparency: true
-            }
+                showTransparency: true,
+            },
         };
 
         const {result} = renderHook(() => useMustShowTransparency(), {
@@ -20,7 +20,7 @@ describe('useMustShowTransparency', () => {
                 <ApplicationContext.Provider value={{currentApp: app, globalSettings: null}}>
                     {children as JSX.Element}
                 </ApplicationContext.Provider>
-            )
+            ),
         });
         expect(result.current).toBe(true);
     });
@@ -28,7 +28,7 @@ describe('useMustShowTransparency', () => {
     test('If nothing defined in settings, return default value', async () => {
         const app = {
             ...mockApplicationDetails,
-            settings: {}
+            settings: {},
         };
 
         const {result} = renderHook(() => useMustShowTransparency(), {
@@ -36,7 +36,7 @@ describe('useMustShowTransparency', () => {
                 <ApplicationContext.Provider value={{currentApp: app, globalSettings: null}}>
                     {children as JSX.Element}
                 </ApplicationContext.Provider>
-            )
+            ),
         });
         expect(result.current).toBe(false);
     });

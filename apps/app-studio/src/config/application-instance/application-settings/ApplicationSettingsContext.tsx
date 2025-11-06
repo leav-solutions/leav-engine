@@ -20,9 +20,9 @@ export const InitApplicationSettingProvider: FunctionComponent = ({children}) =>
     const {
         data,
         loading,
-        error: networkError
+        error: networkError,
     } = useGetApplicationDataByEndpointQuery({
-        variables: {endpoint: APP_ENDPOINT}
+        variables: {endpoint: APP_ENDPOINT},
     });
 
     const currentApp = data?.applications?.list[0];

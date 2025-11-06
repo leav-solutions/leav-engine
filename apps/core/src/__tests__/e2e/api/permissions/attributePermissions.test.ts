@@ -7,7 +7,7 @@ import {
     gqlAddUserToGroup,
     gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('AttributePermissions', () => {
@@ -20,7 +20,7 @@ describe('AttributePermissions', () => {
             id: permAttrName,
             type: AttributeTypes.SIMPLE,
             label: 'Test attr',
-            format: AttributeFormats.TEXT
+            format: AttributeFormats.TEXT,
         });
 
         allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
@@ -72,7 +72,7 @@ describe('AttributePermissions', () => {
             expect(resGetAttrPerm.status).toBe(200);
             expect(resGetAttrPerm.data.data.permissions).toEqual([
                 {name: 'access_attribute', allowed: true},
-                {name: 'edit_value', allowed: false}
+                {name: 'edit_value', allowed: false},
             ]);
             expect(resGetAttrPerm.data.errors).toBeUndefined();
 
@@ -93,7 +93,7 @@ describe('AttributePermissions', () => {
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([
                 {name: 'access_attribute', allowed: true},
-                {name: 'edit_value', allowed: false}
+                {name: 'edit_value', allowed: false},
             ]);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });
@@ -119,7 +119,7 @@ describe('AttributePermissions', () => {
             nodeUserGroup2 = await gqlAddElemToTree(
                 'users_groups',
                 {id: userGroupId2, library: 'users_groups'},
-                nodeUserGroup1
+                nodeUserGroup1,
             );
 
             // User groups tree: [ROOT] -> group 1 -> group 2

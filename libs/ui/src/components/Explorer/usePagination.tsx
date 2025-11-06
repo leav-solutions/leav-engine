@@ -16,14 +16,14 @@ export const usePagination = (dispatch: Dispatch<IViewSettingsAction>) => {
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_PAGE_SIZE,
             payload: {
-                pageSize: newPageSize
-            }
+                pageSize: newPageSize,
+            },
         });
     };
 
     return {
         currentPage,
         setNewPage,
-        setNewPageSize
+        setNewPageSize,
     };
 };

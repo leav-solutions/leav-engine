@@ -40,8 +40,8 @@ function ValuesVersionBtn({
     const iconProps = {
         size: '1.8em',
         style: {
-            paddingTop: '5px'
-        }
+            paddingTop: '5px',
+        },
     };
     const icon =
         activeScope === VersionFieldScope.CURRENT ? <VscLayersActive {...iconProps} /> : <VscLayers {...iconProps} />;
@@ -54,8 +54,8 @@ function ValuesVersionBtn({
                     {currentVersionLabel}
                 </Space>
             ),
-            onClick: _handleVersionSelect
-        }
+            onClick: _handleVersionSelect,
+        },
     ];
 
     if (hasInheritedVersion) {
@@ -66,8 +66,8 @@ function ValuesVersionBtn({
             size: '1.8em',
             style: {
                 paddingTop: '5px',
-                color: themeVars.inheritedValuesVersionColor
-            }
+                color: themeVars.inheritedValuesVersionColor,
+            },
         };
 
         const inheritedIcon =
@@ -84,7 +84,7 @@ function ValuesVersionBtn({
                     {inheritedVersionLabel}
                 </Space>
             ),
-            onClick: _handleVersionSelect
+            onClick: _handleVersionSelect,
         });
     }
 

@@ -6,7 +6,7 @@ import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {
     type GET_TREE_LIBRARIES,
     type GET_TREE_LIBRARIESVariables,
-    type GET_TREE_LIBRARIES_trees_list_libraries
+    type GET_TREE_LIBRARIES_trees_list_libraries,
 } from '_gqlTypes/GET_TREE_LIBRARIES';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 
@@ -18,11 +18,11 @@ export interface IUseTreeLibraryAllowedAsChild {
 
 export const useTreeLibraryAllowedAsChild = (
     treeId: string,
-    parent?: TREE_NODE_CHILDREN_treeNodeChildren_list
+    parent?: TREE_NODE_CHILDREN_treeNodeChildren_list,
 ): IUseTreeLibraryAllowedAsChild => {
     const {data, loading, error} = useQuery<GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables>(getTreeLibraries, {
         skip: !treeId,
-        variables: {treeId: [treeId]}
+        variables: {treeId: [treeId]},
     });
 
     const libraries = [];
@@ -35,7 +35,7 @@ export const useTreeLibraryAllowedAsChild = (
             libraries.push(...treeLibraries.filter(treeLibrary => treeLibrary.settings.allowedAtRoot));
         } else {
             const parentLibrary = treeLibraries.find(
-                treeLibrary => treeLibrary.library.id === parent.record.whoAmI.library.id
+                treeLibrary => treeLibrary.library.id === parent.record.whoAmI.library.id,
             );
             const allChildrenAllowed = parentLibrary?.settings.allowedChildren?.[0] === '__all__';
 
@@ -43,8 +43,8 @@ export const useTreeLibraryAllowedAsChild = (
             libraries.push(
                 ...treeLibraries.filter(
                     treeLibrary =>
-                        allChildrenAllowed || parentLibrary.settings.allowedChildren.includes(treeLibrary.library.id)
-                )
+                        allChildrenAllowed || parentLibrary.settings.allowedChildren.includes(treeLibrary.library.id),
+                ),
             );
         }
     }
@@ -52,6 +52,6 @@ export const useTreeLibraryAllowedAsChild = (
     return {
         loading,
         error,
-        libraries
+        libraries,
     };
 };

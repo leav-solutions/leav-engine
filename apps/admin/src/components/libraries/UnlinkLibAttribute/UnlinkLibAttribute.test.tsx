@@ -16,9 +16,9 @@ describe('UnlinkLibAttribute', () => {
             system: false,
             attributes: [
                 {
-                    ...mockAttrSimple
-                }
-            ]
+                    ...mockAttrSimple,
+                },
+            ],
         };
         const onUnlink = jest.fn();
 
@@ -27,7 +27,7 @@ describe('UnlinkLibAttribute', () => {
                 library={library as GET_LIB_BY_ID_libraries_list}
                 attribute={library.attributes![0]}
                 onUnlink={onUnlink}
-            />
+            />,
         );
 
         expect(comp.find('ConfirmedButton').props().action).toBeDefined();

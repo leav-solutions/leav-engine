@@ -36,16 +36,16 @@ export const RootHeader: FunctionComponent = () => {
                         {t('sign_out')}
                     </KitButton>
                 ),
-                onClick: () => logout()
-            }
-        ]
+                onClick: () => logout(),
+            },
+        ],
     };
 
     const identity = userData?.userWhoAmI?.label;
 
     const avatarProps: IKitAvatar = {
         icon: <FontAwesomeIcon icon={faUser} />,
-        label: identity
+        label: identity,
     };
 
     return (

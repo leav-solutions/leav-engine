@@ -8,7 +8,7 @@ import {getAttributeValuesListQuery} from '../../../../../queries/attributes/get
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {
     type GET_ATTRIBUTES_VALUES_LIST,
-    type GET_ATTRIBUTES_VALUES_LISTVariables
+    type GET_ATTRIBUTES_VALUES_LISTVariables,
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {type ValuesListConfInput} from '../../../../../_gqlTypes/globalTypes';
 import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
@@ -22,11 +22,11 @@ interface IValuesListTabProps {
 function ValuesListTab({attributeId}: IValuesListTabProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_ATTRIBUTES_VALUES_LIST, GET_ATTRIBUTES_VALUES_LISTVariables>(
         getAttributeValuesListQuery,
-        {variables: {attrId: attributeId}}
+        {variables: {attrId: attributeId}},
     );
 
     const [saveAttribute, {error: saveError}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(
-        saveAttributeQuery
+        saveAttributeQuery,
     );
 
     const _handleSubmit = (valuesListConf: ValuesListConfInput) => {

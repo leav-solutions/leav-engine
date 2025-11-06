@@ -30,8 +30,8 @@ export const ConfigureDisplay: FunctionComponent<IConfigureDisplayProps> = ({lib
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_VIEW_TYPE,
             payload: {
-                viewType: event.target.value
-            }
+                viewType: event.target.value,
+            },
         });
     };
 

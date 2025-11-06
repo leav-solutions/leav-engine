@@ -12,8 +12,8 @@ const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom-v5', () => ({
     ...jest.requireActual('react-router-v5'),
     useHistory: () => ({
-        push: mockHistoryPush
-    })
+        push: mockHistoryPush,
+    }),
 }));
 
 describe('Applications', () => {
@@ -22,32 +22,32 @@ describe('Applications', () => {
             {
                 request: {
                     query: getApplicationsQuery,
-                    variables: {filters: {}}
+                    variables: {filters: {}},
                 },
                 result: {
                     data: {
                         applications: {
                             list: [
                                 {...mockApplication, id: 'appA'},
-                                {...mockApplication, id: 'appB'}
-                            ]
-                        }
-                    }
-                }
+                                {...mockApplication, id: 'appB'},
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getApplicationsQuery,
-                    variables: {filters: {id: '%B%'}}
+                    variables: {filters: {id: '%B%'}},
                 },
                 result: {
                     data: {
                         applications: {
-                            list: [{...mockApplication, id: 'appB'}]
-                        }
-                    }
-                }
-            }
+                            list: [{...mockApplication, id: 'appB'}],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<Applications />, {apolloMocks: mocks});
@@ -72,35 +72,35 @@ describe('Applications', () => {
             {
                 request: {
                     query: getApplicationsQuery,
-                    variables: {filters: {}}
+                    variables: {filters: {}},
                 },
                 result: {
                     data: {
                         applications: {
                             list: [
                                 {...mockApplication, id: 'appA'},
-                                {...mockApplication, id: 'appB'}
-                            ]
-                        }
-                    }
-                }
+                                {...mockApplication, id: 'appB'},
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: deleteApplicationQuery,
-                    variables: {appId: 'appA'}
+                    variables: {appId: 'appA'},
                 },
                 result: () => {
                     deleteCalled = true;
                     return {
                         data: {
                             deleteApplication: {
-                                id: 'appA '
-                            }
-                        }
+                                id: 'appA ',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<Applications />, {apolloMocks: mocks});

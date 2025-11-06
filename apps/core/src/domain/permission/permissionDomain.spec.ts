@@ -13,7 +13,7 @@ import {
     AdminPermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
-    RecordPermissionsActions
+    RecordPermissionsActions,
 } from '../../_types/permissions';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {type IAdminPermissionDomain} from './adminPermissionDomain';
@@ -27,11 +27,11 @@ import {type ToAny} from 'utils/utils';
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise(),
-    deleteData: global.__mockPromise()
+    deleteData: global.__mockPromise(),
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService)
+    getCache: jest.fn().mockReturnValue(mockCacheService),
 };
 
 const depsBase: ToAny<IPermissionDomainDeps> = {
@@ -48,22 +48,22 @@ const depsBase: ToAny<IPermissionDomainDeps> = {
     'core.infra.permission': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
     translator: {},
-    config: {}
+    config: {},
 };
 
 describe('PermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'permissionDomainTest'
+        queryId: 'permissionDomainTest',
     };
 
     const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(true),
-        getInheritedAdminPermission: global.__mockPromise(true)
+        getInheritedAdminPermission: global.__mockPromise(true),
     };
 
     const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-        sendDatabaseEvent: global.__mockPromise()
+        sendDatabaseEvent: global.__mockPromise(),
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -76,13 +76,13 @@ describe('PermissionDomain', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
-                permissionTreeTarget: 'test_lib/12345'
+                permissionTreeTarget: 'test_lib/12345',
             };
 
             const mockPermRepo = {
-                savePermission: global.__mockPromise(permData)
+                savePermission: global.__mockPromise(permData),
             } satisfies Mockify<IPermissionRepo>;
 
             const permDomain = permissionDomain({
@@ -90,7 +90,7 @@ describe('PermissionDomain', () => {
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.infra.permission': mockPermRepo as IPermissionRepo,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
             });
 
             const newPerm = await permDomain.savePermission(
@@ -100,14 +100,14 @@ describe('PermissionDomain', () => {
                     actions: {
                         [RecordPermissionsActions.ACCESS_RECORD]: true,
                         [RecordPermissionsActions.EDIT_RECORD]: false,
-                        [RecordPermissionsActions.DELETE_RECORD]: false
+                        [RecordPermissionsActions.DELETE_RECORD]: false,
                     },
                     permissionTreeTarget: {
                         nodeId: '12345',
-                        tree: 'test_tree'
-                    }
+                        tree: 'test_tree',
+                    },
                 },
-                {userId: '1'}
+                {userId: '1'},
             );
 
             expect(mockPermRepo.savePermission.mock.calls.length).toBe(1);
@@ -121,14 +121,14 @@ describe('PermissionDomain', () => {
         test('Return admin permission', async () => {
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
             });
 
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(true);
@@ -137,12 +137,12 @@ describe('PermissionDomain', () => {
 
         test('Return library permission', async () => {
             const mockLibPermDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(true)
+                getLibraryPermission: global.__mockPromise(true),
             };
 
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
             });
 
             const perm = await permsHelperDomain.isAllowed({
@@ -150,7 +150,7 @@ describe('PermissionDomain', () => {
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_lib',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(true);
@@ -159,12 +159,12 @@ describe('PermissionDomain', () => {
 
         test('Return attribute permission', async () => {
             const mockAttrPermDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
+                getAttributePermission: global.__mockPromise(true),
             };
 
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain
+                'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain,
             });
 
             const perm = await permsHelperDomain.isAllowed({
@@ -172,7 +172,7 @@ describe('PermissionDomain', () => {
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_attr',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(true);
@@ -181,12 +181,12 @@ describe('PermissionDomain', () => {
 
         test('Return record permission', async () => {
             const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
-                getRecordPermission: global.__mockPromise(true)
+                getRecordPermission: global.__mockPromise(true),
             };
 
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
             });
 
             const perm = await permsHelperDomain.isAllowed({
@@ -195,9 +195,9 @@ describe('PermissionDomain', () => {
                 userId: '123',
                 applyTo: 'test_lib',
                 target: {
-                    recordId: '1345'
+                    recordId: '1345',
                 },
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(true);
@@ -206,12 +206,12 @@ describe('PermissionDomain', () => {
 
         test('Throw if asked record permission without record ID', async () => {
             const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
-                getRecordPermission: global.__mockPromise(true)
+                getRecordPermission: global.__mockPromise(true),
             };
 
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
             });
 
             // No target at all
@@ -221,8 +221,8 @@ describe('PermissionDomain', () => {
                     action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                     userId: '123',
                     applyTo: 'test_lib',
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
 
             // Empty target
@@ -233,19 +233,19 @@ describe('PermissionDomain', () => {
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
 
         test('Return record attribute permission', async () => {
             const mockRecordAttrPermDomain: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: global.__mockPromise(true)
+                getRecordAttributePermission: global.__mockPromise(true),
             };
 
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
             });
 
             const perm = await permsHelperDomain.isAllowed({
@@ -255,9 +255,9 @@ describe('PermissionDomain', () => {
                 applyTo: 'test_lib',
                 target: {
                     recordId: '1345',
-                    attributeId: 'test_attr'
+                    attributeId: 'test_attr',
                 },
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(true);
@@ -266,12 +266,12 @@ describe('PermissionDomain', () => {
 
         test('Throw if asked attribute permission without record and attribute ID', async () => {
             const mockRecordAttrPermDomain: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: global.__mockPromise(true)
+                getRecordAttributePermission: global.__mockPromise(true),
             };
 
             const permsHelperDomain = permissionDomain({
                 ...depsBase,
-                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
             });
 
             // No target at all
@@ -281,8 +281,8 @@ describe('PermissionDomain', () => {
                     action: RecordAttributePermissionsActions.EDIT_VALUE,
                     userId: '123',
                     applyTo: 'test_lib',
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
 
             // Missing record ID
@@ -293,8 +293,8 @@ describe('PermissionDomain', () => {
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {},
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
 
             // Missing attribute ID
@@ -305,10 +305,10 @@ describe('PermissionDomain', () => {
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {
-                        recordId: '12345'
+                        recordId: '12345',
                     },
-                    ctx
-                })
+                    ctx,
+                }),
             ).rejects.toThrow(ValidationError);
         });
     });
@@ -316,15 +316,15 @@ describe('PermissionDomain', () => {
     describe('getActionsByType', () => {
         const mockConfig = {
             lang: {
-                available: ['fr']
-            }
+                available: ['fr'],
+            },
         };
 
         test('Return actions by type with registered actions', async () => {
             const permsDomain = permissionDomain({
                 ...depsBase,
                 config: mockConfig as IConfig,
-                translator: mockTranslator as i18n
+                translator: mockTranslator as i18n,
             });
 
             // Register actions
@@ -340,7 +340,7 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({
                 ...depsBase,
                 config: mockConfig as IConfig,
-                translator: mockTranslator as i18n
+                translator: mockTranslator as i18n,
             });
 
             // Register actions
@@ -355,7 +355,7 @@ describe('PermissionDomain', () => {
 
             const otherPermsByType = permsDomain.getActionsByType({
                 type: PermissionTypes.ADMIN,
-                applyOn: 'my_other_lib_name'
+                applyOn: 'my_other_lib_name',
             });
 
             expect(otherPermsByType.findIndex(p => p.name === 'other_test_perm')).toBeGreaterThanOrEqual(0);
@@ -366,7 +366,7 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({
                 ...depsBase,
                 config: mockConfig as IConfig,
-                translator: mockTranslator as i18n
+                translator: mockTranslator as i18n,
             });
 
             // Register actions

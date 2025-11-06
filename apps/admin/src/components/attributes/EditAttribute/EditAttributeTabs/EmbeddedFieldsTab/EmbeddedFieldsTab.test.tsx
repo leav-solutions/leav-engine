@@ -18,7 +18,7 @@ describe('EmbeddedFieldsTab', () => {
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: {id: 'test_attr'}
+                    variables: {id: 'test_attr'},
                 },
                 result: {
                     data: {
@@ -29,13 +29,13 @@ describe('EmbeddedFieldsTab', () => {
                                 {
                                     ...mockAttrAdv,
                                     __typename: 'Attribute',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const mockAttribute: Mockify<GET_ATTRIBUTES_attributes_list> = {};
@@ -45,7 +45,7 @@ describe('EmbeddedFieldsTab', () => {
             comp = mount(
                 <MockedProvider mocks={mocks}>
                     <EmbeddedFieldsTab attribute={mockAttribute as GET_ATTRIBUTES_attributes_list} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -57,7 +57,7 @@ describe('EmbeddedFieldsTab', () => {
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: {id: 'test_attr'}
+                    variables: {id: 'test_attr'},
                 },
                 result: {
                     data: {
@@ -68,13 +68,13 @@ describe('EmbeddedFieldsTab', () => {
                                 {
                                     ...mockAttrAdv,
                                     __typename: 'Attribute',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const mockAttribute: Mockify<GET_ATTRIBUTES_attributes_list> = {};
@@ -84,7 +84,7 @@ describe('EmbeddedFieldsTab', () => {
             comp = mount(
                 <MockedProvider mocks={mocks}>
                     <EmbeddedFieldsTab attribute={mockAttribute as GET_ATTRIBUTES_attributes_list} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

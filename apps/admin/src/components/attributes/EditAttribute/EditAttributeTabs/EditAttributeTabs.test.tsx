@@ -6,7 +6,7 @@ import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
 
 jest.mock('../../../../utils/utils', () => ({
-    localizedLabel: jest.fn().mockImplementation(l => l.fr)
+    localizedLabel: jest.fn().mockImplementation(l => l.fr),
 }));
 
 jest.mock('../../../../hooks/useLang');
@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function ActionsListTab() {
             return <div>ActionsListTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -24,7 +24,7 @@ jest.mock(
     () =>
         function EmbeddedFieldsTab() {
             return <div>EmbeddedFieldsTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -32,7 +32,7 @@ jest.mock(
     () =>
         function InfosTab() {
             return <div>InfosTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -40,7 +40,7 @@ jest.mock(
     () =>
         function MetadataTab() {
             return <div>MetadataTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -48,7 +48,7 @@ jest.mock(
     () =>
         function PermissionsTab() {
             return <div>PermissionsTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -56,7 +56,7 @@ jest.mock(
     () =>
         function ValuesListTab() {
             return <div>ValuesListTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -64,7 +64,7 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 
 describe('EditAttributeTabs', () => {
@@ -117,8 +117,8 @@ describe('EditAttributeTabs', () => {
         test('should open the tab in anchor', async () => {
             render(<EditAttributeTabs attribute={{...mockAttrAdv}} />, {
                 routerProps: {
-                    initialEntries: ['/attributes/edit/' + mockAttrAdv.id + '#permissions']
-                }
+                    initialEntries: ['/attributes/edit/' + mockAttrAdv.id + '#permissions'],
+                },
             });
 
             expect(screen.getByText(/PermissionsTab/)).toBeInTheDocument();

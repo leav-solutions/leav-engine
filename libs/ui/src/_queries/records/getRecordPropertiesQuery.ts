@@ -8,7 +8,7 @@ import {
     RecordFilterCondition,
     type RecordFormAttributeLinkAttributeFragment,
     type ValueDetailsFragment,
-    type ValueVersionInput
+    type ValueVersionInput,
 } from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 import {recordIdentityFragment} from '../../gqlFragments';

@@ -16,34 +16,34 @@ export const useCanEditRecord = (library: {id: string}, recordId?: string): IUse
     const {
         loading: recordPermissionsLoading,
         error: recordPermissionsError,
-        data: recordPermissionsData
+        data: recordPermissionsData,
     } = useIsAllowedQuery({
         variables: {
             type: PermissionTypes.record,
             applyTo: library.id,
             target: {
-                recordId
+                recordId,
             },
             actions: [
                 PermissionsActions.access_record,
                 PermissionsActions.create_record,
                 PermissionsActions.edit_record,
-                PermissionsActions.delete_record
-            ]
+                PermissionsActions.delete_record,
+            ],
         },
         skip: isCreationMode,
-        fetchPolicy: 'cache-and-network'
+        fetchPolicy: 'cache-and-network',
     });
 
     // Query runs if record is not specified (= record creation)
     const {
         loading: libraryPermissionsLoading,
         error: libraryPermissionsError,
-        data: libraryPermissionsData
+        data: libraryPermissionsData,
     } = useGetLibraryPermissionsQuery({
         variables: {libraryId: [library.id]},
         skip: !isCreationMode,
-        fetchPolicy: 'cache-and-network'
+        fetchPolicy: 'cache-and-network',
     });
 
     if (recordPermissionsError || libraryPermissionsError) {
@@ -56,7 +56,7 @@ export const useCanEditRecord = (library: {id: string}, recordId?: string): IUse
             recordPerms[perm.name] = perm.allowed;
             return recordPerms;
         },
-        {}
+        {},
     );
 
     return {
@@ -66,6 +66,6 @@ export const useCanEditRecord = (library: {id: string}, recordId?: string): IUse
             : recordPermissionsElem?.access_record,
         isReadOnly: isCreationMode
             ? !libraryPermissionsElem?.permissions.create_record
-            : !recordPermissionsElem?.edit_record
+            : !recordPermissionsElem?.edit_record,
     };
 };

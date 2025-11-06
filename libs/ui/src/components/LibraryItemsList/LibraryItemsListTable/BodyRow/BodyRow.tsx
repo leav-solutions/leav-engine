@@ -45,7 +45,7 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
     }
 
     const isRecordSelected = !!searchState.selection.selected.find(
-        e => e.id === record.id && e.library === searchState.library.id
+        e => e.id === record.id && e.library === searchState.library.id,
     );
     const isAllSelected = searchState.selection.allSelected;
 
@@ -56,7 +56,7 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
 
         searchDispatch({
             type: SearchActionTypes.TOGGLE_RECORD_SELECTION,
-            record: selectionData
+            record: selectionData,
         });
     };
 
@@ -66,7 +66,7 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
             library: record.library.id,
             record,
             onClose: () => null,
-            valuesVersion: searchState.valuesVersions
+            valuesVersion: searchState.valuesVersions,
         });
     };
 

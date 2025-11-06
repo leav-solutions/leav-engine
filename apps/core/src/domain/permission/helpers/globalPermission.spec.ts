@@ -11,14 +11,14 @@ import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors
 const depsBase: ToAny<IGlobalPermissionDeps> = {
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
     'core.domain.permission.helpers.defaultPermission': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn()
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
 };
 
 describe('globalPermissionsHelper', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'permissionDomainTest',
-        groupsId: ['1']
+        groupsId: ['1'],
     };
 
     describe('getGlobalPermission', () => {
@@ -28,35 +28,35 @@ describe('globalPermissionsHelper', () => {
                     {
                         record: {
                             id: 1,
-                            library: 'users_groups'
-                        }
+                            library: 'users_groups',
+                        },
                     },
                     {
                         record: {
                             id: 2,
-                            library: 'users_groups'
-                        }
+                            library: 'users_groups',
+                        },
                     },
                     {
                         record: {
                             id: 3,
-                            library: 'users_groups'
-                        }
-                    }
-                ]
-            ])
+                            library: 'users_groups',
+                        },
+                    },
+                ],
+            ]),
         };
 
         test('Return global permission', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(true)
+                getPermissionByUserGroups: global.__mockPromise(true),
             };
 
             const permHelper = globalPermissions({
                 ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
             });
 
             const perm = await permHelper.getGlobalPermission(
@@ -64,9 +64,9 @@ describe('globalPermissionsHelper', () => {
                     type: PermissionTypes.LIBRARY,
                     action: LibraryPermissionsActions.ACCESS_RECORD,
                     applyTo: 'test_lib',
-                    getDefaultPermission: () => false
+                    getDefaultPermission: () => false,
                 },
-                ctx
+                ctx,
             );
 
             expect(perm).toBe(true);
@@ -80,34 +80,34 @@ describe('globalPermissionsHelper', () => {
                     {
                         record: {
                             id: 1,
-                            library: 'users_groups'
-                        }
+                            library: 'users_groups',
+                        },
                     },
                     {
                         record: {
                             id: 2,
-                            library: 'users_groups'
-                        }
+                            library: 'users_groups',
+                        },
                     },
                     {
                         record: {
                             id: 3,
-                            library: 'users_groups'
-                        }
-                    }
-                ]
-            ])
+                            library: 'users_groups',
+                        },
+                    },
+                ],
+            ]),
         };
         test('Return inherited global permission', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(true)
+                getPermissionByUserGroups: global.__mockPromise(true),
             };
 
             const permHelper = globalPermissions({
                 ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
             });
 
             const perm = await permHelper.getInheritedGlobalPermission(
@@ -116,9 +116,9 @@ describe('globalPermissionsHelper', () => {
                     action: LibraryPermissionsActions.ACCESS_RECORD,
                     applyTo: 'test_lib',
                     userGroupNodeId: '12345',
-                    getDefaultPermission: () => false
+                    getDefaultPermission: () => false,
                 },
-                ctx
+                ctx,
             );
 
             expect(perm).toBe(true);

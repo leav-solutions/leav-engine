@@ -8,7 +8,7 @@ export const getColorspace = async (input: string): Promise<Colorspaces> => {
     const command = `identify -format "%r" "${input}"`;
     const [error, response] = (await new Promise(r => exec(command, (err, res) => r([err, res])))) as [
         ExecException,
-        string
+        string,
     ];
 
     if (error) {

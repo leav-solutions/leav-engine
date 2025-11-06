@@ -59,7 +59,7 @@ export default function ({
     'core.domain.helpers.storeUploadFile': storeUploadFile,
     'core.utils': utils,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
-    config
+    config,
 }: IDeps): ICoreImportApp {
     const _validateFileFormat = (filename: string, allowed: string[]) => {
         const fileExtension = utils.getFileExtension(filename);
@@ -68,8 +68,8 @@ export default function ({
             throw new ValidationError<IImportDataParams | IImportConfigParams>({
                 file: {
                     msg: Errors.INVALID_FILE_FORMAT,
-                    vars: {expected: allowed, received: fileExtension}
-                }
+                    vars: {expected: allowed, received: fileExtension},
+                },
             });
         }
     };
@@ -78,7 +78,7 @@ export default function ({
         filepath: string,
         clearDatabase: boolean,
         ctx: IQueryInfos,
-        forceNoTask?: boolean
+        forceNoTask?: boolean,
     ): Promise<string | undefined> =>
         importDomain.importConfig(
             {filepath, forceNoTask, clearDatabase, dbMigrate: true, ctx},
@@ -91,17 +91,25 @@ export default function ({
                             subModuleName: 'graphql',
                             name: 'generateSchema',
                             args: [],
-                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
+                            type: [
+                                TaskCallbackType.ON_SUCCESS,
+                                TaskCallbackType.ON_FAILURE,
+                                TaskCallbackType.ON_CANCEL,
+                            ],
                         },
                         {
                             moduleName: 'utils',
                             name: 'deleteFile',
                             args: [filepath],
-                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
-                        }
-                    ]
-                })
-            }
+                            type: [
+                                TaskCallbackType.ON_SUCCESS,
+                                TaskCallbackType.ON_FAILURE,
+                                TaskCallbackType.ON_CANCEL,
+                            ],
+                        },
+                    ],
+                }),
+            },
         );
 
     return {
@@ -167,7 +175,7 @@ export default function ({
                         async importConfig(
                             _,
                             {file, clear = false}: IImportConfigParams,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<string | undefined> {
                             const fileData: FileUpload = await file;
                             const allowedExtensions = ['json'];
@@ -204,11 +212,11 @@ export default function ({
                                             type: [
                                                 TaskCallbackType.ON_SUCCESS,
                                                 TaskCallbackType.ON_FAILURE,
-                                                TaskCallbackType.ON_CANCEL
-                                            ]
-                                        }
-                                    ]
-                                }
+                                                TaskCallbackType.ON_CANCEL,
+                                            ],
+                                        },
+                                    ],
+                                },
                             );
 
                             // FIXME: If import fail should we backup database?
@@ -216,7 +224,7 @@ export default function ({
                         async importExcel(
                             _,
                             {file, sheets, startAt}: IImportExcelParams,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<string> {
                             const fileData: FileUpload = await file;
 
@@ -229,12 +237,12 @@ export default function ({
                             await storeUploadFile(fileData, config.import.directory);
 
                             return importDomain.importExcel({filename: fileData.filename, sheets, startAt}, ctx);
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-        }
+        },
     };
 }

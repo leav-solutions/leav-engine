@@ -16,7 +16,7 @@ import {
     theme,
     Tooltip,
     Upload,
-    type UploadFile
+    type UploadFile,
 } from 'antd';
 import {useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
@@ -31,7 +31,7 @@ import {
     useGetDirectoryDataQuery,
     useGetTreeLibrariesQuery,
     useUploadMutation,
-    useUploadUpdateSubscription
+    useUploadUpdateSubscription,
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '../SelectTreeNode';
 
@@ -48,7 +48,7 @@ function UploadFiles({
     libraryId,
     multiple = false,
     onCompleted,
-    onClose
+    onClose,
 }: IUploadFilesProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {token} = theme.useToken();
@@ -76,7 +76,7 @@ function UploadFiles({
         onError: err => {
             setStatus('error');
             setErrorMsg(err.message);
-        }
+        },
     });
 
     useGetDirectoryDataQuery({
@@ -85,13 +85,13 @@ function UploadFiles({
             const dirData = data.records.list[0];
             setSelectedDir({
                 path: dirData.file_path.values[0].value,
-                name: dirData.file_name.values[0].value
+                name: dirData.file_name.values[0].value,
             });
         },
         variables: {
             library: directoriesLibraryId,
-            directoryId: selectedNode?.recordId
-        }
+            directoryId: selectedNode?.recordId,
+        },
     });
 
     const props = {
@@ -120,11 +120,11 @@ function UploadFiles({
 
             return <FileOutlined />;
         },
-        progress: {showInfo: true, strokeWidth: 2}
+        progress: {showInfo: true, strokeWidth: 2},
     };
 
     const [runDoesFileExistAsChild] = useDoesFileExistAsChildLazyQuery({
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
     });
 
     const _checkFilesExist = async (parentNode: string): Promise<void> => {
@@ -140,8 +140,8 @@ function UploadFiles({
                     variables: {
                         treeId: filesTreeId,
                         parentNode: parentNode !== filesTreeId ? parentNode : null,
-                        filename: f.name
-                    }
+                        filename: f.name,
+                    },
                 });
 
                 if (isFileExists.data.doesFileExistAsChild) {
@@ -162,27 +162,27 @@ function UploadFiles({
 
     useGetTreeLibrariesQuery({
         variables: {
-            library: libraryId
+            library: libraryId,
         },
         onCompleted: getTreeLibrariesData => {
             const linkedTree = getTreeLibrariesData.trees.list.filter(
-                tree => tree.system && tree.behavior === TreeBehavior.files
+                tree => tree.system && tree.behavior === TreeBehavior.files,
             )[0];
 
             setFilesTreeId(linkedTree.id);
 
             const directoriesLibrary = linkedTree.libraries.filter(
-                l => l.library.behavior === LibraryBehavior.directories
+                l => l.library.behavior === LibraryBehavior.directories,
             )[0]?.library.id;
 
             setdirectoriesLibraryId(directoriesLibrary);
-        }
+        },
     });
 
     // Sub to update files upload progress
     useUploadUpdateSubscription({
         variables: {
-            filters: {userId: userData.userId}
+            filters: {userId: userData.userId},
         },
         // skip: !user?.userId,
         onData: subData => {
@@ -196,9 +196,9 @@ function UploadFiles({
                     }
 
                     return f;
-                })
+                }),
             );
-        }
+        },
     });
 
     const startUpload = async (): Promise<void> => {
@@ -210,9 +210,9 @@ function UploadFiles({
                     data: f,
                     uid: f.uid,
                     size: f.size,
-                    replace: f.replace
-                }))
-            }
+                    replace: f.replace,
+                })),
+            },
         });
     };
 
@@ -229,7 +229,7 @@ function UploadFiles({
     };
 
     const contentStyle: React.CSSProperties = {
-        marginTop: 16
+        marginTop: 16,
     };
 
     const next = () => {
@@ -289,7 +289,7 @@ function UploadFiles({
                             </Button>
                         </Space>
                     </Row>
-                )
+                ),
             });
         });
 
@@ -311,7 +311,7 @@ function UploadFiles({
                     data-testid="select-tree-node"
                     style={{
                         borderRadius: token.borderRadiusLG,
-                        border: `1px dashed ${token.colorBorder}`
+                        border: `1px dashed ${token.colorBorder}`,
                     }}
                 >
                     {filesTreeId && directoriesLibraryId && (
@@ -324,11 +324,11 @@ function UploadFiles({
                         />
                     )}
                 </div>
-            )
+            ),
         },
         {
             title: t('upload.select_files_step_title'),
-            content: Dragger
+            content: Dragger,
         },
         {
             title: t('upload.upload_step_title'),
@@ -343,8 +343,8 @@ function UploadFiles({
                     )}
                 </>
             ),
-            icon: loading ? <LoadingOutlined /> : null
-        }
+            icon: loading ? <LoadingOutlined /> : null,
+        },
     ];
 
     const items = steps.map(item => ({key: item.title, title: item.title, icon: item.icon}));

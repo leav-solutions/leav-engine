@@ -24,13 +24,13 @@ describe('computeInitialState', () => {
                     [defaultDepValue]: {
                         '123456': [
                             {
-                                ...formElem1
-                            }
+                                ...formElem1,
+                            },
                         ],
                         '123457': [
                             {
-                                ...formElem2
-                            }
+                                ...formElem2,
+                            },
                         ],
                         [defaultContainerId]: [
                             {
@@ -39,7 +39,7 @@ describe('computeInitialState', () => {
                                 type: FormElementTypes.layout,
                                 containerId: defaultContainerId,
                                 settings: {},
-                                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
+                                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
                             },
                             {
                                 id: '456',
@@ -47,9 +47,9 @@ describe('computeInitialState', () => {
                                 type: FormElementTypes.layout,
                                 containerId: defaultContainerId,
                                 settings: {
-                                    title: 'divide'
+                                    title: 'divide',
                                 },
-                                uiElement: layoutElements[UIElementTypes.DIVIDER]
+                                uiElement: layoutElements[UIElementTypes.DIVIDER],
                             },
                             {
                                 id: '789',
@@ -57,7 +57,7 @@ describe('computeInitialState', () => {
                                 type: FormElementTypes.layout,
                                 containerId: defaultContainerId,
                                 settings: {},
-                                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
+                                uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
                             },
                             {
                                 id: '999',
@@ -65,33 +65,33 @@ describe('computeInitialState', () => {
                                 type: FormElementTypes.field,
                                 containerId: defaultContainerId,
                                 settings: {columns: ['col1']},
-                                uiElement: formElements[FieldTypes.LINK]
-                            }
-                        ]
-                    }
+                                uiElement: formElements[FieldTypes.LINK],
+                            },
+                        ],
+                    },
                 },
                 category: {
                     'category/12345': {
                         '123456': [
                             {
-                                ...formElem3
-                            }
-                        ]
-                    }
-                }
+                                ...formElem3,
+                            },
+                        ],
+                    },
+                },
             },
             activeElements: {
                 '123456': [
                     {
                         ...formElem1,
-                        herited: false
-                    }
+                        herited: false,
+                    },
                 ],
                 '123457': [
                     {
                         ...formElem2,
-                        herited: false
-                    }
+                        herited: false,
+                    },
                 ],
                 [defaultContainerId]: [
                     {
@@ -101,7 +101,7 @@ describe('computeInitialState', () => {
                         containerId: defaultContainerId,
                         settings: {},
                         uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
-                        herited: false
+                        herited: false,
                     },
                     {
                         id: '456',
@@ -109,10 +109,10 @@ describe('computeInitialState', () => {
                         type: FormElementTypes.layout,
                         containerId: defaultContainerId,
                         settings: {
-                            title: 'divide'
+                            title: 'divide',
                         },
                         uiElement: layoutElements[UIElementTypes.DIVIDER],
-                        herited: false
+                        herited: false,
                     },
                     {
                         id: '789',
@@ -121,7 +121,7 @@ describe('computeInitialState', () => {
                         containerId: defaultContainerId,
                         settings: {},
                         uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
-                        herited: false
+                        herited: false,
                     },
                     {
                         id: '999',
@@ -130,10 +130,10 @@ describe('computeInitialState', () => {
                         containerId: defaultContainerId,
                         settings: {columns: ['col1']},
                         uiElement: formElements[FieldTypes.LINK],
-                        herited: false
-                    }
-                ]
-            }
+                        herited: false,
+                    },
+                ],
+            },
         };
 
         // We test on objects stringification here because jest keeps saying objects are not equals (with toEqual()

@@ -28,7 +28,7 @@ import {
     permsArrayToObject,
     pick,
     stringToColor,
-    versionObjToGraphql
+    versionObjToGraphql,
 } from './utils';
 
 describe('utils', () => {
@@ -36,8 +36,8 @@ describe('utils', () => {
         const mockI18n: Mockify<i18n> = {
             language: 'fr',
             options: {
-                fallbackLng: ['en']
-            }
+                fallbackLng: ['en'],
+            },
         };
 
         test('Return user lang label', async () => {
@@ -95,7 +95,7 @@ describe('utils', () => {
         const filters = {
             label: 'test',
             id: 'test',
-            otherKey: 'otherTest'
+            otherKey: 'otherTest',
         };
 
         test('Add wildcards to defaults keys', async () => {
@@ -161,9 +161,9 @@ describe('utils', () => {
                 node: {
                     id: 12345,
                     library: {
-                        id: 'test_lib'
-                    }
-                }
+                        id: 'test_lib',
+                    },
+                },
             };
 
             expect(getTreeNodeKey(nodeData)).toBe('12345');
@@ -179,17 +179,17 @@ describe('utils', () => {
             const perms: IS_ALLOWED_isAllowed[] = [
                 {
                     name: PermissionsActions.access_record,
-                    allowed: true
+                    allowed: true,
                 },
                 {
                     name: PermissionsActions.edit_record,
-                    allowed: false
-                }
+                    allowed: false,
+                },
             ];
 
             expect(permsArrayToObject(perms)).toEqual({
                 access_record: true,
-                edit_record: false
+                edit_record: false,
             });
         });
     });
@@ -216,12 +216,12 @@ describe('utils', () => {
         test('Convert a version object to graphql array', async () => {
             const res = versionObjToGraphql({
                 regions: '13586077',
-                lang: '12345'
+                lang: '12345',
             });
 
             expect(res).toStrictEqual([
                 {treeId: 'regions', treeNodeId: '13586077'},
-                {treeId: 'lang', treeNodeId: '12345'}
+                {treeId: 'lang', treeNodeId: '12345'},
             ]);
         });
     });
@@ -249,12 +249,12 @@ describe('utils', () => {
         test('Convert an array to object with given field as key', async () => {
             const myArray: Array<{id: string; someField: string}> = [
                 {id: 'foo', someField: 'value'},
-                {id: 'bar', someField: 'otherValue'}
+                {id: 'bar', someField: 'otherValue'},
             ];
 
             expect(arrayToObj(myArray, 'id')).toEqual({
                 foo: {id: 'foo', someField: 'value'},
-                bar: {id: 'bar', someField: 'otherValue'}
+                bar: {id: 'bar', someField: 'otherValue'},
             });
         });
     });
@@ -264,7 +264,7 @@ describe('utils', () => {
             const obj = {
                 foo: 'bar',
                 toto: 'tata',
-                tutu: 'titi'
+                tutu: 'titi',
             };
 
             expect(omit(obj, ['toto', 'tutu'])).toEqual({foo: 'bar'});
@@ -273,7 +273,7 @@ describe('utils', () => {
         test('Should not mutate original object', async () => {
             const obj = {
                 foo: 'bar',
-                toto: 'tata'
+                toto: 'tata',
             };
 
             omit(obj, ['toto']);
@@ -287,13 +287,13 @@ describe('utils', () => {
             {
                 a: 1,
                 b: 2,
-                c: 3
+                c: 3,
             },
             {
                 a: 4,
                 b: 5,
-                c: 6
-            }
+                c: 6,
+            },
         ];
         test('Should return array of string if given one key', async () => {
             expect(arrayPick(objs, 'a')).toEqual([1, 4]);
@@ -302,7 +302,7 @@ describe('utils', () => {
         test('Should return array of objects if given multiple keys', async () => {
             expect(arrayPick(objs, ['a', 'c'])).toEqual([
                 {a: 1, c: 3},
-                {a: 4, c: 6}
+                {a: 4, c: 6},
             ]);
         });
     });
@@ -311,7 +311,7 @@ describe('utils', () => {
         const obj = {
             a: 1,
             b: 2,
-            c: 3
+            c: 3,
         };
         test('Should return value if given one key', async () => {
             expect(pick(obj, 'a')).toBe(1);

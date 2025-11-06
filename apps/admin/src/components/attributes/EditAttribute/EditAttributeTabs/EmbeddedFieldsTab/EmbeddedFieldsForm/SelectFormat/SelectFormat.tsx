@@ -48,7 +48,7 @@ function SelectFormat({formValues, hasChild, onChange, t, save}: ISelectFormatPr
                 name="format"
                 options={Object.keys(AttributeFormat).map(f => ({
                     text: t('attributes.formats.' + f),
-                    value: f
+                    value: f,
                 }))}
                 value={formValues.format}
                 onChange={_onChange}

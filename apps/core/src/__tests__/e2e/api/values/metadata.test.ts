@@ -15,14 +15,14 @@ describe('Values Metadata', () => {
             id: metaAttrId,
             type: AttributeTypes.SIMPLE,
             label: 'Simple attribute',
-            format: AttributeFormats.TEXT
+            format: AttributeFormats.TEXT,
         });
         await gqlSaveAttribute({
             id: attrWithMetaId,
             type: AttributeTypes.ADVANCED,
             label: 'Adv attribute with metadta',
             format: AttributeFormats.TEXT,
-            metadataFields: [metaAttrId]
+            metadataFields: [metaAttrId],
         });
         await gqlSaveLibrary(metadataLibId, 'Test Metadata', [attrWithMetaId]);
         recordId = await gqlCreateRecord(metadataLibId);

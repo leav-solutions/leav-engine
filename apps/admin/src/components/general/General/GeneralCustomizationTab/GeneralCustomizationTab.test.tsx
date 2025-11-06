@@ -14,7 +14,7 @@ jest.mock(
     () =>
         function FileSelector() {
             return <div>FileSelector</div>;
-        }
+        },
 );
 
 describe('GeneralCustomizationTab', () => {
@@ -24,49 +24,49 @@ describe('GeneralCustomizationTab', () => {
             {
                 request: {
                     query: getGlobalSettingsQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         globalSettings: {
                             name: 'My App',
                             icon: null,
-                            defaultApp: 'admin'
-                        }
-                    }
-                }
+                            defaultApp: 'admin',
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getApplicationsQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         applications: {
                             list: [
                                 {
-                                    endpoint: 'admin'
+                                    endpoint: 'admin',
                                 },
                                 {
-                                    endpoint: 'data-studio'
+                                    endpoint: 'data-studio',
                                 },
                                 {
-                                    endpoint: 'portal'
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    endpoint: 'portal',
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: saveGlobalSettingsQuery,
                     variables: {
                         settings: {
-                            name: 'My App Modified'
-                        }
-                    }
+                            name: 'My App Modified',
+                        },
+                    },
                 },
                 result: () => {
                     saveCalled = true;
@@ -74,12 +74,12 @@ describe('GeneralCustomizationTab', () => {
                         data: {
                             saveGlobalSettings: {
                                 name: 'My App Modified',
-                                icon: null
-                            }
-                        }
+                                icon: null,
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<GeneralCustomizationTab />, {apolloMocks: mocks});

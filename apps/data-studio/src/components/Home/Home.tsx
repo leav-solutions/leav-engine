@@ -38,9 +38,9 @@ function Home(): JSX.Element {
         const baseInfo: IBaseInfo = {
             content: t('info.base-message', {
                 appLabel: `${appData.globalSettings.name} - ${localizedTranslation(appData.currentApp.label, lang)}`,
-                interpolation: {escapeValue: false}
+                interpolation: {escapeValue: false},
             }),
-            type: InfoType.BASIC
+            type: InfoType.BASIC,
         };
         dispatch(setInfoBase(baseInfo));
     }, [t, dispatch]);

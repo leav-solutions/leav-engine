@@ -16,8 +16,8 @@ jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 jest.mock('antd', () => ({
     ...jest.requireActual('antd'),
     message: {
-        error: jest.fn()
-    }
+        error: jest.fn(),
+    },
 }));
 
 describe('EditLibraryAttributes', () => {
@@ -28,17 +28,17 @@ describe('EditLibraryAttributes', () => {
                 ...mockLibraryAttribute,
                 id: 'attributeA',
                 label: {
-                    fr: 'Attribut A'
-                }
+                    fr: 'Attribut A',
+                },
             },
             {
                 ...mockLibraryAttribute,
                 id: 'attributeB',
                 label: {
-                    fr: 'Attribut B'
-                }
-            }
-        ]
+                    fr: 'Attribut B',
+                },
+            },
+        ],
     };
 
     const mockGetAttributesQuery: Mockify<QueryResult> = {
@@ -52,19 +52,19 @@ describe('EditLibraryAttributes', () => {
                         ...mockLibraryAttribute,
                         id: 'attributeA',
                         label: {
-                            fr: 'Attribut A'
-                        }
+                            fr: 'Attribut A',
+                        },
                     },
                     {
                         ...mockLibraryAttribute,
                         id: 'attributeB',
                         label: {
-                            fr: 'Attribut B'
-                        }
-                    }
-                ]
-            }
-        }
+                            fr: 'Attribut B',
+                        },
+                    },
+                ],
+            },
+        },
     };
 
     test('Render list of attributes', async () => {
@@ -72,13 +72,13 @@ describe('EditLibraryAttributes', () => {
         const mockSaveLibraryMutation = jest.fn().mockReturnValue({
             data: {
                 saveLibrary: {
-                    ...mockLibraryWithDetails
-                }
-            }
+                    ...mockLibraryWithDetails,
+                },
+            },
         });
         jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
             mockSaveLibraryMutation,
-            {loading: false, called: false, client: null, reset: null, error: null}
+            {loading: false, called: false, client: null, reset: null, error: null},
         ]);
 
         jest.spyOn(gqlTypes, 'useGetAttributesQuery').mockImplementation(() => mockGetAttributesQuery as QueryResult);
@@ -96,9 +96,9 @@ describe('EditLibraryAttributes', () => {
             variables: {
                 library: {
                     id: mockLibrary.id,
-                    attributes: ['attributeB']
-                }
-            }
+                    attributes: ['attributeB'],
+                },
+            },
         });
     });
 
@@ -110,10 +110,10 @@ describe('EditLibraryAttributes', () => {
                     ...mockLibrary,
                     permissions: {
                         ...mockLibrary.permissions,
-                        admin_library: false
-                    }
+                        admin_library: false,
+                    },
                 }}
-            />
+            />,
         );
 
         // Delete attribute A

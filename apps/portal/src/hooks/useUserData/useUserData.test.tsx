@@ -10,7 +10,7 @@ import useUserData from '.';
 describe('useUserData', () => {
     test('Return user data from context', async () => {
         const {result} = renderHook(() => useUserData(), {
-            wrapper: ({children}) => <UserContext.Provider value={mockUser}>{children}</UserContext.Provider>
+            wrapper: ({children}) => <UserContext.Provider value={mockUser}>{children}</UserContext.Provider>,
         });
 
         expect(result.current.id).toBe('1');

@@ -13,9 +13,9 @@ export const mockApplication: MandatoryId<IApplication> = {
     settings: {libraries: ['products', 'categories'], trees: ['files', 'categories']},
     color: 'orange',
     icon: {
-        id: '123456'
+        id: '123456',
     },
-    module: 'data-studio'
+    module: 'data-studio',
 };
 
 export const mockApplicationExternal: IApplication = {
@@ -27,7 +27,7 @@ export const mockApplicationExternal: IApplication = {
     description: {fr: 'Super application'},
     color: 'orange',
     icon: {
-        id: '123456'
+        id: '123456',
     },
-    module: ''
+    module: '',
 };

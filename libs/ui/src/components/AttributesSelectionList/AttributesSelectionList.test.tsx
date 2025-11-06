@@ -13,8 +13,8 @@ describe('AttributesSelectionList', () => {
                 request: {
                     query: GetAttributesByLibDocument,
                     variables: {
-                        library: 'test_lib'
-                    }
+                        library: 'test_lib',
+                    },
                 },
                 result: {
                     data: {
@@ -29,17 +29,17 @@ describe('AttributesSelectionList', () => {
                                     multiple_values: false,
                                     system: false,
                                     readonly: false,
-                                    embedded_fields: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    embedded_fields: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         const attributesList = await screen.findByTestId('attributes-list');
@@ -61,8 +61,8 @@ describe('AttributesSelectionList', () => {
                 request: {
                     query: GetAttributesByLibDocument,
                     variables: {
-                        library: 'test_lib'
-                    }
+                        library: 'test_lib',
+                    },
                 },
                 result: {
                     data: {
@@ -77,7 +77,7 @@ describe('AttributesSelectionList', () => {
                                     multiple_values: false,
                                     embedded_fields: null,
                                     system: false,
-                                    readonly: false
+                                    readonly: false,
                                 },
                                 {
                                     __typename: 'StandardAttribute',
@@ -88,17 +88,17 @@ describe('AttributesSelectionList', () => {
                                     multiple_values: false,
                                     embedded_fields: null,
                                     system: false,
-                                    readonly: false
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    readonly: false,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         const attributesList = await screen.findByTestId('attributes-list');

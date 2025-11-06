@@ -10,7 +10,7 @@ export default async (
     libData: ILibrary,
     libAttributes: string[],
     deps: {attributeDomain: IAttributeDomain},
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<ILibrary>> => {
     const errors: ErrorFieldDetail<ILibrary> = {};
 

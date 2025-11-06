@@ -14,12 +14,12 @@ export default function useExecuteCreateEmptyRecordMutation(): ICreateRecordHook
     return {
         createEmptyRecord: async libraryId => {
             const creationResult = await executeCreateEmptyRecord({
-                variables: {library: libraryId}
+                variables: {library: libraryId},
             });
             return {
                 status: APICallStatus.SUCCESS,
-                record: creationResult.data.createEmptyRecord.record.whoAmI
+                record: creationResult.data.createEmptyRecord.record.whoAmI,
             };
-        }
+        },
     };
 }

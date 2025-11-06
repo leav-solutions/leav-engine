@@ -13,10 +13,10 @@ interface IALCListSelectorProps {
 function ALCListSelector({
     changeSelectorTo,
     currentActionListName,
-    connectionFailures
+    connectionFailures,
 }: IALCListSelectorProps): JSX.Element {
     const disconnectedStyle = {
-        background: '#ffcccc'
+        background: '#ffcccc',
     };
 
     const listsWithConnectionsFailures: string[] = [];

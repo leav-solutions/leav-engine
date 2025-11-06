@@ -8,11 +8,11 @@ import {
     type AttributesByLibAttributeStandardAttributeFragment,
     type AttributeType,
     RecordFilterCondition,
-    type RecordFilterOperator
+    type RecordFilterOperator,
 } from '_ui/_gqlTypes';
 import {
     type ILibraryDetailExtendedAttributeParentLinkedLibrary,
-    type ILibraryDetailExtendedAttributeParentLinkedTree
+    type ILibraryDetailExtendedAttributeParentLinkedTree,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {type ValueOf} from './misc';
 import {type IRecordIdentityWhoAmI} from './records';
@@ -74,7 +74,7 @@ export interface IQueryFilter {
 
 export enum SearchOrder {
     DESC = 'DESC',
-    ASC = 'ASC'
+    ASC = 'ASC',
 }
 
 export interface IItemBase {
@@ -88,30 +88,30 @@ export type IItem = IItemBase;
 export enum FilterType {
     ATTRIBUTE = 'ATTRIBUTE',
     TREE = 'TREE',
-    LIBRARY = 'LIBRARY'
+    LIBRARY = 'LIBRARY',
 }
 
 export enum OperatorFilter {
     AND = 'AND',
     OR = 'OR',
     OPEN_BRACKET = 'OPEN_BRACKET',
-    CLOSE_BRACKET = 'CLOSE_BRACKET'
+    CLOSE_BRACKET = 'CLOSE_BRACKET',
 }
 
 export enum TreeConditionFilter {
     CLASSIFIED_IN = 'CLASSIFIED_IN',
-    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
+    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN',
 }
 
 export enum ThroughConditionFilter {
-    THROUGH = 'THROUGH'
+    THROUGH = 'THROUGH',
 }
 
 // We're exporting a const and not an enum to "merge" the enum coming
 // from Graphql types with some condition of our own
 export const AttributeConditionFilter = {
     ...RecordFilterCondition,
-    ...ThroughConditionFilter
+    ...ThroughConditionFilter,
 };
 
 export type AttributeConditionType = ValueOf<typeof AttributeConditionFilter>;
@@ -157,12 +157,12 @@ export interface IFilterLibrary extends IFilter {
 export enum SidebarContentType {
     FILTERS = 'filters',
     VIEW = 'view',
-    VERSIONS = 'versions'
+    VERSIONS = 'versions',
 }
 
 export enum SearchMode {
     SEARCH = 'search',
-    SELECT = 'select'
+    SELECT = 'select',
 }
 
 export interface ITableCell {

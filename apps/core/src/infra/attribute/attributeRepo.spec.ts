@@ -11,7 +11,7 @@ import attributeRepo from './attributeRepo';
 describe('AttributeRepo', () => {
     const ctx: IQueryInfos = {
         userId: '0',
-        queryId: 'attributeRepoTest'
+        queryId: 'attributeRepoTest',
     };
     describe('getAttributes', () => {
         test('Get all attributes', async function () {
@@ -22,15 +22,15 @@ describe('AttributeRepo', () => {
                         id: 'label',
                         system: false,
                         label: {
-                            fr: 'label'
-                        }
-                    }
-                ])
+                            fr: 'label',
+                        },
+                    },
+                ]),
             } satisfies Mockify<IDbUtils>;
 
             const repo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const trees = await repo.getAttributes({ctx});
@@ -41,9 +41,9 @@ describe('AttributeRepo', () => {
                     id: 'label',
                     system: false,
                     label: {
-                        fr: 'label'
-                    }
-                }
+                        fr: 'label',
+                    },
+                },
             ]);
         });
     });
@@ -58,7 +58,7 @@ describe('AttributeRepo', () => {
                     format: 'text',
                     label: {en: 'Modified by', fr: 'Modifié par'},
                     system: true,
-                    type: 'link'
+                    type: 'link',
                 },
                 {
                     _key: 'modified_at',
@@ -67,12 +67,12 @@ describe('AttributeRepo', () => {
                     format: 'numeric',
                     label: {en: 'Modification date', fr: 'Date de modification'},
                     system: true,
-                    type: 'index'
-                }
+                    type: 'index',
+                },
             ];
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
@@ -81,28 +81,28 @@ describe('AttributeRepo', () => {
                     format: 'text',
                     label: {en: 'Modified by', fr: 'Modifié par'},
                     system: true,
-                    type: 'link'
+                    type: 'link',
                 },
                 {
                     id: 'modified_at',
                     format: 'numeric',
                     label: {en: 'Modification date', fr: 'Date de modification'},
                     system: true,
-                    type: 'index'
-                }
+                    type: 'index',
+                },
             ];
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const repo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const libAttrs = await repo.getLibraryAttributes({
                 libraryId: 'users',
-                ctx
+                ctx,
             });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
@@ -121,42 +121,42 @@ describe('AttributeRepo', () => {
                     _key: 'products',
                     _id: 'core_libraries/products',
                     _rev: '_WSfp4UC--_',
-                    label: {en: 'Products', fr: 'Produits'}
+                    label: {en: 'Products', fr: 'Produits'},
                 },
                 {
                     _key: 'categories',
                     _id: 'core_libraries/categories',
                     _rev: '_WSfp4UC--_',
-                    label: {en: 'Categories', fr: 'Catégories'}
-                }
+                    label: {en: 'Categories', fr: 'Catégories'},
+                },
             ];
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
                 {
                     id: 'products',
-                    label: {en: 'Products', fr: 'Produits'}
+                    label: {en: 'Products', fr: 'Produits'},
                 },
                 {
                     id: 'categories',
-                    label: {en: 'Categories', fr: 'Catégories'}
-                }
+                    label: {en: 'Categories', fr: 'Catégories'},
+                },
             ];
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const repo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const attributeLibraries = await repo.getAttributeLibraries({
                 attributeId: 'label',
-                ctx
+                ctx,
             });
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
@@ -178,12 +178,12 @@ describe('AttributeRepo', () => {
                     format: 'text',
                     label: {en: 'Modified by', fr: 'Modifié par'},
                     system: true,
-                    type: 'link'
-                }
+                    type: 'link',
+                },
             ];
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise(mockQueryRes)
+                execute: global.__mockPromise(mockQueryRes),
             };
 
             const mockCleanupRes = [
@@ -192,21 +192,21 @@ describe('AttributeRepo', () => {
                     format: 'text',
                     label: {en: 'Modified by', fr: 'Modifié par'},
                     system: true,
-                    type: 'link'
-                }
+                    type: 'link',
+                },
             ];
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]),
             };
 
             const repo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const libFullTextAttrs = await repo.getLibraryFullTextAttributes({
                 libraryId: 'users',
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -225,7 +225,7 @@ describe('AttributeRepo', () => {
             format: 'text',
             type: 'standard',
             label: {fr: 'Test'},
-            multiple_values: false
+            multiple_values: false,
         };
 
         const attrData = {
@@ -234,24 +234,24 @@ describe('AttributeRepo', () => {
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
             type: AttributeTypes.ADVANCED,
-            multiple_values: false
+            multiple_values: false,
         };
 
         test('Should update an existing attribute', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docAttrData])
+                execute: global.__mockPromise([docAttrData]),
             };
 
             const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAttrData)
+                convertToDoc: jest.fn().mockReturnValue(docAttrData),
             };
 
             const attrRepo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const updatedAttr = await attrRepo.updateAttribute({attrData, ctx});
@@ -272,7 +272,7 @@ describe('AttributeRepo', () => {
             format: 'text',
             type: 'standard',
             label: {fr: 'Test'},
-            multiple_values: false
+            multiple_values: false,
         };
         const attrData = {
             id: 'test_attribute',
@@ -280,24 +280,24 @@ describe('AttributeRepo', () => {
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
             type: AttributeTypes.ADVANCED,
-            multiple_values: false
+            multiple_values: false,
         };
 
         test('Should create a new attribute', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docAttrData])
+                execute: global.__mockPromise([docAttrData]),
             };
 
             const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAttrData)
+                convertToDoc: jest.fn().mockReturnValue(docAttrData),
             };
 
             const attrRepo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const createdAttr = await attrRepo.createAttribute({attrData, ctx});
@@ -317,7 +317,7 @@ describe('AttributeRepo', () => {
             system: false,
             label: {fr: 'Test'},
             format: AttributeFormats.TEXT,
-            type: AttributeTypes.SIMPLE
+            type: AttributeTypes.SIMPLE,
         };
 
         const docAttrData = {
@@ -327,7 +327,7 @@ describe('AttributeRepo', () => {
             format: 'numeric',
             label: {en: 'Test', fr: 'Test'},
             system: false,
-            type: 'index'
+            type: 'index',
         };
 
         test('Should delete an attribute and return deleted attribute', async function () {
@@ -336,23 +336,23 @@ describe('AttributeRepo', () => {
                 execute: jest
                     .fn()
                     .mockReturnValueOnce([])
-                    .mockReturnValueOnce(Promise.resolve([docAttrData]))
+                    .mockReturnValueOnce(Promise.resolve([docAttrData])),
             };
 
             const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(attrData),
-                convertToDoc: jest.fn().mockReturnValue(docAttrData)
+                convertToDoc: jest.fn().mockReturnValue(docAttrData),
             };
 
             const mockValueRepo: Mockify<IValueRepo> = {
-                clearAllValues: jest.fn()
+                clearAllValues: jest.fn(),
             };
 
             const attrRepo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as IValueRepo,
             });
             attrRepo.getAttributes = global.__mockPromise([attrData]);
 

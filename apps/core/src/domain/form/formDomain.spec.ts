@@ -35,55 +35,55 @@ const depsBase: ToAny<IFormDomainDeps> = {
     'core.infra.form': jest.fn(),
     'core.utils': jest.fn(),
     'core.utils.logger': jest.fn(),
-    translator: {}
+    translator: {},
 };
 
 describe('formDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'formDomainTest'
+        queryId: 'formDomainTest',
     };
 
     const mockLibDomain: Mockify<ILibraryDomain> = {
-        getLibraries: global.__mockPromise({list: [mockLibrary]})
+        getLibraries: global.__mockPromise({list: [mockLibrary]}),
     };
 
     const mockLibDomainNoLib: Mockify<ILibraryDomain> = {
-        getLibraries: global.__mockPromise({list: []})
+        getLibraries: global.__mockPromise({list: []}),
     };
 
     const mockAttrDomain: Mockify<IAttributeDomain> = {
-        getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test_attribute'}]})
+        getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test_attribute'}]}),
     };
 
     const mockLibraryPermDomain: Mockify<ILibraryPermissionDomain> = {
-        getLibraryPermission: global.__mockPromise(true)
+        getLibraryPermission: global.__mockPromise(true),
     };
 
     const mockRecordDomain: Mockify<IRecordDomain> = {
-        getRecordFieldValue: global.__mockPromise(mockStandardValue)
+        getRecordFieldValue: global.__mockPromise(mockStandardValue),
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn()
+        validateLibrary: jest.fn(),
     };
 
     const mockValidateHelperNoLibrary: Mockify<IValidateHelper> = {
         ...mockValidateHelper,
         validateLibrary: jest.fn(() => {
             throw new ValidationError({id: 'boom'});
-        })
+        }),
     };
 
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true),
-        translateError: jest.fn().mockReturnValue('boom!')
+        translateError: jest.fn().mockReturnValue('boom!'),
     };
 
     describe('Get forms by lib', () => {
         test('Get form by lib', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
-                getForms: global.__mockPromise({list: [mockForm]})
+                getForms: global.__mockPromise({list: [mockForm]}),
             };
 
             const domain = formDomain({
@@ -91,7 +91,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             });
 
             const res = await domain.getFormsByLib({library: 'my_lib', ctx});
@@ -102,7 +102,7 @@ describe('formDomain', () => {
 
         test('If unknown library, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
-                getForms: global.__mockPromise({list: []})
+                getForms: global.__mockPromise({list: []}),
             };
 
             const domain = formDomain({
@@ -110,7 +110,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
             });
 
             await expect(domain.getFormsByLib({library: 'my_lib', ctx})).rejects.toThrow(ValidationError);
@@ -120,7 +120,7 @@ describe('formDomain', () => {
     describe('Get form properties', () => {
         test('Get form properties', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
-                getForms: global.__mockPromise({list: [mockForm]})
+                getForms: global.__mockPromise({list: [mockForm]}),
             };
 
             const domain = formDomain({
@@ -128,7 +128,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             });
 
             const res = await domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx});
@@ -139,7 +139,7 @@ describe('formDomain', () => {
 
         test('If unknown library, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
-                getForms: global.__mockPromise({list: []})
+                getForms: global.__mockPromise({list: []}),
             };
 
             const domain = formDomain({
@@ -147,17 +147,17 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
             });
 
             await expect(domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
-                ValidationError
+                ValidationError,
             );
         });
 
         test('If unknown form, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
-                getForms: global.__mockPromise({list: []})
+                getForms: global.__mockPromise({list: []}),
             };
 
             const domain = formDomain({
@@ -165,11 +165,11 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             });
 
             await expect(domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
-                ValidationError
+                ValidationError,
             );
         });
     });
@@ -179,7 +179,7 @@ describe('formDomain', () => {
             const mockFormRepo = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
-                createForm: global.__mockPromise(mockForm)
+                createForm: global.__mockPromise(mockForm),
             } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
@@ -189,7 +189,7 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as any,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const createdForm = await domain.saveForm({form: {...mockForm}, ctx});
@@ -204,7 +204,7 @@ describe('formDomain', () => {
             const mockFormRepo = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
-                createForm: jest.fn()
+                createForm: jest.fn(),
             } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
@@ -214,20 +214,20 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as any,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             const newLabel = {fr: 'New label'};
             await domain.saveForm({
                 form: {id: mockForm.id, library: mockForm.library, label: newLabel, sidePanel: mockForm.sidePanel},
-                ctx
+                ctx,
             });
 
             expect(mockFormRepo.updateForm).toBeCalled();
             expect(mockFormRepo.updateForm.mock.calls[0][0].formData).toEqual({
                 ...mockForm,
                 label: newLabel,
-                system: false
+                system: false,
             });
             expect(mockFormRepo.createForm).not.toBeCalled();
         });
@@ -236,7 +236,7 @@ describe('formDomain', () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
-                createForm: jest.fn()
+                createForm: jest.fn(),
             };
 
             const domain = formDomain({
@@ -246,7 +246,7 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(ValidationError);
@@ -258,11 +258,11 @@ describe('formDomain', () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
-                createForm: jest.fn()
+                createForm: jest.fn(),
             };
 
             const mockUtilsInvalidID: Mockify<IUtils> = {
-                isIdValid: jest.fn().mockReturnValue(false)
+                isIdValid: jest.fn().mockReturnValue(false),
             };
 
             const domain = formDomain({
@@ -272,11 +272,11 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.utils': mockUtilsInvalidID as IUtils
+                'core.utils': mockUtilsInvalidID as IUtils,
             });
 
             await expect(domain.saveForm({form: {...mockForm, id: 'invalid id'}, ctx})).rejects.toThrow(
-                ValidationError
+                ValidationError,
             );
             expect(mockFormRepo.createForm).not.toBeCalled();
             expect(mockFormRepo.updateForm).not.toBeCalled();
@@ -286,11 +286,11 @@ describe('formDomain', () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
-                createForm: jest.fn()
+                createForm: jest.fn(),
             };
 
             const mockAttrDomainNoMatch: Mockify<IAttributeDomain> = {
-                getAttributes: global.__mockPromise({list: []})
+                getAttributes: global.__mockPromise({list: []}),
             };
 
             const domain = formDomain({
@@ -300,11 +300,11 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             await expect(domain.saveForm({form: {...mockForm, id: 'invalid id'}, ctx})).rejects.toThrow(
-                ValidationError
+                ValidationError,
             );
             expect(mockFormRepo.createForm).not.toBeCalled();
             expect(mockFormRepo.updateForm).not.toBeCalled();
@@ -312,13 +312,13 @@ describe('formDomain', () => {
 
         test('If creation not allowed, throw permission error', async () => {
             const mockLibraryPermForbiddenDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(false)
+                getLibraryPermission: global.__mockPromise(false),
             };
 
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
-                createForm: global.__mockPromise(mockForm)
+                createForm: global.__mockPromise(mockForm),
             };
 
             const domain = formDomain({
@@ -328,7 +328,7 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(PermissionError);
@@ -339,13 +339,13 @@ describe('formDomain', () => {
 
         test('If edition not allowed, throw permission error', async () => {
             const mockLibraryPermForbiddenDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(false)
+                getLibraryPermission: global.__mockPromise(false),
             };
 
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
-                createForm: jest.fn()
+                createForm: jest.fn(),
             };
 
             const domain = formDomain({
@@ -355,7 +355,7 @@ describe('formDomain', () => {
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
 
             await expect(domain.saveForm({form: {...mockForm}, ctx})).rejects.toThrow(PermissionError);
@@ -369,13 +369,13 @@ describe('formDomain', () => {
         test('Delete form', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
-                deleteForm: global.__mockPromise(mockForm)
+                deleteForm: global.__mockPromise(mockForm),
             };
 
             const domain = formDomain({
                 ...depsBase,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.infra.form': mockFormRepo as IFormRepo
+                'core.infra.form': mockFormRepo as IFormRepo,
             });
 
             const res = await domain.deleteForm({library: 'my_lib', id: 'edition_form', ctx});
@@ -387,46 +387,46 @@ describe('formDomain', () => {
         test('If unknown form, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
-                deleteForm: jest.fn()
+                deleteForm: jest.fn(),
             };
 
             const domain = formDomain({
                 ...depsBase,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
-                'core.infra.form': mockFormRepo as IFormRepo
+                'core.infra.form': mockFormRepo as IFormRepo,
             });
 
             await expect(domain.deleteForm({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
-                ValidationError
+                ValidationError,
             );
             expect(mockFormRepo.deleteForm).not.toBeCalled();
         });
 
         test('If not allowed, throw permission error', async () => {
             const mockLibraryPermForbiddenDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(false)
+                getLibraryPermission: global.__mockPromise(false),
             };
 
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
-                deleteForm: global.__mockPromise(mockForm)
+                deleteForm: global.__mockPromise(mockForm),
             };
 
             const domain = formDomain({
                 ...depsBase,
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
-                'core.infra.form': mockFormRepo as IFormRepo
+                'core.infra.form': mockFormRepo as IFormRepo,
             });
 
             await expect(domain.deleteForm({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
-                PermissionError
+                PermissionError,
             );
             expect(mockFormRepo.deleteForm).not.toBeCalled();
         });
     });
     describe('getRecordForm', () => {
         const mockRecordAttributePermissionDomain: Mockify<IRecordAttributePermissionDomain> = {
-            getRecordAttributePermission: global.__mockPromise(true)
+            getRecordAttributePermission: global.__mockPromise(true),
         };
 
         test('Return a record form with values', async () => {
@@ -434,7 +434,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.recordAttribute':
-                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
             });
 
             const mockDivider = {...formLayoutElement, id: 'divider', uiElementType: FormUIElementTypes.DIVIDER};
@@ -444,14 +444,14 @@ describe('formDomain', () => {
 
             domain.getFormProperties = global.__mockPromise({
                 ...mockForm,
-                elements: [{elements: [field1, field2, mockContainer, mockDivider]}]
+                elements: [{elements: [field1, field2, mockContainer, mockDivider]}],
             });
 
             const res = await domain.getRecordForm({
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -465,18 +465,18 @@ describe('formDomain', () => {
                     {...mockContainer, valueError: null, values: null},
                     {...field1, valueError: null, values: [mockStandardValue]},
                     {...field2, valueError: null, values: [mockStandardValue]},
-                    {...mockDivider, valueError: null, values: null}
-                ]
+                    {...mockDivider, valueError: null, values: null},
+                ],
             });
         });
 
         test('Return error encountered when fetching values', async () => {
             const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!'))
+                getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!')),
             };
 
             const mockLogger: Mockify<ILogger> = {
-                error: jest.fn()
+                error: jest.fn(),
             };
 
             const domain = formDomain({
@@ -484,7 +484,7 @@ describe('formDomain', () => {
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
-                'core.utils.logger': mockLogger as ILogger
+                'core.utils.logger': mockLogger as ILogger,
             });
 
             const mockContainer = {...formLayoutElement};
@@ -492,14 +492,14 @@ describe('formDomain', () => {
 
             domain.getFormProperties = global.__mockPromise({
                 ...mockForm,
-                elements: [{elements: [field1, mockContainer]}]
+                elements: [{elements: [field1, mockContainer]}],
             });
 
             const res = await domain.getRecordForm({
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -511,8 +511,8 @@ describe('formDomain', () => {
                 sidePanel: mockForm.sidePanel,
                 elements: [
                     {...mockContainer, valueError: null, values: null},
-                    {...field1, values: null, valueError: 'boom!'}
-                ]
+                    {...field1, values: null, valueError: 'boom!'},
+                ],
             });
         });
 
@@ -520,9 +520,9 @@ describe('formDomain', () => {
             const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
                 getRecordFieldValue: jest.fn().mockRejectedValue(
                     new ValidationError({
-                        test_attribute: 'boom!'
-                    })
-                )
+                        test_attribute: 'boom!',
+                    }),
+                ),
             };
 
             const domain = formDomain({
@@ -530,21 +530,21 @@ describe('formDomain', () => {
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
             });
             const mockContainer = {...formLayoutElement};
             const field1 = {...formField, id: 'field1'};
 
             domain.getFormProperties = global.__mockPromise({
                 ...mockForm,
-                elements: [{elements: [field1, mockContainer]}]
+                elements: [{elements: [field1, mockContainer]}],
             });
 
             const res = await domain.getRecordForm({
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -556,16 +556,16 @@ describe('formDomain', () => {
                 sidePanel: mockForm.sidePanel,
                 elements: [
                     {...mockContainer, valueError: null, values: null},
-                    {...field1, values: null, valueError: 'boom!'}
-                ]
+                    {...field1, values: null, valueError: 'boom!'},
+                ],
             });
         });
 
         test('Return a generated record form when not defined should have reproductible element ids', async () => {
             const mockAttrDomainWithAttrs: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([
-                    {id: 'attr1', label: 'Attribute 1', type: AttributeTypes.SIMPLE}
-                ])
+                    {id: 'attr1', label: 'Attribute 1', type: AttributeTypes.SIMPLE},
+                ]),
             };
             const domain = formDomain({
                 ...depsBase,
@@ -573,7 +573,7 @@ describe('formDomain', () => {
                 'core.domain.attribute': mockAttrDomainWithAttrs as IAttributeDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
-                translator: {t: jest.fn().mockReturnValue('Missing form warning')} as any
+                translator: {t: jest.fn().mockReturnValue('Missing form warning')} as any,
             });
 
             const mockFormWithMissingForm: IFormElementWithValues = {
@@ -583,10 +583,10 @@ describe('formDomain', () => {
                 uiElementType: 'text_block',
                 type: FormElementTypes.LAYOUT,
                 settings: {
-                    content: 'Missing form warning'
+                    content: 'Missing form warning',
                 },
                 valueError: null,
-                values: null
+                values: null,
             };
             const mockFormWithMissingFormDivider: IFormElementWithValues = {
                 id: 'generated-form-missing_form_warning_divider',
@@ -596,7 +596,7 @@ describe('formDomain', () => {
                 type: FormElementTypes.LAYOUT,
                 settings: null,
                 valueError: null,
-                values: null
+                values: null,
             };
             const mockFormAttr1: IFormElementWithValues = {
                 id: 'generated-form-attr1',
@@ -606,7 +606,7 @@ describe('formDomain', () => {
                 type: FormElementTypes.FIELD,
                 settings: {
                     label: 'Attribute 1',
-                    attribute: 'attr1'
+                    attribute: 'attr1',
                 },
                 valueError: null,
                 values: [
@@ -618,9 +618,9 @@ describe('formDomain', () => {
                         modified_at: 1234567890,
                         modified_by: '1',
                         payload: 'some value',
-                        raw_payload: 'some raw value'
-                    }
-                ]
+                        raw_payload: 'some raw value',
+                    },
+                ],
             };
 
             domain.getFormProperties = jest.fn().mockRejectedValue(new ValidationError({id: 'UNKNOWN_FORM'}));
@@ -629,7 +629,7 @@ describe('formDomain', () => {
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -638,9 +638,9 @@ describe('formDomain', () => {
                 recordId: '123456',
                 sidePanel: {
                     enable: true,
-                    isOpenByDefault: true
+                    isOpenByDefault: true,
                 },
-                elements: [mockFormWithMissingForm, mockFormWithMissingFormDivider, mockFormAttr1]
+                elements: [mockFormWithMissingForm, mockFormWithMissingFormDivider, mockFormAttr1],
             });
         });
 
@@ -653,11 +653,11 @@ describe('formDomain', () => {
                         default:
                             return mockStandardValue;
                     }
-                })
+                }),
             };
 
             const mockTreeDomain: Mockify<ITreeDomain> = {
-                getElementAncestors: global.__mockPromise([{id: '987654', record: {id: '123456', library: 'dep_lib'}}])
+                getElementAncestors: global.__mockPromise([{id: '987654', record: {id: '123456', library: 'dep_lib'}}]),
             };
 
             const domain = formDomain({
@@ -665,36 +665,36 @@ describe('formDomain', () => {
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.permission.recordAttribute':
-                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
             });
 
             const mockDepField1 = {
                 ...formField,
                 id: 'field1',
                 containerId: FORM_ROOT_CONTAINER_ID,
-                settings: {...formField.settings, label: 'Dep field 1'}
+                settings: {...formField.settings, label: 'Dep field 1'},
             };
             const mockDepField2 = {
                 ...formField,
                 id: 'field2',
                 containerId: FORM_ROOT_CONTAINER_ID,
-                settings: {...formField.settings, label: 'Dep field 2'}
+                settings: {...formField.settings, label: 'Dep field 2'},
             };
             const mockFormWithDeps: IForm = {
                 ...mockForm,
                 elements: [
                     {
-                        elements: [{...formField, containerId: FORM_ROOT_CONTAINER_ID}]
+                        elements: [{...formField, containerId: FORM_ROOT_CONTAINER_ID}],
                     },
                     {
                         dependencyValue: {attribute: 'dep_attribute', value: '987654'},
-                        elements: [mockDepField1]
+                        elements: [mockDepField1],
                     },
                     {
                         dependencyValue: {attribute: 'dep_attribute', value: '987655'},
-                        elements: [mockDepField2]
-                    }
-                ]
+                        elements: [mockDepField2],
+                    },
+                ],
             };
 
             domain.getFormProperties = global.__mockPromise(mockFormWithDeps);
@@ -703,86 +703,7 @@ describe('formDomain', () => {
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
-            });
-
-            expect(res).toEqual({
-                id: 'edition',
-                library: 'my_lib',
-                recordId: '123456',
-                system: false,
-                dependencyAttributes: [],
-                sidePanel: mockForm.sidePanel,
-                elements: [
-                    {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
-                    {...mockDepField1, valueError: null, values: [mockStandardValue]}
-                ]
-            });
-        });
-
-        test('Retrieve fields by dependency value, applying inheritance', async () => {
-            const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
-                    switch (attributeId) {
-                        case 'dep_attribute':
-                            return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
-                        default:
-                            return mockStandardValue;
-                    }
-                })
-            };
-
-            const mockTreeDomain: Mockify<ITreeDomain> = {
-                getElementAncestors: global.__mockPromise([
-                    {id: '111111', record: {id: '123456', library: 'dep_lib'}},
-                    {id: '987654', record: {id: '123457', library: 'dep_lib'}}
-                ])
-            };
-
-            const domain = formDomain({
-                ...depsBase,
-                'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
-                'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.domain.permission.recordAttribute':
-                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
-            });
-
-            const mockDepField1 = {
-                ...formField,
-                id: 'field1',
-                containerId: FORM_ROOT_CONTAINER_ID,
-                settings: {...formField.settings, label: 'Dep field 1'}
-            };
-            const mockDepField2 = {
-                ...formField,
-                id: 'field2',
-                containerId: FORM_ROOT_CONTAINER_ID,
-                settings: {...formField.settings, label: 'Dep field 2'}
-            };
-            const mockFormWithDeps: IForm = {
-                ...mockForm,
-                elements: [
-                    {
-                        elements: [{...formField, containerId: FORM_ROOT_CONTAINER_ID}]
-                    },
-                    {
-                        dependencyValue: {attribute: 'dep_attribute', value: '987654'},
-                        elements: [mockDepField1]
-                    },
-                    {
-                        dependencyValue: {attribute: 'dep_attribute', value: '111111'},
-                        elements: [mockDepField2]
-                    }
-                ]
-            };
-
-            domain.getFormProperties = global.__mockPromise(mockFormWithDeps);
-
-            const res = await domain.getRecordForm({
-                libraryId: 'my_lib',
-                recordId: '123456',
-                formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -795,8 +716,87 @@ describe('formDomain', () => {
                 elements: [
                     {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
                     {...mockDepField1, valueError: null, values: [mockStandardValue]},
-                    {...mockDepField2, valueError: null, values: [mockStandardValue]}
-                ]
+                ],
+            });
+        });
+
+        test('Retrieve fields by dependency value, applying inheritance', async () => {
+            const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                    switch (attributeId) {
+                        case 'dep_attribute':
+                            return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
+                        default:
+                            return mockStandardValue;
+                    }
+                }),
+            };
+
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getElementAncestors: global.__mockPromise([
+                    {id: '111111', record: {id: '123456', library: 'dep_lib'}},
+                    {id: '987654', record: {id: '123457', library: 'dep_lib'}},
+                ]),
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+            });
+
+            const mockDepField1 = {
+                ...formField,
+                id: 'field1',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                settings: {...formField.settings, label: 'Dep field 1'},
+            };
+            const mockDepField2 = {
+                ...formField,
+                id: 'field2',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                settings: {...formField.settings, label: 'Dep field 2'},
+            };
+            const mockFormWithDeps: IForm = {
+                ...mockForm,
+                elements: [
+                    {
+                        elements: [{...formField, containerId: FORM_ROOT_CONTAINER_ID}],
+                    },
+                    {
+                        dependencyValue: {attribute: 'dep_attribute', value: '987654'},
+                        elements: [mockDepField1],
+                    },
+                    {
+                        dependencyValue: {attribute: 'dep_attribute', value: '111111'},
+                        elements: [mockDepField2],
+                    },
+                ],
+            };
+
+            domain.getFormProperties = global.__mockPromise(mockFormWithDeps);
+
+            const res = await domain.getRecordForm({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx,
+            });
+
+            expect(res).toEqual({
+                id: 'edition',
+                library: 'my_lib',
+                recordId: '123456',
+                system: false,
+                dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
+                elements: [
+                    {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
+                    {...mockDepField1, valueError: null, values: [mockStandardValue]},
+                    {...mockDepField2, valueError: null, values: [mockStandardValue]},
+                ],
             });
         });
 
@@ -809,7 +809,7 @@ describe('formDomain', () => {
                         default:
                             return mockStandardValue;
                     }
-                })
+                }),
             };
 
             const mockRecordAttributePermissionDomainForbidden: Mockify<IRecordAttributePermissionDomain> = {
@@ -820,14 +820,14 @@ describe('formDomain', () => {
                         default:
                             return false;
                     }
-                })
+                }),
             };
 
             const domain = formDomain({
                 ...depsBase,
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.permission.recordAttribute':
-                    mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
+                    mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain,
             });
 
             const filledContainer = {...formLayoutElement, id: 'container'};
@@ -835,25 +835,25 @@ describe('formDomain', () => {
             const emptyContainerChild = {
                 ...formLayoutElement,
                 id: 'empty_container_child',
-                containerId: 'empty_container_parent'
+                containerId: 'empty_container_parent',
             };
             const mockField1 = {
                 ...formField,
                 id: 'field1',
                 containerId: 'container',
-                settings: {attribute: 'allowed_attribute'}
+                settings: {attribute: 'allowed_attribute'},
             };
             const mockField2 = {
                 ...formField,
                 id: 'field2',
                 containerId: 'empty_container_child',
-                settings: {attribute: 'forbidden_attribute'}
+                settings: {attribute: 'forbidden_attribute'},
             };
             const mockDivider = {
                 ...formLayoutElement,
                 id: 'divider',
                 uiElementType: FormUIElementTypes.DIVIDER,
-                containerId: emptyContainerParent.id
+                containerId: emptyContainerParent.id,
             };
 
             const mockFormForPermissions: IForm = {
@@ -866,10 +866,10 @@ describe('formDomain', () => {
                             emptyContainerChild,
                             mockField1,
                             mockField2,
-                            mockDivider
-                        ]
-                    }
-                ]
+                            mockDivider,
+                        ],
+                    },
+                ],
             };
             domain.getFormProperties = global.__mockPromise(mockFormForPermissions);
 
@@ -877,7 +877,7 @@ describe('formDomain', () => {
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -889,8 +889,8 @@ describe('formDomain', () => {
                 sidePanel: mockForm.sidePanel,
                 elements: [
                     {...filledContainer, valueError: null, values: null},
-                    {...mockField1, valueError: null, values: [mockStandardValue]}
-                ]
+                    {...mockField1, valueError: null, values: [mockStandardValue]},
+                ],
             });
         });
 
@@ -903,7 +903,7 @@ describe('formDomain', () => {
                         default:
                             return mockStandardValue;
                     }
-                })
+                }),
             };
 
             const mockRecordAttributePermissionDomainForbidden: Mockify<IRecordAttributePermissionDomain> = {
@@ -914,14 +914,14 @@ describe('formDomain', () => {
                         default:
                             return false;
                     }
-                })
+                }),
             };
 
             const domain = formDomain({
                 ...depsBase,
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.permission.recordAttribute':
-                    mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
+                    mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain,
             });
 
             const mockTabs1 = {
@@ -932,18 +932,18 @@ describe('formDomain', () => {
                     tabs: [
                         {
                             label: {en: 'Tab'},
-                            id: 'first-tab'
+                            id: 'first-tab',
                         },
                         {
                             label: {en: 'Tab'},
-                            id: 'second-tab'
+                            id: 'second-tab',
                         },
                         {
                             label: {en: 'Tab'},
-                            id: 'third-tab'
-                        }
-                    ]
-                }
+                            id: 'third-tab',
+                        },
+                    ],
+                },
             };
             const mockTabs2 = {
                 ...formLayoutElement,
@@ -953,49 +953,49 @@ describe('formDomain', () => {
                     tabs: [
                         {
                             label: {en: 'Tab'},
-                            id: 'first-tab'
+                            id: 'first-tab',
                         },
                         {
                             label: {en: 'Tab'},
-                            id: 'second-tab'
-                        }
-                    ]
-                }
+                            id: 'second-tab',
+                        },
+                    ],
+                },
             };
             const mockContainer = {
                 ...formLayoutElement,
                 id: 'container-in-tab',
-                containerId: 'tabs1/second-tab'
+                containerId: 'tabs1/second-tab',
             };
 
             const mockField1 = {
                 ...formField,
                 id: 'field1',
                 containerId: 'tabs1/first-tab',
-                settings: {attribute: 'allowed_attribute'}
+                settings: {attribute: 'allowed_attribute'},
             };
 
             const mockField2 = {
                 ...formField,
                 id: 'field2',
                 containerId: 'container-in-tab',
-                settings: {attribute: 'allowed_attribute'}
+                settings: {attribute: 'allowed_attribute'},
             };
 
             const mockField3 = {
                 ...formField,
                 id: 'field3',
                 containerId: 'tabs2/first-tab',
-                settings: {attribute: 'forbidden_attribute'}
+                settings: {attribute: 'forbidden_attribute'},
             };
 
             const mockFormWithTabs: IForm = {
                 ...mockForm,
                 elements: [
                     {
-                        elements: [mockTabs1, mockContainer, mockField1, mockField2, mockTabs2, mockField3]
-                    }
-                ]
+                        elements: [mockTabs1, mockContainer, mockField1, mockField2, mockTabs2, mockField3],
+                    },
+                ],
             };
             domain.getFormProperties = global.__mockPromise(mockFormWithTabs);
 
@@ -1003,7 +1003,7 @@ describe('formDomain', () => {
                 libraryId: 'my_lib',
                 recordId: '123456',
                 formId: 'edition',
-                ctx
+                ctx,
             });
 
             expect(res).toEqual({
@@ -1020,21 +1020,21 @@ describe('formDomain', () => {
                             tabs: [
                                 {
                                     label: {en: 'Tab'},
-                                    id: 'first-tab'
+                                    id: 'first-tab',
                                 },
                                 {
                                     label: {en: 'Tab'},
-                                    id: 'second-tab'
-                                }
-                            ]
+                                    id: 'second-tab',
+                                },
+                            ],
                         },
                         valueError: null,
-                        values: null
+                        values: null,
                     },
                     {...mockField1, valueError: null, values: [mockStandardValue]},
                     {...mockContainer, valueError: null, values: null},
-                    {...mockField2, valueError: null, values: [mockStandardValue]}
-                ]
+                    {...mockField2, valueError: null, values: [mockStandardValue]},
+                ],
             });
         });
     });

@@ -12,11 +12,11 @@ import UploadFiles from './UploadFiles';
 import {App} from 'antd';
 
 jest.mock('uuid', () => ({
-    v4: jest.fn(() => 'uid')
+    v4: jest.fn(() => 'uid'),
 }));
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: () => <div>SelectTreeNode</div>
+    SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
 describe('UploadFiles', () => {
@@ -25,8 +25,8 @@ describe('UploadFiles', () => {
             request: {
                 query: getTreeLibraries,
                 variables: {
-                    library: 'files'
-                }
+                    library: 'files',
+                },
             },
             result: {
                 data: {
@@ -44,25 +44,25 @@ describe('UploadFiles', () => {
                                             id: 'files_directories',
                                             label: 'files_directories',
                                             system: true,
-                                            behavior: LibraryBehavior.directories
+                                            behavior: LibraryBehavior.directories,
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: true,
-                                            allowedChildren: ['files', 'files_directories']
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            }
+                                            allowedChildren: ['files', 'files_directories'],
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: UploadUpdateDocument,
-                variables: {filters: {userId: '123'}}
+                variables: {filters: {userId: '123'}},
             },
             result: {
                 data: {
@@ -76,13 +76,13 @@ describe('UploadFiles', () => {
                             remaining: 0,
                             percentage: 0,
                             eta: 0,
-                            delta: 0
+                            delta: 0,
                         },
-                        uid: '123456'
-                    }
-                }
-            }
-        }
+                        uid: '123456',
+                    },
+                },
+            },
+        },
     ];
 
     test('Should display upload modal on first step', async () => {
@@ -95,7 +95,7 @@ describe('UploadFiles', () => {
 
     test('Should be on step 2 with default selected key', async () => {
         render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />, {
-            mocks: commonMocks
+            mocks: commonMocks,
         });
 
         expect(screen.getByTestId('upload-modal')).toBeInTheDocument();
@@ -118,14 +118,14 @@ describe('UploadFiles', () => {
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
-                        filename: 'chucknorris.png'
-                    }
+                        filename: 'chucknorris.png',
+                    },
                 },
                 result: {
                     data: {
-                        doesFileExistAsChild: true
-                    }
-                }
+                        doesFileExistAsChild: true,
+                    },
+                },
             },
             {
                 request: {
@@ -138,28 +138,28 @@ describe('UploadFiles', () => {
                                 data: mockFile,
                                 uid: 'uid',
                                 size: 12,
-                                replace: false
-                            }
-                        ]
-                    }
+                                replace: false,
+                            },
+                        ],
+                    },
                 },
                 result: {
                     data: {
                         upload: {
                             uid: 'uid',
-                            record: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord}
-                        }
-                    }
-                }
-            }
+                            record: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord},
+                        },
+                    },
+                },
+            },
         ];
 
         render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />, {mocks});
 
         fireEvent.drop(screen.getByTestId('dragger'), {
             dataTransfer: {
-                files: [mockFile]
-            }
+                files: [mockFile],
+            },
         });
 
         await userEvent.click(screen.getByTestId('upload-btn'));

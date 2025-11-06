@@ -31,7 +31,7 @@ type IAttributeRepoByType<AttributeType extends AttributeTypes | unknown> = Attr
 
 export interface IAttributeTypesRepo {
     getTypeRepo<AttributeType extends AttributeTypes | unknown>(
-        attribute: IAttribute
+        attribute: IAttribute,
     ): IAttributeRepoByType<AttributeType>;
 }
 
@@ -42,7 +42,7 @@ export interface IAttributeWithRevLink extends IAttribute {
 export type GetConditionPartParentFunc = (
     condition: AttributeCondition,
     value: string | number | boolean,
-    attribute: IAttribute
+    attribute: IAttribute,
 ) => GetConditionPartFunc;
 
 export type IGetValuesOptions = Pick<IValuesOptions, 'forceGetAllValues' | 'version'>;
@@ -53,14 +53,14 @@ export type GetConditionPartFunc = (valueIdentifier: string | AqlLiteral) => Gen
  */
 export interface IAttributeTypeRepo<
     AttributeType extends AttributeTypes = AttributeTypes,
-    Value = IValueByAttributeType[AttributeType]
+    Value = IValueByAttributeType[AttributeType],
 > {
     createValue({
         library,
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -77,7 +77,7 @@ export interface IAttributeTypeRepo<
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -94,7 +94,7 @@ export interface IAttributeTypeRepo<
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -111,7 +111,7 @@ export interface IAttributeTypeRepo<
         excludedRecordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         excludedRecordId?: string;
@@ -131,7 +131,7 @@ export interface IAttributeTypeRepo<
         attribute,
         forceGetAllValues,
         options,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -151,7 +151,7 @@ export interface IAttributeTypeRepo<
         attribute,
         recordIds,
         options,
-        ctx
+        ctx,
     }: {
         library: string;
         attribute: IAttributeWithRevLink;
@@ -167,7 +167,7 @@ export interface IAttributeTypeRepo<
      */
     getReverseValues?({
         advancedLinkAttr,
-        ctx
+        ctx,
     }: {
         advancedLinkAttr: IAttributeWithRevLink;
         value: string;
@@ -182,7 +182,7 @@ export interface IAttributeTypeRepo<
      */
     getReverseValuesBatch?({
         advancedLinkAttr,
-        ctx
+        ctx,
     }: {
         advancedLinkAttr: IAttributeWithRevLink;
         values: string[];
@@ -200,7 +200,7 @@ export interface IAttributeTypeRepo<
         recordId,
         attribute,
         valueId,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -216,7 +216,7 @@ export interface IAttributeTypeRepo<
     filterValueQueryPart(
         attributes: IAttributeWithRepo[],
         filter: IRecordFilterOption,
-        parentIdentifier?: string
+        parentIdentifier?: string,
     ): GeneratedAqlQuery;
 
     /**
@@ -240,7 +240,7 @@ export const isValuesCountCondition = (condition: AttributeCondition): boolean =
     [
         AttributeCondition.VALUES_COUNT_EQUAL,
         AttributeCondition.VALUES_COUNT_GREATER_THAN,
-        AttributeCondition.VALUES_COUNT_LOWER_THAN
+        AttributeCondition.VALUES_COUNT_LOWER_THAN,
     ].includes(condition as AttributeCondition);
 
 interface IDeps {
@@ -256,11 +256,11 @@ export default function ({
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
     'core.infra.attributeTypes.attributeAdvanced': attributeAdvancedRepo = null,
     'core.infra.attributeTypes.attributeAdvancedLink': attributeAdvancedLinkRepo = null,
-    'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null
+    'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null,
 }: IDeps = {}): IAttributeTypesRepo {
     return {
         getTypeRepo<AttributeType extends AttributeTypes | unknown>(
-            attribute: IAttribute
+            attribute: IAttribute,
         ): IAttributeRepoByType<AttributeType> {
             let attrTypeRepo: IAttributeTypeRepo;
             switch (attribute.type) {
@@ -282,6 +282,6 @@ export default function ({
             }
 
             return attrTypeRepo as IAttributeRepoByType<AttributeType>;
-        }
+        },
     };
 }

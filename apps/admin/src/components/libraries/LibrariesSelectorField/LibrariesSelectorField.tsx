@@ -30,7 +30,7 @@ const LibrariesSelectorField = ({loading, libraries, ...fieldProps}: ILibrariesS
 
 LibrariesSelectorField.defaultProps = {
     loading: false,
-    libraries: []
+    libraries: [],
 };
 
 export default LibrariesSelectorField;

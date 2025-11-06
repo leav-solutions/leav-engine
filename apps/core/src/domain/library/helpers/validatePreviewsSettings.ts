@@ -38,7 +38,7 @@ export default async (libData: ILibrary, ctx: IQueryInfos): Promise<ErrorFieldDe
     if (duplicates.length) {
         errors.previewsSettings = {
             msg: Errors.PREVIEWS_SETTINGS_DUPLICATE_NAMES,
-            vars: {duplicates: duplicates.join(', ')}
+            vars: {duplicates: duplicates.join(', ')},
         };
     }
 

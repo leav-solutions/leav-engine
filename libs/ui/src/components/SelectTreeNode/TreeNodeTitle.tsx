@@ -36,7 +36,7 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     node,
     onSelect,
     selectedNodes,
-    showSelectChildrenButton
+    showSelectChildrenButton,
 }) => {
     const {t} = useSharedTranslation();
 

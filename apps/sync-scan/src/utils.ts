@@ -54,8 +54,8 @@ export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas
             filesByInode: {},
             filesByName: {},
             filesByPath: {},
-            filesByLevel: {}
-        }
+            filesByLevel: {},
+        },
     );
 export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas =>
     dbScan.reduce(
@@ -90,6 +90,6 @@ export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas =>
             filesByInode: {},
             filesByName: {},
             filesByPath: {},
-            filesByHash: {}
-        }
+            filesByHash: {},
+        },
     );

@@ -30,9 +30,9 @@ export default async function (libraryId: string | null, recordId: string | null
                 variables: {
                     key: historyKey,
                     value: history,
-                    global: false
-                }
+                    global: false,
+                },
             });
-        }
+        },
     });
 }

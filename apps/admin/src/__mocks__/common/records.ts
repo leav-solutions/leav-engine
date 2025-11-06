@@ -9,8 +9,8 @@ export const mockRecord: RecordIdentity_whoAmI = {
         id: 'library-id',
         label: {
             fr: 'Librairie',
-            en: 'Library'
-        }
+            en: 'Library',
+        },
     },
     label: 'My record',
     color: '#123456',
@@ -22,6 +22,6 @@ export const mockRecord: RecordIdentity_whoAmI = {
         huge: 'path/to/preview.png',
         pdf: 'path/to/file.pdf',
         file: null,
-        original: 'path/to/file.png'
-    }
+        original: 'path/to/file.png',
+    },
 };

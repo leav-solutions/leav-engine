@@ -21,7 +21,7 @@ describe('AttributesList', () => {
             system: false,
             label: {fr: 'Test 1', en: null},
             linked_tree: null,
-            permissions_conf: null
+            permissions_conf: null,
         },
         {
             ...mockAttrSimple,
@@ -31,7 +31,7 @@ describe('AttributesList', () => {
             system: false,
             label: {fr: 'Test 2', en: null},
             linked_tree: null,
-            permissions_conf: null
+            permissions_conf: null,
         },
         {
             ...mockAttrSimple,
@@ -41,8 +41,8 @@ describe('AttributesList', () => {
             system: false,
             label: {fr: 'Test 3', en: null},
             linked_tree: null,
-            permissions_conf: null
-        }
+            permissions_conf: null,
+        },
     ];
 
     const onRowClick = jest.fn();
@@ -57,7 +57,7 @@ describe('AttributesList', () => {
                     onFiltersUpdate={onFiltersUpdate}
                     filters={['test', 'test2']}
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         const attrListComp = comp.find('AttributesList').shallow();
@@ -75,7 +75,7 @@ describe('AttributesList', () => {
                     onFiltersUpdate={onFiltersUpdate}
                     withFilters={false}
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
         const attrListComp = comp.find('AttributesList').shallow();
         expect(attrListComp.find('TableRow.filters').length).toEqual(0);
@@ -92,7 +92,7 @@ describe('AttributesList', () => {
                     withFilters={false}
                     actions={<div key="attr_lib_test" className="children_to_render" />}
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
         const attrListComp = comp.find('AttributesList').shallow();
         expect(attrListComp.find('TableCell.actions .children_to_render').length).toEqual(3);
@@ -108,7 +108,7 @@ describe('AttributesList', () => {
                     onFiltersUpdate={onFiltersUpdate}
                     withFilters={false}
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
         const attrListComp = comp.find('AttributesList').shallow();
         expect(attrListComp.find('TableCell.actions').children().length).toEqual(0);
@@ -124,7 +124,7 @@ describe('AttributesList', () => {
                     onRowClick={onRowClick}
                     onFiltersUpdate={changeFilter}
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         comp.find('.filters input[name="label"]').simulate('change', {target: {value: 'MyLabel'}});

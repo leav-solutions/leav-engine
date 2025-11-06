@@ -58,14 +58,14 @@ const Tasks = (): JSX.Element => {
             for (const task of tasksData.tasks.list) {
                 dispatch(addTask(task));
             }
-        }
+        },
     });
 
     useSubscription(subTaskUpdates, {
         onSubscriptionData: subData => {
             const task = {...subData.subscriptionData.data.task};
             dispatch(addTask(task));
-        }
+        },
     });
 
     const _isInProgressTask = (task: GET_TASKS_tasks_list) =>
@@ -81,13 +81,13 @@ const Tasks = (): JSX.Element => {
             setInProgressTasks(
                 Object.values(tasks)
                     .filter(_isInProgressTask)
-                    .sort((a, b) => a.startAt - b.startAt)
+                    .sort((a, b) => a.startAt - b.startAt),
             );
 
             setCompletedTasks(
                 Object.values(tasks)
                     .filter(_isCompletedTask)
-                    .sort((a, b) => b.completedAt - a.completedAt)
+                    .sort((a, b) => b.completedAt - a.completedAt),
             );
         }
     }, [tasks]);
@@ -126,7 +126,7 @@ const Tasks = (): JSX.Element => {
                             'startedAt',
                             'progress.percent',
                             'progress.description',
-                            'duration'
+                            'duration',
                         ]}
                         striped
                         actionsBtn={task =>
@@ -138,7 +138,7 @@ const Tasks = (): JSX.Element => {
                         tasks={inProgressTasks}
                     />
                 </Tab.Pane>
-            )
+            ),
         },
         {
             menuItem: t('tasks.completed'),
@@ -157,7 +157,7 @@ const Tasks = (): JSX.Element => {
                             'progress.percent',
                             'progress.description',
                             'duration',
-                            'archive'
+                            'archive',
                         ]}
                         actionsBtn={task => [
                             ...(!!task.link
@@ -168,10 +168,10 @@ const Tasks = (): JSX.Element => {
                                           key="download-file"
                                           icon="download"
                                           href={task.link.url}
-                                      />
+                                      />,
                                   ]
                                 : []),
-                            <DeleteTask onDelete={_onDelete} task={task} />
+                            <DeleteTask onDelete={_onDelete} task={task} />,
                         ]}
                         loading={loading || !completedTasks}
                         tasks={completedTasks}
@@ -187,12 +187,12 @@ const Tasks = (): JSX.Element => {
                                 label={t('tasks.delete_archives')}
                                 key="btn-delArchives"
                                 onDeleteAll={() => _onDeleteAll(true)}
-                            />
+                            />,
                         ]}
                     />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ];
 
     return (

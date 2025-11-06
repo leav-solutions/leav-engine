@@ -14,14 +14,14 @@ export const useAttributeInformations = (attribute: RecordFormAttributeFragment)
     if (attribute.format) {
         attributeInformations.push({
             title: t('record_summary.attribute_format'),
-            value: t(`attributes.format_${attribute.format}`)
+            value: t(`attributes.format_${attribute.format}`),
         });
     }
 
     if (attribute.description) {
         attributeInformations.push({
             title: t('record_summary.descriptive'),
-            value: localizedTranslation(attribute.description, lang)
+            value: localizedTranslation(attribute.description, lang),
         });
     }
 

@@ -15,7 +15,7 @@ interface IDeps {
 }
 
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper
+    'core.domain.permission.helpers.globalPermission': globalPermHelper,
 }: IDeps): ITreeLibraryPermissionDomain {
     const getTreeLibraryPermission = async ({
         action,
@@ -23,16 +23,16 @@ export default function ({
         libraryId,
         userId,
         getDefaultPermission,
-        ctx
+        ctx,
     }: IGetTreeLibraryPermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.TREE_LIBRARY,
                 action,
                 applyTo: `${treeId}/${libraryId}`,
-                getDefaultPermission
+                getDefaultPermission,
             },
-            ctx
+            ctx,
         );
 
     const getInheritedTreeLibraryPermission = async ({
@@ -41,7 +41,7 @@ export default function ({
         libraryId,
         userGroupId,
         getDefaultPermission,
-        ctx
+        ctx,
     }: IGetInheritedTreeLibraryPermissionParams): Promise<boolean> =>
         globalPermHelper.getInheritedGlobalPermission(
             {
@@ -49,13 +49,13 @@ export default function ({
                 action,
                 applyTo: `${treeId}/${libraryId}`,
                 userGroupNodeId: userGroupId,
-                getDefaultPermission
+                getDefaultPermission,
             },
-            ctx
+            ctx,
         );
 
     return {
         getTreeLibraryPermission,
-        getInheritedTreeLibraryPermission
+        getInheritedTreeLibraryPermission,
     };
 }

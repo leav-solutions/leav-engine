@@ -19,7 +19,7 @@ export enum ImportReducerActionTypes {
     SET_FILE = 'SET_FILE',
     SET_CURRENT_STEP = 'SET_CURRENT_STEP',
     SET_OK_BTN = 'SET_OK_BTN',
-    SET_IMPORT_ERROR = 'SET_IMPORT_ERROR'
+    SET_IMPORT_ERROR = 'SET_IMPORT_ERROR',
 }
 
 export const initialState: IImportReducerState = {
@@ -29,7 +29,7 @@ export const initialState: IImportReducerState = {
     currentStep: ImportSteps.SELECT_FILE,
     okBtn: false,
     importError: null,
-    settingsError: {}
+    settingsError: {},
 };
 
 export type ImportReducerAction =
@@ -62,23 +62,23 @@ const _getSheetErrors = (sheet: ISheet): SheetSettingsError[] => {
     const checks: Array<{error: SheetSettingsError; condition: boolean}> = [
         {
             error: SheetSettingsError.TYPE,
-            condition: !sheet.type
+            condition: !sheet.type,
         },
         {
             error: SheetSettingsError.MODE,
-            condition: !sheet.mode
+            condition: !sheet.mode,
         },
         {
             error: SheetSettingsError.LIBRARY,
-            condition: !sheet.library
+            condition: !sheet.library,
         },
         {
             error: SheetSettingsError.MAPPING,
-            condition: sheet.type && !(sheet?.mapping ?? []).filter(mappingCol => !!mappingCol).length
+            condition: sheet.type && !(sheet?.mapping ?? []).filter(mappingCol => !!mappingCol).length,
         },
         {
             error: SheetSettingsError.LINK_ATTRIBUTE,
-            condition: sheet.type === ImportType.LINK && !sheet.linkAttribute
+            condition: sheet.type === ImportType.LINK && !sheet.linkAttribute,
         },
         {
             error: SheetSettingsError.KEY,
@@ -86,7 +86,7 @@ const _getSheetErrors = (sheet: ISheet): SheetSettingsError[] => {
                 (sheet.mode === ImportMode.update || sheet.type === ImportType.LINK) &&
                 (typeof sheet.keyColumnIndex === 'undefined' ||
                     sheet.keyColumnIndex === null ||
-                    !sheet.mapping[sheet.keyColumnIndex])
+                    !sheet.mapping[sheet.keyColumnIndex]),
         },
         {
             error: SheetSettingsError.KEY_TO,
@@ -94,8 +94,8 @@ const _getSheetErrors = (sheet: ISheet): SheetSettingsError[] => {
                 sheet.type === ImportType.LINK &&
                 (typeof sheet.keyToColumnIndex === 'undefined' ||
                     sheet.keyToColumnIndex === null ||
-                    !sheet.mapping[sheet.keyToColumnIndex])
-        }
+                    !sheet.mapping[sheet.keyToColumnIndex]),
+        },
     ];
 
     return checks.reduce((errors: SheetSettingsError[], check): SheetSettingsError[] => {
@@ -125,18 +125,18 @@ const importReducer = (state: IImportReducerState, action: ImportReducerAction):
                 ...state,
                 sheets: action.sheets,
                 settingsError,
-                okBtn: !Object.keys(settingsError).length
+                okBtn: !Object.keys(settingsError).length,
             };
         }
         case ImportReducerActionTypes.SET_FILE: {
             return {
                 ...state,
-                file: action.file
+                file: action.file,
             };
         }
         case ImportReducerActionTypes.SET_CURRENT_STEP: {
             let stateChanges: Partial<IImportReducerState> = {
-                currentStep: action.currentStep
+                currentStep: action.currentStep,
             };
 
             if (action.currentStep === ImportSteps.CONFIG) {
@@ -147,19 +147,19 @@ const importReducer = (state: IImportReducerState, action: ImportReducerAction):
 
             return {
                 ...state,
-                ...stateChanges
+                ...stateChanges,
             };
         }
         case ImportReducerActionTypes.SET_OK_BTN: {
             return {
                 ...state,
-                okBtn: action.okBtn
+                okBtn: action.okBtn,
             };
         }
         case ImportReducerActionTypes.SET_IMPORT_ERROR: {
             return {
                 ...state,
-                importError: action.importError
+                importError: action.importError,
             };
         }
         default:

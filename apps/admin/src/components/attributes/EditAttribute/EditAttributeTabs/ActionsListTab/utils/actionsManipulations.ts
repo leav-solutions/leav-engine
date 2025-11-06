@@ -11,12 +11,12 @@ import {getColorsRangeFrom} from './getColorRange';
 export enum ActionListNames {
     SAVE_VALUE = 'saveValue',
     GET_VALUE = 'getValue',
-    DELETE_VALUE = 'deleteValue'
+    DELETE_VALUE = 'deleteValue',
 }
 
 export const getCurrentList = (
     sourceConfigs: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list,
-    availableActions: IReserveAction[] | null
+    availableActions: IReserveAction[] | null,
 ) => {
     const currentList: any = {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}};
 
@@ -44,7 +44,7 @@ export const getActionFromConfig = (configAct: IActionConfig, availableActions: 
     const action: IAction = {
         ...cloneDeep(availableActions.filter(act => act.id === configAct.id)[0]),
         list_id: id,
-        isSystem: configAct.is_system
+        isSystem: configAct.is_system,
     };
 
     if (configAct.error_message) {
@@ -56,7 +56,7 @@ export const getActionFromConfig = (configAct: IActionConfig, availableActions: 
             if (param) {
                 if (configAct.params && configAct.params.length) {
                     const [configParam] = configAct.params.filter(
-                        (uniqueConfigParam: any) => param.name === uniqueConfigParam.name
+                        (uniqueConfigParam: any) => param.name === uniqueConfigParam.name,
                     );
 
                     if (configParam) {

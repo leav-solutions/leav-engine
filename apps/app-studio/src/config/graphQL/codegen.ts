@@ -20,11 +20,11 @@ const config: CodegenConfig = {
                 namingConvention: {
                     typeNames: 'change-case-all#pascalCase',
                     enumValues: 'keep',
-                    transformUnderscore: true
-                }
-            }
-        }
-    }
+                    transformUnderscore: true,
+                },
+            },
+        },
+    },
 };
 
 export default config;

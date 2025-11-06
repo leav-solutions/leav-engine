@@ -12,7 +12,7 @@ interface IDeps {
 export type GetSearchVariableName = (filter: IRecordFilterOption) => string | undefined;
 
 export default function ({
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps): GetSearchVariableName {
     const {isAttributeFilter, isClassifyingFilter} = filterTypesHelper;
 

@@ -7,7 +7,7 @@ import {SelectTreeNodeModalOld} from './SelectTreeNodeModalOld';
 import ReactModal from 'react-modal';
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: () => <div>SelectTreeNode</div>
+    SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
 describe('SelectTreeNodeModalOld', () => {

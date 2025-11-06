@@ -92,7 +92,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
 
     const disableModeSelection = () => {
         searchDispatch({
-            type: SearchActionTypes.CLEAR_SELECTION
+            type: SearchActionTypes.CLEAR_SELECTION,
         });
     };
 
@@ -110,8 +110,8 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     {
                         id: record.whoAmI.id,
                         library: record.whoAmI.library.id,
-                        label: record.whoAmI.label
-                    }
+                        label: record.whoAmI.label,
+                    },
                 ];
             }
         }
@@ -119,19 +119,19 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
 
         searchDispatch({
             type: SearchActionTypes.SET_SELECTION,
-            selected
+            selected,
         });
     };
 
     const selectAll = () => {
         searchDispatch({
-            type: SearchActionTypes.SELECT_ALL
+            type: SearchActionTypes.SELECT_ALL,
         });
     };
 
     const unselectAll = () => {
         searchDispatch({
-            type: SearchActionTypes.CLEAR_SELECTION
+            type: SearchActionTypes.CLEAR_SELECTION,
         });
     };
 
@@ -146,24 +146,24 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                             {
                                 key: 'select-visible',
                                 onClick: selectVisible,
-                                label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
+                                label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length}),
                             },
                             searchState.mode !== SearchMode.SELECT
                                 ? {
                                       key: 'select-all',
                                       onClick: selectAll,
-                                      label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
+                                      label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount}),
                                   }
                                 : null,
-                            {key: 'unselect-all', onClick: unselectAll, label: t('menu-selection.unselect-all')}
-                        ]
+                            {key: 'unselect-all', onClick: unselectAll, label: t('menu-selection.unselect-all')},
+                        ],
                     }}
                 >
                     <DropdownButton>
                         <SelectionSummary>
                             {t('menu-selection.nb-selected', {
                                 nbSelected: !allSelectActive ? countItemsSelected : searchState.totalCount,
-                                total: searchState.totalCount
+                                total: searchState.totalCount,
                             })}
                             <DownOutlined style={{paddingLeft: 12}} />
                         </SelectionSummary>

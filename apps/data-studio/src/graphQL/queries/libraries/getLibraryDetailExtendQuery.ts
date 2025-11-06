@@ -7,14 +7,14 @@ import {
     type AttributeType,
     type LibraryBehavior,
     type ViewSizes,
-    type ViewTypes
+    type ViewTypes,
 } from '_gqlTypes/globalTypes';
 import {
     type AttributeConditionType,
     type ISystemTranslation,
     type OperatorFilter,
     type OrderSearch,
-    type TreeConditionFilter
+    type TreeConditionFilter,
 } from '../../../_types/types';
 import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';
 

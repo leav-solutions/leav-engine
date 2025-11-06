@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function AttributesSelectionList() {
             return <div>AttributesSelectionList</div>;
-        }
+        },
 );
 
 describe('ChooseTableColumns', () => {
@@ -25,18 +25,18 @@ describe('ChooseTableColumns', () => {
                 format: AttributeFormat.text,
                 label: {
                     fr: 'test',
-                    en: 'test'
+                    en: 'test',
                 },
                 isLink: false,
-                isMultiple: false
-            }
+                isMultiple: false,
+            },
         ];
 
         await act(async () => {
             render(
                 <MockSearchContextProvider state={{attributes: attributesMock}}>
                     <ChooseTableColumns visible onClose={jest.fn()} />
-                </MockSearchContextProvider>
+                </MockSearchContextProvider>,
             );
         });
 

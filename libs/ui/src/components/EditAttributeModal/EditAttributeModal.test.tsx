@@ -18,34 +18,34 @@ describe('EditAttributeModal', () => {
             isAllowed: [
                 {
                     name: gqlTypes.PermissionsActions.admin_edit_attribute,
-                    allowed: true
+                    allowed: true,
                 },
                 {
                     name: gqlTypes.PermissionsActions.admin_delete_attribute,
-                    allowed: true
+                    allowed: true,
                 },
                 {
                     name: gqlTypes.PermissionsActions.admin_create_attribute,
-                    allowed: true
-                }
-            ]
+                    allowed: true,
+                },
+            ],
         },
-        called: true
+        called: true,
     };
     jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
-        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
     );
 
     const mockGetAttributeByIdData = {
         attributes: {
-            list: [{...mockAttributeWithDetails}]
-        }
+            list: [{...mockAttributeWithDetails}],
+        },
     };
 
     const mockResultGetAttributeById: Mockify<typeof gqlTypes.useGetAttributeByIdQuery> = {
         loading: false,
         data: mockGetAttributeByIdData,
-        called: true
+        called: true,
     };
 
     describe('Create attribute', () => {
@@ -54,25 +54,25 @@ describe('EditAttributeModal', () => {
             const mockCheckAttributeExistenceLazyQuery = jest.fn().mockReturnValue({
                 data: {
                     attributes: {
-                        totalCount: 0
-                    }
-                }
+                        totalCount: 0,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useCheckAttributeExistenceLazyQuery').mockImplementation(() => [
                 mockCheckAttributeExistenceLazyQuery,
-                null
+                null,
             ]);
 
             const mockSaveAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveAttribute: {
-                        ...mockAttributeWithDetails
-                    }
-                }
+                        ...mockAttributeWithDetails,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
                 mockSaveAttributeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             const mockOnPostCreate = jest.fn();
@@ -107,11 +107,11 @@ describe('EditAttributeModal', () => {
                             id: 'label_fr',
                             label: {
                                 fr: 'label fr',
-                                en: 'label_en'
+                                en: 'label_en',
                             },
                             description: {
                                 fr: '',
-                                en: ''
+                                en: '',
                             },
                             type: gqlTypes.AttributeType.simple,
                             format: gqlTypes.AttributeFormat.text,
@@ -120,9 +120,9 @@ describe('EditAttributeModal', () => {
                             linked_library: null,
                             linked_tree: null,
                             multiple_values: false,
-                            versions_conf: null
-                        }
-                    }
+                            versions_conf: null,
+                        },
+                    },
                 });
                 expect(mockOnPostCreate).toBeCalled();
             });
@@ -133,13 +133,13 @@ describe('EditAttributeModal', () => {
             const mockCheckAttributeExistenceLazyQuery = jest.fn().mockReturnValue({
                 data: {
                     attributes: {
-                        totalCount: 1
-                    }
-                }
+                        totalCount: 1,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useCheckAttributeExistenceLazyQuery').mockImplementation(() => [
                 mockCheckAttributeExistenceLazyQuery,
-                null
+                null,
             ]);
 
             render(<EditAttributeModal open onPostCreate={jest.fn()} onClose={jest.fn()} />);
@@ -161,7 +161,7 @@ describe('EditAttributeModal', () => {
     describe('Edit existing attribute', () => {
         test('Display edit form for existing attribute', async () => {
             jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
-                () => mockResultGetAttributeById as QueryResult
+                () => mockResultGetAttributeById as QueryResult,
             );
             render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
 
@@ -174,18 +174,18 @@ describe('EditAttributeModal', () => {
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
             jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
-                () => mockResultGetAttributeById as QueryResult
+                () => mockResultGetAttributeById as QueryResult,
             );
             const mockSaveAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveAttribute: {
-                        ...mockAttributeWithDetails
-                    }
-                }
+                        ...mockAttributeWithDetails,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
                 mockSaveAttributeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
@@ -204,10 +204,10 @@ describe('EditAttributeModal', () => {
                             id: mockAttributeWithDetails.id,
                             label: {
                                 ...mockAttributeWithDetails.label,
-                                fr: `${mockAttributeWithDetails.label.fr} modified`
-                            }
-                        }
-                    }
+                                fr: `${mockAttributeWithDetails.label.fr} modified`,
+                            },
+                        },
+                    },
                 });
             });
         });
@@ -215,18 +215,18 @@ describe('EditAttributeModal', () => {
         test('Submit checkbox field on change', async () => {
             const user = userEvent.setup();
             jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
-                () => mockResultGetAttributeById as QueryResult
+                () => mockResultGetAttributeById as QueryResult,
             );
             const mockSaveAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveAttribute: {
-                        ...mockAttributeWithDetails
-                    }
-                }
+                        ...mockAttributeWithDetails,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
                 mockSaveAttributeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
@@ -240,9 +240,9 @@ describe('EditAttributeModal', () => {
                 variables: {
                     attribute: {
                         id: mockAttributeWithDetails.id,
-                        readonly: true
-                    }
-                }
+                        readonly: true,
+                    },
+                },
             });
         });
     });
@@ -251,20 +251,20 @@ describe('EditAttributeModal', () => {
         test('Can delete attribute', async () => {
             const user = userEvent.setup();
             jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
-                () => mockResultGetAttributeById as QueryResult
+                () => mockResultGetAttributeById as QueryResult,
             );
 
             const mockDeleteAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     deleteAttribute: {
                         __typename: 'Attribute',
-                        id: mockAttributeWithDetails.id
-                    }
-                }
+                        id: mockAttributeWithDetails.id,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useDeleteAttributeMutation').mockImplementation(() => [
                 mockDeleteAttributeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
@@ -276,13 +276,13 @@ describe('EditAttributeModal', () => {
                 () => {
                     expect(mockDeleteAttributeMutation).toBeCalledWith({
                         variables: {
-                            id: mockAttributeWithDetails.id
-                        }
+                            id: mockAttributeWithDetails.id,
+                        },
                     });
                 },
                 {
-                    timeout: 10000
-                }
+                    timeout: 10000,
+                },
             );
         });
 
@@ -293,38 +293,38 @@ describe('EditAttributeModal', () => {
                     isAllowed: [
                         {
                             name: gqlTypes.PermissionsActions.admin_edit_attribute,
-                            allowed: true
+                            allowed: true,
                         },
                         {
                             name: gqlTypes.PermissionsActions.admin_delete_attribute,
-                            allowed: false
-                        }
-                    ]
+                            allowed: false,
+                        },
+                    ],
                 },
-                called: true
+                called: true,
             };
             jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
                 () =>
                     mockResultIsAllowedForbidden as QueryResult<
                         gqlTypes.IsAllowedQuery,
                         gqlTypes.IsAllowedQueryVariables
-                    >
+                    >,
             );
 
             jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
-                () => mockResultGetAttributeById as QueryResult
+                () => mockResultGetAttributeById as QueryResult,
             );
             const mockDeleteAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     deleteAttribute: {
                         __typename: 'Attribute',
-                        id: mockAttributeWithDetails.id
-                    }
-                }
+                        id: mockAttributeWithDetails.id,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useDeleteAttributeMutation').mockImplementation(() => [
                 mockDeleteAttributeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);

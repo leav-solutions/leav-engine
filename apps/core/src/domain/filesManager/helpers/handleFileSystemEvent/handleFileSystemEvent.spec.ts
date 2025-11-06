@@ -27,41 +27,41 @@ describe('handleFileSystemEvent', () => {
         getDirectoriesLibraryId: jest.fn().mockReturnValue('directoryLibraryId'),
         getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previewsStatus'),
         getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-        previewsSettingsToVersions: jest.fn().mockReturnValue({})
+        previewsSettingsToVersions: jest.fn().mockReturnValue({}),
     };
 
     const mockLibraryDomain: Mockify<ILibraryDomain> = {
-        getLibraryProperties: global.__mockPromise(mockLibraryFiles)
+        getLibraryProperties: global.__mockPromise(mockLibraryFiles),
     };
 
     const mockRecordDomain: Mockify<IRecordDomain> = {
         activateRecord: jest.fn(),
-        deactivateRecord: jest.fn()
+        deactivateRecord: jest.fn(),
     };
 
     const mockTreeDomain: Mockify<ITreeDomain> = {
         moveElement: jest.fn(),
-        getNodesByRecord: global.__mockPromise(['123465798'])
+        getNodesByRecord: global.__mockPromise(['123465798']),
     };
 
     const mockFilesManagerRepo: Mockify<IFilesManagerRepo> = {
         getRecord: global.__mockPromise(mockFileRecord),
-        getParentRecord: global.__mockPromise(mockFileRecord)
+        getParentRecord: global.__mockPromise(mockFileRecord),
     };
 
     const mockFilesManagerRepoNoRecord: Mockify<IFilesManagerRepo> = {
         getRecord: global.__mockPromise(null),
-        getParentRecord: global.__mockPromise(mockFileRecord)
+        getParentRecord: global.__mockPromise(mockFileRecord),
     };
 
     const mockLogger = {
         warn: jest.fn(),
-        error: jest.fn()
+        error: jest.fn(),
     } satisfies Mockify<ILogger>;
 
     const mockRecordRepo = {
         updateRecord: jest.fn(),
-        createRecord: jest.fn()
+        createRecord: jest.fn(),
     } satisfies Mockify<IRecordRepo>;
 
     const mockConfig: Partial<IConfig> = {
@@ -69,19 +69,19 @@ describe('handleFileSystemEvent', () => {
             queues: {
                 events: '',
                 previewRequest: '',
-                previewResponse: ''
+                previewResponse: '',
             },
             allowFilesList: '',
             ignoreFilesList: '',
             rootKeys: {
-                files1: ''
+                files1: '',
             },
             routingKeys: {
                 events: '',
                 previewRequest: '',
-                previewResponse: ''
-            }
-        }
+                previewResponse: '',
+            },
+        },
     };
 
     beforeEach(() => {
@@ -100,7 +100,7 @@ describe('handleFileSystemEvent', () => {
         'core.infra.filesManager': jest.fn(),
         'core.utils.logger': jest.fn(),
         'core.utils': jest.fn(),
-        config: {}
+        config: {},
     };
 
     describe('Update', () => {
@@ -122,7 +122,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.filesManager': mockFilesManagerRepo as IFilesManagerRepo,
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as any
+                'core.utils.logger': mockLogger as any,
             });
 
             await func(
@@ -134,12 +134,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -161,7 +161,7 @@ describe('handleFileSystemEvent', () => {
                 print_width: 471.66388888888883,
                 resolution: 72,
                 root_key: 'root_key',
-                width: 1337
+                width: 1337,
             });
         });
 
@@ -175,7 +175,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.filesManager': mockFilesManagerRepoNoRecord as IFilesManagerRepo,
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as any
+                'core.utils.logger': mockLogger as any,
             });
 
             await func(
@@ -187,12 +187,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).toBeCalled();
@@ -221,7 +221,7 @@ describe('handleFileSystemEvent', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as any
+                'core.utils.logger': mockLogger as any,
             });
 
             await func(
@@ -233,12 +233,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -257,7 +257,7 @@ describe('handleFileSystemEvent', () => {
                 print_width: 471.66388888888883,
                 resolution: 72,
                 root_key: 'root_key',
-                width: 1337
+                width: 1337,
             });
             expect(mockRequestPreviewGeneration).toBeCalled();
             expect(mockCreateFileTreeElement).toBeCalledTimes(1);
@@ -277,7 +277,7 @@ describe('handleFileSystemEvent', () => {
             jest.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
             jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
             jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() =>
-                Promise.resolve({...mockFileRecord, active: false})
+                Promise.resolve({...mockFileRecord, active: false}),
             );
             jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
@@ -288,7 +288,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -300,12 +300,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -327,7 +327,7 @@ describe('handleFileSystemEvent', () => {
                 print_width: 471.66388888888883,
                 resolution: 72,
                 root_key: 'root_key',
-                width: 1337
+                width: 1337,
             });
             expect(mockRequestPreviewGeneration).toBeCalled();
             expect(mockCreateFileTreeElement).toBeCalledTimes(1);
@@ -356,7 +356,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -368,12 +368,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -398,7 +398,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -410,12 +410,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -437,7 +437,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -449,12 +449,12 @@ describe('handleFileSystemEvent', () => {
                     pathBefore: '/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -479,7 +479,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -491,12 +491,12 @@ describe('handleFileSystemEvent', () => {
                     pathAfter: '/new/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.warn).not.toBeCalled();
@@ -506,7 +506,7 @@ describe('handleFileSystemEvent', () => {
             expect(mockUpdateRecordFile.mock.calls[0][0]).toMatchObject({
                 file_path: '/new/path/to/file',
                 root_key: 'root_key',
-                file_name: '1.jpg'
+                file_name: '1.jpg',
             });
         });
 
@@ -524,7 +524,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -536,12 +536,12 @@ describe('handleFileSystemEvent', () => {
                     pathAfter: '/new/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.error).toBeCalled();
@@ -563,7 +563,7 @@ describe('handleFileSystemEvent', () => {
                 'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': mockLogger as any,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             await func(
@@ -575,12 +575,12 @@ describe('handleFileSystemEvent', () => {
                     pathAfter: '/new/path/to/file/1.jpg',
                     rootKey: 'root_key',
                     time: 123456789,
-                    hash: '98765431298765431'
+                    hash: '98765431298765431',
                 },
                 {
-                    library: 'libraryId'
+                    library: 'libraryId',
                 },
-                mockCtx
+                mockCtx,
             );
 
             expect(mockLogger.error).toBeCalled();

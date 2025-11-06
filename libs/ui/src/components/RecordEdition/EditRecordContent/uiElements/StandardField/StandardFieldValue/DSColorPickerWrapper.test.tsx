@@ -17,7 +17,7 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
@@ -25,15 +25,15 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: pinkColorHex
-    }
+        raw_payload: pinkColorHex,
+    },
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
@@ -41,8 +41,8 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: pinkColorHex
-    }
+        raw_payload: pinkColorHex,
+    },
 };
 
 const notReadonly = false;
@@ -78,11 +78,11 @@ describe('DSColorPickerWrapper', () => {
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             expect(screen.getByText(presentationValue)).toBeVisible();
-        }
+        },
     );
 
     test.each([pinkColorHex, pinkColorRgb, pinkColorHsb])(
@@ -101,11 +101,11 @@ describe('DSColorPickerWrapper', () => {
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             expect(screen.getByText(value)).toBeVisible();
-        }
+        },
     );
 
     test('Should display the value if focused', async () => {
@@ -123,7 +123,7 @@ describe('DSColorPickerWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const colorPicker = screen.getByTestId(mockFormAttribute.id);
@@ -147,7 +147,7 @@ describe('DSColorPickerWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const colorPicker = screen.getByTestId(mockFormAttribute.id);
@@ -172,7 +172,7 @@ describe('DSColorPickerWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const colorPicker = screen.getByTestId(mockFormAttribute.id);
@@ -202,7 +202,7 @@ describe('DSColorPickerWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const colorPicker = screen.getByTestId(mockFormAttribute.id);
@@ -230,7 +230,7 @@ describe('DSColorPickerWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const colorPicker = screen.getByTestId(mockFormAttribute.id);

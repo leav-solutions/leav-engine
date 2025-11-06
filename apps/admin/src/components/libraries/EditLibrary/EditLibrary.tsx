@@ -12,7 +12,7 @@ import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {
     type GET_LIB_BY_ID,
     type GET_LIB_BY_IDVariables,
-    type GET_LIB_BY_ID_libraries_list
+    type GET_LIB_BY_ID_libraries_list,
 } from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
@@ -33,7 +33,7 @@ const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
 
     const {loading, error, data} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
         variables: {id: [libraryId]},
-        skip: isNewLib
+        skip: isNewLib,
     });
     const readOnly = isNewLib
         ? !userData.permissions[PermissionsActions.admin_create_library]

@@ -11,7 +11,7 @@ import {SizesEditor} from './SizesEditor';
 
 enum BackgroundMode {
     TRANSPARENT = 'transparent',
-    COLOR = 'color'
+    COLOR = 'color',
 }
 
 interface IEditPreviewsSettingsModalProps {
@@ -27,7 +27,7 @@ function EditPreviewsSettingsModal({
     readOnly,
     open,
     onClose,
-    onSubmit
+    onSubmit,
 }: IEditPreviewsSettingsModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
@@ -43,8 +43,8 @@ function EditPreviewsSettingsModal({
                   background:
                       !previewsSetting.versions.background || previewsSetting.versions.background === 'false'
                           ? '#00000000'
-                          : previewsSetting.versions.background
-              }
+                          : previewsSetting.versions.background,
+              },
           }
         : {
               label: null,
@@ -53,12 +53,12 @@ function EditPreviewsSettingsModal({
               versions: {
                   background: '#ffffff',
                   density: 300,
-                  sizes: []
-              }
+                  sizes: [],
+              },
           };
 
     const [backgroundMode, setBackgroundMode] = useState<BackgroundMode>(
-        hasBackground ? BackgroundMode.COLOR : BackgroundMode.TRANSPARENT
+        hasBackground ? BackgroundMode.COLOR : BackgroundMode.TRANSPARENT,
     );
 
     const [form] = Form.useForm<LibraryPreviewsSettingsFragment>();
@@ -111,8 +111,8 @@ function EditPreviewsSettingsModal({
                             rules={[
                                 {
                                     required: availableLang === defaultLang,
-                                    message: t('errors.default_language_required')
-                                }
+                                    message: t('errors.default_language_required'),
+                                },
                             ]}
                             style={{marginBottom: '0.5rem'}}
                         >

@@ -14,12 +14,12 @@ describe('handleVersion', () => {
     const size = {
         output,
         size: 800,
-        name
+        name,
     };
 
     const rootPaths = {
         input: '/input',
-        output: '/output'
+        output: '/output',
     };
 
     const input = './input';
@@ -29,14 +29,14 @@ describe('handleVersion', () => {
     const version = {
         background,
         density,
-        sizes: [size]
+        sizes: [size],
     };
 
     const params: Mockify<IHandleVersion> = {
         version,
         rootPaths,
         input,
-        type
+        type,
     };
 
     test('should call execute', () => {
@@ -61,7 +61,7 @@ describe('handleVersion', () => {
             results: [],
             rootPaths,
             config: undefined,
-            first: true
+            first: true,
         });
     });
 });

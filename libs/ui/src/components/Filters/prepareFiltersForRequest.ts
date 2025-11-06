@@ -15,7 +15,7 @@ import {
     isUIFilterValueList,
     type IUIFilterValueList,
     type FiltersOperator,
-    isUIFilterLinkWithValueList
+    isUIFilterLinkWithValueList,
 } from './_types';
 import {nullValueConditions} from './conditionsHelper';
 
@@ -33,33 +33,33 @@ const _getDateRequestFilters = ({field, condition, value}: IUIFilterStandard): R
                     condition,
                     value: JSON.stringify({
                         from,
-                        to
-                    })
-                }
+                        to,
+                    }),
+                },
             ];
         case RecordFilterCondition.NOT_EQUAL:
             return [
                 {
                     field,
                     condition: RecordFilterCondition.NOT_EQUAL,
-                    value: _getDateAtNoon(Number(value))
-                }
+                    value: _getDateAtNoon(Number(value)),
+                },
             ];
         case RecordFilterCondition.EQUAL:
             return [
                 {
                     field,
                     condition,
-                    value: _getDateAtNoon(Number(value))
-                }
+                    value: _getDateAtNoon(Number(value)),
+                },
             ];
         default:
             return [
                 {
                     field,
                     condition,
-                    value
-                }
+                    value,
+                },
             ];
     }
 };
@@ -70,8 +70,8 @@ const _getBooleanRequestFilters = (filter: IUIFilterStandard): RecordFilterInput
             {
                 field: filter.field,
                 condition: AttributeConditionFilter.NOT_EQUAL,
-                value: 'true'
-            }
+                value: 'true',
+            },
         ];
     }
 
@@ -86,11 +86,11 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
             {
                 field: 'id',
                 condition: AttributeConditionFilter.EQUAL,
-                value
-            }
-        ])
+                value,
+            },
+        ]),
     ) as RecordFilterInput[]),
-    {operator: RecordFilterOperator.CLOSE_BRACKET}
+    {operator: RecordFilterOperator.CLOSE_BRACKET},
 ];
 
 const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilterValueList): RecordFilterInput[] => {
@@ -105,14 +105,14 @@ const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilter
         filtersWithOperators.push({
             value: recordId,
             condition: filter.condition,
-            field: Array.isArray(filter.field) ? filter.field[idx] : filter.field
+            field: Array.isArray(filter.field) ? filter.field[idx] : filter.field,
         });
         if (filter.value && idx < filter.value.length - 1) {
             filtersWithOperators.push({
                 operator:
                     filter.condition === RecordFilterCondition.NOT_EQUAL
                         ? RecordFilterOperator.AND
-                        : RecordFilterOperator.OR
+                        : RecordFilterOperator.OR,
             });
         }
         if (filter.value && filter.value.length > 1 && idx >= filter.value.length - 1) {
@@ -125,7 +125,7 @@ const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilter
 export const prepareFiltersForRequest = (
     filters: UIFilter[],
     filtersOperator?: FiltersOperator,
-    valuesList?: string[]
+    valuesList?: string[],
 ): RecordFilterInput[] => {
     const interleaveFilter = interleaveElement(
         {operator: filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND},
@@ -174,8 +174,8 @@ export const prepareFiltersForRequest = (
                             {
                                 field: Array.isArray(filter.field) ? filter.field[0] : filter.field,
                                 condition: filter.condition,
-                                value: null
-                            }
+                                value: null,
+                            },
                         ];
                     }
                     return _generateConditionsFromMultipleValues(filter as IUIFilterTree | IUIFilterValueList);
@@ -195,15 +195,15 @@ export const prepareFiltersForRequest = (
                     {
                         field: filter.field as string,
                         condition: filter.condition,
-                        value: filter.value
-                    }
+                        value: filter.value,
+                    },
                 ];
-            })
+            }),
     );
 
     return [
         ...interleaveFilter,
         ...(interleaveFilter.length > 0 && valuesList ? [{operator: RecordFilterOperator.AND}] : []),
-        ...(valuesList ? _addValuesListForFilters(valuesList) : [])
+        ...(valuesList ? _addValuesListForFilters(valuesList) : []),
     ];
 };

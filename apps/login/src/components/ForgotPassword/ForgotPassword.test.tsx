@@ -20,7 +20,7 @@ window.matchMedia = query => ({
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    dispatchEvent: jest.fn(),
 });
 
 const _renderComponent = () =>
@@ -29,7 +29,7 @@ const _renderComponent = () =>
             <MemoryRouter>
                 <ForgotPassword />
             </MemoryRouter>
-        </KitApp>
+        </KitApp>,
     );
 
 const _enterValidEmailAndSubmit = () => {
@@ -41,7 +41,7 @@ describe('ForgotPassword', () => {
     test('Display error msg if user is not found', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 401,
-            ok: false
+            ok: false,
         });
 
         await act(async () => {
@@ -58,7 +58,7 @@ describe('ForgotPassword', () => {
     test('Display success message if email has been sent', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 200,
-            ok: true
+            ok: true,
         });
 
         await act(async () => {
@@ -75,7 +75,7 @@ describe('ForgotPassword', () => {
     test('Display error msg if server is down', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 500,
-            ok: false
+            ok: false,
         });
 
         await act(async () => {

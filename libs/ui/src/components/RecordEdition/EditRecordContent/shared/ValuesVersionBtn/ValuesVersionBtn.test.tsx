@@ -12,15 +12,15 @@ describe('ValuesVersionBtn', () => {
             [VersionFieldScope.CURRENT]: {
                 lang: {
                     id: '1337',
-                    label: 'FR'
-                }
+                    label: 'FR',
+                },
             },
             [VersionFieldScope.INHERITED]: {
                 lang: {
                     id: '1337',
-                    label: 'EN'
-                }
-            }
+                    label: 'EN',
+                },
+            },
         };
 
         const onScopeChange = jest.fn();
@@ -29,7 +29,7 @@ describe('ValuesVersionBtn', () => {
                 versions={versions}
                 activeScope={VersionFieldScope.INHERITED}
                 onScopeChange={onScopeChange}
-            />
+            />,
         );
 
         const valuesVersionBtn = screen.getByRole('button', {name: /values-version/});

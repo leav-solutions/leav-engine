@@ -29,7 +29,7 @@ export default function ({
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps = {}): IAttributeSimpleLinkRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return attributes
@@ -56,7 +56,7 @@ export default function ({
                     UPDATE ${{_key: recordId}} WITH ${{[attribute.id]: value.payload}} IN ${collec}
                     OPTIONS { keepNull: false }
                     RETURN {doc: NEW, linkedRecord}`,
-            ctx
+            ctx,
         });
 
         const updatedDoc = res.length ? res[0] : null;
@@ -68,7 +68,7 @@ export default function ({
                 ? {...dbUtils.cleanup(updatedDoc.linkedRecord), library: attribute.linked_library}
                 : null,
             created_by: null,
-            modified_by: null
+            modified_by: null,
         };
 
         return savedVal;
@@ -86,13 +86,13 @@ export default function ({
                 ...args,
                 attribute: {
                     ...args.attribute,
-                    type: AttributeTypes.SIMPLE
-                }
+                    type: AttributeTypes.SIMPLE,
+                },
             });
             return {
                 ...deletedValue,
                 // deletedValue returns null payload, so override it here !
-                payload: {id: args.value.payload?.id, library: args.attribute.linked_library}
+                payload: {id: args.value.payload?.id, library: args.attribute.linked_library},
             };
         },
         // To get values from advanced reverse link attribute into simple link.
@@ -125,7 +125,7 @@ export default function ({
             advancedLinkAttr,
             values,
             forceGetAllValues = false,
-            ctx
+            ctx,
         }): Promise<ILinkValue[][]> {
             const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
             const query = aql`
@@ -149,7 +149,7 @@ export default function ({
                             id_value: rec.id,
                             payload: rec,
                             created_by: null,
-                            modified_by: null
+                            modified_by: null,
                         };
                     }) || []
                 );
@@ -167,7 +167,7 @@ export default function ({
                             FILTER r.${attribute.id} == l._key
                             RETURN l
                 `,
-                ctx
+                ctx,
             });
 
             return res
@@ -178,7 +178,7 @@ export default function ({
                     payload: dbUtils.cleanup({...r, library: attribute.linked_library}),
                     attribute: attribute.id,
                     created_by: null,
-                    modified_by: null
+                    modified_by: null,
                 }));
         },
         async getValuesBatch({library, recordIds, attribute, ctx}): Promise<ILinkValue[][]> {
@@ -192,7 +192,7 @@ export default function ({
                         LET link = rec && rec.${attribute.id} ? DOCUMENT(${linkedLibCollec}, rec.${attribute.id}) : null
                         RETURN { recordId: rec._key, link }
                 `,
-                ctx
+                ctx,
             });
 
             const valuesByRecordId = new Map(res.map(r => [r.recordId, r]));
@@ -207,12 +207,12 @@ export default function ({
                                   payload: dbUtils.cleanup({...payload, library: attribute.linked_library}),
                                   attribute: attribute.id,
                                   modified_by: null,
-                                  created_by: null
-                              }
+                                  created_by: null,
+                              },
                           ]
                         : [];
                 },
-                {} as Record<string, ILinkValue[]>
+                {} as Record<string, ILinkValue[]>,
             );
         },
         sortQueryPart({attributes, order}) {
@@ -272,6 +272,6 @@ export default function ({
         },
         async clearAllValues(args): Promise<boolean> {
             return true;
-        }
+        },
     };
 }

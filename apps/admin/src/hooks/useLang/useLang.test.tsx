@@ -17,7 +17,7 @@ describe('useLang', () => {
         const comp = mount(
             <MockedLangContextProvider>
                 <CompWithLang />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(comp.find('div.lang').text()).toBe('fr');

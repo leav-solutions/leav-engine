@@ -23,25 +23,25 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     consume: jest.fn(),
     publish: jest.fn(),
     waitForConfirms: jest.fn(),
-    prefetch: jest.fn()
+    prefetch: jest.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
 };
 
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-    sendPubSubEvent: global.__mockPromise()
+    sendPubSubEvent: global.__mockPromise(),
 };
 
 const ctx: IQueryInfos = {
     userId: '1',
-    queryId: 'indexManagerDomainTest'
+    queryId: 'indexManagerDomainTest',
 };
 
 const mockLogger: Mockify<ILogger> = {
-    info: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
+    info: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
 };
 
 const depsBase: ToAny<IIndexationManagerDomainDeps> = {
@@ -55,15 +55,15 @@ const depsBase: ToAny<IIndexationManagerDomainDeps> = {
     'core.utils.logger': jest.fn(),
     'core.utils.getSystemQueryContext': jest.fn(),
     translator: {},
-    config: {}
+    config: {},
 };
 
 describe('Indexation Manager', () => {
     const conf: Mockify<IConfig> = {
         indexationManager: {
             queues: {
-                events: 'events_queue'
-            }
+                events: 'events_queue',
+            },
         },
         amqp: {
             exchange: 'test_exchange',
@@ -72,14 +72,14 @@ describe('Indexation Manager', () => {
                 hostname: 'localhost',
                 username: 'user',
                 password: 'user',
-                port: 1234
+                port: 1234,
             },
-            type: 'direct'
+            type: 'direct',
         },
         eventsManager: {
             routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
-            queues: {pubsub_events_prefix: 'test_pubsub_events-'}
-        }
+            queues: {pubsub_events_prefix: 'test_pubsub_events-'},
+        },
     };
 
     test('Init message listening', async () => {
@@ -87,12 +87,12 @@ describe('Indexation Manager', () => {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
-            }
+                channel: mockAmqpChannel as amqp.ConfirmChannel,
+            },
         };
 
         const mockIndexationService: Mockify<IIndexationService> = {
-            init: global.__mockPromise()
+            init: global.__mockPromise(),
         };
 
         const indexation = indexationManager({
@@ -100,7 +100,7 @@ describe('Indexation Manager', () => {
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
             'core.utils.logger': mockLogger as ILogger,
-            'core.infra.indexation.indexationService': mockIndexationService as IIndexationService
+            'core.infra.indexation.indexationService': mockIndexationService as IIndexationService,
         });
 
         await indexation.init();
@@ -116,29 +116,29 @@ describe('Indexation Manager', () => {
                     {
                         id: '1337',
                         created_at: 1520931648,
-                        modified_at: 1520931648
-                    }
-                ]
+                        modified_at: 1520931648,
+                    },
+                ],
             }),
-            getRecordFieldValue: global.__mockPromise([{value: '1337'}])
+            getRecordFieldValue: global.__mockPromise([{value: '1337'}]),
         };
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
             getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
-            getLibraryAttributes: global.__mockPromise([{id: 'id'}])
+            getLibraryAttributes: global.__mockPromise([{id: 'id'}]),
         };
 
         const mockLibraryDomain: Mockify<ILibraryDomain> = {
             getLibraries: global.__mockPromise({
                 list: [{id: 'test'}],
-                totalCount: 1
-            })
+                totalCount: 1,
+            }),
         };
 
         const mockIndexationService: Mockify<IIndexationService> = {
             isLibraryListed: global.__mockPromise(false),
             listLibrary: global.__mockPromise(),
-            indexRecord: global.__mockPromise()
+            indexRecord: global.__mockPromise(),
         };
 
         const indexation = indexationManager({
@@ -148,7 +148,7 @@ describe('Indexation Manager', () => {
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-            'core.infra.indexation.indexationService': mockIndexationService as IIndexationService
+            'core.infra.indexation.indexationService': mockIndexationService as IIndexationService,
         });
 
         await indexation.indexDatabase({findRecordParams: {library: 'test'}, ctx}, {id: 'fakeTaskId'});
@@ -156,11 +156,11 @@ describe('Indexation Manager', () => {
             {
                 findRecordParams: {
                     library: 'test',
-                    filters: [{field: 'id', value: '1337', condition: AttributeCondition.EQUAL}]
+                    filters: [{field: 'id', value: '1337', condition: AttributeCondition.EQUAL}],
                 },
-                ctx
+                ctx,
             },
-            {id: 'fakeTaskId'}
+            {id: 'fakeTaskId'},
         );
 
         expect(mockIndexationService.isLibraryListed).toBeCalledTimes(2);

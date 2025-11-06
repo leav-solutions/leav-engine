@@ -10,7 +10,7 @@ import permissionRepo from './permissionRepo';
 describe('PermissionRepo', () => {
     const ctx: IQueryInfos = {
         userId: '0',
-        queryId: '123456'
+        queryId: '123456',
     };
     describe('SavePermission', () => {
         test('Should save permission', async () => {
@@ -21,12 +21,12 @@ describe('PermissionRepo', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
                 permissionTreeTarget: {
                     id: 'test_lib/123445',
-                    tree: 'test_tree'
-                }
+                    tree: 'test_tree',
+                },
             };
 
             const permDataClean: IPermission = {
@@ -36,26 +36,26 @@ describe('PermissionRepo', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
                 permissionTreeTarget: {
                     nodeId: '123445',
-                    tree: 'test_tree'
-                }
+                    tree: 'test_tree',
+                },
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([permData])
+                execute: global.__mockPromise([permData]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permDataClean)
+                cleanup: jest.fn().mockReturnValue(permDataClean),
             };
 
             const permRepo = permissionRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
@@ -76,12 +76,12 @@ describe('PermissionRepo', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
                 permissionTreeTarget: {
                     id: 'test_lib/123445',
-                    tree: 'test_tree'
-                }
+                    tree: 'test_tree',
+                },
             };
 
             const permDataClean: IPermission = {
@@ -91,26 +91,26 @@ describe('PermissionRepo', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
                 permissionTreeTarget: {
                     nodeId: '123445',
-                    tree: 'test_tree'
-                }
+                    tree: 'test_tree',
+                },
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([{...permData, usersGroup: 'core_trees/users_groups'}])
+                execute: global.__mockPromise([{...permData, usersGroup: 'core_trees/users_groups'}]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permDataClean)
+                cleanup: jest.fn().mockReturnValue(permDataClean),
             };
 
             const permRepo = permissionRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
@@ -130,12 +130,12 @@ describe('PermissionRepo', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
                 permissionTreeTarget: {
                     nodeId: null,
-                    tree: 'test_tree'
-                }
+                    tree: 'test_tree',
+                },
             };
 
             const permDataClean: IPermission = {
@@ -145,38 +145,38 @@ describe('PermissionRepo', () => {
                 actions: {
                     [RecordPermissionsActions.ACCESS_RECORD]: true,
                     [RecordPermissionsActions.EDIT_RECORD]: false,
-                    [RecordPermissionsActions.DELETE_RECORD]: false
+                    [RecordPermissionsActions.DELETE_RECORD]: false,
                 },
                 permissionTreeTarget: {
                     nodeId: null,
-                    tree: 'test_tree'
-                }
+                    tree: 'test_tree',
+                },
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([permData])
+                execute: global.__mockPromise([permData]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permDataClean)
+                cleanup: jest.fn().mockReturnValue(permDataClean),
             };
 
             const permRepo = permissionRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
 
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value0.permissionTreeTarget).toMatchObject({
                 nodeId: null,
-                tree: 'test_tree'
+                tree: 'test_tree',
             });
 
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1.permissionTreeTarget).toMatchObject({
                 nodeId: null,
-                tree: 'test_tree'
+                tree: 'test_tree',
             });
 
             expect(savedPerm).toMatchObject(permDataClean);
@@ -190,18 +190,18 @@ describe('PermissionRepo', () => {
                     {
                         actions: {
                             ACCESS: true,
-                            EDIT: true
+                            EDIT: true,
                         },
                         permissionTreeTarget: {
                             id: '123',
                             library: 'category',
-                            tree: 'categories'
+                            tree: 'categories',
                         },
                         type: 'RECORD',
                         applyTo: 'test_lib',
-                        usersGroup: '12345'
-                    }
-                ])
+                        usersGroup: '12345',
+                    },
+                ]),
             };
             const permRepo = permissionRepo({'core.infra.db.dbService': mockDbServ});
 
@@ -211,9 +211,9 @@ describe('PermissionRepo', () => {
                 usersGroupNodeId: '12345',
                 permissionTreeTarget: {
                     nodeId: '123',
-                    tree: 'categories'
+                    tree: 'categories',
                 },
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
@@ -233,9 +233,9 @@ describe('PermissionRepo', () => {
                 usersGroupNodeId: '12345',
                 permissionTreeTarget: {
                     nodeId: '123',
-                    tree: 'categories'
+                    tree: 'categories',
                 },
-                ctx
+                ctx,
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);

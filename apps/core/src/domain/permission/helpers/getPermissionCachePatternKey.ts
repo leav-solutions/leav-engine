@@ -9,7 +9,7 @@ export default function ({
     permissionType,
     applyTo,
     permissionAction,
-    key
+    key,
 }: {
     groupsId?: string[];
     permissionType?: PermissionTypes;

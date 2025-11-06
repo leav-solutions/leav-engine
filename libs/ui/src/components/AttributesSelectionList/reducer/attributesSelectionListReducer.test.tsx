@@ -6,25 +6,25 @@ import attributeSelectionListReducer, {
     type AttributesSelectionListAction,
     AttributesSelectionListActionTypes,
     type IAttributesSelectionListState,
-    initialState
+    initialState,
 } from './attributesSelectionListReducer';
 
 describe('attributesSelectionListReducer', () => {
     const state: IAttributesSelectionListState = {
-        ...initialState
+        ...initialState,
     };
 
     describe('TOGGLE_ATTRIBUTE_SELECTION', () => {
         const action: AttributesSelectionListAction = {
             type: AttributesSelectionListActionTypes.TOGGLE_ATTRIBUTE_SELECTION,
-            attribute: mockSelectedAttributeA
+            attribute: mockSelectedAttributeA,
         };
 
         test('Select new attribute', async () => {
             expect(
                 attributeSelectionListReducer(state, {
-                    ...action
-                }).selectedAttributes
+                    ...action,
+                }).selectedAttributes,
             ).toEqual([mockSelectedAttributeA]);
         });
 
@@ -33,9 +33,9 @@ describe('attributesSelectionListReducer', () => {
                 attributeSelectionListReducer(
                     {...state, selectedAttributes: [mockSelectedAttributeA]},
                     {
-                        ...action
-                    }
-                ).selectedAttributes
+                        ...action,
+                    },
+                ).selectedAttributes,
             ).toEqual([]);
         });
 
@@ -45,9 +45,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, multiple: false, selectedAttributes: [mockSelectedAttributeA]},
                     {
                         ...action,
-                        attribute: mockSelectedAttributeB
-                    }
-                ).selectedAttributes
+                        attribute: mockSelectedAttributeB,
+                    },
+                ).selectedAttributes,
             ).toEqual([mockSelectedAttributeB]);
         });
 
@@ -56,9 +56,9 @@ describe('attributesSelectionListReducer', () => {
                 attributeSelectionListReducer(
                     {...state, multiple: false, selectedAttributes: [mockSelectedAttributeA]},
                     {
-                        ...action
-                    }
-                ).selectedAttributes
+                        ...action,
+                    },
+                ).selectedAttributes,
             ).toEqual([]);
         });
     });
@@ -66,15 +66,15 @@ describe('attributesSelectionListReducer', () => {
     describe('TOGGLE_ATTRIBUTE', () => {
         const action: AttributesSelectionListAction = {
             type: AttributesSelectionListActionTypes.TOGGLE_ATTRIBUTE_EXPAND,
-            attributePath: ''
+            attributePath: '',
         };
 
         test('Expand attribute', async () => {
             expect(
                 attributeSelectionListReducer(state, {
                     ...action,
-                    attributePath: 'A'
-                }).expandedAttributePath
+                    attributePath: 'A',
+                }).expandedAttributePath,
             ).toBe('A');
 
             expect(
@@ -82,9 +82,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A'},
                     {
                         ...action,
-                        attributePath: 'B'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'B',
+                    },
+                ).expandedAttributePath,
             ).toBe('B');
 
             expect(
@@ -92,9 +92,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A'},
                     {
                         ...action,
-                        attributePath: 'A.B'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'A.B',
+                    },
+                ).expandedAttributePath,
             ).toBe('A.B');
 
             expect(
@@ -102,9 +102,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A.B'},
                     {
                         ...action,
-                        attributePath: 'D'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'D',
+                    },
+                ).expandedAttributePath,
             ).toBe('D');
         });
 
@@ -114,9 +114,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A'},
                     {
                         ...action,
-                        attributePath: 'A'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'A',
+                    },
+                ).expandedAttributePath,
             ).toBe('');
 
             expect(
@@ -124,9 +124,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A.B'},
                     {
                         ...action,
-                        attributePath: 'A.B'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'A.B',
+                    },
+                ).expandedAttributePath,
             ).toBe('A');
 
             expect(
@@ -134,9 +134,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A.B.C'},
                     {
                         ...action,
-                        attributePath: 'A.B'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'A.B',
+                    },
+                ).expandedAttributePath,
             ).toBe('A');
 
             expect(
@@ -144,9 +144,9 @@ describe('attributesSelectionListReducer', () => {
                     {...state, expandedAttributePath: 'A.B.C'},
                     {
                         ...action,
-                        attributePath: 'A.B.C'
-                    }
-                ).expandedAttributePath
+                        attributePath: 'A.B.C',
+                    },
+                ).expandedAttributePath,
             ).toBe('A.B');
         });
     });
@@ -155,19 +155,19 @@ describe('attributesSelectionListReducer', () => {
         const action: AttributesSelectionListAction = {
             type: AttributesSelectionListActionTypes.MOVE_SELECTED_ATTRIBUTE,
             from: 0,
-            to: 1
+            to: 1,
         };
 
         const stateWithSelection = {
             ...state,
-            selectedAttributes: [mockSelectedAttributeA, mockSelectedAttributeB, mockSelectedAttributeC]
+            selectedAttributes: [mockSelectedAttributeA, mockSelectedAttributeB, mockSelectedAttributeC],
         };
 
         test('Move a selected attribute', async () => {
             expect(
                 attributeSelectionListReducer(stateWithSelection, {
-                    ...action
-                }).selectedAttributes
+                    ...action,
+                }).selectedAttributes,
             ).toEqual([mockSelectedAttributeB, mockSelectedAttributeA, mockSelectedAttributeC]);
         });
 
@@ -175,8 +175,8 @@ describe('attributesSelectionListReducer', () => {
             expect(
                 attributeSelectionListReducer(stateWithSelection, {
                     ...action,
-                    to: 42
-                }).selectedAttributes
+                    to: 42,
+                }).selectedAttributes,
             ).toEqual([mockSelectedAttributeB, mockSelectedAttributeC, mockSelectedAttributeA]);
         });
 
@@ -185,8 +185,8 @@ describe('attributesSelectionListReducer', () => {
                 attributeSelectionListReducer(stateWithSelection, {
                     ...action,
                     from: 1,
-                    to: -42
-                }).selectedAttributes
+                    to: -42,
+                }).selectedAttributes,
             ).toEqual([mockSelectedAttributeB, mockSelectedAttributeA, mockSelectedAttributeC]);
         });
 
@@ -194,8 +194,8 @@ describe('attributesSelectionListReducer', () => {
             expect(
                 attributeSelectionListReducer(stateWithSelection, {
                     ...action,
-                    from: 42
-                }).selectedAttributes
+                    from: 42,
+                }).selectedAttributes,
             ).toEqual([mockSelectedAttributeA, mockSelectedAttributeB, mockSelectedAttributeC]);
         });
     });

@@ -8,18 +8,18 @@ import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockGetLibraryDetailExtendedElement} from '_ui/__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {
     mockGetRecordsFromLibraryQuery,
-    mockGetRecordsFromLibraryQueryVar
+    mockGetRecordsFromLibraryQueryVar,
 } from '_ui/__mocks__/mockQuery/mockGetRecordsFromLibraryQuery';
 import LibraryItemsList from './LibraryItemsList';
 
 jest.mock('_ui/hooks/useGetRecordUpdatesSubscription', () => ({
-    useGetRecordUpdatesSubscription: jest.fn()
+    useGetRecordUpdatesSubscription: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
-    useHistory: jest.fn()
+    useHistory: jest.fn(),
 }));
 
 jest.mock(
@@ -27,28 +27,28 @@ jest.mock(
     () =>
         function Sidebar() {
             return <div>Sidebar</div>;
-        }
+        },
 );
 jest.mock(
     './MenuItemList',
     () =>
         function MenuItemList() {
             return <div>MenuItemList</div>;
-        }
+        },
 );
 jest.mock(
     './MenuItemListSelected',
     () =>
         function MenuItemListSelected() {
             return <div>MenuItemListSelected</div>;
-        }
+        },
 );
 jest.mock(
     './DisplayTypeSelector',
     () =>
         function DisplayTypeSelector() {
             return <div>DisplayTypeSelector</div>;
-        }
+        },
 );
 
 describe('LibraryItemsList', () => {
@@ -63,9 +63,9 @@ describe('LibraryItemsList', () => {
                 label: 'Test',
                 library: 'testLib',
                 type: AttributeType.simple,
-                key: 'testId_testLib'
-            }
-        ]
+                key: 'testId_testLib',
+            },
+        ],
     };
 
     test('should call the children', async () => {
@@ -73,30 +73,30 @@ describe('LibraryItemsList', () => {
             {
                 request: {
                     query: getRecordsFromLibraryQuery([], true),
-                    variables: mockGetRecordsFromLibraryQueryVar
+                    variables: mockGetRecordsFromLibraryQueryVar,
                 },
                 result: {
-                    data: mockGetRecordsFromLibraryQuery(libQueryName, mockStateItem.field)
-                }
+                    data: mockGetRecordsFromLibraryQuery(libQueryName, mockStateItem.field),
+                },
             },
             {
                 request: {
                     query: getUserDataQuery,
-                    variables: {keys: ['selected_view_test']}
+                    variables: {keys: ['selected_view_test']},
                 },
                 result: {
                     data: {
                         userData: {
                             global: false,
-                            data: []
-                        }
-                    }
-                }
-            }
+                            data: [],
+                        },
+                    },
+                },
+            },
         ];
 
         render(<LibraryItemsList library={mockGetLibraryDetailExtendedElement} selectionMode={true} />, {
-            mocks
+            mocks,
         });
 
         await waitFor(() => screen.getByText('DisplayTypeSelector'));

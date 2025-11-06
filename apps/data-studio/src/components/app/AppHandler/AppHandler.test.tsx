@@ -20,11 +20,11 @@ jest.mock(
     () =>
         function Router() {
             return <div>Router</div>;
-        }
+        },
 );
 
 jest.mock('../../../constants', () => ({
-    APP_ENDPOINT: 'data-studio'
+    APP_ENDPOINT: 'data-studio',
 }));
 
 describe('AppHandler', () => {
@@ -33,7 +33,7 @@ describe('AppHandler', () => {
             {
                 request: {
                     query: getMe,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
@@ -49,90 +49,90 @@ describe('AppHandler', () => {
                                     id: 'users',
                                     label: {
                                         en: 'Users',
-                                        fr: 'Utilisateurs'
+                                        fr: 'Utilisateurs',
                                     },
-                                    __typename: 'Library'
+                                    __typename: 'Library',
                                 },
                                 preview: null,
-                                __typename: 'RecordIdentity'
+                                __typename: 'RecordIdentity',
                             },
-                            __typename: 'User'
-                        }
-                    }
-                }
+                            __typename: 'User',
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getApplicationByEndpointQuery,
                     variables: {
-                        endpoint: 'data-studio'
-                    }
+                        endpoint: 'data-studio',
+                    },
                 },
                 result: {
                     data: {
                         applications: {
-                            list: [mockApplicationDetails]
-                        }
-                    }
-                }
+                            list: [mockApplicationDetails],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getTasks,
                     variables: {
                         filters: {
-                            created_by: '1'
-                        }
-                    }
+                            created_by: '1',
+                        },
+                    },
                 },
                 result: {
                     data: {
                         tasks: {
-                            list: [mockTask]
-                        }
-                    }
-                }
+                            list: [mockTask],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getLangs,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
-                        langs: ['fr']
-                    }
-                }
+                        langs: ['fr'],
+                    },
+                },
             },
             {
                 request: {
                     query: getTaskUpdates,
                     variables: {
-                        created_by: '1'
-                    }
+                        created_by: '1',
+                    },
                 },
                 result: {
                     data: {
                         tasks: {
-                            list: [mockTask]
-                        }
-                    }
-                }
+                            list: [mockTask],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getGlobalSettingsQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         globalSettings: {
                             name: 'My app',
-                            icon: null
-                        }
-                    }
-                }
-            }
+                            icon: null,
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {

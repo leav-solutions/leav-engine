@@ -5,12 +5,12 @@ import {getLibraryDetailExtendedQuery} from '_ui/_queries/libraries/getLibraryDe
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {
     mockGetLibraryDetailExtendedQuery,
-    mockGetLibraryDetailExtendedQueryVar
+    mockGetLibraryDetailExtendedQueryVar,
 } from '_ui/__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import SearchModal from './SearchModal';
 
 jest.mock('_ui/components/LibraryItemsList', () => ({
-    LibraryItemsList: () => <div>LibraryItemsList</div>
+    LibraryItemsList: () => <div>LibraryItemsList</div>,
 }));
 
 describe('SearchModal', () => {
@@ -19,16 +19,16 @@ describe('SearchModal', () => {
             {
                 request: {
                     query: getLibraryDetailExtendedQuery(100),
-                    variables: mockGetLibraryDetailExtendedQueryVar
+                    variables: mockGetLibraryDetailExtendedQueryVar,
                 },
                 result: {
-                    data: mockGetLibraryDetailExtendedQuery
-                }
-            }
+                    data: mockGetLibraryDetailExtendedQuery,
+                },
+            },
         ];
 
         render(<SearchModal libId="test" visible={true} setVisible={jest.fn()} submitAction={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         await waitFor(() => screen.getByText('LibraryItemsList'));

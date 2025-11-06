@@ -10,7 +10,7 @@ export interface IMutationsWatcherReducerState {
 
 export const initialState: IMutationsWatcherReducerState = {
     mutationsCount: 0,
-    hasPendingMutations: false
+    hasPendingMutations: false,
 };
 
 export const mutationsWatcherSlice = createSlice({
@@ -24,8 +24,8 @@ export const mutationsWatcherSlice = createSlice({
         endMutation: (state, action: PayloadAction) => {
             state.mutationsCount--;
             state.hasPendingMutations = state.mutationsCount > 0;
-        }
-    }
+        },
+    },
 });
 
 // Action creators are generated for each case reducer function

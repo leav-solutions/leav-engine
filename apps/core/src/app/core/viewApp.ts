@@ -15,7 +15,7 @@ import {
     type PartialViewFromGraphQL,
     type ViewFromGraphQL,
     ViewSizes,
-    ViewTypes
+    ViewTypes,
 } from '../../_types/views';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
@@ -33,7 +33,7 @@ export default function ({
     'core.domain.view': viewDomain,
     'core.domain.record': recordDomain,
     'core.domain.attribute': attributeDomain,
-    'core.utils': utils
+    'core.utils': utils,
 }: IDeps): IViewApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -133,27 +133,27 @@ export default function ({
                         views: (_, {library}: {library: string}, ctx: IQueryInfos): Promise<IList<IView>> =>
                             viewDomain.getViews(library, ctx),
                         view: (_, {viewId}: {viewId: string}, ctx: IQueryInfos): Promise<IView> =>
-                            viewDomain.getViewById(viewId, ctx)
+                            viewDomain.getViewById(viewId, ctx),
                     },
                     Mutation: {
                         saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
                             viewDomain.saveView(
                                 {
                                     ...view,
-                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode')
+                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
                                 },
-                                ctx
+                                ctx,
                             ),
                         updateView: (_, {view}: {view: PartialViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
                             viewDomain.saveView(
                                 {
                                     ...view,
-                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode')
+                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
                                 },
-                                ctx
+                                ctx,
                             ),
                         deleteView: (_, {viewId}: {viewId: string}, ctx: IQueryInfos): Promise<IView> =>
-                            viewDomain.deleteView(viewId, ctx)
+                            viewDomain.deleteView(viewId, ctx),
                     },
                     View: {
                         created_by: async (view: ViewFromGraphQL, _, ctx): Promise<IRecord | null> => {
@@ -161,10 +161,10 @@ export default function ({
                                 params: {
                                     library: USERS_LIBRARY,
                                     filters: [
-                                        {field: 'id', value: view.created_by, condition: AttributeCondition.EQUAL}
-                                    ]
+                                        {field: 'id', value: view.created_by, condition: AttributeCondition.EQUAL},
+                                    ],
                                 },
-                                ctx
+                                ctx,
                             });
 
                             return record.list.length ? record.list[0] : null;
@@ -176,19 +176,19 @@ export default function ({
 
                             const versions = Object.keys(view.valuesVersions).map(treeId => ({
                                 treeId,
-                                treeNode: {id: view.valuesVersions[treeId], treeId}
+                                treeNode: {id: view.valuesVersions[treeId], treeId},
                             }));
                             return versions;
                         },
                         attributes: (view: IView, _, ctx: IQueryInfos) =>
                             Promise.all(
                                 (view.attributes ?? []).map(attributeId =>
-                                    attributeDomain.getAttributeProperties({id: attributeId, ctx})
-                                )
-                            )
-                    }
-                }
+                                    attributeDomain.getAttributeProperties({id: attributeId, ctx}),
+                                ),
+                            ),
+                    },
+                },
             };
-        }
+        },
     };
 }

@@ -20,10 +20,10 @@ describe('EditView', () => {
                     label: {fr: 'label', en: 'label'},
                     display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
                     shared: false,
-                    owner: true
+                    owner: true,
                 }}
             />,
-            {mocks}
+            {mocks},
         );
 
         expect(screen.getByTestId('viewName-input-fr')).toBeInTheDocument();

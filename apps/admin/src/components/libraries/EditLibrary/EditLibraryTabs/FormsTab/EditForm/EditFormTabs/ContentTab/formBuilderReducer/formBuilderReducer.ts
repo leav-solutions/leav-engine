@@ -45,7 +45,7 @@ export enum FormBuilderActionTypes {
     CLOSE_SETTINGS = 'CLOSE_SETTINGS',
     SAVE_SETTINGS = 'SAVE_SETTINGS',
     CHANGE_ACTIVE_DEPENDENCY = 'CHANGE_ACTIVE_DEPENDENCY',
-    REMOVE_TAB = 'REMOVE_TAB'
+    REMOVE_TAB = 'REMOVE_TAB',
 }
 
 export interface IFormBuilderActionAddElement {

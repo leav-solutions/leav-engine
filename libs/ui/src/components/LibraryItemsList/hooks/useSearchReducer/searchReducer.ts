@@ -9,7 +9,7 @@ import {
     type IFilter,
     type ISelectedRecord,
     SearchMode,
-    SidebarContentType
+    SidebarContentType,
 } from '_ui/types/search';
 import {type IValueVersion} from '_ui/types/values';
 import {type IView, type IViewDisplay} from '_ui/types/views';
@@ -46,7 +46,7 @@ export enum SearchActionTypes {
     SET_SELECTION = 'SET_SELECTION',
     TOGGLE_RECORD_SELECTION = 'TOGGLE_RECORD_SELECTION',
     SELECT_ALL = 'SELECT_ALL',
-    CLEAR_SELECTION = 'CLEAR_SELECTION'
+    CLEAR_SELECTION = 'CLEAR_SELECTION',
 }
 
 interface ISearchResult {
@@ -107,19 +107,19 @@ export const initialSearchState: ISearchState = {
     lang: null,
     sideBar: {
         visible: false,
-        type: SidebarContentType.FILTERS
+        type: SidebarContentType.FILTERS,
     },
     selection: {
         selected: [],
-        allSelected: false
+        allSelected: false,
     },
     showTransparency: false,
-    mode: SearchMode.SEARCH
+    mode: SearchMode.SEARCH,
 };
 
 const checkSync = (
     state: ISearchState,
-    toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean; valuesVersions: boolean}
+    toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean; valuesVersions: boolean},
 ): boolean => {
     let isSync = true;
 
@@ -153,7 +153,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         filters: action.type !== SearchActionTypes.SET_FILTERS,
         display: action.type !== SearchActionTypes.SET_DISPLAY,
         fields: action.type !== SearchActionTypes.SET_FIELDS,
-        valuesVersions: action.type !== SearchActionTypes.SET_VALUES_VERSIONS
+        valuesVersions: action.type !== SearchActionTypes.SET_VALUES_VERSIONS,
     });
 
     switch (action.type) {
@@ -163,7 +163,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 records: action.records ?? state.records,
                 totalCount: action.totalCount ?? state.totalCount,
                 errors: action.errors ?? [],
-                loading: false
+                loading: false,
             };
         }
         case SearchActionTypes.SET_PAGINATION:
@@ -201,13 +201,13 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 view: {
                     current: action.view,
                     reload: true,
-                    sync: true
+                    sync: true,
                 },
                 fields: getFieldsFromView(action.view, state.library, state.lang),
                 filters: action.view.filters,
                 sort: action.view.sort,
                 display: action.view.display,
-                valuesVersions: action.view.valuesVersions
+                valuesVersions: action.view.valuesVersions,
             };
         case SearchActionTypes.SET_VIEW_RELOAD:
             return {...state, view: {...state.view, reload: action.reload}};
@@ -229,13 +229,13 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {
                 ...state,
                 filters: state.filters.map(f => ({...f, active: false})),
-                loading: true
+                loading: true,
             };
         case SearchActionTypes.ENABLE_FILTERS:
             return {
                 ...state,
                 filters: state.filters.map(f => ({...f, active: true})),
-                loading: true
+                loading: true,
             };
         case SearchActionTypes.APPLY_FILTERS:
             // Reset pagination when applying filters as this may lead to unexpected behavior
@@ -243,7 +243,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {
                 ...state,
                 offset: 0,
-                loading: true
+                loading: true,
             };
         case SearchActionTypes.SET_VALUES_VERSIONS: {
             isSync =
@@ -251,7 +251,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {
                 ...state,
                 view: {...state.view, sync: isSync},
-                valuesVersions: {...state.valuesVersions, ...action.valuesVersions}
+                valuesVersions: {...state.valuesVersions, ...action.valuesVersions},
             };
         }
         case SearchActionTypes.TOGGLE_TRANSPARENCY:
@@ -271,24 +271,24 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                     ...state.selection,
                     selected: currentlySelected
                         ? state.selection.selected.filter(s => s.id !== action.record.id)
-                        : [...state.selection.selected, action.record]
-                }
+                        : [...state.selection.selected, action.record],
+                },
             };
         case SearchActionTypes.SELECT_ALL:
             return {
                 ...state,
                 selection: {
                     selected: [],
-                    allSelected: true
-                }
+                    allSelected: true,
+                },
             };
         case SearchActionTypes.CLEAR_SELECTION:
             return {
                 ...state,
                 selection: {
                     selected: [],
-                    allSelected: false
-                }
+                    allSelected: false,
+                },
             };
         default:
             return state;

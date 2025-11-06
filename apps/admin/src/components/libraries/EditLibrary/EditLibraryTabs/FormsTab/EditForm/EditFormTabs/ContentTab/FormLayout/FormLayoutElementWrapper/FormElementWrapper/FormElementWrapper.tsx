@@ -11,19 +11,19 @@ import {getAttributesQuery} from '../../../../../../../../../../../queries/attri
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {
     type GET_ATTRIBUTES,
-    type GET_ATTRIBUTESVariables
+    type GET_ATTRIBUTESVariables,
 } from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../../shared/Loading';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {
     FormBuilderActionTypes,
-    type IFormBuilderStateAndDispatch
+    type IFormBuilderStateAndDispatch,
 } from '../../../formBuilderReducer/formBuilderReducer';
 import {
     DraggableElementTypes,
     type IFormBuilderDragObject,
     type IFormElement,
-    type IFormElementPos
+    type IFormElementPos,
 } from '../../../_types';
 
 interface IFieldWrapperProps extends IFormBuilderStateAndDispatch {
@@ -79,7 +79,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
     // Load attribute data
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
         variables: {id: String(element?.settings?.attribute) || null},
-        skip: !element?.settings?.attribute
+        skip: !element?.settings?.attribute,
     });
 
     const [hover, setHover] = useState<boolean>(false);
@@ -92,10 +92,10 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
         accept: [
             DraggableElementTypes.ATTRIBUTE,
             DraggableElementTypes.FORM_ELEMENT,
-            DraggableElementTypes.RESERVE_LAYOUT_ELEMENT
+            DraggableElementTypes.RESERVE_LAYOUT_ELEMENT,
         ],
         collect: monitor => ({
-            isOver: !!monitor.isOver() && element.uiElement.canDrop(monitor.getItem())
+            isOver: !!monitor.isOver() && element.uiElement.canDrop(monitor.getItem()),
         }),
         canDrop: dragItem => element.uiElement.canDrop(dragItem.element) && !readonly,
         hover: (item, monitor) => {
@@ -147,19 +147,19 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                     dispatch({
                         type: FormBuilderActionTypes.ADD_ELEMENT,
                         element: {...item.element},
-                        position: {order: nextPos, containerId: element.containerId}
+                        position: {order: nextPos, containerId: element.containerId},
                     });
                 } else if (dragIndex !== nextPos) {
                     dispatch({
                         type: FormBuilderActionTypes.MOVE_ELEMENT,
                         elementId: item.element.id,
                         from: itemFromPos,
-                        to: item.dropAtPos
+                        to: item.dropAtPos,
                     });
                 }
                 item.index = nextPos;
             }
-        }
+        },
     });
 
     const [, drag, preview] = useDrag<
@@ -172,10 +172,10 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
             element,
             index,
             currentPos: {order: index, containerId: element.containerId},
-            originPos: {order: index, containerId: element.containerId}
+            originPos: {order: index, containerId: element.containerId},
         },
         collect: monitor => ({
-            isDragging: !!monitor.isDragging()
+            isDragging: !!monitor.isDragging(),
         }),
         canDrag: !readonly,
         end: (dropResult, monitor) => {
@@ -185,10 +185,10 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                     type: FormBuilderActionTypes.MOVE_ELEMENT,
                     elementId: monitor.getItem().element.id,
                     from: monitor.getItem().currentPos,
-                    to: monitor.getItem().originPos
+                    to: monitor.getItem().originPos,
                 });
             }
-        }
+        },
     });
 
     if (loading) {
@@ -214,7 +214,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
     const fieldSettings = {
         ...element.settings,
         attribute: typeof element?.settings?.attribute !== 'undefined' ? attrData : null,
-        label: element?.settings?.label || (attrData && localizedLabel(attrData.label, lang)) || element.type
+        label: element?.settings?.label || (attrData && localizedLabel(attrData.label, lang)) || element.type,
     };
 
     drop(preview(dropRef));

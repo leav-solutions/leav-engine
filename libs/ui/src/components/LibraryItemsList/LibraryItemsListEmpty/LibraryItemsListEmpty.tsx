@@ -35,7 +35,7 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
             <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 imageStyle={{
-                    height: 60
+                    height: 60,
                 }}
                 description={<span>{t('items_list.no_data')}.</span>}
             >
@@ -63,7 +63,7 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
                                 <Button
                                     type="primary"
                                     style={{
-                                        width: 'fit-content'
+                                        width: 'fit-content',
                                     }}
                                     block
                                     icon={<CloudUploadOutlined />}

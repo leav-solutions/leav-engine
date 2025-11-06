@@ -7,7 +7,7 @@ import {
     type ValueDetailsFragment,
     type ValueDetailsLinkValueFragment,
     type ValueDetailsTreeValueFragment,
-    type ValueDetailsValueFragment
+    type ValueDetailsValueFragment,
 } from '_ui/_gqlTypes';
 import {getPropertyCacheFieldName} from '_ui/_utils';
 
@@ -48,8 +48,8 @@ export default function (): IValuesCacheUpdateHook {
                 broadcast: true,
                 fields: {
                     [propertyCacheFieldName]: _updateCacheValue,
-                    [savedValue.attribute.id]: _updateCacheValue
-                }
+                    [savedValue.attribute.id]: _updateCacheValue,
+                },
             });
         }
     };

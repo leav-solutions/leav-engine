@@ -24,6 +24,6 @@ export const useResetView = () => {
             <KitButton type="action" icon={<FaUndo />} onClick={_resetView}>
                 {t('explorer.viewList.reinit-view')}
             </KitButton>
-        )
+        ),
     };
 };

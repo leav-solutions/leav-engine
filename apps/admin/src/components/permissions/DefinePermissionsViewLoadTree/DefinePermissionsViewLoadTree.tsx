@@ -23,12 +23,12 @@ interface IDefinePermissionsViewLoadTreeProps {
 const DefinePermissionsViewLoadTree = ({
     treeId,
     onClick,
-    selectedNode
+    selectedNode,
 }: IDefinePermissionsViewLoadTreeProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
-        variables: {id: [treeId]}
+        variables: {id: [treeId]},
     });
 
     if (loading) {
@@ -55,7 +55,7 @@ const DefinePermissionsViewLoadTree = ({
                 withFakeRoot
                 fakeRootLabel={t('permissions.any_entity', {
                     entityName: treeLabel,
-                    interpolation: {escapeValue: false}
+                    interpolation: {escapeValue: false},
                 })}
             />
         </>

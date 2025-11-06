@@ -41,7 +41,7 @@ function RecordSelector({
     value,
     disabled,
     libraries,
-    required = false
+    required = false,
 }: IRecordSelectorProps): JSX.Element {
     const {t} = useTranslation();
     const [isModalOpen, setIsModalOpen] = React.useState(false);

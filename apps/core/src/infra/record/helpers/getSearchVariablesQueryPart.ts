@@ -21,7 +21,7 @@ export default function ({
     'core.infra.attributeTypes': attributeTypes = null,
     'core.infra.record.helpers.getClassifyingFiltersVariableQueryPart': getClassifyingFiltersVariableQueryPart = null,
     'core.infra.record.helpers.getSearchVariableName': getSearchVariableName = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps): GetSearchVariablesQueryPart {
     const {isAttributeFilter, isClassifyingFilter} = filterTypesHelper;
 
@@ -45,7 +45,7 @@ export default function ({
 
                 variablePart = typeRepo.filterValueQueryPart(
                     filter.attributes.map(attr => ({...attr, _repo: attributeTypes.getTypeRepo(attr)})),
-                    filter
+                    filter,
                 );
             } else if (isClassifyingFilter(filter)) {
                 variablePart = getClassifyingFiltersVariableQueryPart(filter);

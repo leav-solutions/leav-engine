@@ -23,7 +23,7 @@ export class SimpleErrorBoundary extends Component<ISimpleErrorBoundaryProps, IS
         // Catch errors in any components below and re-render with error message
         this.setState({
             error,
-            errorInfo
+            errorInfo,
         });
     }
 

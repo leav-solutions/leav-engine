@@ -13,7 +13,7 @@ export interface IAmqpService {
         queue: string,
         routingKey: string,
         onMessage: OnMessageFunc,
-        consumerTag?: string
+        consumerTag?: string,
     ): Promise<amqp.Replies.Consume>;
     close(): Promise<void>;
 }
@@ -50,7 +50,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                     Buffer.from(msg),
                     {
                         persistent: true,
-                        priority
+                        priority,
                     },
                     (err, ok) => {
                         if (err) {
@@ -58,7 +58,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                         } else {
                             resolve(ok);
                         }
-                    }
+                    },
                 );
             });
         } catch (e) {
@@ -70,7 +70,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
         queue: string,
         routingKey: string,
         onMessage: OnMessageFunc,
-        consumerTag?: string
+        consumerTag?: string,
     ): Promise<amqp.Replies.Consume> =>
         consumer.channel.consume(
             queue,
@@ -85,14 +85,14 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                     logger.error(`[${queue}/${routingKey}] Error while processing message: ${e.stack}`, {
                         message: {
                             ...msg,
-                            content: msg.content.toString()
-                        }
+                            content: msg.content.toString(),
+                        },
                     });
                 } finally {
                     // TODO: add ack if msg has not been acked
                 }
             },
-            {consumerTag}
+            {consumerTag},
         );
 
     const close = async () => {
@@ -107,6 +107,6 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
         consumer,
         publish,
         consume,
-        close
+        close,
     };
 }

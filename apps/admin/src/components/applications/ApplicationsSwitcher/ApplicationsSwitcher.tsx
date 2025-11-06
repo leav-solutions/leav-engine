@@ -99,7 +99,7 @@ function ApplicationsSwitcher(): JSX.Element {
                     // Portal and login are also filtered out.
                     .filter(
                         app =>
-                            app.id !== applicationData.currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id)
+                            app.id !== applicationData.currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id),
                     )
                     .map(app => {
                         const label = localizedTranslation(app.label, lang);

@@ -19,7 +19,7 @@ describe('treeRepo', () => {
     const libraryId = 'test_lib_tree_repo';
     const treeId = 'test_tree_repo';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
@@ -29,9 +29,9 @@ describe('treeRepo', () => {
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
     });
 
@@ -47,11 +47,11 @@ describe('treeRepo', () => {
                         remoteLibraryId: {
                             allowedAtRoot: true,
                             allowMultiplePositions: false,
-                            allowedChildren: []
-                        }
-                    }
+                            allowedChildren: [],
+                        },
+                    },
                 },
-                ctx
+                ctx,
             });
 
             expect(tree.id).toEqual(treeId);
@@ -63,7 +63,7 @@ describe('treeRepo', () => {
             if (tree) {
                 await treeRepo.deleteTree({
                     id: tree.id,
-                    ctx
+                    ctx,
                 });
             }
         });
@@ -71,7 +71,7 @@ describe('treeRepo', () => {
         it('getTreeContent should return empty records', async () => {
             const elements = await treeRepo.getTreeContent({
                 treeId,
-                ctx
+                ctx,
             });
 
             expect(elements).toEqual([]);
@@ -89,9 +89,9 @@ describe('treeRepo', () => {
                         created_by: '1',
                         modified_at: Date.now(),
                         modified_by: '1',
-                        text_attr: 'value1'
+                        text_attr: 'value1',
                     },
-                    ctx
+                    ctx,
                 });
 
                 record2 = await recordRepo.createRecord({
@@ -102,9 +102,9 @@ describe('treeRepo', () => {
                         created_by: '1',
                         modified_at: Date.now(),
                         modified_by: '1',
-                        text_attr: 'value2'
+                        text_attr: 'value2',
                     },
-                    ctx
+                    ctx,
                 });
             });
 
@@ -115,10 +115,10 @@ describe('treeRepo', () => {
                         treeId,
                         element: {
                             id: record1.id,
-                            library: libraryId
+                            library: libraryId,
                         },
                         parent: null,
-                        ctx
+                        ctx,
                     });
 
                     expect(element.id).toEqual(expect.any(String));
@@ -126,7 +126,7 @@ describe('treeRepo', () => {
 
                     const elements = await treeRepo.getTreeContent({
                         treeId,
-                        ctx
+                        ctx,
                     });
 
                     expect(elements).toEqual([
@@ -134,8 +134,8 @@ describe('treeRepo', () => {
                             id: element.id,
                             order: element.order,
                             record: record1,
-                            children: []
-                        }
+                            children: [],
+                        },
                     ]);
                 });
             });
@@ -149,26 +149,26 @@ describe('treeRepo', () => {
                         treeId,
                         element: {
                             id: record1.id,
-                            library: libraryId
+                            library: libraryId,
                         },
                         parent: null,
-                        ctx
+                        ctx,
                     });
                     element2 = await treeRepo.addElement({
                         treeId,
                         element: {
                             id: record2.id,
-                            library: libraryId
+                            library: libraryId,
                         },
                         parent: null,
-                        ctx
+                        ctx,
                     });
                 });
 
                 it('getTreeContent should return 2 records', async () => {
                     const elements = await treeRepo.getTreeContent({
                         treeId,
-                        ctx
+                        ctx,
                     });
 
                     expect(elements).toHaveLength(2);
@@ -178,15 +178,15 @@ describe('treeRepo', () => {
                                 id: element1.id,
                                 order: element1.order,
                                 record: record1,
-                                children: []
+                                children: [],
                             },
                             {
                                 id: element2.id,
                                 order: element2.order,
                                 record: record2,
-                                children: []
-                            }
-                        ])
+                                children: [],
+                            },
+                        ]),
                     );
                 });
 
@@ -194,7 +194,7 @@ describe('treeRepo', () => {
                     const recordByNodeId = await treeRepo.getRecordByNodeId({
                         treeId,
                         nodeId: element1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(recordByNodeId).toEqual(record1);
@@ -206,9 +206,9 @@ describe('treeRepo', () => {
                             treeRepo.getRecordByNodeId({
                                 treeId,
                                 nodeId: elem.id,
-                                ctx
-                            })
-                        )
+                                ctx,
+                            }),
+                        ),
                     );
 
                     expect(records).toEqual([record1, record2]);
@@ -218,7 +218,7 @@ describe('treeRepo', () => {
                     const recordByNodeId = await treeRepo.getRecordByNodeId({
                         treeId,
                         nodeId: 'not-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(recordByNodeId).toEqual(null);
@@ -231,9 +231,9 @@ describe('treeRepo', () => {
                             treeRepo.getRecordByNodeId({
                                 treeId,
                                 nodeId: elem.id,
-                                ctx
-                            })
-                        )
+                                ctx,
+                            }),
+                        ),
                     );
 
                     expect(records).toEqual([record1, record2, null, record1, record2, null]);

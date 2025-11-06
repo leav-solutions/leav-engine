@@ -13,7 +13,7 @@ import {
     type Entrypoint,
     type IItemAction,
     type IMassActions,
-    type IPrimaryAction
+    type IPrimaryAction,
 } from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
@@ -30,7 +30,7 @@ import {
     SidePanel,
     useEditSettings,
     useOpenViewSettings,
-    ViewSettingsContext
+    ViewSettingsContext,
 } from './manage-view-settings';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
@@ -91,7 +91,7 @@ export interface IExplorerProps {
         primary?: {
             create?: ({
                 recordIdCreated,
-                saveValuesResultOnLink
+                saveValuesResultOnLink,
             }: {
                 recordIdCreated: string;
                 saveValuesResultOnLink?: ISubmitMultipleResult;
@@ -156,9 +156,9 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultMassActions = ['deactivate'],
             defaultCallbacks,
             defaultViewSettings,
-            joinLibraryContext
+            joinLibraryContext,
         },
-        ref
+        ref,
     ) => {
         const {t} = useSharedTranslation();
 
@@ -167,7 +167,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {
             loading: viewSettingsLoading,
             view,
-            dispatch: viewSettingsDispatch
+            dispatch: viewSettingsDispatch,
         } = useViewSettingsReducer(entrypoint, defaultViewSettings, ignoreViewByDefault);
 
         const {filtersData, dispatch: filtersDispatch} = useFiltersReducer({
@@ -175,7 +175,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             viewId: view.viewId ?? undefined,
             filters: defaultViewSettings?.filters ?? undefined,
             filtersOperator: defaultViewSettings?.filtersOperator ?? undefined,
-            ignoreViewByDefault
+            ignoreViewByDefault,
         });
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
@@ -185,7 +185,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isMultivalue,
             canEditLinkAttributeValues,
             loading: loadingData,
-            refetch
+            refetch,
         } = useExplorerData({
             entrypoint,
             libraryId: view.libraryId,
@@ -195,7 +195,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             sorts: view.sort,
             filters: filtersData.filters,
             filtersOperator: filtersData.filtersOperator,
-            skip: viewSettingsLoading
+            skip: viewSettingsLoading,
         }); // TODO: refresh when go back on page
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
         const isLink = entrypoint.type === 'link';
@@ -207,14 +207,14 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onRemove: defaultCallbacks?.item?.remove,
             canDeleteLinkValues: canEditLinkAttributeValues,
             store: {view, dispatch: viewSettingsDispatch},
-            entrypoint
+            entrypoint,
         });
 
         const {replaceItemAction, replaceItemModal} = useReplaceItemAction({
             isEnabled: isLink && isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('replaceLink'),
             isMultivalue,
             onReplace: defaultCallbacks?.item?.replaceLink,
-            canReplaceLinkValues: canEditLinkAttributeValues
+            canReplaceLinkValues: canEditLinkAttributeValues,
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -238,7 +238,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isMultivalue,
             totalCount,
             formId: creationFormId,
-            refetch
+            refetch,
         });
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
             isEnabled: isLink,
@@ -248,7 +248,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onLink: defaultCallbacks?.primary?.link,
             linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,
             isMultivalue,
-            maxItemsLeft: null // TODO: use KitTable.row
+            maxItemsLeft: null, // TODO: use KitTable.row
         });
 
         const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
@@ -257,7 +257,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('export'),
             store: {view, dispatch: viewSettingsDispatch},
             totalCount,
-            onExport: defaultCallbacks?.mass?.export
+            onExport: defaultCallbacks?.mass?.export,
         });
 
         const {deactivateMassAction} = useDeactivateMassAction({
@@ -266,7 +266,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             allVisibleKeys,
             totalCount,
             onDeactivate: defaultCallbacks?.mass?.deactivate,
-            refetch
+            refetch,
         });
 
         const {unlinkMassAction} = useDeleteLinkValues({
@@ -276,7 +276,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             allVisibleKeys,
             onDelete: defaultCallbacks?.mass?.deactivate,
-            refetch
+            refetch,
         });
 
         const _isSelectionDisable = disableSelection || (isLink && !isMultivalue && totalCount > 0);
@@ -291,13 +291,13 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             totalCount,
             allVisibleKeys,
             massActions: [exportMassAction, deactivateMassAction, unlinkMassAction, ...massActions].filter(Boolean),
-            snackbarId: massActionSnackbarId
+            snackbarId: massActionSnackbarId,
         });
 
         const {primaryButton} = usePrimaryActionsButton({
             view,
             actions: [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean),
-            hideFirstActionLabel
+            hideFirstActionLabel,
         });
 
         const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
@@ -309,9 +309,9 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             () => ({
                 createAction: createPrimaryAction,
                 linkAction: linkPrimaryAction,
-                totalCount
+                totalCount,
             }),
-            [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCount]
+            [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCount],
         );
 
         return (
@@ -367,7 +367,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                                   pageSize: view.pageSize,
                                                   setNewPageSize,
                                                   setNewPage,
-                                                  totalCount
+                                                  totalCount,
                                               }
                                             : undefined
                                     }
@@ -375,7 +375,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                         .filter(Boolean)
                                         .map(action => ({
                                             ...action,
-                                            disabled: isMassSelectionAll || action.disabled
+                                            disabled: isMassSelectionAll || action.disabled,
                                         }))}
                                     selection={{
                                         onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
@@ -383,7 +383,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                         selectedKeys: isMassSelectionAll
                                             ? data?.records.map(({whoAmI}) => whoAmI.id)
                                             : (view.massSelection as string[]),
-                                        mode: selectionMode
+                                        mode: selectionMode,
                                     }}
                                 />
                             )}
@@ -397,5 +397,5 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                 <KitSnackBarProvider id={massActionSnackbarId} />
             </>
         );
-    }
+    },
 );

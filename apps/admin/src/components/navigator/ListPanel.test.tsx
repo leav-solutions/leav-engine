@@ -25,9 +25,9 @@ const getTests = (range = 1) => {
                 preview: null,
                 library: {
                     id: 'tests',
-                    label: {fr: 'tests', en: 'tests'}
-                }
-            }
+                    label: {fr: 'tests', en: 'tests'},
+                },
+            },
         });
     }
     return returnArr;
@@ -45,7 +45,7 @@ describe('<ListPanel />', () => {
         lang,
         list: tests,
         totalCount: tests.length,
-        selectedOffset: 5
+        selectedOffset: 5,
     };
 
     test('pagination and select call dispatch', async () => {
@@ -55,7 +55,7 @@ describe('<ListPanel />', () => {
             wrapper = mount(
                 <MockedLangContextProvider>
                     <ListPanel state={state} dispatch={mockDispatch} />
-                </MockedLangContextProvider>
+                </MockedLangContextProvider>,
             );
         });
 

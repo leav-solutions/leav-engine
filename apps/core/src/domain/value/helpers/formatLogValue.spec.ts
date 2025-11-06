@@ -18,20 +18,20 @@ import {type IListWithCursor} from '_types/list';
 import {AttributeCondition, type IRecord, type IRecordIdentity} from '../../../_types/record';
 
 const actionListMock: jest.Mocked<Partial<IActionsListDomain>> = {
-    runActionsList: jest.fn()
+    runActionsList: jest.fn(),
 };
 
 const recordDomainMock: jest.Mocked<Partial<IRecordDomain>> = {
     find: jest.fn(),
-    getRecordIdentity: jest.fn()
+    getRecordIdentity: jest.fn(),
 };
 
 const attributeDomainMock: jest.Mocked<Partial<IAttributeDomain>> = {
-    getAttributeProperties: jest.fn()
+    getAttributeProperties: jest.fn(),
 };
 
 const treeDomainMock: jest.Mocked<Partial<ITreeDomain>> = {
-    getRecordByNodeId: jest.fn()
+    getRecordByNodeId: jest.fn(),
 };
 
 const deps: ToAny<Parameters<typeof formatLogValue>[0]> = {
@@ -40,14 +40,14 @@ const deps: ToAny<Parameters<typeof formatLogValue>[0]> = {
     'core.domain.attribute': attributeDomainMock,
     'core.domain.tree': treeDomainMock,
     'core.utils.logger': mockLogger,
-    translator: mockTranslator
+    translator: mockTranslator,
 };
 
 describe('formatLogValue', () => {
     const _formatLogValue = formatLogValue(deps);
 
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeEach(() => {
@@ -61,14 +61,14 @@ describe('formatLogValue', () => {
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
-                    attribute: 'unknown_attribute'
-                }
+                    attribute: 'unknown_attribute',
+                },
             } as Log;
             const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
                 payload: {
                     id: '1',
-                    library: 'test'
-                }
+                    library: 'test',
+                },
             };
 
             attributeDomainMock.getAttributeProperties.mockResolvedValue(null);
@@ -81,18 +81,18 @@ describe('formatLogValue', () => {
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
-                    attribute: 'standard_attribute'
-                }
+                    attribute: 'standard_attribute',
+                },
             } as Log;
 
             it('Should return unknown value when log data contains undefined payload', async () => {
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: undefined
+                    payload: undefined,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
-                    type: AttributeTypes.SIMPLE
+                    type: AttributeTypes.SIMPLE,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -104,12 +104,12 @@ describe('formatLogValue', () => {
                 const attributeValue = 'Standard attribute value';
 
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
-                    type: AttributeTypes.SIMPLE
+                    type: AttributeTypes.SIMPLE,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -120,13 +120,13 @@ describe('formatLogValue', () => {
             it('Should return standard attribute boolean value as string', async () => {
                 const attributeValue = true;
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.BOOLEAN
+                    format: AttributeFormats.BOOLEAN,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -137,13 +137,13 @@ describe('formatLogValue', () => {
             it('Should return standard attribute extends value as string', async () => {
                 const attributeValue = {url: 'test'};
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED
+                    format: AttributeFormats.EXTENDED,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -154,13 +154,13 @@ describe('formatLogValue', () => {
             it('Should return standard attribute encrypted value as string', async () => {
                 const attributeValue = 'encrypted_value';
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.ENCRYPTED
+                    format: AttributeFormats.ENCRYPTED,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -171,13 +171,13 @@ describe('formatLogValue', () => {
             it('Should return standard attribute date value as string without getValue action formatDate', async () => {
                 const attributeValue = 1756715467760;
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.DATE
+                    format: AttributeFormats.DATE,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -189,7 +189,7 @@ describe('formatLogValue', () => {
             it('Should return standard attribute date value as string with getValue action formatDate', async () => {
                 const attributeValue = 1756715467760;
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
@@ -200,16 +200,16 @@ describe('formatLogValue', () => {
                         getValue: [
                             {
                                 id: 'formatDate',
-                                name: 'Format date'
-                            }
-                        ]
-                    }
+                                name: 'Format date',
+                            },
+                        ],
+                    },
                 });
 
                 actionListMock.runActionsList.mockResolvedValue([
                     {
-                        payload: '2025-09-01' // for instance
-                    }
+                        payload: '2025-09-01', // for instance
+                    },
                 ]);
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -219,31 +219,31 @@ describe('formatLogValue', () => {
                     [
                         {
                             id: 'formatDate',
-                            name: 'Format date'
-                        }
+                            name: 'Format date',
+                        },
                     ],
                     [
                         {
-                            raw_payload: attributeValue
-                        }
+                            raw_payload: attributeValue,
+                        },
                     ],
-                    ctx
+                    ctx,
                 );
             });
 
             it('Should return standard attribute date range value as string without getValue action formatDateRange', async () => {
                 const attributeValue = {
                     from: 1756715467760,
-                    to: 1756801867760
+                    to: 1756801867760,
                 };
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.DATE_RANGE
+                    format: AttributeFormats.DATE_RANGE,
                 });
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -255,10 +255,10 @@ describe('formatLogValue', () => {
             it('Should return standard attribute date range value as string with getValue action formatDateRange', async () => {
                 const attributeValue = {
                     from: 1756715467760,
-                    to: 1756801867760
+                    to: 1756801867760,
                 };
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
-                    payload: attributeValue
+                    payload: attributeValue,
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
@@ -269,19 +269,19 @@ describe('formatLogValue', () => {
                         getValue: [
                             {
                                 id: 'formatDateRange',
-                                name: 'Format date range'
-                            }
-                        ]
-                    }
+                                name: 'Format date range',
+                            },
+                        ],
+                    },
                 });
 
                 actionListMock.runActionsList.mockResolvedValue([
                     {
                         payload: {
                             from: '2025-09-01',
-                            to: '2025-09-02'
-                        }
-                    }
+                            to: '2025-09-02',
+                        },
+                    },
                 ]);
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -291,22 +291,22 @@ describe('formatLogValue', () => {
                     [
                         {
                             id: 'formatDateRange',
-                            name: 'Format date range'
-                        }
+                            name: 'Format date range',
+                        },
                     ],
                     [
                         {
-                            raw_payload: attributeValue
-                        }
+                            raw_payload: attributeValue,
+                        },
                     ],
-                    ctx
+                    ctx,
                 );
                 expect(mockTranslator.t).toHaveBeenCalledWith(
                     'labels.date_range',
                     expect.objectContaining({
                         from: '2025-09-01',
-                        to: '2025-09-02'
-                    })
+                        to: '2025-09-02',
+                    }),
                 );
             });
         });
@@ -316,8 +316,8 @@ describe('formatLogValue', () => {
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
-                    attribute: 'link_attribute'
-                }
+                    attribute: 'link_attribute',
+                },
             } as Log;
 
             it('Should return linked record name', async () => {
@@ -325,25 +325,25 @@ describe('formatLogValue', () => {
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
                     payload: {
                         id: linkedRecordId,
-                        library: 'test_link'
-                    }
+                        library: 'test_link',
+                    },
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'link_attribute',
-                    type: AttributeTypes.SIMPLE_LINK
+                    type: AttributeTypes.SIMPLE_LINK,
                 });
 
                 recordDomainMock.find.mockResolvedValue({
                     list: [
                         {
-                            id: linkedRecordId
-                        }
-                    ]
+                            id: linkedRecordId,
+                        },
+                    ],
                 } as IListWithCursor<IRecord>);
 
                 recordDomainMock.getRecordIdentity.mockResolvedValue({
-                    getLabel: async () => 'Linked record name'
+                    getLabel: async () => 'Linked record name',
                 } as IRecordIdentity);
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -357,14 +357,14 @@ describe('formatLogValue', () => {
                             {
                                 field: 'id',
                                 value: linkedRecordId,
-                                condition: AttributeCondition.EQUAL
-                            }
+                                condition: AttributeCondition.EQUAL,
+                            },
                         ],
                         retrieveInactive: true,
                         ignorePermissions: true,
-                        withCount: false
+                        withCount: false,
                     },
-                    ctx
+                    ctx,
                 });
                 expect(recordDomainMock.getRecordIdentity).toHaveBeenCalledWith({id: linkedRecordId}, ctx);
             });
@@ -374,17 +374,17 @@ describe('formatLogValue', () => {
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
                     payload: {
                         id: 'not-exists',
-                        library: 'test_link'
-                    }
+                        library: 'test_link',
+                    },
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'link_attribute',
-                    type: AttributeTypes.SIMPLE_LINK
+                    type: AttributeTypes.SIMPLE_LINK,
                 });
 
                 recordDomainMock.find.mockResolvedValue({
-                    list: []
+                    list: [],
                 } as IListWithCursor<IRecord>);
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -398,14 +398,14 @@ describe('formatLogValue', () => {
                             {
                                 field: 'id',
                                 value: linkedRecordId,
-                                condition: AttributeCondition.EQUAL
-                            }
+                                condition: AttributeCondition.EQUAL,
+                            },
                         ],
                         retrieveInactive: true,
                         ignorePermissions: true,
-                        withCount: false
+                        withCount: false,
                     },
-                    ctx
+                    ctx,
                 });
             });
         });
@@ -415,8 +415,8 @@ describe('formatLogValue', () => {
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
-                    attribute: 'tree_attribute'
-                }
+                    attribute: 'tree_attribute',
+                },
             } as Log;
 
             it('Should return tree node record name', async () => {
@@ -425,22 +425,22 @@ describe('formatLogValue', () => {
 
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
                     payload: {
-                        id: linkedNodeId
+                        id: linkedNodeId,
                     },
-                    treeId: 'tree_1'
+                    treeId: 'tree_1',
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'tree_attribute',
-                    type: AttributeTypes.TREE
+                    type: AttributeTypes.TREE,
                 });
 
                 treeDomainMock.getRecordByNodeId.mockResolvedValue({
-                    id: nodeRecordId
+                    id: nodeRecordId,
                 } as IRecord);
 
                 recordDomainMock.getRecordIdentity.mockResolvedValue({
-                    getLabel: async () => 'Tree node record name'
+                    getLabel: async () => 'Tree node record name',
                 } as IRecordIdentity);
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
@@ -450,7 +450,7 @@ describe('formatLogValue', () => {
                 expect(treeDomainMock.getRecordByNodeId).toHaveBeenCalledWith({
                     nodeId: linkedNodeId,
                     treeId: 'tree_1',
-                    ctx
+                    ctx,
                 });
                 expect(recordDomainMock.getRecordIdentity).toHaveBeenCalledWith({id: nodeRecordId}, ctx);
             });
@@ -459,14 +459,14 @@ describe('formatLogValue', () => {
                 const linkedNodeId = '42';
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
                     payload: {
-                        id: linkedNodeId
+                        id: linkedNodeId,
                     },
-                    treeId: 'tree_1'
+                    treeId: 'tree_1',
                 };
 
                 attributeDomainMock.getAttributeProperties.mockResolvedValue({
                     id: 'tree_attribute',
-                    type: AttributeTypes.TREE
+                    type: AttributeTypes.TREE,
                 });
 
                 treeDomainMock.getRecordByNodeId.mockResolvedValue(null);
@@ -478,7 +478,7 @@ describe('formatLogValue', () => {
                 expect(treeDomainMock.getRecordByNodeId).toHaveBeenCalledWith({
                     nodeId: linkedNodeId,
                     treeId: 'tree_1',
-                    ctx
+                    ctx,
                 });
             });
         });

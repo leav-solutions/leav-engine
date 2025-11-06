@@ -9,7 +9,7 @@ jest.mock(
     () =>
         function ChooseTableColumns() {
             return <div>ChooseTableColumns</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -17,7 +17,7 @@ jest.mock(
     () =>
         function LibraryItemsListPagination() {
             return <div>LibraryItemsListPagination</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -25,7 +25,7 @@ jest.mock(
     () =>
         function Header() {
             return <div>Header</div>;
-        }
+        },
 );
 
 describe('Table', () => {

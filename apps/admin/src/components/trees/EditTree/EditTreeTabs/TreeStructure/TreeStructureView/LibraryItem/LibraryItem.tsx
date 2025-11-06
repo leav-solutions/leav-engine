@@ -48,7 +48,7 @@ function LibraryItem({treeLibrary, readOnly, onMove}: ILibraryItemProps): JSX.El
         item: {
             type: 'library',
             from: null,
-            library: treeLibrary
+            library: treeLibrary,
         },
         canDrag: !readOnly,
         end: (_, monitor) => {
@@ -56,7 +56,7 @@ function LibraryItem({treeLibrary, readOnly, onMove}: ILibraryItemProps): JSX.El
             if (dropResult) {
                 onMove(treeLibrary.library.id, null, dropResult.id);
             }
-        }
+        },
     });
 
     const _handleAdd = () => {

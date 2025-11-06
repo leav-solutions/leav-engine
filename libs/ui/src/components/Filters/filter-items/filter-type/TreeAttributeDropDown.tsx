@@ -19,7 +19,7 @@ const DivStyled = styled.div`
 export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -80,7 +80,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             value: records.map(record => record.id),
             formattedValue: records.map(record => record.whoAmI.label).filter(Boolean),
             condition: filter.condition ?? RecordFilterCondition.EQUAL,
-            field: fields
+            field: fields,
         });
     };
 

@@ -16,14 +16,14 @@ export const checkInput = async (input: string, inputRootPath: string) => {
         throw new ErrorPreview({
             error: 301,
             params: {
-                errorId
-            }
+                errorId,
+            },
         });
     }
 
     const [errorStats, stats] = (await new Promise(res => lstat(absInput, (e, r) => res([e, r])))) as [
         NodeJS.ErrnoException,
-        Stats
+        Stats,
     ];
 
     if (errorStats) {
@@ -31,14 +31,14 @@ export const checkInput = async (input: string, inputRootPath: string) => {
         throw new ErrorPreview({
             error: 303,
             params: {
-                errorId
-            }
+                errorId,
+            },
         });
     }
 
     if (!stats.isFile()) {
         throw new ErrorPreview({
-            error: 302
+            error: 302,
         });
     }
 };

@@ -18,7 +18,7 @@ function useAuth(): IAuthHook {
                 return;
             }
             window.location.reload();
-        }
+        },
     };
 }
 

@@ -30,7 +30,7 @@ const DatePickerDropdowncontainerStyledDiv = styled.div`
 export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const datePickerRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +46,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
         onFilterChange({
             ...filter,
             condition,
-            value: unsetValue ? null : filter.value
+            value: unsetValue ? null : filter.value,
         });
     };
 
@@ -54,7 +54,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
         onFilterChange({
             ...filter,
             value: date ? String(date.unix()) : null,
-            formattedValue: date ? date.format('YYYY-MM-DD') : null //TODO: Date format should come from the backend (will be adress in a later ticket)
+            formattedValue: date ? date.format('YYYY-MM-DD') : null, //TODO: Date format should come from the backend (will be adress in a later ticket)
         });
     };
 

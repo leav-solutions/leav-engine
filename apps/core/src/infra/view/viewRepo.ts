@@ -10,7 +10,7 @@ import {type IView} from '_types/views';
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.db.dbUtils': dbUtils = null,
 }: IViewRepoDeps): IViewRepo {
     return {
         async updateView(view: IView, ctx: IQueryInfos): Promise<IView> {
@@ -22,7 +22,7 @@ export default function ({
                     UPDATE ${docToInsert} IN ${collec}
                     OPTIONS {mergeObjects: false, keepNull: false}
                     RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(updatedView[0]);
@@ -33,7 +33,7 @@ export default function ({
 
             const newView = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(newView[0]);
@@ -44,7 +44,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
             const initializedParams = {...defaultParams, ...params};
 
@@ -52,9 +52,9 @@ export default function ({
                 ...initializedParams,
                 collectionName: VIEWS_COLLECTION_NAME,
                 customFilterConditions: {
-                    created_by: (filterKey, filterVal) => aql`el.${filterKey} == ${filterVal} OR el.shared == true`
+                    created_by: (filterKey, filterVal) => aql`el.${filterKey} == ${filterVal} OR el.shared == true`,
                 },
-                ctx
+                ctx,
             });
         },
         async deleteView(viewId: string, ctx: IQueryInfos): Promise<IView> {
@@ -62,10 +62,10 @@ export default function ({
 
             const deletedView = await dbService.execute({
                 query: aql`REMOVE ${{_key: viewId}} IN ${collec} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             return dbUtils.cleanup(deletedView[0]);
-        }
+        },
     };
 }

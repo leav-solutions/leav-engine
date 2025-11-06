@@ -16,14 +16,14 @@ function BreadcrumbNavigator(): JSX.Element {
 
     // Retrieve tree ID from form config and selected attribute
     const selectedDepAttribute = state.form.dependencyAttributes?.find(
-        a => a.id === state.activeDependency?.attribute
+        a => a.id === state.activeDependency?.attribute,
     ) as GET_FORM_forms_list_dependencyAttributes_TreeAttribute;
     const linkedTree = selectedDepAttribute.linked_tree?.id;
 
     // Get tree attribute props
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
         variables: {id: [linkedTree]},
-        skip: !linkedTree
+        skip: !linkedTree,
     });
 
     if (loading) {

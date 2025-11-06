@@ -22,13 +22,13 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                     UPDATE view with {"sort": [viewSort]} IN ${viewsCollection}
                 return NEW
             `,
-            ctx
+            ctx,
         });
     };
 
     return {
         async run(ctx) {
             await _migrateViewSortToArray(ctx);
-        }
+        },
     };
 }

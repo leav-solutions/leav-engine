@@ -17,10 +17,10 @@ describe('LabelFields', () => {
         originalId: 'test',
         label: {
             fr: 'test fr',
-            en: 'test en'
+            en: 'test en',
         },
         format: 'text',
-        validation_regex: ''
+        validation_regex: '',
     };
 
     const comp = mount(
@@ -30,7 +30,7 @@ describe('LabelFields', () => {
             onChange={jest.fn}
             t={mockT as TFunction}
             save={handleSave}
-        />
+        />,
     );
 
     test('should return something', () => {

@@ -14,7 +14,7 @@ describe('ALCOutputConnector', () => {
                 size={100}
                 types={['']}
                 colorTypeDictionnary={{int: [255, 255, 255]}}
-            />
+            />,
         );
 
         expect(comp).toMatchSnapshot();

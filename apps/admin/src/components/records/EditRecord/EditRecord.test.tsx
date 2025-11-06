@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function RecordEditionForm() {
             return <div>Edit form container</div>;
-        }
+        },
 );
 
 describe('EditRecord', () => {
@@ -24,7 +24,7 @@ describe('EditRecord', () => {
             {
                 request: {
                     query: getLibByIdQuery,
-                    variables: {id: ['products']}
+                    variables: {id: ['products']},
                 },
                 result: {
                     data: {
@@ -33,13 +33,13 @@ describe('EditRecord', () => {
                             totalCount: 1,
                             list: [
                                 {
-                                    ...mockLibrary
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    ...mockLibrary,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         let comp;
@@ -47,7 +47,7 @@ describe('EditRecord', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditRecord library="products" recordId="12345" />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -69,10 +69,10 @@ describe('EditRecord', () => {
             {
                 request: {
                     query: getLibByIdQuery,
-                    variables: {id: ['products']}
+                    variables: {id: ['products']},
                 },
-                error: new Error('Boom!')
-            }
+                error: new Error('Boom!'),
+            },
         ];
 
         let comp;
@@ -80,7 +80,7 @@ describe('EditRecord', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditRecord library="products" recordId="12345" />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -97,7 +97,7 @@ describe('EditRecord', () => {
             {
                 request: {
                     query: getLibByIdQuery,
-                    variables: {id: ['products']}
+                    variables: {id: ['products']},
                 },
                 result: {
                     data: {
@@ -106,13 +106,13 @@ describe('EditRecord', () => {
                             totalCount: 1,
                             list: [
                                 {
-                                    ...mockLibrary
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    ...mockLibrary,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const onLabelUpdate = jest.fn();
@@ -122,7 +122,7 @@ describe('EditRecord', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditRecord library="products" recordId="12345" onIdentityUpdate={onLabelUpdate} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

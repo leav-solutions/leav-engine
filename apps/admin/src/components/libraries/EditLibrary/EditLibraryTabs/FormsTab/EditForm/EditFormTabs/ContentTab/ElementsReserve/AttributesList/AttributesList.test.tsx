@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function ReserveAttribute() {
             return <div>ReserveAttribute</div>;
-        }
+        },
 );
 
 jest.mock('../../formBuilderReducer/hook/useFormBuilderReducer');
@@ -26,7 +26,7 @@ describe('AttributesList', () => {
             {
                 request: {
                     query: getAttributesQuery,
-                    variables: {libraries: ['ubs']}
+                    variables: {libraries: ['ubs']},
                 },
                 result: {
                     data: {
@@ -38,25 +38,25 @@ describe('AttributesList', () => {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 1'
+                                        fr: 'Attr 1',
                                     },
                                     id: 'test_tree_attr',
-                                    versions_conf: null
+                                    versions_conf: null,
                                 },
                                 {
                                     ...mockAttrSimple,
                                     __typename: 'Attribute',
                                     label: {
-                                        fr: 'Attr 2'
+                                        fr: 'Attr 2',
                                     },
                                     id: 'other_test_tree_attr',
-                                    versions_conf: null
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    versions_conf: null,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         let comp;
@@ -64,7 +64,7 @@ describe('AttributesList', () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <AttributesList />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

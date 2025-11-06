@@ -28,11 +28,11 @@ const _handleValueVersion = async (
     value: IValue,
     attribute: IAttribute,
     deps: ISaveOneValueDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<IValueVersion> => {
     const versionProfile = await deps.versionProfileDomain.getVersionProfileProperties({
         id: attribute.versions_conf.profile,
-        ctx
+        ctx,
     });
 
     // Run through each profile's tree: if value's version has a value for this tree, we keep it, otherwise we affect
@@ -47,7 +47,7 @@ const _handleValueVersion = async (
             } else {
                 const treeDefaultElement = await deps.getDefaultElementHelper.getDefaultElement({
                     treeId,
-                    ctx
+                    ctx,
                 });
 
                 version[treeId] = treeDefaultElement.id;
@@ -55,7 +55,7 @@ const _handleValueVersion = async (
 
             return version;
         },
-        Promise.resolve({})
+        Promise.resolve({}),
     );
 
     return valueVersion;
@@ -67,13 +67,13 @@ export default async (
     attribute: IAttribute,
     value: ISaveValue,
     deps: ISaveOneValueDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<IValue> => {
     const valueExists = doesValueExist(value, attribute);
 
     const valueToSave = {
         ...value,
-        modified_at: moment().unix()
+        modified_at: moment().unix(),
     };
 
     if (!valueExists) {
@@ -84,7 +84,7 @@ export default async (
     if (!!attribute.reverse_link) {
         reverseLink = await deps.attributeDomain.getAttributeProperties({
             id: attribute.reverse_link as string,
-            ctx
+            ctx,
         });
     }
 
@@ -99,14 +99,14 @@ export default async (
               recordId,
               attribute: {...attribute, reverse_link: reverseLink},
               value: valueToSave,
-              ctx
+              ctx,
           })
         : await deps.valueRepo.createValue({
               library,
               recordId,
               attribute: {...attribute, reverse_link: reverseLink},
               value: valueToSave,
-              ctx
+              ctx,
           });
 
     return savedVal;

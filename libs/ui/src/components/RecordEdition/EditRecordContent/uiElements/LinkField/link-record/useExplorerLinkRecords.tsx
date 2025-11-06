@@ -21,7 +21,7 @@ export const useExplorerLinkRecords = ({
     attribute,
     backendValues,
     setBackendValues,
-    onDeleteMultipleValues
+    onDeleteMultipleValues,
 }: IUseExplorerLinkRecordsProps) => {
     const {t} = useSharedTranslation();
 
@@ -33,33 +33,34 @@ export const useExplorerLinkRecords = ({
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: attribute.required ? [t('errors.standard_field_required')] : []
-                }
+                    errors: attribute.required ? [t('errors.standard_field_required')] : [],
+                },
             ]);
             setBackendValues([]);
             return;
         }
 
         const newBackendValues = backendValues.filter(backendValue =>
-            filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id)
+            filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id),
         );
 
         form.setFieldValue(
             attribute.id,
-            newBackendValues.map(({linkValue}) => linkValue.id)
+            newBackendValues.map(({linkValue}) => linkValue.id),
         );
 
         form.setFields([
             {
                 name: attribute.id,
-                errors: attribute.required && newBackendValues.length === 0 ? [t('errors.standard_field_required')] : []
-            }
+                errors:
+                    attribute.required && newBackendValues.length === 0 ? [t('errors.standard_field_required')] : [],
+            },
         ]);
 
         setBackendValues(previousBackendValues =>
             previousBackendValues.filter(backendValue =>
-                filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id)
-            )
+                filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id),
+            ),
         );
     };
 
@@ -67,7 +68,7 @@ export const useExplorerLinkRecords = ({
         const deleteRes = await onDeleteMultipleValues(
             attribute.id,
             backendValues.filter(backendValue => backendValue.id_value),
-            null
+            null,
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
@@ -81,7 +82,7 @@ export const useExplorerLinkRecords = ({
 
     const handleExplorerMassDeactivateValues = (
         _massSelectedFilter: RecordFilterInput[],
-        massSelection: MassSelection
+        massSelection: MassSelection,
     ) => {
         removeValues(idValue => !massSelection.includes(idValue), true);
     };
@@ -92,14 +93,14 @@ export const useExplorerLinkRecords = ({
 
             form.setFieldValue(attribute.id, [
                 ...backendValues.map(({linkValue}) => linkValue.id),
-                ...saveLinkValues.map(({linkValue}) => linkValue.id)
+                ...saveLinkValues.map(({linkValue}) => linkValue.id),
             ]);
 
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: []
-                }
+                    errors: [],
+                },
             ]);
 
             setBackendValues(previousBackendValues => [...previousBackendValues, ...saveLinkValues]);
@@ -117,8 +118,8 @@ export const useExplorerLinkRecords = ({
                 form.setFields([
                     {
                         name: attribute.id,
-                        errors: [errorMessage]
-                    }
+                        errors: [errorMessage],
+                    },
                 ]);
             }
         }
@@ -126,7 +127,7 @@ export const useExplorerLinkRecords = ({
 
     const handleExplorerCreateValue = ({
         recordIdCreated,
-        saveValuesResultOnLink
+        saveValuesResultOnLink,
     }: {
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
@@ -141,6 +142,6 @@ export const useExplorerLinkRecords = ({
         handleExplorerRemoveValue,
         handleExplorerMassDeactivateValues,
         handleExplorerLinkValue,
-        handleExplorerCreateValue
+        handleExplorerCreateValue,
     };
 };

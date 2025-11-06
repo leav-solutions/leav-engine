@@ -20,7 +20,7 @@ function MetadataTab({attribute, readonly}: IMetadataTabProps): JSX.Element {
     const _handleChange = (fields: string[]) =>
         saveAttribute({
             variables: {attrData: {id: attribute.id, metadata_fields: fields}},
-            refetchQueries: [{query: getAttributesQuery, variables: {id: attribute.id}}]
+            refetchQueries: [{query: getAttributesQuery, variables: {id: attribute.id}}],
         });
 
     return <MetadataList fields={attribute.metadata_fields || []} readonly={readonly} onChange={_handleChange} />;

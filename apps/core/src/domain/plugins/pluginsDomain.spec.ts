@@ -8,7 +8,7 @@ import pluginsDomain from './pluginsDomain';
 describe('PluginsDomain', () => {
     const mockPluginsRepo: Mockify<IPluginsRepo> = {
         registerPlugin: jest.fn().mockImplementation((path, infos) => ({path, infos})),
-        getRegisteredPlugins: jest.fn().mockReturnValue([{path: '/fake/path', infos: {...mockPlugin}}])
+        getRegisteredPlugins: jest.fn().mockReturnValue([{path: '/fake/path', infos: {...mockPlugin}}]),
     };
     const plugins = pluginsDomain({'core.infra.plugins': mockPluginsRepo as IPluginsRepo});
 

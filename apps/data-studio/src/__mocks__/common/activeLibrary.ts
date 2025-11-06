@@ -11,5 +11,5 @@ export const mockActiveLibrary: IActiveLibrary = {
     behavior: LibraryBehavior.standard,
     attributes: [],
     trees: [],
-    permissions: mockLibraryPermissions
+    permissions: mockLibraryPermissions,
 };

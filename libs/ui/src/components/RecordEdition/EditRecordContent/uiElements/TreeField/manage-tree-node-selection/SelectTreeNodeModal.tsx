@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitModal} from 'aristid-ds';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
-    type RecordFormAttributeTreeAttributeFragment
+    type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
@@ -54,7 +54,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     onConfirm,
     onClose,
     childrenAsRecordValuePermissionFilter,
-    className
+    className,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -112,7 +112,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
                 multiple // We want to be able to set as selected in the tree components, the nodes that are already selected and the disabled nodes
                 selectedNodes={[
                     ...selectedNodes.map(node => node.id),
-                    ...(isMonoValueToReplace ? [] : backendValues.map(value => value.treeValue.id))
+                    ...(isMonoValueToReplace ? [] : backendValues.map(value => value.treeValue.id)),
                 ]}
                 childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
                 disabledNodes={backendValues.map(value => value.treeValue.id).concat(attribute.linked_tree.id)}

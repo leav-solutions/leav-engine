@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function TreesList() {
             return <div>TreesList</div>;
-        }
+        },
 );
 
 describe('Trees', () => {
@@ -26,16 +26,16 @@ describe('Trees', () => {
             {
                 request: {
                     query: getTreesQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         attributes: {
-                            list: [mockTree]
-                        }
-                    }
-                }
-            }
+                            list: [mockTree],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -43,7 +43,7 @@ describe('Trees', () => {
                 <Router>
                     <Trees history={mockHistory as History} />
                 </Router>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 

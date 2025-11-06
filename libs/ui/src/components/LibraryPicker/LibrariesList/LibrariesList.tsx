@@ -17,7 +17,7 @@ import {
     PermissionTypes,
     type SaveLibraryMutation,
     useGetLibrariesQuery,
-    useIsAllowedQuery
+    useIsAllowedQuery,
 } from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
 import {extractPermissionFromQuery} from '../../../_utils';
@@ -50,7 +50,7 @@ function LibrariesList({
     onSelect,
     selected = [],
     multiple = true,
-    showSelected = false
+    showSelected = false,
 }: ILibrariesListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -60,8 +60,8 @@ function LibrariesList({
         fetchPolicy: 'cache-and-network',
         variables: {
             type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_create_library]
-        }
+            actions: [PermissionsActions.admin_create_library],
+        },
     });
     const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_library);
 
@@ -112,9 +112,9 @@ function LibrariesList({
                 data: {
                     libraries: {
                         ...allLibrariesData.libraries,
-                        list: newLibsList
-                    }
-                }
+                        list: newLibsList,
+                    },
+                },
             });
         }
         const newSelection = [...selectedRowKeys, newLibrary.id];
@@ -139,11 +139,11 @@ function LibrariesList({
                     label: library.label,
                     subLabel: library.id,
                     preview: (library.icon?.whoAmI?.preview?.[PreviewSize.SMALL] as string) ?? null,
-                    color: null
+                    color: null,
                 };
                 return <EntityCard entity={libraryIdentity} size={PreviewSize.SMALL} />;
-            }
-        }
+            },
+        },
     ];
 
     const tableData: LibraryType[] = ([...data?.libraries?.list] ?? [])
@@ -163,7 +163,7 @@ function LibrariesList({
         .map(lib => ({
             ...lib,
             key: lib.id,
-            label: localizedTranslation(lib.label, lang)
+            label: localizedTranslation(lib.label, lang),
         }));
 
     const tableHeader = (
@@ -184,7 +184,7 @@ function LibrariesList({
                 rowSelection={{
                     type: multiple ? 'checkbox' : 'radio',
                     selectedRowKeys,
-                    onChange: _handleSelectionChange
+                    onChange: _handleSelectionChange,
                 }}
                 columns={columns}
                 dataSource={tableData}
@@ -193,7 +193,7 @@ function LibrariesList({
                 scroll={{y: 'calc(95vh - 20rem)'}}
                 title={() => tableHeader}
                 onRow={record => ({
-                    onClick: () => _handleRowClick(record)
+                    onClick: () => _handleRowClick(record),
                 })}
             />
             {isNewLibraryModalOpen && (

@@ -4,7 +4,7 @@
 export enum ErrorTypes {
     VALIDATION_ERROR = 'VALIDATION_ERROR',
     PERMISSION_ERROR = 'PERMISSION_ERROR',
-    INTERNAL_ERROR = 'INTERNAL_ERROR'
+    INTERNAL_ERROR = 'INTERNAL_ERROR',
 }
 
 export interface IErrorByField {
@@ -21,5 +21,5 @@ export interface IFormError {
 
 export enum ErrorDisplayTypes {
     ERROR = 'error',
-    PERMISSION_ERROR = 'permission_error'
+    PERMISSION_ERROR = 'permission_error',
 }

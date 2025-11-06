@@ -7,7 +7,7 @@ import {
     type ICommonFieldsSettings,
     type IFormDividerSettings,
     type IFormTabsSettings,
-    TabsDirection
+    TabsDirection,
 } from '@leav/utils';
 import {type IRecordForm, type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {AttributeFormat, AttributeType, FormElementTypes, LibraryBehavior} from '_ui/_gqlTypes';
@@ -35,10 +35,10 @@ const formElementBase = {
             id_value: null,
             attribute: mockAttributeSimple,
             metadata: null,
-            version: null
-        }
+            version: null,
+        },
     ],
-    settings: {}
+    settings: {},
 };
 
 export const mockFormElementContainer: FormElement<{}> = {
@@ -47,7 +47,7 @@ export const mockFormElementContainer: FormElement<{}> = {
     containerId: '__root',
     uiElement: () => <div>{FormUIElementTypes.FIELDS_CONTAINER}</div>,
     type: FormElementTypes.layout,
-    uiElementType: FormUIElementTypes.FIELDS_CONTAINER
+    uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
 };
 
 export const mockFormElementInput: FormElement<{}> = {
@@ -58,7 +58,7 @@ export const mockFormElementInput: FormElement<{}> = {
     attribute: {...mockFormAttribute, format: AttributeFormat.text, versions_conf: {versionable: false, profile: null}},
     uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
     type: FormElementTypes.field,
-    uiElementType: FormFieldTypes.TEXT_INPUT
+    uiElementType: FormFieldTypes.TEXT_INPUT,
 };
 
 export const mockFormElementRequiredInput: FormElement<{}> = {
@@ -70,11 +70,11 @@ export const mockFormElementRequiredInput: FormElement<{}> = {
         ...mockFormAttribute,
         format: AttributeFormat.text,
         versions_conf: {versionable: false, profile: null},
-        required: true
+        required: true,
     },
     uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
     type: FormElementTypes.field,
-    uiElementType: FormFieldTypes.TEXT_INPUT
+    uiElementType: FormFieldTypes.TEXT_INPUT,
 };
 
 export const mockFormElementMultipleInput: FormElement<{}> = {
@@ -87,11 +87,11 @@ export const mockFormElementMultipleInput: FormElement<{}> = {
         type: AttributeType.advanced,
         multiple_values: true,
         format: AttributeFormat.text,
-        versions_conf: {versionable: false, profile: null}
+        versions_conf: {versionable: false, profile: null},
     },
     uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
     type: FormElementTypes.field,
-    uiElementType: FormFieldTypes.TEXT_INPUT
+    uiElementType: FormFieldTypes.TEXT_INPUT,
 };
 
 export const mockFormElementDate: FormElement<{}> = {
@@ -101,7 +101,7 @@ export const mockFormElementDate: FormElement<{}> = {
     settings: {attribute: 'test_attribute'},
     uiElement: () => <div>{FormFieldTypes.DATE}</div>,
     type: FormElementTypes.field,
-    uiElementType: FormFieldTypes.DATE
+    uiElementType: FormFieldTypes.DATE,
 };
 
 export const mockFormElementInputVersionable: FormElement<{}> = {
@@ -110,17 +110,17 @@ export const mockFormElementInputVersionable: FormElement<{}> = {
         ...mockFormElementInput.attribute,
         versions_conf: {
             versionable: true,
-            profile: mockVersionProfile
-        }
-    }
+            profile: mockVersionProfile,
+        },
+    },
 };
 
 export const mockLinkValue = {
     linkValue: {
         id: '123456',
         whoAmI: {
-            ...mockRecord
-        }
+            ...mockRecord,
+        },
     },
     created_at: 123456789,
     modified_at: 123456789,
@@ -128,7 +128,7 @@ export const mockLinkValue = {
     modified_by: mockModifier,
     id_value: null,
     metadata: null,
-    version: null
+    version: null,
 };
 
 const mockFormAttributeLink = {
@@ -139,11 +139,11 @@ const mockFormAttributeLink = {
         behavior: LibraryBehavior.standard,
         label: {fr: 'Lib'},
         permissions: {
-            create_record: true
-        }
+            create_record: true,
+        },
     },
     system: false,
-    linkValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
+    linkValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []},
 };
 
 export const mockFormElementLink: FormElement<{}> = {
@@ -155,7 +155,7 @@ export const mockFormElementLink: FormElement<{}> = {
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.LINK,
     attribute: mockFormAttributeLink,
-    values: [mockLinkValue]
+    values: [mockLinkValue],
 };
 
 export const mockFormElementLinkVersionable: FormElement<{}> = {
@@ -164,9 +164,9 @@ export const mockFormElementLinkVersionable: FormElement<{}> = {
         ...mockFormElementLink.attribute,
         versions_conf: {
             versionable: true,
-            profile: mockVersionProfile
-        }
-    }
+            profile: mockVersionProfile,
+        },
+    },
 };
 
 const mockRecordIdentity = {
@@ -178,9 +178,9 @@ const mockRecordIdentity = {
         library: {
             ...mockRecord.library,
             id: 'linked_lib',
-            label: {en: 'Linked lib'}
-        }
-    }
+            label: {en: 'Linked lib'},
+        },
+    },
 };
 
 const mockRecord2 = {
@@ -192,9 +192,9 @@ const mockRecord2 = {
         library: {
             ...mockRecord.library,
             id: 'linked_lib',
-            label: {en: 'Linked lib'}
-        }
-    }
+            label: {en: 'Linked lib'},
+        },
+    },
 };
 
 const mockRecordAncestor = {
@@ -206,9 +206,9 @@ const mockRecordAncestor = {
         library: {
             ...mockRecord.library,
             id: 'linked_lib',
-            label: {en: 'Linked lib'}
-        }
-    }
+            label: {en: 'Linked lib'},
+        },
+    },
 };
 
 export const mockTreeValueA: IRecordPropertyTree = {
@@ -217,19 +217,19 @@ export const mockTreeValueA: IRecordPropertyTree = {
         record: mockRecordIdentity,
         ancestors: [
             {
-                record: mockRecordAncestor
+                record: mockRecordAncestor,
             },
             {
-                record: mockRecordIdentity
-            }
-        ]
+                record: mockRecordIdentity,
+            },
+        ],
     },
     created_at: 123456789,
     modified_at: 123456789,
     created_by: mockModifier,
     modified_by: mockModifier,
     metadata: null,
-    id_value: '123456'
+    id_value: '123456',
 };
 
 export const mockTreeValueB: IRecordPropertyTree = {
@@ -239,14 +239,14 @@ export const mockTreeValueB: IRecordPropertyTree = {
         record: mockRecord2,
         ancestors: [
             {
-                record: mockRecordAncestor
+                record: mockRecordAncestor,
             },
             {
-                record: mockRecord2
-            }
-        ]
+                record: mockRecord2,
+            },
+        ],
     },
-    id_value: '987654'
+    id_value: '987654',
 };
 
 export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
@@ -264,15 +264,15 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
             id: 'my_linked_tree',
             label: {
                 fr: 'Mon arbre',
-                en: 'My tree'
-            }
+                en: 'My tree',
+            },
         },
-        treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
+        treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []},
     },
     values: [
         {...(mockTreeValueA as unknown as RecordFormElementsValueTreeValue)},
-        {...(mockTreeValueB as unknown as RecordFormElementsValueTreeValue)}
-    ]
+        {...(mockTreeValueB as unknown as RecordFormElementsValueTreeValue)},
+    ],
 };
 
 export const mockFormElementTextBlock: FormElement<{}> = {
@@ -280,10 +280,10 @@ export const mockFormElementTextBlock: FormElement<{}> = {
     id: 'text_block',
     containerId: '__root',
     settings: {
-        content: '**text content**'
+        content: '**text content**',
     },
     uiElement: () => <div>{FormUIElementTypes.TEXT_BLOCK}</div>,
-    uiElementType: FormUIElementTypes.TEXT_BLOCK
+    uiElementType: FormUIElementTypes.TEXT_BLOCK,
 };
 
 export const mockFormElementDivider: FormElement<IFormDividerSettings> = {
@@ -291,7 +291,7 @@ export const mockFormElementDivider: FormElement<IFormDividerSettings> = {
     id: 'divider',
     containerId: '__root',
     uiElement: () => <div>{FormUIElementTypes.DIVIDER}</div>,
-    uiElementType: FormUIElementTypes.DIVIDER
+    uiElementType: FormUIElementTypes.DIVIDER,
 };
 
 export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
@@ -301,30 +301,30 @@ export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
     settings: {
         tabs: [
             {id: 'tab1', label: {fr: 'Tab 1'}},
-            {id: 'tab2', label: {fr: 'Tab 2'}}
+            {id: 'tab2', label: {fr: 'Tab 2'}},
         ],
-        direction: TabsDirection.HORIZONTAL
+        direction: TabsDirection.HORIZONTAL,
     },
     uiElement: () => <div>{FormUIElementTypes.TABS}</div>,
-    uiElementType: FormUIElementTypes.TABS
+    uiElementType: FormUIElementTypes.TABS,
 };
 
 export const mockCommonFormElementProps: Partial<IFormElementProps<any>> = {
     onValueDelete: jest.fn(),
     onValueSubmit: jest.fn(),
-    onDeleteMultipleValues: jest.fn()
+    onDeleteMultipleValues: jest.fn(),
 };
 
 export const mockRecordForm: IRecordForm = {
     id: 'edition_form',
     library: {
-        id: 'test_lib'
+        id: 'test_lib',
     },
     recordId: '123456',
     dependencyAttributes: [],
     elements: [{...mockFormElementInput, settings: [{key: 'my_settings', value: 'value'}]}],
     sidePanel: {
         enable: true,
-        isOpenByDefault: true
-    }
+        isOpenByDefault: true,
+    },
 };

@@ -16,7 +16,7 @@ export const viewSettingsInitialState: IViewSettingsState = {
     savedViews: [],
     entrypoint: {
         type: 'library',
-        libraryId: ''
+        libraryId: '',
     },
     attributesIds: [],
     fulltextSearch: '',
@@ -27,13 +27,13 @@ export const viewSettingsInitialState: IViewSettingsState = {
         viewType: 'table',
         attributesIds: [],
         sort: [],
-        pageSize: defaultPageSizeOptions[0]
+        pageSize: defaultPageSizeOptions[0],
     },
     defaultViewSettings: {
         viewType: 'table',
         attributesIds: [],
         sort: [],
-        filters: []
+        filters: [],
     },
-    enableConfigureView: false
+    enableConfigureView: false,
 };

@@ -58,9 +58,9 @@ function Frame({element, onValueSubmit, isFormCreationMode}: IFormElementProps<I
             iframe.contentWindow?.postMessage(
                 {
                     currentRecord: record,
-                    isFormCreationMode
+                    isFormCreationMode,
                 },
-                element.settings.url
+                element.settings.url,
             );
         }
     }, [record, iframeLoaded]);

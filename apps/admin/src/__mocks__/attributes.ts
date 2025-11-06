@@ -5,7 +5,7 @@ import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_
 import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute} from '../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
-    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeFormat, AttributeType, MultiDisplayOption, ValueVersionMode} from '../_gqlTypes/globalTypes';
 
@@ -13,11 +13,11 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     id: 'test_attribute',
     label: {
         fr: 'Mon Attribut',
-        en: 'My Attribute'
+        en: 'My Attribute',
     },
     description: {
         fr: 'Mon Attribut',
-        en: 'My Attribute'
+        en: 'My Attribute',
     },
     type: AttributeType.simple,
     format: AttributeFormat.text,
@@ -34,7 +34,7 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     metadata_fields: null,
     libraries: null,
     multi_link_display_option: MultiDisplayOption.avatar,
-    multi_tree_display_option: MultiDisplayOption.avatar
+    multi_tree_display_option: MultiDisplayOption.avatar,
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};
@@ -46,16 +46,16 @@ export const mockAttrSimpleWithValuesList = {
         enable: true,
         allowFreeEntry: false,
         allowListUpdate: false,
-        values: ['value 1', 'value 2']
+        values: ['value 1', 'value 2'],
     },
-    unique: null
+    unique: null,
 };
 
 export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeType.advanced};
 export const mockAttrAdvMultiVal = {...mockAttrAdv, multiple_values: true};
 export const mockAttrAdvVersionable = {
     ...mockAttrAdv,
-    versions_conf: {versionable: true, trees: ['tree_attribute']}
+    versions_conf: {versionable: true, trees: ['tree_attribute']},
 };
 
 export const mockAttrSimpleLink = {...base, id: 'simple_link_attribute', type: AttributeType.simple_link};
@@ -66,9 +66,9 @@ export const mockAttrSimpleLinkWithValuesList = {
         enable: true,
         allowFreeEntry: false,
         allowListUpdate: false,
-        values: ['132456', '987654']
+        values: ['132456', '987654'],
     },
-    unique: null
+    unique: null,
 };
 
 export const mockAttrAdvLink: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute = {
@@ -76,11 +76,11 @@ export const mockAttrAdvLink: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute 
     id: 'adv_link_attribute',
     type: AttributeType.advanced_link,
     linked_library: {id: 'test_lib'},
-    reverse_link: null
+    reverse_link: null,
 };
 export const mockAttrAdvLinkMultiVal: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute = {
     ...mockAttrAdvLink,
-    multiple_values: true
+    multiple_values: true,
 };
 export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute = {
     ...mockAttrAdvLink,
@@ -96,8 +96,8 @@ export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attribute
                     library: {id: 'test_lib', label: {fr: 'test'}},
                     color: null,
                     label: null,
-                    preview: null
-                }
+                    preview: null,
+                },
             },
             {
                 whoAmI: {
@@ -105,20 +105,20 @@ export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attribute
                     library: {id: 'test_lib', label: {fr: 'test'}},
                     color: null,
                     label: null,
-                    preview: null
-                }
-            }
-        ]
-    }
+                    preview: null,
+                },
+            },
+        ],
+    },
 };
 
 export const mockAttrTree: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute = {
     ...base,
     id: 'tree_attribute',
     type: AttributeType.tree,
-    linked_tree: {id: 'test_tree'}
+    linked_tree: {id: 'test_tree'},
 };
 export const mockAttrTreeMultival: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute = {
     ...mockAttrTree,
-    multiple_values: true
+    multiple_values: true,
 };

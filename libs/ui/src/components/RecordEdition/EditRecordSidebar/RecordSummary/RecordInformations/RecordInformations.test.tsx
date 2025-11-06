@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function MockFileModal() {
             return <div>FileModal</div>;
-        }
+        },
 );
 
 describe('RecordInformations', () => {

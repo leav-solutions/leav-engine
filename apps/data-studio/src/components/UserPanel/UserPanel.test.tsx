@@ -13,8 +13,8 @@ jest.mock('@leav/utils', () => ({
     useAuthToken: jest.fn(() => ({
         getToken: jest.fn(),
         saveToken: jest.fn(),
-        deleteToken: mockDeleteToken
-    }))
+        deleteToken: mockDeleteToken,
+    })),
 }));
 
 describe('UserPanel', () => {
@@ -22,7 +22,7 @@ describe('UserPanel', () => {
         render(
             <BrowserRouter>
                 <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
 
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThanOrEqual(1);
@@ -32,7 +32,7 @@ describe('UserPanel', () => {
         const mockLogout = jest.fn();
 
         jest.spyOn(leavUi, 'useAuth').mockImplementation(() => ({
-            logout: mockLogout
+            logout: mockLogout,
         }));
 
         const mockedLocation = {...window.location, reload: jest.fn()};
@@ -42,7 +42,7 @@ describe('UserPanel', () => {
         render(
             <BrowserRouter>
                 <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
 
         const logoutLink = screen.getByRole('menuitem', {name: /logout/});
@@ -60,13 +60,13 @@ describe('UserPanel', () => {
             lang: ['en'],
             availableLangs: ['fr', 'en'],
             defaultLang: 'en',
-            setLang: mockUpdateLang
+            setLang: mockUpdateLang,
         }));
 
         render(
             <BrowserRouter>
                 <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
-            </BrowserRouter>
+            </BrowserRouter>,
         );
 
         expect(screen.getByRole('button', {name: /🇫🇷/})).toBeInTheDocument();

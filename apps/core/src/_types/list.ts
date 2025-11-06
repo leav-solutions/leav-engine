@@ -8,7 +8,7 @@ export interface IList<T> {
 
 export enum CursorDirection {
     PREV = 'prev',
-    NEXT = 'next'
+    NEXT = 'next',
 }
 
 export interface IPaginationCursors {
@@ -32,7 +32,7 @@ export interface ICursorPaginationParams {
 
 export enum SortOrder {
     ASC = 'asc',
-    DESC = 'desc'
+    DESC = 'desc',
 }
 
 export interface ISortParams {

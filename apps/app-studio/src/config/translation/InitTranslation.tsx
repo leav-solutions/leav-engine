@@ -52,7 +52,7 @@ export const InitTranslation: FunctionComponent = ({children}) => {
                 lang: language,
                 availableLangs: availableLangs.langs,
                 defaultLang: lang,
-                setLang: _handleLanguageChange
+                setLang: _handleLanguageChange,
             }}
         >
             {children}

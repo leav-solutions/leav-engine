@@ -23,6 +23,6 @@ export const useNavigateToIframe = (): {
         navigateToIframe: ({panel, destination, recordId, where, recordPanelId}) => {
             setApplication(prevApplication => addRecordPanelToApplication(panel, prevApplication, destination));
             navigate(generatePath(RelativePaths.nextLevelPanel, {recordId, where, recordPanelId}));
-        }
+        },
     };
 };

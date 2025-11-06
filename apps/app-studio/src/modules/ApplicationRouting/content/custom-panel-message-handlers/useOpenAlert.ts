@@ -7,11 +7,11 @@ import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/type
 export const useOpenAlert = () => {
     const openAlert: IUseIFrameMessengerOptions['handlers']['onAlert'] = data => {
         KitAlert[data.type]?.({
-            ...data
+            ...data,
         });
     };
 
     return {
-        openAlert
+        openAlert,
     };
 };

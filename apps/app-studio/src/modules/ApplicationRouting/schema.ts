@@ -10,20 +10,20 @@ const WorkspaceSchema = z
     .object({
         id: WorkspaceId,
         icon: FontAwesomeIconSchema,
-        title: z.record(LanguageSchema, z.string())
+        title: z.record(LanguageSchema, z.string()),
     })
     .and(
         z.union([
             z.object({
                 type: z.literal('library'),
-                libraryId: LibraryIdSchema
+                libraryId: LibraryIdSchema,
             }),
             z.object({
                 type: z.literal('record'),
                 recordId: z.string(),
-                libraryId: LibraryIdSchema
-            })
-        ])
+                libraryId: LibraryIdSchema,
+            }),
+        ]),
     );
 
 export const ApplicationSchema = z.object({
@@ -32,7 +32,7 @@ export const ApplicationSchema = z.object({
         LibraryIdSchema,
         z.object({
             libraryPanels: z.array(PanelSchema),
-            recordPanels: z.array(PanelSchema) // TODO: refine to have at least one creation and one edition panels
-        })
-    )
+            recordPanels: z.array(PanelSchema), // TODO: refine to have at least one creation and one edition panels
+        }),
+    ),
 });

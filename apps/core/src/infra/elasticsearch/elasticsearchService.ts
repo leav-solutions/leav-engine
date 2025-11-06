@@ -33,7 +33,7 @@ export interface IElasticsearchServiceDeps {
 
 export default function ({config}: IElasticsearchServiceDeps): IElasticsearchService {
     const client = new Client({
-        node: config.elasticsearch.url
+        node: config.elasticsearch.url,
     });
 
     const _createILMPolicyIfNotExists = async (ilmPolicyName: string) => {
@@ -50,26 +50,26 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
                             min_age: '0ms',
                             actions: {
                                 set_priority: {
-                                    priority: 100
+                                    priority: 100,
                                 },
                                 // Create new index when index is 50gb or 30 days old
                                 rollover: {
                                     max_age: '30d',
-                                    max_primary_shard_size: '50gb'
-                                }
-                            }
+                                    max_primary_shard_size: '50gb',
+                                },
+                            },
                         },
                         warm: {
                             min_age: '1d', // Our usage is append only, so we can move to warm phase quickly
                             actions: {
                                 set_priority: {
-                                    priority: 50
+                                    priority: 50,
                                 },
-                                readonly: {}
-                            }
-                        }
-                    }
-                }
+                                readonly: {},
+                            },
+                        },
+                    },
+                },
             });
         }
     };
@@ -86,7 +86,7 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
                 priority: 100,
                 template: {
                     settings: {
-                        'index.lifecycle.name': ilmPolicyName
+                        'index.lifecycle.name': ilmPolicyName,
                     },
                     mappings: {
                         properties: {
@@ -100,10 +100,10 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
                             topic: {type: 'object'},
                             before: {type: 'flattened'},
                             after: {type: 'flattened'},
-                            metadata: {type: 'flattened'}
-                        } satisfies Record<keyof Log | '@timestamp', MappingProperty>
-                    }
-                }
+                            metadata: {type: 'flattened'},
+                        } satisfies Record<keyof Log | '@timestamp', MappingProperty>,
+                    },
+                },
             });
         }
     };
@@ -119,7 +119,7 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
 
             logger.info(`Creating elasticsearch index ${indexName}`);
             await client.indices.createDataStream({
-                name: indexName
+                name: indexName,
             });
         }
     };
@@ -136,14 +136,14 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
                 body: {
                     _source: true,
                     query: query ?? {
-                        match_all: {}
-                    }
-                }
+                        match_all: {},
+                    },
+                },
             });
 
             return {
                 total: typeof response.hits.total === 'object' ? response.hits.total.value : response.hits.total,
-                hits: response.hits.hits.map(h => h._source)
+                hits: response.hits.hits.map(h => h._source),
             };
         },
         async writeData(indexName: string, data: Log): Promise<void> {
@@ -151,8 +151,8 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
 
             await client.index({
                 index: indexName,
-                body: data
+                body: data,
             });
-        }
+        },
     };
 }

@@ -10,14 +10,14 @@ export const PanelIdCardSkeleton: FunctionComponent = () => (
             active
             style={{
                 width: '200px',
-                height: 'calc(var(--general-typography-fontSize1) * var(--general-typography-lineHeight3) * 1px)'
+                height: 'calc(var(--general-typography-fontSize1) * var(--general-typography-lineHeight3) * 1px)',
             }}
         />
         <AntSkeleton.Input
             active
             style={{
                 width: '200px',
-                height: 'calc(var(--general-typography-fontSize5) * var(--general-typography-lineHeight5) * 1px)'
+                height: 'calc(var(--general-typography-fontSize5) * var(--general-typography-lineHeight5) * 1px)',
             }}
         />
     </KitSpace>

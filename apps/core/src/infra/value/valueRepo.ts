@@ -11,7 +11,7 @@ import {type ISaveValue, type IValue} from '_types/value';
 import {
     type IAttributeTypesRepo,
     type IAttributeWithRevLink,
-    type IGetValuesOptions
+    type IGetValuesOptions,
 } from '../attributeTypes/attributeTypesRepo';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
@@ -25,7 +25,7 @@ export interface IValueRepo {
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -42,7 +42,7 @@ export interface IValueRepo {
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -59,7 +59,7 @@ export interface IValueRepo {
         recordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -77,7 +77,7 @@ export interface IValueRepo {
         excludedRecordId,
         attribute,
         value,
-        ctx
+        ctx,
     }: {
         library: string;
         excludedRecordId?: string;
@@ -97,7 +97,7 @@ export interface IValueRepo {
         attribute,
         forceGetAllValues,
         options,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -117,7 +117,7 @@ export interface IValueRepo {
         recordId,
         attribute,
         valueId,
-        ctx
+        ctx,
     }: {
         library: string;
         recordId: string;
@@ -142,12 +142,12 @@ type GetValuesDataLoader = DataLoader<string, IValue[]>;
 export default function ({
     config,
     'core.infra.attributeTypes': attributeTypesRepo = null,
-    'core.infra.db.dbService': dbService = null
+    'core.infra.db.dbService': dbService = null,
 }: IDeps): IValueRepo {
     const computeGetValuesDataLoaderKey = (
         libraryId: string,
         attribute: IAttributeWithRevLink,
-        options: IGetValuesOptions
+        options: IGetValuesOptions,
     ): string => {
         const suffix = options.forceGetAllValues
             ? '-all'
@@ -163,7 +163,7 @@ export default function ({
         libraryId: string,
         attribute: IAttributeWithRevLink,
         options: IGetValuesOptions,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): GetValuesDataLoader => {
         const dataLoaderKey = computeGetValuesDataLoaderKey(libraryId, attribute, options);
         return getOrCreateDataLoaderInCtx<GetValuesDataLoader>(
@@ -179,7 +179,7 @@ export default function ({
                                   attribute,
                                   recordIds: recordIds as string[],
                                   options,
-                                  ctx
+                                  ctx,
                               })
                             : Promise.all(
                                   recordIds.map(recordId =>
@@ -189,15 +189,15 @@ export default function ({
                                           attribute,
                                           forceGetAllValues: options.forceGetAllValues,
                                           options,
-                                          ctx
-                                      })
-                                  )
+                                          ctx,
+                                      }),
+                                  ),
                               );
                     },
                     {
-                        cache: enableGetValueDataLoadersCache
-                    }
-                )
+                        cache: enableGetValueDataLoadersCache,
+                    },
+                ),
         );
     };
 
@@ -209,7 +209,7 @@ export default function ({
                 recordId,
                 attribute,
                 value,
-                ctx
+                ctx,
             });
         },
         updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
@@ -219,7 +219,7 @@ export default function ({
                 recordId,
                 attribute,
                 value,
-                ctx
+                ctx,
             });
         },
         deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
@@ -229,7 +229,7 @@ export default function ({
                 recordId,
                 attribute,
                 value,
-                ctx
+                ctx,
             });
         },
         isValueUsed({library, excludedRecordId, attribute, value, ctx}): Promise<boolean> {
@@ -246,7 +246,7 @@ export default function ({
                 recordId,
                 attribute,
                 valueId,
-                ctx
+                ctx,
             });
         },
         clearAllValues({attribute, ctx}): Promise<boolean> {
@@ -262,8 +262,8 @@ export default function ({
                         FILTER l._from == ${libraryId + '/' + recordId} OR l._to == ${libraryId + '/' + recordId}
                         REMOVE {_key: l._key} IN ${collection}
                 `,
-                ctx
+                ctx,
             });
-        }
+        },
     };
 }

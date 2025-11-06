@@ -7,7 +7,7 @@ import CustomConfigTab from './CustomConfigTab';
 jest.mock('jsoneditor-react', () => ({
     JsonEditor() {
         return <div>JsonEditor</div>;
-    }
+    },
 }));
 
 describe('CustomConfigTab', () => {

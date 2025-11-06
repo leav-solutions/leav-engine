@@ -56,7 +56,7 @@ function ALCOutputConnector({
     size,
     types,
     colorTypeDictionnary,
-    forList
+    forList,
 }: IALCOutputConnectorProps): JSX.Element {
     const width = size ? size : 100;
     return (

@@ -10,7 +10,7 @@ import {useConditionsOptionsByType} from './useConditionOptionsByType';
 export const EncryptedAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
 

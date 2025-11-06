@@ -9,7 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type RecordFilterInput,
     useForcePreviewsGenerationMutation,
-    useGetLibraryPreviewsSettingsQuery
+    useGetLibraryPreviewsSettingsQuery,
 } from '_ui/_gqlTypes';
 import useLang from '../../hooks/useLang';
 import {ErrorDisplay} from '../ErrorDisplay';
@@ -28,7 +28,7 @@ function TriggerPreviewsGenerationModal({
     filesLibraryId,
     recordIds,
     filters,
-    onClose
+    onClose,
 }: ITriggerPreviewsGenerationModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -55,13 +55,13 @@ function TriggerPreviewsGenerationModal({
                 return {
                     title: localizedTranslation(s.label, lang),
                     key: localizedTranslation(s.label, lang),
-                    children
+                    children,
                 };
             });
 
             setTreeData(td);
             setAllSizes(sizes);
-        }
+        },
     });
 
     const _triggerPreviewsGeneration = async () => {
@@ -72,8 +72,8 @@ function TriggerPreviewsGenerationModal({
                     recordIds,
                     filters: filters ?? null,
                     failedOnly: isFailedOnlyChecked,
-                    previewVersionSizeNames: checkedSizes
-                }
+                    previewVersionSizeNames: checkedSizes,
+                },
             });
 
             const isSuccess = result.data?.forcePreviewsGeneration ?? false;
@@ -119,7 +119,7 @@ function TriggerPreviewsGenerationModal({
             width={600}
             onOk={_triggerPreviewsGeneration}
             okButtonProps={{
-                disabled: !checkedSizes.length
+                disabled: !checkedSizes.length,
             }}
             confirmLoading={loading}
         >

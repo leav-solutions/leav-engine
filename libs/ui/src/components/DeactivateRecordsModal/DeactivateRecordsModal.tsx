@@ -25,7 +25,7 @@ function DeactivateRecordsModal({
     onClose,
     open,
     selection,
-    filters
+    filters,
 }: IDeactivateRecordsModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {dispatch: searchDispatch} = useSearchReducer();
@@ -36,8 +36,8 @@ function DeactivateRecordsModal({
         variables: {
             libraryId: library,
             recordsIds: hasSelectedAll ? null : selection.selected.map(record => record.id),
-            filters: hasSelectedAll ? getRequestFromFilters(filters) : null
-        }
+            filters: hasSelectedAll ? getRequestFromFilters(filters) : null,
+        },
     });
 
     const _handleOk = async () => {

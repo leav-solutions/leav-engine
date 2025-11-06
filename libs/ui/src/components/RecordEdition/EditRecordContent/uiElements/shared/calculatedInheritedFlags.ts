@@ -35,7 +35,7 @@ export const computeInheritedFlags = (fieldValues: RecordFormElementsValueStanda
             inheritedValue: null,
             isInheritedValue: false,
             isInheritedOverrideValue: false,
-            isInheritedNotOverrideValue: false
+            isInheritedNotOverrideValue: false,
         };
     }
 
@@ -46,7 +46,7 @@ export const computeInheritedFlags = (fieldValues: RecordFormElementsValueStanda
             inheritedValue,
             isInheritedValue,
             isInheritedNotOverrideValue: true,
-            isInheritedOverrideValue: false
+            isInheritedOverrideValue: false,
         };
     }
 
@@ -54,7 +54,7 @@ export const computeInheritedFlags = (fieldValues: RecordFormElementsValueStanda
         inheritedValue,
         isInheritedValue,
         isInheritedNotOverrideValue: false,
-        isInheritedOverrideValue: true
+        isInheritedOverrideValue: true,
     };
 };
 
@@ -83,12 +83,12 @@ export type CalculatedFlags = INotCalculated | ICalculatedOverride | ICalculated
 
 export const computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): CalculatedFlags => {
     const calculatedValue = fieldValues.find(
-        fieldValue => fieldValue.isCalculated !== null && fieldValue.isCalculated !== undefined
+        fieldValue => fieldValue.isCalculated !== null && fieldValue.isCalculated !== undefined,
     );
     const overrideValue = fieldValues.find(
         fieldValue =>
             (fieldValue.isCalculated === null || fieldValue.isCalculated === undefined) &&
-            (fieldValue.isInherited === null || fieldValue.isInherited === undefined)
+            (fieldValue.isInherited === null || fieldValue.isInherited === undefined),
     );
 
     if (calculatedValue === undefined) {
@@ -96,7 +96,7 @@ export const computeCalculatedFlags = (fieldValues: RecordFormElementsValueStand
             calculatedValue: null,
             isCalculatedValue: false,
             isCalculatedOverrideValue: false,
-            isCalculatedNotOverrideValue: false
+            isCalculatedNotOverrideValue: false,
         };
     }
 
@@ -107,7 +107,7 @@ export const computeCalculatedFlags = (fieldValues: RecordFormElementsValueStand
             calculatedValue,
             isCalculatedValue,
             isCalculatedNotOverrideValue: true,
-            isCalculatedOverrideValue: false
+            isCalculatedOverrideValue: false,
         };
     }
 
@@ -115,6 +115,6 @@ export const computeCalculatedFlags = (fieldValues: RecordFormElementsValueStand
         calculatedValue,
         isCalculatedValue,
         isCalculatedNotOverrideValue: false,
-        isCalculatedOverrideValue: true
+        isCalculatedOverrideValue: true,
     };
 };

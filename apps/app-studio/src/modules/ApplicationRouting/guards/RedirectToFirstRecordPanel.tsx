@@ -23,7 +23,7 @@ export const RedirectToFirstRecordPanel: FunctionComponent = () => {
                 panelId,
                 recordId,
                 where: 'fullpage',
-                recordPanelId: panelRecordId
+                recordPanelId: panelRecordId,
             })}
         />
     );

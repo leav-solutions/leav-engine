@@ -71,8 +71,8 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                             size="small"
                             onClick={() => onDelete(notif)}
                         />
-                    )
-                ]
+                    ),
+                ],
             ]}
         >
             <List.Item.Meta
@@ -94,7 +94,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                                 percent={task.progress?.percent || 0}
                                 {...(isExceptionTask(task) && {
                                     status: 'exception',
-                                    ...(task.status === TaskStatus.CANCELED && {strokeColor: '#F2C037'})
+                                    ...(task.status === TaskStatus.CANCELED && {strokeColor: '#F2C037'}),
                                 })}
                             />
                         </WrapperProgress>
@@ -127,7 +127,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                             {`${t(
                                 task.status === TaskStatus.CANCELED
                                     ? 'notifications.task-canceledAt'
-                                    : 'notifications.task-completedAt'
+                                    : 'notifications.task-completedAt',
                             )} ${new Date(task.completedAt * 1000).toLocaleString()}`}
                         </Typography.Text>
                     )}
@@ -140,7 +140,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                         <Typography.Text>
                             {`${t('notifications.task-duration')}: ${_getTaskDuration(
                                 task.startedAt,
-                                task.completedAt
+                                task.completedAt,
                             )}`}
                         </Typography.Text>
                     )}

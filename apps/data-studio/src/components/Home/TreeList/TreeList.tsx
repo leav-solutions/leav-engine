@@ -49,11 +49,11 @@ function TreeList(): JSX.Element {
 
     const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
-        variables: {keys: [FAVORITE_TREES_KEY]}
+        variables: {keys: [FAVORITE_TREES_KEY]},
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
-        ignoreResults: true
+        ignoreResults: true,
     });
 
     if (treesLoading || userDataQuery.loading) {
@@ -71,7 +71,7 @@ function TreeList(): JSX.Element {
             key: tree.id,
             id: tree.id,
             label: localizedTranslation(tree.label, lang),
-            isFavorite: !!favoriteIds.includes(tree.id)
+            isFavorite: !!favoriteIds.includes(tree.id),
         }))
         .sort((a, b) => Number(b.isFavorite) - Number(a.isFavorite));
 
@@ -84,7 +84,7 @@ function TreeList(): JSX.Element {
                 <TreeLink to={getTreeLink(item.id)}>
                     <TreeIcon style={{fontSize: '1.2rem'}} /> {label}
                 </TreeLink>
-            )
+            ),
         },
         {
             title: <></>,
@@ -99,8 +99,8 @@ function TreeList(): JSX.Element {
                         variables: {
                             key: FAVORITE_TREES_KEY,
                             value: wasFavorite ? favoriteIds.filter(e => e !== id) : favoriteIds.concat([id]),
-                            global: false
-                        }
+                            global: false,
+                        },
                     });
                 };
 
@@ -112,8 +112,8 @@ function TreeList(): JSX.Element {
                         hoverTrigger=".ant-table-row"
                     />
                 );
-            }
-        }
+            },
+        },
     ];
 
     if (!trees.length) {

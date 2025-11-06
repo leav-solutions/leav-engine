@@ -21,9 +21,9 @@ describe('Tabs', () => {
                 {...mockCommonFormElementProps}
                 element={{
                     ...mockFormElementTabs,
-                    settings: {...mockFormElementTabs.settings, direction: TabsDirection.VERTICAL}
+                    settings: {...mockFormElementTabs.settings, direction: TabsDirection.VERTICAL},
                 }}
-            />
+            />,
         );
 
         await act(async () => {

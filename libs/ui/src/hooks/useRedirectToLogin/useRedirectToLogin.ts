@@ -8,10 +8,10 @@ export default function useRedirectToLogin() {
         redirectToLogin: async () => {
             if (isDevEnv()) {
                 return window.location.replace(
-                    `${window.location.origin}/app/login/?dest=${encodeURIComponent(window.location.toString())}`
+                    `${window.location.origin}/app/login/?dest=${encodeURIComponent(window.location.toString())}`,
                 );
             }
             return window.location.reload();
-        }
+        },
     };
 }

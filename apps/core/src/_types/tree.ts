@@ -54,13 +54,13 @@ export type TreePath = ITreeNode[];
 
 export enum TreeBehavior {
     STANDARD = 'standard',
-    FILES = 'files'
+    FILES = 'files',
 }
 
 export enum TreeEventTypes {
     ADD = 'add',
     REMOVE = 'remove',
-    MOVE = 'move'
+    MOVE = 'move',
 }
 
 export interface ITreeEvent {

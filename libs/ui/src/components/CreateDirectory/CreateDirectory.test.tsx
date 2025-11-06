@@ -12,11 +12,11 @@ import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import CreateDirectory from './CreateDirectory';
 
 jest.mock('uuid', () => ({
-    v4: jest.fn(() => 'uid')
+    v4: jest.fn(() => 'uid'),
 }));
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: () => <div>SelectTreeNode</div>
+    SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
 describe('UploadFiles', () => {
@@ -25,8 +25,8 @@ describe('UploadFiles', () => {
             request: {
                 query: getTreeLibraries,
                 variables: {
-                    library: 'files_directories'
-                }
+                    library: 'files_directories',
+                },
             },
             result: {
                 data: {
@@ -44,21 +44,21 @@ describe('UploadFiles', () => {
                                             id: 'files_directories',
                                             label: 'files_directories',
                                             system: true,
-                                            behavior: LibraryBehavior.directories
+                                            behavior: LibraryBehavior.directories,
                                         },
                                         settings: {
                                             allowMultiplePositions: false,
                                             allowedAtRoot: true,
-                                            allowedChildren: ['files', 'files_directories']
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                            allowedChildren: ['files', 'files_directories'],
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     test('Should display create directory modal on first step', async () => {
@@ -76,7 +76,7 @@ describe('UploadFiles', () => {
                 libraryId="files_directories"
                 onClose={jest.fn()}
             />,
-            {mocks: commonMocks}
+            {mocks: commonMocks},
         );
 
         expect(screen.getByTestId('create-directory-modal')).toBeInTheDocument();
@@ -93,21 +93,21 @@ describe('UploadFiles', () => {
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
-                        filename: 'dirname'
-                    }
+                        filename: 'dirname',
+                    },
                 },
                 result: {
                     data: {
-                        doesFileExistAsChild: true
-                    }
-                }
+                        doesFileExistAsChild: true,
+                    },
+                },
             },
             {
                 request: {
                     query: getTreeLibraries,
                     variables: {
-                        library: 'files_directories'
-                    }
+                        library: 'files_directories',
+                    },
                 },
                 result: {
                     data: {
@@ -125,20 +125,20 @@ describe('UploadFiles', () => {
                                                 id: 'files_directories',
                                                 label: 'files_directories',
                                                 system: true,
-                                                behavior: LibraryBehavior.directories
+                                                behavior: LibraryBehavior.directories,
                                             },
                                             settings: {
                                                 allowMultiplePositions: false,
                                                 allowedAtRoot: true,
-                                                allowedChildren: ['files', 'files_directories']
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
+                                                allowedChildren: ['files', 'files_directories'],
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
@@ -146,29 +146,29 @@ describe('UploadFiles', () => {
                     variables: {
                         library: 'files_directories',
                         nodeId: 'files_tree',
-                        name: 'dirname'
-                    }
+                        name: 'dirname',
+                    },
                 },
                 result: {
                     data: {
                         upload: {
                             __typename: 'RecordLib',
                             id: '1',
-                            whoAmI: mockRecord
-                        }
-                    }
-                }
-            }
+                            whoAmI: mockRecord,
+                        },
+                    },
+                },
+            },
         ];
 
         render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         fireEvent.change(screen.getByTestId('directory-name-input'), {
             target: {
-                value: 'dirname'
-            }
+                value: 'dirname',
+            },
         });
 
         const createBtn = screen.getByTestId('create-btn');
@@ -186,21 +186,21 @@ describe('UploadFiles', () => {
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
-                        filename: 'dirname'
-                    }
+                        filename: 'dirname',
+                    },
                 },
                 result: {
                     data: {
-                        doesFileExistAsChild: false
-                    }
-                }
+                        doesFileExistAsChild: false,
+                    },
+                },
             },
             {
                 request: {
                     query: getTreeLibraries,
                     variables: {
-                        library: 'files_directories'
-                    }
+                        library: 'files_directories',
+                    },
                 },
                 result: {
                     data: {
@@ -218,20 +218,20 @@ describe('UploadFiles', () => {
                                                 id: 'files_directories',
                                                 label: 'files_directories',
                                                 system: true,
-                                                behavior: LibraryBehavior.directories
+                                                behavior: LibraryBehavior.directories,
                                             },
                                             settings: {
                                                 allowMultiplePositions: false,
                                                 allowedAtRoot: true,
-                                                allowedChildren: ['files', 'files_directories']
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
+                                                allowedChildren: ['files', 'files_directories'],
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
@@ -239,35 +239,35 @@ describe('UploadFiles', () => {
                     variables: {
                         library: 'files_directories',
                         nodeId: 'files_tree',
-                        name: 'dirname'
-                    }
+                        name: 'dirname',
+                    },
                 },
                 result: {
                     data: {
                         upload: {
                             __typename: 'RecordLib',
                             id: '1',
-                            whoAmI: mockRecord
-                        }
-                    }
-                }
-            }
+                            whoAmI: mockRecord,
+                        },
+                    },
+                },
+            },
         ];
 
         render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />, {
-            mocks
+            mocks,
         });
 
         fireEvent.change(screen.getByTestId('directory-name-input'), {
             target: {
-                value: 'dirname'
-            }
+                value: 'dirname',
+            },
         });
 
         userEvent.click(screen.getByTestId('create-btn'));
 
         await waitFor(() =>
-            expect(screen.queryByTestId('create_directory.duplicate_modal.title')).not.toBeInTheDocument()
+            expect(screen.queryByTestId('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
         );
     });
 });

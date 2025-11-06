@@ -19,7 +19,7 @@ export interface IFormatLogValueHelper {
     formatAsString(
         log: Log,
         rawData: IDBPayloadData<EventAction.VALUE_DELETE | EventAction.VALUE_SAVE>,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<string | null>;
 }
 
@@ -38,13 +38,13 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.domain.tree': treeDomain,
     'core.utils.logger': logger,
-    translator
+    translator,
 }: IDeps): IFormatLogValueHelper {
     const execFormatPayloadAction = async <R>(
         attribute: IAttribute,
         actionId: string,
         rawData: IStandardValue,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<R> => {
         const actionParams = attribute.actions_list?.getValue?.find(action => action.id === actionId);
         if (!actionParams) {
@@ -54,10 +54,10 @@ export default function ({
             [actionParams],
             [
                 {
-                    raw_payload: rawData.payload
-                }
+                    raw_payload: rawData.payload,
+                },
             ],
-            ctx
+            ctx,
         );
         return valueAfterAction[0].payload as R;
     };
@@ -65,7 +65,7 @@ export default function ({
     const formatLogDataValueStandardAsString = async (
         attribute: IAttribute,
         rawData: IStandardValue,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<string> => {
         switch (attribute.format) {
             case AttributeFormats.BOOLEAN:
@@ -78,12 +78,12 @@ export default function ({
                         attribute,
                         'formatDateRange',
                         rawData,
-                        ctx
+                        ctx,
                     );
                     return translator.t('labels.date_range', {
                         lng: ctx.lang,
                         ...formattedPayload,
-                        interpolation: {escapeValue: false}
+                        interpolation: {escapeValue: false},
                     });
                 }
                 break;
@@ -114,14 +114,14 @@ export default function ({
                         {
                             field: 'id',
                             condition: AttributeCondition.EQUAL,
-                            value: rawData.payload.id
-                        }
+                            value: rawData.payload.id,
+                        },
                     ],
                     retrieveInactive: true,
                     ignorePermissions: true,
-                    withCount: false
+                    withCount: false,
                 },
-                ctx
+                ctx,
             });
 
             if (record.list.length === 0) {
@@ -135,7 +135,7 @@ export default function ({
         } catch (e) {
             // record may have issue with record identity computation, we just log the error and return fallback value
             logger.debug(
-                `[LogApp] Error fetching record ${rawData.payload.library}${rawData.payload.id} for link value: ${e.stack}`
+                `[LogApp] Error fetching record ${rawData.payload.library}${rawData.payload.id} for link value: ${e.stack}`,
             );
             return `${rawData.payload.library}/${rawData.payload.id}`;
         }
@@ -146,7 +146,7 @@ export default function ({
             const recordTree = await treeDomain.getRecordByNodeId({
                 nodeId: rawData.payload.id,
                 treeId: rawData.treeId,
-                ctx
+                ctx,
             });
             if (!recordTree) {
                 throw new Error('Tree node not found');
@@ -156,7 +156,7 @@ export default function ({
         } catch (e) {
             // tree or node may have been deleted, we just log the error and return null
             logger.debug(
-                `[LogApp] Error fetching record ${rawData.treeId}/${rawData.payload.id} for tree value: ${e.stack}`
+                `[LogApp] Error fetching record ${rawData.treeId}/${rawData.payload.id} for tree value: ${e.stack}`,
             );
             return `${rawData.treeId}/${rawData.payload.id}`;
         }
@@ -166,7 +166,7 @@ export default function ({
         formatAsString: async (
             log: Log,
             rawData: IDBPayloadData<EventAction.VALUE_DELETE | EventAction.VALUE_SAVE>,
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<string | null> => {
             const attributeId = log.topic.attribute || (rawData.payload as IValue)?.attribute;
             if (!attributeId) {
@@ -192,6 +192,6 @@ export default function ({
                 logger.debug(`[LogApp] Error fetching attribute ${attributeId}: ${e.stack}`);
                 return translator.t('logs.unknown_value', {lng: ctx.lang});
             }
-        }
+        },
     };
 }

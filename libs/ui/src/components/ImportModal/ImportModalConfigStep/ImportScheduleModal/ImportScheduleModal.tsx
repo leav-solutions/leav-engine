@@ -18,7 +18,7 @@ function ImportScheduleModal({
     scheduleDate,
     onCancelImportScheduleModal,
     onChangeScheduleDate,
-    onValidateScheduleImport
+    onValidateScheduleImport,
 }: IImportScheduleModalProps): JSX.Element {
     const {t} = useSharedTranslation();
 

@@ -32,7 +32,7 @@ describe('attributeTreeRepo', () => {
     const remoteLibraryId = 'test_lib_attribute_remote_tree_repo';
     const treeId = 'test_lib_attribute_remote_tree_repo_tree';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
@@ -43,15 +43,15 @@ describe('attributeTreeRepo', () => {
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
         await libraryRepo.createLibrary({
             libData: {
-                id: remoteLibraryId
+                id: remoteLibraryId,
             },
-            ctx
+            ctx,
         });
         await treeRepo.createTree({
             treeData: {
@@ -60,11 +60,11 @@ describe('attributeTreeRepo', () => {
                     remoteLibraryId: {
                         allowedAtRoot: true,
                         allowMultiplePositions: false,
-                        allowedChildren: []
-                    }
-                }
+                        allowedChildren: [],
+                    },
+                },
             },
-            ctx
+            ctx,
         });
     });
 
@@ -72,21 +72,21 @@ describe('attributeTreeRepo', () => {
         recordRepo.createRecord({
             libraryId: remoteLibraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createRecord = (recordData: Record<string, any>): Promise<IRecord> =>
         recordRepo.createRecord({
             libraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createValue = async (
         attribute: IAttributeWithRevLink,
         recordId: string,
         payload: string,
-        version: IValueVersion | null = null
+        version: IValueVersion | null = null,
     ): Promise<ITreeValue> =>
         attributeTreeRepo.createValue({
             library: libraryId,
@@ -96,9 +96,9 @@ describe('attributeTreeRepo', () => {
                 payload,
                 created_at: Date.now(),
                 modified_at: Date.now(),
-                version
+                version,
             },
-            ctx
+            ctx,
         });
 
     describe('6 remote nodes/records exists,', () => {
@@ -120,9 +120,9 @@ describe('attributeTreeRepo', () => {
                 await Promise.all(
                     Array.from({length: 6}).map((_, index) =>
                         createRemoteRecord({
-                            [`attr_data_${index + 1}`]: index + 1
-                        })
-                    )
+                            [`attr_data_${index + 1}`]: index + 1,
+                        }),
+                    ),
                 );
 
             [remoteNode1, remoteNode2, remoteNode3, remoteNode4, remoteNode5, remoteNode6] = await Promise.all(
@@ -132,12 +132,12 @@ describe('attributeTreeRepo', () => {
                             treeId,
                             element: {
                                 id: remoteRecord.id,
-                                library: remoteRecord.library
+                                library: remoteRecord.library,
                             },
                             parent: null,
-                            ctx
-                        })
-                )
+                            ctx,
+                        }),
+                ),
             );
         });
 
@@ -146,7 +146,7 @@ describe('attributeTreeRepo', () => {
                 id: 'tree_attr_mono',
                 type: AttributeTypes.TREE,
                 linked_tree: treeId,
-                multiple_values: false
+                multiple_values: false,
             };
 
             let record1: IRecord;
@@ -164,23 +164,23 @@ describe('attributeTreeRepo', () => {
                     id_value: expect.any(String),
                     payload: {
                         id: remoteNode1.id,
-                        record: remoteRecord1
+                        record: remoteRecord1,
                     },
                     attribute: treeMonoAttribute.id,
                     modified_by: ctx.userId,
                     created_by: ctx.userId,
-                    version: null
+                    version: null,
                 });
                 expect(record2Value).toMatchObject({
                     id_value: expect.any(String),
                     payload: {
                         id: remoteNode2.id,
-                        record: remoteRecord2
+                        record: remoteRecord2,
                     },
                     attribute: treeMonoAttribute.id,
                     modified_by: ctx.userId,
                     created_by: ctx.userId,
-                    version: null
+                    version: null,
                 });
             });
 
@@ -190,7 +190,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record1.id, record2.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value]]);
@@ -201,7 +201,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record1.id, record2.id, 'no-exists'],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -211,14 +211,14 @@ describe('attributeTreeRepo', () => {
                     const record3WithoutAttr = await recordRepo.createRecord({
                         libraryId,
                         recordData: {},
-                        ctx
+                        ctx,
                     });
 
                     const values = await attributeTreeRepo.getValuesBatch({
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -231,7 +231,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1Value]);
@@ -242,7 +242,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -255,7 +255,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -264,7 +264,7 @@ describe('attributeTreeRepo', () => {
 
             describe('add version values', () => {
                 const version1: IValueVersion = {
-                    version1: 'node1'
+                    version1: 'node1',
                 };
                 let record1ValueV1: ILinkValue;
                 let record2ValueV1: ILinkValue;
@@ -273,10 +273,10 @@ describe('attributeTreeRepo', () => {
                     record2ValueV1 = await createValue(treeMonoAttribute, record2.id, remoteNode4.id, version1);
 
                     expect(record1ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                     expect(record2ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                 });
 
@@ -287,7 +287,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMonoAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([[record1Value], [record2Value]]);
@@ -299,7 +299,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMonoAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([[record1ValueV1], [record2ValueV1]]);
@@ -311,11 +311,11 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMonoAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {forceGetAllValues: true},
-                            ctx
+                            ctx,
                         });
                         expect(values).toEqual([
                             expect.arrayContaining([record1Value, record1ValueV1]),
-                            expect.arrayContaining([record2Value, record2ValueV1])
+                            expect.arrayContaining([record2Value, record2ValueV1]),
                         ]);
                         expect(values[0]).toHaveLength(2);
                         expect(values[1]).toHaveLength(2);
@@ -329,7 +329,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMonoAttribute,
                             recordId: record1.id,
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([record1Value]);
@@ -341,7 +341,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMonoAttribute,
                             recordId: record1.id,
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([record1ValueV1]);
@@ -353,7 +353,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMonoAttribute,
                             recordId: record1.id,
                             forceGetAllValues: true,
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
@@ -368,7 +368,7 @@ describe('attributeTreeRepo', () => {
                 id: 'tree_attr_multi',
                 type: AttributeTypes.TREE,
                 linked_tree: treeId,
-                multiple_values: true
+                multiple_values: true,
             };
             let record1: IRecord;
             let record2: IRecord;
@@ -392,12 +392,12 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordIds: [record1.id, record2.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
-                        expect.arrayContaining([record2Value1, record2Value2])
+                        expect.arrayContaining([record2Value1, record2Value2]),
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -408,13 +408,13 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordIds: [record1.id, record2.id, 'no-exists'],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
                         expect.arrayContaining([record2Value1, record2Value2]),
-                        []
+                        [],
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -424,20 +424,20 @@ describe('attributeTreeRepo', () => {
                     const record3WithoutAttr = await recordRepo.createRecord({
                         libraryId,
                         recordData: {},
-                        ctx
+                        ctx,
                     });
 
                     const values = await attributeTreeRepo.getValuesBatch({
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
                         expect.arrayContaining([record2Value1, record2Value2]),
-                        []
+                        [],
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -450,7 +450,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -462,7 +462,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -475,7 +475,7 @@ describe('attributeTreeRepo', () => {
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -484,7 +484,7 @@ describe('attributeTreeRepo', () => {
 
             describe('add version values', () => {
                 const version1: IValueVersion = {
-                    version1: 'node1'
+                    version1: 'node1',
                 };
                 let record1ValueV1: ILinkValue;
                 let record2ValueV1: ILinkValue;
@@ -493,10 +493,10 @@ describe('attributeTreeRepo', () => {
                     record2ValueV1 = await createValue(treeMultiAttribute, record2.id, remoteNode6.id, version1);
 
                     expect(record1ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                     expect(record2ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                 });
 
@@ -507,12 +507,12 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMultiAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([
                             expect.arrayContaining([record1Value1, record1Value2]),
-                            expect.arrayContaining([record2Value1, record2Value2])
+                            expect.arrayContaining([record2Value1, record2Value2]),
                         ]);
 
                         expect(values[0]).toHaveLength(2);
@@ -525,7 +525,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMultiAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([[record1ValueV1], [record2ValueV1]]);
@@ -537,12 +537,12 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMultiAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {forceGetAllValues: true},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([
                             expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]),
-                            expect.arrayContaining([record2Value1, record2Value2, record2ValueV1])
+                            expect.arrayContaining([record2Value1, record2Value2, record2ValueV1]),
                         ]);
                         expect(values[0]).toHaveLength(3);
                         expect(values[1]).toHaveLength(3);
@@ -556,7 +556,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMultiAttribute,
                             recordId: record1.id,
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -569,7 +569,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMultiAttribute,
                             recordId: record1.id,
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([record1ValueV1]);
@@ -581,7 +581,7 @@ describe('attributeTreeRepo', () => {
                             attribute: treeMultiAttribute,
                             recordId: record1.id,
                             forceGetAllValues: true,
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));

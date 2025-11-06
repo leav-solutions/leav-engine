@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function EditRecordInput() {
             return <div>EditRecordInput</div>;
-        }
+        },
 );
 
 jest.mock('../../../../../../hooks/useLang');
@@ -27,7 +27,7 @@ describe('MultipleValuesWrapper', () => {
             raw_value: 'simple_value',
             created_at: null,
             modified_at: null,
-            version: null
+            version: null,
         };
         const comp = shallow(
             <StandardValuesWrapper
@@ -36,7 +36,7 @@ describe('MultipleValuesWrapper', () => {
                 values={value}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
-            />
+            />,
         );
 
         expect(comp.find('EditRecordInput')).toHaveLength(1);
@@ -50,7 +50,7 @@ describe('MultipleValuesWrapper', () => {
                 raw_value: 'adv_value',
                 created_at: null,
                 modified_at: null,
-                version: null
+                version: null,
             },
             {
                 id_value: '6789',
@@ -58,8 +58,8 @@ describe('MultipleValuesWrapper', () => {
                 raw_value: 'adv_value2',
                 created_at: null,
                 modified_at: null,
-                version: null
-            }
+                version: null,
+            },
         ];
 
         const comp = shallow(
@@ -69,7 +69,7 @@ describe('MultipleValuesWrapper', () => {
                 values={values}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
-            />
+            />,
         );
 
         expect(comp.find('EditRecordInput')).toHaveLength(2);
@@ -83,7 +83,7 @@ describe('MultipleValuesWrapper', () => {
                 raw_value: 'adv_value',
                 created_at: null,
                 modified_at: null,
-                version: null
+                version: null,
             },
             {
                 id_value: '6789',
@@ -91,8 +91,8 @@ describe('MultipleValuesWrapper', () => {
                 raw_value: 'adv_value2',
                 created_at: null,
                 modified_at: null,
-                version: null
-            }
+                version: null,
+            },
         ];
 
         const comp = shallow(
@@ -102,7 +102,7 @@ describe('MultipleValuesWrapper', () => {
                 values={values}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
-            />
+            />,
         );
 
         expect(comp.find('[data-test-id="add_value_btn"]')).toHaveLength(1);
@@ -116,7 +116,7 @@ describe('MultipleValuesWrapper', () => {
                 raw_value: 'adv_value',
                 created_at: null,
                 modified_at: null,
-                version: null
+                version: null,
             },
             {
                 id_value: '6789',
@@ -124,8 +124,8 @@ describe('MultipleValuesWrapper', () => {
                 raw_value: 'adv_value2',
                 created_at: null,
                 modified_at: null,
-                version: null
-            }
+                version: null,
+            },
         ];
 
         const comp = shallow(
@@ -135,7 +135,7 @@ describe('MultipleValuesWrapper', () => {
                 values={values}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
-            />
+            />,
         );
 
         expect(comp.find('[data-test-id="add_value_btn"]')).toHaveLength(0);

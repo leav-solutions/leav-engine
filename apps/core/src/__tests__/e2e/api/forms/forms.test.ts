@@ -135,7 +135,7 @@ describe('Forms', () => {
                     }
                 }
             }
-        }`)
+        }`),
         ).rejects.toThrow(/forms_unknown_attribute - {"elements":"Unknown attributes: forms_unknown_attribute"}/);
     });
 

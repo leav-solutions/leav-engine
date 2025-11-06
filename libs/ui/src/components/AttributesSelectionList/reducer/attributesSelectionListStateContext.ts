@@ -5,7 +5,7 @@ import React, {type Dispatch, useContext} from 'react';
 import {
     type AttributesSelectionListAction,
     type IAttributesSelectionListState,
-    initialState
+    initialState,
 } from './attributesSelectionListReducer';
 
 export const AttributesSelectionListStateContext = React.createContext<{

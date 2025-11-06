@@ -8,7 +8,7 @@ import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordC
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn()
+    useSharedTranslation: jest.fn(),
 }));
 
 describe('useRecordInformations', () => {
@@ -20,14 +20,14 @@ describe('useRecordInformations', () => {
         const recordData = {};
 
         const {result} = renderHook(() =>
-            useRecordInformations(mockRecord, recordData as GetRecordColumnsValuesRecord)
+            useRecordInformations(mockRecord, recordData as GetRecordColumnsValuesRecord),
         );
 
         expect(result.current).toEqual([
             {
                 title: 'record_summary.id_entity',
-                value: mockRecord.id
-            }
+                value: mockRecord.id,
+            },
         ]);
     });
 
@@ -37,52 +37,52 @@ describe('useRecordInformations', () => {
         expect(result.current).toEqual([
             {
                 title: 'record_summary.id_entity',
-                value: '-'
-            }
+                value: '-',
+            },
         ]);
     });
 
     it('should return record creation when recordData has creation data', () => {
         const recordData = {
             created_at: [{payload: '2021-01-01'}],
-            created_by: [{linkValue: {whoAmI: {label: 'User1'}}}]
+            created_by: [{linkValue: {whoAmI: {label: 'User1'}}}],
         };
 
         const {result} = renderHook(() =>
-            useRecordInformations(mockRecord, recordData as unknown as GetRecordColumnsValuesRecord)
+            useRecordInformations(mockRecord, recordData as unknown as GetRecordColumnsValuesRecord),
         );
 
         expect(result.current).toEqual([
             {
                 title: 'record_summary.id_entity',
-                value: mockRecord.id
+                value: mockRecord.id,
             },
             {
                 title: 'record_summary.creation',
-                value: 'record_summary.date_by_user'
-            }
+                value: 'record_summary.date_by_user',
+            },
         ]);
     });
 
     it('should return record last modification when recordData has last modification data', () => {
         const recordData = {
             modified_at: [{payload: '2021-01-02'}],
-            modified_by: [{linkValue: {whoAmI: {label: 'User2'}}}]
+            modified_by: [{linkValue: {whoAmI: {label: 'User2'}}}],
         };
 
         const {result} = renderHook(() =>
-            useRecordInformations(mockRecord, recordData as unknown as GetRecordColumnsValuesRecord)
+            useRecordInformations(mockRecord, recordData as unknown as GetRecordColumnsValuesRecord),
         );
 
         expect(result.current).toEqual([
             {
                 title: 'record_summary.id_entity',
-                value: mockRecord.id
+                value: mockRecord.id,
             },
             {
                 title: 'record_summary.last_modification',
-                value: 'record_summary.date_by_user'
-            }
+                value: 'record_summary.date_by_user',
+            },
         ]);
     });
 });

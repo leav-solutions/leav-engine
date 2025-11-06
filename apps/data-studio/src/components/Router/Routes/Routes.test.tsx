@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function RouteNotFound() {
             return <div>RouteNotFound</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function Workspace() {
             return <div>Workspace</div>;
-        }
+        },
 );
 
 describe('Routes', () => {
@@ -26,7 +26,7 @@ describe('Routes', () => {
         render(
             <MemoryRouter initialEntries={['/']}>
                 <Routes />
-            </MemoryRouter>
+            </MemoryRouter>,
         );
 
         expect(screen.getByText('Workspace')).toBeInTheDocument();

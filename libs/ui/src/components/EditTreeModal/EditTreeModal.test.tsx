@@ -12,7 +12,7 @@ import EditTreeModal from './EditTreeModal';
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
 jest.mock('../LibraryPicker', () => ({
-    LibraryPicker: () => <div>LibraryPicker</div>
+    LibraryPicker: () => <div>LibraryPicker</div>,
 }));
 
 describe('EditTreeModal', () => {
@@ -22,34 +22,34 @@ describe('EditTreeModal', () => {
             isAllowed: [
                 {
                     name: gqlTypes.PermissionsActions.admin_edit_tree,
-                    allowed: true
+                    allowed: true,
                 },
                 {
                     name: gqlTypes.PermissionsActions.admin_delete_tree,
-                    allowed: true
+                    allowed: true,
                 },
                 {
                     name: gqlTypes.PermissionsActions.admin_create_tree,
-                    allowed: true
-                }
-            ]
+                    allowed: true,
+                },
+            ],
         },
-        called: true
+        called: true,
     };
     jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
-        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
     );
 
     const mockGetTreeByIdData = {
         trees: {
-            list: [{...mockTreeWithDetails}]
-        }
+            list: [{...mockTreeWithDetails}],
+        },
     };
 
     const mockQueryResultGetTreeById: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
         loading: false,
         data: mockGetTreeByIdData,
-        called: true
+        called: true,
     };
 
     describe('Create tree', () => {
@@ -58,25 +58,25 @@ describe('EditTreeModal', () => {
             const mockCheckTreeExistenceLazyQuery = jest.fn().mockReturnValue({
                 data: {
                     trees: {
-                        totalCount: 0
-                    }
-                }
+                        totalCount: 0,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useCheckTreeExistenceLazyQuery').mockImplementation(() => [
                 mockCheckTreeExistenceLazyQuery,
-                null
+                null,
             ]);
 
             const mockSaveTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveTree: {
-                        ...mockTreeWithDetails
-                    }
-                }
+                        ...mockTreeWithDetails,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             const mockOnPostCreate = jest.fn();
@@ -114,12 +114,12 @@ describe('EditTreeModal', () => {
                         id: 'label_fr',
                         label: {
                             fr: 'label fr',
-                            en: 'label_en'
+                            en: 'label_en',
                         },
                         behavior: 'standard',
-                        libraries: []
-                    }
-                }
+                        libraries: [],
+                    },
+                },
             });
             expect(mockOnPostCreate).toBeCalled();
         });
@@ -129,13 +129,13 @@ describe('EditTreeModal', () => {
             const mockCheckTreeExistenceLazyQuery = jest.fn().mockReturnValue({
                 data: {
                     trees: {
-                        totalCount: 1
-                    }
-                }
+                        totalCount: 1,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useCheckTreeExistenceLazyQuery').mockImplementation(() => [
                 mockCheckTreeExistenceLazyQuery,
-                null
+                null,
             ]);
 
             render(<EditTreeModal open onPostCreate={jest.fn()} onClose={jest.fn()} />);
@@ -157,7 +157,7 @@ describe('EditTreeModal', () => {
     describe('Edit existing tree', () => {
         test('Display edit form for existing tree', async () => {
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
-                () => mockQueryResultGetTreeById as QueryResult
+                () => mockQueryResultGetTreeById as QueryResult,
             );
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
 
@@ -168,18 +168,18 @@ describe('EditTreeModal', () => {
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
-                () => mockQueryResultGetTreeById as QueryResult
+                () => mockQueryResultGetTreeById as QueryResult,
             );
             const mockSaveTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveTree: {
-                        ...mockTreeWithDetails
-                    }
-                }
+                        ...mockTreeWithDetails,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
@@ -198,10 +198,10 @@ describe('EditTreeModal', () => {
                             id: mockTreeWithDetails.id,
                             label: {
                                 ...mockTreeWithDetails.label,
-                                fr: `${mockTreeWithDetails.label.fr} modified`
-                            }
-                        }
-                    }
+                                fr: `${mockTreeWithDetails.label.fr} modified`,
+                            },
+                        },
+                    },
                 });
             });
         });
@@ -217,52 +217,52 @@ describe('EditTreeModal', () => {
                             id: 'libA',
                             label: {
                                 fr: 'Lib A',
-                                en: 'Lib A'
-                            }
+                                en: 'Lib A',
+                            },
                         },
                         settings: {
                             allowedAtRoot: true,
                             allowMultiplePositions: false,
-                            allowedChildren: []
-                        }
+                            allowedChildren: [],
+                        },
                     },
                     {
                         library: {
                             id: 'libB',
                             label: {
                                 fr: 'Lib B',
-                                en: 'Lib B'
-                            }
+                                en: 'Lib B',
+                            },
                         },
                         settings: {
                             allowedAtRoot: false,
                             allowMultiplePositions: false,
-                            allowedChildren: []
-                        }
-                    }
-                ]
+                            allowedChildren: [],
+                        },
+                    },
+                ],
             };
 
             const mockJestResultNoLibs: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
                 ...mockQueryResultGetTreeById,
                 data: {
                     trees: {
-                        list: [treeWithLibs]
-                    }
-                }
+                        list: [treeWithLibs],
+                    },
+                },
             };
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResultNoLibs as QueryResult);
 
             const mockSaveTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveTree: {
-                        ...treeWithLibs
-                    }
-                }
+                        ...treeWithLibs,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
@@ -277,8 +277,8 @@ describe('EditTreeModal', () => {
                 'switch',
                 {},
                 {
-                    timeout: 10000
-                }
+                    timeout: 10000,
+                },
             );
             const allowedMultiplePositionsSwitch = switches[0];
             const allowedAtRootSwitch = switches[1];
@@ -302,27 +302,27 @@ describe('EditTreeModal', () => {
                                     settings: {
                                         allowedAtRoot: true,
                                         allowMultiplePositions: true,
-                                        allowedChildren: []
-                                    }
+                                        allowedChildren: [],
+                                    },
                                 },
                                 {
                                     library: 'libB',
                                     settings: {
                                         allowedAtRoot: false,
                                         allowMultiplePositions: false,
-                                        allowedChildren: []
-                                    }
-                                }
-                            ]
-                        }
-                    }
+                                        allowedChildren: [],
+                                    },
+                                },
+                            ],
+                        },
+                    },
                 });
             });
         });
 
         test('Can add libraries', async () => {
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
-                () => mockQueryResultGetTreeById as QueryResult
+                () => mockQueryResultGetTreeById as QueryResult,
             );
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
 
@@ -340,52 +340,52 @@ describe('EditTreeModal', () => {
                             id: 'libA',
                             label: {
                                 fr: 'Lib A',
-                                en: 'Lib A'
-                            }
+                                en: 'Lib A',
+                            },
                         },
                         settings: {
                             allowedAtRoot: true,
                             allowMultiplePositions: false,
-                            allowedChildren: []
-                        }
+                            allowedChildren: [],
+                        },
                     },
                     {
                         library: {
                             id: 'libB',
                             label: {
                                 fr: 'Lib B',
-                                en: 'Lib B'
-                            }
+                                en: 'Lib B',
+                            },
                         },
                         settings: {
                             allowedAtRoot: false,
                             allowMultiplePositions: false,
-                            allowedChildren: []
-                        }
-                    }
-                ]
+                            allowedChildren: [],
+                        },
+                    },
+                ],
             };
 
             const mockJestResultWithLibs: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
                 ...mockQueryResultGetTreeById,
                 data: {
                     trees: {
-                        list: [treeWithLibs]
-                    }
-                }
+                        list: [treeWithLibs],
+                    },
+                },
             };
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResultWithLibs as QueryResult);
 
             const mockSaveTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveTree: {
-                        ...treeWithLibs
-                    }
-                }
+                        ...treeWithLibs,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
@@ -408,15 +408,15 @@ describe('EditTreeModal', () => {
                                         settings: {
                                             allowedAtRoot: false,
                                             allowMultiplePositions: false,
-                                            allowedChildren: []
-                                        }
-                                    }
-                                ]
-                            }
-                        }
+                                            allowedChildren: [],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
                     });
                 },
-                {timeout: 10000}
+                {timeout: 10000},
             );
         });
     });
@@ -425,19 +425,19 @@ describe('EditTreeModal', () => {
         test('Can delete tree', async () => {
             const user = userEvent.setup();
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
-                () => mockQueryResultGetTreeById as QueryResult
+                () => mockQueryResultGetTreeById as QueryResult,
             );
             const mockDeleteTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     deleteTree: {
                         __typename: 'Tree',
-                        id: mockTreeWithDetails.id
-                    }
-                }
+                        id: mockTreeWithDetails.id,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
                 mockDeleteTreeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
@@ -449,13 +449,13 @@ describe('EditTreeModal', () => {
                 () => {
                     expect(mockDeleteTreeMutation).toBeCalledWith({
                         variables: {
-                            id: mockTreeWithDetails.id
-                        }
+                            id: mockTreeWithDetails.id,
+                        },
                     });
                 },
                 {
-                    timeout: 10000
-                }
+                    timeout: 10000,
+                },
             );
         });
 
@@ -466,42 +466,42 @@ describe('EditTreeModal', () => {
                     isAllowed: [
                         {
                             name: gqlTypes.PermissionsActions.admin_edit_tree,
-                            allowed: true
+                            allowed: true,
                         },
                         {
                             name: gqlTypes.PermissionsActions.admin_delete_tree,
-                            allowed: false
+                            allowed: false,
                         },
                         {
                             name: gqlTypes.PermissionsActions.admin_create_tree,
-                            allowed: true
-                        }
-                    ]
+                            allowed: true,
+                        },
+                    ],
                 },
-                called: true
+                called: true,
             };
             jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
                 () =>
                     mockResultIsAllowedForbidden as QueryResult<
                         gqlTypes.IsAllowedQuery,
                         gqlTypes.IsAllowedQueryVariables
-                    >
+                    >,
             );
 
             jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
-                () => mockQueryResultGetTreeById as QueryResult
+                () => mockQueryResultGetTreeById as QueryResult,
             );
             const mockDeleteTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     deleteTree: {
                         __typename: 'Tree',
-                        id: mockTreeWithDetails.id
-                    }
-                }
+                        id: mockTreeWithDetails.id,
+                    },
+                },
             });
             jest.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
                 mockDeleteTreeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
+                {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);

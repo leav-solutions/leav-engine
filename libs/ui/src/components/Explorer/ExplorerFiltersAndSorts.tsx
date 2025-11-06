@@ -49,7 +49,7 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                   ({field, order}) =>
                       (attributeDetailsById?.[field]?.label ?? field) +
                       ' ' +
-                      (order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending'))
+                      (order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending')),
               );
 
     const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>

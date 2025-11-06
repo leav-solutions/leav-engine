@@ -9,7 +9,7 @@ jest.mock('../index');
 describe('test sendToRabbitMQ', () => {
     test('check if display msg', () => {
         const channelMock: any = {
-            publish: jest.fn()
+            publish: jest.fn(),
         };
 
         sendToRabbitMQ(
@@ -19,18 +19,18 @@ describe('test sendToRabbitMQ', () => {
                 pathAfter: 'path',
                 pathBefore: null,
                 inode: 'inode',
-                rootKey: 'config.rootKey'
+                rootKey: 'config.rootKey',
             }),
             {
-                channel: channelMock
-            }
+                channel: channelMock,
+            },
         );
         expect(channelMock.publish).not.toBeCalled();
     });
 
     test('check if send to rabbitmq', () => {
         const channelMock: any = {
-            publish: jest.fn()
+            publish: jest.fn(),
         };
 
         const msg = JSON.stringify({
@@ -39,7 +39,7 @@ describe('test sendToRabbitMQ', () => {
             pathAfter: 'path',
             pathBefore: null,
             inode: 'inode',
-            rootKey: 'config.rootKey'
+            rootKey: 'config.rootKey',
         });
 
         const exchange = 'sendToRabbitMQ';
@@ -48,7 +48,7 @@ describe('test sendToRabbitMQ', () => {
         sendToRabbitMQ(msg, {
             channel: channelMock,
             exchange,
-            routingKey
+            routingKey,
         });
 
         expect(channelMock.publish).toBeCalledWith(exchange, routingKey, Buffer.from(msg), expect.anything());
@@ -74,8 +74,8 @@ describe('test generateMsgRabbitMQ', () => {
                 pathBefore,
                 isDirectory: false,
                 inode,
-                rootKey
-            })
+                rootKey,
+            }),
         );
     });
 });

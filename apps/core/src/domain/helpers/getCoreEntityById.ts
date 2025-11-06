@@ -23,7 +23,7 @@ interface IDeps {
 export type GetCoreEntityByIdFunc = <T extends ICoreEntity>(
     entityType: 'library' | 'attribute' | 'tree' | 'view' | 'versionProfile',
     entityId: string,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => Promise<T>;
 
 export default function ({
@@ -33,7 +33,7 @@ export default function ({
     'core.infra.view': viewRepo,
     'core.infra.versionProfile': versionProfileRepo,
     'core.infra.cache.cacheService': cacheService,
-    'core.utils': utils
+    'core.utils': utils,
 }: IDeps): GetCoreEntityByIdFunc {
     const getCoreEntityById = async function <T>(entityType, entityId, ctx): Promise<T> {
         const _execute = async () => {
@@ -42,13 +42,13 @@ export default function ({
                 case 'library':
                     result = await libraryRepo.getLibraries({
                         params: {filters: {id: entityId}, strictFilters: true},
-                        ctx
+                        ctx,
                     });
                     break;
                 case 'attribute':
                     result = await attributeRepo.getAttributes({
                         params: {filters: {id: entityId}, strictFilters: true},
-                        ctx
+                        ctx,
                     });
                     break;
                 case 'tree':
@@ -59,7 +59,7 @@ export default function ({
                 case 'versionProfile':
                     result = await versionProfileRepo.getVersionProfiles({
                         params: {filters: {id: entityId}, strictFilters: true},
-                        ctx
+                        ctx,
                     });
                     break;
             }
@@ -79,7 +79,7 @@ export default function ({
             key: cacheKey,
             func: _execute,
             storeNulls: false,
-            ctx
+            ctx,
         });
     };
 

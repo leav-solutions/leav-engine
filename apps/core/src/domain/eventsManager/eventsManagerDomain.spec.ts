@@ -13,7 +13,7 @@ import {type ILogger} from '@leav/logger';
 
 const logger: Mockify<ILogger> = {
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
+    warn: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
@@ -24,28 +24,28 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     consume: jest.fn(),
     publish: jest.fn(),
     waitForConfirms: jest.fn(),
-    prefetch: jest.fn()
+    prefetch: jest.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
 };
 
 jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection),
 }));
 
 const ctx: IQueryInfos = {
     userId: '1',
-    queryId: 'eventsManagerDomainTest'
+    queryId: 'eventsManagerDomainTest',
 };
 
 const depsBase: ToAny<IEventsManagerDomainDeps> = {
     config: {},
     'core.infra.amqpService': jest.fn(),
     'core.utils.logger': jest.fn(),
-    'core.utils': jest.fn()
+    'core.utils': jest.fn(),
 };
 
 describe('Events Manager', () => {
@@ -61,37 +61,37 @@ describe('Events Manager', () => {
                 hostname: 'localhost',
                 username: 'user',
                 password: 'user',
-                port: 1234
+                port: 1234,
             },
-            type: 'direct'
+            type: 'direct',
         },
         eventsManager: {
             routingKeys: {
                 data_events: 'test.data.events',
-                pubsub_events: 'test.pubsub.events'
+                pubsub_events: 'test.pubsub.events',
             },
             queues: {
-                pubsub_events_prefix: 'test_pubsub_events-'
-            }
-        }
+                pubsub_events_prefix: 'test_pubsub_events-',
+            },
+        },
     };
 
     const mockAmqpService: Mockify<IAmqpService> = {
         consume: jest.fn(),
         consumer: {
             connection: mockAmqpConnection as amqp.ChannelModel,
-            channel: mockAmqpChannel as amqp.ConfirmChannel
+            channel: mockAmqpChannel as amqp.ConfirmChannel,
         },
         publish: global.__mockPromise(),
         publisher: {
             connection: mockAmqpConnection as amqp.ChannelModel,
-            channel: mockAmqpChannel as amqp.ConfirmChannel
+            channel: mockAmqpChannel as amqp.ConfirmChannel,
         },
-        close: jest.fn()
+        close: jest.fn(),
     };
 
     const mockUtils: Mockify<IUtils> = {
-        getProcessIdentifier: jest.fn().mockReturnValue('98765431-42')
+        getProcessIdentifier: jest.fn().mockReturnValue('98765431-42'),
     };
 
     test('Init', async () => {
@@ -99,7 +99,7 @@ describe('Events Manager', () => {
             ...depsBase,
             config: conf as IConfig,
             'core.utils.logger': logger as ILogger,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService,
         });
 
         await events.initPubSubEventsConsumer();
@@ -112,12 +112,12 @@ describe('Events Manager', () => {
             ...depsBase,
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         await events.sendDatabaseEvent<EventAction.LIBRARY_SAVE>(
             {action: EventAction.LIBRARY_SAVE, topic: {library: 'test'}, after: {id: 'test'}},
-            ctx
+            ctx,
         );
 
         expect(mockAmqpService.publish).toBeCalledTimes(1);
@@ -128,7 +128,7 @@ describe('Events Manager', () => {
             ...depsBase,
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         await events.sendPubSubEvent({triggerName: 'test', data: {}}, ctx);
@@ -142,7 +142,7 @@ describe('Events Manager', () => {
                 ...depsBase,
                 config: conf as IConfig,
                 'core.utils.logger': logger as ILogger,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
             });
 
             const actions = ['myplugin_ACTION1', 'myplugin_ACTION2', 'myplugin_ACTION3'];
@@ -160,7 +160,7 @@ describe('Events Manager', () => {
                 ...depsBase,
                 config: conf as IConfig,
                 'core.utils.logger': logger as ILogger,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
             });
 
             const actions = ['action1', 'action2', 'action3'];

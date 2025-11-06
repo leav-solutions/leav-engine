@@ -36,7 +36,7 @@ import {type ISessionRepo} from '../../infra/session/sessionRepo';
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
         params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
-        res: Response<unknown>
+        res: Response<unknown>,
     ): Promise<ITokenUserData>;
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
 }
@@ -84,26 +84,26 @@ export default function ({
     'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     'core.infra.session': sessionRepo,
-    config
+    config,
 }: IAuthAppDeps): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groups = await valueDomain.getValues({
             library: 'users',
             recordId: userId,
             attribute: 'user_groups',
-            ctx
+            ctx,
         });
 
         return jwt.sign(
             {
                 userId,
-                groupsId: groups.map(g => g.payload.id)
+                groupsId: groups.map(g => g.payload.id),
             },
             config.auth.key,
             {
                 algorithm: config.auth.algorithm as Algorithm,
-                expiresIn: String(config.auth.tokenExpiration)
-            }
+                expiresIn: String(config.auth.tokenExpiration),
+            },
         );
     };
 
@@ -111,21 +111,21 @@ export default function ({
         jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
             expiresIn: String(config.auth.refreshTokenExpiration),
-            jwtid: uuidv4()
+            jwtid: uuidv4(),
         });
 
     const _getAuthCookieArgs = (
         cookieName: AuthCookieName,
         value: string,
-        host: string | null
+        host: string | null,
     ): [AuthCookieName, string, CookieOptions] => {
         const cookieExpires =
             ms(
                 String(
                     cookieName === ACCESS_TOKEN_COOKIE_NAME
                         ? config.auth.tokenExpiration
-                        : config.auth.refreshTokenExpiration
-                )
+                        : config.auth.refreshTokenExpiration,
+                ),
             ) - ONE_MINUTE; // we subtract one minute to avoid overlapping the access token
         if (!host) {
             throw new AuthenticationError('Missing host, cannot scope cookie domain.');
@@ -135,7 +135,7 @@ export default function ({
             sameSite: config.auth.cookie.sameSite,
             secure: config.auth.cookie.secure,
             expires: new Date(Date.now() + cookieExpires),
-            domain: host
+            domain: host,
         };
 
         return [cookieName, value, cookieOptions];
@@ -145,16 +145,16 @@ export default function ({
         ...initQueryContext(req),
         userId: config.defaultUserId,
         groupsId: [adminsGroupId, filesAdminsGroupId],
-        trigger
+        trigger,
     });
 
     const _checkIfUserExistsById = async (userId: string, ctx: IQueryInfos) => {
         const users = await recordDomain.find({
             params: {
                 library: 'users',
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}],
             },
-            ctx
+            ctx,
         });
 
         // User could have been deleted / disabled in database
@@ -167,21 +167,21 @@ export default function ({
         userId: string,
         headers: IncomingHttpHeaders,
         res: Response,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ) => {
         const newAccessToken = await _generateAccessToken(userId, ctx);
 
         const newRefreshToken = _generateRefreshToken({
             userId,
             ip: headers['x-forwarded-for'] ?? null,
-            agent: headers['user-agent'] ?? null
+            agent: headers['user-agent'] ?? null,
         });
 
         // We do not delete the refresh afterward, we let the cache service expiration handle it
         await sessionRepo.storeData({
             key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
             data: userId,
-            expiresIn: ms(config.auth.refreshTokenExpiration)
+            expiresIn: ms(config.auth.refreshTokenExpiration),
         });
 
         const host = headers.host ?? null;
@@ -191,7 +191,7 @@ export default function ({
 
     const _verifyRefreshToken = async (
         refreshToken: string,
-        reqHeaders: IncomingHttpHeaders
+        reqHeaders: IncomingHttpHeaders,
     ): Promise<ISessionPayload> => {
         let refreshPayload: ISessionPayload;
         try {
@@ -234,11 +234,11 @@ export default function ({
                         return recordRepo.getRecord({
                             libraryId: USERS_LIBRARY,
                             recordId: ctx.userId,
-                            ctx
+                            ctx,
                         });
-                    }
-                }
-            }
+                    },
+                },
+            },
         }),
         registerRoute(app) {
             app.get(
@@ -246,7 +246,7 @@ export default function ({
                 async (
                     req: Request<{identifierBase64Url: string}>,
                     res: Response,
-                    next: NextFunction
+                    next: NextFunction,
                 ): Promise<Response | void> => {
                     if (!config.auth.oidc.enable) {
                         return res.status(401);
@@ -259,7 +259,7 @@ export default function ({
                     try {
                         const oidcTokenSet = await oidcClientService.getTokensFromCodes({
                             authorizationCode: code as string,
-                            queryId
+                            queryId,
                         });
 
                         const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
@@ -271,9 +271,9 @@ export default function ({
                         const userRecords = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
                             },
-                            ctx: systemCtx
+                            ctx: systemCtx,
                         });
 
                         let user = userRecords.list[0];
@@ -287,9 +287,9 @@ export default function ({
                                 library: 'users',
                                 values: [
                                     {payload: email, attribute: 'email'},
-                                    {payload: decodedToken.name, attribute: 'login'} // used to display the username in the UI instead of record id
+                                    {payload: decodedToken.name, attribute: 'login'}, // used to display the username in the UI instead of record id
                                 ],
-                                ctx: systemCtx
+                                ctx: systemCtx,
                             });
                             logger.info(`User ${email} created during auto provisioning step`);
                             user = createdUser;
@@ -302,7 +302,7 @@ export default function ({
                                     recordId: user.id,
                                     attribute: 'user_groups',
                                     value: {payload: adminsGroupId},
-                                    ctx: systemCtx
+                                    ctx: systemCtx,
                                 });
                             }
                         }
@@ -314,7 +314,7 @@ export default function ({
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
                             ip: req.headers['x-forwarded-for'] ?? null,
-                            agent: req.headers['user-agent'] ?? null
+                            agent: req.headers['user-agent'] ?? null,
                         });
 
                         // store refresh token in cache
@@ -322,7 +322,7 @@ export default function ({
                         await sessionRepo.storeData({
                             key: `${SESSION_CACHE_HEADER}:${refreshToken}`,
                             data: user.id,
-                            expiresIn: refreshExpires
+                            expiresIn: refreshExpires,
                         });
                         const host = req.headers.host ?? null;
                         res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, host));
@@ -334,7 +334,7 @@ export default function ({
                         logger.error(`Auth oidc verify error ${err.stack}`);
                         return next(err);
                     }
-                }
+                },
             );
 
             app.post(
@@ -353,9 +353,9 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}]
+                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}],
                             },
-                            ctx: systemCtx
+                            ctx: systemCtx,
                         });
 
                         if (!users.list.length) {
@@ -368,7 +368,7 @@ export default function ({
                             library: 'users',
                             recordId: user.id,
                             attribute: 'password',
-                            ctx: systemCtx
+                            ctx: systemCtx,
                         });
 
                         const isValidPwd =
@@ -383,14 +383,14 @@ export default function ({
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
                             ip: req.headers['x-forwarded-for'] ?? null,
-                            agent: req.headers['user-agent'] ?? null
+                            agent: req.headers['user-agent'] ?? null,
                         });
 
                         // store refresh token in cache
                         await sessionRepo.storeData({
                             key: `${SESSION_CACHE_HEADER}:${refreshToken}`,
                             data: user.id,
-                            expiresIn: ms(config.auth.refreshTokenExpiration)
+                            expiresIn: ms(config.auth.refreshTokenExpiration),
                         });
                         const host = req.headers.host ?? null;
                         res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, host));
@@ -400,7 +400,7 @@ export default function ({
                     } catch (err) {
                         return next(err);
                     }
-                }
+                },
             );
 
             app.post('/auth/logout', async (req, res) => {
@@ -441,9 +441,9 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
                             },
-                            ctx: systemCtx
+                            ctx: systemCtx,
                         });
 
                         if (!users.list.length) {
@@ -456,13 +456,13 @@ export default function ({
                         const token = jwt.sign(
                             {
                                 userId: user.id,
-                                email: user.email
+                                email: user.email,
                             },
                             config.auth.key,
                             {
                                 algorithm: config.auth.algorithm as Algorithm,
-                                expiresIn: String(config.auth.resetPasswordExpiration)
-                            }
+                                expiresIn: String(config.auth.resetPasswordExpiration),
+                            },
                         );
 
                         await userDomain.sendResetPasswordEmail(
@@ -472,14 +472,14 @@ export default function ({
                             ua.browser,
                             ua.os,
                             lang,
-                            systemCtx
+                            systemCtx,
                         );
 
                         return res.sendStatus(200);
                     } catch (err) {
                         return next(err);
                     }
-                }
+                },
             );
 
             app.post(
@@ -516,7 +516,7 @@ export default function ({
                                 recordId: payload.userId,
                                 attribute: 'password',
                                 value: {payload: newPassword},
-                                ctx: systemCtx
+                                ctx: systemCtx,
                             });
                         } catch (e) {
                             return res.status(422).send('Invalid password');
@@ -526,7 +526,7 @@ export default function ({
                     } catch (err) {
                         return next(err);
                     }
-                }
+                },
             );
 
             app.post('/auth/login-checker', async (req: IRequestWithContext, res, next) => {
@@ -592,7 +592,7 @@ export default function ({
                     library: USERS_LIBRARY,
                     recordId: uid,
                     attribute: USERS_GROUP_ATTRIBUTE_NAME,
-                    ctx: systemCtx
+                    ctx: systemCtx,
                 })) as ITreeValue[];
                 return userGroups.map(g => g.payload?.id);
             };
@@ -646,7 +646,7 @@ export default function ({
 
             return {
                 userId,
-                groupsId
+                groupsId,
             };
         },
         authenticateWithOIDCService: async (req, res) => {
@@ -661,10 +661,10 @@ export default function ({
 
             const oidcLoginUrl = await oidcClientService.getAuthorizationUrl({
                 redirectUri: `${config.server.publicUrl}/auth/oidc/verify/${identifierBase64Url}`,
-                queryId
+                queryId,
             });
 
             return res.redirect(oidcLoginUrl);
-        }
+        },
     };
 }

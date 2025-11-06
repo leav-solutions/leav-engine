@@ -5,7 +5,7 @@ import {
     type GetLibraryByIdQuery,
     useSaveLibraryMutation,
     useCancelTaskMutation,
-    useIndexRecordsMutation
+    useIndexRecordsMutation,
 } from '../../../../_gqlTypes';
 import {Divider, type SelectProps, Select, Button, Alert, Space} from 'antd';
 import {localizedTranslation} from '@leav/utils';
@@ -31,7 +31,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
 
     const options: SelectProps['options'] = library.attributes.map(a => ({
         label: localizedTranslation(a.label, lang),
-        value: a.id
+        value: a.id,
     }));
 
     const _onChange = (value: string[]) => {
@@ -43,25 +43,25 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
             variables: {
                 library: {
                     id: library.id,
-                    fullTextAttributes
-                }
-            }
+                    fullTextAttributes,
+                },
+            },
         });
     };
 
     const _onRefresh = async () => {
         await indexRecords({
             variables: {
-                libraryId: library.id
-            }
+                libraryId: library.id,
+            },
         });
     };
 
     const _onCancel = async () => {
         await cancelTaskMutation({
             variables: {
-                taskId: indexationTask
-            }
+                taskId: indexationTask,
+            },
         });
     };
 
@@ -70,7 +70,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
 
         setIsEdited(
             intersections.length !== library.fullTextAttributes.length ||
-                intersections.length !== fullTextAttributes.length
+                intersections.length !== fullTextAttributes.length,
         );
     }, [library.fullTextAttributes, fullTextAttributes]);
 

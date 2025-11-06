@@ -29,7 +29,7 @@ export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 export type CustomFilterConditionsFunc = (
     filterKey: string,
     filterVal: string | boolean | string[],
-    strictFilters: boolean
+    strictFilters: boolean,
 ) => GeneratedAqlQuery;
 
 export interface IFindCoreEntityParams {
@@ -66,7 +66,7 @@ export default function ({
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils.logger': logger = null,
     config = null,
-    'core.utils.getSystemQueryContext': getSystemQueryContext
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
 }: IDeps = {}): IDbUtils {
     /**
      * Create the collections used to managed db migrations
@@ -96,7 +96,7 @@ export default function ({
         filterKey: string,
         filterVal: string | boolean | string[],
         strictFilters: boolean,
-        nonStrictFields?: string[]
+        nonStrictFields?: string[],
     ): GeneratedAqlQuery {
         const queryParts = [];
 
@@ -105,7 +105,7 @@ export default function ({
         if (Array.isArray(filterVal)) {
             if (filterVal.length) {
                 const valParts = filterVal.map(val =>
-                    _getFilterCondition(filterKey, val, strictFilters, nonStrictFields)
+                    _getFilterCondition(filterKey, val, strictFilters, nonStrictFields),
                 );
                 queryParts.push(join(valParts, ' OR '));
             }
@@ -120,7 +120,7 @@ export default function ({
                 queryParts.push(
                     (nonStrictFields ?? []).includes(filterKey) && !strictFilters
                         ? aql`LIKE(el.${filterKey}, ${filterVal}, true)`
-                        : aql`el.${filterKey} == ${filterVal}`
+                        : aql`el.${filterKey} == ${filterVal}`,
                 );
             }
         }
@@ -139,7 +139,7 @@ export default function ({
             await _initMigrationsCollection();
             const ctx: IQueryInfos = {
                 userId: config.defaultUserId,
-                queryId: 'run-migrations'
+                queryId: 'run-migrations',
             };
             // Load already ran migrations
             const executedMigrations = await dbService.execute<string[]>({
@@ -147,7 +147,7 @@ export default function ({
                     FOR m IN core_db_migrations
                     RETURN m.file
                 `,
-                ctx
+                ctx,
             });
 
             const _runMigrationFiles = (files, folder, prefix = null) =>
@@ -157,14 +157,14 @@ export default function ({
                     migrationsDir: folder,
                     prefix,
                     deps: {depsManager, dbService, logger},
-                    ctx
+                    ctx,
                 });
 
             /*** Core migrations ***/
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');
             const migrationFiles = (await fs.promises.readdir(migrationsDir)).filter(
-                file => file.indexOf('.map') === -1
+                file => file.indexOf('.map') === -1,
             );
 
             await _runMigrationFiles(migrationFiles, migrationsDir);
@@ -181,7 +181,7 @@ export default function ({
                 }
 
                 const pluginMigrationFiles = (await fs.promises.readdir(pluginMigrationFolderPath)).filter(
-                    file => file.indexOf('.map') === -1
+                    file => file.indexOf('.map') === -1,
                 );
 
                 await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolderPath, pluginName);
@@ -239,7 +239,7 @@ export default function ({
          * @param strictFilters
          */
         async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
-            params: IFindCoreEntityParams
+            params: IFindCoreEntityParams,
         ): Promise<IList<T>> {
             const {
                 collectionName = null,
@@ -250,7 +250,7 @@ export default function ({
                 sort = null,
                 customFilterConditions = {},
                 nonStrictFields = ['label', '_key'],
-                ctx = getSystemQueryContext('dbUtils:findCoreEntity')
+                ctx = getSystemQueryContext('dbUtils:findCoreEntity'),
             } = params;
 
             const collec = dbService.db.collection(collectionName);
@@ -296,7 +296,7 @@ export default function ({
 
             return {
                 totalCount: withCount ? (res as IExecuteWithCount).totalCount : null,
-                list: results.map(ret.cleanup)
+                list: results.map(ret.cleanup),
             };
         },
         convertValueVersionToDb(version: IValueVersion): IDbValueVersion {
@@ -321,7 +321,7 @@ export default function ({
                 await dbService.dropCollection(col.name, colType);
                 // TODO: clear linked arango views
             }
-        }
+        },
     };
 
     return ret;

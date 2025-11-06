@@ -53,7 +53,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({filter,
             values={getFilterValues(filter, t)}
             dropDownProps={{
                 placement: 'bottomLeft',
-                dropdownRender: () => <FilterDropDown filter={filter} canRemove={!isPinned} />
+                dropdownRender: () => <FilterDropDown filter={filter} canRemove={!isPinned} />,
             }}
         />
     );

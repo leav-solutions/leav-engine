@@ -10,6 +10,6 @@ export default function (): IConvertOIDCIdentifier {
     return {
         encodeIdentifierToBase64Url: identifier => Buffer.from(identifier).toString('base64url'),
         decodeIdentifierFromBase64Url: identifierBase64UrlEncoded =>
-            Buffer.from(identifierBase64UrlEncoded, 'base64url').toString()
+            Buffer.from(identifierBase64UrlEncoded, 'base64url').toString(),
     };
 }

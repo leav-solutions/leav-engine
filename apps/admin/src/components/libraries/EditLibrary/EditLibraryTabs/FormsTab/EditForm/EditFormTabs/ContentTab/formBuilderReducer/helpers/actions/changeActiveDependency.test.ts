@@ -22,10 +22,10 @@ describe('formBuilderReducer', () => {
                         preview: null,
                         library: {
                             id: 'category',
-                            label: null
-                        }
-                    }
-                }
+                            label: null,
+                        },
+                    },
+                },
             },
             ancestors: [
                 {
@@ -38,10 +38,10 @@ describe('formBuilderReducer', () => {
                             preview: null,
                             library: {
                                 id: 'category',
-                                label: null
-                            }
-                        }
-                    }
+                                label: null,
+                            },
+                        },
+                    },
                 },
                 {
                     id: '654321',
@@ -53,16 +53,16 @@ describe('formBuilderReducer', () => {
                             preview: null,
                             library: {
                                 id: 'category',
-                                label: null
-                            }
-                        }
-                    }
-                }
-            ]
+                                label: null,
+                            },
+                        },
+                    },
+                },
+            ],
         };
         const newState = formBuilderReducer(mockInitialState, {
             type: FormBuilderActionTypes.CHANGE_ACTIVE_DEPENDENCY,
-            activeDependency: newDep
+            activeDependency: newDep,
         });
 
         expect(newState.activeDependency).toEqual(newDep);
@@ -75,7 +75,7 @@ describe('formBuilderReducer', () => {
                     order: 0,
                     settings: {},
                     uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
-                    herited: true
+                    herited: true,
                 },
                 {
                     id: '456',
@@ -83,10 +83,10 @@ describe('formBuilderReducer', () => {
                     type: FormElementTypes.layout,
                     order: 1,
                     settings: {
-                        title: 'divide'
+                        title: 'divide',
                     },
                     uiElement: layoutElements[UIElementTypes.DIVIDER],
-                    herited: true
+                    herited: true,
                 },
                 {
                     id: '123457',
@@ -95,29 +95,29 @@ describe('formBuilderReducer', () => {
                     order: 2,
                     settings: {},
                     uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
-                    herited: true
-                }
+                    herited: true,
+                },
             ],
             '123456': [
                 {
                     ...formElem1,
-                    herited: true
+                    herited: true,
                 },
                 {
                     ...formElem4,
-                    herited: true
+                    herited: true,
                 },
                 {
                     ...formElem3,
-                    herited: false
-                }
+                    herited: false,
+                },
             ],
             '123457': [
                 {
                     ...formElem2,
-                    herited: true
-                }
-            ]
+                    herited: true,
+                },
+            ],
         });
     });
 });

@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function View() {
             return <div>View</div>;
-        }
+        },
 );
 
 describe('ViewPanel', () => {
@@ -32,17 +32,17 @@ describe('ViewPanel', () => {
                 id: '1',
                 label: null,
                 library: {
-                    id: 'users'
-                }
-            }
+                    id: 'users',
+                },
+            },
         },
         label: {
             fr: 'list',
-            en: 'list'
+            en: 'list',
         },
         description: {
             fr: 'this is a list ',
-            en: 'this is a list '
+            en: 'this is a list ',
         },
         color: '#e48232',
         filters: [] as any,
@@ -50,10 +50,10 @@ describe('ViewPanel', () => {
             {
                 __typename: 'RecordSort',
                 field: 'id',
-                order: gqlTypes.SortOrder.asc
-            }
+                order: gqlTypes.SortOrder.asc,
+            },
         ],
-        valuesVersions: [] as any
+        valuesVersions: [] as any,
     };
 
     const mocks = [
@@ -63,9 +63,9 @@ describe('ViewPanel', () => {
                 variables: {
                     keys: [
                         'user_views_order_' + mockGetLibraryDetailExtendedElement.id,
-                        'shared_views_order_' + mockGetLibraryDetailExtendedElement.id
-                    ]
-                }
+                        'shared_views_order_' + mockGetLibraryDetailExtendedElement.id,
+                    ],
+                },
             },
             result: {
                 data: {
@@ -74,18 +74,18 @@ describe('ViewPanel', () => {
                         global: false,
                         data: {
                             ['user_views_order_' + mockGetLibraryDetailExtendedElement.id]: [],
-                            ['shared_views_order_' + mockGetLibraryDetailExtendedElement.id]: []
-                        }
-                    }
-                }
-            }
+                            ['shared_views_order_' + mockGetLibraryDetailExtendedElement.id]: [],
+                        },
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getViewsListQuery,
                 variables: {
-                    libraryId: mockGetLibraryDetailExtendedElement.id
-                }
+                    libraryId: mockGetLibraryDetailExtendedElement.id,
+                },
             },
             result: {
                 data: {
@@ -95,13 +95,13 @@ describe('ViewPanel', () => {
                             mockView,
                             {
                                 ...mockView,
-                                id: 'otherId'
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                id: 'otherId',
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     test('should display n View', async () => {
@@ -114,15 +114,16 @@ describe('ViewPanel', () => {
                         mockView,
                         {
                             ...mockView,
-                            id: 'otherId'
-                        }
-                    ]
-                }
+                            id: 'otherId',
+                        },
+                    ],
+                },
             },
-            called: true
+            called: true,
         };
         jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockImplementation(
-            () => mockResultGetViewsList as QueryResult<gqlTypes.GetViewsListQuery, gqlTypes.GetViewsListQueryVariables>
+            () =>
+                mockResultGetViewsList as QueryResult<gqlTypes.GetViewsListQuery, gqlTypes.GetViewsListQueryVariables>,
         );
 
         render(
@@ -133,10 +134,10 @@ describe('ViewPanel', () => {
                 mocks,
                 cacheSettings: {
                     possibleTypes: {
-                        Record: ['User']
-                    }
-                }
-            }
+                        Record: ['User'],
+                    },
+                },
+            },
         );
 
         expect(screen.getAllByText('View')).toHaveLength(2);

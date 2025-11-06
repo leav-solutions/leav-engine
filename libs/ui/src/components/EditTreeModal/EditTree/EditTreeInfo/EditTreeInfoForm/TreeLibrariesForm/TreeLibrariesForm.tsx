@@ -55,7 +55,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
     const _handleSubmitLibraryPicker = (selectedLibraries: LibraryLightFragment[]) => {
         const addedLibraries = selectedLibraries.map(library => ({
             library: {id: library.id, label: library.label},
-            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: [ALL_CHILDREN_ALLOWED_KEY]}
+            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: [ALL_CHILDREN_ALLOWED_KEY]},
         }));
 
         const newLibraries = [...libraries, ...addedLibraries];
@@ -71,7 +71,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
             if (library.library.id === libraryId) {
                 return {
                     ...library,
-                    settings: {...library.settings, [field]: checked}
+                    settings: {...library.settings, [field]: checked},
                 };
             }
 
@@ -100,7 +100,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
             if (library.library.id === libraryId) {
                 return {
                     ...library,
-                    settings: {...library.settings, allowedChildren: selectedChildren}
+                    settings: {...library.settings, allowedChildren: selectedChildren},
                 };
             }
 
@@ -123,7 +123,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
             label: localizedTranslation(item.library.label, lang),
             subLabel: item.library.id,
             color: null,
-            preview: null
+            preview: null,
         };
 
         const allowedChildrenOptions = [
@@ -137,9 +137,9 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
                     label: localizedTranslation(library.library.label, lang),
                     disabled: form
                         .getFieldValue(['libraries', index, 'settings', 'allowedChildren'])
-                        .includes(ALL_CHILDREN_ALLOWED_KEY)
-                }))
-            }
+                        .includes(ALL_CHILDREN_ALLOWED_KEY),
+                })),
+            },
         ];
 
         const collapseItems: ComponentProps<typeof Collapse>['items'] = [
@@ -191,8 +191,8 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
                             </Form.Item>
                         </ListItemPart>
                     </>
-                )
-            }
+                ),
+            },
         ];
 
         return (

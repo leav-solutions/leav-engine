@@ -6,14 +6,14 @@ import {
     defaultDepAttribute,
     defaultDepValue,
     type IFormBuilderActionChangeActiveDependency,
-    type IFormBuilderState
+    type IFormBuilderState,
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';
 
 export default function changeActiveDependency(
     state: IFormBuilderState,
-    action: IFormBuilderActionChangeActiveDependency
+    action: IFormBuilderActionChangeActiveDependency,
 ) {
     const {attribute, value, ancestors} = action.activeDependency ?? {};
 
@@ -23,7 +23,7 @@ export default function changeActiveDependency(
     for (const containerId of Object.keys(activeFields)) {
         activeFields[containerId] = activeFields[containerId].map(f => ({
             ...f,
-            herited: attribute && value?.id ? true : false
+            herited: attribute && value?.id ? true : false,
         }));
     }
 
@@ -37,7 +37,7 @@ export default function changeActiveDependency(
             for (const containerId of Object.keys(depFields)) {
                 depFields[containerId] = depFields[containerId].map(f => ({
                     ...f,
-                    herited: true
+                    herited: true,
                 }));
             }
 
@@ -51,7 +51,7 @@ export default function changeActiveDependency(
         for (const containerId of Object.keys(currentDepFields)) {
             currentDepFields[containerId] = currentDepFields[containerId].map(f => ({
                 ...f,
-                herited: false
+                herited: false,
             }));
         }
 
@@ -61,6 +61,6 @@ export default function changeActiveDependency(
     return {
         ...state,
         activeElements: activeFields,
-        activeDependency: action.activeDependency ? {...action.activeDependency} : null
+        activeDependency: action.activeDependency ? {...action.activeDependency} : null,
     };
 }

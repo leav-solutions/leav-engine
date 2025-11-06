@@ -40,7 +40,7 @@ function LinkedTreeForm({onChange, isReadOnly, extra, selected}: ILinkedTreeForm
               subLabel: linkedTree.id,
               label: localizedTranslation(linkedTree.label, lang),
               color: null,
-              preview: null
+              preview: null,
           }
         : null;
 

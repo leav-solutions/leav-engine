@@ -9,7 +9,7 @@ import {
     type FloatingMenuAction,
     type IEntityData,
     PreviewSize,
-    useLang
+    useLang,
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState} from 'react';
@@ -74,15 +74,15 @@ function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree, dragProvi
         {
             title: t('global.details'),
             icon: <ExpandAltOutlined />,
-            onClick: _handleOpenEditTreeModal
-        }
+            onClick: _handleOpenEditTreeModal,
+        },
     ];
 
     const treeIdentity: IEntityData = {
         label: localizedTranslation(tree.label, lang),
         subLabel: tree.id,
         color: null,
-        preview: null
+        preview: null,
     };
 
     return (

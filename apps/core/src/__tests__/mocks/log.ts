@@ -14,9 +14,9 @@ export const mockLog: Log = {
         attribute: 'my_attribute',
         record: {
             id: '123456',
-            libraryId: 'my_lib'
-        }
+            libraryId: 'my_lib',
+        },
     },
     before: 'value before',
-    after: 'value after'
+    after: 'value after',
 };

@@ -28,12 +28,12 @@ const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
         refetchQueries: [getTreesQueryName],
         update: (cache, {data}) => {
             deleteFromCache(cache, data.deleteTree as unknown as StoreObject);
-        }
+        },
     });
 
     const _handleDelete = async () =>
         deleteTree({
-            variables: {treeId: tree.id}
+            variables: {treeId: tree.id},
         });
 
     const treeLabel = localizedLabel(tree.label, availableLanguages);

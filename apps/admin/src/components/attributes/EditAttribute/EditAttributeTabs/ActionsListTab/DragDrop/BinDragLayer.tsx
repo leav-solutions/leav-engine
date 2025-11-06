@@ -13,12 +13,12 @@ const layerStyles: CSSProperties = {
     left: 0,
     top: 0,
     width: '100%',
-    height: '100%'
+    height: '100%',
 };
 
 const getFieldStyle = isDragging => {
     const style: CSSProperties = {
-        maxWidth: 300
+        maxWidth: 300,
     };
     style.opacity = isDragging ? 0.8 : 1;
     return style;
@@ -28,7 +28,7 @@ const getItemStyles = props => {
     const {currentOffset} = props;
     if (!currentOffset) {
         return {
-            display: 'none'
+            display: 'none',
         };
     }
 
@@ -38,7 +38,7 @@ const getItemStyles = props => {
 
     return {
         transform,
-        WebkitTransform: transform
+        WebkitTransform: transform,
     };
 };
 
@@ -48,7 +48,7 @@ const collect = monitor => ({
     currentOffset: monitor.getSourceClientOffset(),
     initialOffset: monitor.getInitialClientOffset(),
     diff: monitor.getDifferenceFromInitialOffset(),
-    isDragging: monitor.isDragging()
+    isDragging: monitor.isDragging(),
 });
 
 interface IBinDragLayerProps {
@@ -71,13 +71,13 @@ class BinDragLayer extends Component<IBinDragLayerProps> {
         itemType: PropTypes.string,
         initialOffset: PropTypes.shape({
             x: PropTypes.number.isRequired,
-            y: PropTypes.number.isRequired
+            y: PropTypes.number.isRequired,
         }),
         currentOffset: PropTypes.shape({
             x: PropTypes.number.isRequired,
-            y: PropTypes.number.isRequired
+            y: PropTypes.number.isRequired,
         }),
-        isDragging: PropTypes.bool.isRequired
+        isDragging: PropTypes.bool.isRequired,
     };
 
     public static defaultProps = {};

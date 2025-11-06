@@ -46,21 +46,21 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
         if (selection.selected.length) {
             let messages: IMessages = {
                 countValid: 0,
-                errors: {}
+                errors: {},
             };
 
             for (const elementSelected of selection.selected) {
                 const treeElement: TreeElementInput = {
                     id: elementSelected.id,
-                    library: elementSelected.library
+                    library: elementSelected.library,
                 };
                 try {
                     await addToTree({
                         variables: {
                             treeId: activeTree.id,
                             element: treeElement,
-                            parent: parent?.id ?? null
-                        }
+                            parent: parent?.id ?? null,
+                        },
                     });
 
                     messages = {...messages, countValid: messages.countValid + 1};
@@ -72,13 +72,13 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                         if (errorMessageParent) {
                             messages.errors[errorMessageParent] = [
                                 ...(messages.errors[errorMessageParent] ?? []),
-                                elementSelected.id
+                                elementSelected.id,
                             ];
                         }
                         if (errorMessageElement) {
                             messages.errors[errorMessageElement] = [
                                 ...(messages.errors[errorMessageElement] ?? []),
-                                elementSelected.label || elementSelected.id
+                                elementSelected.label || elementSelected.id,
                             ];
                         }
                     } else {
@@ -86,8 +86,8 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                             addInfo({
                                 channel: InfoChannel.TRIGGER,
                                 type: InfoType.ERROR,
-                                content: `${e.message}`
-                            })
+                                content: `${e.message}`,
+                            }),
                         );
                     }
                 }
@@ -101,7 +101,7 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
 
     const buttonIcon = <GrSearchAdvanced size="1.2em" />;
     const buttonStyle: CSSProperties = {
-        paddingTop: '5px'
+        paddingTop: '5px',
     };
 
     if (!availableLibraries.length) {
@@ -116,8 +116,8 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                         items: availableLibraries.map(library => ({
                             key: library.library.id,
                             onClick: () => _showSearch(library.library.id),
-                            label: localizedTranslation(library.library.label, lang)
-                        }))
+                            label: localizedTranslation(library.library.label, lang),
+                        })),
                     }}
                 >
                     <Tooltip title={t('navigation.header.add_by_search')} placement="top">

@@ -58,7 +58,7 @@ function RecordPreviewTile({
     image,
     style,
     imageStyle,
-    placeholderStyle
+    placeholderStyle,
 }: IEntityPreviewProps): JSX.Element {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [hasFailed, setHasFailed] = useState(false);

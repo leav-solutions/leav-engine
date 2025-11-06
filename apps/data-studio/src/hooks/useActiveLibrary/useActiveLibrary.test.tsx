@@ -15,7 +15,7 @@ describe('useActiveLibrary', () => {
         behavior: LibraryBehavior.standard,
         attributes: [],
         trees: [],
-        permissions: mockLibraryPermissions
+        permissions: mockLibraryPermissions,
     };
 
     test('should get empty library if no activeLibrary set', async () => {

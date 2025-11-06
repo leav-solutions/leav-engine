@@ -17,12 +17,12 @@ jest.mock(
     () =>
         function InfosForm() {
             return <div>InfosForm</div>;
-        }
+        },
 );
 
 jest.mock('react-router-dom-v5', () => ({
     ...jest.requireActual('react-router-dom-v5'),
-    useLocation: () => ({pathname: '/libraries/edit/products#forms'})
+    useLocation: () => ({pathname: '/libraries/edit/products#forms'}),
 }));
 
 describe('InfosTab', () => {
@@ -31,8 +31,8 @@ describe('InfosTab', () => {
             id: 'test_form',
             library: 'test_lib',
             label: {fr: 'Test form'},
-            dependencyAttributes: ['test_attr']
-        }
+            dependencyAttributes: ['test_attr'],
+        },
     };
 
     test('Render form', async () => {
@@ -49,17 +49,17 @@ describe('InfosTab', () => {
             {
                 request: {
                     query: saveFormQuery,
-                    variables
+                    variables,
                 },
                 result: () => {
                     saveQueryCalled = true;
                     return {
                         data: {
-                            saveForm: formDataWithTypename
-                        }
+                            saveForm: formDataWithTypename,
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
         const comp = mount(
             <MockedProviderWithFragments mocks={mocks} addTypename>
@@ -68,7 +68,7 @@ describe('InfosTab', () => {
                 >
                     <InfosTab />
                 </EditFormContext.Provider>
-            </MockedProviderWithFragments>
+            </MockedProviderWithFragments>,
         );
         const submitFunc: any = comp.find('InfosForm').prop('onSubmit');
 
@@ -78,7 +78,7 @@ describe('InfosTab', () => {
                     id: 'test_form',
                     library: 'test_lib',
                     label: {fr: 'Test form'},
-                    dependencyAttributes: ['test_attr']
+                    dependencyAttributes: ['test_attr'],
                 });
                 await wait(0);
             });

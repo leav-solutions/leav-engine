@@ -9,7 +9,7 @@ import {
     gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveVersionProfile,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('Versions', () => {
@@ -41,8 +41,8 @@ describe('Versions', () => {
             format: AttributeFormats.TEXT,
             versionsConf: {
                 versionable: true,
-                profile: versionProfileName
-            }
+                profile: versionProfileName,
+            },
         });
 
         // Create libraries

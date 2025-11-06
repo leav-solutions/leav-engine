@@ -44,14 +44,14 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
     const _handleFormSubmit = async (apiKeyData: ApiKeyInput) => {
         const saveRes = await saveApiKey({
             variables: {
-                apiKey: apiKeyData
+                apiKey: apiKeyData,
             },
             update: cache => {
                 // We created a new profile, invalidate all version profiles list cache
                 if (isNewKey) {
                     cache.evict({fieldName: 'apiKeys'});
                 }
-            }
+            },
         });
 
         setCurrentApiKey(saveRes.data.saveApiKey);
@@ -62,7 +62,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
 
         addMessage({
             type: MessagesTypes.SUCCESS,
-            content: t('api_keys.copy_success')
+            content: t('api_keys.copy_success'),
         });
     };
 
@@ -76,7 +76,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
                             {t('api_keys.creation_details', {
                                 date: new Date(currentApiKey.createdAt * 1000).toLocaleString(),
                                 user: currentApiKey.user.whoAmI.label,
-                                interpolation: {escapeValue: false}
+                                interpolation: {escapeValue: false},
                             })}
                             ,
                         </span>
@@ -84,7 +84,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
                             {t('api_keys.modification_details', {
                                 date: new Date(currentApiKey.modifiedAt * 1000).toLocaleString(),
                                 user: currentApiKey.user.whoAmI.label,
-                                interpolation: {escapeValue: false}
+                                interpolation: {escapeValue: false},
                             })}
                         </span>
                     </CreationDetails>

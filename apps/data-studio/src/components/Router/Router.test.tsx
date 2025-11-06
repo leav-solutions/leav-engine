@@ -9,7 +9,7 @@ jest.mock(
     () =>
         function TopBar() {
             return <div>TopBar</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -17,7 +17,7 @@ jest.mock(
     () =>
         function Sidebar() {
             return <div>Sidebar</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -25,7 +25,7 @@ jest.mock(
     () =>
         function UserPanel() {
             return <div>UserPanel</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -33,7 +33,7 @@ jest.mock(
     () =>
         function NotifsPanel() {
             return <div>NotifsPanel</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -41,13 +41,13 @@ jest.mock(
     () =>
         function Routes() {
             return <div>Routes</div>;
-        }
+        },
 );
 
 jest.mock('reduxStore/notifications', () => jest.fn());
 
 jest.mock('../../constants', () => ({
-    APP_BASE_URL: ''
+    APP_BASE_URL: '',
 }));
 
 describe('Router', () => {

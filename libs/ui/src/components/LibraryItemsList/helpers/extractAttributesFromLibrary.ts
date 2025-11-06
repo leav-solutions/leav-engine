@@ -8,7 +8,7 @@ import {
     type ILibraryDetailExtended,
     type ILibraryDetailExtendedAttributeLink,
     type ILibraryDetailExtendedAttributeStandard,
-    type ILibraryDetailExtendedAttributeTree
+    type ILibraryDetailExtendedAttributeTree,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 
 export default (library: ILibraryDetailExtended): IAttribute[] =>
@@ -30,8 +30,8 @@ export default (library: ILibraryDetailExtended): IAttribute[] =>
                     linkedLibrary: (attribute as ILibraryDetailExtendedAttributeLink).linked_library,
                     linkedTree: (attribute as ILibraryDetailExtendedAttributeTree).linked_tree,
                     library: library.id,
-                    embedded_fields: (attribute as ILibraryDetailExtendedAttributeStandard).embedded_fields
-                }
+                    embedded_fields: (attribute as ILibraryDetailExtendedAttributeStandard).embedded_fields,
+                },
             ];
 
             // case attribute is a linked attribute
@@ -51,7 +51,7 @@ export default (library: ILibraryDetailExtended): IAttribute[] =>
                     isMultiple: linkedAttribute.multiple_values,
                     linkedLibrary: (attribute as ILibraryDetailExtendedAttributeLink).linked_library,
                     linkedTree: (attribute as ILibraryDetailExtendedAttributeTree).linked_tree,
-                    library: linkedLibraryId
+                    library: linkedLibraryId,
                 }));
 
                 newAttributes.push(...newLinkedAttributes);
@@ -73,7 +73,7 @@ export default (library: ILibraryDetailExtended): IAttribute[] =>
                             label: linkedAttribute.label,
                             isLink: isTypeLink(linkedAttribute.type),
                             isMultiple: linkedAttribute.multiple_values,
-                            library: linkedLibraryId
+                            library: linkedLibraryId,
                         }));
                     })
                     .flat();

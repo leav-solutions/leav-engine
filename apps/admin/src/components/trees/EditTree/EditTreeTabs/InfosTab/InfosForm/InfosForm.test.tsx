@@ -11,7 +11,7 @@ import TreeInfosForm from './InfosForm';
 jest.mock('../../../../../../utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
     localizedLabel: jest.fn().mockImplementation(l => l.fr),
-    getFieldError: jest.fn().mockReturnValue('')
+    getFieldError: jest.fn().mockReturnValue(''),
 }));
 jest.mock('../../../../../../hooks/useLang');
 
@@ -23,7 +23,7 @@ describe('TreeInfosForm', () => {
         const comp = render(
             <MockedProvider>
                 <TreeInfosForm tree={mockTree} onSubmit={onSubmit} readonly={false} onCheckIdExists={onCheckIdExists} />
-            </MockedProvider>
+            </MockedProvider>,
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(true);
     });
@@ -32,7 +32,7 @@ describe('TreeInfosForm', () => {
         const comp = render(
             <MockedProvider>
                 <TreeInfosForm tree={null} onSubmit={onSubmit} readonly={false} onCheckIdExists={onCheckIdExists} />
-            </MockedProvider>
+            </MockedProvider>,
         );
         expect(comp.find('input[name="id"]').prop('disabled')).toBe(false);
     });
@@ -43,7 +43,7 @@ describe('TreeInfosForm', () => {
             comp = create(
                 <MockedProvider>
                     <TreeInfosForm onSubmit={onSubmit} tree={null} readonly={false} onCheckIdExists={onCheckIdExists} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -51,7 +51,7 @@ describe('TreeInfosForm', () => {
             comp.root.findByProps({name: 'label.fr'}).props.onChange(null, {
                 type: 'text',
                 name: 'label.fr',
-                value: 'labelfr'
+                value: 'labelfr',
             });
         });
 

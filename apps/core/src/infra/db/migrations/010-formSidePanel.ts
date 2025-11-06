@@ -18,11 +18,11 @@ export default function ({'core.infra.form': formRepo}: IDeps = {}): IMigration 
                 forms.list.map(form => {
                     form.sidePanel = form.sidePanel ?? {
                         enable: true,
-                        isOpenByDefault: true
+                        isOpenByDefault: true,
                     };
                     return formRepo.updateForm({formData: form as IFormStrict, ctx});
-                })
+                }),
             );
-        }
+        },
     };
 }

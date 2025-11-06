@@ -15,7 +15,7 @@ function MenuSelection(): JSX.Element {
 
     const selectAll = () => {
         searchDispatch({
-            type: SearchActionTypes.SELECT_ALL
+            type: SearchActionTypes.SELECT_ALL,
         });
     };
 
@@ -29,15 +29,15 @@ function MenuSelection(): JSX.Element {
                     {
                         id: record.whoAmI.id,
                         library: record.whoAmI.library.id,
-                        label: record.whoAmI.label
-                    }
+                        label: record.whoAmI.label,
+                    },
                 ];
             }
         }
 
         searchDispatch({
             type: SearchActionTypes.SET_SELECTION,
-            selected
+            selected,
         });
     };
 
@@ -50,20 +50,20 @@ function MenuSelection(): JSX.Element {
                             ? {
                                   key: 'select_all',
                                   onClick: selectAll,
-                                  label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
+                                  label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount}),
                               }
                             : null,
                         {
                             key: 'select',
                             onClick: selectVisible,
-                            label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
-                        }
-                    ]
+                            label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length}),
+                        },
+                    ],
                 }}
             >
                 <Button icon={<DownOutlined />}>
                     {t('items-list-row.nb-elements', {
-                        nbItems: searchState.totalCount
+                        nbItems: searchState.totalCount,
                     })}
                 </Button>
             </Dropdown>

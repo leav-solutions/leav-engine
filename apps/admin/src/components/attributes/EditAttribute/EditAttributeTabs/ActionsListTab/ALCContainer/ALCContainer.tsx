@@ -9,7 +9,7 @@ import {saveAttributeActionsListMutation} from '../../../../../../queries/attrib
 import {
     type GET_ACTIONS_LIST_QUERY,
     type GET_ACTIONS_LIST_QUERY_attributes_list_input_types,
-    type GET_ACTIONS_LIST_QUERY_attributes_list_output_types
+    type GET_ACTIONS_LIST_QUERY_attributes_list_output_types,
 } from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';
@@ -24,7 +24,7 @@ import {
     type IParam,
     type IParamConfig,
     type IParamInput,
-    type IReserveAction
+    type IReserveAction,
 } from '../interfaces/interfaces';
 import {ExternalContainer, ListsContainer, ReserveContainer} from '../stylesComps';
 import {ActionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';
@@ -49,28 +49,28 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
 
     const [attributeTypes, setAttributeTypes] = useState<IAttributeTypes>({
         inTypes: {saveValue: [], getValue: [], deleteValue: []},
-        outTypes: {saveValue: [], getValue: [], deleteValue: []}
+        outTypes: {saveValue: [], getValue: [], deleteValue: []},
     });
 
     const [currentActionList, setCurrentList] = useState<IAllActionLists>({
         saveValue: {higherId: 0},
         getValue: {higherId: 0},
-        deleteValue: {higherId: 0}
+        deleteValue: {higherId: 0},
     });
     const [currentActionListOrder, setcurrentActionListOrder] = useState<ICurrActionListOrder>({
         saveValue: [],
         getValue: [],
-        deleteValue: []
+        deleteValue: [],
     });
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [colorTypeDictionnary, setColorTypeDictionnary] = useState<IColorDic>({});
     const {loading, data} = useQuery<GET_ACTIONS_LIST_QUERY>(getActionListQuery, {
-        variables: {attId: attribute ? attribute.id : undefined}
+        variables: {attId: attribute ? attribute.id : undefined},
     });
 
     const [saveAttributeActionsList, {loading: loadingSave}] = useMutation(
         saveAttributeActionsListMutation,
-        {onError: e => console.error(e.message)} // TODO: handle error properly
+        {onError: e => console.error(e.message)}, // TODO: handle error properly
     );
 
     useEffect(() => {
@@ -80,7 +80,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
                 : {
                       [ActionListNames.SAVE_VALUE]: [],
                       [ActionListNames.GET_VALUE]: [],
-                      [ActionListNames.DELETE_VALUE]: []
+                      [ActionListNames.DELETE_VALUE]: [],
                   };
         const attr = data && data.attributes && data.attributes.list[0];
 
@@ -106,7 +106,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
             const act: IAction = {
                 ...cloneDeep(availableActions.filter(action => action.id === id)[0]),
                 list_id: listId,
-                isSystem: false
+                isSystem: false,
             };
             return act;
         }
@@ -162,7 +162,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         let listOrderCopy: number[] = [];
         if (currentActionListOrder) {
             listOrderCopy = currentActionListOrder[currentActionListName].filter(
-                actionId => Number(actionId) !== Number(id)
+                actionId => Number(actionId) !== Number(id),
             );
             currentActionListOrderCopy[currentActionListName] = listOrderCopy;
         }
@@ -198,7 +198,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
 
     const extractParamConfig = (param: IParam): IParamConfig => ({
         name: param.name,
-        value: param.value
+        value: param.value,
     });
 
     const getConfigActionFromAction = act => {
@@ -206,7 +206,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         return {
             id: act.id,
             params,
-            error_message: act.error_message
+            error_message: act.error_message,
         };
     };
 
@@ -233,10 +233,10 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
                         actions_list: {
                             saveValue: exportableConfig.saveValue ? exportableConfig.saveValue : null,
                             getValue: exportableConfig.getValue ? exportableConfig.getValue : null,
-                            deleteValue: exportableConfig.deleteValue ? exportableConfig.deleteValue : null
-                        }
-                    }
-                }
+                            deleteValue: exportableConfig.deleteValue ? exportableConfig.deleteValue : null,
+                        },
+                    },
+                },
             });
         }
     };

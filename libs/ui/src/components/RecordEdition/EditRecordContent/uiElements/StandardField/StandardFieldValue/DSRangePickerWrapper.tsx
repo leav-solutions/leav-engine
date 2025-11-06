@@ -36,7 +36,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
@@ -63,17 +63,17 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             onChange(
                 [
                     dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.from)),
-                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.to))
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.to)),
                 ],
-                inheritedFlags.inheritedValue.raw_payload
+                inheritedFlags.inheritedValue.raw_payload,
             );
         } else if (calculatedFlags.isCalculatedValue) {
             onChange(
                 [
                     dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.from)),
-                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.to))
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.to)),
                 ],
-                calculatedFlags.calculatedValue.raw_payload
+                calculatedFlags.calculatedValue.raw_payload,
             );
         }
         await handleSubmit(null, attribute.id);
@@ -81,7 +81,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
-        antOnChangeParams: [from: string, to: string] | null
+        antOnChangeParams: [from: string, to: string] | null,
     ) => void = async (rangePickerDates, ...antOnChangeParams) => {
         hasChangedRef.current = true;
 

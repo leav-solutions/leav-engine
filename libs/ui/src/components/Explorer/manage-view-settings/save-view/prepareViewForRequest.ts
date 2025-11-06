@@ -9,12 +9,12 @@ import {isUIFilterTree, isUIFilterThrough, isUIFilterValueList, type UIFilter} f
 export const prepareViewForRequest = (
     view: IViewSettingsState,
     filters: UIFilter[],
-    label: Record<string, string>
+    label: Record<string, string>,
 ): ViewInput => ({
     library: view.libraryId,
     shared: false,
     display: {
-        type: mapViewTypeFromExplorerToLegacy[view.viewType]
+        type: mapViewTypeFromExplorerToLegacy[view.viewType],
     },
     filters: filters.map((filter): RecordFilterInput => {
         if (isUIFilterTree(filter)) {
@@ -23,14 +23,14 @@ export const prepareViewForRequest = (
                 field: filter.attribute.id,
                 // TODO : save filter values as string[] when tree filter and handle fields with libraries
                 value: filter.value?.[0],
-                condition: filter.condition
+                condition: filter.condition,
             };
         }
         if (isUIFilterThrough(filter)) {
             return {
                 field: `${filter.field}.${filter.subField}`,
                 value: filter.value,
-                condition: filter.subCondition
+                condition: filter.subCondition,
             };
         }
 
@@ -40,17 +40,17 @@ export const prepareViewForRequest = (
                 field: filter.attribute.id,
                 // TODO : save filter values as string[] when filter and handle fields with libraries
                 value: filter.value?.[0],
-                condition: filter.condition
+                condition: filter.condition,
             };
         }
 
         return {
             field: filter.field,
             value: filter.value,
-            condition: filter.condition
+            condition: filter.condition,
         };
     }),
     sort: view.sort.map(({field, order}) => ({field, order})),
     attributes: view.attributesIds,
-    label
+    label,
 });

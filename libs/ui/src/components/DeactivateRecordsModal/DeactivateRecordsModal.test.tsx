@@ -18,24 +18,24 @@ describe('DeactivateRecordsModal', () => {
             {
                 request: {
                     query: DeactivateRecordsDocument,
-                    variables: {libraryId: mockLibraryWithDetails.id, recordsIds: ['1', '2'], filters: null}
+                    variables: {libraryId: mockLibraryWithDetails.id, recordsIds: ['1', '2'], filters: null},
                 },
                 result: {
                     data: {
                         deactivateRecords: [
                             {id: '1', whoAmI: {...mockRecord}},
-                            {id: '2', whoAmI: {...mockRecord}}
-                        ]
-                    }
-                }
-            }
+                            {id: '2', whoAmI: {...mockRecord}},
+                        ],
+                    },
+                },
+            },
         ];
 
         render(
             <SearchContext.Provider
                 value={{
                     state: {...initialSearchState, library: mockGetLibraryDetailExtendedElement},
-                    dispatch: jest.fn()
+                    dispatch: jest.fn(),
                 }}
             >
                 <DeactivateRecordsModal
@@ -45,15 +45,15 @@ describe('DeactivateRecordsModal', () => {
                             {
                                 id: '1',
                                 label: mockRecord.label,
-                                library: mockLibraryWithDetails.id
+                                library: mockLibraryWithDetails.id,
                             },
                             {
                                 id: '2',
                                 label: mockRecord.label,
-                                library: mockLibraryWithDetails.id
-                            }
+                                library: mockLibraryWithDetails.id,
+                            },
                         ],
-                        allSelected: false
+                        allSelected: false,
                     }}
                     open
                     onClose={_handleClose}
@@ -71,18 +71,18 @@ describe('DeactivateRecordsModal', () => {
                                 {
                                     id: '1',
                                     library: mockGetLibraryDetailExtendedElement.id,
-                                    label: mockRecord.label
+                                    label: mockRecord.label,
                                 },
                                 {
                                     id: '2',
                                     library: mockGetLibraryDetailExtendedElement.id,
-                                    label: mockRecord.label
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    label: mockRecord.label,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         );
 
         expect(screen.getByText(/confirm/)).toBeInTheDocument();
@@ -98,17 +98,17 @@ describe('DeactivateRecordsModal', () => {
             {
                 request: {
                     query: DeactivateRecordsDocument,
-                    variables: {libraryId: mockLibraryWithDetails.id, recordsIds: ['1', '2'], filters: null}
+                    variables: {libraryId: mockLibraryWithDetails.id, recordsIds: ['1', '2'], filters: null},
                 },
-                error: new Error('Boom!')
-            }
+                error: new Error('Boom!'),
+            },
         ];
 
         render(
             <SearchContext.Provider
                 value={{
                     state: {...initialSearchState, library: mockGetLibraryDetailExtendedElement},
-                    dispatch: jest.fn()
+                    dispatch: jest.fn(),
                 }}
             >
                 <DeactivateRecordsModal
@@ -118,23 +118,23 @@ describe('DeactivateRecordsModal', () => {
                             {
                                 id: '1',
                                 label: mockRecord.label,
-                                library: mockLibraryWithDetails.id
+                                library: mockLibraryWithDetails.id,
                             },
                             {
                                 id: '2',
                                 label: mockRecord.label,
-                                library: mockLibraryWithDetails.id
-                            }
+                                library: mockLibraryWithDetails.id,
+                            },
                         ],
-                        allSelected: false
+                        allSelected: false,
                     }}
                     open
                     onClose={_handleClose}
                 />
             </SearchContext.Provider>,
             {
-                mocks
-            }
+                mocks,
+            },
         );
 
         await userEvent.click(screen.getByRole('button', {name: /submit/}));

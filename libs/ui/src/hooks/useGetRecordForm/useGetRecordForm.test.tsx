@@ -21,10 +21,10 @@ describe('useGetRecordForm', () => {
                         version: [
                             {
                                 treeId: 'tree_1',
-                                treeNodeId: '1337'
-                            }
-                        ]
-                    }
+                                treeNodeId: '1337',
+                            },
+                        ],
+                    },
                 },
                 result: {
                     data: {
@@ -32,7 +32,7 @@ describe('useGetRecordForm', () => {
                             id: 'edition',
                             recordId: '987654',
                             library: {
-                                id: 'test_lib'
+                                id: 'test_lib',
                             },
                             elements: [
                                 {
@@ -42,7 +42,7 @@ describe('useGetRecordForm', () => {
                                     attribute: {
                                         ...mockFormAttribute,
                                         values_list: null,
-                                        __typename: 'StandardAttribute'
+                                        __typename: 'StandardAttribute',
                                     },
                                     type: FormElementTypes.field,
                                     valueError: null,
@@ -55,12 +55,12 @@ describe('useGetRecordForm', () => {
                                             created_by: {
                                                 __typename: 'User',
                                                 id: '1',
-                                                whoAmI: mockRecord
+                                                whoAmI: mockRecord,
                                             },
                                             modified_by: {
                                                 __typename: 'User',
                                                 id: '1',
-                                                whoAmI: mockRecord
+                                                whoAmI: mockRecord,
                                             },
                                             metadata: null,
                                             version: [
@@ -75,24 +75,24 @@ describe('useGetRecordForm', () => {
                                                                 id: '1337',
                                                                 label: 'Some tree element',
                                                                 library: {
-                                                                    id: 'test_lib'
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                                    id: 'test_lib',
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
                                             ],
                                             value: 'some value',
-                                            raw_value: 'some value'
-                                        }
+                                            raw_value: 'some value',
+                                        },
                                     ],
-                                    settings: []
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    settings: [],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(
@@ -101,11 +101,11 @@ describe('useGetRecordForm', () => {
                     libraryId: 'test_lib',
                     recordId: '987654',
                     formId: 'edition',
-                    version: {tree_1: {id: '1337', label: 'Some tree element'}}
+                    version: {tree_1: {id: '1337', label: 'Some tree element'}},
                 }),
             {
-                wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>
-            }
+                wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>,
+            },
         );
 
         expect(result.current.loading).toBe(true);
@@ -117,7 +117,7 @@ describe('useGetRecordForm', () => {
             id: 'edition',
             recordId: '987654',
             library: {
-                id: 'test_lib'
+                id: 'test_lib',
             },
             elements: [
                 {
@@ -134,26 +134,26 @@ describe('useGetRecordForm', () => {
                             modified_at: 1234567890,
                             created_by: {
                                 id: '1',
-                                whoAmI: mockRecord
+                                whoAmI: mockRecord,
                             },
                             modified_by: {
                                 id: '1',
-                                whoAmI: mockRecord
+                                whoAmI: mockRecord,
                             },
                             metadata: [],
                             version: {
                                 tree_1: {
                                     id: '1337',
-                                    label: 'Some tree element'
-                                }
+                                    label: 'Some tree element',
+                                },
                             },
                             value: 'some value',
-                            raw_value: 'some value'
-                        }
+                            raw_value: 'some value',
+                        },
                     ],
-                    settings: []
-                }
-            ]
+                    settings: [],
+                },
+            ],
         });
     });
 
@@ -169,10 +169,10 @@ describe('useGetRecordForm', () => {
                         version: [
                             {
                                 treeId: 'tree_1',
-                                treeNodeId: '1337'
-                            }
-                        ]
-                    }
+                                treeNodeId: '1337',
+                            },
+                        ],
+                    },
                 },
                 result: {
                     data: {
@@ -180,7 +180,7 @@ describe('useGetRecordForm', () => {
                             id: 'edition',
                             recordId: '987654',
                             library: {
-                                id: 'test_lib'
+                                id: 'test_lib',
                             },
                             elements: [
                                 {
@@ -190,7 +190,7 @@ describe('useGetRecordForm', () => {
                                     attribute: {
                                         ...mockFormAttribute,
                                         values_list: null,
-                                        __typename: 'StandardAttribute'
+                                        __typename: 'StandardAttribute',
                                     },
                                     type: FormElementTypes.field,
                                     valueError: null,
@@ -203,12 +203,12 @@ describe('useGetRecordForm', () => {
                                             created_by: {
                                                 __typename: 'User',
                                                 id: '1',
-                                                whoAmI: mockRecord
+                                                whoAmI: mockRecord,
                                             },
                                             modified_by: {
                                                 __typename: 'User',
                                                 id: '1',
-                                                whoAmI: mockRecord
+                                                whoAmI: mockRecord,
                                             },
                                             metadata: [{value: null}],
                                             version: [
@@ -223,24 +223,24 @@ describe('useGetRecordForm', () => {
                                                                 id: '1337',
                                                                 label: 'Some tree element',
                                                                 library: {
-                                                                    id: 'test_lib'
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                                    id: 'test_lib',
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
                                             ],
                                             value: 'some value',
-                                            raw_value: 'some value'
-                                        }
+                                            raw_value: 'some value',
+                                        },
                                     ],
-                                    settings: []
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    settings: [],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(
@@ -249,11 +249,11 @@ describe('useGetRecordForm', () => {
                     libraryId: 'test_lib',
                     recordId: '987654',
                     formId: 'edition',
-                    version: {tree_1: {id: '1337', label: 'Some tree element'}}
+                    version: {tree_1: {id: '1337', label: 'Some tree element'}},
                 }),
             {
-                wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>
-            }
+                wrapper: ({children}) => <MockedProvider mocks={mocks}>{children}</MockedProvider>,
+            },
         );
 
         expect(result.current.loading).toBe(true);
@@ -265,7 +265,7 @@ describe('useGetRecordForm', () => {
             id: 'edition',
             recordId: '987654',
             library: {
-                id: 'test_lib'
+                id: 'test_lib',
             },
             elements: [
                 {
@@ -282,32 +282,32 @@ describe('useGetRecordForm', () => {
                             modified_at: 1234567890,
                             created_by: {
                                 id: '1',
-                                whoAmI: mockRecord
+                                whoAmI: mockRecord,
                             },
                             modified_by: {
                                 id: '1',
-                                whoAmI: mockRecord
+                                whoAmI: mockRecord,
                             },
                             metadata: [
                                 {
                                     value: {
-                                        version: {}
-                                    }
-                                }
+                                        version: {},
+                                    },
+                                },
                             ],
                             version: {
                                 tree_1: {
                                     id: '1337',
-                                    label: 'Some tree element'
-                                }
+                                    label: 'Some tree element',
+                                },
                             },
                             value: 'some value',
-                            raw_value: 'some value'
-                        }
+                            raw_value: 'some value',
+                        },
                     ],
-                    settings: []
-                }
-            ]
+                    settings: [],
+                },
+            ],
         });
     });
 });

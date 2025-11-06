@@ -20,12 +20,12 @@ describe('EditRecordInput', () => {
         raw_value: 'test_value',
         version: null,
         created_at: 1234567890,
-        modified_at: 1234567890
+        modified_at: 1234567890,
     };
 
     const mockAttribute = {
         ...mockAttrSimple,
-        id: 'test_attr'
+        id: 'test_attr',
     };
 
     beforeEach(jest.clearAllMocks);
@@ -40,7 +40,7 @@ describe('EditRecordInput', () => {
                 onDelete={onDelete}
                 onChange={onChange}
                 onCancel={onCancel}
-            />
+            />,
         );
 
         expect(comp.find('Input').prop('value')).toBe('test_value');
@@ -56,7 +56,7 @@ describe('EditRecordInput', () => {
                 onDelete={onDelete}
                 onChange={onChange}
                 onCancel={onCancel}
-            />
+            />,
         );
 
         const input = comp.find('Input');
@@ -78,7 +78,7 @@ describe('EditRecordInput', () => {
                 onDelete={onDelete}
                 onChange={onChange}
                 onCancel={onCancel}
-            />
+            />,
         );
 
         const input = comp.find('Input');
@@ -103,7 +103,7 @@ describe('EditRecordInput', () => {
                 onDelete={onDelete}
                 onChange={onChange}
                 onCancel={onCancel}
-            />
+            />,
         );
 
         const input = comp.find('Input');
@@ -126,7 +126,7 @@ describe('EditRecordInput', () => {
                 onDelete={onDelete}
                 onChange={onChange}
                 onCancel={onCancel}
-            />
+            />,
         );
 
         comp.find('Input').simulate('focus');
@@ -145,7 +145,7 @@ describe('EditRecordInput', () => {
                 onDelete={onDelete}
                 onChange={onChange}
                 onCancel={onCancel}
-            />
+            />,
         );
 
         const input = comp.find('Input');

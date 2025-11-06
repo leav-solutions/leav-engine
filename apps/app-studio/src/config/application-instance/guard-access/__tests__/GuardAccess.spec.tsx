@@ -13,12 +13,12 @@ describe('GuardAccess component', () => {
                     list: [
                         {
                             permissions: {
-                                access_application: false
-                            }
-                        }
-                    ]
-                }
-            }
+                                access_application: false,
+                            },
+                        },
+                    ],
+                },
+            },
         } as any);
 
         render(<GuardAccess />);
@@ -34,12 +34,12 @@ describe('GuardAccess component', () => {
                     list: [
                         {
                             permissions: {
-                                access_application: true
-                            }
-                        }
-                    ]
-                }
-            }
+                                access_application: true,
+                            },
+                        },
+                    ],
+                },
+            },
         } as any);
         const childLabel = 'Child';
 

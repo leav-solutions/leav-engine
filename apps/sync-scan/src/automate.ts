@@ -13,13 +13,13 @@ enum EMatches {
     INODE_AND_NAME = 'inodeAndName',
     INODE_AND_PATH = 'inodeAndPath',
     NOT_FOUND = 'notFound',
-    DELETE = 'delete'
+    DELETE = 'delete',
 }
 
 export const extractChildrenDbElements = (
     dbSettings: IDbLibrariesSettings,
     database: FullTreeContent,
-    dbEl?: FullTreeContent
+    dbEl?: FullTreeContent,
 ): FullTreeContent => {
     let toList: FullTreeContent = [];
 
@@ -34,8 +34,8 @@ export const extractChildrenDbElements = (
                 record: {
                     ...c.record,
                     treePath:
-                        e.record.treePath === '.' ? e.record.file_name : e.record.treePath + '/' + e.record.file_name
-                }
+                        e.record.treePath === '.' ? e.record.file_name : e.record.treePath + '/' + e.record.file_name,
+                },
             }));
 
             toList = toList.concat(e.children);
@@ -102,7 +102,7 @@ const _sendCommand = async (
     fsFile: IFileContent | null,
     dbFile: IRecord | null,
     amqp: IAmqpService,
-    dbSettings: IDbLibrariesSettings
+    dbSettings: IDbLibrariesSettings,
 ) => {
     switch (match) {
         case EMatches.EXACT:
@@ -113,7 +113,7 @@ const _sendCommand = async (
                     false, // isDirectory parameter, in this case it is sure we are not on a directory
                     amqp,
                     fsFile.hash,
-                    dbFile.record.id
+                    dbFile.record.id,
                 );
             }
             // otherwise we do nothing cause fsFile and dbFile are "in sync"
@@ -125,7 +125,7 @@ const _sendCommand = async (
                 fsFile.type === 'directory' ? true : false,
                 amqp,
                 fsFile.hash,
-                dbFile.record.id
+                dbFile.record.id,
             );
             break;
         case EMatches.INODE_AND_PATH:
@@ -138,7 +138,7 @@ const _sendCommand = async (
                 fsFile.ino,
                 fsFile.type === 'directory' ? true : false,
                 dbFile.record.id,
-                amqp
+                amqp,
             );
             break;
         case EMatches.NOT_FOUND:
@@ -147,7 +147,7 @@ const _sendCommand = async (
                 fsFile.ino,
                 fsFile.type === 'directory' ? true : false,
                 amqp,
-                fsFile.hash
+                fsFile.hash,
             );
             break;
         case EMatches.DELETE:
@@ -158,7 +158,7 @@ const _sendCommand = async (
                 dbFile.record.inode,
                 dbFile.record.library === dbSettings.directoriesLibraryId,
                 dbFile.record.id,
-                amqp
+                amqp,
             );
             break;
         default:
@@ -173,7 +173,7 @@ const _process = async (
     fsFilesByData: IFilesystemDatas,
     dbFilesByData: IDbFilesDatas,
     dbSettings: IDbLibrariesSettings,
-    amqp: IAmqpService
+    amqp: IAmqpService,
 ): Promise<void> => {
     const fsLevels = Object.keys(fsFilesByData.filesByLevel);
     fsLevels.sort();
@@ -196,7 +196,7 @@ export default async (
     fsFiles: FilesystemContent,
     dbFiles: IRecord[],
     dbSettings: IDbLibrariesSettings,
-    amqp: IAmqpService
+    amqp: IAmqpService,
 ): Promise<void> => {
     const fsFilesByData = groupFsFilesByDatas(fsFiles);
     const dbFilesByData = groupDbFilesByDatas(dbFiles);

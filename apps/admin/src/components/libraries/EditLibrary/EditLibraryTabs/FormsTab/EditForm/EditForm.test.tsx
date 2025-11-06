@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function EditFormTabs() {
             return <div>EditFormTabs</div>;
-        }
+        },
 );
 
 describe('EditForm', () => {
@@ -27,25 +27,25 @@ describe('EditForm', () => {
             {
                 request: {
                     query: getFormQuery,
-                    variables: {library: 'test_lib', id: 'test_form'}
+                    variables: {library: 'test_lib', id: 'test_form'},
                 },
                 result: {
                     data: {
                         forms: {
                             __typename: 'FormsList',
                             totalCount: 1,
-                            list: [formDataWithTypename]
-                        }
-                    }
-                }
-            }
+                            list: [formDataWithTypename],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
                     <EditForm formId="test_form" libraryId="test_lib" readonly={false} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -67,17 +67,17 @@ describe('EditForm', () => {
             {
                 request: {
                     query: getFormQuery,
-                    variables: {library: 'test_lib', id: 'test_form_full'}
+                    variables: {library: 'test_lib', id: 'test_form_full'},
                 },
-                error: new Error('boom!')
-            }
+                error: new Error('boom!'),
+            },
         ];
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
                     <EditForm formId="test_form" libraryId="test_lib" readonly={false} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 
@@ -100,7 +100,7 @@ describe('EditForm', () => {
             {
                 request: {
                     query: getFormQuery,
-                    variables: {library: 'test_lib', id: 'test_form_full'}
+                    variables: {library: 'test_lib', id: 'test_form_full'},
                 },
                 result: () => {
                     mockDataUsed = true;
@@ -112,21 +112,21 @@ describe('EditForm', () => {
                                 list: [
                                     {
                                         ...mockFormFull,
-                                        __typename: 'Form'
-                                    }
-                                ]
-                            }
-                        }
+                                        __typename: 'Form',
+                                    },
+                                ],
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
                     <EditForm formId={null} libraryId="test_lib" readonly={false} />
-                </MockedProviderWithFragments>
+                </MockedProviderWithFragments>,
             );
         });
 

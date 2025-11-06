@@ -24,8 +24,8 @@ function DeactivateRecordBtn({record, ...buttonProps}: IDeactivateRecordBtnProps
     const [deactivateRecords] = useDeactivateRecordsMutation({
         variables: {
             libraryId: record.library.id,
-            recordsIds: [record.id]
-        }
+            recordsIds: [record.id],
+        },
     });
 
     const _handleClickConfirm = async () => {
@@ -41,7 +41,7 @@ function DeactivateRecordBtn({record, ...buttonProps}: IDeactivateRecordBtnProps
             content: t('records_deactivation.confirm_one'),
             okText: t('global.submit'),
             cancelText: t('global.cancel'),
-            onOk: _handleClickConfirm
+            onOk: _handleClickConfirm,
         });
     };
 

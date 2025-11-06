@@ -6,11 +6,11 @@ import {render, screen} from '../../_tests/testUtils';
 import {ShowMore} from './ShowMore';
 
 const fakeUseIntersectionObserver = {
-    isIntersecting: false // component is not visible by default
+    isIntersecting: false, // component is not visible by default
 };
 
 jest.mock('@uidotdev/usehooks', () => ({
-    useIntersectionObserver: () => [jest.fn(), fakeUseIntersectionObserver]
+    useIntersectionObserver: () => [jest.fn(), fakeUseIntersectionObserver],
 }));
 
 describe('ShowMore', () => {

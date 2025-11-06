@@ -94,7 +94,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     enableSidebar,
     submitButtons = ['create'],
     withInfoButton = true,
-    autoHeight = false
+    autoHeight = false,
 }) => {
     const {t} = useSharedTranslation();
     const [antdForm] = useForm();
@@ -106,7 +106,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const formElementId = useRef(uuidv4());
     const [isCreation, setIsCreation] = useState(!record);
     const [formId, setFormId] = useState<string>(
-        isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition')
+        isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition'),
     );
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
     const modalTitle =
@@ -136,8 +136,8 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
             errorPolicy: 'ignore',
             variables: {
                 libraryId: currentRecord?.library?.id,
-                recordId: currentRecord?.id
-            }
+                recordId: currentRecord?.id,
+            },
         });
 
     const _closeAfterConfirm = async () => {
@@ -153,7 +153,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         submitButtons,
         formElementId.current,
         isCreation,
-        _handleClickSubmit
+        _handleClickSubmit,
     );
 
     const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
@@ -212,7 +212,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                         >
                             {closeButtonLabel}
                         </KitButton>,
-                        ...displayedSubmitButtons
+                        ...displayedSubmitButtons,
                     ]}
                 </KitSpace>
             }

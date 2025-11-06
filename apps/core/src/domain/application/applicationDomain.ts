@@ -17,7 +17,7 @@ import {
     ApplicationTypes,
     type IApplication,
     type IApplicationModule,
-    type IGetCoreApplicationsParams
+    type IGetCoreApplicationsParams,
 } from '../../_types/application';
 import {type ErrorFieldDetail, Errors} from '../../_types/errors';
 import {TriggerNames} from '../../_types/eventsManager';
@@ -47,7 +47,7 @@ export interface IApplicationDomain {
 
 const applicationEventActionByEventType = {
     [ApplicationEventTypes.SAVE]: EventAction.APP_SAVE,
-    [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE
+    [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE,
 } as const;
 
 export interface IApplicationDomainDeps {
@@ -67,17 +67,17 @@ export default function ({
     'core.infra.application': applicationRepo,
     'core.utils': utils,
     translator,
-    config
+    config,
 }: IApplicationDomainDeps): IApplicationDomain {
     const _getApplicationProperties = async ({id, ctx}) => {
         const apps = await applicationRepo.getApplications({
             params: {filters: {id}, strictFilters: true},
-            ctx
+            ctx,
         });
 
         if (!apps.list.length) {
             throw new ValidationError<IApplication>({
-                id: {msg: Errors.UNKNOWN_APPLICATION, vars: {application: id}}
+                id: {msg: Errors.UNKNOWN_APPLICATION, vars: {application: id}},
             });
         }
         const props = apps.list.pop();
@@ -91,7 +91,7 @@ export default function ({
             applicationBefore?: IApplication;
             type: ApplicationEventTypes;
         },
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void> => {
         const {application, applicationBefore, type} = params;
 
@@ -112,24 +112,24 @@ export default function ({
                 data: {
                     applicationEvent: {
                         type,
-                        application
-                    }
+                        application,
+                    },
                 },
-                triggerName: TriggerNames.APPLICATION_EVENT
+                triggerName: TriggerNames.APPLICATION_EVENT,
             },
-            ctx
+            ctx,
         );
 
         await eventsManagerDomain.sendDatabaseEvent<(typeof applicationEventActionByEventType)[typeof type]>(
             {
                 action: applicationEventActionByEventType[type],
                 topic: {
-                    application: application.id
+                    application: application.id,
                 },
                 before: appBeforeToSend ?? null,
-                after: application ?? null
+                after: application ?? null,
             },
-            ctx
+            ctx,
         );
     };
 
@@ -149,7 +149,7 @@ export default function ({
             // Check if application exists
             const apps = await applicationRepo.getApplications({
                 params: {filters: {id: applicationData.id}, strictFilters: true},
-                ctx
+                ctx,
             });
 
             const isExistingApp = apps.list.length;
@@ -157,7 +157,7 @@ export default function ({
             const defaultParams: Partial<IApplication> = {
                 id: '',
                 system: false,
-                type: ApplicationTypes.INTERNAL
+                type: ApplicationTypes.INTERNAL,
             };
 
             const appProps: IApplication = apps.list[0] ?? null;
@@ -165,7 +165,7 @@ export default function ({
                 ? {
                       ...defaultParams,
                       ...appProps,
-                      ...applicationData
+                      ...applicationData,
                   }
                 : {...defaultParams, ...applicationData};
 
@@ -180,7 +180,7 @@ export default function ({
             const canSave = await adminPermissionDomain.getAdminPermission({
                 action: permissionToCheck,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!canSave) {
@@ -208,9 +208,9 @@ export default function ({
                 {
                     application: savedApp,
                     applicationBefore: appProps,
-                    type: ApplicationEventTypes.SAVE
+                    type: ApplicationEventTypes.SAVE,
                 },
-                ctx
+                ctx,
             );
 
             return savedApp;
@@ -218,13 +218,13 @@ export default function ({
         async deleteApplication({id, ctx}) {
             const apps = await applicationRepo.getApplications({
                 params: {filters: {id}, strictFilters: true},
-                ctx
+                ctx,
             });
 
             const canDelete = await adminPermissionDomain.getAdminPermission({
                 action: AdminPermissionsActions.DELETE_APPLICATION,
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (!canDelete) {
@@ -240,9 +240,9 @@ export default function ({
             await _sendAppEvent(
                 {
                     application: deletedApp,
-                    type: ApplicationEventTypes.DELETE
+                    type: ApplicationEventTypes.DELETE,
                 },
-                ctx
+                ctx,
             );
 
             return deletedApp;
@@ -257,7 +257,7 @@ export default function ({
             // - Limit size to MAX_CONSULTATION_HISTORY_SIZE
             const newHistory = [...new Set([applicationId, ...(consultedApps.data[CONSULTED_APPS_KEY] ?? [])])].slice(
                 0,
-                MAX_CONSULTATION_HISTORY_SIZE
+                MAX_CONSULTATION_HISTORY_SIZE,
             );
 
             // Save new history
@@ -266,7 +266,7 @@ export default function ({
                 value: newHistory,
                 global: false,
                 isCoreData: true,
-                ctx
+                ctx,
             });
         },
         async getAvailableModules({ctx}): Promise<IApplicationModule[]> {
@@ -283,6 +283,6 @@ export default function ({
                 : `http://${application.endpoint}`;
 
             return url;
-        }
+        },
     };
 }

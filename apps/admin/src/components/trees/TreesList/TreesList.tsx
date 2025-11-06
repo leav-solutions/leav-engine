@@ -108,7 +108,7 @@ const TreesList = ({trees, loading, filters, onFiltersUpdate, onRowClick}: ITree
 TreesList.defaultProps = {
     loading: false,
     trees: [],
-    filters: {}
+    filters: {},
 };
 
 export default TreesList;

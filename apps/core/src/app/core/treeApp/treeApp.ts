@@ -19,7 +19,7 @@ import {
     PermissionTypes,
     type RecordPermissionsActions,
     TreeNodePermissionsActions,
-    TreePermissionsActions
+    TreePermissionsActions,
 } from '../../../_types/permissions';
 import {type IQueryField, type IRecord} from '../../../_types/record';
 import {
@@ -29,7 +29,7 @@ import {
     type ITreeNodeWithTreeId,
     TreeBehavior,
     TreeEventTypes,
-    type TreePath
+    type TreePath,
 } from '../../../_types/tree';
 import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
 import {type ICoreApp} from '../coreApp';
@@ -42,7 +42,7 @@ import {
     type ITreeEventFilters,
     type ITreeLibraryForGraphQL,
     type ITreePermissionsConfForGraphQL,
-    type ITreesQueryArgs
+    type ITreesQueryArgs,
 } from './_types';
 import {type IRecordPermissionDomain} from '../../../domain/permission/recordPermissionDomain';
 
@@ -69,7 +69,7 @@ export default function ({
     'core.app.graphql': graphqlApp,
     'core.app.core.subscriptionsHelper': subscriptionsHelper,
     'core.domain.library': libraryDomain,
-    'core.domain.permission.record': recordPermissionDomain
+    'core.domain.permission.record': recordPermissionDomain,
 }: IDeps): ITreeAttributeApp {
     /**
      * Retrieve parent tree attribute by recursively getting up on GraphQL query path.
@@ -105,7 +105,7 @@ export default function ({
         (ctx: IQueryInfos, treeId: string) =>
         async (
             visibleNodesProm: Promise<ITreeNodeWithTreeId[]>,
-            treeNode: ITreeNode
+            treeNode: ITreeNode,
         ): Promise<ITreeNodeWithTreeId[]> => {
             const visibleNodes = await visibleNodesProm;
             const isVisible = await permissionDomain.isAllowed({
@@ -114,7 +114,7 @@ export default function ({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 target: {nodeId: treeNode.id},
                 userId: ctx.userId,
-                ctx
+                ctx,
             });
 
             if (isVisible) {
@@ -137,7 +137,7 @@ export default function ({
         parent: ITreeNode & {treeId?: string},
         _,
         ctx: IQueryInfos,
-        info: GraphQLResolveInfo
+        info: GraphQLResolveInfo,
     ): Promise<TreePath> => {
         const treeId = parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
@@ -363,14 +363,14 @@ export default function ({
                         async trees(
                             _,
                             {filters, pagination, sort}: ITreesQueryArgs,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IList<ITree>> {
                             return treeDomain.getTrees({params: {filters, withCount: true, pagination, sort}, ctx});
                         },
                         async getRecordByNodeId(
                             _,
                             {treeId, nodeId}: {treeId: string; nodeId: string},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IRecord> {
                             return treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
                         },
@@ -378,7 +378,7 @@ export default function ({
                             _,
                             {treeId, startAt}: {treeId: string; startAt: string},
                             ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
+                            info: GraphQLResolveInfo,
                         ): Promise<ITreeNode[]> {
                             ctx.treeId = treeId;
 
@@ -392,11 +392,11 @@ export default function ({
                                     startingNode: startAt,
                                     depth,
                                     childrenCount: hasChildrenCount,
-                                    ctx
+                                    ctx,
                                 })
                             ).map(node => ({
                                 ...node,
-                                treeId
+                                treeId,
                             }));
                         },
                         async treeNodeChildren(
@@ -405,7 +405,7 @@ export default function ({
                                 treeId,
                                 node,
                                 pagination,
-                                childrenAsRecordValuePermissionFilter
+                                childrenAsRecordValuePermissionFilter,
                             }: {
                                 treeId: string;
                                 node?: string;
@@ -417,7 +417,7 @@ export default function ({
                                 };
                             },
                             ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
+                            info: GraphQLResolveInfo,
                         ): Promise<IList<ITreeNode>> {
                             ctx.treeId = treeId;
 
@@ -433,7 +433,7 @@ export default function ({
                                 childrenCount: hasChildrenCount,
                                 withTotalCount,
                                 pagination,
-                                ctx
+                                ctx,
                             });
 
                             if (childrenAsRecordValuePermissionFilter) {
@@ -445,9 +445,9 @@ export default function ({
                                             libraryId: childrenAsRecordValuePermissionFilter.libraryId,
                                             attributeId: childrenAsRecordValuePermissionFilter.attributeId,
                                             nodeId: treeNode.id,
-                                            ctx
-                                        })
-                                    )
+                                            ctx,
+                                        }),
+                                    ),
                                 );
 
                                 // Apply permissions filter to children list
@@ -458,34 +458,34 @@ export default function ({
 
                             return {
                                 ...children,
-                                list: children.list.map(child => ({...child, treeId}))
+                                list: children.list.map(child => ({...child, treeId})),
                             };
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
                             return treeDomain.getTreeContent({treeId, ctx});
-                        }
+                        },
                     },
                     Mutation: {
                         async saveTree(_, {tree}: ISaveTreeMutationArgs, ctx: IQueryInfos): Promise<ITree> {
                             // Convert permissions conf
                             const treeToSave: Partial<ITree> = {
-                                ...omit(tree, ['libraries', 'permissions_conf'])
+                                ...omit(tree, ['libraries', 'permissions_conf']),
                             };
 
                             if (tree.permissions_conf) {
                                 treeToSave.permissions_conf = tree.permissions_conf.reduce(
                                     (acc, cur) => ({
                                         ...acc,
-                                        [cur.libraryId]: cur.permissionsConf
+                                        [cur.libraryId]: cur.permissionsConf,
                                     }),
-                                    {}
+                                    {},
                                 );
                             }
 
                             if (tree.libraries) {
                                 treeToSave.libraries = tree.libraries.reduce(
                                     (acc, cur) => ({...acc, [cur.library]: cur.settings}),
-                                    {}
+                                    {},
                                 );
                             }
 
@@ -497,7 +497,7 @@ export default function ({
                         async treeAddElement(
                             _,
                             {treeId, element, parent, order}: IAddElementMutationArgs,
-                            ctx
+                            ctx,
                         ): Promise<ITreeNodeWithTreeId> {
                             parent = parent || null;
 
@@ -508,7 +508,7 @@ export default function ({
                         async treeMoveElement(
                             _,
                             {treeId, nodeId, parentTo, order}: IMoveElementMutationArgs,
-                            ctx
+                            ctx,
                         ): Promise<ITreeNodeWithTreeId> {
                             parentTo = parentTo || null;
                             const movedNode = await treeDomain.moveElement({
@@ -516,7 +516,7 @@ export default function ({
                                 nodeId,
                                 parentTo,
                                 order,
-                                ctx
+                                ctx,
                             });
 
                             return {...movedNode, treeId};
@@ -524,17 +524,17 @@ export default function ({
                         async treeDeleteElement(
                             _,
                             {treeId, nodeId, deleteChildren}: IDeleteElementMutationArgs,
-                            ctx
+                            ctx,
                         ): Promise<string> {
                             const deletedNode = await treeDomain.deleteElement({
                                 treeId,
                                 nodeId,
                                 deleteChildren: deleteChildren ?? true,
-                                ctx
+                                ctx,
                             });
 
                             return deletedNode.id;
-                        }
+                        },
                     },
                     Subscription: {
                         treeEvent: {
@@ -543,7 +543,7 @@ export default function ({
                                 (
                                     event: PublishedEvent<{treeEvent: ITreeEvent}>,
                                     {filters}: {filters: ICommonSubscriptionFilters & ITreeEventFilters},
-                                    ctx: IQueryInfos
+                                    ctx: IQueryInfos,
                                 ) => {
                                     if (filters.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
                                         return false;
@@ -566,9 +566,9 @@ export default function ({
                                     }
 
                                     return mustReturn;
-                                }
-                            )
-                        }
+                                },
+                            ),
+                        },
                     },
                     FullTreeContent: new GraphQLScalarType({
                         name: 'FullTreeContent',
@@ -576,7 +576,7 @@ export default function ({
                             On each node we will have record data and children`,
                         serialize: val => val,
                         parseValue: val => val,
-                        parseLiteral: ast => ast
+                        parseLiteral: ast => ast,
                     }),
                     Tree: {
                         /**
@@ -589,20 +589,20 @@ export default function ({
                                 Object.keys(treeData.libraries ?? {}).map(async libId => {
                                     const lib = await libraryDomain.getLibraryProperties(libId, ctx);
                                     return {library: lib, settings: treeData.libraries[libId]};
-                                })
+                                }),
                             ),
                         permissions_conf: (treeData: ITree): ITreePermissionsConfForGraphQL[] | null =>
                             treeData.permissions_conf
                                 ? Object.keys(treeData.permissions_conf).map(libId => ({
                                       libraryId: libId,
-                                      permissionsConf: treeData.permissions_conf[libId]
+                                      permissionsConf: treeData.permissions_conf[libId],
                                   }))
                                 : null,
                         permissions: (
                             tree: ITree,
                             _,
                             ctx: IQueryInfos,
-                            infos: GraphQLResolveInfo
+                            infos: GraphQLResolveInfo,
                         ): Promise<IKeyValue<boolean>> => {
                             const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
                             return requestedActions.reduce(async (allPermsProm, action) => {
@@ -613,7 +613,7 @@ export default function ({
                                     applyTo: tree.id,
                                     action: action as TreePermissionsActions,
                                     userId: ctx.userId,
-                                    ctx
+                                    ctx,
                                 });
 
                                 return {...allPerms, [action]: isAllowed};
@@ -622,19 +622,19 @@ export default function ({
                         defaultElement: async (
                             treeData: ITree,
                             _,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<ITreeNode & {treeId?: string}> => {
                             const element = await treeDomain.getDefaultElement({treeId: treeData.id, ctx});
 
                             return element ? {...element, treeId: treeData.id} : null;
-                        }
+                        },
                     },
                     TreeNode: {
                         record: async (
                             parent: ITreeNode & {treeId?: string},
                             _,
                             ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
+                            info: GraphQLResolveInfo,
                         ): Promise<IRecord> => {
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
@@ -645,7 +645,7 @@ export default function ({
                             parent: ITreeNode & {treeId?: string},
                             _,
                             ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
+                            info: GraphQLResolveInfo,
                         ): Promise<ITreeNode[]> => {
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
@@ -664,7 +664,7 @@ export default function ({
                         linkedRecords: async (
                             parent: ITreeNode & {treeId?: string},
                             {attribute}: {attribute: string},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IRecord[]> => {
                             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
@@ -672,14 +672,14 @@ export default function ({
                                 treeId: attributeProps.linked_tree,
                                 attribute,
                                 nodeId: parent.id,
-                                ctx
+                                ctx,
                             });
                         },
                         permissions: (
                             treeNode: ITreeNode & {treeId?: string},
                             _,
                             ctx: IQueryInfos,
-                            infos: GraphQLResolveInfo
+                            infos: GraphQLResolveInfo,
                         ): Promise<IKeyValue<boolean>> => {
                             if (!treeNode.treeId) {
                                 return null;
@@ -696,19 +696,19 @@ export default function ({
                                     action: action as TreeNodePermissionsActions,
                                     userId: ctx.userId,
                                     target: {nodeId: treeNode.id},
-                                    ctx
+                                    ctx,
                                 });
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
-                        }
+                        },
                     },
                     TreeNodeLight: {
                         permissions: (
                             treeNode: ITreeNode & {treeId?: string},
                             _,
                             ctx: IQueryInfos,
-                            infos: GraphQLResolveInfo
+                            infos: GraphQLResolveInfo,
                         ): Promise<IKeyValue<boolean>> => {
                             if (!treeNode.treeId) {
                                 return null;
@@ -725,18 +725,18 @@ export default function ({
                                     action: action as TreeNodePermissionsActions,
                                     userId: ctx.userId,
                                     target: {nodeId: treeNode.id},
-                                    ctx
+                                    ctx,
                                 });
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
                         },
-                        ancestors: _getAncestors
-                    }
-                }
+                        ancestors: _getAncestors,
+                    },
+                },
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-        }
+        },
     };
 }

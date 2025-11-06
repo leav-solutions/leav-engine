@@ -3,6 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export default function useDeleteValueMutation() {
     return {
-        deleteValue: jest.fn()
+        deleteValue: jest.fn(),
     };
 }

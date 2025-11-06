@@ -5,7 +5,7 @@ import {useApolloClient} from '@apollo/client';
 import {
     type TREE_NODE_CHILDREN,
     type TREE_NODE_CHILDRENVariables,
-    type TREE_NODE_CHILDREN_treeNodeChildren_list
+    type TREE_NODE_CHILDREN_treeNodeChildren_list,
 } from '_gqlTypes/TREE_NODE_CHILDREN';
 import {type WithOptional} from '_types/WithOptional';
 import {type ITreeNode, type ITreeNodeData, fakeRootId} from '_types/trees';
@@ -32,7 +32,7 @@ import {
     type ClickNodeHandler,
     type DeleteNodeHandler,
     type MoveNodeHandler,
-    type NodeVisibilityToggleHandler
+    type NodeVisibilityToggleHandler,
 } from './_types';
 
 interface ITreeExplorerProps {
@@ -63,7 +63,7 @@ const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): I
             // Actual children loading will be handle by the _loadChildren function.
             // Assigning an empty function here just displays the "+" button if we have children
             children: n.childrenCount ? () => null : null,
-            path: []
+            path: [],
         };
     });
 
@@ -83,7 +83,7 @@ const TreeExplorer = ({
     withFakeRoot,
     fakeRootLabel,
     startAt,
-    compact = false
+    compact = false,
 }: ITreeExplorerProps) => {
     const apolloClient = useApolloClient();
 
@@ -98,13 +98,13 @@ const TreeExplorer = ({
                     label: fakeRootLabel || '',
                     color: 'transparent',
                     library: {id: fakeRootId, label: null},
-                    preview: null
+                    preview: null,
                 },
-                isFakeRoot: true
+                isFakeRoot: true,
             },
             childrenCount: 0,
-            order: 0
-        }
+            order: 0,
+        },
     ];
 
     const initTreeData = withFakeRoot ? _convertTreeRecord(fakeRootData, compact) : [];
@@ -129,8 +129,8 @@ const TreeExplorer = ({
             query: getTreeNodeChildrenQuery,
             variables: {
                 treeId: tree.id,
-                node: parent || null
-            }
+                node: parent || null,
+            },
         });
 
         const convertedRecords = data.data.treeNodeChildren
@@ -151,9 +151,9 @@ const TreeExplorer = ({
                     loading: false,
                     loaded: true,
                     children: convertedRecords,
-                    expanded: expand
+                    expanded: expand,
                 },
-                path!
+                path!,
             );
         }
 
@@ -181,7 +181,7 @@ const TreeExplorer = ({
             const parentNodeAtPath = getNodeAtPath({
                 treeData,
                 path: moveData.nextPath.slice(0, -1),
-                getNodeKey: getTreeNodeKey
+                getNodeKey: getTreeNodeKey,
             });
             position = parentNodeAtPath ? moveData.treeIndex - parentNodeAtPath.treeIndex - 1 : moveData.treeIndex;
         }
@@ -194,8 +194,8 @@ const TreeExplorer = ({
                     treeId: tree.id,
                     nodeId: moveData.node.id,
                     parentTo,
-                    order: position
-                }
+                    order: position,
+                },
             });
 
             // Update positions (field 'order') for all siblings in destination
@@ -211,11 +211,11 @@ const TreeExplorer = ({
                                           treeId: tree.id,
                                           nodeId: s.id,
                                           parentTo,
-                                          order: i
-                                      }
+                                          order: i,
+                                      },
                                   })
-                                : Promise.resolve()
-                    )
+                                : Promise.resolve(),
+                    ),
                 );
             }
             setError('');
@@ -228,18 +228,18 @@ const TreeExplorer = ({
     const _deleteNode: DeleteNodeHandler = async node => {
         const variables: DELETE_TREE_ELEMENTVariables = {
             treeId: tree.id,
-            nodeId: node.node.id
+            nodeId: node.node.id,
         };
 
         await apolloClient.mutate<DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables>({
             mutation: deleteTreeElementQuery,
-            variables
+            variables,
         });
 
         const updatedTree = removeNodeAtPath({
             treeData,
             path: node.path,
-            getNodeKey: getTreeNodeKey
+            getNodeKey: getTreeNodeKey,
         });
         setTreeData(updatedTree as ITreeNode[]);
         setError('');
@@ -256,7 +256,7 @@ const TreeExplorer = ({
                 treeData,
                 getNodeKey: getTreeNodeKey,
                 searchQuery: nodeKey,
-                searchMethod: d => d.node.id === nodeKey
+                searchMethod: d => d.node.id === nodeKey,
             });
 
             return findRes.matches.length ? findRes.matches[0].node : null;
@@ -280,10 +280,10 @@ const TreeExplorer = ({
                     treeId: tree.id,
                     element: {
                         id: record.id,
-                        library: record.library.id
+                        library: record.library.id,
                     },
-                    parent: parent !== fakeRootId ? parent : null
-                }
+                    parent: parent !== fakeRootId ? parent : null,
+                },
             });
 
             const newRecord = {
@@ -291,10 +291,10 @@ const TreeExplorer = ({
                 record: {
                     id: record.id,
                     library: record.library,
-                    whoAmI: record
+                    whoAmI: record,
                 },
                 childrenCount: 0,
-                order: 0
+                order: 0,
             };
 
             const parentKey = getTreeNodeKey({node: {id: parent, path}});
@@ -303,7 +303,7 @@ const TreeExplorer = ({
                 newNode: _convertTreeRecord([newRecord], compact)[0],
                 parentKey,
                 getNodeKey: getTreeNodeKey,
-                expandParent: true
+                expandParent: true,
             });
             setTreeData(updatedTree.treeData as ITreeNode[]);
             setError('');

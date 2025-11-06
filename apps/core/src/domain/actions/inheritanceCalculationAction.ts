@@ -13,7 +13,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null,
-    'core.domain.attribute': attributeDomain = null
+    'core.domain.attribute': attributeDomain = null,
 }: IDeps = {}): IActionsListFunction<{Formula: true; Description: true}> {
     return {
         id: 'inheritanceCalculation',
@@ -23,13 +23,13 @@ export default function ({
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
             ActionsListIOTypes.OBJECT,
-            ActionsListIOTypes.BOOLEAN
+            ActionsListIOTypes.BOOLEAN,
         ],
         output_types: [
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
             ActionsListIOTypes.OBJECT,
-            ActionsListIOTypes.BOOLEAN
+            ActionsListIOTypes.BOOLEAN,
         ],
         compute: true,
         params: [
@@ -38,15 +38,15 @@ export default function ({
                 type: 'string',
                 description: 'Quick description of your calculation',
                 required: true,
-                helper_value: 'Your description'
+                helper_value: 'Your description',
             },
             {
                 name: 'Formula',
                 type: 'string',
                 description: 'Variables function calls to perform. Ex: getValue(linked_products).getValue(image)',
                 required: true,
-                helper_value: ''
-            }
+                helper_value: '',
+            },
         ],
         action: async (values, params, ctx) => {
             const {Formula: formula} = params;
@@ -63,17 +63,17 @@ export default function ({
                 inheritedValues = result.map(resultValue => ({
                     payload: {id: String(resultValue.payload), library: resultValue.library},
                     raw_payload: {id: String(resultValue.raw_payload), library: resultValue.library},
-                    isInherited: true
+                    isInherited: true,
                 }));
             } else {
                 inheritedValues = result.map(v => ({
                     payload: v.payload,
                     raw_payload: v.raw_payload,
-                    isInherited: true
+                    isInherited: true,
                 }));
             }
 
             return {values: [...(values ?? []), ...inheritedValues], errors: []};
-        }
+        },
     };
 }

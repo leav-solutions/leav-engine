@@ -31,6 +31,6 @@ export default function ({config = null}: IDeps): ICacheService {
         },
         async deleteAll(path?: string): Promise<void> {
             await cacache.rm.all(path ?? '');
-        }
+        },
     };
 }

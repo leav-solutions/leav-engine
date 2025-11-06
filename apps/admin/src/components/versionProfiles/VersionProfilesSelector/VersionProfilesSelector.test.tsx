@@ -14,19 +14,19 @@ describe('VersionProfilesSelector', () => {
             {
                 request: {
                     query: getVersionProfilesQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
                         versionProfiles: {
                             list: [
                                 {...mockVersionProfile, id: 'vpA', label: {fr: 'Profil A'}},
-                                {...mockVersionProfile, id: 'vpB', label: {fr: 'Profil B'}}
-                            ]
-                        }
-                    }
-                }
-            }
+                                {...mockVersionProfile, id: 'vpB', label: {fr: 'Profil B'}},
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const mockOnChange = jest.fn();

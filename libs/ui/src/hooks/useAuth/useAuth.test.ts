@@ -12,7 +12,7 @@ delete window.location;
 window.location = mockedLocation;
 
 jest.mock('_ui/constants', () => ({
-    GLOBAL_BASE_URL: '/global-base'
+    GLOBAL_BASE_URL: '/global-base',
 }));
 
 describe('useAuth', () => {
@@ -25,7 +25,7 @@ describe('useAuth', () => {
     it('should reload page on empty logout', async () => {
         const {result} = renderHook(() => useAuth());
         fetchMock.mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({})
+            json: jest.fn().mockResolvedValueOnce({}),
         });
 
         await result.current.logout();
@@ -41,8 +41,8 @@ describe('useAuth', () => {
         const {result} = renderHook(() => useAuth());
         fetchMock.mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
-                redirectUrl: 'redirectUrl'
-            })
+                redirectUrl: 'redirectUrl',
+            }),
         });
 
         await result.current.logout();

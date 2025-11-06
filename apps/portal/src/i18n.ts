@@ -17,7 +17,7 @@ const init = (defaultLang: string) => {
                 } catch (e) {
                     console.error('Error while fetching translations files', e);
                 }
-            })
+            }),
         )
         .use(LanguageDetector)
         .init({
@@ -25,8 +25,8 @@ const init = (defaultLang: string) => {
             ns: ['translations'],
             defaultNS: 'translations',
             react: {
-                useSuspense: true
-            }
+                useSuspense: true,
+            },
         });
 };
 

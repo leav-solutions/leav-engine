@@ -6,5 +6,5 @@ import {initialState} from '../attributesSelectionListReducer';
 
 export const useAttributesSelectionListState = () => ({
     state: {...initialState, selectedAttributes: [mockSelectedAttributeA]},
-    dispatch: jest.fn()
+    dispatch: jest.fn(),
 });

@@ -19,9 +19,9 @@ describe('View', () => {
         sort: [
             {
                 field: 'id',
-                order: SortOrder.asc
-            }
-        ]
+                order: SortOrder.asc,
+            },
+        ],
     };
 
     test('should show view label', async () => {
@@ -29,7 +29,7 @@ describe('View', () => {
             render(
                 <MockSearchContextProvider>
                     <View view={mockView} onEdit={jest.fn()} />
-                </MockSearchContextProvider>
+                </MockSearchContextProvider>,
             );
         });
 

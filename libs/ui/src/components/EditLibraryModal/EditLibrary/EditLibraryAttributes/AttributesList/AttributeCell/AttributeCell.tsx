@@ -36,15 +36,15 @@ function AttributeCell({attribute}: IAttributeCellProps): JSX.Element {
         label: attribute.label,
         subLabel: attribute.id,
         preview: null,
-        color: null
+        color: null,
     };
 
     const menuActions = [
         {
             label: t('attributes.edit'),
             icon: <ExpandAltOutlined />,
-            onClick: _handleOpenEditModal
-        }
+            onClick: _handleOpenEditModal,
+        },
     ];
 
     return (

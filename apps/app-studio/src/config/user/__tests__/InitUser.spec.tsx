@@ -34,13 +34,13 @@ describe('InitUser component', () => {
         render(
             <InitUser>
                 <FakeComponent />
-            </InitUser>
+            </InitUser>,
         );
 
         expect(spyOnUseGetUserIdentityQuery).toHaveBeenCalledTimes(1);
         expect(screen.getByText(FakeComponentLabel)).toBeVisible();
         expect(mockUsageOfUserContext).toHaveBeenCalledWith({
-            userData: null
+            userData: null,
         });
     });
 
@@ -52,17 +52,17 @@ describe('InitUser component', () => {
                     whoAmI: {
                         id: '1234567890',
                         library: {
-                            id: 'libraryId'
-                        }
-                    }
-                }
-            }
+                            id: 'libraryId',
+                        },
+                    },
+                },
+            },
         } as any);
 
         render(
             <InitUser>
                 <FakeComponent />
-            </InitUser>
+            </InitUser>,
         );
 
         expect(spyOnUseGetUserIdentityQuery).toHaveBeenCalledTimes(1);
@@ -73,10 +73,10 @@ describe('InitUser component', () => {
                 userWhoAmI: {
                     id: '1234567890',
                     library: {
-                        id: 'libraryId'
-                    }
-                }
-            }
+                        id: 'libraryId',
+                    },
+                },
+            },
         });
     });
 

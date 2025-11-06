@@ -15,7 +15,7 @@ import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 
 const depsBase: ToAny<IActionsListDomainDeps> = {
     'core.depsManager': jest.fn(),
-    translator: {}
+    translator: {},
 };
 
 describe('handleJoiError', () => {
@@ -24,9 +24,9 @@ describe('handleJoiError', () => {
         const mockError = {
             details: [
                 {
-                    message: 'boom'
-                }
-            ]
+                    message: 'boom',
+                },
+            ],
         };
 
         const res = domain.handleJoiError({id: 'test', type: AttributeTypes.SIMPLE}, mockError as Joi.ValidationError);
@@ -34,9 +34,9 @@ describe('handleJoiError', () => {
             test: {
                 msg: 'FORMAT_ERROR',
                 vars: {
-                    details: 'boom'
-                }
-            }
+                    details: 'boom',
+                },
+            },
         });
     });
 });
@@ -44,7 +44,7 @@ describe('handleJoiError', () => {
 describe('runActionsList', () => {
     const val = {
         id_value: '999',
-        payload: 'test_val'
+        payload: 'test_val',
     };
 
     const ctx = {
@@ -52,7 +52,7 @@ describe('runActionsList', () => {
         attribute: {id: 'test_attr', type: AttributeTypes.SIMPLE},
         lang: 'en',
         defaultLang: 'fr',
-        userId: 'test_user'
+        userId: 'test_user',
     };
 
     test('Should run a list of actions', async () => {
@@ -64,17 +64,17 @@ describe('runActionsList', () => {
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
                     values: [{id_value: '999', payload: 'test_val'}],
-                    errors: []
-                }))
+                    errors: [],
+                })),
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
                     values: [{id_value: '999', payload: 'test_val'}],
-                    errors: []
-                }))
-            }
+                    errors: [],
+                })),
+            },
         ];
 
         domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
@@ -82,10 +82,10 @@ describe('runActionsList', () => {
         const res = await domain.runActionsList(
             [
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
-                {id: 'validate', name: 'Validate', is_system: true}
+                {id: 'validate', name: 'Validate', is_system: true},
             ],
             [val],
-            ctx
+            ctx,
         );
 
         expect(res).toEqual([val]);
@@ -100,17 +100,17 @@ describe('runActionsList', () => {
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
                     values: [{id_value: '999', payload: 'test_val'}],
-                    errors: []
-                }))
+                    errors: [],
+                })),
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
                     values: [{id_value: '999', payload: 'test_val'}],
-                    errors: []
-                }))
-            }
+                    errors: [],
+                })),
+            },
         ];
 
         domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
@@ -118,10 +118,10 @@ describe('runActionsList', () => {
         const res = await domain.runActionsList(
             [
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
-                {id: 'validate', name: 'Validate', is_system: true}
+                {id: 'validate', name: 'Validate', is_system: true},
             ],
             [val, {payload: EMPTY_VALUE}],
-            ctx
+            ctx,
         );
 
         expect(res).toEqual([val, {payload: EMPTY_VALUE}]);
@@ -134,16 +134,16 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
-                }))
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
-                }))
-            }
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
+            },
         ];
 
         domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
@@ -152,11 +152,11 @@ describe('runActionsList', () => {
             domain.runActionsList(
                 [
                     {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
-                    {id: 'validate', name: 'validate', is_system: true}
+                    {id: 'validate', name: 'validate', is_system: true},
                 ],
                 [val],
-                ctx
-            )
+                ctx,
+            ),
         ).rejects.toThrow(ValidationError);
     });
 
@@ -167,16 +167,16 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
-                }))
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
-                }))
-            }
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
+            },
         ];
 
         domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
@@ -184,10 +184,10 @@ describe('runActionsList', () => {
         const res = domain.runActionsList(
             [
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
-                {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}}
+                {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}},
             ],
             [val],
-            ctx
+            ctx,
         );
 
         await expect(res).rejects.toThrow(ValidationError);
@@ -199,7 +199,7 @@ describe('runActionsList', () => {
             ...mockCtx,
             attribute: {...mockAttrSimple, id: 'test_attr'},
             lang: 'fr',
-            defaultLang: 'fr'
+            defaultLang: 'fr',
         };
         const domain = actionListDomain({...depsBase, translator: mockTranslator as i18n});
         const availActions = [
@@ -207,16 +207,16 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
-                }))
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
-                }))
-            }
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
+            },
         ];
 
         domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
@@ -224,10 +224,10 @@ describe('runActionsList', () => {
         const res = domain.runActionsList(
             [
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
-                {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}}
+                {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}},
             ],
             [val],
-            textctx
+            textctx,
         );
         await expect(res).rejects.toThrow(ValidationError);
         await expect(res).rejects.toHaveProperty('fields.test_attr', 'validation Error: true');

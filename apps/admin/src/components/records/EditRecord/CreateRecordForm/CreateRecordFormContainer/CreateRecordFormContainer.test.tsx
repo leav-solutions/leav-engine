@@ -17,7 +17,7 @@ jest.mock(
     () =>
         function CreateRecordForm() {
             return <div>CreateRecordForm</div>;
-        }
+        },
 );
 
 jest.mock('../../../../../hooks/useLang');
@@ -27,7 +27,7 @@ describe('CreateRecordFormContainer', () => {
         const comp = mount(
             <MockedProvider>
                 <CreateRecordFormContainer library={{...mockLibrary}} attributes={[{...mockAttrSimple}]} />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         expect(comp.find('CreateRecordForm')).toHaveLength(1);
@@ -41,7 +41,7 @@ describe('CreateRecordFormContainer', () => {
             {
                 request: {
                     query: createRecordQuery,
-                    variables: {library: 'products'}
+                    variables: {library: 'products'},
                 },
                 result: {
                     data: {
@@ -54,13 +54,13 @@ describe('CreateRecordFormContainer', () => {
                                     library: mockLibrary,
                                     label: null,
                                     color: null,
-                                    preview: null
+                                    preview: null,
                                 },
-                                __typename: 'Record'
-                            }
-                        }
-                    }
-                }
+                                __typename: 'Record',
+                            },
+                        },
+                    },
+                },
             },
             {
                 request: {
@@ -69,23 +69,23 @@ describe('CreateRecordFormContainer', () => {
                         library: 'products',
                         recordId: '1234567',
                         version: null,
-                        values: [{attribute: 'simple_attribute', id_value: null, value: 'MyVal'}]
-                    }
+                        values: [{attribute: 'simple_attribute', id_value: null, value: 'MyVal'}],
+                    },
                 },
                 result: {
                     data: {
                         saveValueBatch: {
                             __typename: 'saveValueBatchResult',
                             values: [],
-                            errors: null
-                        }
-                    }
-                }
+                            errors: null,
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: recordDataQuery,
-                    variables: {library: mockLibrary.id, id: '1234567', version: null, lang: ['fr', 'en']}
+                    variables: {library: mockLibrary.id, id: '1234567', version: null, lang: ['fr', 'en']},
                 },
                 result: {
                     data: {
@@ -98,16 +98,16 @@ describe('CreateRecordFormContainer', () => {
                                         library: mockLibrary,
                                         label: null,
                                         color: null,
-                                        preview: null
+                                        preview: null,
                                     },
                                     simple_attribute: {id_value: null, value: 'MyVal'},
-                                    __typename: 'Record'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    __typename: 'Record',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const comp = mount(
@@ -117,7 +117,7 @@ describe('CreateRecordFormContainer', () => {
                     attributes={[{...mockAttrSimple}]}
                     onPostSave={onPostSave}
                 />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         const saveFunc: (values: RecordData) => void = comp.find('CreateRecordForm').prop('onSave');
@@ -132,13 +132,13 @@ describe('CreateRecordFormContainer', () => {
             modified_at: null,
             created_at: null,
             raw_value: 'MyVal',
-            version: null
+            version: null,
         };
 
         await act(() =>
             saveFunc({
-                simple_attribute: [valToSave]
-            })
+                simple_attribute: [valToSave],
+            }),
         );
 
         expect(onPostSave).toHaveBeenCalled();

@@ -39,11 +39,11 @@ export const useShareView = () => {
         const mappedView = {
             ...prepareViewForRequest(view, filtersData.filters, view.viewLabels),
             shared: !isSharedView,
-            id: view.viewId
+            id: view.viewId,
         };
 
         const {data} = await saveView({
-            view: mappedView
+            view: mappedView,
         });
 
         setIsSharedView(!isSharedView);
@@ -58,10 +58,10 @@ export const useShareView = () => {
                     filters: toValidFilters(data.saveView.filters),
                     sort: data.saveView.sort ?? [],
                     display: (data.saveView.display as IViewDisplay) ?? {
-                        type: mapViewTypeFromExplorerToLegacy[view.viewType]
+                        type: mapViewTypeFromExplorerToLegacy[view.viewType],
                     },
-                    attributes: data.saveView?.attributes?.map(({id}) => id) ?? []
-                }
+                    attributes: data.saveView?.attributes?.map(({id}) => id) ?? [],
+                },
             });
         }
     };
@@ -72,6 +72,6 @@ export const useShareView = () => {
                 <KitButton type="action" icon={<FaShare />} onClick={_toggleShareView}>
                     {isSharedView ? t('explorer.viewList.unshare-view') : t('explorer.viewList.share-view')}
                 </KitButton>
-            )
+            ),
     };
 };

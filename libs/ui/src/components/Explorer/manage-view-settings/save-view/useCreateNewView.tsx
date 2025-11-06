@@ -33,7 +33,7 @@ export const useCreateNewView = () => {
         const mappedView = prepareViewForRequest(view, filtersData.filters, label);
 
         const {data} = await saveView({
-            view: mappedView
+            view: mappedView,
         });
 
         if (data) {
@@ -48,18 +48,18 @@ export const useCreateNewView = () => {
                     filters: validFilters,
                     sort: data.saveView.sort ?? [],
                     display: (data.saveView.display as IViewDisplay) ?? {
-                        type: mapViewTypeFromExplorerToLegacy[view.viewType]
+                        type: mapViewTypeFromExplorerToLegacy[view.viewType],
                     },
-                    attributes: data.saveView?.attributes?.map(({id}) => id) ?? []
-                }
+                    attributes: data.saveView?.attributes?.map(({id}) => id) ?? [],
+                },
             });
             filtersDispatch({
                 type: FiltersActionTypes.UPDATE_VIEWS,
                 payload: {
                     ...filtersData,
                     viewId: data.saveView.id,
-                    filters: validFilters as UIFilter[]
-                }
+                    filters: validFilters as UIFilter[],
+                },
             });
         }
     };
@@ -72,6 +72,6 @@ export const useCreateNewView = () => {
                     {t('explorer.viewList.save-view-as')}
                 </KitButton>
             </>
-        )
+        ),
     };
 };

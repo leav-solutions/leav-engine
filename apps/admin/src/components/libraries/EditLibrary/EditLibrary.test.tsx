@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function EditLibraryTabs() {
             return <div>EditLibraryTabs</div>;
-        }
+        },
 );
 
 describe('EditLibrary', () => {
@@ -23,21 +23,21 @@ describe('EditLibrary', () => {
                 request: {
                     query: getLibByIdQuery,
                     variables: {
-                        id: ['test']
-                    }
+                        id: ['test'],
+                    },
                 },
                 result: {
                     data: {
                         libraries: {
                             list: [
                                 {
-                                    ...mockLibrary
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    ...mockLibrary,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
         const mockMatch: any = {params: {id: 'test'}};
         render(<EditLibrary match={mockMatch} />, {apolloMocks: mocks});
@@ -57,7 +57,7 @@ describe('EditLibrary', () => {
     test('Display error if not allowed to create', async () => {
         const mockMatch: any = {params: {}};
         render(<EditLibrary match={mockMatch} />, {
-            userPermissions: {[PermissionsActions.admin_create_library]: false}
+            userPermissions: {[PermissionsActions.admin_create_library]: false},
         });
 
         expect(screen.getByText('errors.access_denied')).toBeInTheDocument();
@@ -69,17 +69,17 @@ describe('EditLibrary', () => {
                 request: {
                     query: getLibByIdQuery,
                     variables: {
-                        id: ['test']
-                    }
+                        id: ['test'],
+                    },
                 },
                 result: {
                     data: {
                         libraries: {
-                            list: []
-                        }
-                    }
-                }
-            }
+                            list: [],
+                        },
+                    },
+                },
+            },
         ];
         const mockMatch: any = {params: {id: 'test'}};
         render(<EditLibrary match={mockMatch} />, {apolloMocks: mocks});

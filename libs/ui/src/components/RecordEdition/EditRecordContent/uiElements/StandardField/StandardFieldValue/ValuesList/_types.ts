@@ -4,7 +4,7 @@
 import {
     type RecordFormAttributeStandardAttributeFragment,
     type StandardValuesListFragmentStandardDateRangeValuesListConfFragment,
-    type StandardValuesListFragmentStandardStringValuesListConfFragment
+    type StandardValuesListFragmentStandardStringValuesListConfFragment,
 } from '_ui/_gqlTypes';
 import {type IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {type SelectProps} from 'antd';

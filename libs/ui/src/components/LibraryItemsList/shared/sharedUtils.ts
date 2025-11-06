@@ -3,5 +3,5 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export enum SelectCellsBtnType {
     ONLY = 'ONLY',
-    ALL = 'ALL'
+    ALL = 'ALL',
 }

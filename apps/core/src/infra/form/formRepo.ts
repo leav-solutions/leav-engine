@@ -30,7 +30,7 @@ interface IDeps {
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.db.dbUtils': dbUtils = null,
 }: IDeps = {}): IFormRepo {
     const _generateKey = (form: Pick<IForm, 'id' | 'library'>) => `${form.library}__${form.id}`;
     const _cleanKey = (key: string) => key.substring(key.indexOf('__') + 2);
@@ -46,7 +46,7 @@ export default function ({
                 strictFilters: false,
                 withCount: false,
                 pagination: null,
-                sort: null
+                sort: null,
             };
             const initializedParams = {...defaultParams, ...params};
 
@@ -56,19 +56,19 @@ export default function ({
                     ? initializedParams.filters.id.map(filterId =>
                           _generateKey({
                               id: filterId,
-                              library: (initializedParams.filters as IFormFilterOptions).library
-                          })
+                              library: (initializedParams.filters as IFormFilterOptions).library,
+                          }),
                       )
                     : _generateKey({
                           id: initializedParams.filters.id,
-                          library: (initializedParams.filters as IFormFilterOptions).library
+                          library: (initializedParams.filters as IFormFilterOptions).library,
                       });
             }
 
             const res = await dbUtils.findCoreEntity<IForm>({
                 ...initializedParams,
                 collectionName: FORM_COLLECTION_NAME,
-                ctx
+                ctx,
             });
 
             // Convert id to user friendly id
@@ -82,7 +82,7 @@ export default function ({
             const col = dbService.db.collection(FORM_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return _cleanDocForm(res.pop());
@@ -95,7 +95,7 @@ export default function ({
             const col = dbService.db.collection(FORM_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`INSERT ${docToInsert} IN ${col} RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return _cleanDocForm(res.pop());
@@ -108,10 +108,10 @@ export default function ({
             const col = dbService.db.collection(FORM_COLLECTION_NAME);
             const res = await dbService.execute({
                 query: aql`REMOVE ${docToDelete} IN ${col} RETURN OLD`,
-                ctx
+                ctx,
             });
 
             return _cleanDocForm(res.pop());
-        }
+        },
     };
 }

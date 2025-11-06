@@ -6,7 +6,7 @@ import * as useQueryParams from 'hooks/useQueryParams';
 import useRedirectToDest from './useRedirectToDest';
 
 jest.mock('react-router-dom', () => ({
-    useQueryParams: jest.fn()
+    useQueryParams: jest.fn(),
 }));
 
 describe('useRedirectToDest', () => {

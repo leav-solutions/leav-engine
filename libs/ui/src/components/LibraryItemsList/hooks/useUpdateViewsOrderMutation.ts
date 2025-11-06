@@ -7,7 +7,7 @@ import {
     type GetUserDataQueryVariables,
     type SaveUserDataMutationResult,
     type SaveUserDataMutationVariables,
-    useSaveUserDataMutation
+    useSaveUserDataMutation,
 } from '_ui/_gqlTypes';
 import {getUserDataQuery} from '_ui/_queries/userData/getUserData';
 
@@ -26,8 +26,8 @@ export default function useUpdateViewsOrderMutation(library: string) {
                     const queryToUpdate = {
                         query: getUserDataQuery,
                         variables: {
-                            keys: [PREFIX_USER_VIEWS_ORDER_KEY + library, PREFIX_SHARED_VIEWS_ORDER_KEY + library]
-                        }
+                            keys: [PREFIX_USER_VIEWS_ORDER_KEY + library, PREFIX_SHARED_VIEWS_ORDER_KEY + library],
+                        },
                     };
 
                     const cacheData = cache.readQuery<GetUserDataQuery, GetUserDataQueryVariables>(queryToUpdate);
@@ -41,14 +41,14 @@ export default function useUpdateViewsOrderMutation(library: string) {
                                     data: {
                                         ...cacheData.userData.data,
                                         [options.variables.key]:
-                                            mutationResult.data.saveUserData.data[options.variables.key]
-                                    }
-                                }
-                            }
+                                            mutationResult.data.saveUserData.data[options.variables.key],
+                                    },
+                                },
+                            },
                         });
                     }
-                }
+                },
             });
-        }
+        },
     };
 }

@@ -27,7 +27,7 @@ const ApplicationsList = ({
     filters = {},
     onRowClick,
     actions,
-    onFiltersUpdate
+    onFiltersUpdate,
 }: IApplicationsListProps): JSX.Element => {
     const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
@@ -48,7 +48,7 @@ const ApplicationsList = ({
     const types = Object.keys(ApplicationType).map(type => ({
         key: type,
         value: type,
-        text: t('applications.types.' + type)
+        text: t('applications.types.' + type),
     }));
 
     return (
@@ -133,7 +133,7 @@ const ApplicationsList = ({
                                 <Table.Cell>{t('applications.types.' + app.type)}</Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
                                     {actionsList.map(child =>
-                                        React.cloneElement(child as React.ReactElement<any>, {application: app})
+                                        React.cloneElement(child as React.ReactElement<any>, {application: app}),
                                     )}
                                 </Table.Cell>
                             </Table.Row>

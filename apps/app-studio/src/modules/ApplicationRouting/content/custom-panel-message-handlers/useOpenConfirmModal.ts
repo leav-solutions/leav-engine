@@ -9,11 +9,11 @@ export const useOpenConfirmModal = () => {
         KitModal[data.type]?.({
             ...data,
             width: '100%',
-            style: {content: {width: '90vw', maxWidth: '656px'}}
+            style: {content: {width: '90vw', maxWidth: '656px'}},
         });
     };
 
     return {
-        openConfirmModal
+        openConfirmModal,
     };
 };

@@ -24,7 +24,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
 }) => {
     if (!onChange) {
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');

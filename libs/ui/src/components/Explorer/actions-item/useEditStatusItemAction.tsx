@@ -9,7 +9,7 @@ import {
     type DeactivateRecordsMutation,
     useActivateRecordsMutation,
     useDeactivateRecordsMutation,
-    useDeleteValueMutation
+    useDeleteValueMutation,
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
@@ -35,7 +35,7 @@ export const useEditStatusItemAction = ({
     canDeleteLinkValues,
     store: {view, dispatch},
     onRemove,
-    entrypoint
+    entrypoint,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
@@ -52,40 +52,40 @@ export const useEditStatusItemAction = ({
         update(cache, deactivatedRecords) {
             deactivatedRecords.data?.deactivateRecords.forEach(record => {
                 cache.evict({
-                    id: cache.identify(record)
+                    id: cache.identify(record),
                 });
             });
             cache.modify({
                 fields: {
                     records: prev => ({
                         ...prev,
-                        totalCount: prev.totalCount - 1
-                    })
+                        totalCount: prev.totalCount - 1,
+                    }),
                 },
-                broadcast: false
+                broadcast: false,
             });
             cache.gc();
-        }
+        },
     });
 
     const [activateRecordsMutation] = useActivateRecordsMutation({
         update(cache, activatedRecords) {
             activatedRecords.data?.activateRecords.forEach(record => {
                 cache.evict({
-                    id: cache.identify(record)
+                    id: cache.identify(record),
                 });
             });
             cache.modify({
                 fields: {
                     records: prev => ({
                         ...prev,
-                        totalCount: prev.totalCount - 1
-                    })
+                        totalCount: prev.totalCount - 1,
+                    }),
                 },
-                broadcast: false
+                broadcast: false,
             });
             cache.gc();
-        }
+        },
     });
 
     const [deleteRecordLinkMutation] = useDeleteValueMutation({
@@ -93,25 +93,25 @@ export const useEditStatusItemAction = ({
             const parentRecord = {
                 id: (entrypoint as IEntrypointLink).parentRecordId,
                 library: {
-                    id: (entrypoint as IEntrypointLink).parentLibraryId
-                }
+                    id: (entrypoint as IEntrypointLink).parentLibraryId,
+                },
             };
             updateValuesCache(parentRecord, deletedRecord.data?.deleteValue ?? []);
-        }
+        },
     });
 
     const _deactivateItem = async (item: IItemData): Promise<FetchResult<DeactivateRecordsMutation>> => {
         const libRes = await deactivateRecordsMutation({
             variables: {
                 libraryId: item.libraryId,
-                recordsIds: [item.itemId]
-            }
+                recordsIds: [item.itemId],
+            },
         });
 
         if (view.massSelection !== MASS_SELECTION_ALL) {
             dispatch({
                 type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                payload: view.massSelection.filter(key => key !== item.itemId)
+                payload: view.massSelection.filter(key => key !== item.itemId),
             });
         }
 
@@ -124,14 +124,14 @@ export const useEditStatusItemAction = ({
         const libRes = await activateRecordsMutation({
             variables: {
                 libraryId: item.libraryId,
-                recordsIds: [item.itemId]
-            }
+                recordsIds: [item.itemId],
+            },
         });
 
         if (view.massSelection !== MASS_SELECTION_ALL) {
             dispatch({
                 type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                payload: view.massSelection.filter(key => key !== item.itemId)
+                payload: view.massSelection.filter(key => key !== item.itemId),
             });
         }
 
@@ -193,18 +193,18 @@ export const useEditStatusItemAction = ({
                                         recordId: entrypoint.parentRecordId,
                                         value: {
                                             payload: itemId,
-                                            id_value
-                                        }
-                                    }
+                                            id_value,
+                                        },
+                                    },
                                 });
                                 onRemove?.(item);
                                 return linkRes;
                             default:
                                 return;
                         }
-                    }
+                    },
                 });
-            }
+            },
         }),
         [
             t,
@@ -214,11 +214,11 @@ export const useEditStatusItemAction = ({
             canDeleteLinkValues,
             entrypoint.type,
             view.massSelection,
-            dispatch
-        ]
+            dispatch,
+        ],
     );
 
     return {
-        editStatusItemAction: isEnabled ? _editStatusItemAction : null
+        editStatusItemAction: isEnabled ? _editStatusItemAction : null,
     };
 };

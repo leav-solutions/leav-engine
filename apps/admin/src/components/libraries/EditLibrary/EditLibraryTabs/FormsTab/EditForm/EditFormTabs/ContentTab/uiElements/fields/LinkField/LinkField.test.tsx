@@ -11,7 +11,7 @@ describe('LinkField', () => {
         render(
             <MockedLangContextProvider>
                 <LinkField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.fr)).toBeVisible();
@@ -23,7 +23,7 @@ describe('LinkField', () => {
         render(
             <MockedLangContextProvider>
                 <LinkField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.en)).toBeVisible();

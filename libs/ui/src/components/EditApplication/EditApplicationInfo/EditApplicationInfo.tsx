@@ -7,7 +7,7 @@ import {useLang} from '../../../hooks';
 import {
     type GetApplicationByIdQuery,
     useCheckApplicationExistenceLazyQuery,
-    useSaveApplicationMutation
+    useSaveApplicationMutation,
 } from '../../../_gqlTypes';
 import EditApplicationInfoForm from './EditApplicationInfoForm';
 
@@ -27,7 +27,7 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
         fetchPolicy: 'no-cache',
         nextFetchPolicy: 'no-cache',
         variables: {},
-        partialRefetch: false
+        partialRefetch: false,
     });
 
     const _submitForm = async () => {
@@ -57,17 +57,17 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
                         description,
                         module: values.module,
                         type: values.type,
-                        endpoint: values.endpoint
-                    }
-                }
+                        endpoint: values.endpoint,
+                    },
+                },
             });
         } catch (e) {
             // Display errors in form
             form.setFields(
                 Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
                     name: fieldName,
-                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                }))
+                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]],
+                })),
             );
 
             throw e;
@@ -88,7 +88,7 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
                 label: availableLangs.reduce((acc, lang) => {
                     acc[lang] = lang === modifiedLang ? value : form.getFieldValue(`label_${lang}`);
                     return acc;
-                }, {})
+                }, {}),
             };
         } else if (field.startsWith('description_')) {
             const modifiedLang = field.replace('description_', '');
@@ -96,11 +96,11 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
                 description: availableLangs.reduce((acc, lang) => {
                     acc[lang] = lang === modifiedLang ? value : form.getFieldValue(`description_${lang}`);
                     return acc;
-                }, {})
+                }, {}),
             };
         } else {
             dataToSave = {
-                [field]: value
+                [field]: value,
             };
         }
 
@@ -109,24 +109,24 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
                 variables: {
                     application: {
                         id: application.id,
-                        ...dataToSave
-                    }
-                }
+                        ...dataToSave,
+                    },
+                },
             });
 
             form.setFields([
                 {
                     name: field,
-                    touched: false
-                }
+                    touched: false,
+                },
             ]);
         } catch (err) {
             // Display errors in form
             form.setFields([
                 {
                     name: field,
-                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message]
-                }
+                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message],
+                },
             ]);
         }
     };
@@ -137,8 +137,8 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
                 // Force undefined values to fix a weird bug where both values are sent to the server even if only one is passed
                 id: undefined,
                 endpoint: undefined,
-                [fieldToCheck]: value
-            }
+                [fieldToCheck]: value,
+            },
         });
 
         return !applicationExistenceData?.applications?.totalCount;

@@ -11,5 +11,5 @@ export const mockStandardValue: IStandardValue = {
     created_by: '1',
     modified_by: '1',
     payload: 'some value',
-    raw_payload: 'some raw value'
+    raw_payload: 'some raw value',
 };

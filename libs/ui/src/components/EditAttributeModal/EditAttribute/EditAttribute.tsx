@@ -26,9 +26,9 @@ function EditAttribute({attributeId, onSetSubmitFunction, readOnly: isReadOnly}:
     const {loading, error, data} = useGetAttributeByIdQuery({
         fetchPolicy: 'cache-and-network',
         variables: {
-            id: attributeId
+            id: attributeId,
         },
-        skip: !attributeId
+        skip: !attributeId,
     });
 
     if (loading) {
@@ -58,8 +58,8 @@ function EditAttribute({attributeId, onSetSubmitFunction, readOnly: isReadOnly}:
         {
             key: 'info',
             label: t('global.info'),
-            children: <TabContentWrapper>{attributeInfoComp}</TabContentWrapper>
-        }
+            children: <TabContentWrapper>{attributeInfoComp}</TabContentWrapper>,
+        },
     ];
 
     return <Tabs items={tabs} />;

@@ -8,8 +8,8 @@ import AuthHandler from './AuthHandler';
 
 jest.mock('hooks/useRedirectToDest', () => ({
     useRedirectToDest: jest.fn().mockReturnValue({
-        redirectToDest: jest.fn()
-    })
+        redirectToDest: jest.fn(),
+    }),
 }));
 
 describe('AuthHandler', () => {
@@ -21,7 +21,7 @@ describe('AuthHandler', () => {
 
     beforeAll(() => {
         jest.spyOn(useRedirectToDest, 'useRedirectToDest').mockReturnValue({
-            redirectToDest: mockRedirectToDest
+            redirectToDest: mockRedirectToDest,
         });
     });
 
@@ -40,7 +40,7 @@ describe('AuthHandler', () => {
         render(
             <AuthHandler>
                 <div>Login Form</div>
-            </AuthHandler>
+            </AuthHandler>,
         );
 
         expect(useAuthChecker.useAuthChecker).toHaveBeenCalled();

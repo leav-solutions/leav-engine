@@ -18,22 +18,22 @@ describe('Sidebar', () => {
                 request: {
                     query: getUserDataQuery,
                     variables: {
-                        keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]
-                    }
+                        keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY],
+                    },
                 },
                 result: {
                     data: {
                         userData: {
                             global: false,
-                            data: []
-                        }
-                    }
-                }
+                            data: [],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getTreeListQuery,
-                    variables: {filters: {id: ['treeA', 'treeB']}}
+                    variables: {filters: {id: ['treeA', 'treeB']}},
                 },
                 result: {
                     data: {
@@ -41,21 +41,21 @@ describe('Sidebar', () => {
                             list: [
                                 {
                                     ...mockTree,
-                                    id: 'treeA'
+                                    id: 'treeA',
                                 },
                                 {
                                     ...mockTree,
-                                    id: 'treeB'
-                                }
-                            ]
-                        }
-                    }
-                }
+                                    id: 'treeB',
+                                },
+                            ],
+                        },
+                    },
+                },
             },
             {
                 request: {
                     query: getLibrariesListQuery,
-                    variables: {filters: {id: ['libA', 'libB']}}
+                    variables: {filters: {id: ['libA', 'libB']}},
                 },
                 result: {
                     data: {
@@ -63,23 +63,23 @@ describe('Sidebar', () => {
                             list: [
                                 {
                                     ...mockLibrary,
-                                    id: 'libA'
+                                    id: 'libA',
                                 },
                                 {
                                     ...mockLibrary,
-                                    id: 'libB'
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    id: 'libB',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
         render(
             <MemoryRouter>
                 <Sidebar />
             </MemoryRouter>,
-            {apolloMocks: mocks}
+            {apolloMocks: mocks},
         );
 
         await act(async () => {

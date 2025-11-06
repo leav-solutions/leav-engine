@@ -6,11 +6,11 @@ import isCurrentVersion from '_ui/components/RecordEdition/EditRecordContent/hel
 import {
     VersionFieldScope,
     type FormElement,
-    type ICommonFieldsReducerState
+    type ICommonFieldsReducerState,
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {
     type RecordFormElementsValueLinkValue,
-    type RecordFormElementsValueTreeValue
+    type RecordFormElementsValueTreeValue,
 } from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {type IRecordIdentityWhoAmI} from '_ui/types/records';
 import {type IValueVersion} from '_ui/types/values';
@@ -31,7 +31,7 @@ export enum LinkFieldReducerActionsType {
     CLEAR_ERROR_MESSAGE = 'CLEAR_ERROR_MESSAGE',
     SET_IS_VALUES_ADD_VISIBLE = 'SET_IS_VALUES_ADD_VISIBLE',
     CHANGE_ACTIVE_SCOPE = 'CHANGE_ACTIVE_SCOPE',
-    REFRESH_VALUES = 'REFRESH_VALUES'
+    REFRESH_VALUES = 'REFRESH_VALUES',
 }
 
 export type LinkFieldReducerActions<ValuesType extends AllowedValuesType> =
@@ -65,12 +65,12 @@ export const virginState: ILinkFieldState<AllowedValuesType> = {
     values: {
         [VersionFieldScope.CURRENT]: {
             version: null,
-            values: []
+            values: [],
         },
-        [VersionFieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null,
     },
     errorMessage: '',
-    isValuesAddVisible: false
+    isValuesAddVisible: false,
 };
 
 /**
@@ -104,10 +104,10 @@ const _computeScopeAndValues = <ValuesType extends AllowedValuesType>(params: {
         values: {
             [VersionFieldScope.CURRENT]: {
                 version: currentVersion ?? null,
-                values: hasInheritedValues ? [] : values
+                values: hasInheritedValues ? [] : values,
             },
-            [VersionFieldScope.INHERITED]: hasInheritedValues ? {version: inheritedVersion ?? null, values} : null
-        }
+            [VersionFieldScope.INHERITED]: hasInheritedValues ? {version: inheritedVersion ?? null, values} : null,
+        },
     };
 };
 
@@ -129,7 +129,7 @@ export const computeInitialState = <ValuesType extends AllowedValuesType>(params
         record,
         formElement: element,
         isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute?.permissions?.edit_value,
-        ..._computeScopeAndValues<ValuesType>({attribute, values: fieldValues, formVersion})
+        ..._computeScopeAndValues<ValuesType>({attribute, values: fieldValues, formVersion}),
     };
 
     return initialState;
@@ -137,7 +137,7 @@ export const computeInitialState = <ValuesType extends AllowedValuesType>(params
 
 const linkFieldReducer = <ValuesType extends AllowedValuesType>(
     state: ILinkFieldState<ValuesType>,
-    action: LinkFieldReducerActions<ValuesType>
+    action: LinkFieldReducerActions<ValuesType>,
 ): ILinkFieldState<ValuesType> => {
     switch (action.type) {
         case LinkFieldReducerActionsType.ADD_VALUES: {
@@ -148,9 +148,9 @@ const linkFieldReducer = <ValuesType extends AllowedValuesType>(
                     ...state.values,
                     [state.activeScope]: {
                         ...state.values[state.activeScope],
-                        values: newValues
-                    }
-                }
+                        values: newValues,
+                    },
+                },
             };
         }
         case LinkFieldReducerActionsType.DELETE_VALUE: {
@@ -163,9 +163,9 @@ const linkFieldReducer = <ValuesType extends AllowedValuesType>(
                     ...state.values,
                     [state.activeScope]: {
                         ...state.values[state.activeScope],
-                        values: newValues
-                    }
-                }
+                        values: newValues,
+                    },
+                },
             };
         }
         case LinkFieldReducerActionsType.DELETE_ALL_VALUES: {
@@ -175,9 +175,9 @@ const linkFieldReducer = <ValuesType extends AllowedValuesType>(
                     ...state.values,
                     [state.activeScope]: {
                         ...state.values[state.activeScope],
-                        values: []
-                    }
-                }
+                        values: [],
+                    },
+                },
             };
         }
         case LinkFieldReducerActionsType.SET_ERROR_MESSAGE: {
@@ -198,8 +198,8 @@ const linkFieldReducer = <ValuesType extends AllowedValuesType>(
                 ..._computeScopeAndValues({
                     attribute: state.formElement.attribute,
                     values: action.values,
-                    formVersion: state.values[VersionFieldScope.CURRENT].version
-                })
+                    formVersion: state.values[VersionFieldScope.CURRENT].version,
+                }),
             };
         }
         default:

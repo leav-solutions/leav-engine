@@ -7,13 +7,13 @@ import {type ISystemTranslation} from './systemTranslation';
 export enum ViewTypes {
     LIST = 'list',
     CARDS = 'cards',
-    TIMELINE = 'timeline'
+    TIMELINE = 'timeline',
 }
 
 export enum ViewSizes {
     SMALL = 'SMALL',
     MEDIUM = 'MEDIUM',
-    BIG = 'BIG'
+    BIG = 'BIG',
 }
 
 interface IViewDisplay {

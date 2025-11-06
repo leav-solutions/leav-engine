@@ -18,15 +18,15 @@ describe('PermissionsSettings', () => {
             {
                 ...mockAttrTree,
                 id: 'permAttribute1',
-                label: {fr: 'Attribut 1', en: 'Attribute 1'}
+                label: {fr: 'Attribut 1', en: 'Attribute 1'},
             },
             {
                 ...mockAttrTree,
                 id: 'permAttribute2',
-                label: {fr: 'Attribut 2', en: 'Attribute 2'}
-            }
+                label: {fr: 'Attribut 2', en: 'Attribute 2'},
+            },
         ],
-        relation: PermissionsRelation.and
+        relation: PermissionsRelation.and,
     };
 
     const _showPopup = async () => {
@@ -45,7 +45,7 @@ describe('PermissionsSettings', () => {
                 readonly={false}
                 permissionsSettings={permissionsSettings}
                 onChangeSettings={jest.fn()}
-            />
+            />,
         );
 
         await _showPopup();
@@ -64,8 +64,8 @@ describe('PermissionsSettings', () => {
                     query: getAttributesQuery,
                     variables: {
                         libraries: null,
-                        type: [AttributeType.tree]
-                    }
+                        type: [AttributeType.tree],
+                    },
                 },
                 result: {
                     data: {
@@ -77,13 +77,13 @@ describe('PermissionsSettings', () => {
                                     ...mockAttrTree,
                                     __typename: 'Attribute',
                                     id: 'permAttribute3',
-                                    label: {fr: 'Attribut 3', en: 'Attribute 3'}
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                    label: {fr: 'Attribut 3', en: 'Attribute 3'},
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         render(
@@ -93,8 +93,8 @@ describe('PermissionsSettings', () => {
                 onChangeSettings={_handleChangeSettings}
             />,
             {
-                apolloMocks: mocks
-            }
+                apolloMocks: mocks,
+            },
         );
 
         await _showPopup();
@@ -117,7 +117,7 @@ describe('PermissionsSettings', () => {
                 readonly={false}
                 permissionsSettings={permissionsSettings}
                 onChangeSettings={_handleChangeSettings}
-            />
+            />,
         );
 
         await _showPopup();
@@ -125,7 +125,7 @@ describe('PermissionsSettings', () => {
         userEvent.click(screen.getAllByRole('button', {name: /remove/})[0]);
         expect(_handleChangeSettings).toHaveBeenCalledWith({
             ...permissionsSettings,
-            permissionTreeAttributes: [permissionsSettings.permissionTreeAttributes[1].id]
+            permissionTreeAttributes: [permissionsSettings.permissionTreeAttributes[1].id],
         });
     });
 
@@ -135,7 +135,7 @@ describe('PermissionsSettings', () => {
                 readonly={false}
                 permissionsSettings={permissionsSettings}
                 onChangeSettings={_handleChangeSettings}
-            />
+            />,
         );
 
         await _showPopup();
@@ -146,7 +146,7 @@ describe('PermissionsSettings', () => {
 
         expect(_handleChangeSettings).toHaveBeenCalledWith({
             permissionTreeAttributes: permissionsSettings.permissionTreeAttributes.map(a => a.id),
-            relation: PermissionsRelation.or
+            relation: PermissionsRelation.or,
         });
     });
 
@@ -156,7 +156,7 @@ describe('PermissionsSettings', () => {
                 readonly={true}
                 permissionsSettings={permissionsSettings}
                 onChangeSettings={jest.fn()}
-            />
+            />,
         );
 
         await _showPopup();

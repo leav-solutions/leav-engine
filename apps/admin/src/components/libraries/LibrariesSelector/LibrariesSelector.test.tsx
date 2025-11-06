@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function LibrariesSelectorField() {
             return <div>LibrariesSelectorField</div>;
-        }
+        },
 );
 
 describe('LibrariesSelector', () => {

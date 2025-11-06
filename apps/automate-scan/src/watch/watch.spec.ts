@@ -14,47 +14,47 @@ const rootKey = 'rootKey';
 const stats = {ino: inode};
 
 jest.mock('chokidar', () => ({
-    watch: jest.fn()
+    watch: jest.fn(),
 }));
 
 jest.mock('crypto', () => ({
-    createHash: jest.fn(() => ({digest: jest.fn, update: jest.fn}))
+    createHash: jest.fn(() => ({digest: jest.fn, update: jest.fn})),
 }));
 
 jest.mock('fs', () => ({
     createReadStream: jest.fn(() => ({
         on: jest.fn(() => ({
             on: jest.fn(() => ({
-                on: jest.fn((...args) => args[1]())
-            }))
-        }))
-    }))
+                on: jest.fn((...args) => args[1]()),
+            })),
+        })),
+    })),
 }));
 
 jest.mock('../redis/redis', () => ({
     setData: jest.fn(),
     updateData: jest.fn(),
-    getInode: jest.fn(() => 123456)
+    getInode: jest.fn(() => 123456),
 }));
 
 jest.mock('../rabbitmq/rabbitmq', () => ({
     generateMsgRabbitMQ: jest.fn(),
-    sendToRabbitMQ: jest.fn()
+    sendToRabbitMQ: jest.fn(),
 }));
 
 jest.mock('../config', () => ({
     getConfig: global.__mockPromise({
         allowFilesList: '',
         ignoreFilesList: '',
-        rootPath: '/files'
-    })
+        rootPath: '/files',
+    }),
 }));
 
 jest.mock('./events', () => ({
     handleCreate: jest.fn(),
     handleDelete: jest.fn(),
     handleMove: jest.fn(),
-    handleUpdate: jest.fn()
+    handleUpdate: jest.fn(),
 }));
 
 describe('test checkEvent', () => {
@@ -65,7 +65,7 @@ describe('test checkEvent', () => {
             verbose: false,
             ready: false,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('add', file, params, {...stats, isDirectory: jest.fn(() => false)});
@@ -80,7 +80,7 @@ describe('test checkEvent', () => {
             ready: false,
             timeout: 0,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('addDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
@@ -95,7 +95,7 @@ describe('test checkEvent', () => {
             ready: true,
             timeout: 0,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('add', file, params, {...stats, isDirectory: jest.fn(() => false)});
@@ -109,7 +109,7 @@ describe('test checkEvent', () => {
             ready: true,
             timeout: 0,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('addDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
@@ -123,7 +123,7 @@ describe('test checkEvent', () => {
             ready: true,
             timeout: 0,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('unlink', file, params, {...stats, isDirectory: jest.fn(() => false)});
@@ -137,7 +137,7 @@ describe('test checkEvent', () => {
             ready: true,
             timeout: 0,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('unlinkDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
@@ -151,7 +151,7 @@ describe('test checkEvent', () => {
             ready: true,
             timeout: 0,
             rootPath: '/files',
-            rootKey
+            rootKey,
         };
 
         await checkEvent('change', file, params, {...stats, isDirectory: jest.fn(() => false)});
@@ -167,7 +167,7 @@ describe('test checkEvent', () => {
             ready: true,
             rootPath: '/files',
             rootKey,
-            delay: 1100
+            delay: 1100,
         };
 
         // not use await for unlink
@@ -181,7 +181,7 @@ describe('test checkEvent', () => {
         (getConfig as jest.FunctionLike) = global.__mockPromise({
             allowFilesList: '',
             ignoreFilesList: file,
-            rootPath: '/files'
+            rootPath: '/files',
         });
 
         const params = {
@@ -189,7 +189,7 @@ describe('test checkEvent', () => {
             ready: true,
             rootPath: '/files',
             rootKey,
-            delay: 1100
+            delay: 1100,
         };
 
         // not use await for unlink
@@ -203,7 +203,7 @@ describe('test checkEvent', () => {
         (getConfig as jest.FunctionLike) = global.__mockPromise({
             allowFilesList: '',
             ignoreFilesList: file + 1,
-            rootPath: '/files'
+            rootPath: '/files',
         });
 
         const params = {
@@ -211,7 +211,7 @@ describe('test checkEvent', () => {
             ready: true,
             rootPath: '/files',
             rootKey,
-            delay: 1100
+            delay: 1100,
         };
 
         // not use await for unlink

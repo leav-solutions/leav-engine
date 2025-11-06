@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function Navigator() {
             return <div>Select record</div>;
-        }
+        },
 );
 
 describe('SelectRecordModal', () => {
@@ -23,7 +23,7 @@ describe('SelectRecordModal', () => {
         {
             request: {
                 query: getLibsQuery,
-                variables: {id: 'test_lib'}
+                variables: {id: 'test_lib'},
             },
             result: {
                 data: {
@@ -32,13 +32,13 @@ describe('SelectRecordModal', () => {
                         totalCount: 1,
                         list: [
                             {
-                                ...mockLibrary
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                ...mockLibrary,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     const onClose = jest.fn();
@@ -49,7 +49,7 @@ describe('SelectRecordModal', () => {
             comp = mount(
                 <MockedProvider mocks={[...mocks]} addTypename>
                     <SelectRecordModal open library="test_lib" onClose={onClose} onSelect={onSelect} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -70,7 +70,7 @@ describe('SelectRecordModal', () => {
             comp = mount(
                 <MockedProvider mocks={[...mocks]} addTypename>
                     <SelectRecordModal open library="test_lib" onClose={onClose} onSelect={onSelect} />
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

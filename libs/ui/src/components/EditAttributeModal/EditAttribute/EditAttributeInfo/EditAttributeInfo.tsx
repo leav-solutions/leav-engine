@@ -7,7 +7,7 @@ import {
     type AttributeDetailsFragment,
     AttributeType,
     useCheckAttributeExistenceLazyQuery,
-    useSaveAttributeMutation
+    useSaveAttributeMutation,
 } from '../../../../_gqlTypes';
 import {useLang} from '../../../../hooks';
 import {EditAttributeInfoForm} from './EditAttributeInfoForm';
@@ -28,7 +28,7 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
     const [checkAttributeExistence] = useCheckAttributeExistenceLazyQuery({
         fetchPolicy: 'no-cache',
         nextFetchPolicy: 'no-cache',
-        partialRefetch: false
+        partialRefetch: false,
     });
 
     const _submitForm = async () => {
@@ -70,13 +70,13 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
                             ? {
                                   versionable: values?.versions_conf?.versionable ?? false,
                                   mode: values?.versions_conf?.mode ?? null,
-                                  profile: values?.versions_conf?.profile ?? null
+                                  profile: values?.versions_conf?.profile ?? null,
                               }
                             : null,
                         linked_library: isLinkType ? values.linked_library.id : null,
-                        linked_tree: isTreeType ? values.linked_tree.id : null
-                    }
-                }
+                        linked_tree: isTreeType ? values.linked_tree.id : null,
+                    },
+                },
             });
 
             return res.data.saveAttribute;
@@ -85,8 +85,8 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
             form.setFields(
                 Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
                     name: fieldName,
-                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                }))
+                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]],
+                })),
             );
 
             throw e;
@@ -108,7 +108,7 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
                 label: availableLangs.reduce((acc, lang) => {
                     acc[lang] = lang === modifiedLang ? value : form.getFieldValue(`label_${lang}`);
                     return acc;
-                }, {})
+                }, {}),
             };
         } else if (field.startsWith('description_')) {
             const modifiedLang = field.replace('description_', '');
@@ -116,15 +116,15 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
                 description: availableLangs.reduce((acc, lang) => {
                     acc[lang] = lang === modifiedLang ? value : form.getFieldValue(`description_${lang}`);
                     return acc;
-                }, {})
+                }, {}),
             };
         } else if (field.startsWith('versions_conf')) {
             dataToSave = {
-                versions_conf: form.getFieldValue('versions_conf')
+                versions_conf: form.getFieldValue('versions_conf'),
             };
         } else {
             dataToSave = {
-                [field]: value
+                [field]: value,
             };
         }
 
@@ -133,24 +133,24 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
                 variables: {
                     attribute: {
                         id: attribute.id,
-                        ...dataToSave
-                    }
-                }
+                        ...dataToSave,
+                    },
+                },
             });
 
             form.setFields([
                 {
                     name: field,
-                    touched: false
-                }
+                    touched: false,
+                },
             ]);
         } catch (err) {
             // Display errors in form
             form.setFields([
                 {
                     name: field,
-                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message]
-                }
+                    errors: [err.graphQLErrors?.[0]?.extensions?.fields?.[field] ?? err.message],
+                },
             ]);
         }
     };
@@ -158,8 +158,8 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
     const _isAttributeUnique = async (value: any) => {
         const {data: attributeExistenceData} = await checkAttributeExistence({
             variables: {
-                id: value
-            }
+                id: value,
+            },
         });
 
         return !attributeExistenceData?.attributes?.totalCount;

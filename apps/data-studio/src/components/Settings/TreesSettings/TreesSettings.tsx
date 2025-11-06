@@ -6,7 +6,7 @@ import {
     Loading,
     SubmitStateNotifier,
     type SubmitStateNotifierStates,
-    useSaveApplicationMutation
+    useSaveApplicationMutation,
 } from '@leav/ui';
 import {type IApplicationSettings} from '_types/types';
 import {useApplicationContext} from 'context/ApplicationContext';
@@ -63,22 +63,22 @@ function TreesSettings(): JSX.Element {
     const _executeSave = async (settings: IApplicationSettings) => {
         const newSettings = {
             ...currentApp.settings,
-            ...settings
+            ...settings,
         };
 
         await saveApplication({
             optimisticResponse: {
                 saveApplication: {
                     ...currentApp,
-                    settings: newSettings
-                }
+                    settings: newSettings,
+                },
             },
             variables: {
                 application: {
                     id: currentApp.id,
-                    settings: newSettings
-                }
-            }
+                    settings: newSettings,
+                },
+            },
         });
 
         setSubmitState('success');
@@ -93,14 +93,14 @@ function TreesSettings(): JSX.Element {
         orderAfter.splice(to, 0, libraryId);
 
         _executeSave({
-            treesOrder: orderAfter
+            treesOrder: orderAfter,
         });
     };
 
     const _handleSelectionModeChange = async (value: 'all' | 'none' | 'custom') => {
         _executeSave({
             trees: value === 'custom' ? [] : value,
-            treesOrder: value === 'none' ? [] : currentApp.settings?.treesOrder
+            treesOrder: value === 'none' ? [] : currentApp.settings?.treesOrder,
         });
     };
 
@@ -111,7 +111,7 @@ function TreesSettings(): JSX.Element {
 
         _executeSave({
             trees: (currentApp.settings?.trees ?? []).filter(id => id !== libraryId),
-            treesOrder: (currentApp.settings?.treesOrder ?? []).filter(id => id !== libraryId)
+            treesOrder: (currentApp.settings?.treesOrder ?? []).filter(id => id !== libraryId),
         });
     };
 
@@ -122,7 +122,7 @@ function TreesSettings(): JSX.Element {
 
         _executeSave({
             trees: [],
-            treesOrder: []
+            treesOrder: [],
         });
     };
 
@@ -132,7 +132,7 @@ function TreesSettings(): JSX.Element {
         }
 
         _executeSave({
-            trees: [...currentApp.settings?.trees, ...addedTrees]
+            trees: [...currentApp.settings?.trees, ...addedTrees],
         });
     };
 

@@ -13,7 +13,7 @@ export const dataloaderCtxKey: keyof IQueryInfos = 'dataLoaders' as const;
 export function getOrCreateDataLoaderInCtx<DL extends DataLoader<unknown, unknown>>(
     ctx: IQueryInfos,
     name: string,
-    create: () => DL
+    create: () => DL,
 ): DL {
     // Important to not serialize dataLoaders to JSON for task submission for instance;
     // ctx is in task params, saved in core_tasks collection and read by worker
@@ -22,7 +22,7 @@ export function getOrCreateDataLoaderInCtx<DL extends DataLoader<unknown, unknow
             value: {},
             enumerable: false,
             writable: true,
-            configurable: true
+            configurable: true,
         });
     }
     if (!ctx.dataLoaders[name]) {

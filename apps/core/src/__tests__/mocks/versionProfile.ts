@@ -7,11 +7,11 @@ export const mockVersionProfile: IVersionProfile = {
     id: 'versionProfileId',
     label: {
         fr: 'Version Profile Label FR',
-        en: 'Version Profile Label EN'
+        en: 'Version Profile Label EN',
     },
     description: {
         fr: 'Version Profile Description FR',
-        en: 'Version Profile Description EN'
+        en: 'Version Profile Description EN',
     },
-    trees: ['treeA', 'treeB']
+    trees: ['treeA', 'treeB'],
 };

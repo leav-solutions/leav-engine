@@ -28,7 +28,7 @@ function EditTreeInfoForm({
     onSubmitField,
     onCheckTreeUniqueness,
     loading,
-    readOnly: isReadOnly
+    readOnly: isReadOnly,
 }: IEditTreeInfoFormProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
@@ -41,7 +41,7 @@ function EditTreeInfoForm({
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
             interpolation: {escapeValue: false},
-            fieldName: t(`trees.${field}`)
+            fieldName: t(`trees.${field}`),
         });
 
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,20 +111,20 @@ function EditTreeInfoForm({
               ...availableLangs.reduce((acc, availableLang) => {
                   acc[`label_${availableLang}`] = tree.label[availableLang] ?? '';
                   return acc;
-              }, {})
+              }, {}),
           }
         : {};
 
     const formInitValues: FormValues = {
         behavior: TreeBehavior.standard,
         ...treeSettings,
-        ...label
+        ...label,
     };
 
     const behaviorSelectOptions = Object.values(TreeBehavior).map(b => ({
         key: b,
         value: b,
-        label: t(`trees.behavior_${b}`)
+        label: t(`trees.behavior_${b}`),
     }));
 
     const _getFieldState = (field: string) => {
@@ -158,7 +158,7 @@ function EditTreeInfoForm({
                         labelCol={{span: 2}}
                         wrapperCol={{span: 22}}
                         rules={[
-                            {required: availableLang === defaultLang, message: t('errors.default_language_required')}
+                            {required: availableLang === defaultLang, message: t('errors.default_language_required')},
                         ]}
                         style={{marginBottom: '0.5rem'}}
                     >
@@ -184,8 +184,8 @@ function EditTreeInfoForm({
                     {
                         validateTrigger: ['onBlur', 'onSubmit'],
                         validator: _handleTreeUniquenessValidation,
-                        message: t('errors.id_already_exists')
-                    }
+                        message: t('errors.id_already_exists'),
+                    },
                 ]}
                 hasFeedback
             >

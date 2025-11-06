@@ -10,7 +10,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('Records permissions', () => {
@@ -45,11 +45,11 @@ describe('Records permissions', () => {
         nodePermTreeElem = await gqlAddElemToTree(permTreeName, {id: permTreeElemId, library: permTreeLibName});
         nodePermTreeElemForMultival1 = await gqlAddElemToTree(permTreeName, {
             id: permTreeElemIdForMultiVal1,
-            library: permTreeLibName
+            library: permTreeLibName,
         });
         nodePermTreeElemForMultival2 = await gqlAddElemToTree(permTreeName, {
             id: permTreeElemIdForMultiVal2,
-            library: permTreeLibName
+            library: permTreeLibName,
         });
 
         adminsTreeElemId = await gqlGetAdminsGroupNodeId();
@@ -60,7 +60,7 @@ describe('Records permissions', () => {
         usersGroupElemId = await gqlAddElemToTree(
             'users_groups',
             {id: usersGroupRecordId, library: 'users_groups'},
-            adminsTreeElemId
+            adminsTreeElemId,
         );
 
         // Create library using permission tree
@@ -69,7 +69,7 @@ describe('Records permissions', () => {
             label: 'Test Attr tree record permissions',
             type: AttributeTypes.TREE,
             linkedTree: permTreeName,
-            multipleValues: true
+            multipleValues: true,
         });
 
         await makeGraphQlCall(`mutation {
@@ -209,7 +209,7 @@ describe('Records permissions', () => {
         await expect(
             makeGraphQlCall(`mutation {
             deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {id}
-        }`)
+        }`),
         ).rejects.toThrow(/Action forbidden/);
     });
 

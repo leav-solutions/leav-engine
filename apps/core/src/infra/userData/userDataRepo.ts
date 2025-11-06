@@ -39,7 +39,7 @@ export default function ({'core.infra.db.dbService': dbService}: IUserDataRepoDe
                     IN ${collection}
                     OPTIONS { mergeObjects: true, keepNull: false }
                     RETURN NEW`,
-                ctx
+                ctx,
             });
 
             return {global, data: {[key]: res[0].data[key]}};
@@ -58,10 +58,10 @@ export default function ({'core.infra.db.dbService': dbService}: IUserDataRepoDe
 
                     RETURN KEEP(MERGED, ${keys})
                 `,
-                ctx
+                ctx,
             });
 
             return {global, data: userData[0] || {}};
-        }
+        },
     };
 }

@@ -14,9 +14,9 @@ describe('EmbeddedFieldsWrapper', () => {
             id: 'test',
             label: {
                 fr: 'testFr',
-                en: 'testEn'
+                en: 'testEn',
             },
-            format: 'text'
+            format: 'text',
         };
 
         const mockValues = [];
@@ -30,7 +30,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 formValues={mockValues}
                 setFormValues={mockSetValues}
                 save={handleSave}
-            />
+            />,
         );
 
         expect(comp.find('div')).toBeTruthy();
@@ -41,9 +41,9 @@ describe('EmbeddedFieldsWrapper', () => {
             id: 'test',
             label: {
                 fr: 'testFr',
-                en: 'testEn'
+                en: 'testEn',
             },
-            format: 'testFormat'
+            format: 'testFormat',
         };
 
         const mockValues = [];
@@ -57,7 +57,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 formValues={mockValues}
                 setFormValues={mockSetValues}
                 save={handleSave}
-            />
+            />,
         );
 
         expect(comp.find(EmbeddedFieldsForm)).toHaveLength(1);
@@ -68,9 +68,9 @@ describe('EmbeddedFieldsWrapper', () => {
             id: 'test',
             label: {
                 fr: 'testFr',
-                en: 'testEn'
+                en: 'testEn',
             },
-            format: 'text'
+            format: 'text',
         };
 
         const mockValues = [];
@@ -84,7 +84,7 @@ describe('EmbeddedFieldsWrapper', () => {
                 formValues={mockValues}
                 setFormValues={mockSetValues}
                 save={handleSave}
-            />
+            />,
         );
 
         expect(comp.find(EmbeddedFieldsDisplay)).toHaveLength(1);

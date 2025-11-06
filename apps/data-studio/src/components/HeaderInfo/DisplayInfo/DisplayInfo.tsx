@@ -65,7 +65,7 @@ function DisplayInfo({
     activeTimeouts,
     cancelInfo,
     triggerInfos,
-    setTriggerInfos
+    setTriggerInfos,
 }: IDisplayInfoProps): JSX.Element {
     const {stack} = useAppSelector(state => ({stack: state.info.stack}));
 

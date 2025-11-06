@@ -9,7 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 // Mock the useSharedTranslation hook
 jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn()
+    useSharedTranslation: jest.fn(),
 }));
 
 describe('FilterDropDown', () => {
@@ -19,11 +19,11 @@ describe('FilterDropDown', () => {
             id: 'test_filter',
             label: 'test filter',
             format: AttributeFormat.text,
-            type: AttributeType.simple
+            type: AttributeType.simple,
         },
         field: 'test',
         value: null,
-        condition: RecordFilterCondition.CONTAINS
+        condition: RecordFilterCondition.CONTAINS,
     };
 
     // Mock translation function
@@ -36,7 +36,7 @@ describe('FilterDropDown', () => {
         // Setup translation mock
         (useSharedTranslation as jest.Mock).mockReturnValue({
             t: mockT,
-            i18n: {language: 'en'}
+            i18n: {language: 'en'},
         });
     });
 

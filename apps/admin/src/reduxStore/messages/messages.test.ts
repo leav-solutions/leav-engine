@@ -9,8 +9,8 @@ describe('messages store', () => {
             initialState,
             addMessage({
                 type: MessagesTypes.SUCCESS,
-                content: 'foobar'
-            })
+                content: 'foobar',
+            }),
         );
 
         expect(newState.messages).toHaveLength(1);
@@ -23,11 +23,11 @@ describe('messages store', () => {
                     {
                         id: '123456',
                         type: MessagesTypes.SUCCESS,
-                        content: 'foobar'
-                    }
-                ]
+                        content: 'foobar',
+                    },
+                ],
             },
-            removeMessage('123456')
+            removeMessage('123456'),
         );
 
         expect(newState.messages).toHaveLength(0);

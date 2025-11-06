@@ -17,15 +17,15 @@ describe('ProtectedRoute', () => {
             label: 'Test User',
             library: {
                 id: 'my_lib',
-                label: {fr: 'My lib'}
+                label: {fr: 'My lib'},
             },
             color: null,
-            preview: null
+            preview: null,
         },
         permissions: {
             [PermissionsActions.admin_access_attributes]: true,
-            [PermissionsActions.admin_edit_attribute]: true
-        }
+            [PermissionsActions.admin_edit_attribute]: true,
+        },
     };
 
     test('Render normally if no permissions specified', async () => {
@@ -34,7 +34,7 @@ describe('ProtectedRoute', () => {
                 <Router>
                     <ProtectedRoute path="/" component={TestComp} />
                 </Router>
-            </UserContext.Provider>
+            </UserContext.Provider>,
         );
 
         expect(comp.find('TestComp')).toHaveLength(1);
@@ -50,7 +50,7 @@ describe('ProtectedRoute', () => {
                         component={TestComp}
                     />{' '}
                 </Router>
-            </UserContext.Provider>
+            </UserContext.Provider>,
         );
         expect(comp.find('TestComp')).toHaveLength(1);
     });
@@ -67,7 +67,7 @@ describe('ProtectedRoute', () => {
                         component={TestComp}
                     />{' '}
                 </Router>
-            </UserContext.Provider>
+            </UserContext.Provider>,
         );
         expect(comp.find('TestComp')).toHaveLength(0);
     });
@@ -79,21 +79,21 @@ describe('ProtectedRoute', () => {
                     ...defaultContext,
                     permissions: {
                         [PermissionsActions.admin_access_attributes]: false,
-                        [PermissionsActions.admin_edit_attribute]: true
-                    }
+                        [PermissionsActions.admin_edit_attribute]: true,
+                    },
                 }}
             >
                 <Router>
                     <ProtectedRoute
                         permissions={[
                             PermissionsActions.admin_access_attributes,
-                            PermissionsActions.admin_edit_attribute
+                            PermissionsActions.admin_edit_attribute,
                         ]}
                         path="/"
                         component={TestComp}
                     />{' '}
                 </Router>
-            </UserContext.Provider>
+            </UserContext.Provider>,
         );
         expect(comp.find('TestComp')).toHaveLength(0);
     });

@@ -11,5 +11,5 @@ export interface IEditRecordContextType {
 export const EditRecordModalContext = createContext<IEditRecordContextType>({
     editRecord: () => {
         throw new Error('Not implemented');
-    }
+    },
 });

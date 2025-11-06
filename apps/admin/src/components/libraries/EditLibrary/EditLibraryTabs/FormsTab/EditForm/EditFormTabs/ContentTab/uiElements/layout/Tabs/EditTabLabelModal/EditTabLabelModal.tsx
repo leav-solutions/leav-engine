@@ -33,19 +33,19 @@ function EditTabLabelModal({open, tabsElement, tab, onClose}: IEditTabLabelModal
             ...newTabs[tabIndex],
             label: {
                 ...newTabs[tabIndex].label,
-                [lang]: data.value
-            }
+                [lang]: data.value,
+            },
         };
 
         const newSettings = {
             ...tabsElement?.settings,
-            tabs: newTabs
+            tabs: newTabs,
         };
 
         dispatch({
             type: FormBuilderActionTypes.SAVE_SETTINGS,
             element: tabsElement,
-            settings: newSettings
+            settings: newSettings,
         });
     };
 

@@ -23,7 +23,7 @@ export interface ICalculationVariable {
     processVariableString: (
         context: IActionsListContext,
         variables: string,
-        initialValues: ActionsListValueType[]
+        initialValues: ActionsListValueType[],
     ) => Promise<IVariableValue[]>;
 }
 
@@ -31,14 +31,14 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
     const processVariableString: ICalculationVariable['processVariableString'] = async (
         context,
         variableString,
-        initialValues
+        initialValues,
     ) => {
         let passingValue = [
             {
                 recordId: context.recordId,
                 library: context.library,
-                payload: initialValues
-            }
+                payload: initialValues,
+            },
         ] as IVariableValue[];
 
         const functionsStrings = variableString.split('.').filter(fStr => fStr.length);
@@ -55,8 +55,8 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
                 throw new ValidationError({
                     target: {
                         msg: Errors.INVALID_VARIABLE_FUNCTION,
-                        vars: {functionName: funcName}
-                    }
+                        vars: {functionName: funcName},
+                    },
                 });
             }
         }
@@ -65,6 +65,6 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
     };
 
     return {
-        processVariableString
+        processVariableString,
     };
 }

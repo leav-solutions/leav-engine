@@ -11,13 +11,13 @@ import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {
     type GET_LIB_BY_ID_libraries_list,
-    type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
+    type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute,
 } from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {
     PermissionsActions,
     PermissionsRelation,
     PermissionTypes,
-    type Treepermissions_confInput
+    type Treepermissions_confInput,
 } from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
@@ -45,8 +45,8 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
             PermissionsActions.access_record,
             PermissionsActions.create_record,
             PermissionsActions.edit_record,
-            PermissionsActions.delete_record
-        ]
+            PermissionsActions.delete_record,
+        ],
     };
 
     const permsConf = library.permissions_conf || defaultPermsConf;
@@ -70,7 +70,7 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
                     <p>Missing tree ID</p>
                 )}
             </Tab.Pane>
-        )
+        ),
     }));
 
     panes.unshift({
@@ -86,7 +86,7 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
                     readOnly={readonly}
                 />
             </Tab.Pane>
-        )
+        ),
     });
 
     const _handleChangeSettings = (settings: Treepermissions_confInput) => {

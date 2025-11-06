@@ -7,7 +7,7 @@ import {type INavigationState} from './stateType';
 
 export const navigationInitialState: INavigationState = {
     activeTree: '',
-    path: []
+    path: [],
 };
 
 const navigationSlice = createSlice({
@@ -22,8 +22,8 @@ const navigationSlice = createSlice({
         },
         setNavigationPath: (state, action: PayloadAction<TREE_NODE_CHILDREN_treeNodeChildren_list[]>) => {
             state.path = action.payload;
-        }
-    }
+        },
+    },
 });
 
 export const {setNavigationActiveTree, setNavigationPath} = navigationSlice.actions;

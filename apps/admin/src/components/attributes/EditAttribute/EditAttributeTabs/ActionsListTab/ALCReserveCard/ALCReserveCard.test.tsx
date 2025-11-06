@@ -23,7 +23,7 @@ jest.mock('react-dnd', () => ({
         const drop = () => true;
         return [{isOver}, drop];
     },
-    DndProvider: ({backend, children}) => children
+    DndProvider: ({backend, children}) => children,
 }));
 
 describe('ALCReserveCard', () => {
@@ -40,13 +40,13 @@ describe('ALCReserveCard', () => {
                         input_types: [],
                         output_types: [],
                         params: [],
-                        isSystem: false
+                        isSystem: false,
                     }}
                     origin="ALCList"
                     addActionToList={placeholder}
                     colorTypeDictionnary={{int: []}}
                 />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

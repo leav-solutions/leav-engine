@@ -8,7 +8,7 @@ import {
     getRecordPropertiesQuery,
     type IGetRecordProperties,
     type IGetRecordPropertiesVariables,
-    type RecordProperty
+    type RecordProperty,
 } from '_ui/_queries/records/getRecordPropertiesQuery';
 import {arrayValueVersionToObject} from '_ui/_utils';
 import {hasTypename} from '_ui/_utils/typeguards';
@@ -20,17 +20,17 @@ export interface IUseRefetchFieldValuesHook {
 const useRefreshFieldValues = (
     libraryId: string,
     attributeId: string,
-    recordId: string
+    recordId: string,
 ): IUseRefetchFieldValuesHook => {
     const [getRecordProperty] = useLazyQuery<IGetRecordProperties, IGetRecordPropertiesVariables>(
         getRecordPropertiesQuery([
             {
-                attributeId
-            }
+                attributeId,
+            },
         ]),
         {
-            fetchPolicy: 'network-only'
-        }
+            fetchPolicy: 'network-only',
+        },
     );
 
     return {
@@ -41,8 +41,8 @@ const useRefreshFieldValues = (
                     recordId,
                     version: version
                         ? objectToNameValueArray(version).map(v => ({treeId: v.name, treeNodeId: v.value.id}))
-                        : null
-                }
+                        : null,
+                },
             });
 
             if (!res.data.records.list.length) {
@@ -58,11 +58,11 @@ const useRefreshFieldValues = (
 
                 return {
                     ...data,
-                    version: arrayValueVersionToObject(value.version ?? [])
+                    version: arrayValueVersionToObject(value.version ?? []),
                 };
             });
             return values;
-        }
+        },
     };
 };
 

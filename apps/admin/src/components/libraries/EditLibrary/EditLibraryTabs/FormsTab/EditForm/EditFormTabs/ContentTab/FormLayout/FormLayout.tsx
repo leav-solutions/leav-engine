@@ -18,7 +18,7 @@ function FormLayout(): JSX.Element {
         order: 0,
         containerId: defaultContainerId,
         type: FormElementTypes.layout,
-        uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
+        uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
     };
 
     // Render layout

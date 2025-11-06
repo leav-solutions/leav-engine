@@ -63,7 +63,7 @@ function EntityPreviewList({label, color, image, size, style, simplistic = false
                             width: '65%',
                             height: '65%',
                             background: 'none',
-                            margin: 'auto'
+                            margin: 'auto',
                         }}
                     />
                 )}
@@ -79,7 +79,7 @@ function EntityPreviewList({label, color, image, size, style, simplistic = false
                         width: '100%',
                         height: '100%',
                         objectFit: 'cover',
-                        ...style
+                        ...style,
                     }}
                 />
             </ImagePreview>

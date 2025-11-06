@@ -71,14 +71,14 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             acc[cur] = '';
             return acc;
         }, {}),
-        endpoint: ''
+        endpoint: '',
     };
 
     const isNewApp = !application;
 
     const initialValues: ApplicationInfosFormValues = {
         ...defaultApplicationData,
-        ...application
+        ...application,
     };
 
     const _handleSubmit = (values: ApplicationInfosFormValues) => {
@@ -115,22 +115,22 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             label: yup.string().nullable(),
                             color: yup.string().nullable(),
                             library: yup.object().shape({id: yup.string(), label: yup.object()}),
-                            preview: yup.object().nullable()
+                            preview: yup.object().nullable(),
                         })
-                        .nullable()
+                        .nullable(),
                 })
                 .nullable(),
             module: yup.string(),
             label: yup.object().shape({
-                [defaultLang]: yup.string().required()
+                [defaultLang]: yup.string().required(),
             }),
             description: yup
                 .object()
                 .shape({
-                    [defaultLang]: yup.string()
+                    [defaultLang]: yup.string(),
                 })
                 .nullable(),
-            endpoint: yup.string().required()
+            endpoint: yup.string().required(),
         });
 
     const _renderForm = ({
@@ -140,7 +140,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         errors: inputErrors,
         values,
         touched,
-        submitForm
+        submitForm,
     }: FormikProps<ApplicationInfosFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
@@ -193,7 +193,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         const _handleIconChange = async (selectedIcon: RecordIdentity_whoAmI) => {
             _handleChangeWithSubmit(null, {
                 name: 'icon',
-                value: {whoAmI: selectedIcon}
+                value: {whoAmI: selectedIcon},
             });
         };
 
@@ -280,7 +280,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             onChange={_handleChangeWithSubmit}
                             options={Object.keys(ApplicationType).map(appType => ({
                                 text: t('applications.types.' + appType),
-                                value: appType
+                                value: appType,
                             }))}
                             value={values.type}
                         />

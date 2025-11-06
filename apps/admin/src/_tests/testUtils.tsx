@@ -42,15 +42,15 @@ const Providers = ({
     routerProps,
     storeState,
     globalSettings,
-    userPermissions
+    userPermissions,
 }: PropsWithChildren<IProvidersProps>) => {
     const appContextData: ICurrentApplicationContext = {
         currentApp: mockApplicationDetails,
         globalSettings: {
             name: 'My App',
             icon: null,
-            ...globalSettings
-        }
+            ...globalSettings,
+        },
     };
 
     return (

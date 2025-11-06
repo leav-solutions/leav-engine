@@ -23,7 +23,7 @@ import {
     type IAttributeFilterOptions,
     type IAttributeVersionsConf,
     type IGetCoreAttributesParams,
-    type IValuesListConf
+    type IValuesListConf,
 } from '../../../_types/attribute';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
@@ -56,7 +56,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
         'core.domain.versionProfile': versionProfileDomain,
         'core.app.graphql': graphqlApp,
         'core.app.core': coreApp,
-        'core.utils': utils
+        'core.utils': utils,
     } = deps;
     const commonResolvers = {
         /**
@@ -72,8 +72,8 @@ export default function (deps: IDeps): ICoreAttributeApp {
             !!attributeData.metadata_fields
                 ? Promise.all(
                       attributeData.metadata_fields.map(attrId =>
-                          attributeDomain.getAttributeProperties({id: attrId, ctx})
-                      )
+                          attributeDomain.getAttributeProperties({id: attrId, ctx}),
+                      ),
                   )
                 : null,
         libraries: (attributeData, _, ctx) =>
@@ -82,7 +82,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
             attributeData: IAttribute,
             {record}: {record: {id: string; library: string}},
             ctx: IQueryInfos,
-            infos: GraphQLResolveInfo
+            infos: GraphQLResolveInfo,
         ): Promise<IKeyValue<boolean>> => {
             const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
 
@@ -99,23 +99,23 @@ export default function (deps: IDeps): ICoreAttributeApp {
                               action: action as AttributePermissionsActions,
                               target: {
                                   recordId: record.id,
-                                  attributeId: attributeData.id
+                                  attributeId: attributeData.id,
                               },
                               userId: ctx.userId,
-                              ctx
+                              ctx,
                           }
                         : {
                               type: PermissionTypes.ATTRIBUTE,
                               applyTo: attributeData.id,
                               action: action as AttributePermissionsActions,
                               userId: ctx.userId,
-                              ctx
-                          }
+                              ctx,
+                          },
                 );
 
                 return {...allPerms, [action]: isAllowed};
             }, Promise.resolve({}));
-        }
+        },
     };
 
     return {
@@ -359,24 +359,24 @@ export default function (deps: IDeps): ICoreAttributeApp {
                             {
                                 filters,
                                 pagination,
-                                sort
+                                sort,
                             }: Override<
                                 IGetCoreAttributesParams,
                                 {filters?: IAttributeFilterOptions & {ids?: string[]}}
                             >,
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
                         ): Promise<IList<IAttribute>> {
                             const applicableFilters = {
                                 ...filters,
-                                id: filters?.ids ?? filters?.id
+                                id: filters?.ids ?? filters?.id,
                             };
                             delete applicableFilters.ids;
 
                             return attributeDomain.getAttributes({
                                 params: {filters: applicableFilters, withCount: true, pagination, sort},
-                                ctx
+                                ctx,
                             });
-                        }
+                        },
                     },
                     Mutation: {
                         async saveAttribute(parent, {attribute}, ctx): Promise<IAttribute> {
@@ -384,7 +384,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         },
                         async deleteAttribute(parent, {id}, ctx): Promise<IAttribute> {
                             return attributeDomain.deleteAttribute({id, ctx});
-                        }
+                        },
                     },
                     Attribute: {
                         __resolveType: (attr: IAttribute) => {
@@ -398,14 +398,14 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                 case AttributeTypes.TREE:
                                     return 'TreeAttribute';
                             }
-                        }
+                        },
                     },
                     StandardAttribute: {
                         ...commonResolvers,
                         values_list: (attributeData: IAttribute) =>
                             attributeData.values_list
                                 ? {...attributeData.values_list, attributeFormat: attributeData.format}
-                                : null
+                                : null,
                     },
                     LinkAttribute: {
                         ...commonResolvers,
@@ -433,22 +433,22 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                                     {
                                                         field: 'id',
                                                         condition: AttributeCondition.EQUAL,
-                                                        value: recId
-                                                    }
-                                                ]
+                                                        value: recId,
+                                                    },
+                                                ],
                                             },
-                                            ctx
+                                            ctx,
                                         });
 
                                         return record.list.length ? record.list[0] : null;
-                                    }
-                                )
+                                    },
+                                ),
                             );
                             return {
                                 ...attributeData.values_list,
-                                values: linkedRecords.filter(r => r !== null) // Remove invalid values (unknown records)
+                                values: linkedRecords.filter(r => r !== null), // Remove invalid values (unknown records)
                             };
-                        }
+                        },
                     },
                     TreeAttribute: {
                         ...commonResolvers,
@@ -475,22 +475,22 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                             const isInTree = await treeDomain.isNodePresent({
                                                 treeId: attributeData.linked_tree,
                                                 nodeId,
-                                                ctx
+                                                ctx,
                                             });
 
                                             // Add treeId to the tree node for further resolvers
                                             return isInTree ? {id: nodeId, treeId: attributeData.linked_tree} : null;
-                                        })
+                                        }),
                                     )
-                                ).filter(r => r !== null)
+                                ).filter(r => r !== null),
                             };
-                        }
+                        },
                     },
                     StandardValuesListConf: {
                         __resolveType: (obj: IValuesListConf & {attributeFormat: AttributeFormats}) =>
                             obj.attributeFormat === AttributeFormats.DATE_RANGE
                                 ? 'StandardDateRangeValuesListConf'
-                                : 'StandardStringValuesListConf'
+                                : 'StandardStringValuesListConf',
                     },
                     ValuesVersionsConf: {
                         profile: async (conf: IAttributeVersionsConf, args, ctx: IQueryInfos) => {
@@ -500,16 +500,16 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                             return versionProfileDomain.getVersionProfileProperties({
                                 id: conf.profile,
-                                ctx
+                                ctx,
                             });
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        }
+        },
     };
 }

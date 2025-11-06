@@ -8,7 +8,7 @@ import {InitTheme} from '../../../../config/theme/InitTheme';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/ApplicationSettingsContext';
 
 jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 describe('WorkspacesNavigationMenu component', () => {
@@ -26,22 +26,22 @@ describe('WorkspacesNavigationMenu component', () => {
                     id: '1',
                     title: {
                         fr: 'un',
-                        en: 'one'
+                        en: 'one',
                     },
                     type: 'library',
-                    libraryId: 'test1'
+                    libraryId: 'test1',
                 },
                 {
                     id: '2',
                     title: {
                         fr: 'deux',
-                        en: 'two'
+                        en: 'two',
                     },
                     type: 'library',
-                    libraryId: 'test2'
-                }
+                    libraryId: 'test2',
+                },
             ],
-            libraries: {}
+            libraries: {},
         };
         spyUseApplicationSettingsContext.mockReturnValue([application] as any);
 
@@ -59,13 +59,13 @@ describe('WorkspacesNavigationMenu component', () => {
                     id: '1',
                     title: {
                         fr: 'un',
-                        en: 'one'
+                        en: 'one',
                     },
                     type: 'library',
-                    libraryId: 'test1'
-                }
+                    libraryId: 'test1',
+                },
             ],
-            libraries: {}
+            libraries: {},
         };
         spyUseApplicationSettingsContext.mockReturnValue([application] as any);
 
@@ -83,24 +83,24 @@ describe('WorkspacesNavigationMenu component', () => {
                     id: '1',
                     title: {
                         fr: 'un',
-                        en: 'one'
+                        en: 'one',
                     },
                     icon: 'fa-house',
                     type: 'library',
-                    libraryId: 'test1'
+                    libraryId: 'test1',
                 },
                 {
                     id: '2',
                     title: {
                         fr: 'deux',
-                        en: 'two'
+                        en: 'two',
                     },
                     icon: 'fa-user',
                     type: 'library',
-                    libraryId: 'test2'
-                }
+                    libraryId: 'test2',
+                },
             ],
-            libraries: {}
+            libraries: {},
         };
         spyUseApplicationSettingsContext.mockReturnValue([application] as any);
 

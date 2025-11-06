@@ -25,12 +25,12 @@ describe('DependencySettings', () => {
     test('Render attributes selection', async () => {
         const mockState: IFormBuilderState = {
             ...mockInitialState,
-            form: {...mockInitialState.form, dependencyAttributes: []}
+            form: {...mockInitialState.form, dependencyAttributes: []},
         };
 
         jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockImplementation(() => ({
             state: mockState,
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         }));
 
         const comp = shallow(<DependencySettings />);
@@ -43,7 +43,7 @@ describe('DependencySettings', () => {
 
         jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockImplementation(() => ({
             state: mockInitialState,
-            dispatch: mockDispatch
+            dispatch: mockDispatch,
         }));
 
         const comp = mount(<DependencySettings />);

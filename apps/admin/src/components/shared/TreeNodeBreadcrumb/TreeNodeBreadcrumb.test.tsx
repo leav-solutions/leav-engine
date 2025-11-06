@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function PathPart({record}) {
             return <div data-test-id="tree-breadcrumb-part" />;
-        }
+        },
 );
 
 describe('TreeNodeBreadcrumb', () => {
@@ -20,7 +20,7 @@ describe('TreeNodeBreadcrumb', () => {
         label: 'My record',
         preview: null,
         color: null,
-        library: {id: 'test_lib', label: {fr: 'Test Lib'}}
+        library: {id: 'test_lib', label: {fr: 'Test Lib'}},
     };
 
     const mockElementWithAncestors: ITreeLinkElement = {
@@ -28,8 +28,8 @@ describe('TreeNodeBreadcrumb', () => {
         record: {
             whoAmI: {
                 ...baseWhoAmI,
-                id: '123456'
-            }
+                id: '123456',
+            },
         },
         ancestors: [
             {
@@ -37,29 +37,29 @@ describe('TreeNodeBreadcrumb', () => {
                 record: {
                     whoAmI: {
                         ...baseWhoAmI,
-                        id: '654321'
-                    }
-                }
+                        id: '654321',
+                    },
+                },
             },
             {
                 id: '987654',
                 record: {
                     whoAmI: {
                         ...baseWhoAmI,
-                        id: '987654'
-                    }
-                }
+                        id: '987654',
+                    },
+                },
             },
             {
                 id: '123456',
                 record: {
                     whoAmI: {
                         ...baseWhoAmI,
-                        id: '123456'
-                    }
-                }
-            }
-        ]
+                        id: '123456',
+                    },
+                },
+            },
+        ],
     };
 
     const mockElementNoAncestors: ITreeLinkElement = {
@@ -67,10 +67,10 @@ describe('TreeNodeBreadcrumb', () => {
         record: {
             whoAmI: {
                 ...baseWhoAmI,
-                id: '123456'
-            }
+                id: '123456',
+            },
         },
-        ancestors: []
+        ancestors: [],
     };
 
     test('Render element with its ancestors', async () => {

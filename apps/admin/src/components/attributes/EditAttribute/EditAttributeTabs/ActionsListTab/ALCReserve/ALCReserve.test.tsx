@@ -21,7 +21,7 @@ describe('ALCReserve', () => {
                 setCurrentIndex={numPlaceHolder}
                 colorTypeDictionnary={{int: []}}
                 addActionToList={placeHolder}
-            />
+            />,
         );
 
         expect(comp).toMatchSnapshot();

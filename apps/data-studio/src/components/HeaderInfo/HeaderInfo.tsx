@@ -17,7 +17,7 @@ function HeaderInfo(): JSX.Element {
     const [triggerInfos, setTriggerInfos] = useState<IInfo[]>([]);
     const [activeTimeouts, setActiveTimeouts] = useState<{info: any; base: any}>({
         info: null,
-        base: null
+        base: null,
     });
 
     useEffect(() => {
@@ -33,8 +33,8 @@ function HeaderInfo(): JSX.Element {
             },
             {
                 passiveInfos: [] as IInfo[],
-                triggerInfos: [] as IInfo[]
-            }
+                triggerInfos: [] as IInfo[],
+            },
         );
 
         if (triggerInf.length) {
@@ -62,7 +62,7 @@ function HeaderInfo(): JSX.Element {
 
                         return {
                             base: null,
-                            info: timeouts.info
+                            info: timeouts.info,
                         };
                     });
                 }
@@ -79,21 +79,21 @@ function HeaderInfo(): JSX.Element {
                         // set baseTimeout in state
                         setActiveTimeouts(timeouts => ({
                             info: timeouts.info,
-                            base: baseTimeout
+                            base: baseTimeout,
                         }));
                     }
 
                     // reset info timeout in state
                     setActiveTimeouts(at => ({
                         info: null,
-                        base: at.base
+                        base: at.base,
                     }));
                 }, infoTime);
 
                 // set the timeout for reset the info in the state
                 setActiveTimeouts(timeouts => ({
                     info: infoTimeout,
-                    base: timeouts.base
+                    base: timeouts.base,
                 }));
 
                 // update info stack with rest infos
@@ -114,7 +114,7 @@ function HeaderInfo(): JSX.Element {
         clearTimeout(activeTimeouts.info);
         setActiveTimeouts(timeouts => ({
             info: null,
-            base: timeouts.base
+            base: timeouts.base,
         }));
     };
 

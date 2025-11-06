@@ -28,27 +28,27 @@ describe('attributeAdvancedLinkRepo', () => {
     const libraryId = 'test_lib_attribute_advanced_link_repo';
     const remoteLibraryId = 'test_lib_attribute_remote_advanced_link_repo';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
         libraryRepo = getLibraryRepo();
         recordRepo = getRecordRepo();
         attributeAdvancedLinkRepo = getCoreDep<IAttributeAdvancedLinkRepo>(
-            'core.infra.attributeTypes.attributeAdvancedLink'
+            'core.infra.attributeTypes.attributeAdvancedLink',
         );
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
         await libraryRepo.createLibrary({
             libData: {
-                id: remoteLibraryId
+                id: remoteLibraryId,
             },
-            ctx
+            ctx,
         });
     });
 
@@ -56,21 +56,21 @@ describe('attributeAdvancedLinkRepo', () => {
         recordRepo.createRecord({
             libraryId: remoteLibraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createRecord = (recordData: Record<string, any>): Promise<IRecord> =>
         recordRepo.createRecord({
             libraryId,
             recordData,
-            ctx
+            ctx,
         });
 
     const createValue = async (
         attribute: IAttributeWithRevLink,
         recordId: string,
         payload: string,
-        version: IValueVersion | null = null
+        version: IValueVersion | null = null,
     ): Promise<ILinkValue> =>
         attributeAdvancedLinkRepo.createValue({
             library: libraryId,
@@ -80,9 +80,9 @@ describe('attributeAdvancedLinkRepo', () => {
                 payload,
                 created_at: Date.now(),
                 modified_at: Date.now(),
-                version
+                version,
             },
-            ctx
+            ctx,
         });
 
     describe('6 remote records exists,', () => {
@@ -98,9 +98,9 @@ describe('attributeAdvancedLinkRepo', () => {
                 await Promise.all(
                     Array.from({length: 6}).map((_, index) =>
                         createRemoteRecord({
-                            [`attr_data_${index + 1}`]: index + 1
-                        })
-                    )
+                            [`attr_data_${index + 1}`]: index + 1,
+                        }),
+                    ),
                 );
         });
 
@@ -109,7 +109,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 id: 'link_attr_mono',
                 type: AttributeTypes.ADVANCED_LINK,
                 linked_library: remoteLibraryId,
-                multiple_values: false
+                multiple_values: false,
             };
 
             let record1: IRecord;
@@ -129,7 +129,7 @@ describe('attributeAdvancedLinkRepo', () => {
                     attribute: advancedLinkMonoAttribute.id,
                     modified_by: ctx.userId,
                     created_by: ctx.userId,
-                    version: null
+                    version: null,
                 });
                 expect(record2Value).toMatchObject({
                     id_value: expect.any(String),
@@ -137,7 +137,7 @@ describe('attributeAdvancedLinkRepo', () => {
                     attribute: advancedLinkMonoAttribute.id,
                     modified_by: ctx.userId,
                     created_by: ctx.userId,
-                    version: null
+                    version: null,
                 });
             });
 
@@ -147,7 +147,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordIds: [record1.id, record2.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value]]);
@@ -158,7 +158,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordIds: [record1.id, record2.id, 'no-exists'],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -168,14 +168,14 @@ describe('attributeAdvancedLinkRepo', () => {
                     const record3WithoutAttr = await recordRepo.createRecord({
                         libraryId,
                         recordData: {},
-                        ctx
+                        ctx,
                     });
 
                     const values = await attributeAdvancedLinkRepo.getValuesBatch({
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([[record1Value], [record2Value], []]);
@@ -188,7 +188,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([record1Value]);
@@ -199,7 +199,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -212,7 +212,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -221,7 +221,7 @@ describe('attributeAdvancedLinkRepo', () => {
 
             describe('add version values', () => {
                 const version1: IValueVersion = {
-                    version1: 'node1'
+                    version1: 'node1',
                 };
                 let record1ValueV1: ILinkValue;
                 let record2ValueV1: ILinkValue;
@@ -230,20 +230,20 @@ describe('attributeAdvancedLinkRepo', () => {
                         advancedLinkMonoAttribute,
                         record1.id,
                         remoteRecord3.id,
-                        version1
+                        version1,
                     );
                     record2ValueV1 = await createValue(
                         advancedLinkMonoAttribute,
                         record2.id,
                         remoteRecord4.id,
-                        version1
+                        version1,
                     );
 
                     expect(record1ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                     expect(record2ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                 });
 
@@ -254,7 +254,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMonoAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([[record1Value], [record2Value]]);
@@ -266,7 +266,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMonoAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([[record1ValueV1], [record2ValueV1]]);
@@ -278,11 +278,11 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMonoAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {forceGetAllValues: true},
-                            ctx
+                            ctx,
                         });
                         expect(values).toEqual([
                             expect.arrayContaining([record1Value, record1ValueV1]),
-                            expect.arrayContaining([record2Value, record2ValueV1])
+                            expect.arrayContaining([record2Value, record2ValueV1]),
                         ]);
                         expect(values[0]).toHaveLength(2);
                         expect(values[1]).toHaveLength(2);
@@ -296,7 +296,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMonoAttribute,
                             recordId: record1.id,
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([record1Value]);
@@ -308,7 +308,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMonoAttribute,
                             recordId: record1.id,
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([record1ValueV1]);
@@ -320,7 +320,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMonoAttribute,
                             recordId: record1.id,
                             forceGetAllValues: true,
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
@@ -335,7 +335,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 id: 'link_attr_multi',
                 type: AttributeTypes.ADVANCED_LINK,
                 linked_library: remoteLibraryId,
-                multiple_values: true
+                multiple_values: true,
             };
 
             let record1: IRecord;
@@ -360,12 +360,12 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordIds: [record1.id, record2.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
-                        expect.arrayContaining([record2Value1, record2Value2])
+                        expect.arrayContaining([record2Value1, record2Value2]),
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -376,13 +376,13 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordIds: [record1.id, record2.id, 'no-exists'],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
                         expect.arrayContaining([record2Value1, record2Value2]),
-                        []
+                        [],
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -392,20 +392,20 @@ describe('attributeAdvancedLinkRepo', () => {
                     const record3WithoutAttr = await recordRepo.createRecord({
                         libraryId,
                         recordData: {},
-                        ctx
+                        ctx,
                     });
 
                     const values = await attributeAdvancedLinkRepo.getValuesBatch({
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
                         expect.arrayContaining([record2Value1, record2Value2]),
-                        []
+                        [],
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -418,7 +418,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -430,7 +430,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -443,7 +443,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -452,7 +452,7 @@ describe('attributeAdvancedLinkRepo', () => {
 
             describe('add version values', () => {
                 const version1: IValueVersion = {
-                    version1: 'node1'
+                    version1: 'node1',
                 };
                 let record1ValueV1: ILinkValue;
                 let record2ValueV1: ILinkValue;
@@ -461,20 +461,20 @@ describe('attributeAdvancedLinkRepo', () => {
                         advancedLinkMultiAttribute,
                         record1.id,
                         remoteRecord5.id,
-                        version1
+                        version1,
                     );
                     record2ValueV1 = await createValue(
                         advancedLinkMultiAttribute,
                         record2.id,
                         remoteRecord6.id,
-                        version1
+                        version1,
                     );
 
                     expect(record1ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                     expect(record2ValueV1).toMatchObject({
-                        version: version1
+                        version: version1,
                     });
                 });
 
@@ -485,12 +485,12 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMultiAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([
                             expect.arrayContaining([record1Value1, record1Value2]),
-                            expect.arrayContaining([record2Value1, record2Value2])
+                            expect.arrayContaining([record2Value1, record2Value2]),
                         ]);
 
                         expect(values[0]).toHaveLength(2);
@@ -503,7 +503,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMultiAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([[record1ValueV1], [record2ValueV1]]);
@@ -515,12 +515,12 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMultiAttribute,
                             recordIds: [record1.id, record2.id],
                             options: {forceGetAllValues: true},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([
                             expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]),
-                            expect.arrayContaining([record2Value1, record2Value2, record2ValueV1])
+                            expect.arrayContaining([record2Value1, record2Value2, record2ValueV1]),
                         ]);
                         expect(values[0]).toHaveLength(3);
                         expect(values[1]).toHaveLength(3);
@@ -534,7 +534,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMultiAttribute,
                             recordId: record1.id,
                             options: {version: null},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -547,7 +547,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMultiAttribute,
                             recordId: record1.id,
                             options: {version: version1},
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual([record1ValueV1]);
@@ -559,7 +559,7 @@ describe('attributeAdvancedLinkRepo', () => {
                             attribute: advancedLinkMultiAttribute,
                             recordId: record1.id,
                             forceGetAllValues: true,
-                            ctx
+                            ctx,
                         });
 
                         expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));
@@ -573,14 +573,14 @@ describe('attributeAdvancedLinkRepo', () => {
             const simpleLinkAttribute: IAttributeWithRevLink = {
                 id: 'simple_link_attr',
                 type: AttributeTypes.SIMPLE_LINK,
-                linked_library: libraryId
+                linked_library: libraryId,
             };
             const advancedLinkReverseAttribute: IAttributeWithRevLink = {
                 id: 'link_attr_multi_reverse',
                 type: AttributeTypes.ADVANCED_LINK,
                 linked_library: remoteLibraryId,
                 multiple_values: true,
-                reverse_link: simpleLinkAttribute
+                reverse_link: simpleLinkAttribute,
             };
             let record1: IRecord;
             let record2: IRecord;
@@ -600,24 +600,24 @@ describe('attributeAdvancedLinkRepo', () => {
                 const remoteRecord = await recordRepo.getRecord({
                     libraryId: remoteLibraryId,
                     recordId: remoteRecord1.id,
-                    ctx
+                    ctx,
                 });
 
                 expect(remoteRecord).toMatchObject({
                     id: remoteRecord1.id,
                     library: remoteLibraryId,
                     [simpleLinkAttribute.id]: record1.id,
-                    attr_data_1: 1
+                    attr_data_1: 1,
                 });
 
                 expect(record1Value1).toMatchObject({
                     id_value: remoteRecord1.id, // id_value is the id of the remote record in case of reverse simple link
                     payload: {
                         id: remoteRecord1.id,
-                        library: remoteLibraryId
+                        library: remoteLibraryId,
                     },
                     modified_by: null,
-                    created_by: null
+                    created_by: null,
                 });
 
                 // Hack, createValue with to reverse simple link does not return the full record in payload.
@@ -627,9 +627,9 @@ describe('attributeAdvancedLinkRepo', () => {
                         payload: await recordRepo.getRecord({
                             libraryId: remoteLibraryId,
                             recordId: recordVal.payload.id,
-                            ctx
-                        })
-                    }))
+                            ctx,
+                        }),
+                    })),
                 );
             });
 
@@ -639,12 +639,12 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordIds: [record1.id, record2.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
-                        expect.arrayContaining([record2Value1, record2Value2])
+                        expect.arrayContaining([record2Value1, record2Value2]),
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -655,13 +655,13 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordIds: [record1.id, record2.id, 'no-exists'],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
                         expect.arrayContaining([record2Value1, record2Value2]),
-                        []
+                        [],
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -671,20 +671,20 @@ describe('attributeAdvancedLinkRepo', () => {
                     const record3WithoutAttr = await recordRepo.createRecord({
                         libraryId,
                         recordData: {},
-                        ctx
+                        ctx,
                     });
 
                     const values = await attributeAdvancedLinkRepo.getValuesBatch({
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id],
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([
                         expect.arrayContaining([record1Value1, record1Value2]),
                         expect.arrayContaining([record2Value1, record2Value2]),
-                        []
+                        [],
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
@@ -697,7 +697,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordId: record1.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
@@ -709,7 +709,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordId: 'no-exists',
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);
@@ -722,7 +722,7 @@ describe('attributeAdvancedLinkRepo', () => {
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordId: record3WithoutAttr.id,
-                        ctx
+                        ctx,
                     });
 
                     expect(values).toEqual([]);

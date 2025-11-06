@@ -22,13 +22,13 @@ export async function setup() {
         const redis = await initRedis({config: conf});
         const amqp = await amqpService({
             // limit prefetch to one for task cancel to avoid multiple tasks being started in parallel
-            config: {...conf.amqp, prefetch: 1}
+            config: {...conf.amqp, prefetch: 1},
         });
 
         const {coreContainer} = await initDI({
             translator,
             'core.infra.redis': redis,
-            'core.infra.amqpService': amqp
+            'core.infra.amqpService': amqp,
         });
 
         const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];

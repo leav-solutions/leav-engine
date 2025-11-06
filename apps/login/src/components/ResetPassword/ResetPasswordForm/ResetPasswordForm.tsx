@@ -69,8 +69,8 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                                 return !value || getFieldValue('newPassword') === value
                                     ? Promise.resolve()
                                     : Promise.reject(new Error(t('resetPassword.wrong_confirm_password')));
-                            }
-                        })
+                            },
+                        }),
                     ]}
                 >
                     <KitInput.Password

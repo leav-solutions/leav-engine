@@ -9,7 +9,7 @@ import Container from './Container';
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
-    useLayoutEffect: jest.requireActual('react').useEffect
+    useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 describe('Container', () => {
@@ -17,7 +17,7 @@ describe('Container', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <Container />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

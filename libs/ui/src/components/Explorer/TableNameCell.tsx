@@ -36,7 +36,7 @@ type ResolvedItemActionProp<T> = T extends (item: IItemData) => infer R ? R : T;
 
 const resolveItemActionProp = <T extends IItemAction[keyof IItemAction]>(
     itemData: IItemData,
-    itemActionProp: T
+    itemActionProp: T,
 ): ResolvedItemActionProp<T> =>
     (typeof itemActionProp === 'function' ? itemActionProp(itemData) : itemActionProp) as ResolvedItemActionProp<T>;
 
@@ -51,7 +51,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
 
     const itemActionsWithCallback = itemActions.map(action => ({
         ...action,
-        callback: () => action.callback(item)
+        callback: () => action.callback(item),
     }));
 
     const isMoreThanThreeActions = itemActionsWithCallback.length > 3;
@@ -103,11 +103,11 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                                     label: resolveItemActionProp(item, label),
                                     icon: icon
                                         ? cloneElement(resolveItemActionProp(item, icon), {
-                                              size: '2em'
+                                              size: '2em',
                                           })
                                         : null, // TODO: find better tuning
-                                    onClick: callback
-                                }))
+                                    onClick: callback,
+                                })),
                         }}
                     >
                         <KitTooltip

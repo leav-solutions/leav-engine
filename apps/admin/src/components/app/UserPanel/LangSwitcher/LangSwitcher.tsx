@@ -19,7 +19,7 @@ function LangSwitcher(): JSX.Element {
 
     const unicodeFlagByLang = {
         fr: '🇫🇷',
-        en: '🇬🇧'
+        en: '🇬🇧',
     };
 
     const _handleLangChange = (lang: string) => () => {

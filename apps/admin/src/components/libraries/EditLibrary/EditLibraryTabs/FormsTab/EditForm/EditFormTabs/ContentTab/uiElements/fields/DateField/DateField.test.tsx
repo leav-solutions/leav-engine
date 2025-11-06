@@ -10,12 +10,12 @@ describe('DateField', () => {
     it('should display datefield with specified fr label', async () => {
         const label = {
             fr: 'tata',
-            en: 'toto'
+            en: 'toto',
         };
         renderWithProviders(
             <MockedLangContextProvider>
                 <DateField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.fr)).toBeVisible();
@@ -24,12 +24,12 @@ describe('DateField', () => {
 
     it('should display datefield with fallback lang label', async () => {
         const label = {
-            en: 'toto'
+            en: 'toto',
         };
         renderWithProviders(
             <MockedLangContextProvider>
                 <DateField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.en)).toBeVisible();
@@ -42,7 +42,7 @@ describe('DateField', () => {
                 <MockedLangContextProvider>
                     <DateField settings={{}} />
                 </MockedLangContextProvider>
-            </div>
+            </div>,
         );
 
         expect(comp.find('[data-test-id="date-field"]')).toHaveLength(1);
@@ -55,7 +55,7 @@ describe('DateField', () => {
                 <MockedLangContextProvider>
                     <DateField settings={{withTime: true}} />
                 </MockedLangContextProvider>
-            </div>
+            </div>,
         );
 
         expect(comp.find('[data-test-id="date-field"]')).toHaveLength(1);

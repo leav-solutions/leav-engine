@@ -8,6 +8,6 @@ export interface IReducePermissionsArrayHelper {
 export default function (): IReducePermissionsArrayHelper {
     return {
         reducePermissionsArray: permissions =>
-            permissions.reduce((globalPerm, valuePerm) => globalPerm || valuePerm, false)
+            permissions.reduce((globalPerm, valuePerm) => globalPerm || valuePerm, false),
     };
 }

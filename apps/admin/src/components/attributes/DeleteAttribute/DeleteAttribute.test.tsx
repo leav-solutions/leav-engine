@@ -14,7 +14,7 @@ describe('DeleteAttribute', () => {
     test('Render delete button for system attribute', async () => {
         const attr: Mockify<GET_ATTRIBUTES_attributes_list> = {
             ...mockAttrSimple,
-            system: true
+            system: true,
         };
 
         await act(async () => {
@@ -23,7 +23,7 @@ describe('DeleteAttribute', () => {
                     <MockedLangContextProvider>
                         <DeleteAttribute attribute={attr as GET_ATTRIBUTES_attributes_list} />
                     </MockedLangContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

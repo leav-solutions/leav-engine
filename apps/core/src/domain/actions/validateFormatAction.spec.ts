@@ -16,7 +16,7 @@ describe('validateFormatAction', () => {
         embedded_fields: [
             {
                 format: AttributeFormats.TEXT,
-                id: 'street'
+                id: 'street',
             },
             {
                 format: AttributeFormats.EXTENDED,
@@ -24,15 +24,15 @@ describe('validateFormatAction', () => {
                 embedded_fields: [
                     {
                         format: AttributeFormats.NUMERIC,
-                        id: 'zipcode'
+                        id: 'zipcode',
                     },
                     {
                         format: AttributeFormats.TEXT,
-                        id: 'name'
-                    }
-                ]
-            }
-        ]
+                        id: 'name',
+                    },
+                ],
+            },
+        ],
     };
     const ctxAttrExt = {attribute: attrExt, userId: 'test'};
     const ctxAttrColor = {attribute: attrColor, userId: 'test'};
@@ -67,7 +67,7 @@ describe('validateFormatAction', () => {
             'hsb(255, 100%, 100%, 0.75)',
             'hsba(255, 100%, 100%)',
             'FFFFFFF',
-            '#FFFF'
+            '#FFFF',
         ])('"%s" Should not be a valid color format', async color => {
             const colorValue = [{payload: color}];
             const res = await action(colorValue, {}, ctxAttrColor);

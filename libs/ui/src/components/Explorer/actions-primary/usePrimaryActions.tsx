@@ -21,7 +21,7 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
 export const usePrimaryActionsButton = ({
     view,
     actions,
-    hideFirstActionLabel
+    hideFirstActionLabel,
 }: {
     view: IViewSettingsState;
     actions: IPrimaryAction[];
@@ -51,7 +51,7 @@ export const usePrimaryActionsButton = ({
                         role="dropdown-trigger"
                     />
                 </KitDropDown>
-            )
+            ),
     };
 };
 
@@ -60,5 +60,5 @@ const mapPrimaryActionsToMenuItems = (actions: IPrimaryAction[], view: IViewSett
         key: index,
         label: action.label,
         disabled: action.disabled || view.massSelection === MASS_SELECTION_ALL,
-        onClick: action.callback
+        onClick: action.callback,
     }));

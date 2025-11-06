@@ -15,7 +15,7 @@ interface IAllTags extends Tags {
 export const extractFileMetadata = async (
     filePath: string,
     rootKey: string,
-    config: IConfig
+    config: IConfig,
 ): Promise<IFileMetadata> => {
     let fileData: IFileMetadata = {};
     const rootPath = getRootPathByKey(rootKey, config);
@@ -40,7 +40,7 @@ export const extractFileMetadata = async (
         [FilesAttributes.COLOR_PROFILE]: exifData.ICCProfileName,
         [FilesAttributes.RESOLUTION]: resolution,
         [FilesAttributes.PRINT_WIDTH]: printWidth,
-        [FilesAttributes.PRINT_HEIGHT]: printHeight
+        [FilesAttributes.PRINT_HEIGHT]: printHeight,
     };
 
     if (rawMimeType === 'application/pdf') {

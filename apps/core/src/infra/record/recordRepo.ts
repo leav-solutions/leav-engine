@@ -12,7 +12,7 @@ import {
     type ICursorPaginationParams,
     type IListWithCursor,
     type IPaginationCursors,
-    type IPaginationParams
+    type IPaginationParams,
 } from '../../_types/list';
 import {
     AttributeCondition,
@@ -20,7 +20,7 @@ import {
     type IRecordFilterOption,
     type IRecordSort,
     Operator,
-    TreeCondition
+    TreeCondition,
 } from '../../_types/record';
 import {type IAttributeRepo} from '../attribute/attributeRepo';
 import {type IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
@@ -42,7 +42,7 @@ export interface IRecordRepo {
     createRecord({
         libraryId,
         recordData,
-        ctx
+        ctx,
     }: {
         libraryId: string;
         recordData: IRecord;
@@ -51,7 +51,7 @@ export interface IRecordRepo {
     updateRecord({
         libraryId,
         recordData,
-        ctx
+        ctx,
     }: {
         libraryId: string;
         recordData: IRecord;
@@ -100,21 +100,21 @@ export default function ({
     'core.infra.record.helpers.getSearchVariableName': getSearchVariableName,
     'core.infra.record.helpers.filterTypes': filterTypesHelper,
     'core.infra.indexation.helpers.getSearchQuery': getSearchQuery,
-    'core.infra.attribute': attributeRepo
+    'core.infra.attribute': attributeRepo,
 }: IRecordRepoDeps): IRecordRepo {
     const _isOffsetPagination = (
-        pagination: IPaginationParams | ICursorPaginationParams
+        pagination: IPaginationParams | ICursorPaginationParams,
     ): pagination is IPaginationParams => 'offset' in pagination;
 
     const _isCursorPagination = (
-        pagination: IPaginationParams | ICursorPaginationParams
+        pagination: IPaginationParams | ICursorPaginationParams,
     ): pagination is ICursorPaginationParams => 'cursor' in pagination;
 
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
 
     const _parseCursor = (
-        cursor: string
+        cursor: string,
     ): {
         direction: string;
         from: string;
@@ -124,7 +124,7 @@ export default function ({
 
         return {
             direction,
-            from
+            from,
         };
     };
 
@@ -141,19 +141,19 @@ export default function ({
                         getRecords({
                             libraryId,
                             recordIds: recordIds as string[],
-                            ctx
+                            ctx,
                         }),
                     {
-                        cache: false // May be experiment later with caching
-                    }
-                )
+                        cache: false, // May be experiment later with caching
+                    },
+                ),
         );
     };
 
     const getRecords = async ({
         libraryId,
         recordIds,
-        ctx
+        ctx,
     }: {
         libraryId: string;
         recordIds: string[];
@@ -166,7 +166,7 @@ export default function ({
 
         const records = await dbService.execute<IDbDocument[]>({
             query,
-            ctx
+            ctx,
         });
 
         // Replace missing records with null to match input order
@@ -176,7 +176,7 @@ export default function ({
             return rec
                 ? (dbUtils.cleanup({
                       ...rec,
-                      library: libraryId
+                      library: libraryId,
                   }) as IRecord)
                 : null;
         });
@@ -192,7 +192,7 @@ export default function ({
             fulltextSearch,
             retrieveInactive = false,
             accessPermissionFilters = [],
-            ctx
+            ctx,
         }): Promise<IListWithCursor<IRecord>> {
             const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
             // Force disabling count on cursor  pagination as it's pointless
@@ -208,7 +208,7 @@ export default function ({
                 fulltextSearchQuery = getSearchQuery(
                     libraryId,
                     fullTextAttributes.map(a => a.id),
-                    cleanFulltextSearch
+                    cleanFulltextSearch,
                 );
             }
 
@@ -220,7 +220,7 @@ export default function ({
                 [Operator.AND]: aql`AND`,
                 [Operator.OR]: aql`OR`,
                 [Operator.OPEN_BRACKET]: aql`(`,
-                [Operator.CLOSE_BRACKET]: aql`)`
+                [Operator.CLOSE_BRACKET]: aql`)`,
             };
 
             if (typeof filters !== 'undefined' && filters.length) {
@@ -266,7 +266,7 @@ export default function ({
                                 conditionApplied,
                                 valueToCheck,
                                 lastFilterAttribute,
-                                true
+                                true,
                             );
                             statement = aql`${countConditionPart}`;
                         } else {
@@ -277,7 +277,7 @@ export default function ({
                                 filter.condition as AttributeCondition,
                                 filter.value,
                                 lastFilterAttribute,
-                                false
+                                false,
                             );
 
                             const standardConditionPart = getConditionPart(
@@ -285,11 +285,11 @@ export default function ({
                                 filter.condition as AttributeCondition,
                                 filter.value,
                                 lastFilterAttribute,
-                                false
+                                false,
                             );
 
                             statement = aql`IS_ARRAY(${variableNameAql}) ? LENGTH(${literal(
-                                variableNameAql
+                                variableNameAql,
                             )}[* FILTER ${arrayConditionPart}]) : ${standardConditionPart}`;
                         }
 
@@ -372,7 +372,7 @@ export default function ({
             const records = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
                 query: fullQuery,
                 withTotalCount,
-                ctx
+                ctx,
             });
 
             const list = withTotalCount ? (records as IExecuteWithCount).results : (records as IDbDocument[]);
@@ -382,14 +382,14 @@ export default function ({
             const cursor: IPaginationCursors = pagination
                 ? {
                       prev: list.length ? _generateCursor(Number(list[0]._key), CursorDirection.PREV) : null,
-                      next: list.length ? _generateCursor(Number(list.slice(-1)[0]._key), CursorDirection.NEXT) : null
+                      next: list.length ? _generateCursor(Number(list.slice(-1)[0]._key), CursorDirection.NEXT) : null,
                   }
                 : null;
 
             return {
                 totalCount,
                 list: list.map(dbUtils.cleanup),
-                cursor
+                cursor,
             };
         },
         async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {
@@ -419,7 +419,7 @@ export default function ({
 
             const dbDocument = {
                 _id: `${libraryId}/${recordId}`,
-                _key: recordId
+                _key: recordId,
             };
 
             const [{old: oldRecord, new: updatedRecord}] = await dbService.execute<
@@ -430,7 +430,7 @@ export default function ({
                     OPTIONS { keepNull: false }
                     RETURN {old: OLD, new: NEW}
                 `,
-                ctx
+                ctx,
             });
 
             updatedRecord.library = libraryId;
@@ -440,6 +440,6 @@ export default function ({
         },
         async getRecord({libraryId, recordId, ctx}): Promise<IRecord | null> {
             return getRecordDataLoader(libraryId, ctx).load(recordId);
-        }
+        },
     };
 }

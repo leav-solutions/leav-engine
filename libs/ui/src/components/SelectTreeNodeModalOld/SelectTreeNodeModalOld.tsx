@@ -24,14 +24,14 @@ export const SelectTreeNodeModalOld: FunctionComponent<ISelectTreeNodeModalProps
     onSubmit,
     isVisible,
     onClose,
-    canSelectRoot = false
+    canSelectRoot = false,
 }) => {
     const {t} = useSharedTranslation();
     const [selectedNode, setSelectedNode] = useState<ITreeNode>({
         id: selectedNodeKey,
         key: selectedNodeKey,
         title: '',
-        children: []
+        children: [],
     });
 
     const _handleCancel = () => {
@@ -64,7 +64,7 @@ export const SelectTreeNodeModalOld: FunctionComponent<ISelectTreeNodeModalProps
                 </KitButton>,
                 <KitButton type="primary" key="add" onClick={_handleApply}>
                     {t('global.apply')}
-                </KitButton>
+                </KitButton>,
             ]}
             destroyOnClose
         >

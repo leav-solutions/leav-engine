@@ -16,14 +16,14 @@ export default function useExecuteDeleteViewMutation(): IUseExecuteDeleteViewMut
         deleteView(viewId: string) {
             return executeDeleteView({
                 variables: {
-                    viewId
+                    viewId,
                 },
                 update: (cache, {data}) => {
                     const cacheKey = cache.identify(data.deleteView as WithTypename<DeleteViewMutation['deleteView']>);
                     cache.evict({id: cacheKey});
                     cache.gc();
-                }
+                },
             });
-        }
+        },
     };
 }

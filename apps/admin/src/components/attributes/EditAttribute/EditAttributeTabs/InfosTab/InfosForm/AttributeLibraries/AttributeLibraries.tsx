@@ -12,14 +12,14 @@ import {type DropdownProps, type FormDropdownProps} from 'semantic-ui-react';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {
     type GET_LIBRARIES_WITH_ATTRIBUTES,
-    type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list
+    type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list,
 } from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
 import {type SAVE_LIBRARY_ATTRIBUTES, type SAVE_LIBRARY_ATTRIBUTESVariables} from '_gqlTypes/SAVE_LIBRARY_ATTRIBUTES';
 import AttributeLibrariesField from './AttributeLibrariesField';
 
 export type AttributeLibrariesOnChange = (
     e: SyntheticEvent<HTMLElement>,
-    fieldData: DropdownProps & {value: GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list[]}
+    fieldData: DropdownProps & {value: GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list[]},
 ) => void;
 
 interface IAttributeLibrariesProps extends Omit<FormDropdownProps, 'onChange' | 'value'> {
@@ -32,7 +32,7 @@ function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibr
         SAVE_LIBRARY_ATTRIBUTES,
         SAVE_LIBRARY_ATTRIBUTESVariables
     >(saveLibAttributesMutation, {
-        onError: e => undefined // To prevent unhandled rejection, error is managed with error variable
+        onError: e => undefined, // To prevent unhandled rejection, error is managed with error variable
     });
 
     const libraries = data?.libraries?.list ?? [];
@@ -42,7 +42,7 @@ function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibr
                 libs[lib.id] = lib;
                 return libs;
             }, {}),
-        [libraries]
+        [libraries],
     );
 
     const _handleChange = async (e: SyntheticEvent<HTMLElement>, fieldData: DropdownProps) => {
@@ -56,20 +56,20 @@ function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibr
                 saveLibrary({
                     variables: {
                         libId: libraryId,
-                        attributes: [...librariesById[libraryId].attributes.map(a => a.id), attribute.id]
-                    }
-                })
+                        attributes: [...librariesById[libraryId].attributes.map(a => a.id), attribute.id],
+                    },
+                }),
             ),
             ...removedValues.map(libraryId =>
                 saveLibrary({
                     variables: {
                         libId: libraryId,
                         attributes: [
-                            ...librariesById[libraryId].attributes.filter(a => a.id !== attribute.id).map(a => a.id)
-                        ]
-                    }
-                })
-            )
+                            ...librariesById[libraryId].attributes.filter(a => a.id !== attribute.id).map(a => a.id),
+                        ],
+                    },
+                }),
+            ),
         ]);
     };
 

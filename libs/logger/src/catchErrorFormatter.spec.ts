@@ -29,7 +29,7 @@ describe('catchErrorFormatter', () => {
         const logger = winston.createLogger({
             level: 'error',
             format: format(),
-            transports: [new winston.transports.Console({silent: true})]
+            transports: [new winston.transports.Console({silent: true})],
         });
 
         logger.error('Test error', {foo: 'bar'});
@@ -48,7 +48,7 @@ describe('catchErrorFormatter', () => {
         const logger = winston.createLogger({
             level: 'error',
             format: catchErrorFormatter(onErrorLog)(),
-            transports: [new winston.transports.Console({silent: true})]
+            transports: [new winston.transports.Console({silent: true})],
         });
 
         logger.error('Test error 1');
@@ -75,7 +75,7 @@ describe('catchErrorFormatter', () => {
         const logger = winston.createLogger({
             level: 'info',
             format: format(),
-            transports: [new winston.transports.Console({silent: true})]
+            transports: [new winston.transports.Console({silent: true})],
         });
 
         logger.info('Test info');

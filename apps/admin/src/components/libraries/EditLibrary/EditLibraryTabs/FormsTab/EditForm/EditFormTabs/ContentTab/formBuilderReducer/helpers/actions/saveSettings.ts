@@ -6,7 +6,7 @@ import {type IFormElement} from '../../../_types';
 import {
     defaultContainerId,
     type IFormBuilderActionSaveSettings,
-    type IFormBuilderState
+    type IFormBuilderState,
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import {type IKeyValue} from '@leav/utils';
@@ -24,7 +24,7 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
     const containerId = elementToUpdate.containerId ?? defaultContainerId;
 
     const indexInFields = (state.elements[depAttrKey]?.[depValueKey]?.[containerId] ?? []).findIndex(
-        el => el.id === elementToUpdate.id
+        el => el.id === elementToUpdate.id,
     );
     const indexInActiveFields = state.activeElements[containerId].findIndex(el => el.id === elementToUpdate.id);
 
@@ -43,7 +43,7 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
 
     const newElement: IFormElement = {
         ...elementToUpdate,
-        settings: newSettings
+        settings: newSettings,
     };
 
     const newFields = cloneDeep(state.elements);
@@ -52,7 +52,7 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
     const newActiveFields = {...state.activeElements};
     newActiveFields[containerId][indexInActiveFields] = {
         ...newActiveFields[containerId][indexInActiveFields],
-        settings: newSettings
+        settings: newSettings,
     };
 
     return {...state, elementInSettings: newElement, elements: newFields, activeElements: newActiveFields};

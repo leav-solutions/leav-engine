@@ -12,7 +12,7 @@ import {type RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {act} from '@testing-library/react';
 import {
     EditRecordReducerActionsTypes,
-    type IEditRecordReducerState
+    type IEditRecordReducerState,
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {type CalculatedFlags, type InheritedFlags} from '../../../shared/calculatedInheritedFlags';
 
@@ -20,14 +20,14 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const notReadonly = false;
@@ -39,13 +39,13 @@ describe('<DSListSelect />', () => {
     const mockSaveAttributeMutation = jest.fn().mockReturnValue({
         data: {
             saveAttribute: {
-                ...mockAttributeWithDetails
-            }
-        }
+                ...mockAttributeWithDetails,
+            },
+        },
     });
     jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
         mockSaveAttributeMutation,
-        {loading: false, called: false, client: null, reset: null, error: null}
+        {loading: false, called: false, client: null, reset: null, error: null},
     ]);
 
     const commonAttribute: RecordFormAttributeStandardAttributeFragment = {
@@ -54,17 +54,17 @@ describe('<DSListSelect />', () => {
         required: false,
         multiple_values: false,
         permissions: {access_attribute: true, edit_value: true},
-        compute: false
+        compute: false,
     };
 
     const valuesList = {
         enable: true,
-        values: ['green', 'yellow', 'foudre']
+        values: ['green', 'yellow', 'foudre'],
     };
 
     const attribute = {
         ...commonAttribute,
-        values_list: valuesList
+        values_list: valuesList,
     } satisfies RecordFormAttributeStandardAttributeFragment;
 
     afterEach(() => {
@@ -83,9 +83,9 @@ describe('<DSListSelect />', () => {
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        />
+                        />,
                     ),
-                'DSListSelect should be used inside a antd Form.Item'
+                'DSListSelect should be used inside a antd Form.Item',
             );
         });
 
@@ -104,9 +104,9 @@ describe('<DSListSelect />', () => {
                                     inheritedFlags={inheritedFlagsWithoutInheritedValue}
                                 />
                             </AntForm.Item>
-                        </AntForm>
+                        </AntForm>,
                     ),
-                'DSListSelect should have a values list'
+                'DSListSelect should have a values list',
             );
         });
     });
@@ -124,7 +124,7 @@ describe('<DSListSelect />', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const select = screen.getByRole('combobox');
@@ -144,7 +144,7 @@ describe('<DSListSelect />', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const select = screen.getByRole('combobox');
@@ -177,7 +177,7 @@ describe('<DSListSelect />', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             const select = screen.getByRole('combobox');
@@ -207,7 +207,7 @@ describe('<DSListSelect />', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             const select = screen.getByRole('combobox');
@@ -230,7 +230,7 @@ describe('<DSListSelect />', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             const select = screen.getByRole('combobox');
@@ -250,7 +250,7 @@ describe('<DSListSelect />', () => {
             const editRecordState = {};
             jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
                 state: editRecordState as IEditRecordReducerState,
-                dispatch: mockEditRecordDispatch
+                dispatch: mockEditRecordDispatch,
             }));
 
             render(
@@ -259,7 +259,7 @@ describe('<DSListSelect />', () => {
                         <DSListSelect
                             attribute={{
                                 ...attribute,
-                                values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
+                                values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true},
                             }}
                             handleSubmit={handleSubmitMock}
                             readonly={notReadonly}
@@ -267,7 +267,7 @@ describe('<DSListSelect />', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
-                </AntForm>
+                </AntForm>,
             );
 
             const select = screen.getByRole('combobox');
@@ -292,7 +292,7 @@ describe('<DSListSelect />', () => {
                                 attribute={{
                                     ...attribute,
                                     values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true},
-                                    multiple_values: true
+                                    multiple_values: true,
                                 }}
                                 handleSubmit={handleSubmitMock}
                                 readonly={notReadonly}
@@ -300,7 +300,7 @@ describe('<DSListSelect />', () => {
                                 inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             />
                         </AntForm.Item>
-                    </AntForm>
+                    </AntForm>,
                 );
 
                 const select = screen.getByRole('combobox');

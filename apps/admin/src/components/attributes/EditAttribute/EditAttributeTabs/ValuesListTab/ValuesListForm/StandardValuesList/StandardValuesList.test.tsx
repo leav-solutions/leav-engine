@@ -23,9 +23,9 @@ describe('StandardValuesList', () => {
             enable: true,
             allowFreeEntry: false,
             allowListUpdate: false,
-            values: ['valueA', 'valueB']
+            values: ['valueA', 'valueB'],
         },
-        unique: null
+        unique: null,
     };
 
     test('Render existing list', async () => {
@@ -35,7 +35,7 @@ describe('StandardValuesList', () => {
                     attribute={mockAttribute}
                     values={['value 1', 'value 2']}
                     onValuesUpdate={onValuesUpdate}
-                />
+                />,
             );
         });
 
@@ -49,7 +49,7 @@ describe('StandardValuesList', () => {
                     attribute={mockAttribute}
                     values={['value 1', 'value 2']}
                     onValuesUpdate={onValuesUpdate}
-                />
+                />,
             );
         });
 
@@ -67,7 +67,7 @@ describe('StandardValuesList', () => {
                     attribute={mockAttribute}
                     values={['value 1', 'value 2']}
                     onValuesUpdate={onValuesUpdate}
-                />
+                />,
             );
         });
 
@@ -85,7 +85,7 @@ describe('StandardValuesList', () => {
                     attribute={mockAttribute}
                     values={['value 1', 'value 2']}
                     onValuesUpdate={onValuesUpdate}
-                />
+                />,
             );
         });
 
@@ -105,7 +105,7 @@ describe('StandardValuesList', () => {
                     attribute={mockAttribute}
                     values={['value 1', 'value 2']}
                     onValuesUpdate={onValuesUpdate}
-                />
+                />,
             );
         });
 
@@ -127,7 +127,7 @@ describe('StandardValuesList', () => {
                         attribute={{...mockAttribute, format: AttributeFormat.date_range}}
                         values={[{from: '1639061243', to: '1639652400'}]}
                         onValuesUpdate={onValuesUpdate}
-                    />
+                    />,
                 );
             });
 
@@ -144,7 +144,7 @@ describe('StandardValuesList', () => {
                         attribute={{...mockAttribute, format: AttributeFormat.date_range}}
                         values={[]}
                         onValuesUpdate={onValuesUpdate}
-                    />
+                    />,
                 );
             });
 

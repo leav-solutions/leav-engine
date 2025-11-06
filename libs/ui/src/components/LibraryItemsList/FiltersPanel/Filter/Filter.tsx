@@ -24,19 +24,19 @@ import {
     type IFilterLibrary,
     type IFilterTree,
     ThroughConditionFilter,
-    TreeConditionFilter
+    TreeConditionFilter,
 } from '_ui/types/search';
 import {type ITreeNode} from '_ui/types/trees';
 import {
     AttributeFormat,
     type AttributesByLibAttributeStandardAttributeFragment,
     AttributeType,
-    RecordFilterCondition
+    RecordFilterCondition,
 } from '_ui/_gqlTypes';
 import {
     type ILibraryDetailExtended,
     type ILibraryDetailExtendedAttribute,
-    type ILibraryDetailExtendedAttributeParentLinkedTree
+    type ILibraryDetailExtendedAttributeParentLinkedTree,
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {formatNotUsingCondition} from '../../constants';
 import FiltersDropdown from '../../FiltersDropdown';
@@ -174,7 +174,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const handleDelete = () => {
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
-            filters: searchState.filters.filter(f => f.index !== filter.index)
+            filters: searchState.filters.filter(f => f.index !== filter.index),
         });
     };
 
@@ -189,7 +189,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
-            filters: newFilters
+            filters: newFilters,
         });
     };
 
@@ -209,7 +209,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
-            filters: newFilters
+            filters: newFilters,
         });
     };
 
@@ -218,14 +218,14 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             {
                 key: 'deactivate',
                 label: filter.active ? t('filters.deactivate') : t('filters.activate'),
-                onClick: toggleActiveStatus
+                onClick: toggleActiveStatus,
             },
             {
                 key: 'delete',
                 label: t('global.delete'),
-                onClick: handleDelete
-            }
-        ]
+                onClick: handleDelete,
+            },
+        ],
     };
 
     const InputByFormat = useCallback(
@@ -234,7 +234,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 props.filter.condition in AttributeConditionFilter &&
                 !(props.filter.condition in TreeConditionFilter) &&
                 !formatNotUsingCondition.find(
-                    format => format === (props.filter as IFilterAttribute).attribute?.format
+                    format => format === (props.filter as IFilterAttribute).attribute?.format,
                 );
 
             const showTreeCondition = props.filter.condition in TreeConditionFilter;
@@ -269,11 +269,11 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
             return <></>;
         },
-        [t]
+        [t],
     );
 
     const embeddedFieldsToAttribute = (
-        embeddedFields: AttributesByLibAttributeStandardAttributeFragment['embedded_fields']
+        embeddedFields: AttributesByLibAttributeStandardAttributeFragment['embedded_fields'],
     ): AttributesByLibAttributeStandardAttributeFragment[] =>
         embeddedFields
             ? embeddedFields.map(f => ({
@@ -282,7 +282,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                   multiple_values: undefined,
                   linked_tree: undefined,
                   system: false,
-                  readonly: false
+                  readonly: false,
               }))
             : [];
 
@@ -311,7 +311,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
             if (typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined') {
                 const lib = (filter as IFilterAttribute).parentTreeLibrary.parentAttribute.linkedTree.libraries.find(
-                    l => l.library.id === (filter as IFilterAttribute).parentTreeLibrary.library.id
+                    l => l.library.id === (filter as IFilterAttribute).parentTreeLibrary.library.id,
                 );
 
                 return lib.library.attributes;
@@ -332,7 +332,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
             if (filter.condition === ThroughConditionFilter.THROUGH) {
                 const lib = (filter as IFilterLibrary).parentAttribute.linkedTree?.libraries.find(
-                    l => l.library.id === (filter as IFilterLibrary).library.id
+                    l => l.library.id === (filter as IFilterLibrary).library.id,
                 );
 
                 return lib.library.attributes;
@@ -389,11 +389,11 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             index: filter.index,
             key: parentAttribute?.id,
             value: {
-                value: getDefaultFilterValueByFormat(parentAttribute.format)
+                value: getDefaultFilterValueByFormat(parentAttribute.format),
             },
             active: true,
             condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(parentAttribute.format)],
-            attribute: parentAttribute
+            attribute: parentAttribute,
         };
 
         const filterPos = searchState.filters.findIndex(f => f.index === filter.index);
@@ -401,7 +401,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
-            filters
+            filters,
         });
     };
 
@@ -431,18 +431,18 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 ? (filter as IFilterAttribute).attribute?.label
                 : (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
                       (filter as IFilterLibrary).parentAttribute?.label,
-            lang
+            lang,
         ) ||
         `${localizedTranslation(
             filter.condition === ThroughConditionFilter.THROUGH
                 ? (filter as IFilterLibrary).parentAttribute?.label
                 : (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
-            lang
+            lang,
         )} > ${localizedTranslation(
             filter.condition === ThroughConditionFilter.THROUGH
                 ? (filter as IFilterLibrary)?.library.label
                 : (filter as IFilterAttribute).parentTreeLibrary?.library.label,
-            lang
+            lang,
         )} `;
 
     const hasParent = !!(

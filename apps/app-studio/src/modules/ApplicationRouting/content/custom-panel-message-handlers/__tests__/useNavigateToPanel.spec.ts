@@ -9,11 +9,11 @@ import {useNavigateToPanel} from '../useNavigateToPanel';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn()
+    useNavigate: jest.fn(),
 }));
 
 jest.mock('../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn()
+    useApplicationSettingsContext: jest.fn(),
 }));
 
 describe('useNavigateToPanel', () => {
@@ -34,12 +34,12 @@ describe('useNavigateToPanel', () => {
                         id: '1',
                         title: {
                             fr: 'un',
-                            en: 'one'
+                            en: 'one',
                         },
                         icon: 'fa-house',
                         type: 'library',
-                        libraryId: 'test1'
-                    }
+                        libraryId: 'test1',
+                    },
                 ],
                 libraries: {
                     test1: {
@@ -48,24 +48,24 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
-                                actions: []
-                            }
-                        ]
-                    }
-                }
+                                actions: [],
+                            },
+                        ],
+                    },
+                },
             } satisfies Application,
-            jest.fn()
+            jest.fn(),
         ]);
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useNavigateToPanel());
 
         current.navigateToPanel({
             libraryId: 'useless due to other fields fulfillment',
             recordId: '1234567890',
             where: 'fullpage',
-            panelId: 'panelIdTest'
+            panelId: 'panelIdTest',
         });
 
         expect(navigateMock).toHaveBeenCalledWith('1234567890/fullpage/panelIdTest');
@@ -79,12 +79,12 @@ describe('useNavigateToPanel', () => {
                         id: '1',
                         title: {
                             fr: 'un',
-                            en: 'one'
+                            en: 'one',
                         },
                         icon: 'fa-house',
                         type: 'library',
-                        libraryId: 'test1'
-                    }
+                        libraryId: 'test1',
+                    },
                 ],
                 libraries: {
                     test1: {
@@ -93,23 +93,23 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
-                                actions: []
-                            }
-                        ]
-                    }
-                }
+                                actions: [],
+                            },
+                        ],
+                    },
+                },
             } satisfies Application,
-            jest.fn()
+            jest.fn(),
         ]);
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useNavigateToPanel());
 
         current.navigateToPanel({
             libraryId: 'test1',
             where: 'fullpage',
-            panelId: 'panelIdTest'
+            panelId: 'panelIdTest',
         });
 
         expect(navigateMock).not.toHaveBeenCalled();
@@ -123,12 +123,12 @@ describe('useNavigateToPanel', () => {
                         id: '1',
                         title: {
                             fr: 'un',
-                            en: 'one'
+                            en: 'one',
                         },
                         icon: 'fa-house',
                         type: 'library',
-                        libraryId: 'test1'
-                    }
+                        libraryId: 'test1',
+                    },
                 ],
                 libraries: {
                     test1: {
@@ -137,23 +137,23 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
-                                actions: []
-                            }
-                        ]
-                    }
-                }
+                                actions: [],
+                            },
+                        ],
+                    },
+                },
             } satisfies Application,
-            jest.fn()
+            jest.fn(),
         ]);
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useNavigateToPanel());
 
         current.navigateToPanel({
             libraryId: 'test1',
             recordId: '1234567890',
-            where: 'fullpage'
+            where: 'fullpage',
         });
 
         expect(navigateMock).toHaveBeenCalledWith('1234567890/fullpage/panelIdTest');
@@ -167,31 +167,31 @@ describe('useNavigateToPanel', () => {
                         id: '1',
                         title: {
                             fr: 'un',
-                            en: 'one'
+                            en: 'one',
                         },
                         icon: 'fa-house',
                         type: 'library',
-                        libraryId: 'test1'
-                    }
+                        libraryId: 'test1',
+                    },
                 ],
                 libraries: {
                     empty: {
                         libraryPanels: [],
-                        recordPanels: []
-                    }
-                }
+                        recordPanels: [],
+                    },
+                },
             } satisfies Application,
-            jest.fn()
+            jest.fn(),
         ]);
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useNavigateToPanel());
 
         current.navigateToPanel({
             libraryId: 'test1',
             recordId: '1234567890',
-            where: 'fullpage'
+            where: 'fullpage',
         });
 
         expect(navigateMock).not.toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe('useNavigateToPanel', () => {
         current.navigateToPanel({
             libraryId: 'empty',
             recordId: '1234567890',
-            where: 'fullpage'
+            where: 'fullpage',
         });
 
         expect(navigateMock).not.toHaveBeenCalled();

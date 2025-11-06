@@ -5,7 +5,7 @@ export enum EventTypes {
     CREATE = 'CREATE',
     REMOVE = 'REMOVE',
     MOVE = 'MOVE',
-    UPDATE = 'UPDATE'
+    UPDATE = 'UPDATE',
 }
 
 export interface IEventMsg {

@@ -10,7 +10,7 @@ export const mockRecord: IRecord = {
     created_by: '1',
     modified_at: 1234567890,
     modified_by: '1',
-    active: true
+    active: true,
 };
 
 export const mockFileRecord: IRecord = {
@@ -22,5 +22,5 @@ export const mockFileRecord: IRecord = {
     modified_by: '1',
     active: true,
     file_name: 'name',
-    file_path: 'path'
+    file_path: 'path',
 };

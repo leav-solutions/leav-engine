@@ -9,7 +9,7 @@ import {
     InfoCircleOutlined,
     OrderedListOutlined,
     PictureOutlined,
-    SearchOutlined
+    SearchOutlined,
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles} from '@leav/ui';
@@ -46,7 +46,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const dispatch = useAppDispatch();
     const {selectionState, navigation} = useAppSelector(state => ({
         selectionState: state.selection,
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
     const hasSelection = !!selectionState.selection.selected.length;
     const [activeTree] = useActiveTree();
@@ -78,14 +78,14 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             await removeFromTree({
                 variables: {
                     treeId: activeTree.id,
-                    nodeId: parent?.id ?? null
-                }
+                    nodeId: parent?.id ?? null,
+                },
             });
 
             info = {
                 channel: InfoChannel.TRIGGER,
                 type: InfoType.SUCCESS,
-                content: t('navigation.infos.success-detach', {nb: 1})
+                content: t('navigation.infos.success-detach', {nb: 1}),
             };
         } catch (e) {
             info = {
@@ -93,8 +93,8 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                 type: InfoType.ERROR,
                 content: t('navigation.infos.error-detach', {
                     elementName: label ?? parent.record.id,
-                    errorMessage: (e as Error).message
-                })
+                    errorMessage: (e as Error).message,
+                }),
             };
         }
 
@@ -129,7 +129,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             label: t('upload.title'),
             displayCondition:
                 activeTree.behavior === TreeBehavior.files &&
-                (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories)
+                (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories),
         },
         {
             key: 'create_directory',
@@ -138,34 +138,34 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             label: t('create_directory.title'),
             displayCondition:
                 activeTree.behavior === TreeBehavior.files &&
-                (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories)
+                (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories),
         },
         {
             key: 'details',
             icon: <InfoCircleOutlined />,
             onClick: _handleClickDetails,
             label: t('navigation.actions.details'),
-            displayCondition: !!parent && !isDetail
+            displayCondition: !!parent && !isDetail,
         },
         {
             key: 'edit',
             icon: <ExpandAltOutlined />,
             onClick: _handleOpenEditRecord,
             label: t('navigation.actions.edit'),
-            displayCondition: !!parent
+            displayCondition: !!parent,
         },
         {
             key: 'classified_in',
             icon: <SearchOutlined />,
             onClick: _handleClickClassifiedIn,
             label: t('navigation.actions.classified_in'),
-            displayCondition: true
+            displayCondition: true,
         },
         {
             label: t('files.generate_previews'),
             icon: <PictureOutlined />,
             onClick: _handleClickGeneratePreviews,
-            displayCondition: activeTree.behavior === TreeBehavior.files
+            displayCondition: activeTree.behavior === TreeBehavior.files,
         },
         {key: 'divider', type: 'divider', displayCondition: canEditChildren},
         {
@@ -173,15 +173,15 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             icon: <OrderedListOutlined />,
             onClick: _handleClickOrder,
             label: t('navigation.actions.order'),
-            displayCondition: canEditChildren
+            displayCondition: canEditChildren,
         },
         {
             key: 'detach',
             icon: <DeleteOutlined />,
             onClick: _handleClickDetach,
             label: t('navigation.actions.detach'),
-            displayCondition: canEditChildren && canDetach
-        }
+            displayCondition: canEditChildren && canDetach,
+        },
     ].reduce((displayedItems, item) => {
         if (item.displayCondition) {
             // "displayCondition" is not a valid prop for menu items and ends up in the DOM element,

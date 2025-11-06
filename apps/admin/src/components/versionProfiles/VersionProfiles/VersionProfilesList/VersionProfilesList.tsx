@@ -26,7 +26,7 @@ function VersionProfilesList({
     loading,
     withFilters,
     filters,
-    actions
+    actions,
 }: IVersionProfilesListProps): JSX.Element {
     const _handleFilterChange = (e, d: any) => {
         onFiltersUpdate(d);
@@ -89,7 +89,7 @@ function VersionProfilesList({
                                 <Table.Cell>{profile.id}</Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
                                     {actionsList.map(child =>
-                                        React.cloneElement(child as React.ReactElement<any>, {profile})
+                                        React.cloneElement(child as React.ReactElement<any>, {profile}),
                                     )}
                                 </Table.Cell>
                             </Table.Row>

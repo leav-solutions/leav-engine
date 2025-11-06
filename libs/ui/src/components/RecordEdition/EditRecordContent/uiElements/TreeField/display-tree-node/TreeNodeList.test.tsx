@@ -8,7 +8,7 @@ import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm'
 
 jest.mock('./TreeNodeItem', () => ({
     __esModule: true,
-    default: () => <div data-testid="tree-node-item">TreeNodeItem</div>
+    default: () => <div data-testid="tree-node-item">TreeNodeItem</div>,
 }));
 
 const mockRemoveTreeNode = jest.fn();
@@ -21,11 +21,11 @@ const createMockBackendValues = (count: number) =>
                 record: {
                     whoAmI: {
                         color: `color-${index}`,
-                        label: `label-${index}`
-                    }
+                        label: `label-${index}`,
+                    },
                 },
-                ancestors: []
-            }
+                ancestors: [],
+            },
         })) as RecordFormElementsValueTreeValue[];
 
 describe('TreeNodeList', () => {
@@ -36,7 +36,7 @@ describe('TreeNodeList', () => {
                 backendValues={[]}
                 removeTreeNode={mockRemoveTreeNode}
                 isReadOnly={false}
-            />
+            />,
         );
 
         expect(screen.queryAllByTestId('tree-node-item')).toHaveLength(0);
@@ -51,7 +51,7 @@ describe('TreeNodeList', () => {
                 backendValues={mockBackendValues}
                 removeTreeNode={mockRemoveTreeNode}
                 isReadOnly={false}
-            />
+            />,
         );
 
         expect(screen.queryAllByTestId('tree-node-item')).toHaveLength(5);

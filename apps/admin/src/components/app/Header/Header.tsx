@@ -60,7 +60,7 @@ const Header = (): JSX.Element => {
                             height: '100%',
                             width: '100%',
                             objectFit: 'contain',
-                            padding: '5px'
+                            padding: '5px',
                         }}
                     />
                 </Menu.Item>

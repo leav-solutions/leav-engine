@@ -7,21 +7,21 @@ export const mockTree: MandatoryId<ITree> = {
     id: 'my_tree',
     label: {
         fr: 'MonArbre',
-        en: 'MyTree'
+        en: 'MyTree',
     },
     behavior: TreeBehavior.STANDARD,
     libraries: {
         lib1: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: ['__all__']
+            allowedChildren: ['__all__'],
         },
         lib2: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: ['__all__']
-        }
-    }
+            allowedChildren: ['__all__'],
+        },
+    },
 };
 
 export const mockFilesTree: ITree = {
@@ -31,12 +31,12 @@ export const mockFilesTree: ITree = {
         lib1: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: ['lib1', 'lib2']
+            allowedChildren: ['lib1', 'lib2'],
         },
         lib2: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: []
-        }
-    }
+            allowedChildren: [],
+        },
+    },
 };

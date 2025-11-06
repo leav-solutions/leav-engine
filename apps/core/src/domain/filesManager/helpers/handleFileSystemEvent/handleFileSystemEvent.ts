@@ -48,7 +48,7 @@ export default function (deps: IFileSystemEventDeps): HandleFileSystemEventFunc 
         'core.infra.filesManager': filesManagerRepo,
         'core.utils.logger': logger,
         'core.utils': utils,
-        config
+        config,
     } = deps;
 
     return async (scanMsg, resources, ctx) => {
@@ -65,7 +65,7 @@ export default function (deps: IFileSystemEventDeps): HandleFileSystemEventFunc 
             sendRecordUpdateEvent,
             logger,
             config,
-            utils
+            utils,
         };
 
         switch (event) {

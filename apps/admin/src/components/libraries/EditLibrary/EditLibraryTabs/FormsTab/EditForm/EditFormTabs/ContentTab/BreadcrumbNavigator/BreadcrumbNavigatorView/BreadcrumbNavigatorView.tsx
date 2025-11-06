@@ -29,8 +29,8 @@ function BreadcrumbNavigatorView({treeData}: IBreadcrumbNavigatorViewProps): JSX
             key: defaultDepValue,
             content: _getSection(),
             link: false,
-            active: false
-        }
+            active: false,
+        },
     ];
 
     if (state.activeDependency?.ancestors) {
@@ -40,8 +40,8 @@ function BreadcrumbNavigatorView({treeData}: IBreadcrumbNavigatorViewProps): JSX
                 key: el?.id,
                 content: _getSection(el, [...state.activeDependency.ancestors].splice(0, i)),
                 link: false,
-                active: false
-            }))
+                active: false,
+            })),
         ];
     }
 
@@ -50,7 +50,7 @@ function BreadcrumbNavigatorView({treeData}: IBreadcrumbNavigatorViewProps): JSX
             key: state.activeDependency.value.id,
             content: _getSection(state.activeDependency.value, state.activeDependency.ancestors ?? []),
             link: false,
-            active: false
+            active: false,
         });
     }
 

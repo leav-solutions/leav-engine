@@ -11,30 +11,30 @@ import getDefaultElement from './getDefaultElement';
 describe('getDefaultElementId', () => {
     test('Return default element', async () => {
         const mockTreeNode: ITreeNode = {
-            id: '1'
+            id: '1',
         };
 
         const mockTreeRepo: Mockify<ITreeRepo> = {
-            getTreeContent: global.__mockPromise([mockTreeNode])
+            getTreeContent: global.__mockPromise([mockTreeNode]),
         };
 
         const mockCacheService: Mockify<ICachesService> = {
-            memoize: jest.fn().mockImplementation(({func}) => func())
+            memoize: jest.fn().mockImplementation(({func}) => func()),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getCoreEntityCacheKey: jest.fn().mockReturnValue('cacheKey')
+            getCoreEntityCacheKey: jest.fn().mockReturnValue('cacheKey'),
         };
 
         const helper = getDefaultElement({
             'core.infra.tree': mockTreeRepo as ITreeRepo,
             'core.infra.cache.cacheService': mockCacheService as ICachesService,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         const defaultElement = await helper.getDefaultElement({
             treeId: 'test_tree',
-            ctx: mockCtx
+            ctx: mockCtx,
         });
 
         expect(defaultElement).toEqual(mockTreeNode);

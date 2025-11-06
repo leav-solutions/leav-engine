@@ -10,7 +10,7 @@ import {
     type Callbacks,
     type CallCbFunction,
     type IUseIFrameMessengerOptions,
-    type MessageDispatcher
+    type MessageDispatcher,
 } from './types';
 import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 
@@ -30,16 +30,16 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         dispatch(
             {
                 type: 'change-language',
-                language: newLanguage
+                language: newLanguage,
             },
-            'all'
+            'all',
         );
     };
 
     const panelMessageHandlerRegistry = useRef<Record<string, MessageToPanelMessageHandler>>({});
     const addPanelMessageHandler: AddMessageToPanelMessageHandler = (
         type: string,
-        handler: MessageToPanelMessageHandler
+        handler: MessageToPanelMessageHandler,
     ) => {
         panelMessageHandlerRegistry.current[type] = handler;
     };
@@ -51,7 +51,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
             } else if (frameId && registry.current[frameId]) {
                 (registry.current[frameId] as Window).postMessage(
                     encodeMessage({...message, __frameId: selfId.current}),
-                    '*'
+                    '*',
                 );
             } else if (frameId === 'all') {
                 Object.entries(registry.current).forEach(([id, frame]) => {
@@ -62,14 +62,14 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                 });
             }
         },
-        [registry.current]
+        [registry.current],
     );
 
     const callCb = useCallback<CallCbFunction>(
         (path, data, frameId) => {
             dispatch({type: 'on-call-callback', path, data}, frameId);
         },
-        [dispatch]
+        [dispatch],
     );
 
     const unregister = () => {
@@ -83,7 +83,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         ...getExposedMethods(callbacksStore, dispatch),
         unregister,
         changeLangInAllFrames,
-        addPanelMessageHandler
+        addPanelMessageHandler,
     });
 
     useEffect(() => {

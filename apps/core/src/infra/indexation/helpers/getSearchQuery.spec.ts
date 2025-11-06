@@ -17,7 +17,7 @@ describe('getSearchQuery', () => {
         const getSearchQueryFunc = getSearchQuery();
         const {query} = getSearchQueryFunc('libraryId', ['fieldA', 'fieldB'], 'search', {
             attributes: [{...mockAttrAdv, reverse_link: null}],
-            order: 'asc'
+            order: 'asc',
         });
 
         expect(query).not.toMatch('SORT BM25');

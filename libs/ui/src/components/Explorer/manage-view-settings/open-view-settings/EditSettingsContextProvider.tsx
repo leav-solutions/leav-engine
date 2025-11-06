@@ -11,7 +11,7 @@ interface IEditSettingsContextProviderProps {
 
 export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContextProviderProps> = ({
     children,
-    panelElement
+    panelElement,
 }) => {
     const [activeSettings, setActiveSettings] = useState<IEditSettingsContext['activeSettings']>(null);
     const closeSettingsPanel = () => setActiveSettings(null);
@@ -22,7 +22,7 @@ export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContext
                 activeSettings,
                 setActiveSettings,
                 panelElement: panelElement ?? null,
-                closeSettingsPanel
+                closeSettingsPanel,
             }}
         >
             {children}

@@ -8,7 +8,7 @@ function MockedLangContextProvider({children}) {
         lang: ['fr'],
         availableLangs: ['fr', 'en'],
         defaultLang: 'fr',
-        setLang: jest.fn()
+        setLang: jest.fn(),
     };
 
     return <LangContext.Provider value={mockLangs}>{children}</LangContext.Provider>;

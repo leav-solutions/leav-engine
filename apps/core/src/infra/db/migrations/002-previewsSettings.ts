@@ -27,18 +27,18 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
 }: IDeps = {}): IMigration {
     const _checkIfAttributeExist = async (attributeId, ctx) => {
         const attributeFromDb = await attributeRepo.getAttributes({
             params: {
                 filters: {
-                    id: attributeId
+                    id: attributeId,
                 },
                 strictFilters: true,
-                withCount: false
+                withCount: false,
             },
-            ctx
+            ctx,
         });
 
         return attributeFromDb.list.length;
@@ -54,7 +54,7 @@ export default function ({
                         previewsSettings: ${systemPreviewsSettings}
                     } IN ${coreLibsCollec}
                     RETURN NEW`,
-            ctx
+            ctx,
         });
 
         // Create and bind previews attributes to library
@@ -68,7 +68,7 @@ export default function ({
         const attributesToCheck = [previewsAttributeId, previewsStatus];
         const attributeLabel = {
             [previewsAttributeId]: {fr: 'Aperçus', en: 'Previews'},
-            [previewsStatus]: {fr: 'Statut des aperçus', en: 'Previews status'}
+            [previewsStatus]: {fr: 'Statut des aperçus', en: 'Previews status'},
         };
 
         const attributesToBind = [];
@@ -95,29 +95,29 @@ export default function ({
                             {
                                 is_system: true,
                                 id: 'toJSON',
-                                name: 'To JSON'
-                            }
+                                name: 'To JSON',
+                            },
                         ],
                         [ActionsListEvents.SAVE_VALUE]: [
                             {
                                 is_system: true,
                                 id: 'parseJSON',
-                                name: 'Parse JSON'
+                                name: 'Parse JSON',
                             },
                             {
                                 is_system: true,
                                 id: 'validateFormat',
-                                name: 'Validate Format'
-                            }
-                        ]
+                                name: 'Validate Format',
+                            },
+                        ],
                     },
-                    embedded_fields: previewsAttributeSettings
+                    embedded_fields: previewsAttributeSettings,
                 };
 
                 // Let's create it
                 await attributeRepo.createAttribute({
                     attrData: previewsAttributeData,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -130,7 +130,7 @@ export default function ({
             libId: library._key,
             attributes: attributesToBind,
             insertOnly: true,
-            ctx
+            ctx,
         });
 
         // Move previews values to the new attributes
@@ -144,7 +144,7 @@ export default function ({
                         ${previewsStatus}: r.previews_status
                     } IN ${libCollec}
             `,
-            ctx
+            ctx,
         });
     };
     return {
@@ -157,7 +157,7 @@ export default function ({
                         FILTER l.behavior == ${LibraryBehavior.FILES}
                         RETURN l
                 `,
-                ctx
+                ctx,
             });
 
             await Promise.all(filesLibraries.map(async library => _processLibrary(library, ctx)));
@@ -170,9 +170,9 @@ export default function ({
                     attrData: {
                         id: 'previews',
                         type: AttributeTypes.SIMPLE,
-                        format: AttributeFormats.EXTENDED
+                        format: AttributeFormats.EXTENDED,
                     },
-                    ctx
+                    ctx,
                 });
             }
 
@@ -183,11 +183,11 @@ export default function ({
                     attrData: {
                         id: 'previews_status',
                         type: AttributeTypes.SIMPLE,
-                        format: AttributeFormats.EXTENDED
+                        format: AttributeFormats.EXTENDED,
                     },
-                    ctx
+                    ctx,
                 });
             }
-        }
+        },
     };
 }

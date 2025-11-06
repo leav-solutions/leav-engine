@@ -38,7 +38,7 @@ export default function ({
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.app.helpers.validateRequestToken': validateRequestToken = null,
     'core.domain.value': valueDomain = null,
-    config = null
+    config = null,
 }: IDeps = {}): IEndpointApp {
     const _pluginsRoutes: IPluginRoute[] = [];
 
@@ -62,7 +62,7 @@ export default function ({
                                 library: USERS_LIBRARY,
                                 recordId: req.ctx.userId,
                                 attribute: USERS_GROUP_ATTRIBUTE_NAME,
-                                ctx: req.ctx
+                                ctx: req.ctx,
                             })) as ITreeValue[];
                             const groupsId = userGroups.map(g => g.payload?.id);
 
@@ -86,10 +86,10 @@ export default function ({
                         path,
                         method,
                         handlers,
-                        isProtected
-                    }))
+                        isProtected,
+                    })),
                 );
-            }
-        }
+            },
+        },
     };
 }

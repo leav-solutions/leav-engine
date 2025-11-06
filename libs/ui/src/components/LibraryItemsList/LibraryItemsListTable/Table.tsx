@@ -39,7 +39,7 @@ enum FieldColumnWidth {
     TINY = 125,
     SMALL = 150,
     MEDIUM = 250,
-    LARGE = 300
+    LARGE = 300,
 }
 
 const CustomTable = styled.div<ICustomTableProps>`
@@ -145,14 +145,14 @@ const Table = () => {
                 sticky: 'left',
                 width: 35,
                 maxWidth: 35,
-                minWidth: 30
+                minWidth: 30,
             },
             {
                 Header: t('items_list.table.infos'),
                 accessor: infosCol,
                 key: infosCol,
-                sticky: 'left'
-            }
+                sticky: 'left',
+            },
         ];
 
         let columnsFromFields: ITableColumn[] = [];
@@ -165,7 +165,7 @@ const Table = () => {
                         <Paragraph
                             ellipsis={{
                                 rows: 2,
-                                tooltip: field.label
+                                tooltip: field.label,
                             }}
                             style={{marginBottom: 0, textAlign: 'center'}}
                         >
@@ -177,7 +177,7 @@ const Table = () => {
                     type: field.type,
                     format: field.embeddedData?.format || field.format,
                     embeddedPath: field.embeddedData?.path,
-                    width: _getFieldColumWidth(field)
+                    width: _getFieldColumWidth(field),
                 };
             });
         }
@@ -228,7 +228,7 @@ const Table = () => {
 
                         return acc;
                     },
-                    {[selectionColumn]: null, record: record.whoAmI}
+                    {[selectionColumn]: null, record: record.whoAmI},
                 );
 
                 return [...allData, tableItem];
@@ -254,10 +254,10 @@ const Table = () => {
     const tableInstance = useTable<ITableRow>(
         {
             columns: tableColumns as Array<ColumnWithLooseAccessor<ITableRow>>,
-            data: tableData
+            data: tableData,
         },
         useFlexLayout,
-        useSticky
+        useSticky,
     );
 
     const {getTableProps, getTableBodyProps, headerGroups, prepareRow, rows, data} = tableInstance;
@@ -288,7 +288,7 @@ const Table = () => {
                                     headerCellProps.style = {
                                         ...headerCellProps.style,
                                         minWidth: INFOS_COLUMN_WIDTH,
-                                        maxWidth: INFOS_COLUMN_WIDTH
+                                        maxWidth: INFOS_COLUMN_WIDTH,
                                     };
                                 }
 

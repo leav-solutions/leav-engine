@@ -19,14 +19,14 @@ describe('searchReducer', () => {
                         whoAmI: {
                             ...mockRecord,
                             id: '123456',
-                            label: 'My record'
+                            label: 'My record',
                         },
                         index: 0,
-                        fields: []
-                    }
+                        fields: [],
+                    },
                 ],
-                totalCount: 42
-            }
+                totalCount: 42,
+            },
         );
 
         expect(newState.records).toHaveLength(1);
@@ -40,8 +40,8 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_PAGINATION,
-                page: 2
-            }
+                page: 2,
+            },
         );
 
         expect(newState.pagination).toBe(2);
@@ -52,8 +52,8 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_OFFSET,
-                offset: 50
-            }
+                offset: 50,
+            },
         );
 
         expect(newState.offset).toBe(50);
@@ -64,8 +64,8 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_LOADING,
-                loading: true
-            }
+                loading: true,
+            },
         );
 
         expect(newState.loading).toBe(true);
@@ -79,17 +79,17 @@ describe('searchReducer', () => {
                 sort: [
                     {
                         order: SortOrder.desc,
-                        field: 'label'
-                    }
-                ]
-            }
+                        field: 'label',
+                    },
+                ],
+            },
         );
 
         expect(newState.sort).toEqual([
             {
                 order: SortOrder.desc,
-                field: 'label'
-            }
+                field: 'label',
+            },
         ]);
     });
 
@@ -97,8 +97,8 @@ describe('searchReducer', () => {
         const newState = searchReducer(
             {...initialSearchState},
             {
-                type: SearchActionTypes.CANCEL_SORT
-            }
+                type: SearchActionTypes.CANCEL_SORT,
+            },
         );
 
         expect(newState.sort).toBe(undefined);
@@ -109,8 +109,8 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_ATTRIBUTES,
-                attributes: [{...mockAttributeSimple, isLink: false, isMultiple: false, library: mockLibrarySimple.id}]
-            }
+                attributes: [{...mockAttributeSimple, isLink: false, isMultiple: false, library: mockLibrarySimple.id}],
+            },
         );
 
         expect(newState.attributes.length).toBe(1);
@@ -128,10 +128,10 @@ describe('searchReducer', () => {
                         type: AttributeType.simple,
                         library: 'test',
                         label: 'my field',
-                        key: '123456'
-                    }
-                ]
-            }
+                        key: '123456',
+                    },
+                ],
+            },
         );
 
         expect(newState.fields.length).toBe(1);
@@ -143,8 +143,8 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_FULLTEXT,
-                fullText: 'test'
-            }
+                fullText: 'test',
+            },
         );
 
         expect(newState.fullText).toBe('test');
@@ -157,7 +157,7 @@ describe('searchReducer', () => {
             key: '1',
             value: {value: 'test'},
             active: true,
-            condition: AttributeConditionFilter.EQUAL
+            condition: AttributeConditionFilter.EQUAL,
             // FIXME: missing attribute
         };
 
@@ -165,8 +165,8 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_FILTERS,
-                filters: [filter]
-            }
+                filters: [filter],
+            },
         );
 
         expect(newState.filters).toEqual(expect.arrayContaining([expect.objectContaining(filter)]));
@@ -186,12 +186,12 @@ describe('searchReducer', () => {
             key: '1',
             value: {value: 'test'},
             active: true,
-            condition: AttributeConditionFilter.EQUAL
+            condition: AttributeConditionFilter.EQUAL,
         };
 
         const newState = searchReducer(
             {...initialSearchState, filters: [filter]},
-            {type: SearchActionTypes.DISABLE_FILTERS}
+            {type: SearchActionTypes.DISABLE_FILTERS},
         );
 
         expect(newState.filters).toHaveLength(1);
@@ -206,12 +206,12 @@ describe('searchReducer', () => {
             key: '1',
             value: {value: 'test'},
             active: false,
-            condition: AttributeConditionFilter.EQUAL
+            condition: AttributeConditionFilter.EQUAL,
         };
 
         const newState = searchReducer(
             {...initialSearchState, filters: [filter]},
-            {type: SearchActionTypes.ENABLE_FILTERS}
+            {type: SearchActionTypes.ENABLE_FILTERS},
         );
 
         expect(newState.filters).toHaveLength(1);
@@ -226,12 +226,12 @@ describe('searchReducer', () => {
             key: 'id',
             value: {value: 'test'},
             active: true,
-            condition: AttributeConditionFilter.EQUAL
+            condition: AttributeConditionFilter.EQUAL,
         };
 
         const newState = searchReducer(
             {...initialSearchState, filters: [filter]},
-            {type: SearchActionTypes.APPLY_FILTERS}
+            {type: SearchActionTypes.APPLY_FILTERS},
         );
 
         expect(newState.filters).toHaveLength(1);
@@ -242,8 +242,8 @@ describe('searchReducer', () => {
         const valuesVersions = {
             my_tree: {
                 label: 'My node',
-                id: '123456'
-            }
+                id: '123456',
+            },
         };
 
         const newState = searchReducer(
@@ -252,14 +252,14 @@ describe('searchReducer', () => {
                 valuesVersions: {
                     some_tree: {
                         label: 'Some node',
-                        id: '987654'
-                    }
-                }
+                        id: '987654',
+                    },
+                },
             },
             {
                 type: SearchActionTypes.SET_VALUES_VERSIONS,
-                valuesVersions
-            }
+                valuesVersions,
+            },
         );
 
         expect(Object.keys(newState.valuesVersions)).toHaveLength(2);
@@ -287,7 +287,7 @@ describe('searchReducer', () => {
         const newState = searchReducer(initialSearchState, {
             type: SearchActionTypes.SET_SIDEBAR,
             sidebarType: SidebarContentType.VIEW,
-            visible: true
+            visible: true,
         });
 
         expect(newState.sideBar.type).toBe(SidebarContentType.VIEW);
@@ -297,7 +297,7 @@ describe('searchReducer', () => {
     test('SET_SELECTION', () => {
         const newState = searchReducer(initialSearchState, {
             type: SearchActionTypes.SET_SELECTION,
-            selected: [{id: '123456', label: 'My record', library: 'test_lib'}]
+            selected: [{id: '123456', label: 'My record', library: 'test_lib'}],
         });
         expect(newState.selection.selected).toEqual([{id: '123456', label: 'My record', library: 'test_lib'}]);
 
@@ -305,11 +305,11 @@ describe('searchReducer', () => {
             {...initialSearchState, selection: {selected: [], allSelected: true}},
             {
                 type: SearchActionTypes.SET_SELECTION,
-                selected: [{id: '123456', label: 'My record', library: 'test_lib'}]
-            }
+                selected: [{id: '123456', label: 'My record', library: 'test_lib'}],
+            },
         );
         expect(newStateWithAllSelected.selection.selected).toEqual([
-            {id: '123456', label: 'My record', library: 'test_lib'}
+            {id: '123456', label: 'My record', library: 'test_lib'},
         ]);
         expect(newStateWithAllSelected.selection.allSelected).toBe(false);
     });
@@ -322,29 +322,29 @@ describe('searchReducer', () => {
                     selected: [
                         {id: '1', label: 'My record 1', library: 'test_lib'},
                         {id: '2', label: 'My record 2', library: 'test_lib'},
-                        {id: '3', label: 'My record 3', library: 'test_lib'}
+                        {id: '3', label: 'My record 3', library: 'test_lib'},
                     ],
-                    allSelected: false
-                }
+                    allSelected: false,
+                },
             },
             {
                 type: SearchActionTypes.TOGGLE_RECORD_SELECTION,
-                record: {id: '2', label: 'My record', library: 'test_lib'}
-            }
+                record: {id: '2', label: 'My record', library: 'test_lib'},
+            },
         );
         expect(newState.selection.selected).toEqual([
             {id: '1', label: 'My record 1', library: 'test_lib'},
-            {id: '3', label: 'My record 3', library: 'test_lib'}
+            {id: '3', label: 'My record 3', library: 'test_lib'},
         ]);
 
         const newState2 = searchReducer(newState, {
             type: SearchActionTypes.TOGGLE_RECORD_SELECTION,
-            record: {id: '2', label: 'My record 2', library: 'test_lib'}
+            record: {id: '2', label: 'My record 2', library: 'test_lib'},
         });
         expect(newState2.selection.selected).toEqual([
             {id: '1', label: 'My record 1', library: 'test_lib'},
             {id: '3', label: 'My record 3', library: 'test_lib'},
-            {id: '2', label: 'My record 2', library: 'test_lib'}
+            {id: '2', label: 'My record 2', library: 'test_lib'},
         ]);
     });
 
@@ -355,9 +355,9 @@ describe('searchReducer', () => {
         const newStateWithSelection = searchReducer(
             {
                 ...initialSearchState,
-                selection: {selected: [{id: '123456', label: 'My record', library: 'test_lib'}], allSelected: false}
+                selection: {selected: [{id: '123456', label: 'My record', library: 'test_lib'}], allSelected: false},
             },
-            {type: SearchActionTypes.SELECT_ALL}
+            {type: SearchActionTypes.SELECT_ALL},
         );
         expect(newStateWithSelection.selection.selected).toEqual([]);
         expect(newStateWithSelection.selection.allSelected).toBe(true);
@@ -371,12 +371,12 @@ describe('searchReducer', () => {
                     selected: [
                         {id: '1', label: 'My record 1', library: 'test_lib'},
                         {id: '2', label: 'My record 2', library: 'test_lib'},
-                        {id: '3', label: 'My record 3', library: 'test_lib'}
+                        {id: '3', label: 'My record 3', library: 'test_lib'},
                     ],
-                    allSelected: false
-                }
+                    allSelected: false,
+                },
             },
-            {type: SearchActionTypes.CLEAR_SELECTION}
+            {type: SearchActionTypes.CLEAR_SELECTION},
         );
         expect(newState.selection.selected).toEqual([]);
         expect(newState.selection.allSelected).toBe(false);

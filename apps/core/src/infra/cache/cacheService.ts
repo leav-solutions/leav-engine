@@ -42,14 +42,14 @@ interface ICacheServiceDeps {
 
 export enum ECacheType {
     DISK = 'DISK',
-    RAM = 'RAM'
+    RAM = 'RAM',
 }
 
 type RamCacheDataLoader = DataLoader<string, unknown>;
 
 export default function ({
     'core.infra.redis': redis,
-    'core.infra.cache.diskService': diskService
+    'core.infra.cache.diskService': diskService,
 }: ICacheServiceDeps): ICachesService {
     const _ramService = ramService(redis.cache);
 
@@ -69,12 +69,12 @@ export default function ({
                 new DataLoader<string, unknown>(
                     async (keys: readonly string[]) =>
                         (await _ramService.getData([...keys])).map((data: string | null) =>
-                            data !== null ? JSON.parse(data) : null
+                            data !== null ? JSON.parse(data) : null,
                         ),
                     {
-                        cache: true
-                    }
-                )
+                        cache: true,
+                    },
+                ),
         );
     }
 
@@ -132,6 +132,6 @@ export default function ({
 
                 return result;
             });
-        }
+        },
     };
 }

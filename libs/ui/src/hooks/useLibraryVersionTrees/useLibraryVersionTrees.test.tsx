@@ -14,28 +14,28 @@ describe('useLibraryVersionTrees', () => {
             id: 'my_tree',
             label: {
                 fr: 'Mon arbre',
-                en: 'My tree'
-            }
+                en: 'My tree',
+            },
         };
 
         const mockSimpleTree2 = {
             id: 'my_tree2',
             label: {
                 fr: 'Mon arbre 2',
-                en: 'My tree 2'
-            }
+                en: 'My tree 2',
+            },
         };
 
         const mockProfileBase = {
             ...mockVersionProfile,
-            trees: [mockSimpleTree]
+            trees: [mockSimpleTree],
         };
 
         const mocks = [
             {
                 request: {
                     query: getVersionableAttributesByLibraryQuery,
-                    variables: {libraryId: 'my_lib'}
+                    variables: {libraryId: 'my_lib'},
                 },
                 result: {
                     data: {
@@ -48,9 +48,9 @@ describe('useLibraryVersionTrees', () => {
                                         versionable: true,
                                         profile: {
                                             ...mockProfileBase,
-                                            id: 'profileA'
-                                        }
-                                    }
+                                            id: 'profileA',
+                                        },
+                                    },
                                 },
                                 {
                                     ...mockAttributeSimple,
@@ -59,9 +59,9 @@ describe('useLibraryVersionTrees', () => {
                                         versionable: true,
                                         profile: {
                                             ...mockProfileBase,
-                                            id: 'profileA'
-                                        }
-                                    }
+                                            id: 'profileA',
+                                        },
+                                    },
                                 },
                                 {
                                     ...mockAttributeSimple,
@@ -71,19 +71,19 @@ describe('useLibraryVersionTrees', () => {
                                         profile: {
                                             ...mockProfileBase,
                                             id: 'profileB',
-                                            trees: [mockSimpleTree2]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                            trees: [mockSimpleTree2],
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useLibraryVersionTrees('my_lib'), {
-            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>
+            wrapper: ({children}) => <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>,
         });
 
         expect(result.current.loading).toBe(true);

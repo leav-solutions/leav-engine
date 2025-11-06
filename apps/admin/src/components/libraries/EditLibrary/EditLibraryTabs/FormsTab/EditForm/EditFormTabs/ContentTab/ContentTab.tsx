@@ -31,7 +31,7 @@ function ContentTab(): JSX.Element {
 
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         onCompleted: () => setIsSaving(false),
-        onError: () => setIsSaving(false)
+        onError: () => setIsSaving(false),
     });
 
     const _handleSubmit = useCallback(async () => {
@@ -58,7 +58,7 @@ function ContentTab(): JSX.Element {
                                     }
 
                                     return allSettings;
-                                }, [])
+                                }, []),
                             }));
 
                         const depElems: FormElementsByDepsInput = {elements: elems};
@@ -66,18 +66,18 @@ function ContentTab(): JSX.Element {
                         if (depAttr !== defaultDepAttribute && depVal !== defaultDepValue) {
                             depElems.dependencyValue = {
                                 attribute: depAttr,
-                                value: depVal
+                                value: depVal,
                             };
                         }
 
                         return [...allDepElems, depElems];
                     },
-                    []
+                    [],
                 );
 
                 return [...allElems, ...elemsWithDeps];
             },
-            []
+            [],
         );
 
         await saveForm({
@@ -85,14 +85,14 @@ function ContentTab(): JSX.Element {
                 formData: {
                     id: form.id,
                     library,
-                    elements: savableElements
-                }
-            }
+                    elements: savableElements,
+                },
+            },
         });
 
         addMessage({
             type: MessagesTypes.SUCCESS,
-            content: t('forms.save_success')
+            content: t('forms.save_success'),
         });
         setIsSaving(false);
     }, [state]);
@@ -110,7 +110,7 @@ function ContentTab(): JSX.Element {
             <Button loading={isSaving} key={buttonKey} primary icon labelPosition="left" onClick={_handleSubmit}>
                 <Icon name="save" />
                 {t('admin.save')}
-            </Button>
+            </Button>,
         );
 
         return () => {

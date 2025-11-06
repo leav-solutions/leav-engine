@@ -12,20 +12,20 @@ export const mockTree: GET_TREE_BY_ID_trees_list = {
     libraries: [
         {
             library: {id: 'test_lib', label: {fr: 'Test Lib'}, attributes: [{...mockAttrTree}]},
-            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']}
+            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']},
         },
         {
             library: {id: 'test_lib2', label: {fr: 'Test Lib 2'}, attributes: [{...mockAttrTree}]},
-            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']}
-        }
+            settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']},
+        },
     ],
     settings: {},
     behavior: TreeBehavior.standard,
     label: {
         fr: 'TestTree',
-        en: 'TestTree'
+        en: 'TestTree',
     },
-    permissions_conf: null
+    permissions_conf: null,
 };
 
 export const mockTreeWithPermConf: GET_TREE_BY_ID_trees_list = {
@@ -36,15 +36,15 @@ export const mockTreeWithPermConf: GET_TREE_BY_ID_trees_list = {
             libraryId: 'test_lib',
             permissionsConf: {
                 permissionTreeAttributes: [pick(mockAttrTree, ['id', 'label'])],
-                relation: PermissionsRelation.and
-            }
+                relation: PermissionsRelation.and,
+            },
         },
         {
             libraryId: 'test_lib2',
             permissionsConf: {
                 permissionTreeAttributes: [pick(mockAttrTree, ['id', 'label'])],
-                relation: PermissionsRelation.and
-            }
-        }
-    ]
+                relation: PermissionsRelation.and,
+            },
+        },
+    ],
 };

@@ -25,8 +25,8 @@ const ResetPassword = (): JSX.Element => {
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({
                     token,
-                    newPassword
-                })
+                    newPassword,
+                }),
             });
 
             if (response.status === 400) {

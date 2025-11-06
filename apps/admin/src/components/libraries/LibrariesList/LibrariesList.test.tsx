@@ -15,18 +15,18 @@ describe('LibrariesList', () => {
         {
             ...mockLibrary,
             id: 'test',
-            label: {fr: 'Test', en: null}
+            label: {fr: 'Test', en: null},
         },
         {
             ...mockLibrary,
             id: 'test2',
-            label: {fr: null, en: 'Test 2'}
+            label: {fr: null, en: 'Test 2'},
         },
         {
             ...mockLibrary,
             id: 'test3',
-            label: null
-        }
+            label: null,
+        },
     ];
 
     const onRowClick = jest.fn();
@@ -44,7 +44,7 @@ describe('LibrariesList', () => {
                         />
                     </MockedUserContextProvider>
                 </MockedProvider>
-            </Router>
+            </Router>,
         );
         const libListComp = comp.find('LibrariesList').shallow();
 
@@ -59,7 +59,7 @@ describe('LibrariesList', () => {
                 <MockedUserContextProvider>
                     <LibrariesList libraries={libraries} onRowClick={onRowClick} onFiltersUpdate={changeFilter} />
                 </MockedUserContextProvider>
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         comp.find('.filters input[name="label"]').simulate('change', {target: {value: 'MyLabel'}});

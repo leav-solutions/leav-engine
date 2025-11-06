@@ -17,8 +17,8 @@ const store = configureStore({
         info: infosReducer,
         activePanel: activePanelReducer,
         tasks: tasksReducer,
-        notifications: notificationsReducer
-    }
+        notifications: notificationsReducer,
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

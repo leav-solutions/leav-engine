@@ -14,7 +14,7 @@ import {AbsolutePaths, UnreachablePaths} from './paths';
 export const firstLevelRoutes: RouteObject[] = [
     {
         path: UnreachablePaths.workspace,
-        element: <RedirectToFirstPanel />
+        element: <RedirectToFirstPanel />,
     },
     {
         element: <WorkspacesNavigationMenu />,
@@ -25,20 +25,20 @@ export const firstLevelRoutes: RouteObject[] = [
                     <RedirectToPreviousPanel>
                         <Panel />
                     </RedirectToPreviousPanel>
-                )
-            }
-        ]
+                ),
+            },
+        ],
     },
     {
         path: '*',
-        element: <RedirectToFirstWorkspace />
-    }
+        element: <RedirectToFirstWorkspace />,
+    },
 ];
 
 export const nextLevelRoutes: RouteObject[] = [
     {
         path: UnreachablePaths.record,
-        element: <RedirectToFirstRecordPanel />
+        element: <RedirectToFirstRecordPanel />,
     },
     {
         path: UnreachablePaths.recordWherePanel,
@@ -48,6 +48,6 @@ export const nextLevelRoutes: RouteObject[] = [
                     <Panel />
                 </PanelContainer>
             </RedirectToPreviousPanel>
-        )
-    }
+        ),
+    },
 ];

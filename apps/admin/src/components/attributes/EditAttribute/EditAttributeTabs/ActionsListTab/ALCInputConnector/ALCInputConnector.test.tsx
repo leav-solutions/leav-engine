@@ -8,7 +8,7 @@ import ALCInputConnector from './ALCInputConnector';
 describe('ALCInputConnector', () => {
     test('Snapshot test', async () => {
         const comp = render(
-            <ALCInputConnector size={100} types={[]} colorTypeDictionnary={{int: [255, 255, 255]}} connColor={[]} />
+            <ALCInputConnector size={100} types={[]} colorTypeDictionnary={{int: [255, 255, 255]}} connColor={[]} />,
         );
 
         expect(comp).toMatchSnapshot();

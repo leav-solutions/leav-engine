@@ -67,7 +67,7 @@ function FileModalContent({fileData}: IFileModalContentProps): JSX.Element {
     let fileViewer;
     const viewerProps = {
         fileData,
-        fallback: <NoDisplayFile fileData={fileData} noPreviewMessage fallback={null} />
+        fallback: <NoDisplayFile fileData={fileData} noPreviewMessage fallback={null} />,
     };
 
     const fileType = getFileType(fileData?.file_name?.[0]?.value);

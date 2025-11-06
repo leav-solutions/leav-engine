@@ -34,14 +34,14 @@ export default function ({'core.infra.library': libraryRepo, 'core.utils': utils
 
         if (unknownLibs.length) {
             throw new ValidationError({
-                libraries: {msg: Errors.UNKNOWN_LIBRARIES, vars: {libraries: unknownLibs.join(', ')}}
+                libraries: {msg: Errors.UNKNOWN_LIBRARIES, vars: {libraries: unknownLibs.join(', ')}},
             });
         }
     };
 
     const _validateFilesTree = (treeLibraries: ILibrary[]) => {
         const hasForbiddenLibrary = treeLibraries.some(
-            lib => lib.behavior !== LibraryBehavior.FILES && lib.behavior !== LibraryBehavior.DIRECTORIES
+            lib => lib.behavior !== LibraryBehavior.FILES && lib.behavior !== LibraryBehavior.DIRECTORIES,
         );
 
         if (hasForbiddenLibrary) {
@@ -62,8 +62,8 @@ export default function ({'core.infra.library': libraryRepo, 'core.utils': utils
             throw new ValidationError({
                 permissions_conf: {
                     msg: Errors.INVALID_PERMISSIONS_CONF_LIBRARIES,
-                    vars: {libraries: invalidLibs.join(', ')}
-                }
+                    vars: {libraries: invalidLibs.join(', ')},
+                },
             });
         }
     };
@@ -77,7 +77,7 @@ export default function ({'core.infra.library': libraryRepo, 'core.utils': utils
 
         if (treeData.behavior === TreeBehavior.FILES) {
             const treeLibraries = Object.keys(treeData.libraries).map(libId =>
-                existingLibraries.find(lib => lib.id === libId)
+                existingLibraries.find(lib => lib.id === libId),
             );
 
             _validateFilesTree(treeLibraries);
@@ -85,6 +85,6 @@ export default function ({'core.infra.library': libraryRepo, 'core.utils': utils
     };
 
     return {
-        validate
+        validate,
     };
 }

@@ -7,7 +7,7 @@ import {
     PictureOutlined,
     RightOutlined,
     SearchOutlined,
-    WarningOutlined
+    WarningOutlined,
 } from '@ant-design/icons';
 import {
     EditRecordBtn,
@@ -16,7 +16,7 @@ import {
     RecordCard,
     themeVars,
     TriggerPreviewsGenerationModal,
-    useLang
+    useLang,
 } from '@leav/ui';
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
@@ -36,7 +36,7 @@ import {
     type ISharedSelected,
     type ISharedStateSelectionNavigation,
     PreviewSize,
-    SharedStateSelectionType
+    SharedStateSelectionType,
 } from '../../../../../_types/types';
 
 interface IRowProps {
@@ -132,7 +132,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
     const {t} = useTranslation();
     const {selectionState, navigation} = useAppSelector(state => ({
         selectionState: state.selection,
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
     const dispatch = useAppDispatch();
     const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
@@ -165,7 +165,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             const selection: ISharedStateSelectionNavigation = {
                 type: SharedStateSelectionType.NAVIGATION,
                 selected: newSelected,
-                parent: parentElement?.id
+                parent: parentElement?.id,
             };
 
             dispatch(setSelection(selection));
@@ -176,7 +176,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                 id: treeElement.record.whoAmI.id,
                 nodeId: treeElement.id,
                 library: treeElement.record.whoAmI.library.id,
-                label
+                label,
             };
 
             // reset selection if previous selection is not navigation or if the parent change
@@ -192,7 +192,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             const selection: ISharedStateSelectionNavigation = {
                 type: SharedStateSelectionType.NAVIGATION,
                 selected: newSelected,
-                parent: parentElement?.id
+                parent: parentElement?.id,
             };
 
             dispatch(setSelection(selection));
@@ -217,7 +217,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
 
     const record: IRecordIdentityWhoAmI = {
         ...treeElement.record.whoAmI,
-        label: recordLabel ?? ''
+        label: recordLabel ?? '',
     };
 
     const isInPath = navigation.path.some(pathPart => pathPart.id === treeElement.id);
@@ -229,8 +229,8 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
     const menuActions: FloatingMenuAction[] = [
         {
             title: t('global.details'),
-            button: <EditRecordBtn shape="circle" record={record} size={menuBtnSize} />
-        }
+            button: <EditRecordBtn shape="circle" record={record} size={menuBtnSize} />,
+        },
     ];
 
     const moreMenuActions: FloatingMenuAction[] = isAccessible
@@ -238,13 +238,13 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
               {
                   title: t('navigation.actions.details'),
                   icon: <InfoCircleOutlined />,
-                  onClick: _handleClickDetails
+                  onClick: _handleClickDetails,
               },
               {
                   title: t('navigation.actions.classified_in'),
                   icon: <SearchOutlined />,
-                  onClick: _handleClickClassifiedIn
-              }
+                  onClick: _handleClickClassifiedIn,
+              },
           ]
         : [];
 
@@ -252,7 +252,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
         moreMenuActions.push({
             title: t('files.generate_previews'),
             icon: <PictureOutlined />,
-            onClick: _handleClickGeneratePreviews
+            onClick: _handleClickGeneratePreviews,
         });
     }
 
@@ -301,7 +301,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                             overflowCount={1000}
                             style={{
                                 background: themeVars.secondaryBg,
-                                color: themeVars.defaultTextColor
+                                color: themeVars.defaultTextColor,
                             }}
                         />
                     </div>

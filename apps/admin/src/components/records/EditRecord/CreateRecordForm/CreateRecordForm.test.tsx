@@ -22,7 +22,7 @@ describe('RecordCreationModal', () => {
             <CreateRecordForm
                 attributes={{simple_attribute1: mockAttrSimple, simple_attribute2: mockAttrSimple}}
                 onSave={onSave}
-            />
+            />,
         );
 
         expect(component.shallow().find('FormInput')).toHaveLength(2);
@@ -30,7 +30,7 @@ describe('RecordCreationModal', () => {
 
     test('Add values on a multiple values field', async () => {
         const component = mount(
-            <CreateRecordForm attributes={{advanced_attribute: mockAttrAdvMultiVal}} onSave={onSave} />
+            <CreateRecordForm attributes={{advanced_attribute: mockAttrAdvMultiVal}} onSave={onSave} />,
         );
 
         expect(component.find('FormInput[name="advanced_attribute"]')).toHaveLength(1);
@@ -50,9 +50,9 @@ describe('RecordCreationModal', () => {
             {
                 request: {
                     query: createRecordQuery,
-                    variables: {library: 'products'}
+                    variables: {library: 'products'},
                 },
-                result: {data: {createRecord: {id: '1234567'}}}
+                result: {data: {createRecord: {id: '1234567'}}},
             },
             {
                 request: {
@@ -61,18 +61,18 @@ describe('RecordCreationModal', () => {
                         library: 'products',
                         recordId: '1234567',
                         version: null,
-                        values: []
-                    }
+                        values: [],
+                    },
                 },
                 result: {
                     data: {
                         saveValueBatch: {
                             values: [],
-                            errors: null
-                        }
-                    }
-                }
-            }
+                            errors: null,
+                        },
+                    },
+                },
+            },
         ];
 
         const component = mount(
@@ -83,7 +83,7 @@ describe('RecordCreationModal', () => {
                         onSave={onSave}
                     />
                 </MockedProvider>
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         await act(async () => {

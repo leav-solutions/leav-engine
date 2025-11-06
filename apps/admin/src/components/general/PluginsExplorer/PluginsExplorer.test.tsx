@@ -20,7 +20,7 @@ jest.mock(
     () =>
         function PluginsList(props) {
             return <div>MOCK PluginsList</div>;
-        }
+        },
 );
 
 const pluginData = {
@@ -28,20 +28,20 @@ const pluginData = {
     description: '',
     name: 'plugin',
     version: '0.0.1',
-    __typename: 'Plugin'
+    __typename: 'Plugin',
 };
 
 const mocks = [
     {
         request: {
-            query: getPluginsQuery
+            query: getPluginsQuery,
         },
         result: {
             data: {
-                plugins: [pluginData]
-            }
-        }
-    }
+                plugins: [pluginData],
+            },
+        },
+    },
 ];
 
 describe('PluginsExplorer', () => {
@@ -58,7 +58,7 @@ describe('PluginsExplorer', () => {
                             </Router>
                         </MockedUserContextProvider>
                     </MockedLangContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -84,7 +84,7 @@ describe('PluginsExplorer', () => {
                             </Router>
                         </MockedUserContextProvider>
                     </MockedLangContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

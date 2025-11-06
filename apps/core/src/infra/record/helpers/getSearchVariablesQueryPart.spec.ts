@@ -11,16 +11,16 @@ import getSearchVariablesQueryPart from './getSearchVariablesQueryPart';
 describe('getSearchVariablesQueryPart', () => {
     test('Return list of unique variables for filters', async () => {
         const mockAttributeTypeRepo: Mockify<IAttributeTypeRepo> = {
-            filterValueQueryPart: jest.fn().mockReturnValue(aql``)
+            filterValueQueryPart: jest.fn().mockReturnValue(aql``),
         };
 
         const mockAttributeTypesRepo: Mockify<IAttributeTypesRepo> = {
-            getTypeRepo: jest.fn().mockReturnValue(mockAttributeTypeRepo)
+            getTypeRepo: jest.fn().mockReturnValue(mockAttributeTypeRepo),
         };
 
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
             isAttributeFilter: jest.fn().mockImplementation(filter => !!filter.attributes),
-            isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId)
+            isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId),
         };
 
         const mockGetClassifyingFiltersVariableQueryPart = jest.fn().mockReturnValue(aql``);
@@ -31,68 +31,68 @@ describe('getSearchVariablesQueryPart', () => {
 
         const filters: IRecordFilterOption[] = [
             {
-                operator: Operator.OPEN_BRACKET
+                operator: Operator.OPEN_BRACKET,
             },
             {
                 attributes: [
                     {
                         ...mockAttrSimple,
-                        reverse_link: null
-                    }
+                        reverse_link: null,
+                    },
                 ],
                 condition: AttributeCondition.EQUAL,
-                value: 'foo'
+                value: 'foo',
             },
             {
-                operator: Operator.OR
+                operator: Operator.OR,
             },
             {
                 attributes: [
                     {
                         ...mockAttrSimple,
-                        reverse_link: null
-                    }
+                        reverse_link: null,
+                    },
                 ],
                 condition: AttributeCondition.EQUAL,
-                value: 'bar'
+                value: 'bar',
             },
             {
-                operator: Operator.CLOSE_BRACKET
+                operator: Operator.CLOSE_BRACKET,
             },
             {
-                operator: Operator.AND
+                operator: Operator.AND,
             },
             {
-                operator: Operator.OPEN_BRACKET
+                operator: Operator.OPEN_BRACKET,
             },
             {
                 attributes: [
                     {
                         ...mockAttrAdvLink,
-                        reverse_link: null
+                        reverse_link: null,
                     },
                     {
                         ...mockAttrAdv,
-                        reverse_link: null
-                    }
+                        reverse_link: null,
+                    },
                 ],
                 condition: AttributeCondition.EQUAL,
-                value: 'bax'
+                value: 'bax',
             },
             {
-                operator: Operator.OR
+                operator: Operator.OR,
             },
             {
                 condition: TreeCondition.CLASSIFIED_IN,
                 treeId: 'my_tree',
-                value: '123456'
+                value: '123456',
             },
             {
-                operator: Operator.CLOSE_BRACKET
+                operator: Operator.CLOSE_BRACKET,
             },
             {
-                operator: Operator.CLOSE_BRACKET
-            }
+                operator: Operator.CLOSE_BRACKET,
+            },
         ];
 
         const func = getSearchVariablesQueryPart({
@@ -100,7 +100,7 @@ describe('getSearchVariablesQueryPart', () => {
             'core.infra.record.helpers.getClassifyingFiltersVariableQueryPart':
                 mockGetClassifyingFiltersVariableQueryPart,
             'core.infra.record.helpers.getSearchVariableName': mockGetSearchVariableName,
-            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
         });
 
         const variables = func(filters);

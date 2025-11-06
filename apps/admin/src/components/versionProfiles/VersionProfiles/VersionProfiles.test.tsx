@@ -12,8 +12,8 @@ const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom-v5', () => ({
     ...jest.requireActual('react-router-dom-v5'),
     useHistory: () => ({
-        push: mockHistoryPush
-    })
+        push: mockHistoryPush,
+    }),
 }));
 
 describe('VersionProfiles', () => {
@@ -21,32 +21,32 @@ describe('VersionProfiles', () => {
         {
             request: {
                 query: getVersionProfilesQuery,
-                variables: {filters: {}}
+                variables: {filters: {}},
             },
             result: {
                 data: {
                     versionProfiles: {
                         list: [
                             {...mockVersionProfile, id: 'vpA'},
-                            {...mockVersionProfile, id: 'vpB'}
-                        ]
-                    }
-                }
-            }
+                            {...mockVersionProfile, id: 'vpB'},
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getVersionProfilesQuery,
-                variables: {filters: {id: '%B%'}}
+                variables: {filters: {id: '%B%'}},
             },
             result: {
                 data: {
                     versionProfiles: {
-                        list: [{...mockVersionProfile, id: 'vpB'}]
-                    }
-                }
-            }
-        }
+                        list: [{...mockVersionProfile, id: 'vpB'}],
+                    },
+                },
+            },
+        },
     ];
     test('Render test', async () => {
         render(<VersionProfiles />, {apolloMocks: mocks});
@@ -74,19 +74,19 @@ describe('VersionProfiles', () => {
             {
                 request: {
                     query: deleteVersionProfileMutation,
-                    variables: {id: 'vpA'}
+                    variables: {id: 'vpA'},
                 },
                 result: () => {
                     deleteCalled = true;
                     return {
                         data: {
                             deleteVersionProfile: {
-                                id: 'vpA'
-                            }
-                        }
+                                id: 'vpA',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<VersionProfiles />, {apolloMocks: mocksWithDelete});

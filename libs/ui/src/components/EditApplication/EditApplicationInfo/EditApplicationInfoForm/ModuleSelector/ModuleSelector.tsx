@@ -30,7 +30,7 @@ function ModuleSelector({disabled, ...itemProps}: IModuleSelectorProps): JSX.Ele
     const options = modules.map(module => ({
         label: module.id,
         value: module.id,
-        description: module.description
+        description: module.description,
     }));
     const helper = modules.find(m => m.id === selectedModule)?.description;
 

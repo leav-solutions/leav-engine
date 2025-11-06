@@ -26,21 +26,21 @@ function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormPr
     const {
         loading: profilesLoading,
         error: profilesError,
-        data: profilesData
+        data: profilesData,
     } = useGetVersionProfilesQuery({
-        skip: !isVersionable
+        skip: !isVersionable,
     });
 
     const modeSelectOptions = Object.values(ValueVersionMode).map(mode => ({
         key: mode,
         label: t(`attributes.versions_mode_${mode}`),
-        value: mode
+        value: mode,
     }));
 
     const profilesSelectOptions = (profilesData?.versionProfiles?.list ?? []).map(profile => ({
         key: profile.id,
         label: localizedTranslation(profile.label, lang),
-        value: profile.id
+        value: profile.id,
     }));
 
     const _handleChange = (value: string | boolean) => {

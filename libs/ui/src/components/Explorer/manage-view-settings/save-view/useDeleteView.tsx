@@ -35,8 +35,8 @@ export const useDeleteView = () => {
             dispatch({
                 type: ViewSettingsActionTypes.DELETE_VIEW,
                 payload: {
-                    id: dataViewOnAction.id
-                }
+                    id: dataViewOnAction.id,
+                },
             });
         }
         setDataViewOnAction({id: null, label: null});
@@ -80,6 +80,6 @@ export const useDeleteView = () => {
                     {localizedTranslation(dataViewOnAction.label, availableLangs)}
                 </KitTypography.Text>
             </KitModal>
-        )
+        ),
     };
 };

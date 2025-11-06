@@ -13,12 +13,12 @@ describe('FloatingMenu', () => {
         const mockActions: FloatingMenuAction[] = [
             {
                 title: 'actionA',
-                button: <div>my action A</div>
+                button: <div>my action A</div>,
             },
             {
                 title: 'actionB',
-                button: <div>my action B</div>
-            }
+                button: <div>my action B</div>,
+            },
         ];
 
         await act(async () => {
@@ -36,8 +36,8 @@ describe('FloatingMenu', () => {
             {
                 title: 'actionA',
                 icon: <DeleteOutlined />,
-                onClick: _handleClick
-            }
+                onClick: _handleClick,
+            },
         ];
 
         render(<FloatingMenu actions={mockActions} />);
@@ -54,20 +54,20 @@ describe('FloatingMenu', () => {
         const mockActions: FloatingMenuAction[] = [
             {
                 title: 'actionA',
-                button: <div>my action A</div>
+                button: <div>my action A</div>,
             },
             {
                 title: 'actionB',
-                button: <div>my action B</div>
-            }
+                button: <div>my action B</div>,
+            },
         ];
 
         const mockMoreActions: IFloatingMenuActionWithIcon[] = [
             {
                 title: 'moreActionA',
                 icon: <DeleteOutlined />,
-                onClick: jest.fn()
-            }
+                onClick: jest.fn(),
+            },
         ];
 
         render(<FloatingMenu actions={mockActions} moreActions={mockMoreActions} />);

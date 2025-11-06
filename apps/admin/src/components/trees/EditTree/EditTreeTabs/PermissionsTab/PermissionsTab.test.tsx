@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function PermissionsContent() {
             return <div>PermissionsContent</div>;
-        }
+        },
 );
 
 describe('PermissionsTab', () => {

@@ -37,7 +37,7 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
         const newLibs = libraries;
         newLibs[index].settings = {
             ...newLibs[index].settings,
-            [data.name]: value
+            [data.name]: value,
         };
 
         onChange(newLibs);
@@ -58,9 +58,9 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
                 settings: {
                     allowMultiplePositions: false,
                     allowedAtRoot: true,
-                    allowedChildren: ['__all__']
-                }
-            }
+                    allowedChildren: ['__all__'],
+                },
+            },
         ]);
     };
 

@@ -34,15 +34,15 @@ export default function useExecuteSaveValueBatchMutation(): ISaveValueBatchHook 
                             metadata: valueToSave.metadata
                                 ? objectToNameValueArray(valueToSave.metadata).map(({name, value}) => ({
                                       name,
-                                      value: String(value)
+                                      value: String(value),
                                   }))
-                                : null
+                                : null,
                         })),
                         version: version
                             ? objectToNameValueArray(version).map(v => ({treeId: v.name, treeNodeId: v.value.id}))
                             : null,
-                        deleteEmpty
-                    }
+                        deleteEmpty,
+                    },
                 });
                 const {values: savedValues, errors} = saveRes.data.saveValueBatch;
 
@@ -57,7 +57,7 @@ export default function useExecuteSaveValueBatchMutation(): ISaveValueBatchHook 
 
                 return {
                     status,
-                    ...saveRes.data.saveValueBatch
+                    ...saveRes.data.saveValueBatch,
                 };
             } catch (err) {
                 const gqlError = (err as ApolloError).graphQLErrors?.[0];
@@ -70,6 +70,6 @@ export default function useExecuteSaveValueBatchMutation(): ISaveValueBatchHook 
 
                 return {status: APICallStatus.ERROR, error: message};
             }
-        }
+        },
     };
 }

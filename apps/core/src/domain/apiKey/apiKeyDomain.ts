@@ -41,7 +41,7 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.apiKey': apiKeyRepo,
     'core.utils': utils,
-    config
+    config,
 }: IApiKeyDomainDeps): IApiKeyDomain {
     const _hashApiKey = async (key: string): Promise<string> => {
         const salt = await bcrypt.genSalt(10);
@@ -65,7 +65,7 @@ export default function ({
 
     const _hideSecrets = (apiKey: IApiKey): IApiKey => ({
         ...apiKey,
-        key: null
+        key: null,
     });
 
     return {
@@ -80,12 +80,12 @@ export default function ({
 
             return {
                 ...keys,
-                list: keys.list.map(_hideSecrets)
+                list: keys.list.map(_hideSecrets),
             };
         },
         async getApiKeyProperties({id, hideKey = true, ctx}) {
             const searchParams: IGetCoreApiKeysParams = {
-                filters: {id}
+                filters: {id},
             };
 
             const keys = await apiKeyRepo.getApiKeys({params: searchParams, ctx});
@@ -117,7 +117,7 @@ export default function ({
                 modifiedAt: moment().unix(),
                 modifiedBy: String(ctx.userId),
                 expiresAt: null,
-                userId: null
+                userId: null,
             };
 
             const modifier = String(ctx.userId);
@@ -128,7 +128,7 @@ export default function ({
             const dataToSave = {
                 ...defaultParams,
                 ...existingKeyProps,
-                ...inputApiKeyData
+                ...inputApiKeyData,
             };
 
             let keyString: string;
@@ -160,12 +160,12 @@ export default function ({
                 {
                     action: EventAction.API_KEY_SAVE,
                     topic: {
-                        apiKey: savedKey.id
+                        apiKey: savedKey.id,
                     },
                     before: _hideSecrets(existingKeyProps) ?? null,
-                    after: _hideSecrets(savedKey)
+                    after: _hideSecrets(savedKey),
                 },
-                ctx
+                ctx,
             );
 
             return savedKey;
@@ -188,12 +188,12 @@ export default function ({
                 {
                     action: EventAction.API_KEY_DELETE,
                     topic: {
-                        apiKey: keyToReturn.id
+                        apiKey: keyToReturn.id,
                     },
                     before: _hideSecrets(keyProps),
-                    after: null
+                    after: null,
                 },
-                ctx
+                ctx,
             );
 
             return keyToReturn;
@@ -204,7 +204,7 @@ export default function ({
                 return {
                     label: 'testApiKey',
                     expiresAt: new Date(now.setDate(now.getDate() + 1)).getTime(),
-                    userId: config.defaultUserId
+                    userId: config.defaultUserId,
                 };
             }
 
@@ -220,6 +220,6 @@ export default function ({
             }
 
             return keyData;
-        }
+        },
     };
 }

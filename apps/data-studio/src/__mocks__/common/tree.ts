@@ -13,12 +13,12 @@ export const mockTree: GET_TREES_trees_list = {
             library: {
                 id: 'library-id',
                 label: {fr: 'library-label', en: 'library-label'},
-                behavior: LibraryBehavior.standard
-            }
-        }
+                behavior: LibraryBehavior.standard,
+            },
+        },
     ],
     permissions: {
         access_tree: true,
-        edit_children: true
-    }
+        edit_children: true,
+    },
 };

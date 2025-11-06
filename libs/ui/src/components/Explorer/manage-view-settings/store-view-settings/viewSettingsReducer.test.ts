@@ -5,7 +5,7 @@ import {
     type IViewSettingsState,
     ViewSettingsActionTypes,
     viewSettingsReducer,
-    type ViewType
+    type ViewType,
 } from './viewSettingsReducer';
 import {defaultPageSizeOptions, viewSettingsInitialState} from './viewSettingsInitialState';
 import {AttributeFormat, AttributeType, RecordFilterCondition, SortOrder, ViewTypes} from '_ui/_gqlTypes';
@@ -16,19 +16,19 @@ const attributeDataStandard = {
     label: 'first',
     id: 'first',
     format: AttributeFormat.text,
-    type: AttributeType.simple
+    type: AttributeType.simple,
 };
 const attributeDataLink = {
     label: 'first',
     id: 'first',
     linkedLibrary: {id: 'toto'},
-    type: AttributeType.simple_link
+    type: AttributeType.simple_link,
 };
 const attributeDataThrough = {
     label: 'first',
     id: 'first',
     linkedLibrary: {id: 'toto'},
-    type: AttributeType.simple_link
+    type: AttributeType.simple_link,
 };
 
 describe('ViewSettings Reducer', () => {
@@ -41,8 +41,8 @@ describe('ViewSettings Reducer', () => {
             const state = viewSettingsReducer(viewSettingsInitialState, {
                 type: ViewSettingsActionTypes.CHANGE_PAGE_SIZE,
                 payload: {
-                    pageSize: 42
-                }
+                    pageSize: 42,
+                },
             });
             expect(state.pageSize).toEqual(42);
         });
@@ -51,7 +51,7 @@ describe('ViewSettings Reducer', () => {
     test(`Action ${ViewSettingsActionTypes.ADD_ATTRIBUTE} test`, () => {
         const state = viewSettingsReducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.ADD_ATTRIBUTE,
-            payload: {attributeId: 'test'}
+            payload: {attributeId: 'test'},
         });
         expect(state.attributesIds).toEqual(['test']);
         expect(state.viewModified).toEqual(true);
@@ -61,12 +61,12 @@ describe('ViewSettings Reducer', () => {
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
-                attributesIds: ['test', 'active', 'created_at']
+                attributesIds: ['test', 'active', 'created_at'],
             },
             {
                 type: ViewSettingsActionTypes.REMOVE_ATTRIBUTE,
-                payload: {attributeId: 'test'}
-            }
+                payload: {attributeId: 'test'},
+            },
         );
         expect(state.attributesIds).toEqual(['active', 'created_at']);
         expect(state.viewModified).toEqual(true);
@@ -75,36 +75,36 @@ describe('ViewSettings Reducer', () => {
     describe(`Action ${ViewSettingsActionTypes.MOVE_ATTRIBUTE} test`, () => {
         const initialState: IViewSettingsState = {
             ...viewSettingsInitialState,
-            attributesIds: ['test', 'active', 'created_at']
+            attributesIds: ['test', 'active', 'created_at'],
         };
 
         const cases = [
             {
                 indexFrom: 0,
                 indexTo: 2,
-                expected: ['active', 'created_at', 'test']
+                expected: ['active', 'created_at', 'test'],
             },
             {
                 indexFrom: 2,
                 indexTo: 0,
-                expected: ['created_at', 'test', 'active']
+                expected: ['created_at', 'test', 'active'],
             },
             {
                 indexFrom: 2,
                 indexTo: 1,
-                expected: ['test', 'created_at', 'active']
+                expected: ['test', 'created_at', 'active'],
             },
             {
                 indexFrom: 0,
                 indexTo: 0,
-                expected: initialState.attributesIds
-            }
+                expected: initialState.attributesIds,
+            },
         ];
 
         test.each(cases)('Move attribute from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
             const state = viewSettingsReducer(initialState, {
                 type: ViewSettingsActionTypes.MOVE_ATTRIBUTE,
-                payload: {indexFrom, indexTo}
+                payload: {indexFrom, indexTo},
             });
             expect(state.attributesIds).toEqual(expected);
             expect(state.viewModified).toEqual(true);
@@ -115,11 +115,11 @@ describe('ViewSettings Reducer', () => {
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
-                attributesIds: ['test', 'active', 'created_at']
+                attributesIds: ['test', 'active', 'created_at'],
             },
             {
-                type: ViewSettingsActionTypes.RESET_ATTRIBUTES
-            }
+                type: ViewSettingsActionTypes.RESET_ATTRIBUTES,
+            },
         );
         expect(state.attributesIds).toEqual([]);
         expect(state.viewModified).toEqual(false);
@@ -130,11 +130,11 @@ describe('ViewSettings Reducer', () => {
         viewType => {
             const state = viewSettingsReducer(viewSettingsInitialState, {
                 type: ViewSettingsActionTypes.CHANGE_VIEW_TYPE,
-                payload: {viewType: viewType as ViewType}
+                payload: {viewType: viewType as ViewType},
             });
             expect(state.viewType).toEqual(viewType);
             expect(state.viewModified).toEqual(true);
-        }
+        },
     );
 
     test(`Action ${ViewSettingsActionTypes.ADD_SORT} test`, () => {
@@ -144,28 +144,28 @@ describe('ViewSettings Reducer', () => {
                 sort: [
                     {
                         field: 'first',
-                        order: SortOrder.asc
-                    }
-                ]
+                        order: SortOrder.asc,
+                    },
+                ],
             },
             {
                 type: ViewSettingsActionTypes.ADD_SORT,
                 payload: {
                     field: 'attributeId',
-                    order: SortOrder.desc
-                }
-            }
+                    order: SortOrder.desc,
+                },
+            },
         );
         expect(state.sort).toHaveLength(2);
         expect(state.sort).toEqual([
             {
                 field: 'first',
-                order: SortOrder.asc
+                order: SortOrder.asc,
             },
             {
                 field: 'attributeId',
-                order: 'desc'
-            }
+                order: 'desc',
+            },
         ]);
         expect(state.viewModified).toEqual(true);
     });
@@ -177,35 +177,35 @@ describe('ViewSettings Reducer', () => {
                 sort: [
                     {
                         field: 'first',
-                        order: SortOrder.asc
+                        order: SortOrder.asc,
                     },
                     {
                         field: 'second',
-                        order: SortOrder.desc
+                        order: SortOrder.desc,
                     },
                     {
                         field: 'third',
-                        order: SortOrder.desc
-                    }
-                ]
+                        order: SortOrder.desc,
+                    },
+                ],
             },
             {
                 type: ViewSettingsActionTypes.REMOVE_SORT,
                 payload: {
-                    field: 'second'
-                }
-            }
+                    field: 'second',
+                },
+            },
         );
         expect(state.sort).toHaveLength(2);
         expect(state.sort).toEqual([
             {
                 field: 'first',
-                order: 'asc'
+                order: 'asc',
             },
             {
                 field: 'third',
-                order: 'desc'
-            }
+                order: 'desc',
+            },
         ]);
         expect(state.viewModified).toEqual(true);
     });
@@ -217,32 +217,32 @@ describe('ViewSettings Reducer', () => {
                 sort: [
                     {
                         field: 'first',
-                        order: SortOrder.asc
+                        order: SortOrder.asc,
                     },
                     {
                         field: 'second',
-                        order: SortOrder.asc
-                    }
-                ]
+                        order: SortOrder.asc,
+                    },
+                ],
             },
             {
                 type: ViewSettingsActionTypes.CHANGE_SORT_ORDER,
                 payload: {
                     field: 'first',
-                    order: SortOrder.desc
-                }
-            }
+                    order: SortOrder.desc,
+                },
+            },
         );
         expect(state.sort).toHaveLength(2);
         expect(state.sort).toEqual([
             {
                 field: 'first',
-                order: SortOrder.desc
+                order: SortOrder.desc,
             },
             {
                 field: 'second',
-                order: SortOrder.asc
-            }
+                order: SortOrder.asc,
+            },
         ]);
         expect(state.viewModified).toEqual(true);
     });
@@ -253,8 +253,8 @@ describe('ViewSettings Reducer', () => {
             sort: [
                 {order: SortOrder.desc, field: 'test'},
                 {order: SortOrder.asc, field: 'active'},
-                {order: SortOrder.asc, field: 'created_at'}
-            ]
+                {order: SortOrder.asc, field: 'created_at'},
+            ],
         };
 
         const cases = [
@@ -264,8 +264,8 @@ describe('ViewSettings Reducer', () => {
                 expected: [
                     {order: SortOrder.asc, field: 'active'},
                     {order: SortOrder.asc, field: 'created_at'},
-                    {order: SortOrder.desc, field: 'test'}
-                ]
+                    {order: SortOrder.desc, field: 'test'},
+                ],
             },
             {
                 indexFrom: 2,
@@ -273,8 +273,8 @@ describe('ViewSettings Reducer', () => {
                 expected: [
                     {order: SortOrder.asc, field: 'created_at'},
                     {order: SortOrder.desc, field: 'test'},
-                    {order: SortOrder.asc, field: 'active'}
-                ]
+                    {order: SortOrder.asc, field: 'active'},
+                ],
             },
             {
                 indexFrom: 2,
@@ -282,20 +282,20 @@ describe('ViewSettings Reducer', () => {
                 expected: [
                     {order: SortOrder.desc, field: 'test'},
                     {order: SortOrder.asc, field: 'created_at'},
-                    {order: SortOrder.asc, field: 'active'}
-                ]
+                    {order: SortOrder.asc, field: 'active'},
+                ],
             },
             {
                 indexFrom: 0,
                 indexTo: 0,
-                expected: initialState.sort
-            }
+                expected: initialState.sort,
+            },
         ];
 
         test.each(cases)('Move sort from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
             const state = viewSettingsReducer(initialState, {
                 type: ViewSettingsActionTypes.MOVE_SORT,
-                payload: {indexFrom, indexTo}
+                payload: {indexFrom, indexTo},
             });
             expect(state.sort).toEqual(expected);
             expect(state.viewModified).toEqual(true);
@@ -312,23 +312,23 @@ describe('ViewSettings Reducer', () => {
                     attribute: attributeDataStandard,
                     field: 'first',
                     condition: RecordFilterCondition.EQUAL,
-                    value: null
-                }
+                    value: null,
+                },
             ],
             sort: [
                 {
                     field: 'first',
-                    order: SortOrder.asc
-                }
+                    order: SortOrder.asc,
+                },
             ],
             fulltextSearch: 'test',
             attributesIds: ['first'],
-            viewType: 'table' as ViewType
+            viewType: 'table' as ViewType,
         };
 
         const state = viewSettingsReducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.RESET,
-            payload: newState
+            payload: newState,
         });
 
         expect(state).toEqual(newState);
@@ -343,21 +343,21 @@ describe('ViewSettings Reducer', () => {
                 sort: [
                     {
                         field: 'first',
-                        order: SortOrder.asc
-                    }
+                        order: SortOrder.asc,
+                    },
                 ],
                 attributesIds: ['firstAttribute', 'secondAttribute', 'thirdAttribute'],
                 initialViewSettings: {
                     viewType: viewSettingsInitialState.viewType,
                     sort: viewSettingsInitialState.sort,
                     attributesIds: viewSettingsInitialState.attributesIds,
-                    pageSize: viewSettingsInitialState.pageSize
+                    pageSize: viewSettingsInitialState.pageSize,
                 },
-                viewModified: true
+                viewModified: true,
             },
             {
-                type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS
-            }
+                type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS,
+            },
         );
 
         expect(state).toEqual(viewSettingsInitialState);
@@ -369,12 +369,12 @@ describe('ViewSettings Reducer', () => {
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
-                massSelection: ['toBeDeletedKey']
+                massSelection: ['toBeDeletedKey'],
             },
             {
                 type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                payload: newSelectedKeys
-            }
+                payload: newSelectedKeys,
+            },
         );
 
         expect(state.massSelection).toEqual(newSelectedKeys);
@@ -386,21 +386,21 @@ describe('ViewSettings Reducer', () => {
             id: 'viewId',
             ownerId: 'Admin',
             label: {
-                fr: 'Ma vue'
+                fr: 'Ma vue',
             },
             shared: false,
             filters: [],
-            display: {type: ViewTypes.list}
+            display: {type: ViewTypes.list},
         };
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
-                viewModified: true
+                viewModified: true,
             },
             {
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
-                payload: view
-            }
+                payload: view,
+            },
         );
 
         expect(state.viewId).toEqual(view.id);
@@ -413,8 +413,8 @@ describe('ViewSettings Reducer', () => {
         const view = {
             id: 'viewId',
             label: {
-                fr: 'Ma nouvelle vue'
-            }
+                fr: 'Ma nouvelle vue',
+            },
         };
         const state = viewSettingsReducer(
             {
@@ -424,19 +424,19 @@ describe('ViewSettings Reducer', () => {
                         id: 'viewId',
                         ownerId: 'Admin',
                         label: {
-                            fr: 'Ma vue'
+                            fr: 'Ma vue',
                         },
                         shared: false,
                         filters: [],
-                        display: {type: ViewTypes.list}
-                    }
+                        display: {type: ViewTypes.list},
+                    },
                 ],
-                viewModified: true
+                viewModified: true,
             },
             {
                 type: ViewSettingsActionTypes.RENAME_VIEW,
-                payload: view
-            }
+                payload: view,
+            },
         );
 
         expect(state.viewLabels).toEqual(view.label);
@@ -455,19 +455,19 @@ describe('ViewSettings Reducer', () => {
                         id,
                         ownerId: 'Admin',
                         label: {
-                            fr: 'Ma vue'
+                            fr: 'Ma vue',
                         },
                         shared: false,
                         filters: [],
-                        display: {type: ViewTypes.list}
-                    }
+                        display: {type: ViewTypes.list},
+                    },
                 ],
-                viewModified: true
+                viewModified: true,
             },
             {
                 type: ViewSettingsActionTypes.DELETE_VIEW,
-                payload: {id}
-            }
+                payload: {id},
+            },
         );
 
         expect(state.viewId).toEqual(null);
@@ -485,19 +485,19 @@ describe('ViewSettings Reducer', () => {
                         id,
                         ownerId: 'Admin',
                         label: {
-                            fr: 'Ma vue'
+                            fr: 'Ma vue',
                         },
                         shared: false,
                         filters: [],
-                        display: {type: ViewTypes.list}
-                    }
+                        display: {type: ViewTypes.list},
+                    },
                 ],
-                viewModified: true
+                viewModified: true,
             },
             {
                 type: ViewSettingsActionTypes.DELETE_VIEW,
-                payload: {id}
-            }
+                payload: {id},
+            },
         );
 
         expect(state.savedViews.length).toEqual(0);
@@ -508,7 +508,7 @@ describe('ViewSettings Reducer', () => {
         const view = {
             viewId: 'viewId',
             viewLabels: {
-                fr: 'Ma vue'
+                fr: 'Ma vue',
             },
             shared: false,
             filters: [],
@@ -521,18 +521,18 @@ describe('ViewSettings Reducer', () => {
                 attributesIds: [],
                 filters: [],
                 viewType: mapViewTypeFromLegacyToExplorer.list,
-                pageSize: defaultPageSizeOptions[0]
-            }
+                pageSize: defaultPageSizeOptions[0],
+            },
         };
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
-                viewModified: true
+                viewModified: true,
             },
             {
                 type: ViewSettingsActionTypes.LOAD_VIEW,
-                payload: view
-            }
+                payload: view,
+            },
         );
 
         expect(state.viewId).toEqual(view.viewId);

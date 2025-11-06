@@ -11,10 +11,10 @@ jest.mock('react-router-dom', () => ({
     useLocation: jest.fn(() => ({pathname: ''})),
     useMatch: jest.fn(() => ({
         params: {
-            '*': ''
-        }
+            '*': '',
+        },
     })),
-    useParams: jest.fn(() => ({}))
+    useParams: jest.fn(() => ({})),
 }));
 
 describe('useDisplayConditions hook', () => {
@@ -28,14 +28,14 @@ describe('useDisplayConditions hook', () => {
 
     it('should provide 3 flags', async () => {
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useDisplayConditions());
 
         expect(spyOnUseMatch).toHaveBeenCalledWith(AbsolutePaths.panel);
         expect(current).toEqual({
             isLastFullpagePanel: expect.any(Boolean),
             isLastLevelRecordPanel: expect.any(Boolean),
-            isFirstPanel: expect.any(Boolean)
+            isFirstPanel: expect.any(Boolean),
         });
     });
 
@@ -43,7 +43,7 @@ describe('useDisplayConditions hook', () => {
         spyOnUseParams.mockReturnValue({where: undefined});
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useDisplayConditions());
 
         expect(current.isFirstPanel).toBe(true);
@@ -56,14 +56,14 @@ describe('useDisplayConditions hook', () => {
         spyOnUseParams.mockReturnValue({
             recordId,
             where,
-            recordPanelId
+            recordPanelId,
         });
         spyOnUseLocation.mockReturnValue({
-            pathname: `/workspaceId/firstFullpagePanelId/0987654321/fullpage/fakeRecordPanelId/${recordId}/${where}/${recordPanelId}`
+            pathname: `/workspaceId/firstFullpagePanelId/0987654321/fullpage/fakeRecordPanelId/${recordId}/${where}/${recordPanelId}`,
         } as any);
 
         const {
-            result: {current}
+            result: {current},
         } = renderHook(() => useDisplayConditions());
 
         expect(current.isLastLevelRecordPanel).toBe(true);
@@ -75,19 +75,19 @@ describe('useDisplayConditions hook', () => {
             spyOnUseParams.mockReturnValue({
                 recordId: undefined,
                 where: undefined,
-                recordPanelId: undefined
+                recordPanelId: undefined,
             });
             spyOnUseMatch.mockReturnValue({
                 params: {
-                    '*': levels
-                }
+                    '*': levels,
+                },
             } as any);
             spyOnUseLocation.mockReturnValue({
-                pathname: `/workspaceId/firstFullpagePanelId/${levels}`
+                pathname: `/workspaceId/firstFullpagePanelId/${levels}`,
             } as any);
 
             const {
-                result: {current}
+                result: {current},
             } = renderHook(() => useDisplayConditions());
 
             expect(current.isLastFullpagePanel).toBe(true);
@@ -97,19 +97,19 @@ describe('useDisplayConditions hook', () => {
             spyOnUseParams.mockReturnValue({
                 recordId: undefined,
                 where: undefined,
-                recordPanelId: undefined
+                recordPanelId: undefined,
             });
             spyOnUseMatch.mockReturnValue({
                 params: {
-                    '*': levels
-                }
+                    '*': levels,
+                },
             } as any);
             spyOnUseLocation.mockReturnValue({
-                pathname: `/workspaceId/firstFullpagePanelId/${levels}`
+                pathname: `/workspaceId/firstFullpagePanelId/${levels}`,
             } as any);
 
             const {
-                result: {current}
+                result: {current},
             } = renderHook(() => useDisplayConditions());
 
             expect(current.isLastFullpagePanel).toBe(false);
@@ -122,19 +122,19 @@ describe('useDisplayConditions hook', () => {
             spyOnUseParams.mockReturnValue({
                 recordId,
                 where,
-                recordPanelId
+                recordPanelId,
             });
             spyOnUseMatch.mockReturnValue({
                 params: {
-                    '*': levels
-                }
+                    '*': levels,
+                },
             } as any);
             spyOnUseLocation.mockReturnValue({
-                pathname: `/workspaceId/firstFullpagePanelId/${levels}`
+                pathname: `/workspaceId/firstFullpagePanelId/${levels}`,
             } as any);
 
             const {
-                result: {current}
+                result: {current},
             } = renderHook(() => useDisplayConditions());
 
             expect(current.isLastFullpagePanel).toBe(true);
@@ -147,19 +147,19 @@ describe('useDisplayConditions hook', () => {
             spyOnUseParams.mockReturnValue({
                 recordId,
                 where,
-                recordPanelId
+                recordPanelId,
             });
             spyOnUseMatch.mockReturnValue({
                 params: {
-                    '*': levels
-                }
+                    '*': levels,
+                },
             } as any);
             spyOnUseLocation.mockReturnValue({
-                pathname: `/workspaceId/firstFullpagePanelId/${levels}`
+                pathname: `/workspaceId/firstFullpagePanelId/${levels}`,
             } as any);
 
             const {
-                result: {current}
+                result: {current},
             } = renderHook(() => useDisplayConditions());
 
             expect(current.isLastFullpagePanel).toBe(false);

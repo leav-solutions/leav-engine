@@ -9,27 +9,27 @@ import treePermissionDomain from './treePermissionDomain';
 describe('TreePermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'permissionDomainTest'
+        queryId: 'permissionDomainTest',
     };
     const globalPerm = false;
     const inheritGlobalPerm = true;
 
     const mockGlobalPermHelper: Mockify<IGlobalPermissionHelper> = {
         getGlobalPermission: global.__mockPromise(globalPerm),
-        getInheritedGlobalPermission: global.__mockPromise(inheritGlobalPerm)
+        getInheritedGlobalPermission: global.__mockPromise(inheritGlobalPerm),
     };
 
     describe('getTreePermission', () => {
         test('Return tree permission', async () => {
             const permDomain = treePermissionDomain({
-                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
+                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper,
             });
 
             const perm = await permDomain.getTreePermission({
                 action: TreePermissionsActions.ACCESS_TREE,
                 treeId: 'test_tree',
                 userId: '12345',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(globalPerm);
@@ -39,14 +39,14 @@ describe('TreePermissionDomain', () => {
     describe('getInheritedTreePermission', () => {
         test('Return herited permission', async () => {
             const permDomain = treePermissionDomain({
-                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
+                'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper,
             });
 
             const perm = await permDomain.getInheritedTreePermission({
                 action: TreePermissionsActions.ACCESS_TREE,
                 treeId: 'test_tree',
                 userGroupId: '12345',
-                ctx
+                ctx,
             });
 
             expect(perm).toBe(inheritGlobalPerm);

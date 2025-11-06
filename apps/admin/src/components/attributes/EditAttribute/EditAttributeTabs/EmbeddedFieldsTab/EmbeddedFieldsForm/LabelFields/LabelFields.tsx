@@ -25,12 +25,12 @@ function LabelFields({formValues, setFormValues, onChange, t, save}: ILabelField
         const handleOnChangeLabel = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
             const newLabel = {
                 ...label,
-                [labelIndex]: data.value.toString() ?? ''
+                [labelIndex]: data.value.toString() ?? '',
             };
 
             setFormValues(v => ({
                 ...v,
-                label: newLabel
+                label: newLabel,
             }));
 
             onChange(newLabel);

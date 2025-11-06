@@ -25,11 +25,11 @@ function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
             if (!tree) {
                 clearCacheForQuery(cache, 'trees');
             }
-        }
+        },
     });
 
     const [getTreeById, {data: dataTreeById}] = useLazyQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
     });
 
     const _handleSubmit = async (treeData: TreeInput) => {
@@ -38,10 +38,10 @@ function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
                 treeData: {
                     id: treeData.id,
                     label: treeData.label,
-                    libraries: treeData.libraries?.filter(l => l.library) ?? null
-                }
+                    libraries: treeData.libraries?.filter(l => l.library) ?? null,
+                },
             },
-            refetchQueries: ['GET_TREES']
+            refetchQueries: ['GET_TREES'],
         });
 
         if (isNewTree) {

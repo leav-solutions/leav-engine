@@ -9,7 +9,7 @@ describe('FilesManagerRepo', () => {
     test('getRecord', async function () {
         const ctx: IQueryInfos = {
             userId: '0',
-            queryId: 'filesManagerRepoTest'
+            queryId: 'filesManagerRepoTest',
         };
         const mockEnsureIndex = jest.fn();
         const mockCollection = new Database().collection('test');
@@ -20,25 +20,25 @@ describe('FilesManagerRepo', () => {
 
         const mockDbServ = {
             db: mockDb,
-            execute: global.__mockPromise([])
+            execute: global.__mockPromise([]),
         };
 
         const repo = filesManagerRepo({
-            'core.infra.db.dbService': mockDbServ
+            'core.infra.db.dbService': mockDbServ,
         });
 
         const res = await repo.getRecord(
             {
                 fileName: 'fileNameTest',
                 filePath: 'filePathTest',
-                fileInode: 128
+                fileInode: 128,
             },
             {
                 recordLibrary: 'test',
-                recordId: '128'
+                recordId: '128',
             },
             false,
-            ctx
+            ctx,
         );
         expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
@@ -46,7 +46,7 @@ describe('FilesManagerRepo', () => {
     test('getParentRecord', async function () {
         const ctx: IQueryInfos = {
             userId: '0',
-            queryId: 'filesManagerRepoTest'
+            queryId: 'filesManagerRepoTest',
         };
         const mockEnsureIndex = jest.fn();
         const mockCollection = new Database().collection('test');
@@ -57,11 +57,11 @@ describe('FilesManagerRepo', () => {
 
         const mockDbServ = {
             db: mockDb,
-            execute: global.__mockPromise([])
+            execute: global.__mockPromise([]),
         };
 
         const repo = filesManagerRepo({
-            'core.infra.db.dbService': mockDbServ
+            'core.infra.db.dbService': mockDbServ,
         });
 
         const res = await repo.getParentRecord('fullParentPath', 'libraryTest', ctx);

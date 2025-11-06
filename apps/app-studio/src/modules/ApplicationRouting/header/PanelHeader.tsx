@@ -16,7 +16,7 @@ import cn from 'classnames';
 
 export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?: string}> = ({
     enabled,
-    currentRecordId
+    currentRecordId,
 }) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
@@ -33,7 +33,7 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
     return (
         <KitSpace
             className={cn({
-                [panelHeaderInSlider]: where === 'slider'
+                [panelHeaderInSlider]: where === 'slider',
             })}
             direction="horizontal"
             align="center"

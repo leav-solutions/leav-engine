@@ -27,11 +27,11 @@ function GeneralApiKeysTab(): JSX.Element {
     const [filters, setFilters] = React.useState<ApiKeysFiltersInput>({});
     const [editingState, setEditingState] = React.useState<IApiKeyEditingState>({
         apiKey: null,
-        isEditing: false
+        isEditing: false,
     });
 
     const {loading, error, data} = useQuery<GET_API_KEYS>(getApiKeysQuery, {
-        variables: {filters: {...addWildcardToFilters(filters, ['label'])}}
+        variables: {filters: {...addWildcardToFilters(filters, ['label'])}},
     });
 
     const _handleFiltersUpdate = (newFilters: ApiKeysFiltersInput) => {

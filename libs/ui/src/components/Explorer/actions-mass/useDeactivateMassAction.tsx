@@ -31,7 +31,7 @@ export const useDeactivateMassAction = ({
     allVisibleKeys,
     totalCount,
     onDeactivate,
-    refetch
+    refetch,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
@@ -58,11 +58,11 @@ export const useDeactivateMassAction = ({
                     icon: false,
                     title:
                         t('explorer.deactivate_item', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
                         }) ?? undefined,
                     content:
                         t('explorer.deactivate_item_description', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
                         }) +
                         BREAK_TWO_LINES +
                         t('global.are_you_sure'),
@@ -72,8 +72,8 @@ export const useDeactivateMassAction = ({
                         const {data} = await deactivateRecordsMutation({
                             variables: {
                                 libraryId: view.libraryId,
-                                filters: massSelectionFilter
-                            }
+                                filters: massSelectionFilter,
+                            },
                         });
                         const total =
                             view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
@@ -83,9 +83,9 @@ export const useDeactivateMassAction = ({
                             message: t('explorer.massAction.deactivate_message'),
                             description: t('explorer.massAction.deactivate_description', {
                                 count: data?.deactivateRecords.length,
-                                total
+                                total,
                             }),
-                            closable: true
+                            closable: true,
                         });
                         if (
                             view.massSelection === MASS_SELECTION_ALL ||
@@ -94,8 +94,8 @@ export const useDeactivateMassAction = ({
                             await refetch({
                                 pagination: {
                                     limit: view.pageSize,
-                                    offset: 0
-                                }
+                                    offset: 0,
+                                },
                             });
                         } else {
                             await refetch();
@@ -103,16 +103,16 @@ export const useDeactivateMassAction = ({
                         onDeactivate?.(massSelectionFilter, view.massSelection);
                         dispatch({
                             type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                            payload: []
+                            payload: [],
                         });
-                    }
+                    },
                 });
-            }
+            },
         }),
-        [t, deactivateRecordsMutation, view.massSelection, dispatch, view.libraryId, allVisibleKeys, refetch]
+        [t, deactivateRecordsMutation, view.massSelection, dispatch, view.libraryId, allVisibleKeys, refetch],
     );
 
     return {
-        deactivateMassAction: isEnabled ? _deactivateMassAction : null
+        deactivateMassAction: isEnabled ? _deactivateMassAction : null,
     };
 };

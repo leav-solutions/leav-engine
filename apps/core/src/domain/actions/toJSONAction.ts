@@ -18,6 +18,6 @@ export default function (): IActionsListFunction {
             });
 
             return {values: computedValues, errors: []};
-        }
+        },
     };
 }

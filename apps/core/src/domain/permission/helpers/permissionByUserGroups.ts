@@ -39,7 +39,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.infra.cache.cacheService': cacheService,
-        config
+        config,
     } = deps;
 
     return {
@@ -50,7 +50,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             applyTo = null,
             treeTarget = null,
             getDefaultPermission = defaultPermHelper.getDefaultPermission,
-            ctx
+            ctx,
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
             // we reverse to have this group paths order: from current user groups to the added root group
             const reversedGroupsPath = userGroupsPaths.length
@@ -80,10 +80,10 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                             ...(!!targetPath && {
                                 permissionTreeTarget: {
                                     tree: treeTarget.tree,
-                                    nodeId: targetPath[0].id
-                                }
+                                    nodeId: targetPath[0].id,
+                                },
                             }),
-                            ctx
+                            ctx,
                         });
 
                         if (groupPermission !== null) {
@@ -101,7 +101,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                 };
 
                 const userPerms = await Promise.all(
-                    reversedGroupsPath.map(groupPath => _getPermission(groupPath, reversedTreeTargetPath))
+                    reversedGroupsPath.map(groupPath => _getPermission(groupPath, reversedTreeTargetPath)),
                 );
 
                 // The user may have multiple groups with different permissions. We must reduce them to a single permission
@@ -118,13 +118,13 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                     type,
                     applyTo,
                     action,
-                    key
+                    key,
                 );
 
                 return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
             }
 
             return _execute();
-        }
+        },
     };
 }

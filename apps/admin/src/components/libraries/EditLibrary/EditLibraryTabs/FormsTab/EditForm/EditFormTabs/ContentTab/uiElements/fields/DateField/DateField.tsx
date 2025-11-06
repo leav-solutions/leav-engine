@@ -30,7 +30,7 @@ function DateField(props: IFormElementProps<IDateFieldSettings>): JSX.Element {
     const {lang: availableLangs} = useLang();
 
     const fieldProps = {
-        label: localizedLabel(label, availableLangs)
+        label: localizedLabel(label, availableLangs),
     };
 
     return (

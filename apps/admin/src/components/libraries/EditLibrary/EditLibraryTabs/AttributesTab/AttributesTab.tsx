@@ -23,12 +23,12 @@ interface IAttributesTabProps {
 const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | null => {
     const {t} = useTranslation();
     const [attributeModalDisplay, setAttributeModalDisplay] = useState<{visible: boolean; attribute?: string}>({
-        visible: false
+        visible: false,
     });
 
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
     const [saveLibAttr] = useMutation<SAVE_LIBRARY_ATTRIBUTES, SAVE_LIBRARY_ATTRIBUTESVariables>(
-        saveLibAttributesMutation
+        saveLibAttributesMutation,
     );
 
     const _handleRowClick = (attribute: GET_ATTRIBUTES_attributes_list) => {
@@ -52,7 +52,7 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
     const saveAttributes = async (attributesToSave: string[]) =>
         saveLibAttr({
             variables: {libId: library.id, attributes: attributesToSave},
-            refetchQueries: [{query: getLibByIdQuery, variables: {id: library.id}}]
+            refetchQueries: [{query: getLibByIdQuery, variables: {id: library.id}}],
         });
 
     const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes_list) => {

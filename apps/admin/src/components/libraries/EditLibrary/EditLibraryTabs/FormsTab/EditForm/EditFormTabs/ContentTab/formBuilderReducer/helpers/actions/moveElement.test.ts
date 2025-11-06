@@ -6,7 +6,7 @@ import {
     defaultContainerId,
     defaultDepAttribute,
     defaultDepValue,
-    FormBuilderActionTypes
+    FormBuilderActionTypes,
 } from '../../formBuilderReducer';
 import {formElem1, formElem4, mockInitialState} from '../../_fixtures/fixtures';
 
@@ -17,7 +17,7 @@ describe('formBuilderReducer', () => {
                 type: FormBuilderActionTypes.MOVE_ELEMENT,
                 elementId: '123457',
                 from: {order: 2, containerId: defaultContainerId},
-                to: {order: 0, containerId: defaultContainerId}
+                to: {order: 0, containerId: defaultContainerId},
             });
 
             expect(newState.elements[defaultDepAttribute][defaultDepValue][defaultContainerId][0].id).toBe('123457');
@@ -28,7 +28,7 @@ describe('formBuilderReducer', () => {
                 type: FormBuilderActionTypes.MOVE_ELEMENT,
                 elementId: '987654',
                 from: {order: 0, containerId: '123456'},
-                to: {order: 1, containerId: '123456'}
+                to: {order: 1, containerId: '123456'},
             });
 
             const containerFields = newState.elements[defaultDepAttribute][defaultDepValue]['123456'];
@@ -43,7 +43,7 @@ describe('formBuilderReducer', () => {
                 type: FormBuilderActionTypes.MOVE_ELEMENT,
                 elementId: '987654',
                 from: {order: 0, containerId: '123456'},
-                to: {order: 1, containerId: '123457'}
+                to: {order: 1, containerId: '123457'},
             });
 
             const containerFrom = newState.elements[defaultDepAttribute][defaultDepValue]['123456'];

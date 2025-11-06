@@ -12,7 +12,7 @@ import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {
     type GET_TREE_BY_ID_trees_list,
-    type GET_TREE_BY_ID_trees_list_libraries_settings
+    type GET_TREE_BY_ID_trees_list_libraries_settings,
 } from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {TreeBehavior, type TreeInput, type TreeLibraryInput} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
@@ -45,13 +45,13 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
         id: '',
         label: {
             fr: '',
-            en: ''
+            en: '',
         },
         settings: {},
         behavior: TreeBehavior.standard,
         system: false,
         permissions_conf: null,
-        libraries: []
+        libraries: [],
     };
 
     const initialValues: TreeInfos =
@@ -61,8 +61,8 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
                   ...tree,
                   libraries: tree.libraries.map(treeLib => ({
                       library: treeLib.library.id,
-                      settings: omit(treeLib.settings, ['__typename']) as GET_TREE_BY_ID_trees_list_libraries_settings
-                  }))
+                      settings: omit(treeLib.settings, ['__typename']) as GET_TREE_BY_ID_trees_list_libraries_settings,
+                  })),
               };
 
     const existingTree = tree !== null;
@@ -89,21 +89,21 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
 
     const validationSchema = yup.object().shape({
         label: yup.object().shape({
-            [defaultLang || availableLangs[0]]: yup.string().required()
+            [defaultLang || availableLangs[0]]: yup.string().required(),
         }),
         id: idValidator,
         libraries: yup.array(
             yup.object().shape({
                 library: yup.string(),
-                settings: yup.object()
-            })
-        )
+                settings: yup.object(),
+            }),
+        ),
     });
 
     const behaviorOptions = Object.values(TreeBehavior).map(b => ({
         key: b,
         value: b,
-        text: t(`trees.behavior_${b}`)
+        text: t(`trees.behavior_${b}`),
     }));
 
     const _renderForm = ({
@@ -112,7 +112,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
         setFieldValue,
         errors: inputErrors,
         values,
-        touched
+        touched,
     }: FormikProps<TreeInfos>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);

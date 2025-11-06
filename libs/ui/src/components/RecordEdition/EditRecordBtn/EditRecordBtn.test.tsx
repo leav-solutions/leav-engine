@@ -6,7 +6,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import EditRecordBtn from './EditRecordBtn';
 
 jest.mock('../EditRecordModal', () => ({
-    EditRecordModal: () => <div>EditRecordModal</div>
+    EditRecordModal: () => <div>EditRecordModal</div>,
 }));
 
 describe('EditRecordBtn', () => {

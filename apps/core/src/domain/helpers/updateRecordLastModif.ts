@@ -19,7 +19,7 @@ export type UpdateRecordLastModifFunc = (library: string, recordId: string, ctx:
 export default function ({
     'core.infra.record': recordRepo,
     'core.infra.cache.cacheService': cacheService,
-    'core.utils': utils
+    'core.utils': utils,
 }: IDeps): UpdateRecordLastModifFunc {
     return async (library, recordId, ctx) => {
         await cacheService.getCache(ECacheType.RAM).deleteData([utils.getRecordsCacheKey(library, recordId)]);
@@ -28,9 +28,9 @@ export default function ({
             recordData: {
                 id: recordId,
                 modified_at: moment().unix(),
-                modified_by: String(ctx.userId)
+                modified_by: String(ctx.userId),
             },
-            ctx
+            ctx,
         });
     };
 }

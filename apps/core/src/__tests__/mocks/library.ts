@@ -8,7 +8,7 @@ export const mockLibrary: ILibrary = {
     id: 'test_lib',
     system: false,
     behavior: LibraryBehavior.STANDARD,
-    label: {fr: 'Test lib'}
+    label: {fr: 'Test lib'},
 };
 
 export const mockLibraryFiles: ILibrary = {
@@ -27,10 +27,10 @@ export const mockLibraryFiles: ILibrary = {
                 sizes: [
                     {
                         name: 'my_size',
-                        size: 1337
-                    }
-                ]
-            }
+                        size: 1337,
+                    },
+                ],
+            },
         },
         {
             label: {fr: 'test 2'},
@@ -42,17 +42,17 @@ export const mockLibraryFiles: ILibrary = {
                 sizes: [
                     {
                         name: 'my_other_size',
-                        size: 1337
-                    }
-                ]
-            }
-        }
-    ]
+                        size: 1337,
+                    },
+                ],
+            },
+        },
+    ],
 };
 
 export const mockLibraryDirectories: MandatoryId<ILibrary> = {
     id: 'files_directories',
     system: false,
     behavior: LibraryBehavior.DIRECTORIES,
-    label: {fr: 'Test lib'}
+    label: {fr: 'Test lib'},
 };

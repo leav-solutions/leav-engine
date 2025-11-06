@@ -13,7 +13,7 @@ import {
     type RecordAttributePermissionsActions,
     type RecordPermissionsActions,
     type TreeNodePermissionsActions,
-    type TreePermissionsActions
+    type TreePermissionsActions,
 } from '_types/permissions';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type TreePath} from '_types/tree';

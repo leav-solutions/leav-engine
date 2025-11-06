@@ -18,13 +18,13 @@ jest.mock(
     () =>
         function AttributeSelector() {
             return <div>AttributeSelector</div>;
-        }
+        },
 );
 jest.mock('react-rte');
 
 const mockState = {
     ...mockInitialState,
-    openSettings: true
+    openSettings: true,
 };
 
 const renderWithAttributesMock = (children: JSX.Element) => {
@@ -33,8 +33,8 @@ const renderWithAttributesMock = (children: JSX.Element) => {
             request: {
                 query: getAttributeByIdQuery,
                 variables: {
-                    id: formElem1.settings.attribute
-                }
+                    id: formElem1.settings.attribute,
+                },
             },
             result: {
                 data: {
@@ -46,13 +46,13 @@ const renderWithAttributesMock = (children: JSX.Element) => {
                                 ...mockAttrSimple,
                                 __typename: 'Attribute',
                                 id: formElem1.settings.attribute,
-                                versions_conf: null
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                versions_conf: null,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
 
     return render(<MockedProviderWithFragments mocks={mocks}>{children}</MockedProviderWithFragments>);
@@ -70,14 +70,14 @@ describe('SettingsEdition', () => {
                         settings: [
                             {
                                 name: 'myinput',
-                                inputType: FormElementSettingsInputTypes.INPUT
-                            }
-                        ]
+                                inputType: FormElementSettingsInputTypes.INPUT,
+                            },
+                        ],
                     },
-                    settings: {...formElem1.settings, myinput: 'input value'}
-                }
+                    settings: {...formElem1.settings, myinput: 'input value'},
+                },
             },
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -100,15 +100,15 @@ describe('SettingsEdition', () => {
                                 name: 'mySelect',
                                 inputType: FormElementSettingsInputTypes.SELECT,
                                 getInputSettings: () => ({
-                                    options: ['option1', 'option2']
-                                })
-                            }
-                        ]
+                                    options: ['option1', 'option2'],
+                                }),
+                            },
+                        ],
                     },
-                    settings: {...formElem1.settings, mySelect: 'option1'}
-                }
+                    settings: {...formElem1.settings, mySelect: 'option1'},
+                },
             },
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -131,14 +131,14 @@ describe('SettingsEdition', () => {
                         settings: [
                             {
                                 name: 'myCheckbox',
-                                inputType: FormElementSettingsInputTypes.CHECKBOX
-                            }
-                        ]
+                                inputType: FormElementSettingsInputTypes.CHECKBOX,
+                            },
+                        ],
                     },
-                    settings: {...formElem1.settings, myCheckbox: true}
-                }
+                    settings: {...formElem1.settings, myCheckbox: true},
+                },
             },
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -159,14 +159,14 @@ describe('SettingsEdition', () => {
                         settings: [
                             {
                                 name: 'myAttribute',
-                                inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION
-                            }
-                        ]
+                                inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION,
+                            },
+                        ],
                     },
-                    settings: {...formElem1.settings}
-                }
+                    settings: {...formElem1.settings},
+                },
             },
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -186,14 +186,14 @@ describe('SettingsEdition', () => {
                         settings: [
                             {
                                 name: 'myRTE',
-                                inputType: FormElementSettingsInputTypes.RTE
-                            }
-                        ]
+                                inputType: FormElementSettingsInputTypes.RTE,
+                            },
+                        ],
                     },
-                    settings: {...formElem1.settings, myRTE: '**Content**'}
-                }
+                    settings: {...formElem1.settings, myRTE: '**Content**'},
+                },
             },
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -213,14 +213,14 @@ describe('SettingsEdition', () => {
                         settings: [
                             {
                                 name: 'myNoDisplaySettings',
-                                inputType: FormElementSettingsInputTypes.NONE
-                            }
-                        ]
+                                inputType: FormElementSettingsInputTypes.NONE,
+                            },
+                        ],
                     },
-                    settings: {...formElem1.settings, myNoDisplaySettings: 'some_value'}
-                }
+                    settings: {...formElem1.settings, myNoDisplaySettings: 'some_value'},
+                },
             },
-            dispatch: jest.fn()
+            dispatch: jest.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);

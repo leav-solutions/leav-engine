@@ -8,7 +8,7 @@ import {APP_ENDPOINT} from '../../../constants';
 
 export const GuardAccess: FunctionComponent = ({children}) => {
     const {data} = useGetApplicationDataByEndpointQuery({
-        variables: {endpoint: APP_ENDPOINT}
+        variables: {endpoint: APP_ENDPOINT},
     });
 
     const currentApp = data?.applications?.list[0];

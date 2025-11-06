@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {
     type GET_ATTRIBUTE_BY_ID,
     type GET_ATTRIBUTE_BY_IDVariables,
-    type GET_ATTRIBUTE_BY_ID_attributes_list
+    type GET_ATTRIBUTE_BY_ID_attributes_list,
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {type AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
@@ -41,13 +41,13 @@ function EditAttribute({
     attributeId,
     onPostSave,
     forcedType,
-    redirectAfterCreate
+    redirectAfterCreate,
 }: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
         variables: {id: attrId},
-        skip: !attrId
+        skip: !attrId,
     });
 
     const _renderEditAttributeTabs = useMemo(
@@ -59,7 +59,7 @@ function EditAttribute({
                 redirectAfterCreate={redirectAfterCreate}
             />
         ),
-        [onPostSave, forcedType, history]
+        [onPostSave, forcedType, history],
     );
 
     if (!attrId) {

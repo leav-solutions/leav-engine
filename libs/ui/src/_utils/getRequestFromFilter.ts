@@ -18,8 +18,8 @@ export const getRequestFromFilters = (filters: IFilter[]): RecordFilterInput[] =
                     {
                         field: conditionToApply in AttributeConditionFilter ? filter.key : null,
                         condition: RecordFilterCondition[conditionToApply],
-                        treeId: (filter as IFilterTree).tree?.id
-                    }
+                        treeId: (filter as IFilterTree).tree?.id,
+                    },
                 ];
             } else if (typeof filter.value.value === 'string' && filter.value.value.match(/\n/g)) {
                 const values = filter.value.value.split('\n').filter(Boolean);
@@ -30,7 +30,7 @@ export const getRequestFromFilters = (filters: IFilter[]): RecordFilterInput[] =
                     queryFilter.push({
                         field: conditionToApply in AttributeConditionFilter ? filter.key : null,
                         value: v,
-                        condition: RecordFilterCondition[conditionToApply]
+                        condition: RecordFilterCondition[conditionToApply],
                     });
 
                     queryFilter.push({operator: RecordFilterOperator.OR});
@@ -47,8 +47,8 @@ export const getRequestFromFilters = (filters: IFilter[]): RecordFilterInput[] =
                                 ? JSON.stringify(filter?.value?.value ?? '')
                                 : (filter?.value?.value ?? '').toString(),
                         condition: RecordFilterCondition[filter?.condition],
-                        treeId: (filter as IFilterTree).tree?.id
-                    }
+                        treeId: (filter as IFilterTree).tree?.id,
+                    },
                 ];
             }
 

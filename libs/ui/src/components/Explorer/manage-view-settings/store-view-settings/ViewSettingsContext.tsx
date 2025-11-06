@@ -11,5 +11,5 @@ export const ViewSettingsContext = createContext<{
     view: null as any,
     dispatch: () => {
         throw new Error('useViewSettingsContext must be used inside a <ViewSettingsContext.Provider />');
-    }
+    },
 });

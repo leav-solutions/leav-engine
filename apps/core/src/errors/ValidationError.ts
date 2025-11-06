@@ -15,7 +15,7 @@ export default class ValidationError<T> extends LeavError<T> {
         fields: ErrorFieldDetail<T>,
         message = 'Invalid request',
         isCustomMessage = false,
-        context?: any
+        context?: any,
     ) {
         super(ErrorTypes.VALIDATION_ERROR, message, {fields});
 

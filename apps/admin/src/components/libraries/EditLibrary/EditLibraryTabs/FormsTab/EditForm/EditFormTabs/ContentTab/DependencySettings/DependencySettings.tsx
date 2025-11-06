@@ -26,7 +26,7 @@ function DependencySettings(): JSX.Element {
 
     const options = state.form.dependencyAttributes.map(attr => ({
         text: localizedLabel(attr.label, lang),
-        value: attr.id
+        value: attr.id,
     }));
 
     const _handleChange = (_, data) =>
@@ -35,8 +35,8 @@ function DependencySettings(): JSX.Element {
             activeDependency: {
                 attribute: data.value,
                 value: null,
-                ancestors: []
-            }
+                ancestors: [],
+            },
         });
 
     return (

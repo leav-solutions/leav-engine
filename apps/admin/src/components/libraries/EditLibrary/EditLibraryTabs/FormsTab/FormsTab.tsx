@@ -20,7 +20,7 @@ interface IFormsTabProps {
 function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
     const [filters, setFilters] = useState<IFormFilterOptions>({});
     const {loading, error, data} = useQuery<GET_FORMS_LIST, GET_FORMS_LISTVariables>(getFormsQuery, {
-        variables: {...addWildcardToFilters(filters), library: libraryId}
+        variables: {...addWildcardToFilters(filters), library: libraryId},
     });
 
     const [deleteForm] = useMutation<DELETE_FORM, DELETE_FORMVariables>(deleteFormQuery);
@@ -42,7 +42,7 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
 
         const newFilters = {
             ...filters,
-            [filterElem.name]: newElemState
+            [filterElem.name]: newElemState,
         };
 
         setFilters(newFilters);
@@ -62,13 +62,13 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
         deleteForm({
             variables: {
                 formId,
-                library: libraryId
+                library: libraryId,
             },
             update: (cache, {data: {deleteForm: deletedForm}}: any) => {
                 // Get cached data for library's forms list
                 const cacheData = cache.readQuery<GET_FORMS_LIST, GET_FORMS_LISTVariables>({
                     query: getFormsQuery,
-                    variables: {library: libraryId}
+                    variables: {library: libraryId},
                 });
 
                 // Clear everything in cache related to this library's forms list. There might be
@@ -84,16 +84,16 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
                     forms: {
                         list: [...(cacheData?.forms?.list || [])].filter(f => f.id !== deletedForm.id),
                         totalCount: cacheData?.forms?.totalCount ? cacheData?.forms?.totalCount - 1 : 0,
-                        __typename: 'FormsList'
-                    }
+                        __typename: 'FormsList',
+                    },
                 };
 
                 cache.writeQuery({
                     query: getFormsQuery,
                     variables: {library: libraryId},
-                    data: newCacheData
+                    data: newCacheData,
                 });
-            }
+            },
         });
 
     if (error) {

@@ -17,10 +17,10 @@ export default function (): IActionsListFunction {
 
             const computedValues = values.map(elementValue => ({
                 ...elementValue,
-                payload: _isValueDefined(elementValue.payload) ? '●●●●●●●' : ''
+                payload: _isValueDefined(elementValue.payload) ? '●●●●●●●' : '',
             }));
 
             return {values: computedValues, errors: []};
-        }
+        },
     };
 }

@@ -54,7 +54,7 @@ function ALCList({
     onSelectorChange,
     currentActionListName,
     onSave,
-    onChangeCustomMessage
+    onChangeCustomMessage,
 }: IALCListProps) {
     const {t} = useTranslation();
     const specificCardOrder = cardOrder[currentActionListName];
@@ -85,8 +85,8 @@ function ALCList({
         },
         collect: monitor => ({
             hovered: monitor.isOver(),
-            canDrop: !!monitor.canDrop()
-        })
+            canDrop: !!monitor.canDrop(),
+        }),
     });
 
     /////// DRAG / DROP FOR THE HIDDEN DIV
@@ -99,7 +99,7 @@ function ALCList({
         hover(item, monitor) {
             setCurrentIndex(-1);
             return;
-        }
+        },
     });
 
     //////////////////// TYPES COMPATIBILITY FUNCTIONS

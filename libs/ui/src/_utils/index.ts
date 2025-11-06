@@ -18,7 +18,7 @@ import {
     type useIsAllowedQuery,
     type ValueDetailsFragment,
     type ValueVersionInput,
-    type ViewDetailsFragment
+    type ViewDetailsFragment,
 } from '_ui/_gqlTypes';
 import {getFiltersFromRequest} from './getFiltersFromRequest';
 import dayjs from 'dayjs';
@@ -30,7 +30,7 @@ export const arrayValueVersionToObject = (version: ValueDetailsFragment['version
     version?.reduce((acc: IValueVersion, value) => {
         acc[value.treeId] = {
             id: value.treeNode.id,
-            label: value.treeNode.record.whoAmI.label
+            label: value.treeNode.record.whoAmI.label,
         };
 
         return acc;
@@ -40,14 +40,14 @@ export const objectValueVersionToArray = (version: IValueVersion): ValueVersionI
     version
         ? objectToNameValueArray(version).map(v => ({
               treeId: v.name,
-              treeNodeId: v?.value?.id ?? null
+              treeNodeId: v?.value?.id ?? null,
           }))
         : null;
 
 export const extractPermissionFromQuery = (
     queryResult: ReturnType<typeof useIsAllowedQuery>,
     action: PermissionsActions,
-    fallbackPermission = false
+    fallbackPermission = false,
 ): boolean =>
     !queryResult.loading && !queryResult.error
         ? (queryResult.data?.isAllowed?.find(permission => permission.name === action)?.allowed ?? fallbackPermission)
@@ -85,7 +85,7 @@ export const getValueVersionLabel = (version: IValueVersion) =>
 export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): string =>
     t('record_edition.date_range_value', {
         ...value,
-        interpolation: {escapeValue: false}
+        interpolation: {escapeValue: false},
     });
 
 /**
@@ -105,19 +105,19 @@ export const prepareView = (
     view: WithTypename<ViewDetailsFragment>,
     attributes: IAttribute[],
     libraryId: string,
-    userId: string
+    userId: string,
 ): IView => {
     const viewFilters: RecordFilterInput[] = (view?.filters ?? []).map(filter => ({
         ...filter,
-        treeId: filter.tree?.id
+        treeId: filter.tree?.id,
     }));
 
     const viewValuesVersions = (view?.valuesVersions ?? []).map(version => ({
         ...version,
         treeNode: {
             ...version.treeNode,
-            title: version.treeNode.record.whoAmI.label
-        }
+            title: version.treeNode.record.whoAmI.label,
+        },
     }));
 
     return {
@@ -126,18 +126,18 @@ export const prepareView = (
         filters: getFiltersFromRequest(viewFilters, libraryId, attributes),
         sort: (view.sort ?? []).map(s => ({
             field: s.field,
-            order: s.order
+            order: s.order,
         })),
         display: omit(view.display, '__typename') as ViewDetailsFragment['display'],
         valuesVersions: viewValuesVersions.reduce((versions: IValueVersion, version): IValueVersion => {
             versions[version.treeId] = {
                 id: version.treeNode.id,
-                label: version.treeNode.record.whoAmI.label
+                label: version.treeNode.record.whoAmI.label,
             };
 
             return versions;
         }, {}),
-        attributes: (view.attributes ?? []).map(attr => attr.id)
+        attributes: (view.attributes ?? []).map(attr => attr.id),
     };
 };
 export const getAttributeFromKey = (key: string, library: string, attributes: IAttribute[]): IAttribute | undefined => {
@@ -157,7 +157,7 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
     if (isTypeLink(rootAttribute.type)) {
         if (splitKey[1]) {
             const linkedAttribute = attributes.find(
-                attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === splitKey[1]
+                attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === splitKey[1],
             );
 
             return {...linkedAttribute, parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat}};

@@ -20,6 +20,6 @@ export default function (): IPluginsRepo {
         },
         getRegisteredPlugins(): IRegisteredPlugin[] {
             return _registeredPlugins.sort((a, b) => a.infos.name.localeCompare(b.infos.name));
-        }
+        },
     };
 }

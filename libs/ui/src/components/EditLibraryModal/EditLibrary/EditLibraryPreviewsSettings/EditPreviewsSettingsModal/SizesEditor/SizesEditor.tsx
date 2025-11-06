@@ -46,14 +46,14 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                         rules={[
                             {
                                 pattern: idFormatRegex,
-                                message: t('errors.invalid_id_format')
+                                message: t('errors.invalid_id_format'),
                             },
                             {
                                 required: true,
                                 message: t('errors.field_required', {
                                     interpolation: {escapeValue: false},
-                                    fieldName: t('libraries.previews_settings.size_name')
-                                })
+                                    fieldName: t('libraries.previews_settings.size_name'),
+                                }),
                             },
                             {
                                 validator: (_, value) => {
@@ -63,8 +63,8 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                                         return Promise.reject(t('libraries.previews_settings.duplicate_size_name'));
                                     }
                                     return Promise.resolve();
-                                }
-                            }
+                                },
+                            },
                         ]}
                         validateTrigger={['onBlur']}
                         name={['versions', 'sizes', index, 'name']}
@@ -72,7 +72,7 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                         <Input disabled={readOnly} type="text" onChange={_handleChange} aria-label="size_name" />
                     </SizeEditorFormItem>
                 );
-            }
+            },
         },
         {
             key: 'size',
@@ -93,9 +93,9 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                                 required: true,
                                 message: t('errors.field_required', {
                                     interpolation: {escapeValue: false},
-                                    fieldName: t('libraries.previews_settings.size')
-                                })
-                            }
+                                    fieldName: t('libraries.previews_settings.size'),
+                                }),
+                            },
                         ]}
                         validateTrigger={['onBlur']}
                         name={['versions', 'sizes', index, 'size']}
@@ -109,8 +109,8 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                         />
                     </SizeEditorFormItem>
                 );
-            }
-        }
+            },
+        },
     ];
 
     if (!readOnly) {
@@ -144,14 +144,14 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                         />
                     </Popconfirm>
                 );
-            }
+            },
         });
     }
 
     const sizesData = sizesList.map((size, index) => ({
         key: index,
         name: size.name,
-        size: size.size
+        size: size.size,
     }));
 
     const _handleAddSize = () => {

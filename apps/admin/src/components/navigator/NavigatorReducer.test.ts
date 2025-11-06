@@ -8,7 +8,7 @@ describe('Navigator Reducer', () => {
         for (let i = 0; i < 5; i++) {
             const state = reducer(initialState, {
                 type: ActionTypes.SET_RESTRICT_ROOTS,
-                data: Array(i)
+                data: Array(i),
             });
             expect(state.restrictToRoots).toHaveLength(i);
         }
@@ -16,7 +16,7 @@ describe('Navigator Reducer', () => {
     test('Action SET_RESTRICT_ROOTS with 1 root', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_RESTRICT_ROOTS,
-            data: ['test']
+            data: ['test'],
         });
         expect(state.restrictToRoots).toHaveLength(1);
         expect(state.selectedRoot).toBe('test');
@@ -24,7 +24,7 @@ describe('Navigator Reducer', () => {
     test('Action SET_SELECTED_ROOT', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_SELECTED_ROOT,
-            data: 'test'
+            data: 'test',
         });
         expect(state.selectedRoot).toBe('test');
     });
@@ -32,8 +32,8 @@ describe('Navigator Reducer', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_ROOT_INFOS,
             data: {
-                query: 'test'
-            }
+                query: 'test',
+            },
         });
         expect(state.selectedRoot).toBe('test');
     });
@@ -42,12 +42,12 @@ describe('Navigator Reducer', () => {
             type: ActionTypes.SET_ROOTS,
             data: [
                 {
-                    id: 'test'
+                    id: 'test',
                 },
                 {
-                    id: 'test2'
-                }
-            ]
+                    id: 'test2',
+                },
+            ],
         });
         expect(state.rootsList).toHaveLength(2);
         expect(state.rootsList[1].id).toEqual('test2');
@@ -57,17 +57,17 @@ describe('Navigator Reducer', () => {
             {
                 attribute: 'test',
                 value: 'v1',
-                operator: '='
+                operator: '=',
             },
             {
                 attribute: 'test2',
                 value: 'v2',
-                operator: '='
-            }
+                operator: '=',
+            },
         ];
         const state = reducer(initialState, {
             type: ActionTypes.SET_FILTERS,
-            data: filters
+            data: filters,
         });
         expect(state.filters).toHaveLength(2);
         expect(state.filters).toEqual(filters);
@@ -75,19 +75,19 @@ describe('Navigator Reducer', () => {
     test('Action TOGGLE_FILTERS', () => {
         const state = reducer(initialState, {
             type: ActionTypes.TOGGLE_FILTERS,
-            data: null
+            data: null,
         });
         expect(state.showFilters).toBe(true);
         const newState = reducer(state, {
             type: ActionTypes.TOGGLE_FILTERS,
-            data: null
+            data: null,
         });
         expect(newState.showFilters).toBe(false);
     });
     test('Action SET_LIST', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_LIST,
-            data: {list: [1, 2]}
+            data: {list: [1, 2]},
         });
         expect(state.list).toHaveLength(2);
     });
@@ -95,7 +95,7 @@ describe('Navigator Reducer', () => {
         const data = {offset: 3, page: 2};
         const state = reducer(initialState, {
             type: ActionTypes.SET_OFFSET,
-            data
+            data,
         });
         expect(state.offset).toBe(3);
         expect(state.currentPage).toBe(2);
@@ -103,7 +103,7 @@ describe('Navigator Reducer', () => {
     test('Action SET_LIMIT', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_LIMIT,
-            data: {limit: 25}
+            data: {limit: 25},
         });
         expect(state.selectedOffset).toBe(25);
     });

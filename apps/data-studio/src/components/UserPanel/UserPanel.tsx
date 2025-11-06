@@ -36,12 +36,12 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
             placement="right"
             closable={false}
             styles={{
-                body: {padding: 0}
+                body: {padding: 0},
             }}
         >
             <CustomMenu
                 style={{
-                    height: '100%'
+                    height: '100%',
                 }}
                 mode="inline"
                 items={[
@@ -54,7 +54,7 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                                 {t('menu.user_menu.tasks')}
                                 <AvailableSoon />
                             </>
-                        )
+                        ),
                     },
                     {
                         disabled: true,
@@ -65,7 +65,7 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                                 {t('menu.user_menu.shortcuts')}
                                 <AvailableSoon />
                             </>
-                        )
+                        ),
                     },
                     {
                         disabled: true,
@@ -76,7 +76,7 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                                 {t('menu.user_menu.events')}
                                 <AvailableSoon />
                             </>
-                        )
+                        ),
                     },
 
                     {key: 'lang-switcher', label: <LangSwitcher />},
@@ -88,8 +88,8 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                                 <LogoutOutlined />
                                 {t('menu.user_menu.logout')}
                             </>
-                        )
-                    }
+                        ),
+                    },
                 ]}
             />
             <a href="https://leav-engine.com" target="_blank">

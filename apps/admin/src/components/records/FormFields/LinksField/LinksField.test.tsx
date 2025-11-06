@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function LinksFieldElement() {
             return <div data-test-id="record_links_element" />;
-        }
+        },
 );
 
 jest.mock(
@@ -20,7 +20,7 @@ jest.mock(
     () =>
         function LinksFieldTreeElement() {
             return <div data-test-id="record_links_element" />;
-        }
+        },
 );
 
 jest.mock('../../../../hooks/useLang');
@@ -36,17 +36,17 @@ describe('EditRecordFormLinks', () => {
                     library: {
                         id: 'test_lib',
                         label: {
-                            fr: 'Test Lib'
-                        }
+                            fr: 'Test Lib',
+                        },
                     },
                     label: 'TestLabel',
                     color: null,
-                    preview: null
-                }
+                    preview: null,
+                },
             },
             modified_at: 1234567890,
             created_at: 1234567890,
-            version: null
+            version: null,
         },
         {
             id_value: '98766',
@@ -57,18 +57,18 @@ describe('EditRecordFormLinks', () => {
                     library: {
                         id: 'test_lib',
                         label: {
-                            fr: 'Test Lib'
-                        }
+                            fr: 'Test Lib',
+                        },
                     },
                     label: 'TestLabel2',
                     color: null,
-                    preview: null
-                }
+                    preview: null,
+                },
             },
             modified_at: 1234567890,
             created_at: 1234567890,
-            version: null
-        }
+            version: null,
+        },
     ];
 
     const treeValues: ITreeLinkValue[] = [
@@ -82,13 +82,13 @@ describe('EditRecordFormLinks', () => {
                         library: {
                             id: 'test_lib',
                             label: {
-                                fr: 'Test Lib'
-                            }
+                                fr: 'Test Lib',
+                            },
                         },
                         label: 'TestLabel',
                         color: null,
-                        preview: null
-                    }
+                        preview: null,
+                    },
                 },
                 ancestors: [
                     {
@@ -99,21 +99,21 @@ describe('EditRecordFormLinks', () => {
                                 library: {
                                     id: 'test_lib',
                                     label: {
-                                        fr: 'Test Lib'
-                                    }
+                                        fr: 'Test Lib',
+                                    },
                                 },
                                 label: 'TestLabel2',
                                 color: null,
-                                preview: null
-                            }
-                        }
-                    }
-                ]
+                                preview: null,
+                            },
+                        },
+                    },
+                ],
             },
             modified_at: 1234567890,
             created_at: 1234567890,
-            version: null
-        }
+            version: null,
+        },
     ];
 
     const onChange = jest.fn();
@@ -152,9 +152,9 @@ describe('EditRecordFormLinks', () => {
                 linkValue: null,
                 created_at: null,
                 modified_at: null,
-                version: null
+                version: null,
             },
-            0
+            0,
         );
     });
 
@@ -169,29 +169,29 @@ describe('EditRecordFormLinks', () => {
                         library: {
                             id: 'test_lib',
                             label: {
-                                fr: 'Test Lib'
-                            }
+                                fr: 'Test Lib',
+                            },
                         },
                         label: 'TestLabel',
                         color: null,
-                        preview: null
-                    }
+                        preview: null,
+                    },
                 },
                 modified_at: 1234567890,
                 created_at: 1234567890,
-                version: null
+                version: null,
             },
             {
                 id_value: '98766',
                 linkValue: null,
                 modified_at: 1234567890,
                 created_at: 1234567890,
-                version: null
-            }
+                version: null,
+            },
         ];
 
         const comp = shallow(
-            <LinksField values={valuesWithNull} attribute={{...mockAttrAdvLink}} onChange={onChange} />
+            <LinksField values={valuesWithNull} attribute={{...mockAttrAdvLink}} onChange={onChange} />,
         );
 
         expect(comp.find('[data-test-id="link_values"] LinksFieldElement')).toHaveLength(1);

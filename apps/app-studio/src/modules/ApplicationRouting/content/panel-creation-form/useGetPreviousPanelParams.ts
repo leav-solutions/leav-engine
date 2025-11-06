@@ -11,13 +11,13 @@ export const useGetPreviousPanelParams = ({currentRecordId, currentWhere, curren
         return {
             previousRecordPanelId,
             previousWhere: 'fullpage',
-            previousRecordId: undefined
+            previousRecordId: undefined,
         };
     }
 
     return {
         previousRecordPanelId,
         previousWhere,
-        previousRecordId
+        previousRecordId,
     };
 };

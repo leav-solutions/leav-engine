@@ -16,7 +16,7 @@ jest.mock(
     () =>
         function EditApiKeyModal() {
             return <div>EditApiKeyModal</div>;
-        }
+        },
 );
 
 describe('ApiKeys', () => {
@@ -24,7 +24,7 @@ describe('ApiKeys', () => {
         {
             request: {
                 query: getApiKeysQuery,
-                variables: {filters: {}}
+                variables: {filters: {}},
             },
             result: {
                 data: {
@@ -33,26 +33,26 @@ describe('ApiKeys', () => {
                         list: [
                             {...mockApiKey, id: 'key1', label: 'keyA'},
                             {...mockApiKey, id: 'key2', expiresAt: null, label: 'keyB'},
-                            {...mockApiKey, id: 'key3', expiresAt: 2000000000, label: 'keyC'}
-                        ]
-                    }
-                }
-            }
+                            {...mockApiKey, id: 'key3', expiresAt: 2000000000, label: 'keyC'},
+                        ],
+                    },
+                },
+            },
         },
         {
             request: {
                 query: getApiKeysQuery,
-                variables: {filters: {label: '%C%'}}
+                variables: {filters: {label: '%C%'}},
             },
             result: {
                 data: {
                     apiKeys: {
                         __typename: 'ApiKeyList',
-                        list: [{...mockApiKey, id: 'key3', expiresAt: 2000000000, label: 'keyC'}]
-                    }
-                }
-            }
-        }
+                        list: [{...mockApiKey, id: 'key3', expiresAt: 2000000000, label: 'keyC'}],
+                    },
+                },
+            },
+        },
     ];
 
     const cacheSettings = {possibleTypes: {Record: ['User']}};
@@ -85,7 +85,7 @@ describe('ApiKeys', () => {
             {
                 request: {
                     query: deleteApiKeyMutation,
-                    variables: {id: 'key1'}
+                    variables: {id: 'key1'},
                 },
                 result: () => {
                     deleteCalled = true;
@@ -93,12 +93,12 @@ describe('ApiKeys', () => {
                         data: {
                             deleteApiKey: {
                                 __typename: 'ApiKey',
-                                id: 'keyA'
-                            }
-                        }
+                                id: 'keyA',
+                            },
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         render(<GeneralApiKeysTab />, {apolloMocks: mocksWithDelete, cacheSettings});

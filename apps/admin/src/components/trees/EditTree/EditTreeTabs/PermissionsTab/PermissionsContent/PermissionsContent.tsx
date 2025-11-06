@@ -34,8 +34,8 @@ function PermissionsContent({tree, readonly, onSubmitSettings}: IPermissionsCont
                         readOnly={readonly}
                     />
                 </Tab.Pane>
-            )
-        }
+            ),
+        },
     ];
 
     panes = [
@@ -52,8 +52,8 @@ function PermissionsContent({tree, readonly, onSubmitSettings}: IPermissionsCont
                         readonly={readonly}
                     />
                 </Tab.Pane>
-            )
-        }))
+            ),
+        })),
     ];
 
     return <Tab panes={panes} className="grow flex-col height100" />;

@@ -14,7 +14,7 @@ import {
     type ActiveDependencyNode,
     FormBuilderActionTypes,
     defaultDepAttribute,
-    defaultDepValue
+    defaultDepValue,
 } from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 
@@ -59,8 +59,8 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
             activeDependency: {
                 attribute: state.activeDependency?.attribute || defaultDepAttribute,
                 value: (node as ActiveDependencyNode) || {id: defaultDepValue, record: null},
-                ancestors: node.ancestors ? node.ancestors.slice(0, -1) : []
-            }
+                ancestors: node.ancestors ? node.ancestors.slice(0, -1) : [],
+            },
         });
     };
 
@@ -70,8 +70,8 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
             activeDependency: {
                 attribute: state.activeDependency?.attribute ?? defaultDepAttribute,
                 value: element ?? null,
-                ancestors: ancestors ?? []
-            }
+                ancestors: ancestors ?? [],
+            },
         });
 
     // We'll display tree starting from element's parent, to have its siblings and children accessible

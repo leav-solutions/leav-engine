@@ -28,7 +28,7 @@ function TreeField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.El
         key: i,
         content: <RecordCardSkeleton />,
         link: false,
-        active: false
+        active: false,
     }));
 
     return (

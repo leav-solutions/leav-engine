@@ -20,7 +20,7 @@ const EditTree = ({match}: IEditTreeProps): JSX.Element => {
 
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
         variables: {id: treeId},
-        skip: !treeId
+        skip: !treeId,
     });
 
     if (loading) {

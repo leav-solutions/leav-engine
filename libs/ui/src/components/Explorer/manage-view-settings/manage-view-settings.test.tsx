@@ -36,7 +36,7 @@ const MockOpenEditSettings: FunctionComponent = () => {
 
 const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({
     defaultSettings,
-    children
+    children,
 }) => {
     const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings, false);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
@@ -53,64 +53,64 @@ describe('Integration tests about managing view settings feature', () => {
             ...mockAttributeSimple,
             id: 'simple_attribute',
             permissions: {access_attribute: true},
-            label: {fr: 'Attribut simple'}
+            label: {fr: 'Attribut simple'},
         },
         {
             ...mockAttributeLink,
             id: 'link_attribute',
             permissions: {access_attribute: true},
-            label: {fr: 'Attribut lien'}
+            label: {fr: 'Attribut lien'},
         },
         {
             ...mockAttributeSimple,
             id: 'simple_attribute_allemand',
             permissions: {access_attribute: true},
-            label: {fr: 'Fußballer Märchenkönig'}
+            label: {fr: 'Fußballer Märchenkönig'},
         },
         {
             ...mockAttributeSimple,
             id: 'simple_attribute_polonais',
             permissions: {access_attribute: true},
-            label: {fr: 'zdawał się być pogrążonym wnętrzności'}
+            label: {fr: 'zdawał się być pogrążonym wnętrzności'},
         },
         {
             ...mockAttributeSimple,
             id: 'simple_attribute_français',
             permissions: {access_attribute: true},
-            label: {fr: 'éssai français Noël'}
-        }
+            label: {fr: 'éssai français Noël'},
+        },
     ];
     const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibWithPermissionsQuery> = {
         data: {attributes: {list: attributesList}},
         loading: false,
-        called: true
+        called: true,
     };
 
     const viewMutation = data => ({
         id: '42',
         created_by: {
-            id: '1'
+            id: '1',
         },
         shared: !data?.shared,
-        label: {en: 'My view'}
+        label: {en: 'My view'},
     });
 
     const mockSaveViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            saveView: viewMutation(data)
-        }
+            saveView: viewMutation(data),
+        },
     }));
 
     const mockUpdateViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            updateView: viewMutation(data)
-        }
+            updateView: viewMutation(data),
+        },
     }));
 
     const mockDeleteViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            deleteView: viewMutation(data)
-        }
+            deleteView: viewMutation(data),
+        },
     }));
 
     const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
@@ -121,7 +121,7 @@ describe('Integration tests about managing view settings feature', () => {
                         id: '43',
                         shared: false,
                         display: {
-                            type: gqlTypes.ViewTypes.list
+                            type: gqlTypes.ViewTypes.list,
                         },
                         created_by: {
                             id: '1',
@@ -129,19 +129,19 @@ describe('Integration tests about managing view settings feature', () => {
                                 id: '1',
                                 label: 'Admin',
                                 library: {
-                                    id: 'users'
-                                }
-                            }
+                                    id: 'users',
+                                },
+                            },
                         },
                         label: {en: 'My view'},
                         filters: [],
-                        sort: []
-                    }
-                ]
-            }
+                        sort: [],
+                    },
+                ],
+            },
         },
         loading: false,
-        called: true
+        called: true,
     };
 
     const mockViewsResultWithSort: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
@@ -152,7 +152,7 @@ describe('Integration tests about managing view settings feature', () => {
                         id: '44',
                         shared: false,
                         display: {
-                            type: gqlTypes.ViewTypes.list
+                            type: gqlTypes.ViewTypes.list,
                         },
                         created_by: {
                             id: '1',
@@ -160,30 +160,30 @@ describe('Integration tests about managing view settings feature', () => {
                                 id: '1',
                                 label: 'Admin',
                                 library: {
-                                    id: 'users'
-                                }
-                            }
+                                    id: 'users',
+                                },
+                            },
                         },
                         label: {en: 'My view'},
                         filters: [],
                         sort: [
                             {
                                 field: 'simple_attribute',
-                                direction: gqlTypes.SortOrder.asc
-                            }
-                        ]
-                    }
-                ]
-            }
+                                direction: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         loading: false,
-        called: true
+        called: true,
     };
 
     const mockExplorerAttributesQuery: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
         data: {attributes: {list: attributesList}},
         loading: false,
-        called: true
+        called: true,
     };
 
     const mockMeResult: Mockify<typeof gqlTypes.useMeQuery> = {
@@ -191,16 +191,16 @@ describe('Integration tests about managing view settings feature', () => {
             me: {
                 id: '1',
                 whoAmI: {
-                    id: '1'
-                }
-            }
-        }
+                    id: '1',
+                },
+            },
+        },
     };
 
     let getViewsListSpy: jest.SpyInstance;
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
-            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult
+            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult,
         );
 
         getViewsListSpy = jest
@@ -208,22 +208,22 @@ describe('Integration tests about managing view settings feature', () => {
             .mockReturnValue(mockViewsResult as gqlTypes.GetViewsListQueryResult);
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockReturnValue(
-            mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult
+            mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult,
         );
 
         jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
             mockSaveViewMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
         ]);
 
         jest.spyOn(gqlTypes, 'useUpdateViewMutation').mockImplementation(() => [
             mockUpdateViewMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
         ]);
 
         jest.spyOn(gqlTypes, 'useDeleteViewMutation').mockImplementation(() => [
             mockDeleteViewMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
         ]);
 
         jest.spyOn(gqlTypes, 'useMeQuery').mockImplementation(() => mockMeResult as gqlTypes.MeQueryResult);
@@ -238,7 +238,7 @@ describe('Integration tests about managing view settings feature', () => {
                         <SidePanel />
                     </MockViewSettingsContextProvider>
                 </MockFilterscontextProvider>
-            </EditSettingsContextProvider>
+            </EditSettingsContextProvider>,
         );
 
         await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -264,7 +264,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -275,7 +275,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(
                 within(visibleAttributesList)
                     .getAllByRole('listitem')
-                    .find(item => item.textContent === attributesList[0].label.fr)
+                    .find(item => item.textContent === attributesList[0].label.fr),
             ).toBeUndefined();
 
             const [firstAttribute, secondAttribute] = within(hiddenAttributesList).getAllByRole('listitem');
@@ -294,7 +294,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(
                 within(hiddenAttributesList)
                     .getAllByRole('listitem')
-                    .find(item => item.textContent === attributesList[0].label.fr)
+                    .find(item => item.textContent === attributesList[0].label.fr),
             ).toBeUndefined();
 
             await userEvent.click(within(firstAttributeVisible).getByRole('button', {name: /hide/}));
@@ -315,7 +315,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -364,7 +364,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -422,7 +422,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -463,7 +463,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -481,10 +481,10 @@ describe('Integration tests about managing view settings feature', () => {
                             label: {en: 'My view'},
                             library: 'my_lib',
                             shared: false,
-                            sort: []
-                        }
-                    }
-                })
+                            sort: [],
+                        },
+                    },
+                }),
             );
             mockUpdateViewMutation.mockClear();
         });
@@ -498,7 +498,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
             const myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
@@ -528,10 +528,10 @@ describe('Integration tests about managing view settings feature', () => {
                     variables: {
                         view: {
                             id: '43',
-                            label: {fr: 'Nom de ma vue requis', en: 'My view'}
-                        }
-                    }
-                })
+                            label: {fr: 'Nom de ma vue requis', en: 'My view'},
+                        },
+                    },
+                }),
             );
             mockUpdateViewMutation.mockClear();
         });
@@ -545,7 +545,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
@@ -570,9 +570,9 @@ describe('Integration tests about managing view settings feature', () => {
             expect(mockDeleteViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: {
-                        viewId: '43'
-                    }
-                })
+                        viewId: '43',
+                    },
+                }),
             );
             mockDeleteViewMutation.mockClear();
         });
@@ -586,7 +586,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
@@ -606,10 +606,10 @@ describe('Integration tests about managing view settings feature', () => {
                             label: {en: 'My view'},
                             library: 'my_lib',
                             shared: true,
-                            sort: []
-                        }
-                    }
-                })
+                            sort: [],
+                        },
+                    },
+                }),
             );
 
             mockSaveViewMutation.mockClear();
@@ -632,10 +632,10 @@ describe('Integration tests about managing view settings feature', () => {
                             label: {en: 'My view'},
                             library: 'my_lib',
                             shared: false,
-                            sort: []
-                        }
-                    }
-                })
+                            sort: [],
+                        },
+                    },
+                }),
             );
 
             expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
@@ -653,7 +653,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -696,10 +696,10 @@ describe('Integration tests about managing view settings feature', () => {
                             label: {fr: 'Nom de ma vue requis', en: 'My view'},
                             library: 'my_lib',
                             shared: false,
-                            sort: []
-                        }
-                    }
-                })
+                            sort: [],
+                        },
+                    },
+                }),
             );
             mockSaveViewMutation.mockClear();
         });
@@ -715,7 +715,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -736,7 +736,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
@@ -770,7 +770,7 @@ describe('Integration tests about managing view settings feature', () => {
                                 id: '42',
                                 shared: false,
                                 display: {
-                                    type: gqlTypes.ViewTypes.list
+                                    type: gqlTypes.ViewTypes.list,
                                 },
                                 created_by: {
                                     id: '1',
@@ -778,19 +778,19 @@ describe('Integration tests about managing view settings feature', () => {
                                         id: '1',
                                         label: 'Admin',
                                         library: {
-                                            id: 'users'
-                                        }
-                                    }
+                                            id: 'users',
+                                        },
+                                    },
                                 },
                                 label: {en: 'My view'},
                                 filters: [],
-                                sort: []
+                                sort: [],
                             },
                             {
                                 id: '43',
                                 shared: false,
                                 display: {
-                                    type: gqlTypes.ViewTypes.list
+                                    type: gqlTypes.ViewTypes.list,
                                 },
                                 created_by: {
                                     id: '1',
@@ -798,19 +798,19 @@ describe('Integration tests about managing view settings feature', () => {
                                         id: '1',
                                         label: 'Admin',
                                         library: {
-                                            id: 'users'
-                                        }
-                                    }
+                                            id: 'users',
+                                        },
+                                    },
                                 },
                                 label: {en: 'My second view'},
                                 filters: [],
-                                sort: []
+                                sort: [],
                             },
                             {
                                 id: '44',
                                 shared: false,
                                 display: {
-                                    type: gqlTypes.ViewTypes.list
+                                    type: gqlTypes.ViewTypes.list,
                                 },
                                 created_by: {
                                     id: '1',
@@ -818,19 +818,19 @@ describe('Integration tests about managing view settings feature', () => {
                                         id: '1',
                                         label: 'Admin',
                                         library: {
-                                            id: 'users'
-                                        }
-                                    }
+                                            id: 'users',
+                                        },
+                                    },
                                 },
                                 label: {en: 'My third view'},
                                 filters: [],
-                                sort: []
-                            }
-                        ]
-                    }
+                                sort: [],
+                            },
+                        ],
+                    },
                 },
                 loading: false,
-                called: true
+                called: true,
             };
             getViewsListSpy.mockReturnValue(mockViewsListResult as gqlTypes.GetViewsListQueryResult);
 
@@ -842,7 +842,7 @@ describe('Integration tests about managing view settings feature', () => {
                             <SidePanel />
                         </MockViewSettingsContextProvider>
                     </MockFilterscontextProvider>
-                </EditSettingsContextProvider>
+                </EditSettingsContextProvider>,
             );
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));

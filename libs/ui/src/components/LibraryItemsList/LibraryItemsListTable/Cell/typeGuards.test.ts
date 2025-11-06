@@ -14,9 +14,9 @@ const mockRecordIdentity = {
         library: {
             ...mockRecord.library,
             id: 'linked_lib',
-            label: {en: 'Linked lib'}
-        }
-    }
+            label: {en: 'Linked lib'},
+        },
+    },
 };
 
 const mockValue = {
@@ -26,22 +26,22 @@ const mockValue = {
     id_value: null,
     metadata: null,
     version: null,
-    attribute: mockAttributeSimple
+    attribute: mockAttributeSimple,
 };
 
 const mockLinkValue = {
     linkValue: {
         id: '123456',
         whoAmI: {
-            ...mockRecord
-        }
+            ...mockRecord,
+        },
     },
     attribute: mockAttributeLink,
     created_at: 123456789,
     modified_at: 123456789,
     id_value: null,
     metadata: null,
-    version: null
+    version: null,
 };
 
 const mockTreeValue = {
@@ -50,18 +50,18 @@ const mockTreeValue = {
         record: mockRecordIdentity,
         ancestors: [
             {
-                record: mockRecordIdentity
+                record: mockRecordIdentity,
             },
             {
-                record: mockRecordIdentity
-            }
-        ]
+                record: mockRecordIdentity,
+            },
+        ],
     },
     attribute: mockAttributeTree,
     created_at: 123456789,
     modified_at: 123456789,
     metadata: null,
-    id_value: '123456'
+    id_value: '123456',
 };
 
 describe('typeGuards', () => {

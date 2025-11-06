@@ -25,7 +25,7 @@ function AttributePicker({
     selected = [],
     showCreateButton = true,
     multiple = true,
-    baseFilters
+    baseFilters,
 }: IAttributePickerProps): JSX.Element {
     const {t} = useSharedTranslation();
     const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);

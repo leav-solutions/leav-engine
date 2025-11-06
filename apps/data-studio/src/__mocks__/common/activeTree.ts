@@ -11,11 +11,11 @@ export const mockActiveTree: IActiveTree = {
     libraries: [
         {
             id: 'activeTreeLibraryId',
-            behavior: LibraryBehavior.standard
-        }
+            behavior: LibraryBehavior.standard,
+        },
     ],
     permissions: {
         access_tree: true,
-        edit_children: true
-    }
+        edit_children: true,
+    },
 };

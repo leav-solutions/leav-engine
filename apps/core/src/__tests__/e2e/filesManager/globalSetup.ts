@@ -29,7 +29,7 @@ export async function setup() {
             translator,
             'core.infra.amqpService': amqp,
             'core.infra.redis': redis,
-            'core.infra.mailer': mailer
+            'core.infra.mailer': mailer,
         });
 
         // Clear all caches (redis cache for example might persist between runs)

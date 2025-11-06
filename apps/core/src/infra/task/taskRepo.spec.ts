@@ -20,15 +20,15 @@ const mockTask: ITask = {
         moduleName: 'moduleName',
         subModuleName: 'subModuleName',
         name: 'func',
-        args: []
+        args: [],
     },
     role: {
-        type: TaskType.IMPORT_DATA
+        type: TaskType.IMPORT_DATA,
     },
     archive: false,
     startAt: 123,
     status: TaskStatus.PENDING,
-    priority: TaskPriority.MEDIUM
+    priority: TaskPriority.MEDIUM,
 };
 
 describe('TaskRepo', () => {
@@ -38,28 +38,28 @@ describe('TaskRepo', () => {
 
     const ctx: IQueryInfos = {
         userId: '0',
-        queryId: 'taskRepoTest'
+        queryId: 'taskRepoTest',
     };
 
     test('Create task', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([docTaskData])
+            execute: global.__mockPromise([docTaskData]),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
             cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docTaskData)
+            convertToDoc: jest.fn().mockReturnValue(docTaskData),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1)
+            getUnixTime: jest.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
             'core.infra.db.dbService': mockDbServ,
             'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         const createdTask = await repo.createTask(taskData, ctx);
@@ -77,22 +77,22 @@ describe('TaskRepo', () => {
     test('Update task', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([docTaskData])
+            execute: global.__mockPromise([docTaskData]),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
             cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docTaskData)
+            convertToDoc: jest.fn().mockReturnValue(docTaskData),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1)
+            getUnixTime: jest.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
             'core.infra.db.dbService': mockDbServ,
             'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         const updatedTask = await repo.updateTask(taskData, ctx);
@@ -109,17 +109,17 @@ describe('TaskRepo', () => {
     test('Retrieve tasks list with clean id', async () => {
         const mockDbServ = {execute: global.__mockPromise([])};
         const mockDbUtils = {
-            findCoreEntity: global.__mockPromise({list: [{...mockTask, id: 'id'}]})
+            findCoreEntity: global.__mockPromise({list: [{...mockTask, id: 'id'}]}),
         } satisfies Mockify<IDbUtils>;
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1)
+            getUnixTime: jest.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
             'core.infra.db.dbService': mockDbServ,
             'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         const tasks = await repo.getTasks({ctx});
@@ -131,21 +131,21 @@ describe('TaskRepo', () => {
     test('Retrieve tasks to execute', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise({results: [{...mockTask}]})
+            execute: global.__mockPromise({results: [{...mockTask}]}),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes)
+            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1)
+            getUnixTime: jest.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
             'core.infra.db.dbService': mockDbServ,
             'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-            'core.utils': mockUtils as IUtils
+            'core.utils': mockUtils as IUtils,
         });
 
         const tasks = await repo.getTasksToExecute(ctx);
@@ -164,16 +164,16 @@ describe('TaskRepo', () => {
     test('Delete task', async () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([docTaskData])
+            execute: global.__mockPromise([docTaskData]),
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes)
+            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
         };
 
         const repo = taskRepo({
             'core.infra.db.dbService': mockDbServ,
-            'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
         });
 
         const deleteRes = await repo.deleteTask(taskData.id, ctx);

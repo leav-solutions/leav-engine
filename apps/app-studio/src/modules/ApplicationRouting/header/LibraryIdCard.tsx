@@ -19,9 +19,9 @@ export const LibraryIdCard: FunctionComponent<ILibraryIdCardProps> = ({title, li
 
     const {data, loading} = useGetLibraryNameQuery({
         variables: {
-            libraryId
+            libraryId,
         },
-        skip: libraryId === null
+        skip: libraryId === null,
     });
 
     const libraryLabel = localizedTranslation(data?.libraries?.list?.[0]?.label, lang);
@@ -34,7 +34,7 @@ export const LibraryIdCard: FunctionComponent<ILibraryIdCardProps> = ({title, li
                 avatarProps={{
                     shape: 'square',
                     label: libraryLabel,
-                    size: avatarSize
+                    size: avatarSize,
                 }}
             />
         );
@@ -56,7 +56,7 @@ export const LibraryIdCard: FunctionComponent<ILibraryIdCardProps> = ({title, li
             avatarProps={{
                 shape: 'square',
                 label: libraryLabel,
-                size: avatarSize
+                size: avatarSize,
             }}
         />
     );

@@ -17,22 +17,22 @@ const commonAttributeData = {
             {
                 id: 'validateFormat',
                 name: 'Validate Format',
-                is_system: true
-            }
+                is_system: true,
+            },
         ],
-        [ActionsListEvents.DELETE_VALUE]: []
-    }
+        [ActionsListEvents.DELETE_VALUE]: [],
+    },
 };
 
 const previewStatusSubFields = [
     {
         id: 'status',
-        format: AttributeFormats.NUMERIC
+        format: AttributeFormats.NUMERIC,
     },
     {
         id: 'message',
-        format: AttributeFormats.TEXT
-    }
+        format: AttributeFormats.TEXT,
+    },
 ];
 
 export const systemAttributes: IAttributeForRepo[] = [
@@ -42,7 +42,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Identifiant', en: 'Identifier'},
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -53,8 +53,8 @@ export const systemAttributes: IAttributeForRepo[] = [
         readonly: true,
         actions_list: {
             ...commonAttributeData.actions_list,
-            saveValue: []
-        }
+            saveValue: [],
+        },
     },
     {
         ...commonAttributeData,
@@ -69,13 +69,13 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     id: 'toNumber',
                     name: 'To Number',
-                    is_system: true
+                    is_system: true,
                 },
                 {
                     id: 'validateFormat',
                     name: 'Validate Format',
-                    is_system: true
-                }
+                    is_system: true,
+                },
             ],
             [ActionsListEvents.GET_VALUE]: [
                 {
@@ -85,12 +85,12 @@ export const systemAttributes: IAttributeForRepo[] = [
                     params: [
                         {
                             name: 'format',
-                            value: 'DD/MM/YYYY HH:mm:ss'
-                        }
-                    ]
-                }
-            ]
-        }
+                            value: 'DD/MM/YYYY HH:mm:ss',
+                        },
+                    ],
+                },
+            ],
+        },
     },
     {
         ...commonAttributeData,
@@ -101,8 +101,8 @@ export const systemAttributes: IAttributeForRepo[] = [
         readonly: true,
         actions_list: {
             ...commonAttributeData.actions_list,
-            saveValue: []
-        }
+            saveValue: [],
+        },
     },
     {
         ...commonAttributeData,
@@ -117,13 +117,13 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     id: 'toNumber',
                     name: 'To Number',
-                    is_system: true
+                    is_system: true,
                 },
                 {
                     id: 'validateFormat',
                     name: 'Validate Format',
-                    is_system: true
-                }
+                    is_system: true,
+                },
             ],
             [ActionsListEvents.GET_VALUE]: [
                 {
@@ -133,12 +133,12 @@ export const systemAttributes: IAttributeForRepo[] = [
                     params: [
                         {
                             name: 'format',
-                            value: 'DD/MM/YYYY HH:mm:ss'
-                        }
-                    ]
-                }
-            ]
-        }
+                            value: 'DD/MM/YYYY HH:mm:ss',
+                        },
+                    ],
+                },
+            ],
+        },
     },
     {
         ...commonAttributeData,
@@ -147,7 +147,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         id: 'label',
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
-        label: {fr: 'Libellé', en: 'Label'}
+        label: {fr: 'Libellé', en: 'Label'},
     },
     /** Users attributes */
     {
@@ -156,7 +156,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Login', en: 'Login'},
-        unique: true
+        unique: true,
     },
     {
         ...commonAttributeData,
@@ -172,15 +172,15 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     id: 'validateFormat',
                     name: 'Validate Format',
-                    is_system: true
+                    is_system: true,
                 },
                 {
                     id: 'validateEmail',
                     name: 'Validate Email',
-                    is_system: true
-                }
-            ]
-        }
+                    is_system: true,
+                },
+            ],
+        },
     },
     {
         ...commonAttributeData,
@@ -194,7 +194,7 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     id: 'validateFormat',
                     name: 'validateFormat',
-                    is_system: true
+                    is_system: true,
                 },
                 {
                     id: 'validateRegex',
@@ -205,24 +205,24 @@ export const systemAttributes: IAttributeForRepo[] = [
                             name: 'regex',
                             // prettier-ignore
                             // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-                            value: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})'
-                        }
-                    ]
+                            value: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})',
+                        },
+                    ],
                 },
                 {
                     id: 'encrypt',
                     name: 'encrypt',
-                    is_system: true
-                }
+                    is_system: true,
+                },
             ],
             getValue: [
                 {
                     id: 'toBoolean',
                     name: 'To Boolean',
-                    is_system: true
-                }
-            ]
-        }
+                    is_system: true,
+                },
+            ],
+        },
     },
     {
         ...commonAttributeData,
@@ -230,14 +230,14 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.TREE,
         label: {
             fr: "Groupes de l'utilisateur",
-            en: 'User groups'
+            en: 'User groups',
         },
         linked_tree: 'users_groups',
         multiple_values: true,
         actions_list: {
             ...commonAttributeData.actions_list,
-            saveValue: []
-        }
+            saveValue: [],
+        },
     },
     /** Files attributes */
     {
@@ -246,7 +246,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Clé racine', en: 'Root key'},
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -254,7 +254,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Hash', en: 'Hash'},
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -262,7 +262,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Chemin du fichier', en: 'File path'},
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -270,7 +270,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Nom du fichier', en: 'File name'},
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -284,16 +284,16 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     id: 'validateFormat',
                     name: 'Validate Format',
-                    is_system: true
+                    is_system: true,
                 },
                 {
                     id: 'toNumber',
                     name: 'To Number',
-                    is_system: true
-                }
-            ]
+                    is_system: true,
+                },
+            ],
         },
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -303,28 +303,28 @@ export const systemAttributes: IAttributeForRepo[] = [
         embedded_fields: [
             {
                 id: 'tiny',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: 'small',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: 'medium',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: 'big',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: 'huge',
-                format: AttributeFormats.TEXT
+                format: AttributeFormats.TEXT,
             },
             {
                 id: 'pdf',
-                format: AttributeFormats.TEXT
-            }
+                format: AttributeFormats.TEXT,
+            },
         ],
         label: {fr: 'Aperçus', en: 'Previews'},
         actions_list: {
@@ -333,23 +333,23 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     is_system: true,
                     id: 'toJSON',
-                    name: 'To JSON'
-                }
+                    name: 'To JSON',
+                },
             ],
             [ActionsListEvents.SAVE_VALUE]: [
                 {
                     is_system: true,
                     id: 'parseJSON',
-                    name: 'Parse JSON'
+                    name: 'Parse JSON',
                 },
                 {
                     is_system: true,
                     id: 'validateFormat',
-                    name: 'Validate Format'
-                }
-            ]
+                    name: 'Validate Format',
+                },
+            ],
         },
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -361,33 +361,33 @@ export const systemAttributes: IAttributeForRepo[] = [
             {
                 id: 'tiny',
                 format: AttributeFormats.EXTENDED,
-                embedded_fields: previewStatusSubFields
+                embedded_fields: previewStatusSubFields,
             },
             {
                 id: 'small',
                 format: AttributeFormats.EXTENDED,
-                embedded_fields: previewStatusSubFields
+                embedded_fields: previewStatusSubFields,
             },
             {
                 id: 'medium',
                 format: AttributeFormats.EXTENDED,
-                embedded_fields: previewStatusSubFields
+                embedded_fields: previewStatusSubFields,
             },
             {
                 id: 'big',
                 format: AttributeFormats.EXTENDED,
-                embedded_fields: previewStatusSubFields
+                embedded_fields: previewStatusSubFields,
             },
             {
                 id: 'huge',
                 format: AttributeFormats.EXTENDED,
-                embedded_fields: previewStatusSubFields
+                embedded_fields: previewStatusSubFields,
             },
             {
                 id: 'pdf',
                 format: AttributeFormats.EXTENDED,
-                embedded_fields: previewStatusSubFields
-            }
+                embedded_fields: previewStatusSubFields,
+            },
         ],
         actions_list: {
             ...commonAttributeData.actions_list,
@@ -395,23 +395,23 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     is_system: true,
                     id: 'toJSON',
-                    name: 'To JSON'
-                }
+                    name: 'To JSON',
+                },
             ],
             [ActionsListEvents.SAVE_VALUE]: [
                 {
                     is_system: true,
                     id: 'parseJSON',
-                    name: 'Parse JSON'
+                    name: 'Parse JSON',
                 },
                 {
                     is_system: true,
                     id: 'validateFormat',
-                    name: 'Validate Format'
-                }
-            ]
+                    name: 'Validate Format',
+                },
+            ],
         },
-        readonly: true
+        readonly: true,
     },
     {
         ...commonAttributeData,
@@ -425,22 +425,22 @@ export const systemAttributes: IAttributeForRepo[] = [
                 {
                     id: 'toBoolean',
                     name: 'To Boolean',
-                    is_system: true
-                }
+                    is_system: true,
+                },
             ],
             [ActionsListEvents.SAVE_VALUE]: [
                 {
                     id: 'validateFormat',
                     name: 'Validate Format',
-                    is_system: true
+                    is_system: true,
                 },
                 {
                     id: 'toBoolean',
                     name: 'To Boolean',
-                    is_system: true
-                }
-            ]
+                    is_system: true,
+                },
+            ],
         },
-        readonly: false
-    }
+        readonly: false,
+    },
 ];

@@ -18,7 +18,7 @@ let inodes: {[ino: string]: any};
 
 const DB_SETTINGS = {
     filesLibraryId: 'files_library_id',
-    directoriesLibraryId: 'directories_library_id'
+    directoriesLibraryId: 'directories_library_id',
 };
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
@@ -71,7 +71,7 @@ describe('e2e tests', () => {
         [
             `${cfg.filesystem.absolutePath}/file`,
             `${cfg.filesystem.absolutePath}/dir/sfile`,
-            `${cfg.filesystem.absolutePath}/dir/sdir/ssfile`
+            `${cfg.filesystem.absolutePath}/dir/sdir/ssfile`,
         ].forEach(p => fs.writeFileSync(p, ''));
 
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir`)).toEqual(true);
@@ -86,12 +86,12 @@ describe('e2e tests', () => {
                 children: [
                     {
                         ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino,
-                        children: [{ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino}]
+                        children: [{ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino}],
                     },
-                    {ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino}
-                ]
+                    {ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino},
+                ],
             },
-            {ino: fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino}
+            {ino: fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino},
         ];
     });
 
@@ -102,7 +102,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: IDbScanResult = {
                 ...DB_SETTINGS,
-                treeContent: []
+                treeContent: [],
             };
 
             const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
@@ -115,7 +115,7 @@ describe('e2e tests', () => {
                 file: 'CREATE',
                 'dir/sdir': 'CREATE',
                 'dir/sfile': 'CREATE',
-                'dir/sdir/ssfile': 'CREATE'
+                'dir/sdir/ssfile': 'CREATE',
             };
 
             await amqp.consumer.channel.consume(
@@ -129,7 +129,7 @@ describe('e2e tests', () => {
                         done();
                     }
                 },
-                {consumerTag: 'test3', noAck: true}
+                {consumerTag: 'test3', noAck: true},
             );
         } catch (e) {
             console.error(e);
@@ -148,7 +148,7 @@ describe('e2e tests', () => {
 
             const dbs: IDbScanResult = {
                 ...DB_SETTINGS,
-                treeContent: test3Db(inodes)
+                treeContent: test3Db(inodes),
             };
 
             const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
@@ -159,7 +159,7 @@ describe('e2e tests', () => {
                 // pathBefore as keys
                 file: {pathAfter: 'dir/file', event: 'MOVE'},
                 'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'},
-                'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'}
+                'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'},
             };
 
             amqp.consumer.channel.consume(
@@ -175,7 +175,7 @@ describe('e2e tests', () => {
                         done();
                     }
                 },
-                {consumerTag: 'test4', noAck: true}
+                {consumerTag: 'test4', noAck: true},
             );
         } catch (e) {
             console.error(e);
@@ -192,7 +192,7 @@ describe('e2e tests', () => {
 
             const dbs: IDbScanResult = {
                 ...DB_SETTINGS,
-                treeContent: test4Db(inodes)
+                treeContent: test4Db(inodes),
             };
 
             const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
@@ -204,7 +204,7 @@ describe('e2e tests', () => {
                 'dir/sdir': 'REMOVE',
                 'dir/f': 'REMOVE',
                 'dir/sf': 'REMOVE',
-                'dir/sdir/ssfile': 'REMOVE'
+                'dir/sdir/ssfile': 'REMOVE',
             };
 
             amqp.consumer.channel.consume(
@@ -218,7 +218,7 @@ describe('e2e tests', () => {
                         done();
                     }
                 },
-                {consumerTag: 'test5', noAck: true}
+                {consumerTag: 'test5', noAck: true},
             );
         } catch (e) {
             console.error(e);

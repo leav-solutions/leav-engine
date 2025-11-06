@@ -17,10 +17,10 @@ export default function (): IActionsListFunction {
                 const dateRangeValue = valueElement.payload as IDateRangeValue<string>;
                 return {
                     ...valueElement,
-                    payload: {from: Number(dateRangeValue?.from ?? ''), to: Number(dateRangeValue?.to ?? '')}
+                    payload: {from: Number(dateRangeValue?.from ?? ''), to: Number(dateRangeValue?.to ?? '')},
                 };
             }),
-            errors: []
-        })
+            errors: [],
+        }),
     };
 }

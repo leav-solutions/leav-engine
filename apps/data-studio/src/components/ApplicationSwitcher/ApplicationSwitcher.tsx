@@ -53,7 +53,7 @@ const CustomMenu = styled(Menu)`
 const skeletonItems: ItemType[] = [1, 2, 3].map(el => ({
     key: el,
     icon: <Skeleton.Avatar active size={24} />,
-    label: <Skeleton.Input active block size="small" style={{width: '15em', marginLeft: '1em'}} />
+    label: <Skeleton.Input active block size="small" style={{width: '15em', marginLeft: '1em'}} />,
 }));
 
 function ApplicationSwitcher(): JSX.Element {
@@ -99,14 +99,14 @@ function ApplicationSwitcher(): JSX.Element {
                               <Typography.Paragraph
                                   ellipsis={{
                                       rows: 1,
-                                      tooltip: description
+                                      tooltip: description,
                                   }}
                                   className="description"
                               >
                                   {description}
                               </Typography.Paragraph>
                           </AppLink>
-                      )
+                      ),
                   };
               });
 
@@ -128,7 +128,7 @@ function ApplicationSwitcher(): JSX.Element {
                         {portalLabel}
                     </Typography.Paragraph>
                 </AppLink>
-            )
+            ),
         });
     }
 
@@ -158,7 +158,7 @@ function ApplicationSwitcher(): JSX.Element {
                 placement="right"
                 closable={false}
                 styles={{
-                    body: {padding: 0}
+                    body: {padding: 0},
                 }}
             >
                 {dropdownContent}

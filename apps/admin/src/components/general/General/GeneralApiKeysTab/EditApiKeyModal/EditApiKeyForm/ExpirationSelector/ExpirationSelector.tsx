@@ -42,19 +42,19 @@ function ExpirationSelector({onChange, label, value, ...dropdownProps}: Dropdown
         {text: t('api_keys.one_week'), value: now.add(1, 'week').unix()},
         {text: t('api_keys.one_month'), value: now.add(1, 'month').unix()},
         {text: t('api_keys.six_months'), value: now.add(6, 'months').unix()},
-        {text: t('api_keys.one_year'), value: now.add(1, 'year').unix()}
+        {text: t('api_keys.one_year'), value: now.add(1, 'year').unix()},
     ];
 
     const expirationDropdownOptions = [
         {
             text: t('api_keys.never'),
-            value: NEVER_EXPIRATION_DATE
+            value: NEVER_EXPIRATION_DATE,
         },
         ...expirationPresets,
         {
             text: t('api_keys.custom') + '...',
-            value: CUSTOM_EXPIRATION_DATE
-        }
+            value: CUSTOM_EXPIRATION_DATE,
+        },
     ];
 
     const hasExpired = value && Number(value) < Date.now() / 1000;
@@ -69,11 +69,11 @@ function ExpirationSelector({onChange, label, value, ...dropdownProps}: Dropdown
                         ? hasExpired
                             ? t('api_keys.expiration_reminder_expired', {
                                   date: new Date(Number(value) * 1000).toLocaleString(),
-                                  interpolation: {escapeValue: false}
+                                  interpolation: {escapeValue: false},
                               })
                             : t('api_keys.expiration_reminder', {
                                   date: new Date(Number(value) * 1000).toLocaleString(),
-                                  interpolation: {escapeValue: false}
+                                  interpolation: {escapeValue: false},
                               })
                         : t('api_keys.expiration_reminder_never')}
                 </p>

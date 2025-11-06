@@ -11,7 +11,7 @@ import {
     type WhereSchema,
     type PanelIdSchema,
     type PanelSchema,
-    type PanelIFrameSchema
+    type PanelIFrameSchema,
 } from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
@@ -163,14 +163,14 @@ export interface IUseIFrameMessengerOptions {
             data: ModalConfirmMessage['data'],
             id: string,
             dispatch: MessageDispatcher,
-            callCb: CallCbFunction
+            callCb: CallCbFunction,
         ) => void;
         onAlert?: (data: AlertMessage['data'], id: string, dispatch: MessageDispatcher, callCb: CallCbFunction) => void;
         onNotification?: (
             data: NotificationMessage['data'],
             id: string,
             dispatch: MessageDispatcher,
-            callCb: CallCbFunction
+            callCb: CallCbFunction,
         ) => void;
         onMessage?: (data: unknown, id: string, dispatch: MessageDispatcher, callCb: CallCbFunction) => void;
         onNavigateToPanel?: (data: NavigateToPanelMessage['data']) => void;

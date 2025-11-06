@@ -11,7 +11,7 @@ export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
         try {
             // if we had channel, send message to rabbitmq
             channel.publish(exchange, routingKey, Buffer.from(msg), {
-                persistent: true
+                persistent: true,
             });
         } catch (e) {
             logger.error("105 - Can't publish to rabbitMQ");
@@ -30,7 +30,7 @@ export const generateMsgRabbitMQ = (
     inode: number,
     isDirectory: boolean,
     rootKey: string,
-    hash?: string
+    hash?: string,
 ) => {
     const params: IMessageSend = {
         event,
@@ -40,7 +40,7 @@ export const generateMsgRabbitMQ = (
         isDirectory,
         inode,
         rootKey,
-        hash
+        hash,
     };
 
     return JSON.stringify(params);

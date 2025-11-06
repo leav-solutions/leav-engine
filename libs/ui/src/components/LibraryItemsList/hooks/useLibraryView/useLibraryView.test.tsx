@@ -9,7 +9,7 @@ import {renderHook, waitFor} from '_ui/_tests/testUtils';
 import {mockView} from '_ui/__mocks__/common/view';
 import {
     mockGetLibraryDetailExtendedDefaultView,
-    mockGetLibraryDetailExtendedElement
+    mockGetLibraryDetailExtendedElement,
 } from '_ui/__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {defaultView, getSelectedViewKey} from '../../constants';
 import useLibraryView from './useLibraryView';
@@ -19,37 +19,37 @@ describe('useLibraryView', () => {
     const mockNoUserData = {
         request: {
             query: getUserDataQuery,
-            variables: {keys: [selectedViewKey]}
+            variables: {keys: [selectedViewKey]},
         },
         result: {
             data: {
                 userData: {
-                    [selectedViewKey]: null
-                }
-            }
-        }
+                    [selectedViewKey]: null,
+                },
+            },
+        },
     };
 
     const mockUserDataWithView = {
         request: {
             query: getUserDataQuery,
-            variables: {keys: [selectedViewKey]}
+            variables: {keys: [selectedViewKey]},
         },
         result: {
             data: {
                 userData: {
-                    [selectedViewKey]: mockView.id
-                }
-            }
-        }
+                    [selectedViewKey]: mockView.id,
+                },
+            },
+        },
     };
 
     const mockUserDataThrowing = {
         request: {
             query: getUserDataQuery,
-            variables: {keys: [selectedViewKey]}
+            variables: {keys: [selectedViewKey]},
         },
-        error: new Error('boom!')
+        error: new Error('boom!'),
     };
 
     test('Nothing defined on user data nor library default view, return default view', async () => {
@@ -60,7 +60,7 @@ describe('useLibraryView', () => {
                 <MockedUserContextProvider>
                     <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>
                 </MockedUserContextProvider>
-            )
+            ),
         });
         expect(result.current.loading).toBe(true);
 
@@ -77,15 +77,15 @@ describe('useLibraryView', () => {
             () =>
                 useLibraryView({
                     ...mockGetLibraryDetailExtendedElement,
-                    defaultView: {...mockGetLibraryDetailExtendedDefaultView, id: 'some_view'}
+                    defaultView: {...mockGetLibraryDetailExtendedDefaultView, id: 'some_view'},
                 }),
             {
                 wrapper: ({children}) => (
                     <MockedUserContextProvider>
                         <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>
                     </MockedUserContextProvider>
-                )
-            }
+                ),
+            },
         );
         expect(result.current.loading).toBe(true);
 
@@ -101,14 +101,14 @@ describe('useLibraryView', () => {
             {
                 request: {
                     query: getViewByIdQuery,
-                    variables: {viewId: mockView.id}
+                    variables: {viewId: mockView.id},
                 },
                 result: {
                     data: {
-                        view: mockView
-                    }
-                }
-            }
+                        view: mockView,
+                    },
+                },
+            },
         ];
 
         const {result} = renderHook(() => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}), {
@@ -116,7 +116,7 @@ describe('useLibraryView', () => {
                 <MockedUserContextProvider>
                     <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>
                 </MockedUserContextProvider>
-            )
+            ),
         });
         expect(result.current.loading).toBe(true);
 
@@ -134,7 +134,7 @@ describe('useLibraryView', () => {
                 <MockedUserContextProvider>
                     <MockedProvider mocks={mocks}>{children as JSX.Element}</MockedProvider>
                 </MockedUserContextProvider>
-            )
+            ),
         });
         expect(result.current.loading).toBe(true);
 

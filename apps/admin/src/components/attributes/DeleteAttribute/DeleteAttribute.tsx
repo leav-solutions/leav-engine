@@ -25,12 +25,12 @@ const DeleteAttribute = (props: IDeleteAttributeProps): JSX.Element => {
         update: (cache, {data: {deleteAttribute}}) => {
             deleteFromCache(cache, deleteAttribute as unknown as StoreObject);
         },
-        onError: props.onError
+        onError: props.onError,
     });
 
     const onDelete = async () =>
         deleteAttr({
-            variables: {attrId: attribute.id}
+            variables: {attrId: attribute.id},
         });
 
     const attrLabel =

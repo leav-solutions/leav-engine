@@ -12,7 +12,7 @@ function CheckboxField(props: IFormElementProps<ICommonFieldsSettings>): JSX.Ele
     const {lang: availableLangs} = useLang();
 
     const fieldProps = {
-        label: localizedLabel(label, availableLangs)
+        label: localizedLabel(label, availableLangs),
     };
 
     return <Checkbox toggle {...fieldProps} />;

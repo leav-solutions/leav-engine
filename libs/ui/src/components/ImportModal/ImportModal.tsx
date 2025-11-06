@@ -49,7 +49,7 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
     // Retrieve attributes list
     const [runGetAttributes] = useGetAttributesByLibLazyQuery({
         fetchPolicy: 'cache-and-network',
-        onError: error => message.error(error.message)
+        onError: error => message.error(error.message),
     });
 
     const [runImport, {error: importError}] = useImportExcelMutation({
@@ -67,7 +67,7 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
 
             importDispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: errorMessage});
             importDispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
-        }
+        },
     });
 
     const _runImport = async () => {
@@ -85,10 +85,10 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
                         keyIndex: Number(sheet.keyColumnIndex),
                         linkAttribute: sheet.linkAttribute,
                         keyToIndex: Number(sheet.keyToColumnIndex),
-                        treeLinkLibrary: sheet.treeLinkLibrary
+                        treeLinkLibrary: sheet.treeLinkLibrary,
                     })),
-                    ...(!!scheduleDate && {startAt: scheduleDate.unix()})
-                }
+                    ...(!!scheduleDate && {startAt: scheduleDate.unix()}),
+                },
             });
         } catch (err) {
             importDispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: (err as Error).message});
@@ -115,14 +115,14 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
         [ImportSteps.SELECT_FILE]: 'import.file_configuration',
         [ImportSteps.CONFIG]: 'import.start',
         [ImportSteps.PROCESSING]: 'global.close',
-        [ImportSteps.DONE]: 'global.close'
+        [ImportSteps.DONE]: 'global.close',
     };
 
     const validateButtonIcon: {[key in ImportSteps]: ReactNode} = {
         [ImportSteps.SELECT_FILE]: <RightOutlined />,
         [ImportSteps.CONFIG]: null,
         [ImportSteps.PROCESSING]: null,
-        [ImportSteps.DONE]: null
+        [ImportSteps.DONE]: null,
     };
 
     const validateButtonLabel = (
@@ -134,7 +134,7 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
 
     const _handleGetAttributes = async (attributesLib: string) => {
         const {error, data} = await runGetAttributes({
-            variables: {library: attributesLib}
+            variables: {library: attributesLib},
         });
 
         if (error) {
@@ -210,10 +210,10 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
                             {
                                 label: t('import.import_schedule'),
                                 key: '1',
-                                icon: <FieldTimeOutlined />
-                            }
+                                icon: <FieldTimeOutlined />,
+                            },
                         ],
-                        onClick: _onScheduleImportBtnClick
+                        onClick: _onScheduleImportBtnClick,
                     }}
                 >
                     {validateButtonLabel}
@@ -231,18 +231,18 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
 
     const stepsItems: IKitStep[] = [
         {
-            title: t('import.file_selection')
+            title: t('import.file_selection'),
         },
         {
-            title: t('import.file_configuration')
+            title: t('import.file_configuration'),
         },
         {
-            title: t('import.in_progress')
+            title: t('import.in_progress'),
         },
         {
             title: t('import.import_done'),
-            status: importError ? 'error' : null
-        }
+            status: importError ? 'error' : null,
+        },
     ];
 
     return (

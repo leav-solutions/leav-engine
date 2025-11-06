@@ -11,24 +11,24 @@ describe('retrievePanelDetails', () => {
             {
                 id: '1',
                 title: {
-                    fr: 'Test'
+                    fr: 'Test',
                 },
                 type: 'library',
-                libraryId: 'home'
-            }
+                libraryId: 'home',
+            },
         ],
         libraries: {
             home: {
                 libraryPanels: [],
-                recordPanels: []
-            }
-        }
+                recordPanels: [],
+            },
+        },
     };
 
     it('should provide null values on unknown panelId', async () => {
         const {currentPanel, libraryId, panelType} = retrievePanelDetails({
             application: emptyApplication,
-            panelId: 'unknown'
+            panelId: 'unknown',
         });
 
         expect(currentPanel).toBeNull();
@@ -48,16 +48,16 @@ describe('retrievePanelDetails', () => {
                         {
                             id: panelId,
                             type: 'explorer',
-                            actions: []
-                        }
-                    ]
-                }
-            }
+                            actions: [],
+                        },
+                    ],
+                },
+            },
         };
 
         const {currentPanel, libraryId, panelType} = retrievePanelDetails({
             application: baseApplication,
-            panelId
+            panelId,
         });
 
         expect(panelType).toBe('libraryPanels');
@@ -65,7 +65,7 @@ describe('retrievePanelDetails', () => {
         expect(currentPanel).toEqual({
             id: panelId,
             type: 'explorer',
-            actions: []
+            actions: [],
         });
     });
 
@@ -83,16 +83,16 @@ describe('retrievePanelDetails', () => {
                             type: 'custom',
                             iframeSource: 'https://fakeurl.aristid.com',
                             isSelfContaining: true,
-                            isStandalone: true
-                        }
-                    ]
-                }
-            }
+                            isStandalone: true,
+                        },
+                    ],
+                },
+            },
         };
 
         const {currentPanel, libraryId, panelType} = retrievePanelDetails({
             application: baseApplication,
-            recordPanelId
+            recordPanelId,
         });
 
         expect(panelType).toBe('recordPanels');
@@ -102,7 +102,7 @@ describe('retrievePanelDetails', () => {
             type: 'custom',
             iframeSource: 'https://fakeurl.aristid.com',
             isSelfContaining: true,
-            isStandalone: true
+            isStandalone: true,
         });
     });
 });

@@ -7,12 +7,12 @@ const nullValue = {payload: null, isInherited: null};
 
 const inheritedValues = [
     {payload: 'inherited_value_1', isInherited: true},
-    {payload: 'inherited_value_2', isInherited: true}
+    {payload: 'inherited_value_2', isInherited: true},
 ];
 
 const overrideValues = [
     {payload: 'override_value_1', isInherited: false},
-    {payload: 'override_value_2', isInherited: false}
+    {payload: 'override_value_2', isInherited: false},
 ];
 
 describe('utils', () => {

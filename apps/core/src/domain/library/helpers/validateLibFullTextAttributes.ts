@@ -11,7 +11,7 @@ export default (attributes: string[], fullTextAttributes: string[]): ErrorFieldD
     if (difference(fullTextAttributes, attributes).length) {
         errors.fullTextAttributes = {
             msg: Errors.INVALID_FULLTEXT_ATTRIBUTES,
-            vars: {fullTextAttributes: fullTextAttributes.join(', ')}
+            vars: {fullTextAttributes: fullTextAttributes.join(', ')},
         };
     }
 

@@ -18,7 +18,7 @@ export default function useExecuteDeleteValueMutation(record: IRecordIdentityWho
     const [executeDeleteValue] = useDeleteValueMutation({
         update: (cache, {data: {deleteValue}}) => {
             updateValuesCache(record, deleteValue);
-        }
+        },
     });
     const {t} = useSharedTranslation();
 
@@ -30,8 +30,8 @@ export default function useExecuteDeleteValueMutation(record: IRecordIdentityWho
                         library: record.library.id,
                         attribute,
                         recordId: record.id,
-                        value
-                    }
+                        value,
+                    },
                 });
                 return {status: APICallStatus.SUCCESS};
             } catch (err) {
@@ -45,6 +45,6 @@ export default function useExecuteDeleteValueMutation(record: IRecordIdentityWho
 
                 return {status: APICallStatus.ERROR, error: message};
             }
-        }
+        },
     };
 }

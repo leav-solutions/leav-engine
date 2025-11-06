@@ -13,7 +13,7 @@ import {
     gqlSaveValue,
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
-    waitGraphqlWebSocketMessage
+    waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
 import {waitMailpitMessage} from '../mailpitUtils';
 import {type IPubSubNotificationData} from '_types/eventsManager';
@@ -90,14 +90,14 @@ describe('Export', () => {
             subscriptionGraphqlQuery,
             {},
             data => data?.notification?.title?.includes('export'),
-            {timeoutMs: 20000}
+            {timeoutMs: 20000},
         );
 
     const attributesIdFormats = Object.values(AttributeFormats)
         .filter(format => format !== AttributeFormats.DATE_RANGE && format !== AttributeFormats.EXTENDED)
         .map(format => ({
             format,
-            attrId: `simple_attr_${format.toLowerCase()}`
+            attrId: `simple_attr_${format.toLowerCase()}`,
         }));
 
     beforeAll(async () => {
@@ -107,7 +107,7 @@ describe('Export', () => {
             format: AttributeFormats.TEXT,
             linkedLibrary: exportLibName,
             label: advancedAttrId,
-            multipleValues: true
+            multipleValues: true,
         });
 
         await gqlSaveAttribute({
@@ -115,7 +115,7 @@ describe('Export', () => {
             type: AttributeTypes.ADVANCED_LINK,
             multipleValues: true,
             label: advancedLinkAttrId,
-            linkedLibrary: exportLibName
+            linkedLibrary: exportLibName,
         });
 
         await gqlSaveAttribute({
@@ -123,7 +123,7 @@ describe('Export', () => {
             type: AttributeTypes.TREE,
             multipleValues: true,
             label: treeAttrId,
-            linkedTree: testTreeId
+            linkedTree: testTreeId,
         });
 
         await Promise.all(
@@ -132,16 +132,16 @@ describe('Export', () => {
                     id: attrId,
                     label: attrId,
                     type: AttributeTypes.SIMPLE,
-                    format
-                })
-            )
+                    format,
+                }),
+            ),
         );
 
         await gqlSaveLibrary(
             exportLibName,
             'Lib test export',
             [advancedAttrId, advancedLinkAttrId, treeAttrId, ...attributesIdFormats.map(({attrId}) => attrId)],
-            exportProfileConfig
+            exportProfileConfig,
         );
 
         await gqlSaveTree(testTreeId, 'Test tree', [exportLibName]);
@@ -185,7 +185,7 @@ describe('Export', () => {
                     default:
                         await Promise.resolve();
                 }
-            })
+            }),
         );
 
         await gqlSaveValue(advancedAttrId, exportLibName, recordId1, 'advanced_value_1');
@@ -214,7 +214,7 @@ describe('Export', () => {
 
     async function getTask(taskId: string): Promise<ITask> {
         const resTaskQuery = await makeGraphQlCall(
-            `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`
+            `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`,
         );
 
         expect(resTaskQuery.data.errors).toBeUndefined();
@@ -233,7 +233,7 @@ describe('Export', () => {
             test('should notify success by email', async () => {
                 const config = await getConfig();
                 const mailMsg = await waitMailpitMessage(
-                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('export')
+                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('export'),
                 );
 
                 expect(mailMsg).toBeDefined();
@@ -281,7 +281,7 @@ describe('Export', () => {
                 const config = await getConfig();
 
                 const mailMsg = await waitMailpitMessage(
-                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('export')
+                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('export'),
                 );
 
                 expect(mailMsg).toBeDefined();
@@ -330,8 +330,8 @@ describe('Export', () => {
                     ['campaign id', 'created by'],
                     ['Identifier', 'Created by'],
                     [recordId2, 'admin'],
-                    [recordId1, 'admin']
-                ]
+                    [recordId1, 'admin'],
+                ],
             ]);
         });
 
@@ -352,8 +352,8 @@ describe('Export', () => {
                     ['campaign id', 'created by'],
                     ['Identifier', 'Created by'],
                     [recordId2, 'admin'],
-                    [recordId1, 'admin']
-                ]
+                    [recordId1, 'admin'],
+                ],
             ]);
         });
 
@@ -373,8 +373,8 @@ describe('Export', () => {
                     ['campaign id', 'created by'], // custom label based on profile
                     ['Identifier', 'Created by'], // attribute label
                     [recordId2, 'admin'],
-                    [recordId1, 'admin']
-                ]
+                    [recordId1, 'admin'],
+                ],
             ]);
         });
 
@@ -395,8 +395,8 @@ describe('Export', () => {
                     ['modified by'], // custom label based on profile
                     ['Modified by'], // attribute label
                     ['admin'],
-                    ['admin']
-                ]
+                    ['admin'],
+                ],
             ]);
         });
     });

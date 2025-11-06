@@ -62,7 +62,7 @@ const TreeNodeItem = ({color, label, ancestors, canDelete, onClickToDelete, isRe
                         <KitIdCard title={label} />
                         <KitBreadcrumbStyled
                             items={ancestors?.map(ancestor => ({
-                                title: ancestor.record.whoAmI.label
+                                title: ancestor.record.whoAmI.label,
                             }))}
                             separator={BREADCRUMB_SEPARATOR}
                         />
@@ -77,8 +77,8 @@ const TreeNodeItem = ({color, label, ancestors, canDelete, onClickToDelete, isRe
                               icon: <FaTrash />,
                               label: t('global.delete'),
                               title: t('global.delete'),
-                              onClick: onClickToDelete
-                          }
+                              onClick: onClickToDelete,
+                          },
                       ]
                     : undefined
             }

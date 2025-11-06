@@ -13,10 +13,10 @@ describe('loadConfig', () => {
             tutu: {
                 titi: {
                     tyty: 42,
-                    utut: [3, 4]
-                }
+                    utut: [3, 4],
+                },
             },
-            env: 'dev'
+            env: 'dev',
         });
     });
 });

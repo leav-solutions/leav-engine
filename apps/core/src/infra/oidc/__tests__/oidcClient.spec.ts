@@ -16,9 +16,9 @@ class ClientClassMock {
 jest.mock('openid-client', () => ({
     Issuer: {
         discover: jest.fn(() => ({
-            Client: ClientClassMock
-        }))
-    }
+            Client: ClientClassMock,
+        })),
+    },
 }));
 
 describe('initOIDCClient', () => {
@@ -32,9 +32,9 @@ describe('initOIDCClient', () => {
         const config = {
             auth: {
                 oidc: {
-                    wellKnownEndpoint: 'wellKnownEndpoint'
-                }
-            }
+                    wellKnownEndpoint: 'wellKnownEndpoint',
+                },
+            },
         };
 
         await initOIDCClient(config as IConfig);
@@ -48,9 +48,9 @@ describe('initOIDCClient', () => {
             auth: {
                 oidc: {
                     wellKnownEndpoint: 'wellKnownEndpoint',
-                    clientId: 'clientId'
-                }
-            }
+                    clientId: 'clientId',
+                },
+            },
         };
         clientMock.mockResolvedValueOnce('client');
 
@@ -59,7 +59,7 @@ describe('initOIDCClient', () => {
         expect(clientMock).toHaveBeenCalledTimes(1);
         expect(clientMock).toHaveBeenCalledWith({
             client_id: config.auth.oidc.clientId,
-            token_endpoint_auth_method: 'none'
+            token_endpoint_auth_method: 'none',
         });
         expect(clientResult).toBeInstanceOf(ClientClassMock);
     });

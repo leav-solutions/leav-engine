@@ -49,7 +49,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         system: false,
         label: {
             fr: '',
-            en: ''
+            en: '',
         },
         icon: null,
         behavior: LibraryBehavior.standard,
@@ -63,7 +63,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             subLabel: null,
             color: null,
             preview: null,
-            treeColorPreview: null
+            treeColorPreview: null,
         },
         settings: {},
         permissions: {
@@ -72,8 +72,8 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             access_record: true,
             create_record: true,
             edit_record: true,
-            delete_record: true
-        }
+            delete_record: true,
+        },
     };
 
     const initialValues: LibraryFormValues =
@@ -83,7 +83,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                   ...library,
                   defaultView: library?.defaultView?.id ?? null,
                   mandatoryAttribute: library?.mandatoryAttribute?.id ?? null,
-                  fullTextAttributes: library?.fullTextAttributes ? library.fullTextAttributes.map(a => a.id) : []
+                  fullTextAttributes: library?.fullTextAttributes ? library.fullTextAttributes.map(a => a.id) : [],
               };
 
     const mandatoryAttributeOptions = initialValues.attributes
@@ -92,7 +92,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
               .map(attr => ({
                   key: attr.id,
                   value: attr.id,
-                  text: localizedLabel(attr.label, lang)
+                  text: localizedLabel(attr.label, lang),
               }))
         : [];
     mandatoryAttributeOptions.unshift({key: '', value: '', text: ''});
@@ -101,7 +101,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         ? initialValues.attributes.map(a => ({
               key: a.id,
               value: a.id,
-              text: localizedLabel(a.label, lang) || a.id
+              text: localizedLabel(a.label, lang) || a.id,
           }))
         : [];
 
@@ -111,7 +111,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
               .map(a => ({
                   key: a.id,
                   value: a.id,
-                  text: localizedLabel(a.label, lang) || a.id
+                  text: localizedLabel(a.label, lang) || a.id,
               }))
         : [];
 
@@ -138,7 +138,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
 
     const validationSchema = yup.object().shape({
         label: yup.object().shape({
-            [defaultLang || lang[0]]: yup.string().required()
+            [defaultLang || lang[0]]: yup.string().required(),
         }),
         id: idValidator,
         recordIdentityConf: yup
@@ -148,9 +148,9 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                 subLabel: yup.string().nullable(),
                 color: yup.string().nullable(),
                 preview: yup.string().nullable(),
-                treeColorPreview: yup.string().nullable()
+                treeColorPreview: yup.string().nullable(),
             })
-            .nullable()
+            .nullable(),
     });
 
     const _renderForm = ({
@@ -160,7 +160,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         errors: inputErrors,
         values,
         touched,
-        submitForm
+        submitForm,
     }: FormikProps<LibraryFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
@@ -206,7 +206,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         const _handleIconChange = async (selectedIcon: RecordIdentity_whoAmI) => {
             _handleChangeWithSubmit(null, {
                 name: 'icon',
-                value: {whoAmI: selectedIcon}
+                value: {whoAmI: selectedIcon},
             });
         };
 
@@ -218,7 +218,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         const behaviorOptions = Object.values(LibraryBehavior).map(b => ({
             key: b,
             value: b,
-            text: t(`libraries.behavior_${b}`)
+            text: t(`libraries.behavior_${b}`),
         }));
 
         const _onSubmit = () => handleSubmit();

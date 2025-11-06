@@ -17,7 +17,7 @@ describe('recordRepo', () => {
 
     const libraryId = 'test_lib_record_repo';
     const ctx: IQueryInfos = {
-        userId: '1'
+        userId: '1',
     };
 
     beforeAll(async () => {
@@ -26,9 +26,9 @@ describe('recordRepo', () => {
 
         await libraryRepo.createLibrary({
             libData: {
-                id: libraryId
+                id: libraryId,
             },
-            ctx
+            ctx,
         });
     });
 
@@ -41,9 +41,9 @@ describe('recordRepo', () => {
                 created_by: '1',
                 modified_at: Date.now(),
                 modified_by: '1',
-                text_attr: 'value1'
+                text_attr: 'value1',
             },
-            ctx
+            ctx,
         });
 
         expect(record).toMatchObject({
@@ -54,13 +54,13 @@ describe('recordRepo', () => {
             created_by: '1',
             modified_at: expect.any(Number),
             modified_by: '1',
-            text_attr: 'value1'
+            text_attr: 'value1',
         });
 
         const createdRecord = await recordRepo.getRecord({
             libraryId,
             recordId: record.id,
-            ctx
+            ctx,
         });
 
         expect(createdRecord).toEqual(record);
@@ -78,10 +78,10 @@ describe('recordRepo', () => {
                     created_by: '1',
                     modified_at: Date.now(),
                     modified_by: '2',
-                    text_attr: 'value1'
+                    text_attr: 'value1',
                 },
-                ctx
-            })
+                ctx,
+            }),
         ).rejects.toThrow('document not found');
     });
 
@@ -91,8 +91,8 @@ describe('recordRepo', () => {
             recordRepo.deleteRecord({
                 libraryId,
                 recordId: nonExistentId,
-                ctx
-            })
+                ctx,
+            }),
         ).rejects.toThrow('document not found');
     });
 
@@ -108,9 +108,9 @@ describe('recordRepo', () => {
                     created_by: '1',
                     modified_at: Date.now(),
                     modified_by: '1',
-                    text_attr: 'value1'
+                    text_attr: 'value1',
                 },
-                ctx
+                ctx,
             });
         });
 
@@ -119,7 +119,7 @@ describe('recordRepo', () => {
                 await recordRepo.deleteRecord({
                     libraryId,
                     recordId: record1.id,
-                    ctx
+                    ctx,
                 });
                 record1 = null; // Clear the record reference
             }
@@ -133,9 +133,9 @@ describe('recordRepo', () => {
                     active: false,
                     modified_at: Date.now(),
                     modified_by: '2',
-                    text_attr: 'updated_value'
+                    text_attr: 'updated_value',
                 },
-                ctx
+                ctx,
             });
             expect(updatedRecord.old).toEqual(record1);
             expect(updatedRecord.new).toMatchObject({
@@ -146,7 +146,7 @@ describe('recordRepo', () => {
                 created_by: record1.created_by,
                 modified_at: expect.any(Number),
                 modified_by: '2',
-                text_attr: 'updated_value'
+                text_attr: 'updated_value',
             });
             record1 = updatedRecord.new; // Update the reference to the modified record
         });
@@ -155,7 +155,7 @@ describe('recordRepo', () => {
             const deleted = await recordRepo.deleteRecord({
                 libraryId,
                 recordId: record1.id,
-                ctx
+                ctx,
             });
 
             expect(deleted).toBeDefined();
@@ -167,10 +167,10 @@ describe('recordRepo', () => {
                     {
                         attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
                         condition: AttributeCondition.EQUAL,
-                        value: record1.id
-                    }
+                        value: record1.id,
+                    },
                 ],
-                ctx
+                ctx,
             });
 
             expect(findDeleted.list).toHaveLength(0);
@@ -178,7 +178,7 @@ describe('recordRepo', () => {
             const deletedRecord = await recordRepo.getRecord({
                 libraryId,
                 recordId: record1.id,
-                ctx
+                ctx,
             });
 
             expect(deletedRecord).toBeNull();

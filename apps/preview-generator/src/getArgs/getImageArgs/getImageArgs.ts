@@ -20,7 +20,7 @@ const _getMainCommand = async (
     size: number,
     name: string,
     version: IVersion,
-    first = false
+    first = false,
 ): Promise<IExec> => {
     if (ext === 'svg') {
         return getSvgCommand(input, output, size);
@@ -39,7 +39,7 @@ const _getMainCommand = async (
     // User defined density (eg. 72 or 300) is used in output
     const densityArgs = [
         '-density', // use density option
-        600 // density value
+        600, // density value
     ];
 
     const colorspaceArgs = ['-colorspace', 'srgb'];
@@ -66,14 +66,14 @@ const _getMainCommand = async (
             profileArgs = [
                 ...profileArgs,
                 '-profile', // use profile option
-                join(config.ICCPath, 'eciCMYK_v2.icc') // profile value
+                join(config.ICCPath, 'eciCMYK_v2.icc'), // profile value
             ];
         }
 
         profileArgs = [
             ...profileArgs,
             '-profile', // use profile option
-            join(config.ICCPath, 'eciRGB_v2.icc') // profile value
+            join(config.ICCPath, 'eciRGB_v2.icc'), // profile value
         ];
 
         stripArgs = ['-strip'];
@@ -81,12 +81,12 @@ const _getMainCommand = async (
 
     const densityOutArgs = [
         '-density', // use density option
-        version.density ? version.density.toString() : '72' // density value
+        version.density ? version.density.toString() : '72', // density value
     ];
 
     const resizeArgs: string[] = [
         '-geometry', // use resize option
-        `${size}x${size}>` // resize value
+        `${size}x${size}>`, // resize value
     ];
 
     const args: string[] = [
@@ -99,7 +99,7 @@ const _getMainCommand = async (
         ...resizeArgs,
         ...densityOutArgs,
         ...stripArgs,
-        `png:${output}` // output path
+        `png:${output}`, // output path
     ];
 
     return {command, args};
@@ -112,7 +112,7 @@ export const getImageArgs = async (
     size: number,
     name: string,
     version: IVersion,
-    first = false
+    first = false,
 ): Promise<IExec[]> => {
     try {
         const mainCommand = await _getMainCommand(ext, input, output, size, name, version, first);
@@ -134,8 +134,8 @@ export const getImageArgs = async (
                 size,
                 output,
                 name,
-                errorId
-            }
+                errorId,
+            },
         });
     }
 };

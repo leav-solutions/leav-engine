@@ -57,15 +57,15 @@ function App(): JSX.Element {
     const {
         data: applicationData,
         loading: applicationLoading,
-        error: applicationError
+        error: applicationError,
     } = useQuery<GET_APPLICATIONS, GET_APPLICATIONSVariables>(getApplicationsQuery, {
-        variables: {filters: {endpoint: APP_ENDPOINT}}
+        variables: {filters: {endpoint: APP_ENDPOINT}},
     });
 
     const {
         data: globalSettingsData,
         loading: globalSettingsLoading,
-        error: globalSettingsError
+        error: globalSettingsError,
     } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
 
     const currentApp = applicationData?.applications?.list?.[0];
@@ -114,7 +114,7 @@ function App(): JSX.Element {
 
     const appContextData = {
         currentApp,
-        globalSettings
+        globalSettings,
     };
 
     return (
@@ -124,7 +124,7 @@ function App(): JSX.Element {
                     lang,
                     availableLangs: availableLangs.langs,
                     defaultLang: i18n?.language?.split('-')[0] ?? appLang,
-                    setLang: _handleLanguageChange
+                    setLang: _handleLanguageChange,
                 }}
             >
                 <ApplicationContext.Provider value={appContextData}>

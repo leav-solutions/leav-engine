@@ -33,7 +33,7 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
         integer: 'number',
         boolean: 'checkbox',
         string: 'text',
-        date: 'date'
+        date: 'date',
     };
 
     //////////////////// SETTING VALUES ON CHANGE

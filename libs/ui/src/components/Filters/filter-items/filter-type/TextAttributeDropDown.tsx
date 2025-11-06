@@ -16,7 +16,7 @@ const InputStyled = styled(KitInput)`
 export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
 

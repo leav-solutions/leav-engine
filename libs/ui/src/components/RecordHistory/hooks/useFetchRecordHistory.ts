@@ -25,7 +25,7 @@ const eventsToFetch = [LogAction.VALUE_SAVE, LogAction.VALUE_DELETE];
 
 export const useFetchRecordHistory = ({
     record,
-    attributeId
+    attributeId,
 }: IUseFetchRecordHistoryProps): IUseFetchRecordHistoryHook => {
     const [logs, setLogs] = useState<LogEntry[]>([]);
     const [total, setTotal] = useState<number>(0);
@@ -35,18 +35,18 @@ export const useFetchRecordHistory = ({
         loading,
         error,
         data: history,
-        refetch
+        refetch,
     } = useGetRecordHistoryQuery({
         fetchPolicy: 'network-only',
         variables: {
             record: {
                 id: record.id,
-                libraryId: record.libraryId
+                libraryId: record.libraryId,
             },
             attributeId,
             actions: eventsToFetch,
-            pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0}
-        }
+            pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0},
+        },
     });
 
     useEffect(() => {
@@ -60,11 +60,11 @@ export const useFetchRecordHistory = ({
         refetch({
             record: {
                 id: record.id,
-                libraryId: record.libraryId
+                libraryId: record.libraryId,
             },
             attributeId,
             actions: eventsToFetch,
-            pagination: {limit: RECORD_HISTORY_LOGS_PAGE, offset: logs.length}
+            pagination: {limit: RECORD_HISTORY_LOGS_PAGE, offset: logs.length},
         });
     }, [logs.length, refetch, record.id, record.libraryId, attributeId]);
 
@@ -85,6 +85,6 @@ export const useFetchRecordHistory = ({
         logs,
         total,
         hasMore,
-        fetchMore
+        fetchMore,
     };
 };

@@ -9,7 +9,7 @@ import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery
 import {
     type GET_ATTRIBUTES,
     type GET_ATTRIBUTESVariables,
-    type GET_ATTRIBUTES_attributes_list
+    type GET_ATTRIBUTES_attributes_list,
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../shared/Loading';
 import AttributesSelectionList from './AttributesSelectionList';
@@ -27,13 +27,13 @@ const AttributesSelectionModal = ({
     selection,
     onClose,
     onSubmit,
-    filter
+    filter,
 }: IAttributesSelectionProps): JSX.Element => {
     const {t} = useTranslation();
     const [pendingSelection, setPendingSelection] = useState<string[]>([]);
     const [isSubmitPending, setIsSubmitPending] = useState(false);
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
-        variables: filter
+        variables: filter,
     });
 
     const _handleclose = () => {

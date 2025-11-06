@@ -12,7 +12,7 @@ describe('LibraryItemsListPagination', () => {
         render(
             <MockSearchContextProvider state={mockState}>
                 <LibraryItemsListPagination />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getAllByRole('listitem')).toHaveLength(6); // 3 page, 1 previous, 1 next and 1 size selector

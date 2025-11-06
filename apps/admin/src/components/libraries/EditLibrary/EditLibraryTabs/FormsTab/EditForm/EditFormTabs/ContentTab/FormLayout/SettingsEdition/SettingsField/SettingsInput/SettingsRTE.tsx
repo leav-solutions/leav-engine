@@ -18,11 +18,11 @@ const EditorWrapper = styled.div`
 function SettingsRTE({fieldName, onChange, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {t} = useTranslation();
     const {
-        state: {elementInSettings}
+        state: {elementInSettings},
     } = useFormBuilderReducer();
 
     const [editorState, setEditorState] = useState(
-        RichTextEditor.createValueFromString(String(elementInSettings?.settings?.[fieldName] ?? ''), 'markdown')
+        RichTextEditor.createValueFromString(String(elementInSettings?.settings?.[fieldName] ?? ''), 'markdown'),
     );
 
     const _handleBlur = () => {
@@ -41,18 +41,18 @@ function SettingsRTE({fieldName, onChange, disabled}: ISettingsFieldCommonProps)
                     display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
                     INLINE_STYLE_BUTTONS: [
                         {label: t('forms.rte.bold'), style: 'BOLD'},
-                        {label: t('forms.rte.italic'), style: 'ITALIC'}
+                        {label: t('forms.rte.italic'), style: 'ITALIC'},
                     ],
                     BLOCK_TYPE_DROPDOWN: [
                         {label: t('forms.rte.normal'), style: 'unstyled', className: 'normal_text'},
                         {label: t('forms.rte.header1'), style: 'header-one'},
                         {label: t('forms.rte.header2'), style: 'header-two'},
-                        {label: t('forms.rte.header3'), style: 'header-three'}
+                        {label: t('forms.rte.header3'), style: 'header-three'},
                     ],
                     BLOCK_TYPE_BUTTONS: [
                         {label: t('forms.rte.ul'), style: 'unordered-list-item'},
-                        {label: t('forms.rte.ol'), style: 'ordered-list-item'}
-                    ]
+                        {label: t('forms.rte.ol'), style: 'ordered-list-item'},
+                    ],
                 }}
                 toolbarClassName="rte-editor-toolbar"
             />

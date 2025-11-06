@@ -46,8 +46,8 @@ function DependenciesEditor({tree, onMove, readOnly}: IDependenciesEditorProps):
             return {id: ROOT_ID};
         },
         collect: monitor => ({
-            isOver: monitor.isOver({shallow: true})
-        })
+            isOver: monitor.isOver({shallow: true}),
+        }),
     });
 
     const rootLibraries = tree.libraries.filter(treeLibrary => treeLibrary.settings.allowedAtRoot);

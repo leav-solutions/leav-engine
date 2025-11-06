@@ -13,7 +13,7 @@ describe('ApplicationSwitcher', () => {
             {
                 request: {
                     query: getApplicationsQuery,
-                    variables: {}
+                    variables: {},
                 },
                 result: {
                     data: {
@@ -22,27 +22,27 @@ describe('ApplicationSwitcher', () => {
                                 {
                                     ...mockApplication,
                                     label: {
-                                        en: 'My first app'
+                                        en: 'My first app',
                                     },
                                     description: {
-                                        en: 'My first description'
-                                    }
+                                        en: 'My first description',
+                                    },
                                 },
                                 {
                                     ...mockApplication,
                                     id: 'my-other-app',
                                     label: {
-                                        en: 'My second app'
+                                        en: 'My second app',
                                     },
                                     description: {
-                                        en: 'My second description'
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
+                                        en: 'My second description',
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {

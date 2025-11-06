@@ -19,7 +19,7 @@ interface ISelectionActionsProps {
 function SelectionActions({parent, allowedChildrenLibraries, onMessages}: ISelectionActionsProps): JSX.Element {
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
-        navigation: state.navigation
+        navigation: state.navigation,
     }));
     const hasSelection = !!selectionState.selection.selected.length;
 

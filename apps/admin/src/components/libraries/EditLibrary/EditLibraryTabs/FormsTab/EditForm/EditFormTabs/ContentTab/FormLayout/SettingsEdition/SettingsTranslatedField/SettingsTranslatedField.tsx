@@ -24,7 +24,7 @@ function SettingsField({settingsField}: ISettingsFieldProps) {
     const {readonly} = useEditFormContext();
     const {
         state: {elementInSettings},
-        dispatch
+        dispatch,
     } = useFormBuilderReducer();
 
     const values = useMemo(() => {
@@ -39,8 +39,8 @@ function SettingsField({settingsField}: ISettingsFieldProps) {
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
         variables: {
-            id: String(elementInSettings.settings?.attribute)
-        }
+            id: String(elementInSettings.settings?.attribute),
+        },
     });
 
     if (loading) {
@@ -60,9 +60,9 @@ function SettingsField({settingsField}: ISettingsFieldProps) {
                 settings: {
                     [settingsField.name]: {
                         ...values,
-                        [name]: value
-                    }
-                }
+                        [name]: value,
+                    },
+                },
             });
         };
 
@@ -70,7 +70,7 @@ function SettingsField({settingsField}: ISettingsFieldProps) {
         onChange: _handleChange,
         disabled: readonly,
         fieldName: settingsField.name,
-        ...(settingsField.getInputSettings ? settingsField.getInputSettings(attributeProps) : null)
+        ...(settingsField.getInputSettings ? settingsField.getInputSettings(attributeProps) : null),
     };
 
     return (

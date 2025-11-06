@@ -22,7 +22,7 @@ describe('applicationRepo', () => {
         description: 'Super application',
         libraries: ['products', 'categories'],
         color: 'orange',
-        module: 'data-studio'
+        module: 'data-studio',
     };
     const applicationData = {
         ...mockApplication,
@@ -34,19 +34,19 @@ describe('applicationRepo', () => {
         libraries: ['products', 'categories'],
         trees: ['files', 'categories'],
         color: 'orange',
-        module: 'data-studio'
+        module: 'data-studio',
     };
 
     describe('getApplications', () => {
         test('Get all applications', async () => {
             const mockDbServ = {execute: global.__mockPromise([])};
             const mockDbUtils = {
-                findCoreEntity: global.__mockPromise([applicationData])
+                findCoreEntity: global.__mockPromise([applicationData]),
             } satisfies Mockify<IDbUtils>;
 
             const repo = applicationRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const trees = await repo.getApplications({ctx: mockCtx});
@@ -60,18 +60,18 @@ describe('applicationRepo', () => {
         test('Create new application', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docAppData])
+                execute: global.__mockPromise([docAppData]),
             };
 
             const mockCleanupRes = applicationData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAppData)
+                convertToDoc: jest.fn().mockReturnValue(docAppData),
             };
 
             const appRepo = applicationRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const createdAttr = await appRepo.createApplication({applicationData, ctx: mockCtx});
@@ -89,18 +89,18 @@ describe('applicationRepo', () => {
         test('Update application', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docAppData])
+                execute: global.__mockPromise([docAppData]),
             };
 
             const mockCleanupRes = applicationData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAppData)
+                convertToDoc: jest.fn().mockReturnValue(docAppData),
             };
 
             const appRepo = applicationRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             const updatedApp = await appRepo.updateApplication({applicationData, ctx: mockCtx});
@@ -118,17 +118,17 @@ describe('applicationRepo', () => {
         test('Delete application', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([docAppData])
+                execute: global.__mockPromise([docAppData]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(applicationData),
-                convertToDoc: jest.fn().mockReturnValue(docAppData)
+                convertToDoc: jest.fn().mockReturnValue(docAppData),
             };
 
             const appRepo = applicationRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
             await appRepo.deleteApplication({id: applicationData.id, ctx: mockCtx});
@@ -143,7 +143,7 @@ describe('applicationRepo', () => {
 
     describe('getAvailableModules', () => {
         const mockConfig: Mockify<IConfig> = {
-            applications: {rootFolder: '/some/path'}
+            applications: {rootFolder: '/some/path'},
         };
 
         afterAll(() => {
@@ -160,9 +160,9 @@ describe('applicationRepo', () => {
                 () => ({
                     name: 'data-studio',
                     description: 'data studio description',
-                    version: '42'
+                    version: '42',
                 }),
-                {virtual: true}
+                {virtual: true},
             );
 
             jest.mock(
@@ -170,9 +170,9 @@ describe('applicationRepo', () => {
                 () => ({
                     name: 'admin',
                     description: 'admin description',
-                    version: '42'
+                    version: '42',
                 }),
-                {virtual: true}
+                {virtual: true},
             );
 
             const repo = applicationRepo({config: mockConfig as IConfig});
@@ -181,7 +181,7 @@ describe('applicationRepo', () => {
 
             expect(modules).toEqual([
                 {id: 'data-studio', description: 'data studio description', version: '42'},
-                {id: 'admin', description: 'admin description', version: '42'}
+                {id: 'admin', description: 'admin description', version: '42'},
             ]);
 
             pathSpy.mockRestore();
@@ -204,18 +204,18 @@ describe('applicationRepo', () => {
                 () => ({
                     name: 'data-studio',
                     description: 'data studio description',
-                    version: '42'
+                    version: '42',
                 }),
-                {virtual: true}
+                {virtual: true},
             );
 
             const mockLogger: Mockify<ILogger> = {
-                warn: jest.fn()
+                warn: jest.fn(),
             };
 
             const repo = applicationRepo({
                 'core.utils.logger': mockLogger as ILogger,
-                config: mockConfig as IConfig
+                config: mockConfig as IConfig,
             });
 
             const modules = await repo.getAvailableModules({ctx: mockCtx});

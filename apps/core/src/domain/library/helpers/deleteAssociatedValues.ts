@@ -24,13 +24,13 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.infra.value': valueRepo = null,
-    'core.domain.attribute': attributeDomain = null
+    'core.domain.attribute': attributeDomain = null,
 }: IDeps): IDeleteAssociatedValuesHelper {
     return {
         async deleteAssociatedValues(attributes: string[], libraryId: string, ctx: IQueryInfos): Promise<void> {
             const records = await recordDomain.find({params: {library: libraryId}, ctx});
             const attributesWithProps = await Promise.all(
-                attributes.map(async a => attributeDomain.getAttributeProperties({id: a, ctx}))
+                attributes.map(async a => attributeDomain.getAttributeProperties({id: a, ctx})),
             );
 
             for (const r of records.list) {
@@ -46,7 +46,7 @@ export default function ({
                             recordId: r.id,
                             attribute: a as IAttributeWithRevLink,
                             options: {forceGetAllValues: true},
-                            ctx
+                            ctx,
                         });
 
                         for (const v of values) {
@@ -55,7 +55,7 @@ export default function ({
                                 recordId: r.id,
                                 attribute: a.id,
                                 value: v,
-                                ctx
+                                ctx,
                             });
                         }
                     } else {
@@ -63,11 +63,11 @@ export default function ({
                             library: libraryId,
                             recordId: r.id,
                             attribute: a.id,
-                            ctx
+                            ctx,
                         });
                     }
                 }
             }
-        }
+        },
     };
 }

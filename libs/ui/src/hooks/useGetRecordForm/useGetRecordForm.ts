@@ -12,7 +12,7 @@ import {
     useRecordFormQuery,
     type ValueDetailsLinkValueFragment,
     type ValueDetailsTreeValueFragment,
-    type ValueDetailsValueFragment
+    type ValueDetailsValueFragment,
 } from '_ui/_gqlTypes';
 import {arrayValueVersionToObject} from '_ui/_utils';
 
@@ -84,7 +84,7 @@ const useGetRecordForm = ({
     libraryId,
     recordId,
     formId,
-    version
+    version,
 }: {
     libraryId: string;
     recordId: string;
@@ -98,7 +98,7 @@ const useGetRecordForm = ({
               .filter(arrayVersion => !!arrayVersion.value)
               .map(({name, value}) => ({
                   treeId: name,
-                  treeNodeId: value.id
+                  treeNodeId: value.id,
               }))
         : null;
 
@@ -109,7 +109,7 @@ const useGetRecordForm = ({
             libraryId,
             recordId,
             formId,
-            version: requestVersion
+            version: requestVersion,
         },
         onCompleted: data => {
             // Transform result to format values version to a more convenient object
@@ -125,16 +125,16 @@ const useGetRecordForm = ({
                                 ...metadata,
                                 value: {
                                     ...metadata.value,
-                                    version: arrayValueVersionToObject(metadata.value?.version ?? [])
-                                }
-                            }))
-                        }))
-                    })
-                )
+                                    version: arrayValueVersionToObject(metadata.value?.version ?? []),
+                                },
+                            })),
+                        })),
+                    }),
+                ),
             };
 
             setRecordForm(recordFormFormatted);
-        }
+        },
     });
 
     const refetchRecordForm = () =>
@@ -142,7 +142,7 @@ const useGetRecordForm = ({
             libraryId,
             recordId,
             formId,
-            version: requestVersion
+            version: requestVersion,
         });
 
     // To avoid a moment where loading is done and record form is not available yet, we force loading to be true until

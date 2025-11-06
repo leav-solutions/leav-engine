@@ -12,7 +12,7 @@ import {CreateNewRecordButton} from '_ui/components/LibraryItemsList/CreateNewRe
 jest.mock('_ui/components', () => ({
     EditRecordModal: ({onCreate}) => <button onClick={() => onCreate?.()}>close</button>,
     UploadFiles: ({onCompleted}) => <button onClick={() => onCompleted?.()}>close</button>,
-    CreateDirectory: ({onCompleted}) => <button onClick={() => onCompleted?.()}>close</button>
+    CreateDirectory: ({onCompleted}) => <button onClick={() => onCompleted?.()}>close</button>,
 }));
 
 describe('<CreateNewRecordButton/>', () => {
@@ -35,9 +35,9 @@ describe('<CreateNewRecordButton/>', () => {
                         value={{
                             state: {
                                 ...initialSearchState,
-                                library: {id: mockGetLibraryDetailExtendedElement.id} as any
+                                library: {id: mockGetLibraryDetailExtendedElement.id} as any,
                             },
-                            dispatch: jest.fn()
+                            dispatch: jest.fn(),
                         }}
                     >
                         <CreateNewRecordButton
@@ -47,14 +47,14 @@ describe('<CreateNewRecordButton/>', () => {
                             valuesVersions={initialSearchState.valuesVersions}
                             notifyNewCreation={notifyNewCreationMock}
                         />
-                    </SearchContext.Provider>
+                    </SearchContext.Provider>,
                 );
 
                 await userEvent.click(screen.getByRole('button', {name: `plus ${labelButton}`}));
                 await userEvent.click(screen.getByRole('button', {name: 'close'}));
 
                 expect(notifyNewCreationMock).toHaveBeenCalledTimes(1);
-            }
+            },
         );
     });
 });

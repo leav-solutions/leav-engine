@@ -19,7 +19,7 @@ function ErrorDisplay({
     message,
     actionButton,
     showActionButton = true,
-    type = ErrorDisplayTypes.ERROR
+    type = ErrorDisplayTypes.ERROR,
 }: IErrorProps): JSX.Element {
     const {t, i18n} = useSharedTranslation();
     const navigate = useNavigate();
@@ -37,20 +37,20 @@ function ErrorDisplay({
             title: i18n.isInitialized ? t('error.error_occurred') : 'An error occurred',
             icon: <CloseCircleFilled color="red" />,
             message: '',
-            actionButton: null
+            actionButton: null,
         },
         [ErrorDisplayTypes.PERMISSION_ERROR]: {
             title: t('error.access_denied'),
             icon: <MinusCircleFilled color="red" />,
             message: t('error.access_denied_details'),
-            actionButton: showActionButton ? BackHomeButton : null
+            actionButton: showActionButton ? BackHomeButton : null,
         },
         [ErrorDisplayTypes.PAGE_NOT_FOUND]: {
             title: t('error.page_not_found'),
             icon: <FrownOutlined />,
             message: '',
-            actionButton: showActionButton ? BackHomeButton : null
-        }
+            actionButton: showActionButton ? BackHomeButton : null,
+        },
     };
 
     return (

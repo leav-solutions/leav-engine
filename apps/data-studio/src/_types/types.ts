@@ -7,7 +7,7 @@ import {type AttributeFormat, type AttributeType, RecordFilterCondition} from '_
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     type ILibraryDetailExtendedAttributeParentLinkedLibrary,
-    type ILibraryDetailExtendedAttributeParentLinkedTree
+    type ILibraryDetailExtendedAttributeParentLinkedTree,
 } from '../graphQL/queries/libraries/getLibraryDetailExtendQuery';
 
 export interface ISystemTranslation {
@@ -36,18 +36,18 @@ export enum PreviewSize {
     TINY = 'tiny',
     SMALL = 'small',
     MEDIUM = 'medium',
-    BIG = 'big'
+    BIG = 'big',
 }
 
 export enum AvailableLanguage {
     EN = 'en',
-    FR = 'fr'
+    FR = 'fr',
 }
 
 export enum FilterType {
     ATTRIBUTE = 'ATTRIBUTE',
     TREE = 'TREE',
-    LIBRARY = 'LIBRARY'
+    LIBRARY = 'LIBRARY',
 }
 
 export interface IFilter {
@@ -63,30 +63,30 @@ export enum OperatorFilter {
     AND = 'AND',
     OR = 'OR',
     OPEN_BRACKET = 'OPEN_BRACKET',
-    CLOSE_BRACKET = 'CLOSE_BRACKET'
+    CLOSE_BRACKET = 'CLOSE_BRACKET',
 }
 
 export enum TreeConditionFilter {
     CLASSIFIED_IN = 'CLASSIFIED_IN',
-    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
+    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN',
 }
 
 export enum ThroughConditionFilter {
-    THROUGH = 'THROUGH'
+    THROUGH = 'THROUGH',
 }
 
 // We're exporting a const and not an enum to "merge" the enum coming
 // from Graphql types with some condition of our own
 export const AttributeConditionFilter = {
     ...RecordFilterCondition,
-    ...ThroughConditionFilter
+    ...ThroughConditionFilter,
 };
 
 export type AttributeConditionType = ValueOf<typeof AttributeConditionFilter>;
 
 export enum OrderSearch {
     DESC = 'DESC',
-    ASC = 'ASC'
+    ASC = 'ASC',
 }
 
 export interface IAttribute {
@@ -168,18 +168,18 @@ export enum InfoType {
     BASIC = 'basic',
     SUCCESS = 'success',
     WARNING = 'warning',
-    ERROR = 'error'
+    ERROR = 'error',
 }
 
 export enum InfoPriority {
     LOW = 'low',
     MEDIUM = 'medium',
-    HIGH = 'high'
+    HIGH = 'high',
 }
 
 export enum InfoChannel {
     TRIGGER = 'trigger',
-    PASSIVE = 'passive'
+    PASSIVE = 'passive',
 }
 
 export interface IBaseInfo {
@@ -210,7 +210,7 @@ export type SharedStateSelection = ISharedStateSelectionSearch | ISharedStateSel
 
 export enum SharedStateSelectionType {
     NAVIGATION,
-    SEARCH
+    SEARCH,
 }
 
 export interface ISharedSelected {
@@ -223,7 +223,7 @@ export interface ISharedSelected {
 export enum WorkspacePanels {
     HOME = 'home',
     LIBRARY = 'library',
-    TREE = 'tree'
+    TREE = 'tree',
 }
 export interface IDateRangeValue {
     from: string;
@@ -241,5 +241,5 @@ export interface IApplicationSettings {
 }
 
 export enum NotifTypes {
-    TASK = 'TASK'
+    TASK = 'TASK',
 }

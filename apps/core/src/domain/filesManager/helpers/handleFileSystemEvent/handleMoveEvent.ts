@@ -8,7 +8,7 @@ import {
     getInputData,
     getParentRecord,
     getRecord,
-    updateRecordFile
+    updateRecordFile,
 } from '../handleFileUtilsHelper';
 import {type IHandleFileSystemEventDeps, type IHandleFileSystemEventResources} from './_types';
 
@@ -16,7 +16,7 @@ export const handleMoveEvent = async (
     scanMsg: IFileEventData,
     {library}: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ): Promise<boolean | void> => {
     const {fileName: fileNameDest, filePath: filePathDest} = getInputData(scanMsg.pathAfter);
     const {fileName: fileNameOrigin, filePath: filePathOrigin} = getInputData(scanMsg.pathBefore);
@@ -32,7 +32,7 @@ export const handleMoveEvent = async (
         {recordLibrary, recordId},
         false,
         deps,
-        ctx
+        ctx,
     );
 
     // Update the origin record
@@ -47,7 +47,7 @@ export const handleMoveEvent = async (
         {recordLibrary},
         false,
         deps,
-        ctx
+        ctx,
     );
 
     // If destination record already exists, disable it.
@@ -62,7 +62,7 @@ export const handleMoveEvent = async (
     const recordData: IFileMetadata = {
         [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
         [FilesAttributes.FILE_PATH]: filePathDest,
-        [FilesAttributes.FILE_NAME]: fileNameDest
+        [FilesAttributes.FILE_NAME]: fileNameDest,
     };
     await updateRecordFile(recordData, originRecord.id!, recordLibrary, deps, ctx);
     // Find parent record destination
@@ -76,7 +76,7 @@ export const handleMoveEvent = async (
                           await deps.treeDomain.getNodesByRecord({
                               treeId,
                               record: {id: originRecord.id, library: originRecord.library},
-                              ctx
+                              ctx,
                           })
                       )[0]
                     : null;
@@ -94,7 +94,7 @@ export const handleMoveEvent = async (
                           await deps.treeDomain.getNodesByRecord({
                               treeId,
                               record: {id: parentRecord.id, library: parentRecord.library},
-                              ctx
+                              ctx,
                           })
                       )[0]
                     : null;
@@ -107,11 +107,11 @@ export const handleMoveEvent = async (
                 nodeId: recordNode,
                 parentTo: parentNode,
                 ctx,
-                skipChecks: true
+                skipChecks: true,
             });
         } catch (e) {
             deps.logger.error(
-                `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.stack}`
+                `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.stack}`,
             );
         }
     }

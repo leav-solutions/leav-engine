@@ -8,7 +8,7 @@ import {logger} from '@leav/logger';
 
 const _logEvent = (params: {eventType: EventTypes; pathBefore?: string; pathAfter?: string}) => {
     logger.info(
-        `Event detected event=${params.eventType} pathBefore=${params.pathBefore} pathAfter=${params.pathAfter}`
+        `Event detected event=${params.eventType} pathBefore=${params.pathBefore} pathAfter=${params.pathAfter}`,
     );
 };
 
@@ -20,7 +20,7 @@ const _getEventMsg = (
     isDirectory: boolean,
     rootKey: string,
     hash?: string,
-    recordId?: string
+    recordId?: string,
 ): IEventMsg => ({
     event,
     time: Math.round(Date.now() / 1000),
@@ -30,7 +30,7 @@ const _getEventMsg = (
     inode,
     rootKey,
     ...(!!hash && {hash}),
-    ...(!!recordId && {recordId})
+    ...(!!recordId && {recordId}),
 });
 
 export const create = async (path: string, inode: number, isDirectory: boolean, amqp: IAmqpService, hash?: string) => {
@@ -39,7 +39,7 @@ export const create = async (path: string, inode: number, isDirectory: boolean, 
     await amqp.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        JSON.stringify(_getEventMsg(EventTypes.CREATE, null, path, inode, isDirectory, cfg.amqp.rootKey, hash))
+        JSON.stringify(_getEventMsg(EventTypes.CREATE, null, path, inode, isDirectory, cfg.amqp.rootKey, hash)),
     );
 
     _logEvent({eventType: EventTypes.CREATE, pathAfter: path});
@@ -50,7 +50,7 @@ export const remove = async (
     inode: number,
     isDirectory: boolean,
     recordId: string,
-    amqp: IAmqpService
+    amqp: IAmqpService,
 ) => {
     const cfg = await getConfig();
 
@@ -58,8 +58,8 @@ export const remove = async (
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
         JSON.stringify(
-            _getEventMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.amqp.rootKey, null, recordId)
-        )
+            _getEventMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.amqp.rootKey, null, recordId),
+        ),
     );
 
     _logEvent({eventType: EventTypes.REMOVE, pathBefore: path});
@@ -71,7 +71,7 @@ export const move = async (
     inode: number,
     isDirectory: boolean,
     recordId: string,
-    amqp: IAmqpService
+    amqp: IAmqpService,
 ) => {
     const cfg = await getConfig();
 
@@ -79,8 +79,8 @@ export const move = async (
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
         JSON.stringify(
-            _getEventMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.amqp.rootKey, recordId)
-        )
+            _getEventMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.amqp.rootKey, recordId),
+        ),
     );
 
     _logEvent({eventType: EventTypes.MOVE, pathBefore, pathAfter});
@@ -92,7 +92,7 @@ export const update = async (
     isDirectory: boolean,
     amqp: IAmqpService,
     hash: string,
-    recordId: string
+    recordId: string,
 ) => {
     const cfg = await getConfig();
 
@@ -100,8 +100,8 @@ export const update = async (
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
         JSON.stringify(
-            _getEventMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.amqp.rootKey, hash, recordId)
-        )
+            _getEventMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.amqp.rootKey, hash, recordId),
+        ),
     );
 
     _logEvent({eventType: EventTypes.UPDATE, pathAfter: path, pathBefore: path});

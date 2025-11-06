@@ -24,7 +24,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
         [LibraryBehavior.files]: <PictureOutlined style={{fontSize: iconSize}} />,
         [LibraryBehavior.directories]: <FolderOutlined style={{fontSize: iconSize}} />,
         [LibraryBehavior.standard]: <FileOutlined style={{fontSize: iconSize}} />,
-        [LibraryBehavior.join]: <TableOutlined style={{fontSize: iconSize}} />
+        [LibraryBehavior.join]: <TableOutlined style={{fontSize: iconSize}} />,
     };
 
     const behavior = library?.behavior ?? LibraryBehavior.standard;

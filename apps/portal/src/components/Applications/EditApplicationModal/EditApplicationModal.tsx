@@ -40,16 +40,16 @@ function EditApplicationModal({open, applicationId, onClose, activeTab}: IEditAp
                 ? apolloClient.readFragment({
                       id: apolloClient.cache.identify({
                           __typename: 'Application',
-                          id: applicationId
+                          id: applicationId,
                       }),
                       fragment: gql`
                           fragment ApplicationLabel on Application {
                               label
                           }
-                      `
+                      `,
                   })?.label
                 : null,
-        [applicationId, isEditing, apolloClient]
+        [applicationId, isEditing, apolloClient],
     );
 
     const _handleSetSubmitFunction = submitFunc => {
@@ -73,14 +73,14 @@ function EditApplicationModal({open, applicationId, onClose, activeTab}: IEditAp
     const buttons = [
         <Button key="cancel" onClick={onClose}>
             {t(isEditing ? 'global.close' : 'global.cancel')}
-        </Button>
+        </Button>,
     ];
 
     if (!isEditing) {
         buttons.push(
             <SubmitButton key="submit" type="primary" loading={submitLoading} onClick={_handleSubmit}>
                 {t('global.submit')}
-            </SubmitButton>
+            </SubmitButton>,
         );
     }
 

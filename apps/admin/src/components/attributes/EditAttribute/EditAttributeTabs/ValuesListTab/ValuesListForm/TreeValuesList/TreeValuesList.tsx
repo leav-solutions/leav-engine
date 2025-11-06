@@ -36,7 +36,7 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
 
         if (
             values.filter(
-                v => v.record.whoAmI.id === node.record.whoAmI.id && v.record.whoAmI.id === node.record.whoAmI.id
+                v => v.record.whoAmI.id === node.record.whoAmI.id && v.record.whoAmI.id === node.record.whoAmI.id,
             ).length
         ) {
             return;
@@ -49,10 +49,10 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
                 record: {whoAmI: node.record.whoAmI},
                 ancestors: node.parents.map(p => ({
                     record: {
-                        whoAmI: p.record.whoAmI
-                    }
-                }))
-            }
+                        whoAmI: p.record.whoAmI,
+                    },
+                })),
+            },
         ];
         onValuesUpdate(newValuesList);
     };
@@ -71,8 +71,8 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
             action: (r: RecordIdentity_whoAmI) => {
                 setEditedRecord(r);
                 _handleOpenEditRecordModal();
-            }
-        }
+            },
+        },
     ];
 
     return (

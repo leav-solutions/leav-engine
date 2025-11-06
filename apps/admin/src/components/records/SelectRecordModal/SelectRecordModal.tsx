@@ -24,7 +24,7 @@ const EditRecordFormSelectRecord = ({
     library,
     open,
     onClose,
-    onSelect
+    onSelect,
 }: IEditRecordFormSelectRecordProps): JSX.Element => {
     const {t} = useTranslation();
 

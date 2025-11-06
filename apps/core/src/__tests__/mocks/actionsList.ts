@@ -11,48 +11,48 @@ const mockActionBase: IActionsListFunction = {
     compute: false,
     input_types: Object.values(ActionsListIOTypes),
     output_types: Object.values(ActionsListIOTypes),
-    action: jest.fn()
+    action: jest.fn(),
 };
 
 export const mockActionStringOutput = {
     ...mockActionBase,
     id: 'toString',
     name: 'toString',
-    output_types: [ActionsListIOTypes.STRING]
+    output_types: [ActionsListIOTypes.STRING],
 };
 
 export const mockActionNumberOutput = {
     ...mockActionBase,
     id: 'toNumber',
     name: 'toNumber',
-    output_types: [ActionsListIOTypes.NUMBER]
+    output_types: [ActionsListIOTypes.NUMBER],
 };
 
 export const mockActionBooleanOutput = {
     ...mockActionBase,
     id: 'toBoolean',
     name: 'toBoolean',
-    output_types: [ActionsListIOTypes.BOOLEAN]
+    output_types: [ActionsListIOTypes.BOOLEAN],
 };
 
 export const mockActionObjectOutput = {
     ...mockActionBase,
     id: 'toObject',
     name: 'toObject',
-    output_types: [ActionsListIOTypes.OBJECT]
+    output_types: [ActionsListIOTypes.OBJECT],
 };
 
 export const mockActionAllOutput = {
     ...mockActionBase,
     id: 'toAnyType',
-    name: 'toAnyType'
+    name: 'toAnyType',
 };
 
 export const mockActionValidateFormat = {
     ...mockActionBase,
     id: 'validateFormat',
     name: 'validateFormat',
-    output_types: [ActionsListIOTypes.STRING]
+    output_types: [ActionsListIOTypes.STRING],
 };
 
 export const mockAvailActions: IActionsListFunction[] = [
@@ -60,14 +60,14 @@ export const mockAvailActions: IActionsListFunction[] = [
     mockActionNumberOutput,
     mockActionBooleanOutput,
     mockActionObjectOutput,
-    mockActionAllOutput
+    mockActionAllOutput,
 ];
 
 /*** Actions list conf ***/
 const mockConfBase: ActionsListConfig = {
     saveValue: [],
     deleteValue: [],
-    getValue: []
+    getValue: [],
 };
 
 export const mockActionsListConfGetString: ActionsListConfig = {
@@ -75,9 +75,9 @@ export const mockActionsListConfGetString: ActionsListConfig = {
     getValue: [
         {
             id: 'toString',
-            name: 'toString'
-        }
-    ]
+            name: 'toString',
+        },
+    ],
 };
 
 export const mockActionsListConfGetBoolean: ActionsListConfig = {
@@ -85,9 +85,9 @@ export const mockActionsListConfGetBoolean: ActionsListConfig = {
     getValue: [
         {
             id: 'toBoolean',
-            name: 'toBoolean'
-        }
-    ]
+            name: 'toBoolean',
+        },
+    ],
 };
 
 export const mockActionsListConfGetObject: ActionsListConfig = {
@@ -95,9 +95,9 @@ export const mockActionsListConfGetObject: ActionsListConfig = {
     getValue: [
         {
             id: 'toObject',
-            name: 'toObject'
-        }
-    ]
+            name: 'toObject',
+        },
+    ],
 };
 
 export const mockActionsListConfGetNumber: ActionsListConfig = {
@@ -105,9 +105,9 @@ export const mockActionsListConfGetNumber: ActionsListConfig = {
     getValue: [
         {
             id: 'toNumber',
-            name: 'toNumber'
-        }
-    ]
+            name: 'toNumber',
+        },
+    ],
 };
 
 export const mockActionsListConfGetAll: ActionsListConfig = {
@@ -115,7 +115,7 @@ export const mockActionsListConfGetAll: ActionsListConfig = {
     getValue: [
         {
             id: 'toAnyType',
-            name: 'toAnyType'
-        }
-    ]
+            name: 'toAnyType',
+        },
+    ],
 };

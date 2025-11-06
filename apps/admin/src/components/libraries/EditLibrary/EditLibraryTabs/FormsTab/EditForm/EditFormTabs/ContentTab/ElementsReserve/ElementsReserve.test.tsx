@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function LayoutElementsList() {
             return <div>LayoutElementsList</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -20,7 +20,7 @@ jest.mock(
     () =>
         function AttributesList() {
             return <div>AttributesList</div>;
-        }
+        },
 );
 
 describe('ElementsReserve', () => {
@@ -28,7 +28,7 @@ describe('ElementsReserve', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <ElementsReserve />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

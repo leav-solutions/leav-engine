@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function LibraryItemsListPagination() {
             return <div>LibraryItemsListPagination</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -20,7 +20,7 @@ jest.mock(
     () =>
         function ItemTileDisplay() {
             return <div>ItemTileDisplay</div>;
-        }
+        },
 );
 
 describe('TileDisplay', () => {
@@ -31,17 +31,17 @@ describe('TileDisplay', () => {
                     fields: {},
                     whoAmI: {
                         ...mockRecord,
-                        id: 'test'
+                        id: 'test',
                     },
-                    index: 0
-                }
-            ]
+                    index: 0,
+                },
+            ],
         };
 
         render(
             <MockSearchContextProvider state={mockState}>
                 <TileDisplay />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('ItemTileDisplay')).toBeInTheDocument();

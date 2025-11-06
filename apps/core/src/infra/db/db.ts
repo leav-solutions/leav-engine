@@ -10,7 +10,7 @@ interface IDeps {
 
 const _getDbConnection = (config: IConfig): Database =>
     new Database({
-        url: config.db.url
+        url: config.db.url,
     });
 
 export default function (deps: IDeps): Database {

@@ -11,14 +11,14 @@ const depsBase: ToAny<ICoreAppDeps> = {
     'core.app.graphql.customScalars.dateTime': jest.fn(),
     'core.app.graphql.customScalars.any': jest.fn(),
     config: {},
-    translator: {}
+    translator: {},
 };
 
 describe('coreApp', () => {
     describe('filterSysTranslationField', () => {
         const fieldData = {
             fr: 'labelFR',
-            en: 'labelEN'
+            en: 'labelEN',
         };
         test('Return filtered label', async () => {
             const requestedLangs = ['fr'];

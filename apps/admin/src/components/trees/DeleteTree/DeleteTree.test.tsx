@@ -15,7 +15,7 @@ describe('DeleteTree', () => {
     test('Render button for system tree', async () => {
         const tree: Mockify<GET_TREES_trees_list> = {
             label: null,
-            system: false
+            system: false,
         };
 
         await act(async () => {
@@ -24,7 +24,7 @@ describe('DeleteTree', () => {
                     <MockedUserContextProvider>
                         <DeleteTree tree={tree as GET_TREES_trees_list} />
                     </MockedUserContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 
@@ -34,7 +34,7 @@ describe('DeleteTree', () => {
     test('Disable button for system tree', async () => {
         const tree: Mockify<GET_TREES_trees_list> = {
             label: null,
-            system: true
+            system: true,
         };
 
         await act(async () => {
@@ -43,7 +43,7 @@ describe('DeleteTree', () => {
                     <MockedUserContextProvider>
                         <DeleteTree tree={tree as GET_TREES_trees_list} />
                     </MockedUserContextProvider>
-                </MockedProvider>
+                </MockedProvider>,
             );
         });
 

@@ -30,8 +30,8 @@ export default function ({'core.domain.indexationManager': indexationManager}: I
 
             await indexationManager.indexDatabase({
                 findRecordParams: {library: libraryId, ...(filters.length && {filters})},
-                ctx
+                ctx,
             });
-        }
+        },
     };
 }

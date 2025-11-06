@@ -12,14 +12,14 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const notReadonly = false;
@@ -50,7 +50,7 @@ describe('DSInputEncryptedWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const text = 'text';
@@ -77,7 +77,7 @@ describe('DSInputEncryptedWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
         const text = 'text';
         const input = screen.getByTestId('kit-input-password');
@@ -108,7 +108,7 @@ describe('DSInputEncryptedWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByTestId('kit-input-password');

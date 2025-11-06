@@ -8,7 +8,7 @@ import {useUser} from './useUser';
 describe('useUser', () => {
     test('Return user data from context', async () => {
         const hook = renderHook(() => useUser(), {
-            wrapper: ({children}) => <MockedUserContextProvider>{children as JSX.Element}</MockedUserContextProvider>
+            wrapper: ({children}) => <MockedUserContextProvider>{children as JSX.Element}</MockedUserContextProvider>,
         });
 
         expect(hook.result.current.userData.userId).toEqual('123');

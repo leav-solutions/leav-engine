@@ -16,14 +16,14 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: null
+    calculatedValue: null,
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
     isInheritedNotOverrideValue: false,
-    inheritedValue: null
+    inheritedValue: null,
 };
 
 const notReadonly = false;
@@ -56,7 +56,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -77,7 +77,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -99,7 +99,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -122,7 +122,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -142,7 +142,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');
@@ -168,7 +168,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const clearIcon = screen.getByLabelText('clear');
@@ -194,7 +194,7 @@ describe('DSInputWrapper', () => {
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
-            </AntForm>
+            </AntForm>,
         );
 
         const input = screen.getByRole('textbox');

@@ -12,7 +12,7 @@ jest.mock(
     () =>
         function TreeExplorer() {
             return <div>Tree Explorer</div>;
-        }
+        },
 );
 
 describe('SelectTreeNodeModal', () => {
@@ -23,7 +23,7 @@ describe('SelectTreeNodeModal', () => {
         {
             request: {
                 query: getTreeByIdQuery,
-                variables: {id: ['test_tree']}
+                variables: {id: ['test_tree']},
             },
             result: {
                 data: {
@@ -37,7 +37,7 @@ describe('SelectTreeNodeModal', () => {
                                 system: false,
                                 label: {
                                     en: 'TestTree',
-                                    fr: 'TestTree'
+                                    fr: 'TestTree',
                                 },
                                 behavior: TreeBehavior.standard,
                                 libraries: [
@@ -47,27 +47,27 @@ describe('SelectTreeNodeModal', () => {
                                             id: 'test_lib',
                                             label: {fr: 'My Lib'},
                                             attributes: [],
-                                            __typename: 'Library'
+                                            __typename: 'Library',
                                         },
                                         settings: {
                                             __typename: 'TreeLibrarySettings',
                                             allowMultiplePositions: true,
                                             allowedAtRoot: true,
-                                            allowedChildren: ['__all__']
-                                        }
-                                    }
+                                            allowedChildren: ['__all__'],
+                                        },
+                                    },
                                 ],
-                                permissions_conf: null
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+                                permissions_conf: null,
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     ];
     test('Load tree settings', async () => {
         render(<SelectTreeNodeModal tree="test_tree" onSelect={onSelect} open onClose={onClose} />, {
-            apolloMocks: mocks
+            apolloMocks: mocks,
         });
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('SelectTreeNodeModal', () => {
 
     test('Calls onClose', async () => {
         render(<SelectTreeNodeModal tree="test_tree" onSelect={onSelect} open onClose={onClose} />, {
-            apolloMocks: mocks
+            apolloMocks: mocks,
         });
 
         userEvent.click(await screen.findByTestId('select_tree_node_close_btn'));

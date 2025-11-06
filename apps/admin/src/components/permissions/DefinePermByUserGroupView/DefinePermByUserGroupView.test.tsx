@@ -14,7 +14,7 @@ describe('DefineAttrPermissionsView', () => {
         const comp = render(
             <MockedProvider>
                 <DefinePermByUserGroupView type={PermissionTypes.attribute} applyTo="test_attr" readOnly={false} />
-            </MockedProvider>
+            </MockedProvider>,
         );
 
         expect(comp).toMatchSnapshot();

@@ -11,7 +11,7 @@ describe('getSettingsRepo', () => {
     describe('saveSettings', () => {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise([mockGlobalSettings])
+            execute: global.__mockPromise([mockGlobalSettings]),
         };
 
         beforeEach(() => {
@@ -20,7 +20,7 @@ describe('getSettingsRepo', () => {
 
         test('Should save settings', async () => {
             const repo = globalSettingsRepo({
-                'core.infra.db.dbService': mockDbServ as IDbService
+                'core.infra.db.dbService': mockDbServ as IDbService,
             });
 
             const savedSettings = await repo.saveSettings({settings: mockGlobalSettings, ctx: mockCtx});
@@ -35,7 +35,7 @@ describe('getSettingsRepo', () => {
 
         test('Should return settings', async () => {
             const repo = globalSettingsRepo({
-                'core.infra.db.dbService': mockDbServ as IDbService
+                'core.infra.db.dbService': mockDbServ as IDbService,
             });
 
             const savedSettings = await repo.getSettings(mockCtx);

@@ -15,6 +15,6 @@ export default function ({config}: IDeps): IDefaultPermissionHelper {
     return {
         getDefaultPermission(): boolean {
             return config.permissions.default ?? true;
-        }
+        },
     };
 }

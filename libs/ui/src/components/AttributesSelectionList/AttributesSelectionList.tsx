@@ -13,7 +13,7 @@ import {ErrorDisplay} from '../ErrorDisplay';
 import Attribute from './Attribute';
 import attributeSelectionListReducer, {
     AttributesSelectionListActionTypes,
-    initialState
+    initialState,
 } from './reducer/attributesSelectionListReducer';
 import {AttributesSelectionListStateContext} from './reducer/attributesSelectionListStateContext';
 import SelectedAttributesList from './SelectedAttributesList';
@@ -44,7 +44,7 @@ function AttributesSelectionList({
     multiple = true,
     selectedAttributes = [],
     canExpandExtendedAttributes = true,
-    onSelectionChange
+    onSelectionChange,
 }: IAttributesSelectionListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const searchRef = useRef<any>(null);
@@ -56,20 +56,20 @@ function AttributesSelectionList({
         library,
         multiple,
         selectedAttributes,
-        canExpandExtendedAttributes
+        canExpandExtendedAttributes,
     });
 
     // Retrieve attributes list
     const {loading, error} = useGetAttributesByLibQuery({
         variables: {
-            library
+            library,
         },
         onCompleted: data => {
             dispatch({
                 type: AttributesSelectionListActionTypes.SET_ATTRIBUTES,
-                attributes: data.attributes?.list || []
+                attributes: data.attributes?.list || [],
             });
-        }
+        },
     });
 
     useEffect(() => {

@@ -11,7 +11,7 @@ jest.mock(
     () =>
         function RecordSelector() {
             return <div>RecordSelector</div>;
-        }
+        },
 );
 
 jest.mock('hooks/useLang');
@@ -22,8 +22,8 @@ describe('FileSelector', () => {
             request: {
                 query: getLibsQuery,
                 variables: {
-                    behavior: [LibraryBehavior.files]
-                }
+                    behavior: [LibraryBehavior.files],
+                },
             },
             result: {
                 data: {
@@ -35,18 +35,18 @@ describe('FileSelector', () => {
                                 system: true,
                                 label: {
                                     en: 'Files',
-                                    fr: 'Fichiers'
+                                    fr: 'Fichiers',
                                 },
                                 icon: null,
                                 behavior: 'files',
-                                __typename: 'Library'
-                            }
+                                __typename: 'Library',
+                            },
                         ],
-                        __typename: 'LibrariesList'
-                    }
-                }
-            }
-        }
+                        __typename: 'LibrariesList',
+                    },
+                },
+            },
+        },
     ];
     afterEach(() => jest.clearAllMocks());
 

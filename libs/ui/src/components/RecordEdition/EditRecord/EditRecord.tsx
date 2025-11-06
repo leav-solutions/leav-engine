@@ -11,12 +11,12 @@ import {
     AttributeType,
     type RecordFormAttributeStandardAttributeFragment,
     type RecordIdentityFragment,
-    useActivateNewRecordMutation
+    useActivateNewRecordMutation,
 } from '../../../_gqlTypes';
 import {
     type IRecordPropertyLink,
     type IRecordPropertyStandard,
-    type IRecordPropertyTree
+    type IRecordPropertyTree,
 } from '../../../_queries/records/getRecordPropertiesQuery';
 import {ErrorBoundary} from '../../ErrorBoundary';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -30,7 +30,7 @@ import {
     type ISubmittedValueTree,
     type IValueToSubmit,
     type MetadataSubmitValueFunc,
-    type SubmitValueFunc
+    type SubmitValueFunc,
 } from '../EditRecordContent/_types';
 import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
@@ -88,7 +88,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     showSidebar = false,
     sidebarContainer,
     containerStyle,
-    withInfoButton
+    withInfoButton,
 }) => {
     const [state, dispatch] = useReducer(editRecordReducer, {
         ...initialState,
@@ -97,17 +97,17 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         libraryLabel: null,
         valuesVersion,
         originValuesVersion: valuesVersion,
-        withInfoButton
+        withInfoButton,
     });
 
     const {
         loading: permissionsLoading,
         canEdit,
-        isReadOnly
+        isReadOnly,
     } = useCanEditRecord({...record?.library, id: libraryId}, record?.id);
 
     const {data: libraryData} = useQuery(getLibraryByIdQuery, {
-        variables: {id: [libraryId]}
+        variables: {id: [libraryId]},
     });
 
     const {saveValues} = useSaveValueBatchMutation();
@@ -119,7 +119,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         if (libraryData) {
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_LIBRARY_LABEL,
-                label: libraryData.libraries.list[0].label
+                label: libraryData.libraries.list[0].label,
             });
         }
     }, [libraryData]);
@@ -128,7 +128,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         if (record && !isEqual(record, state.record)) {
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_RECORD,
-                record
+                record,
             });
         }
     }, [record]);
@@ -136,14 +136,14 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     useEffect(() => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ENABLE_SIDEBAR,
-            enabled: enableSidebar
+            enabled: enableSidebar,
         });
     }, [enableSidebar]);
 
     useEffect(() => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
-            isOpen: showSidebar
+            isOpen: showSidebar,
         });
     }, [showSidebar]);
 
@@ -171,7 +171,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                 return savableValue as IValueToSubmit;
             }),
             version,
-            true // deleteEmpty
+            true, // deleteEmpty
         );
 
     const _handleMetadataSubmit: MetadataSubmitValueFunc = (value, attribute, metadata) => {
@@ -196,10 +196,10 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     idValue: value.id_value,
                     attribute,
                     value: valueContent,
-                    metadata
-                }
+                    metadata,
+                },
             ],
-            null
+            null,
         );
     };
 
@@ -212,8 +212,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             variables: {
                 libraryId,
                 recordId: record.id,
-                formId
-            }
+                formId,
+            },
         });
         const errors = activateNewRecordResult?.data?.activateNewRecord.valuesErrors;
         if (errors == null || errors?.length === 0) {
@@ -235,9 +235,9 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                         doesAttributeHaveMultipleFields && error.type === 'REQUIRED_ATTRIBUTE'
                             ? [error.attribute, 0]
                             : error.attribute,
-                    errors: [error.message]
+                    errors: [error.message],
                 };
-            })
+            }),
         );
     };
 
@@ -245,7 +245,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         const valuesToSave = values.map(value => ({
             idValue: value.id_value,
             attribute,
-            value: null
+            value: null,
         }));
 
         return saveValues(record, valuesToSave, version, true);

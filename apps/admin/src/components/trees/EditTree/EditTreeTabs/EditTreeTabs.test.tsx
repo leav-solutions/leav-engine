@@ -13,7 +13,7 @@ jest.mock(
     () =>
         function TreeInfosTab() {
             return <div>TreeInfosTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -21,7 +21,7 @@ jest.mock(
     () =>
         function TreePermissionsTab() {
             return <div>TreePermissionsTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -29,7 +29,7 @@ jest.mock(
     () =>
         function CustomConfigTab() {
             return <div>CustomConfigTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -37,7 +37,7 @@ jest.mock(
     () =>
         function TreeStructure() {
             return <div>TreeStructure</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -45,7 +45,7 @@ jest.mock(
     () =>
         function TreeExplorer() {
             return <div>TreeExplorer</div>;
-        }
+        },
 );
 
 describe('EditTreeTabs', () => {

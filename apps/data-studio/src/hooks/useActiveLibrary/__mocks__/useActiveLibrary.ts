@@ -16,8 +16,8 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
             access_record: true,
             create_record: true,
             edit_record: true,
-            delete_record: true
-        }
+            delete_record: true,
+        },
     };
 
     const updateActiveLibrary = jest.fn();

@@ -7,7 +7,7 @@ import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQ
 import {
     type GET_LIBRARIES_LIST,
     type GET_LIBRARIES_LISTVariables,
-    type GET_LIBRARIES_LIST_libraries_list
+    type GET_LIBRARIES_LIST_libraries_list,
 } from '_gqlTypes/GET_LIBRARIES_LIST';
 
 interface IUseApplicationLibrariesParams {
@@ -33,10 +33,10 @@ export const useApplicationLibraries = (params: IUseApplicationLibrariesParams =
                 (Array.isArray(currentApp?.settings?.libraries) && !currentApp.settings.libraries.length), // Skip if no libraries are selected
             variables: {
                 filters: {
-                    id: Array.isArray(currentApp?.settings?.libraries) ? currentApp.settings.libraries : []
-                }
-            }
-        }
+                    id: Array.isArray(currentApp?.settings?.libraries) ? currentApp.settings.libraries : [],
+                },
+            },
+        },
     );
 
     let libraries = data?.libraries.list ? [...data?.libraries.list] : [];

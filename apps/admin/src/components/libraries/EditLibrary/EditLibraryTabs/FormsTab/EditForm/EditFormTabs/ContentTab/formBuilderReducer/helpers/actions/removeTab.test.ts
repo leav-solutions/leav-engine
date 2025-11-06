@@ -8,7 +8,7 @@ import {
     defaultContainerId,
     defaultDepAttribute,
     defaultDepValue,
-    FormBuilderActionTypes
+    FormBuilderActionTypes,
 } from '../../formBuilderReducer';
 import {mockInitialState} from '../../_fixtures/fixtures';
 import removeTab from './removeTab';
@@ -30,16 +30,16 @@ describe('formBuilderReducer', () => {
                                     tabs: [
                                         {
                                             label: 'tab 1',
-                                            id: '1_1'
+                                            id: '1_1',
                                         },
                                         {
                                             label: 'tab 2',
-                                            id: '1_2'
-                                        }
-                                    ]
+                                            id: '1_2',
+                                        },
+                                    ],
                                 },
-                                uiElement: layoutElements[UIElementTypes.TABS]
-                            }
+                                uiElement: layoutElements[UIElementTypes.TABS],
+                            },
                         ],
                         '1/1_1': [
                             {
@@ -48,8 +48,8 @@ describe('formBuilderReducer', () => {
                                 type: FormElementTypes.layout,
                                 order: 2,
                                 settings: {},
-                                uiElement: layoutElements[UIElementTypes.DIVIDER]
-                            }
+                                uiElement: layoutElements[UIElementTypes.DIVIDER],
+                            },
                         ],
                         '1/1_2': [
                             {
@@ -58,11 +58,11 @@ describe('formBuilderReducer', () => {
                                 type: FormElementTypes.layout,
                                 order: 2,
                                 settings: {},
-                                uiElement: layoutElements[UIElementTypes.DIVIDER]
-                            }
-                        ]
-                    }
-                }
+                                uiElement: layoutElements[UIElementTypes.DIVIDER],
+                            },
+                        ],
+                    },
+                },
             },
             activeElements: {
                 [defaultContainerId]: [
@@ -75,16 +75,16 @@ describe('formBuilderReducer', () => {
                             tabs: [
                                 {
                                     label: 'tab 1',
-                                    id: '1_1'
+                                    id: '1_1',
                                 },
                                 {
                                     label: 'tab 2',
-                                    id: '1_2'
-                                }
-                            ]
+                                    id: '1_2',
+                                },
+                            ],
                         },
-                        uiElement: layoutElements[UIElementTypes.TABS]
-                    }
+                        uiElement: layoutElements[UIElementTypes.TABS],
+                    },
                 ],
                 '1/1_1': [
                     {
@@ -93,8 +93,8 @@ describe('formBuilderReducer', () => {
                         type: FormElementTypes.layout,
                         order: 2,
                         settings: {},
-                        uiElement: layoutElements[UIElementTypes.DIVIDER]
-                    }
+                        uiElement: layoutElements[UIElementTypes.DIVIDER],
+                    },
                 ],
                 '1/1_2': [
                     {
@@ -103,10 +103,10 @@ describe('formBuilderReducer', () => {
                         type: FormElementTypes.layout,
                         order: 2,
                         settings: {},
-                        uiElement: layoutElements[UIElementTypes.DIVIDER]
-                    }
-                ]
-            }
+                        uiElement: layoutElements[UIElementTypes.DIVIDER],
+                    },
+                ],
+            },
         };
         test('Remove a tab', async () => {
             const newState = removeTab(removeTabInitialState, {
@@ -120,17 +120,17 @@ describe('formBuilderReducer', () => {
                         tabs: [
                             {
                                 label: 'tab 1',
-                                id: '1_1'
+                                id: '1_1',
                             },
                             {
                                 label: 'tab 2',
-                                id: '1_2'
-                            }
-                        ]
+                                id: '1_2',
+                            },
+                        ],
                     },
-                    uiElement: layoutElements[UIElementTypes.TABS]
+                    uiElement: layoutElements[UIElementTypes.TABS],
                 },
-                tabId: '1_2'
+                tabId: '1_2',
             });
 
             const newElements = newState.elements[defaultDepAttribute][defaultDepValue];
@@ -143,7 +143,7 @@ describe('formBuilderReducer', () => {
             // Update tabs settings
             expect(newElements[defaultContainerId][0]?.settings?.tabs).toHaveLength(
                 removeTabInitialState.elements[defaultDepAttribute][defaultDepValue][defaultContainerId][0].settings
-                    .tabs.length - 1
+                    .tabs.length - 1,
             );
         });
     });

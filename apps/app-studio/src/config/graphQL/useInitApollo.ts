@@ -11,7 +11,7 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
 export const useInitApollo = (
-    unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>
+    unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>,
 ) => {
     const errorLink = onError(({graphQLErrors, networkError, operation, forward, response}) => {
         if (
@@ -41,13 +41,13 @@ export const useInitApollo = (
         createClient({
             url: `${WS_URL}/${API_ENDPOINT}`,
             retryAttempts: Infinity,
-            shouldRetry: () => true
-        })
+            shouldRetry: () => true,
+        }),
     );
 
     // TODO: get lang from context
     const httpLink = new HttpLink({
-        uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?lang=fr&opName=${operation.operationName}`
+        uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?lang=fr&opName=${operation.operationName}`,
     });
 
     const splitLink = split(
@@ -56,15 +56,15 @@ export const useInitApollo = (
             return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
         },
         wsLink,
-        httpLink
+        httpLink,
     );
 
     const client = new ApolloClient({
         link: from([errorLink, splitLink]),
         connectToDevTools: import.meta.env.DEV,
         cache: new InMemoryCache({
-            possibleTypes: gqlPossibleTypes
-        })
+            possibleTypes: gqlPossibleTypes,
+        }),
     });
 
     return {client};

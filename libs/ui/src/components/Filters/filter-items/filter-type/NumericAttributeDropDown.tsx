@@ -16,7 +16,7 @@ const InputNumberStyled = styled(KitInputNumber)`
 export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef
+    selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
 

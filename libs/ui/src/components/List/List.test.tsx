@@ -46,7 +46,7 @@ describe('List', () => {
                 selectable
                 selectedItems={['Item B']}
                 onSelectionChange={onSelect}
-            />
+            />,
         );
 
         const secondRow = screen.getAllByRole('listitem')[1];

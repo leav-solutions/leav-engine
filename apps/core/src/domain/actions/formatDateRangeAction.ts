@@ -30,7 +30,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 description:
                     'Adapt format to current language. Available options: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString#options.',
                 required: false,
-                helper_value: helperValueLocalizedParam
+                helper_value: helperValueLocalizedParam,
             },
             {
                 name: 'universal',
@@ -38,8 +38,8 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 description:
                     'Date format for every languages. If "localized" parameter is defined, this parameter is ignored. Available formats: https://momentjs.com/docs/#/displaying/format/.',
                 required: false,
-                helper_value: 'DD/MM/YYYY HH:mm:ss'
-            }
+                helper_value: 'DD/MM/YYYY HH:mm:ss',
+            },
         ],
         action: (values, {localized, universal}, {lang}) => {
             const errors: IActionsListFunctionResult['errors'] = [];
@@ -49,7 +49,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                     errors.push({
                         errorType: Errors.INVALID_VALUES,
                         attributeValue: elementValue,
-                        message: 'Non standard value received in formatDateRange.'
+                        message: 'Non standard value received in formatDateRange.',
                     });
                     return elementValue;
                 }
@@ -70,8 +70,8 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                         ...elementValue,
                         payload: {
                             from: moment.unix(numberValFrom).format(universal),
-                            to: moment.unix(numberValTo).format(universal)
-                        }
+                            to: moment.unix(numberValTo).format(universal),
+                        },
                     };
                 }
 
@@ -87,18 +87,18 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                         errorType: Errors.FORMAT_ERROR,
                         attributeValue: {payload: localized},
                         message:
-                            'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
+                            'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.',
                     });
                 }
 
                 elementValue.payload = {
                     from: new Date(numberValFrom * 1_000).toLocaleString(lang, options),
-                    to: new Date(numberValTo * 1_000).toLocaleString(lang, options)
+                    to: new Date(numberValTo * 1_000).toLocaleString(lang, options),
                 };
                 return elementValue;
             });
 
             return {values: formattedValues, errors};
-        }
+        },
     };
 }

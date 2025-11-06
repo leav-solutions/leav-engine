@@ -8,7 +8,7 @@ export enum FormLayoutElementType {
     DIVIDER = 'divider',
     TABS = 'tabs',
     FIELDS_CONTAINER = 'fields_container',
-    FRAME = 'frame'
+    FRAME = 'frame',
 }
 
 export enum FormFieldType {
@@ -17,7 +17,7 @@ export enum FormFieldType {
     CHECKBOX = 'checkbox',
     ENCRYPTED = 'encrypted',
     DROPDOWN = 'dropdown',
-    TEXT_BLOCK = 'text_block'
+    TEXT_BLOCK = 'text_block',
 }
 
 export interface IForm {

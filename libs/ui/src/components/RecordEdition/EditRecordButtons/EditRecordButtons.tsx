@@ -33,7 +33,7 @@ const EditRecordButtons = () => {
             content:
                 state.sidebarContent === EditRecordSidebarContentTypeMap.VALUES_VERSIONS
                     ? EditRecordSidebarContentTypeMap.SUMMARY
-                    : EditRecordSidebarContentTypeMap.VALUES_VERSIONS
+                    : EditRecordSidebarContentTypeMap.VALUES_VERSIONS,
         });
     };
 

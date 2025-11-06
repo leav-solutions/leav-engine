@@ -37,7 +37,7 @@ export default function ({
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypes = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
 }: IDeps = {}): IAttributeAdvancedLinkRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
@@ -57,7 +57,7 @@ export default function ({
     const _buildLinkValue = (
         linkedRecord: (IDbDocument & IRecord) | {library: string; id: string},
         valueEdge: IValueEdge,
-        reverseLink: boolean
+        reverseLink: boolean,
     ): ILinkValue => {
         const recordIdField = reverseLink ? '_from' : '_to';
         const [recordLibrary, recordId] = valueEdge[recordIdField].split('/');
@@ -70,7 +70,7 @@ export default function ({
             created_at: valueEdge.created_at,
             created_by: valueEdge.created_by,
             version: valueEdge.version ?? null,
-            metadata: valueEdge.metadata
+            metadata: valueEdge.metadata,
         };
     };
 
@@ -78,7 +78,7 @@ export default function ({
         id_value: linkedRecordId,
         payload: {id: linkedRecordId, library: linkedLibrary},
         created_by: null,
-        modified_by: null
+        modified_by: null,
     });
 
     return {
@@ -94,10 +94,10 @@ export default function ({
                     attribute: {
                         ...(attribute.reverse_link as IAttribute),
                         reverse_link: undefined,
-                        type: AttributeTypes.SIMPLE_LINK
+                        type: AttributeTypes.SIMPLE_LINK,
                     },
                     value: {payload: recordId},
-                    ctx
+                    ctx,
                 });
                 return _buildSimpleLinkReverseValue(value.payload, attribute.linked_library);
             }
@@ -125,7 +125,7 @@ export default function ({
                 created_at: value.created_at,
                 created_by: String(ctx.userId),
                 modified_by: String(ctx.userId),
-                version: value.version ?? null
+                version: value.version ?? null,
             };
 
             if (value.metadata) {
@@ -137,7 +137,7 @@ export default function ({
                     LET linkedRecord = DOCUMENT(${toLibrary + '/' + toRecordId})
                     INSERT ${edgeData} IN ${edgeCollec}
                     RETURN {edge: NEW, linkedRecord}`,
-                ctx
+                ctx,
             });
 
             const savedEdge = resEdge.length ? resEdge[0] : null;
@@ -146,7 +146,7 @@ export default function ({
             return _buildLinkValue(
                 {...savedEdge?.linkedRecord, ...utils.decomposeValueEdgeDestination(savedValue)},
                 savedEdge?.edge,
-                !!attribute.reverse_link
+                !!attribute.reverse_link,
             );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
@@ -161,10 +161,10 @@ export default function ({
                     attribute: {
                         ...(attribute.reverse_link as IAttribute),
                         reverse_link: undefined,
-                        type: AttributeTypes.SIMPLE_LINK
+                        type: AttributeTypes.SIMPLE_LINK,
                     },
                     value: {payload: recordId},
-                    ctx
+                    ctx,
                 });
                 return _buildSimpleLinkReverseValue(value.payload, attribute.linked_library);
             }
@@ -189,7 +189,7 @@ export default function ({
                 modified_at: value.modified_at,
                 created_by: value.created_by,
                 modified_by: String(ctx.userId),
-                version: value.version ?? null
+                version: value.version ?? null,
             };
 
             if (value.metadata) {
@@ -203,7 +203,7 @@ export default function ({
                         WITH ${edgeData}
                         IN ${edgeCollec}
                     RETURN {edge: NEW, linkedRecord}`,
-                ctx
+                ctx,
             });
 
             const savedEdge = resEdge.length ? resEdge[0] : null;
@@ -212,7 +212,7 @@ export default function ({
             return _buildLinkValue(
                 {...savedEdge?.linkedRecord, ...utils.decomposeValueEdgeDestination(savedValue)},
                 savedEdge?.edge,
-                !!attribute.reverse_link
+                !!attribute.reverse_link,
             );
         },
         async deleteValue({attribute, value, ctx}): Promise<ILinkValue> {
@@ -223,10 +223,10 @@ export default function ({
                     attribute: {
                         ...(attribute.reverse_link as IAttribute),
                         reverse_link: undefined,
-                        type: AttributeTypes.SIMPLE_LINK
+                        type: AttributeTypes.SIMPLE_LINK,
                     },
                     value: {payload: null},
-                    ctx
+                    ctx,
                 });
                 return _buildSimpleLinkReverseValue(value.payload.id, attribute.linked_library);
             }
@@ -235,21 +235,21 @@ export default function ({
 
             // Create the link between records and add some metadata on it
             const edgeData = {
-                _key: value.id_value
+                _key: value.id_value,
             };
 
             const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     REMOVE ${edgeData} IN ${edgeCollec}
                     RETURN OLD`,
-                ctx
+                ctx,
             });
             const deletedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
             return _buildLinkValue(
                 utils.decomposeValueEdgeDestination(deletedEdge._to),
                 deletedEdge as IValueEdge,
-                !!attribute.reverse_link
+                !!attribute.reverse_link,
             );
         },
         async getValues({
@@ -258,7 +258,7 @@ export default function ({
             attribute,
             forceGetAllValues = false,
             options,
-            ctx
+            ctx,
         }): Promise<ILinkValue[]> {
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
@@ -266,7 +266,7 @@ export default function ({
                     advancedLinkAttr: attribute,
                     value: recordId,
                     forceGetAllValues,
-                    ctx
+                    ctx,
                 });
             }
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -309,7 +309,7 @@ export default function ({
                     advancedLinkAttr: attribute,
                     values: recordIds,
                     forceGetAllValues: options?.forceGetAllValues ?? false,
-                    ctx
+                    ctx,
                 });
                 return results;
             }
@@ -325,7 +325,7 @@ export default function ({
                     FOR recordKey IN ${recordsList}
                         FOR linkedRecord, edge IN 1 ${direction} recordKey ${edgeCollec}
                             FILTER edge.attribute == ${edgeAttribute}
-                `
+                `,
             ];
 
             if (!options?.forceGetAllValues) {
@@ -370,7 +370,7 @@ export default function ({
                 }>
             >({
                 query,
-                ctx
+                ctx,
             });
 
             const valuesByRecordId: Map<
@@ -472,7 +472,7 @@ export default function ({
                         COUNT(
                             FOR ${vIdentifier} IN ${c}
                                 FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${literal(
-                                    parentIdentifier
+                                    parentIdentifier,
                                 )}._key
                             RETURN true
                         )
@@ -496,7 +496,7 @@ export default function ({
                 retrieveValue = aql`
                         FOR ${vIdentifier} IN ${c}
                             FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${literal(
-                                parentIdentifier
+                                parentIdentifier,
                             )}._key`;
             } else {
                 retrieveValue = aql`
@@ -513,7 +513,7 @@ export default function ({
                 ? aql`LET ${literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
                       [...attributes].splice(1),
                       filter,
-                      linkIdentifier
+                      linkIdentifier,
                   )})`
                 : null;
             const linkedValue = join([literal('FLATTEN('), retrieveValue, linkValueQuery, returnValue, literal(')')]);
@@ -524,6 +524,6 @@ export default function ({
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
-        }
+        },
     };
 }

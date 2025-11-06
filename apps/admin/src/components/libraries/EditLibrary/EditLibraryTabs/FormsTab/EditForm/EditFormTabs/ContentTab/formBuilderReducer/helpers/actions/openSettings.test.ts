@@ -10,8 +10,8 @@ describe('formBuilderReducer', () => {
         const newState = formBuilderReducer(mockInitialState, {
             type: FormBuilderActionTypes.OPEN_SETTINGS,
             element: {
-                ...formElem1
-            }
+                ...formElem1,
+            },
         });
 
         expect(newState.elementInSettings).toEqual({...formElem1});

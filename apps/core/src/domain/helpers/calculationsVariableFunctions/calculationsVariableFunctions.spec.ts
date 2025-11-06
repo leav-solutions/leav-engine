@@ -8,17 +8,17 @@ import calculationsVariableFunctions from '.';
 import {TypeGuards} from '../../../utils';
 
 const mockRecordDomain = {
-    getRecordFieldValue: jest.fn()
+    getRecordFieldValue: jest.fn(),
 } satisfies Mockify<IRecordDomain>;
 
 const mockAttributeDomain = {
-    getAttributeProperties: jest.fn()
+    getAttributeProperties: jest.fn(),
 } satisfies Mockify<IAttributeDomain>;
 
 describe('calculationsVariableFunctions', () => {
     const calculationFunctions = calculationsVariableFunctions({
         'core.domain.record': mockRecordDomain as any,
-        'core.domain.attribute': mockAttributeDomain as any
+        'core.domain.attribute': mockAttributeDomain as any,
     });
 
     const ctx: IActionsListContext = {userId: 'test'};
@@ -31,7 +31,7 @@ describe('calculationsVariableFunctions', () => {
             const res = await calculationFunctions.getValue.run(
                 ctx,
                 [{library: 'library', recordId: 'recordId'}],
-                'attributeId'
+                'attributeId',
             );
 
             expect(res).toHaveLength(1);
@@ -43,14 +43,14 @@ describe('calculationsVariableFunctions', () => {
 
         it('Should return tree node on tree attribute', async () => {
             mockRecordDomain.getRecordFieldValue.mockResolvedValue([
-                {payload: {id: 'nodeId', record: {library: 'treeLibraryId', id: 'treeRecordId'}}}
+                {payload: {id: 'nodeId', record: {library: 'treeLibraryId', id: 'treeRecordId'}}},
             ]);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({linked_tree: 'treeId'});
 
             const res = await calculationFunctions.getValue.run(
                 ctx,
                 [{library: 'library', recordId: 'recordId'}],
-                'attributeId'
+                'attributeId',
             );
 
             expect(res).toHaveLength(1);
@@ -72,10 +72,10 @@ describe('calculationsVariableFunctions', () => {
                     {
                         library: 'libraryId',
                         recordId: 'recordId',
-                        payload: {id: 'nodeId', record: {id: 'nodeRecordId', library: 'nodeRecordLibraryId'}}
-                    }
+                        payload: {id: 'nodeId', record: {id: 'nodeRecordId', library: 'nodeRecordLibraryId'}},
+                    },
                 ],
-                'nodeRecordAttributeId'
+                'nodeRecordAttributeId',
             );
 
             expect(res).toHaveLength(1);
@@ -94,7 +94,7 @@ describe('calculationsVariableFunctions', () => {
             const res = await calculationFunctions.getValue.run(
                 ctx,
                 [{library: 'library', recordId: 'recordId'}],
-                ['toto']
+                ['toto'],
             );
 
             expect(res).toHaveLength(1);
@@ -114,7 +114,7 @@ describe('calculationsVariableFunctions', () => {
 
     test('should get the "from" date on period attribute', async () => {
         const inputValue = [
-            {payload: {from: 17438843200, to: 1742472000}, raw_payload: {from: 17438843233, to: 1742472033}}
+            {payload: {from: 17438843200, to: 1742472000}, raw_payload: {from: 17438843233, to: 1742472033}},
         ];
 
         const res = await calculationFunctions.fromDate.run(ctx, inputValue, ['attributeKey']);
@@ -126,7 +126,7 @@ describe('calculationsVariableFunctions', () => {
 
     test('should get the "to" date on period attribute', async () => {
         const inputValue = [
-            {payload: {from: 17438843200, to: 1742472000}, raw_payload: {from: 17438843233, to: 1742472033}}
+            {payload: {from: 17438843200, to: 1742472000}, raw_payload: {from: 17438843233, to: 1742472033}},
         ];
 
         const res = await calculationFunctions.toDate.run(ctx, inputValue, ['attributeKey']);
@@ -147,7 +147,7 @@ describe('calculationsVariableFunctions', () => {
         const res = await calculationFunctions.last.run(
             ctx,
             [{payload: 'meh'}, {payload: 'meh2'}, {payload: 'meh3'}],
-            ['toto']
+            ['toto'],
         );
         expect(res).toHaveLength(1);
         expect(res[0]).toHaveProperty('payload');
@@ -179,7 +179,7 @@ describe('calculationsVariableFunctions', () => {
         const res = await calculationFunctions.dedup.run(
             ctx,
             [{payload: 2}, {payload: 1}, {payload: 2}, {payload: 3}],
-            ['toto']
+            ['toto'],
         );
         expect(res).toHaveLength(3);
         expect(res[0]).toHaveProperty('payload');

@@ -17,6 +17,6 @@ export default function (): IActionsListFunction {
                 return elementValue;
             });
             return {values: computedValues, errors: []};
-        }
+        },
     };
 }

@@ -18,7 +18,7 @@ interface IDeps {
 export default function ({
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.domain.eventsManager': eventsManagerDomain,
-    config
+    config,
 }: IDeps): IEventsManagerApp {
     return {
         extensionPoints: {
@@ -26,11 +26,11 @@ export default function ({
                 const ctx: IQueryInfos = {
                     ...initQueryContext(),
                     userId: config.defaultUserId,
-                    lang: config.lang.default
+                    lang: config.lang.default,
                 };
 
                 eventsManagerDomain.registerEventActions(actions, prefix, ctx);
-            }
-        }
+            },
+        },
     };
 }

@@ -23,20 +23,20 @@ function PermissionSelector({
     onChange,
     forbiddenColor,
     allowedColor,
-    readOnly
+    readOnly,
 }: IPermissionSelectorProps): JSX.Element {
     const [isLoading, setIsLoading] = React.useState(false);
     const permValToInputVal = permVal => (permVal === false ? 0 : permVal === null ? 1 : 2);
     const inputValToPermVal = {
         0: false,
         1: null,
-        2: true
+        2: true,
     };
 
     const bgColors = {
         0: forbiddenColor,
         1: '#FFFFFF',
-        2: allowedColor
+        2: allowedColor,
     };
 
     const inputVal = permValToInputVal(value);
@@ -76,7 +76,7 @@ function PermissionSelector({
     );
 }
 PermissionSelector.defaultProps = {
-    readOnly: false
+    readOnly: false,
 };
 
 export default PermissionSelector;

@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function AttributesList() {
             return <div>AttributesList</div>;
-        }
+        },
 );
 
 describe('Attributes', () => {
@@ -25,16 +25,16 @@ describe('Attributes', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: getAttributesQuery
+                    query: getAttributesQuery,
                 },
                 result: {
                     data: {
                         attributes: {
-                            list: [mockAttrSimple]
-                        }
-                    }
-                }
-            }
+                            list: [mockAttrSimple],
+                        },
+                    },
+                },
+            },
         ];
 
         await act(async () => {
@@ -42,7 +42,7 @@ describe('Attributes', () => {
                 <Router>
                     <Attributes history={mockHistory as History} />
                 </Router>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks},
             );
         });
 

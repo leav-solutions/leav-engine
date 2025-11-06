@@ -70,7 +70,7 @@ describe('Attributes', () => {
 
     test('Get Attribute by IDs', async () => {
         const res = await makeGraphQlCall(
-            `{attributes(filters: {ids: ["${testAttrName}", "created_by"]}) { list {id} }}`
+            `{attributes(filters: {ids: ["${testAttrName}", "created_by"]}) { list {id} }}`,
         );
 
         expect(res.status).toBe(200);
@@ -80,7 +80,7 @@ describe('Attributes', () => {
 
     test('Return only request language on label', async () => {
         const res = await makeGraphQlCall(
-            `{attributes(filters: {id: "${testAttrName}"}) { list {id label(lang: [fr])}}}`
+            `{attributes(filters: {id: "${testAttrName}"}) { list {id label(lang: [fr])}}}`,
         );
 
         expect(res.status).toBe(200);
@@ -92,7 +92,7 @@ describe('Attributes', () => {
 
     test('Return only request language on description', async () => {
         const res = await makeGraphQlCall(
-            `{attributes(filters: {id: "${testAttrName}"}) { list {id description(lang: [fr]) label(lang: [fr])}}}`
+            `{attributes(filters: {id: "${testAttrName}"}) { list {id description(lang: [fr]) label(lang: [fr])}}}`,
         );
 
         expect(res.status).toBe(200);
@@ -129,7 +129,7 @@ describe('Attributes', () => {
 
     test('Get error if deleting system attribute', async () => {
         await expect(makeGraphQlCall('mutation {deleteAttribute(id: "modified_by") { id }}')).rejects.toThrow(
-            /Cannot delete system attribute/
+            /Cannot delete system attribute/,
         );
     });
 

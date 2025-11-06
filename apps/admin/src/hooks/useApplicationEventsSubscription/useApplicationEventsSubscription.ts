@@ -13,8 +13,8 @@ const useApplicationEventsSubscription = (applicationId: string) =>
     useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {
         variables: {
             filters: {
-                applicationId
-            }
+                applicationId,
+            },
         },
         onSubscriptionData: ({client, subscriptionData}) => {
             // Update install status of saved app
@@ -40,7 +40,7 @@ const useApplicationEventsSubscription = (applicationId: string) =>
             //     data: newAppData,
             //     fragment: applicationDetailsFragment
             // });
-        }
+        },
     });
 
 export default useApplicationEventsSubscription;

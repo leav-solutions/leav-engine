@@ -9,13 +9,13 @@ export const mapViewTypeFromExplorerToLegacy: Record<ViewType, ViewTypes> = {
     table: ViewTypes.list,
     mosaic: ViewTypes.cards,
     timeline: ViewTypes.timeline,
-    list: ViewTypes.list
+    list: ViewTypes.list,
 };
 
 export const mapViewTypeFromLegacyToExplorer: Record<ViewTypes, ViewType> = {
     [ViewTypes.list]: 'table',
     [ViewTypes.cards]: 'mosaic',
-    [ViewTypes.timeline]: 'timeline'
+    [ViewTypes.timeline]: 'timeline',
 };
 
 export const MASS_SELECTION_ALL = 'all';

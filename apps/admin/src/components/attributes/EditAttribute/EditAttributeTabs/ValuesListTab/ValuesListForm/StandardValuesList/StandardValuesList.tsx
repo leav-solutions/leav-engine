@@ -10,7 +10,7 @@ import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {
     type IDateRangeValue,
     type StandardValuesListType,
-    type ValuesList
+    type ValuesList,
 } from '../../../../../../../_types/attributes';
 import DateRangeValue from './DateRangeValue';
 
@@ -26,7 +26,7 @@ const inputTypeByFormat = {
     [AttributeFormat.numeric]: 'number',
     [AttributeFormat.boolean]: 'checkbox',
     [AttributeFormat.extended]: 'text',
-    [AttributeFormat.encrypted]: 'text'
+    [AttributeFormat.encrypted]: 'text',
 };
 
 function StandardValuesList({values: initialValues, onValuesUpdate, attribute}: IStandardValuesListProps): JSX.Element {
@@ -109,7 +109,7 @@ function StandardValuesList({values: initialValues, onValuesUpdate, attribute}: 
                                             icon: 'trash',
                                             onClick: _deleteValue(i),
                                             type: 'button',
-                                            'aria-label': 'delete-value'
+                                            'aria-label': 'delete-value',
                                         }}
                                     />
                                 )}

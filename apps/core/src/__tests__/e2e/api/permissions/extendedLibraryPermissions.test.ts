@@ -12,7 +12,7 @@ import {
     gqlSaveLibrary,
     gqlSaveTree,
     type IMakeGraphQlCallOptions,
-    makeGraphQlCall
+    makeGraphQlCall,
 } from '../e2eUtils';
 import {adminsGroupId} from '../../../../_constants/users';
 
@@ -41,13 +41,13 @@ describe('ExtendedLibraryPermissions', () => {
             permTreeName,
             {id: permTreeNodeRecord1Id, library: permNodeLibName},
             null,
-            2
+            2,
         );
         permTreeNode2Id = await gqlAddElemToTree(
             permTreeName,
             {id: permTreeNodeRecord2Id, library: permNodeLibName},
             null,
-            2
+            2,
         );
 
         // Create library using permission tree
@@ -56,7 +56,7 @@ describe('ExtendedLibraryPermissions', () => {
             label: 'Test Attr tree record permissions',
             type: AttributeTypes.TREE,
             linkedTree: permTreeName,
-            multipleValues: false
+            multipleValues: false,
         });
 
         await makeGraphQlCall(
@@ -70,7 +70,7 @@ describe('ExtendedLibraryPermissions', () => {
             }) {
                 id
             }
-        }`
+        }`,
         );
 
         record1Id = await gqlCreateRecord(libName);
@@ -88,7 +88,7 @@ describe('ExtendedLibraryPermissions', () => {
             ) {
                 id_value
             }
-        }`
+        }`,
         );
         await makeGraphQlCall(
             `mutation {
@@ -102,7 +102,7 @@ describe('ExtendedLibraryPermissions', () => {
             ) {
                 id_value
             }
-        }`
+        }`,
         );
     });
 
@@ -115,7 +115,7 @@ describe('ExtendedLibraryPermissions', () => {
             d11: deleteTree(id: "${permTreeName}") { id }
             d12: deleteLibrary(id: "${permNodeLibName}") { id }
             d20: deleteAttribute(id: "${libTreeAttr}") { id }
-        }`
+        }`,
         );
     });
 
@@ -159,7 +159,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`
+            }`,
             );
         });
 
@@ -181,7 +181,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`
+            }`,
             );
         });
 
@@ -236,7 +236,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`
+                }`,
                 );
             });
 
@@ -258,7 +258,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`
+                }`,
                 );
             });
 
@@ -285,7 +285,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord1Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()}
+                    {user: await e2eGuestUser()},
                 );
 
                 expect(records.length).toBe(0);
@@ -300,7 +300,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord2Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()}
+                    {user: await e2eGuestUser()},
                 );
 
                 expect(records.length).toBe(1);
@@ -328,7 +328,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`
+            }`,
             );
         });
 
@@ -350,7 +350,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`
+            }`,
             );
         });
 
@@ -406,7 +406,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`
+                }`,
                 );
             });
 
@@ -428,7 +428,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`
+                }`,
                 );
             });
 
@@ -455,7 +455,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord1Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()}
+                    {user: await e2eGuestUser()},
                 );
 
                 expect(records.length).toBe(1);
@@ -471,7 +471,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord2Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()}
+                    {user: await e2eGuestUser()},
                 );
 
                 expect(records.length).toBe(1);

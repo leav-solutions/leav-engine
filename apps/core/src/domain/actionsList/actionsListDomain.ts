@@ -9,7 +9,7 @@ import {
     type IActionsListFunction,
     type ActionsListParams,
     type IActionsListSavedAction,
-    type IRunActionsListCtx
+    type IRunActionsListCtx,
 } from '../../_types/actionsList';
 import {type IAttribute} from '../../_types/attribute';
 import {type ErrorFieldDetail, Errors} from '../../_types/errors';
@@ -82,8 +82,8 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
             return {
                 [attribute.id]: {
                     msg: Errors.FORMAT_ERROR,
-                    vars: {details: error.details.map(er => er.message).join('\n')}
-                }
+                    vars: {details: error.details.map(er => er.message).join('\n')},
+                },
             };
         },
         registerActions(actions) {
@@ -124,7 +124,7 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                         throw new ValidationError(
                             {[ctx.attribute.id]: customMessage, attribute: ctx.attribute.id},
                             customMessage,
-                            true
+                            true,
                         );
                     } else {
                         const errorsByType = errors.reduce<
@@ -141,24 +141,24 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                             (message, [errorType, {attributeValues, message: optionalMessage}]) => {
                                 const messageText = optionalMessage ?? translator.t(`error.${errorType}`);
                                 message.push(
-                                    `${messageText}: ${(attributeValues ?? []).map(value => value?.payload).join(', ')}`
+                                    `${messageText}: ${(attributeValues ?? []).map(value => value?.payload).join(', ')}`,
                                 );
                                 return message;
                             },
-                            []
+                            [],
                         );
 
                         const formattedErrorMessage = errorMessage.join('\n');
 
                         throw new ValidationError(
                             {[ctx.attribute.id]: formattedErrorMessage, attribute: ctx.attribute.id},
-                            formattedErrorMessage
+                            formattedErrorMessage,
                         );
                     }
                 }
             }
 
             return resultAction.concat(emptyValues);
-        }
+        },
     };
 }

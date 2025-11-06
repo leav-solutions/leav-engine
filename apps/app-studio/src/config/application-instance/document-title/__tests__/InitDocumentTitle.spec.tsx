@@ -14,12 +14,12 @@ describe('InitDocumentTitle component', () => {
                         {
                             label: {
                                 fr: 'Mon application',
-                                en: 'My application'
-                            }
-                        }
-                    ]
-                }
-            }
+                                en: 'My application',
+                            },
+                        },
+                    ],
+                },
+            },
         } as any);
     });
 

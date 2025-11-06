@@ -35,7 +35,7 @@ export type IGetAccessPermissions = (
     library: string,
     existingFiltersOnTreeIds: string[],
     deps: IAccessPermissionFilterDeps,
-    ctx: IQueryInfos
+    ctx: IQueryInfos,
 ) => Promise<IGetAccessPermissionsValue[]>;
 
 const getAccessPermissionsFilters: IGetAccessPermissions = async (
@@ -43,19 +43,19 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
     library,
     existingFiltersOnTreeIds,
     deps,
-    ctx
+    ctx,
 ) => {
     const {
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.tree': treeRepo,
         'core.infra.permission': permissionRepo,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
     } = deps;
 
     const _computePermissionTree = (
         treeContent: ITreeNode[],
         parentPermission: boolean,
-        permissionsByTreeTarget
+        permissionsByTreeTarget,
     ): any[] => {
         const result = treeContent.map(treeElem => {
             const treeElemWithPermission = {id: treeElem.id, children: [], permission: parentPermission};
@@ -63,7 +63,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
             treeElemWithPermission.children = _computePermissionTree(
                 treeElem.children,
                 treeElemWithPermission.permission,
-                permissionsByTreeTarget
+                permissionsByTreeTarget,
             );
             return treeElemWithPermission;
         });
@@ -84,11 +84,11 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
     const _getNodesIdByPermission = async (
         treeId: string,
         treeContent: ITreeNode[],
-        action: RecordPermissionsActions.ACCESS_RECORD | RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT
+        action: RecordPermissionsActions.ACCESS_RECORD | RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
     ): Promise<INodeIdsByPermissions> => {
         const result: INodeIdsByPermissions = {
             true: [],
-            false: []
+            false: [],
         };
         for (const groupWithAncestor of groupsIdsWithAncestorsId) {
             // we calc permissions group by group.
@@ -99,7 +99,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
                 actionKey: action,
                 treeId,
                 groupsIds: groupWithAncestor,
-                ctx
+                ctx,
             });
 
             // for each treeTarget we list all saved permission (null, true, false)
@@ -157,27 +157,27 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
         const nodesIdByPermission = await _getNodesIdByPermission(
             treeId,
             treeContent,
-            RecordPermissionsActions.ACCESS_RECORD
+            RecordPermissionsActions.ACCESS_RECORD,
         );
 
         if (!existingFiltersOnTreeIds.includes(treeId)) {
             const nodesIdByPermissionByDefault = await _getNodesIdByPermission(
                 treeId,
                 treeContent,
-                RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT
+                RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
             );
 
             nodesIdByPermission.true = _.intersection(nodesIdByPermission.true, nodesIdByPermissionByDefault.true);
             nodesIdByPermission.false = _.difference(
                 _.union(nodesIdByPermission.false, nodesIdByPermissionByDefault.false),
-                nodesIdByPermission.true
+                nodesIdByPermission.true,
             );
         }
 
         result.push({
             treeId,
             attribute: attributeProps,
-            permissions: nodesIdByPermission
+            permissions: nodesIdByPermission,
         });
     }
 

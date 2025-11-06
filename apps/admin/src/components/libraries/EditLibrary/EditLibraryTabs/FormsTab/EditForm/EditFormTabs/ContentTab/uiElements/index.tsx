@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
-    type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {type ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
@@ -15,7 +15,7 @@ import {
     type IUIElement,
     type SettingsFieldSpecificProps,
     TabsDirection,
-    UIElementTypes
+    UIElementTypes,
 } from '../_types';
 import CheckboxField from './fields/CheckboxField';
 import DateField from './fields/DateField';
@@ -33,23 +33,23 @@ import UiIframe from './layout/UiIframe';
 const commonFieldSettings: IFormElementSettings[] = [
     {
         name: 'attribute',
-        inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION
+        inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION,
     },
     {
         name: 'label',
-        inputType: FormElementSettingsInputTypes.TRANSLATED_INPUT
+        inputType: FormElementSettingsInputTypes.TRANSLATED_INPUT,
     },
     {
         name: 'useAttributeLabel',
-        inputType: FormElementSettingsInputTypes.CHECKBOX
-    }
+        inputType: FormElementSettingsInputTypes.CHECKBOX,
+    },
 ];
 
 export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     [UIElementTypes.FIELDS_CONTAINER]: {
         type: UIElementTypes.FIELDS_CONTAINER,
         component: <Container />,
-        canDrop: () => true
+        canDrop: () => true,
     },
     [UIElementTypes.DIVIDER]: {
         type: UIElementTypes.DIVIDER,
@@ -57,16 +57,16 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
         settings: [
             {
                 name: 'title',
-                inputType: FormElementSettingsInputTypes.INPUT
-            }
+                inputType: FormElementSettingsInputTypes.INPUT,
+            },
         ],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [UIElementTypes.TEXT_BLOCK]: {
         type: UIElementTypes.TEXT_BLOCK,
         component: <TextBlock settings={{}} />,
         settings: [{name: 'content', inputType: FormElementSettingsInputTypes.RTE}],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [UIElementTypes.TABS]: {
         type: UIElementTypes.TABS,
@@ -77,11 +77,11 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
                 name: 'direction',
                 inputType: FormElementSettingsInputTypes.SELECT,
                 getInputSettings: (): SettingsFieldSpecificProps<ISettingsFieldSelectProps> => ({
-                    options: [TabsDirection.HORIZONTAL, TabsDirection.VERTICAL]
-                })
-            }
+                    options: [TabsDirection.HORIZONTAL, TabsDirection.VERTICAL],
+                }),
+            },
         ],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [UIElementTypes.FRAME]: {
         type: UIElementTypes.FRAME,
@@ -89,15 +89,15 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
         settings: [
             {
                 name: 'url',
-                inputType: FormElementSettingsInputTypes.INPUT
+                inputType: FormElementSettingsInputTypes.INPUT,
             },
             {
                 name: 'height',
-                inputType: FormElementSettingsInputTypes.INPUT
-            }
+                inputType: FormElementSettingsInputTypes.INPUT,
+            },
         ],
-        canDrop: () => false
-    }
+        canDrop: () => false,
+    },
 };
 
 export const formElements: {[type in FieldTypes]: IUIElement} = {
@@ -105,31 +105,31 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
         type: FieldTypes.TEXT_INPUT,
         component: <InputField settings={{}} />,
         settings: [...commonFieldSettings],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [FieldTypes.CHECKBOX]: {
         type: FieldTypes.CHECKBOX,
         component: <CheckboxField settings={{}} />,
         settings: [...commonFieldSettings],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [FieldTypes.DATE]: {
         type: FieldTypes.DATE,
         component: <DateField settings={{}} />,
         settings: [...commonFieldSettings, {name: 'withTime', inputType: FormElementSettingsInputTypes.CHECKBOX}],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [FieldTypes.ENCRYPTED]: {
         type: FieldTypes.ENCRYPTED,
         component: <EncryptedField settings={{}} />,
         settings: [...commonFieldSettings],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [FieldTypes.DROPDOWN]: {
         type: FieldTypes.DROPDOWN,
         component: <DropdownField settings={{}} />,
         settings: [...commonFieldSettings],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [FieldTypes.LINK]: {
         type: FieldTypes.LINK,
@@ -140,26 +140,26 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                 name: 'columns',
                 inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION_MULTIPLE,
                 getInputSettings: (
-                    attributeProps: GET_ATTRIBUTE_BY_ID_attributes_list
+                    attributeProps: GET_ATTRIBUTE_BY_ID_attributes_list,
                 ): SettingsFieldSpecificProps<ISettingsAttributeProps> => ({
                     multiple: true,
                     filters: {
                         // Links and trees are forbidden due to technical issues on the front to handle them
-                        type: [AttributeType.simple, AttributeType.advanced]
+                        type: [AttributeType.simple, AttributeType.advanced],
                     },
-                    library: (attributeProps as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).linked_library.id
-                })
+                    library: (attributeProps as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).linked_library.id,
+                }),
             },
             {
                 name: 'displayRecordIdentity',
                 inputType: FormElementSettingsInputTypes.CHECKBOX,
-                defaultValue: true
+                defaultValue: true,
             },
             {
                 name: 'editFormId',
                 inputType: FormElementSettingsInputTypes.INPUT,
-                defaultValue: ''
-            }
+                defaultValue: '',
+            },
             // TODO: uncomment when select in tag mode is implemented
             // {
             //     name: 'tagDisplayMode',
@@ -167,12 +167,12 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
             //     defaultValue: false
             // }
         ],
-        canDrop: () => false
+        canDrop: () => false,
     },
     [FieldTypes.TREE]: {
         type: FieldTypes.TREE,
         component: <TreeField settings={{}} />,
         settings: [...commonFieldSettings],
-        canDrop: () => false
-    }
+        canDrop: () => false,
+    },
 };

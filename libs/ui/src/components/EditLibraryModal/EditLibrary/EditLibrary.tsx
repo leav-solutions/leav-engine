@@ -29,7 +29,7 @@ function EditLibrary({
     libraryId,
     onSetSubmitFunction,
     readOnly: isReadOnly,
-    indexationTask
+    indexationTask,
 }: IEditLibraryProps): JSX.Element {
     const {t} = useSharedTranslation();
     const isEditing = !!libraryId;
@@ -37,9 +37,9 @@ function EditLibrary({
     const {loading, error, data} = useGetLibraryByIdQuery({
         fetchPolicy: 'cache-and-network',
         variables: {
-            id: libraryId
+            id: libraryId,
         },
-        skip: !libraryId
+        skip: !libraryId,
     });
 
     if (loading) {
@@ -68,7 +68,7 @@ function EditLibrary({
         {
             key: 'info',
             label: t('libraries.info'),
-            children: <TabContentWrapper>{libraryInfoComp}</TabContentWrapper>
+            children: <TabContentWrapper>{libraryInfoComp}</TabContentWrapper>,
         },
         {
             key: 'attributes',
@@ -77,7 +77,7 @@ function EditLibrary({
                 <TabContentWrapper>
                     <EditLibraryAttributes library={libraryData} readOnly={isReadOnly} />
                 </TabContentWrapper>
-            )
+            ),
         },
         {
             key: 'Indexation',
@@ -95,8 +95,8 @@ function EditLibrary({
                         readOnly={isReadOnly}
                     />
                 </TabContentWrapper>
-            )
-        }
+            ),
+        },
     ];
 
     if (isEditing && libraryData.behavior === LibraryBehavior.files) {
@@ -107,7 +107,7 @@ function EditLibrary({
                 <TabContentWrapper>
                     <EditLibraryPreviewsSettings library={libraryData} readOnly={isReadOnly} />
                 </TabContentWrapper>
-            )
+            ),
         });
     }
 

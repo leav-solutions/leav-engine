@@ -9,7 +9,7 @@ const ImportReducerContext = createContext<{
     dispatch: React.Dispatch<ImportReducerAction>;
 }>({
     state: initialState,
-    dispatch: () => initialState
+    dispatch: () => initialState,
 });
 
 export default ImportReducerContext;

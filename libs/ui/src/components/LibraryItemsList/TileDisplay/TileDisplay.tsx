@@ -45,7 +45,7 @@ function TileDisplay(): JSX.Element {
     const _handleClick = () => {
         searchDispatch({
             type: SearchActionTypes.SET_SELECTION,
-            selected: []
+            selected: [],
         });
     };
 

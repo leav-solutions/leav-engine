@@ -29,10 +29,10 @@ describe('formatDateAction', () => {
                         {localized},
                         {
                             ...ctx,
-                            lang: 'en-GB'
-                        }
+                            lang: 'en-GB',
+                        },
                     )
-                ).values[0].payload
+                ).values[0].payload,
             ).toBe('28 February 37 at 23');
             expect(
                 (
@@ -41,10 +41,10 @@ describe('formatDateAction', () => {
                         {localized},
                         {
                             ...ctx,
-                            lang: 'fr-FR'
-                        }
+                            lang: 'fr-FR',
+                        },
                     )
-                ).values[0].payload
+                ).values[0].payload,
             ).toBe('28 février 37 à 23 h');
             expect(
                 (
@@ -53,10 +53,10 @@ describe('formatDateAction', () => {
                         {localized},
                         {
                             ...ctx,
-                            lang: 'ko-KR'
-                        }
+                            lang: 'ko-KR',
+                        },
                     )
-                ).values[0].payload
+                ).values[0].payload,
             ).toBe('37년 2월 28일 오후 11시');
         });
 
@@ -69,16 +69,16 @@ describe('formatDateAction', () => {
                     {localized},
                     {
                         ...ctx,
-                        lang: 'en-EN'
-                    }
+                        lang: 'en-EN',
+                    },
                 );
                 expect(result.values[0].payload).toBe('2/28/2037, 11:42:00 PM');
                 expect(result.errors[0]).toEqual({
                     attributeValue: {value: localized},
                     errorType: 'FORMAT_ERROR',
-                    message: 'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
+                    message: 'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.',
                 });
-            }
+            },
         );
     });
 
@@ -88,11 +88,11 @@ describe('formatDateAction', () => {
                 await action(
                     [testValue],
                     {
-                        universal: 'D/MMMM-YY HH:mm'
+                        universal: 'D/MMMM-YY HH:mm',
                     },
-                    ctx
+                    ctx,
                 )
-            ).values[0].payload
+            ).values[0].payload,
         ).toBe('28/February-37 23:42');
     });
 
@@ -121,11 +121,11 @@ describe('formatDateAction', () => {
                             "era": "short",
                             "month": "narrow",
                             "day": "numeric"
-                        }`
+                        }`,
                     },
-                    {...ctx, lang: 'fr-FR'}
+                    {...ctx, lang: 'fr-FR'},
                 )
-            ).values[0].payload
+            ).values[0].payload,
         ).toBe('ap. J.-C. samedi 28 F');
     });
 });

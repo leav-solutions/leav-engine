@@ -9,15 +9,15 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
     __typename: 'Application',
     id: 'my-app',
     label: {
-        en: 'My App'
+        en: 'My App',
     },
     description: {
-        en: 'My description'
+        en: 'My description',
     },
     endpoint: 'my-app',
     permissions: {
         access_application: true,
-        __typename: 'ApplicationPermissions'
+        __typename: 'ApplicationPermissions',
     },
     type: ApplicationType.internal,
     color: null,
@@ -31,8 +31,8 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
             library: {
                 id: 'my-lib',
                 label: {
-                    en: 'My Library'
-                }
+                    en: 'My Library',
+                },
             },
             subLabel: 'my Icon',
             color: '#789456',
@@ -43,8 +43,8 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
                 big: 'path/to/big/preview.png',
                 huge: 'path/to/huge/preview.png',
                 original: 'path/to/original/preview.png',
-                file: null
-            }
-        }
-    }
+                file: null,
+            },
+        },
+    },
 };

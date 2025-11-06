@@ -27,7 +27,7 @@ export const useCreateCancelConfirm: UseCreateCancelConfirmHook = onConfirm => {
             type: 'confirm',
             okText: t('global.confirm'),
             cancelText: t('global.cancel'),
-            onOk: onConfirm
+            onOk: onConfirm,
         });
     };
 };

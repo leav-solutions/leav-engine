@@ -8,12 +8,12 @@ import RecordSummary from './RecordSummary';
 
 let user!: ReturnType<typeof userEvent.setup>;
 jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
-    RecordInformations: () => <div>Informations</div>
+    RecordInformations: () => <div>Informations</div>,
 }));
 
 const useGetRecordValuesQueryMock = jest.fn();
 jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
-    useGetRecordValuesQuery: () => useGetRecordValuesQueryMock()
+    useGetRecordValuesQuery: () => useGetRecordValuesQueryMock(),
 }));
 
 describe('RecordSummary', () => {
@@ -22,7 +22,7 @@ describe('RecordSummary', () => {
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: {},
-            refetch: jest.fn()
+            refetch: jest.fn(),
         });
     });
 
@@ -42,7 +42,7 @@ describe('RecordSummary', () => {
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: true,
             data: {},
-            refetch: jest.fn()
+            refetch: jest.fn(),
         });
 
         render(<RecordSummary record={mockRecord} />);
@@ -55,7 +55,7 @@ describe('RecordSummary', () => {
             loading: false,
             error: {message: 'error message'},
             data: {},
-            refetch: jest.fn()
+            refetch: jest.fn(),
         });
 
         render(<RecordSummary record={mockRecord} />);
@@ -70,7 +70,7 @@ describe('RecordSummary', () => {
             loading: false,
             error: {message: 'error message'},
             data: {},
-            refetch: refreshMock
+            refetch: refreshMock,
         });
 
         render(<RecordSummary record={mockRecord} />);

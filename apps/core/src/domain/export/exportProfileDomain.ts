@@ -25,7 +25,7 @@ export interface IExportProfileDomain {
     getColumnsFromProfileConfig(
         profile: string | undefined,
         library: string,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<IExportColumn[]>;
 }
 
@@ -36,17 +36,17 @@ export interface IExportProfileDomainDeps {
 export default function ({'core.domain.library': libraryDomain}: IExportProfileDomainDeps): IExportProfileDomain {
     const columnSchema = Joi.object({
         columnLabel: Joi.string().allow('').required(),
-        attribute: Joi.string().allow('').required()
+        attribute: Joi.string().allow('').required(),
     }).required();
 
     const profileSchema = Joi.object({
         label: Joi.string().required(),
-        columns: Joi.array().items(columnSchema).min(1).required()
+        columns: Joi.array().items(columnSchema).min(1).required(),
     }).required();
 
     const exportProfileConfigSchema = Joi.object({
         defaultProfile: Joi.string().required(),
-        profiles: Joi.array().items(profileSchema).min(1).required()
+        profiles: Joi.array().items(profileSchema).min(1).required(),
     }).required();
 
     const _validateExportProfileConfig = (exportProfile: IExportProfileConfig) => {
@@ -57,7 +57,7 @@ export default function ({'core.domain.library': libraryDomain}: IExportProfileD
         const isValid = exportProfileConfigSchema.validate(exportProfile);
         if (isValid.error) {
             throw new ValidationError({
-                msg: `Export profile config is not valid: ${isValid.error.message}`
+                msg: `Export profile config is not valid: ${isValid.error.message}`,
             });
         }
         return true;
@@ -67,7 +67,7 @@ export default function ({'core.domain.library': libraryDomain}: IExportProfileD
         async getColumnsFromProfileConfig(profile, library, ctx) {
             if (!library) {
                 throw new ValidationError({
-                    msg: 'Export error: No library provided'
+                    msg: 'Export error: No library provided',
                 });
             }
 
@@ -87,6 +87,6 @@ export default function ({'core.domain.library': libraryDomain}: IExportProfileD
 
             const exportProfile = profiles.find(p => p.label === profile) ?? defaultOrFirstProfile;
             return exportProfile.columns;
-        }
+        },
     };
 }

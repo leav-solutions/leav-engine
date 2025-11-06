@@ -9,12 +9,12 @@ describe('DropdownField', () => {
     it('should display dropdown with fr label', async () => {
         const label = {
             fr: 'tata',
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <DropdownField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.fr)).toBeVisible();
@@ -23,12 +23,12 @@ describe('DropdownField', () => {
 
     it('should display dropdown with fallback lang label', async () => {
         const label = {
-            en: 'toto'
+            en: 'toto',
         };
         render(
             <MockedLangContextProvider>
                 <DropdownField settings={{label}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(screen.getByText(label.en)).toBeVisible();
@@ -38,7 +38,7 @@ describe('DropdownField', () => {
         const comp = render(
             <MockedLangContextProvider>
                 <DropdownField settings={{}} />
-            </MockedLangContextProvider>
+            </MockedLangContextProvider>,
         );
 
         expect(comp).toMatchSnapshot();

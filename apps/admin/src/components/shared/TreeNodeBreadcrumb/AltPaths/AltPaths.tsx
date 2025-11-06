@@ -16,7 +16,7 @@ const PathPartWrapper = styled.div`
 
 function AltPaths({
     altPaths = [],
-    onClose
+    onClose,
 }: {
     altPaths: RecordIdentity_whoAmI[][];
     onClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +38,7 @@ function AltPaths({
                                                 </PathPartWrapper>
                                             ),
                                             link: false,
-                                            active: false
+                                            active: false,
                                         }))}
                                         icon="right angle"
                                     />

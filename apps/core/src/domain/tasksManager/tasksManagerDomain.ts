@@ -33,7 +33,7 @@ import {
     TaskCallbackType,
     TaskPriority,
     TaskStatus,
-    TaskType
+    TaskType,
 } from '../../_types/tasksManager';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
@@ -67,7 +67,7 @@ export interface ITasksManagerDomain {
     updateProgress(
         taskId: string | null,
         progress: {percent?: number; description?: ISystemTranslation},
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<void>;
     createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<string>;
     cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
@@ -95,7 +95,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.utils.logger': logger,
     'core.utils': utils,
-    'core.utils.getSystemQueryContext': getSystemQueryContext
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
 
@@ -140,9 +140,9 @@ export default function ({
                 startedAt: utils.getUnixTime(),
                 status: TaskStatus.RUNNING,
                 progress: {percent: 0},
-                ..._attachWorker(process.pid)
+                ..._attachWorker(process.pid),
             },
-            ctx
+            ctx,
         );
 
         let status = task.status;
@@ -152,7 +152,7 @@ export default function ({
             const func = _getDepsManagerFunc({
                 moduleName: task.func.moduleName,
                 subModuleName: task.func.subModuleName,
-                funcName: task.func.name
+                funcName: task.func.name,
             });
 
             await func(task.func.args, {id: task.id});
@@ -175,10 +175,10 @@ export default function ({
                                     description: config.lang.available.reduce((labels, lang) => {
                                         labels[lang] = errorMessage;
                                         return labels;
-                                    }, {})
-                                }
+                                    }, {}),
+                                },
                             }
-                          : {})
+                          : {}),
                   };
 
         return _updateTask(
@@ -187,9 +187,9 @@ export default function ({
                 ...progress,
                 completedAt: utils.getUnixTime(),
                 status,
-                ..._detachWorker()
+                ..._detachWorker(),
             },
-            ctx
+            ctx,
         );
     };
 
@@ -211,7 +211,7 @@ export default function ({
                     const callbackFunc = _getDepsManagerFunc({
                         moduleName: callback.moduleName,
                         subModuleName: callback.subModuleName,
-                        funcName: callback.name
+                        funcName: callback.name,
                     });
 
                     await callbackFunc(...callback.args);
@@ -247,7 +247,7 @@ export default function ({
                                     moduleName: Joi.string().required(),
                                     subModuleName: Joi.string().required(),
                                     name: Joi.string().required(),
-                                    args: Joi.array().required()
+                                    args: Joi.array().required(),
                                 })
                                 .required(),
                             startAt: Joi.date().timestamp('unix').raw().required(),
@@ -258,7 +258,7 @@ export default function ({
                                 type: Joi.string()
                                     .valid(...Object.values(TaskType))
                                     .required(),
-                                detail: Joi.string()
+                                detail: Joi.string(),
                             }),
                             callbacks: Joi.array().items(
                                 Joi.object().keys({
@@ -268,17 +268,17 @@ export default function ({
                                     args: Joi.array().required(),
                                     type: Joi.array()
                                         .items(...Object.values(TaskCallbackType))
-                                        .required()
-                                })
-                            )
-                        })
+                                        .required(),
+                                }),
+                            ),
+                        }),
                     },
                     {
                         is: OrderType.CANCEL,
-                        then: Joi.object().keys({id: Joi.string().required()})
-                    }
-                ]
-            })
+                        then: Joi.object().keys({id: Joi.string().required()}),
+                    },
+                ],
+            }),
         });
 
         const isValid = msgBodySchema.validate(msg);
@@ -299,12 +299,12 @@ export default function ({
         task = await taskRepo.updateTask(
             {
                 id: taskId,
-                ...data
+                ...data,
                 // ...(!data.callbacks && {
                 //     callbacks: data.callbacks.map(a => ({...a})) // copy of callbacks to avoid changes on old refs in mock calls (tests only)
                 // })
             },
-            ctx
+            ctx,
         );
 
         await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
@@ -318,7 +318,7 @@ export default function ({
 
     const _taskWithPublicLinkUrl = (task: ITask): ITask => ({
         ...task,
-        link: task.link ? {...task.link, url: `${config.server.basePath}${task.link.url}`} : undefined
+        link: task.link ? {...task.link, url: `${config.server.basePath}${task.link.url}`} : undefined,
     });
 
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
@@ -329,26 +329,26 @@ export default function ({
         const tasks = await taskRepo.getTasks({params, ctx});
         return {
             totalCount: tasks.totalCount,
-            list: tasks.list.map(_taskWithPublicLinkUrl)
+            list: tasks.list.map(_taskWithPublicLinkUrl),
         };
     };
 
     const _getDepsManagerFunc = ({
         moduleName,
         subModuleName,
-        funcName
+        funcName,
     }: {
         moduleName: string | null;
         subModuleName?: string | null;
         funcName: string;
     }): DepsManagerFunc => {
         const func: DepsManagerFunc = depsManager.resolve(
-            `core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`
+            `core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`,
         )?.[funcName];
 
         if (!func) {
             throw new Error(
-                `Function core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}.${funcName} not found`
+                `Function core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}.${funcName} not found`,
             );
         }
 
@@ -379,7 +379,7 @@ export default function ({
 
     const _createTask = async (
         {id, label, func, startAt, priority, callbacks, role}: ITaskCreatePayload,
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
     ): Promise<string> => {
         const task = await taskRepo.createTask(
             {
@@ -391,9 +391,9 @@ export default function ({
                 priority,
                 role,
                 archive: false, // FIXME: move to repo
-                ...(!!callbacks && {callbacks: callbacks.map(c => ({...c, status: TaskCallbackStatus.PENDING}))})
+                ...(!!callbacks && {callbacks: callbacks.map(c => ({...c, status: TaskCallbackStatus.PENDING}))}),
             },
-            (({dbProfiler, ...c}) => c)(ctx)
+            (({dbProfiler, ...c}) => c)(ctx),
         );
 
         await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
@@ -470,7 +470,7 @@ export default function ({
         await _updateTask(
             task.id,
             {completedAt: utils.getUnixTime(), status: TaskStatus.CANCELED, ..._detachWorker()},
-            workerCtx
+            workerCtx,
         );
 
         if (config.tasksManager.restartWorker) {
@@ -484,7 +484,7 @@ export default function ({
         await amqpService.publish(
             config.amqp.exchange,
             routingKey,
-            JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, payload})
+            JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, payload}),
         );
     };
 
@@ -500,7 +500,7 @@ export default function ({
             config.tasksManager.queues.execOrders,
             config.tasksManager.routingKeys.execOrders,
             _onExecMessage,
-            tag
+            tag,
         );
     };
 
@@ -523,10 +523,10 @@ export default function ({
                     action: EventAction.TASKS_DELETE,
                     topic: null,
                     metadata: {
-                        tasks
-                    }
+                        tasks,
+                    },
                 },
-                ctx
+                ctx,
             );
         },
         // Master
@@ -536,11 +536,11 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.tasksManager.queues.execOrders,
                 config.amqp.exchange,
-                config.tasksManager.routingKeys.execOrders
+                config.tasksManager.routingKeys.execOrders,
             );
             return _monitorTasks({
                 userId: config.defaultUserId,
-                queryId: 'TasksManagerDomain'
+                queryId: 'TasksManagerDomain',
             });
         },
 
@@ -553,23 +553,23 @@ export default function ({
             await amqpService.consumer.channel.assertQueue(cancelOrdersQueue, {
                 autoDelete: true,
                 durable: false,
-                exclusive: true
+                exclusive: true,
             });
             await amqpService.consumer.channel.bindQueue(
                 cancelOrdersQueue,
                 config.amqp.exchange,
-                config.tasksManager.routingKeys.cancelOrders
+                config.tasksManager.routingKeys.cancelOrders,
             );
             await amqpService.consume(
                 cancelOrdersQueue,
                 config.tasksManager.routingKeys.cancelOrders,
-                _onCancelMessage
+                _onCancelMessage,
             );
         },
         async updateProgress(
             taskId: string,
             progress: {percent?: number; description?: ISystemTranslation},
-            ctx: IQueryInfos
+            ctx: IQueryInfos,
         ): Promise<void> {
             if (typeof progress.percent !== 'undefined' && progress.percent >= 100) {
                 // If percent update is equal to 100, task is completed but not yet updated
@@ -581,6 +581,6 @@ export default function ({
         },
         async setLink(taskId, link, ctx) {
             await _updateTask(taskId, {link}, ctx);
-        }
+        },
     };
 }

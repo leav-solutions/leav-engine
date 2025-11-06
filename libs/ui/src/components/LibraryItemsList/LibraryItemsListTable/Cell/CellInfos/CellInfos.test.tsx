@@ -14,7 +14,7 @@ describe('CellInfos', () => {
                     record={{id: 'recordId', library: {id: 'libraryId'}} as any}
                     previewSize={PreviewSize.SMALL}
                 />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByTestId('floating-menu')).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe('CellInfos', () => {
                     }
                     previewSize={PreviewSize.SMALL}
                 />
-            </MockSearchContextProvider>
+            </MockSearchContextProvider>,
         );
 
         expect(screen.getByText('my record')).toBeInTheDocument();

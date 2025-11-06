@@ -12,7 +12,7 @@ if (window.__bugsnag_api_key__ && window.__bugsnag_app_version__) {
         appVersion: window.__bugsnag_app_version__,
         releaseStage: window.__bugsnag_release_stage__,
         appType: 'app-studio',
-        plugins: [new BugsnagPluginReact()]
+        plugins: [new BugsnagPluginReact()],
     });
 
     ErrorBoundary = Bugsnag.getPlugin('react')!.createErrorBoundary(React);

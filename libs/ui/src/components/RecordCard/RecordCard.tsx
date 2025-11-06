@@ -13,7 +13,7 @@ const _getPreviewBySize = (preview?: IRecordIdentityWhoAmI['preview'], size?: Pr
         [PreviewSize.TINY]: 'tiny',
         [PreviewSize.SMALL]: 'tiny',
         [PreviewSize.MEDIUM]: 'small',
-        [PreviewSize.BIG]: 'medium'
+        [PreviewSize.BIG]: 'medium',
     };
 
     const previewPath: string = (preview?.[fileSizeByPreviewSize[size]] ?? preview?.small) as string;
@@ -31,7 +31,7 @@ const RecordCard = ({
     withLibrary = true,
     withColor = true,
     tile = false,
-    simplistic = false
+    simplistic = false,
 }: IRecordCardProps): JSX.Element => {
     const {lang: userLang} = useLang();
     const label = record.label || record.id;
@@ -43,7 +43,7 @@ const RecordCard = ({
         label,
         subLabel,
         preview: _getPreviewBySize(record.preview, size),
-        color: record.color
+        color: record.color,
     };
 
     return (

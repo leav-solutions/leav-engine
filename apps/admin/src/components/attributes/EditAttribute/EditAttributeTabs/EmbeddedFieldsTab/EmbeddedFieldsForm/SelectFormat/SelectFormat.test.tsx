@@ -17,10 +17,10 @@ describe('SelectFormat', () => {
         id: 'test',
         label: {
             fr: 'test fr',
-            en: 'test en'
+            en: 'test en',
         },
         format: 'text',
-        validation_regex: ''
+        validation_regex: '',
     };
 
     const comp = mount(
@@ -30,7 +30,7 @@ describe('SelectFormat', () => {
             onChange={jest.fn()}
             t={mockT as TFunction}
             save={jest.fn()}
-        />
+        />,
     );
 
     test('should return something', () => {

@@ -10,7 +10,7 @@ export const hasTransparency = async (input: string): Promise<boolean> => {
     // execute command in a promise
     const [error, response] = (await new Promise(r => exec(command, (err, res) => r([err, res])))) as [
         ExecException,
-        string
+        string,
     ];
 
     if (error) {

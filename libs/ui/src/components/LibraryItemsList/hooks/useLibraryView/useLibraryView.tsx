@@ -39,11 +39,11 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
                 ? [
                       {
                           field: library.defaultView.sort.field,
-                          order: library.defaultView.sort.order
-                      }
+                          order: library.defaultView.sort.order,
+                      },
                   ]
                 : null,
-            attributes: (library.defaultView.attributes ?? []).map(attr => attr.id)
+            attributes: (library.defaultView.attributes ?? []).map(attr => attr.id),
         };
     };
 
@@ -59,7 +59,7 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
                 data.view,
                 extractAttributesFromLibrary(library),
                 library.id,
-                userData?.userId
+                userData?.userId,
             );
 
             setView(viewDetails);
@@ -74,7 +74,7 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
 
             setError(err);
             setIsLoading(false);
-        }
+        },
     });
 
     // First of all, get last used view from user data
@@ -107,13 +107,13 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
             // Unable to load any other view, keep default view
             setError(err);
             setIsLoading(false);
-        }
+        },
     });
 
     return {
         loading: isLoading,
         error,
-        view
+        view,
     };
 };
 

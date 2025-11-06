@@ -15,7 +15,7 @@ jest.mock(
     () =>
         function InfosTab() {
             return <div>InfosTab</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -23,7 +23,7 @@ jest.mock(
     () =>
         function ContentTab() {
             return <div>ContentTab</div>;
-        }
+        },
 );
 
 describe('EditFormTabs', () => {
@@ -35,7 +35,7 @@ describe('EditFormTabs', () => {
                 value={{form: mockForm, library: 'test_lib', readonly: false, setForm: jest.fn()}}
             >
                 <EditFormTabs />
-            </EditFormContext.Provider>
+            </EditFormContext.Provider>,
         );
 
         expect(screen.getByTestId('header')).toHaveTextContent('Test Form');
@@ -49,7 +49,7 @@ describe('EditFormTabs', () => {
         const comp = render(
             <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false, setForm: jest.fn()}}>
                 <EditFormTabs />
-            </EditFormContext.Provider>
+            </EditFormContext.Provider>,
         );
 
         expect(screen.getByTestId('header')).toHaveTextContent('forms.new');

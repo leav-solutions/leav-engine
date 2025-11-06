@@ -14,7 +14,7 @@ function Container({
     readonly,
     onValueSubmit,
     onValueDelete,
-    onDeleteMultipleValues
+    onDeleteMultipleValues,
 }: IFormElementProps<{}> & {antdForm?: FormInstance; computedValues: GetRecordColumnsValuesRecord}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];

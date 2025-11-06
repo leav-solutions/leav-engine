@@ -9,7 +9,7 @@ import ConfirmedButton from './ConfirmedButton';
 describe('ConfirmedButton', () => {
     const mockEvent: Mockify<React.SyntheticEvent> = {
         preventDefault: jest.fn(),
-        stopPropagation: jest.fn()
+        stopPropagation: jest.fn(),
     };
 
     test('Render child', async () => {
@@ -18,7 +18,7 @@ describe('ConfirmedButton', () => {
         const comp = shallow(
             <ConfirmedButton action={action} confirmMessage="Test">
                 <div className="my_child" />
-            </ConfirmedButton>
+            </ConfirmedButton>,
         );
         expect(comp.find('.my_child')).toHaveLength(1);
     });
@@ -29,7 +29,7 @@ describe('ConfirmedButton', () => {
         const comp = mount(
             <ConfirmedButton action={action} confirmMessage="Test">
                 <div className="my_child" />
-            </ConfirmedButton>
+            </ConfirmedButton>,
         );
         comp.find('.my_child').simulate('click', mockEvent as React.SyntheticEvent);
 
@@ -43,7 +43,7 @@ describe('ConfirmedButton', () => {
         const comp = mount(
             <ConfirmedButton action={action} confirmMessage="Test">
                 <div className="my_child" />
-            </ConfirmedButton>
+            </ConfirmedButton>,
         );
         comp.find('.my_child').simulate('click', mockEvent as React.SyntheticEvent);
         comp.find('Modal button.primary').simulate('click', mockEvent as React.SyntheticEvent);

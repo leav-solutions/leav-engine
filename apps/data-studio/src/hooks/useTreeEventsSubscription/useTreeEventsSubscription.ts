@@ -15,6 +15,6 @@ export const useTreeEventsSubscription = (params: {
     return useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
         variables: {filters},
         skip,
-        onData
+        onData,
     });
 };

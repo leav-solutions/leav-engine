@@ -13,7 +13,7 @@ jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
-    useLayoutEffect: jest.requireActual('react').useEffect
+    useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 describe('ReserveAttribute', () => {
@@ -21,7 +21,7 @@ describe('ReserveAttribute', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <ReserveAttribute attribute={mockAttrSimple} />
-            </DndProvider>
+            </DndProvider>,
         );
 
         expect(comp).toMatchSnapshot();

@@ -10,7 +10,7 @@ jest.mock(
     () =>
         function ProtectedRoute() {
             return <div>ProtectedRoute</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -18,7 +18,7 @@ jest.mock(
     () =>
         function General() {
             return <div>General</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -26,7 +26,7 @@ jest.mock(
     () =>
         function Dashboard() {
             return <div>Dashboard</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -34,7 +34,7 @@ jest.mock(
     () =>
         function Applications() {
             return <div>Applications</div>;
-        }
+        },
 );
 
 jest.mock(
@@ -42,7 +42,7 @@ jest.mock(
     () =>
         function EditApplication() {
             return <div>EditApplication</div>;
-        }
+        },
 );
 
 describe('Routes', () => {
@@ -51,7 +51,7 @@ describe('Routes', () => {
             render(
                 <MemoryRouter>
                     <Routes />
-                </MemoryRouter>
+                </MemoryRouter>,
             );
         });
 

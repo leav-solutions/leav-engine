@@ -13,7 +13,7 @@ import {
     type ITreeNodePermissionsConf,
     PermissionTypes,
     type TreeNodePermissionsActions,
-    type TreePermissionsActions
+    type TreePermissionsActions,
 } from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
@@ -23,7 +23,7 @@ import {type ITreePermissionDomain} from './treePermissionDomain';
 import {
     type IGetDefaultPermissionParams,
     type IGetInheritedTreeNodePermissionParams,
-    type IGetTreeNodePermissionParams
+    type IGetTreeNodePermissionParams,
 } from './_types';
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
@@ -54,7 +54,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.tree': treeRepo,
         'core.domain.attribute': attributeDomain,
-        'core.infra.value': valueRepo = null
+        'core.infra.value': valueRepo = null,
     } = deps;
 
     const _getPermByTreeNode = async (params: {
@@ -75,7 +75,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 libraryId: library,
                 userId,
                 ctx,
-                getDefaultPermission: () => null
+                getDefaultPermission: () => null,
             });
         }
 
@@ -87,9 +87,9 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                     library,
                     recordId,
                     attribute: permTreeAttrProps as IAttributeWithRevLink,
-                    ctx
+                    ctx,
                 });
-            })
+            }),
         );
 
         const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
@@ -105,7 +105,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 libraryId: library,
                 userId,
                 ctx,
-                getDefaultPermission: () => null
+                getDefaultPermission: () => null,
             });
 
         return treeBasedPermissionsHelper.getTreeBasedPermission(
@@ -116,9 +116,9 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 applyTo: `${treeId}/${library}`,
                 treeValues: valuesByAttr,
                 permissions_conf: permConf[library],
-                getDefaultPermission: _getDefaultPermission
+                getDefaultPermission: _getDefaultPermission,
             },
-            ctx
+            ctx,
         );
     };
 
@@ -132,7 +132,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                     action: action as unknown as TreePermissionsActions,
                     userId,
                     treeId,
-                    ctx
+                    ctx,
                 });
             }
 
@@ -141,7 +141,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             const treeData = await getCoreEntityById<ITree>('tree', treeId, ctx);
             if (!treeData) {
                 throw new ValidationError({
-                    id: Errors.UNKNOWN_TREE
+                    id: Errors.UNKNOWN_TREE,
                 });
             }
 
@@ -152,7 +152,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 treeId,
                 permConf: treeData.permissions_conf,
                 treeElement: nodeElement,
-                ctx
+                ctx,
             });
 
             if (elemPerm !== null) {
@@ -164,13 +164,13 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
                 treeId,
                 nodeId,
-                ctx
+                ctx,
             });
 
             for (const parent of ancestors) {
                 const parentNode: ITreeElement = {
                     id: parent.record.id,
-                    library: parent.record.library
+                    library: parent.record.library,
                 };
 
                 const parentPerm = await _getPermByTreeNode({
@@ -179,7 +179,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                     treeId,
                     permConf: treeData.permissions_conf,
                     treeElement: parentNode,
-                    ctx
+                    ctx,
                 });
 
                 if (parentPerm !== null) {
@@ -192,7 +192,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 action: action as unknown as TreePermissionsActions,
                 userId,
                 treeId,
-                ctx
+                ctx,
             });
         },
         async getInheritedTreeNodePermission({
@@ -202,7 +202,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             libraryId,
             permTree,
             permTreeNode,
-            ctx
+            ctx,
         }): Promise<boolean> {
             const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
                 permByUserGroupHelper.getPermissionByUserGroups({
@@ -216,9 +216,9 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                             action,
                             userGroupsPaths: params.userGroups,
                             applyTo: treeId,
-                            ctx
+                            ctx,
                         }),
-                    ctx
+                    ctx,
                 });
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
@@ -228,10 +228,10 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                     action,
                     userGroupId,
                     permissionTreeTarget: {tree: permTree, nodeId: permTreeNode},
-                    getDefaultPermission: _getDefaultPermission
+                    getDefaultPermission: _getDefaultPermission,
                 },
-                ctx
+                ctx,
             );
-        }
+        },
     };
 }

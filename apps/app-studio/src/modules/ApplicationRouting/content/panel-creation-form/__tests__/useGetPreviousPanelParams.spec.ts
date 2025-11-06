@@ -8,13 +8,13 @@ describe('useGetPreviousPanelParams', () => {
         window.history.pushState(
             {},
             '',
-            '/42/firstFullpagePanelId/secondRecordId/secondWhere/secondRecordPanelId/thirdRecordId/thirdWhere/thirdRecordPanelId'
+            '/42/firstFullpagePanelId/secondRecordId/secondWhere/secondRecordPanelId/thirdRecordId/thirdWhere/thirdRecordPanelId',
         );
 
         const {previousRecordPanelId, previousWhere, previousRecordId} = useGetPreviousPanelParams({
             currentRecordId: 'thirdRecordId',
             currentWhere: 'thirdWhere',
-            currentRecordPanelId: 'thirdRecordPanelId'
+            currentRecordPanelId: 'thirdRecordPanelId',
         });
 
         expect(previousRecordPanelId).toBe('secondRecordPanelId');
@@ -28,7 +28,7 @@ describe('useGetPreviousPanelParams', () => {
         const {previousRecordPanelId, previousWhere, previousRecordId} = useGetPreviousPanelParams({
             currentRecordId: 'secondRecordId',
             currentWhere: 'secondWhere',
-            currentRecordPanelId: 'secondRecordPanelId'
+            currentRecordPanelId: 'secondRecordPanelId',
         });
 
         expect(previousRecordPanelId).toBe('firstFullpagePanelId');
