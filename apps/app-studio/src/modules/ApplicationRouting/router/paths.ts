@@ -17,5 +17,6 @@ export const RelativePaths = {
     nextLevelPanel: ':recordId/:where/:recordPanelId',
     closeCurrentPanel: '../../..',
     changeLastRecordPanel: '../:recordPanelId',
-    openCurrentPanelInFullpage: '../../../:recordId/fullpage/:recordPanelId',
+    openCurrentPanelInPopup: '../../../:recordId/popup/:recordPanelId',
+    openCurrentPanelInSlider: '../../../:recordId/slider/:recordPanelId',
 };

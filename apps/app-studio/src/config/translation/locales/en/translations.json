@@ -26,7 +26,8 @@
         "or": "or",
         "create": "Create",
         "ok": "Ok",
-        "full_page": "Full page"
+        "expand": "Expand",
+        "collapse": "Collapse"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occurred",
