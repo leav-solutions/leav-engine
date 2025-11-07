@@ -45,4 +45,5 @@ export interface IRecordsQueryVariables {
     pagination?: IRecordsQueryPagination;
     retrieveInactive?: boolean;
     searchQuery?: string;
+    ignoreAccessRecordByDefaultPermission?: boolean;
 }

@@ -121,19 +121,21 @@ describe('ExtendedLibraryPermissions', () => {
 
     describe('no perm', () => {
         it('record should get all of them', async () => {
-            const records = await getLibRecords();
+            const records = await getLibRecords({});
 
             expect(records.length).toBe(2);
         });
 
         it('record should get some of them with filter', async () => {
-            const records = await getLibRecords(`[
+            const records = await getLibRecords({
+                filters: `[
                 {
                     condition: ${AttributeCondition.EQUAL},
                     field: "${libTreeAttr}.${permNodeLibName}.id",
                     value: "${permTreeNodeRecord1Id}"
                 }
-            ]`);
+            ]`,
+            });
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record1Id);
@@ -186,32 +188,36 @@ describe('ExtendedLibraryPermissions', () => {
         });
 
         it('record should get only one of them', async () => {
-            const records = await getLibRecords();
+            const records = await getLibRecords({});
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record2Id);
         });
 
         it('record should get none of them with filter on node 1', async () => {
-            const records = await getLibRecords(`[
+            const records = await getLibRecords({
+                filters: `[
                 {
                     condition: ${AttributeCondition.EQUAL},
                     field: "${libTreeAttr}.${permNodeLibName}.id",
                     value: "${permTreeNodeRecord1Id}"
                 }
-            ]`);
+            ]`,
+            });
 
             expect(records.length).toBe(0);
         });
 
         it('record should get one of them with filter on node 2', async () => {
-            const records = await getLibRecords(`[
+            const records = await getLibRecords({
+                filters: `[
                 {
                     condition: ${AttributeCondition.EQUAL},
                     field: "${libTreeAttr}.${permNodeLibName}.id",
                     value: "${permTreeNodeRecord2Id}"
                 }
-            ]`);
+            ]`,
+            });
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record2Id);
@@ -264,44 +270,44 @@ describe('ExtendedLibraryPermissions', () => {
 
             // To improve those test, would be fine to be able to make call as another user than admin
             it('record should get all records', async () => {
-                const records = await getLibRecords();
+                const records = await getLibRecords({});
 
                 expect(records.length).toBe(2);
             });
 
             it('non admin user should get only one of them', async () => {
-                const records = await getLibRecords(undefined, {user: await e2eGuestUser()});
+                const records = await getLibRecords({options: {user: await e2eGuestUser()}});
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
             });
 
             it('non admin user should get none of them with filter on node 1', async () => {
-                const records = await getLibRecords(
-                    `[
+                const records = await getLibRecords({
+                    filters: `[
                     {
                         condition: ${AttributeCondition.EQUAL},
                         field: "${libTreeAttr}.${permNodeLibName}.id",
                         value: "${permTreeNodeRecord1Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()},
-                );
+                    options: {user: await e2eGuestUser()},
+                });
 
                 expect(records.length).toBe(0);
             });
 
             it('non admin user should get one of them with filter on node 2', async () => {
-                const records = await getLibRecords(
-                    `[
+                const records = await getLibRecords({
+                    filters: `[
                     {
                         condition: ${AttributeCondition.EQUAL},
                         field: "${libTreeAttr}.${permNodeLibName}.id",
                         value: "${permTreeNodeRecord2Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()},
-                );
+                    options: {user: await e2eGuestUser()},
+                });
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
@@ -355,36 +361,48 @@ describe('ExtendedLibraryPermissions', () => {
         });
 
         it('record should get only one of them', async () => {
-            const records = await getLibRecords();
+            const records = await getLibRecords({});
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record2Id);
         });
-
         it('record should get hidden one with filter on node 1', async () => {
-            const records = await getLibRecords(`[
+            const records = await getLibRecords({
+                filters: `[
                 {
                     condition: ${AttributeCondition.EQUAL},
                     field: "${libTreeAttr}.${permNodeLibName}.id",
                     value: "${permTreeNodeRecord1Id}"
                 }
-            ]`);
+            ]`,
+            });
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record1Id);
         });
 
         it('record should get one of them with filter on node 2', async () => {
-            const records = await getLibRecords(`[
+            const records = await getLibRecords({
+                filters: `[
                 {
                     condition: ${AttributeCondition.EQUAL},
                     field: "${libTreeAttr}.${permNodeLibName}.id",
                     value: "${permTreeNodeRecord2Id}"
                 }
-            ]`);
+            ]`,
+            });
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record2Id);
+        });
+
+        it('record should get both records when ignoreAccessRecordByDefaultPermission is true', async () => {
+            const records = await getLibRecords({ignoreAccessRecordByDefaultPermission: true});
+
+            expect(records.length).toBe(2);
+            const ids = records.map(r => r.id);
+            expect(ids).toContain(record1Id);
+            expect(ids).toContain(record2Id);
         });
 
         describe('except current user group (admin)', () => {
@@ -434,57 +452,80 @@ describe('ExtendedLibraryPermissions', () => {
 
             // To improve those test, would be fine to be able to make call as another user than admin
             it('record should get all records', async () => {
-                const records = await getLibRecords();
+                const records = await getLibRecords({});
 
                 expect(records.length).toBe(2);
             });
 
             it('non admin user should get only one of them', async () => {
-                const records = await getLibRecords(undefined, {user: await e2eGuestUser()});
+                const records = await getLibRecords({options: {user: await e2eGuestUser()}});
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
             });
 
-            it('non admin user should get none of them with filter on node 1', async () => {
-                const records = await getLibRecords(
-                    `[
+            it('non admin user should get one of them with filter on node 1', async () => {
+                const records = await getLibRecords({
+                    filters: `[
                     {
                         condition: ${AttributeCondition.EQUAL},
                         field: "${libTreeAttr}.${permNodeLibName}.id",
                         value: "${permTreeNodeRecord1Id}"
                     }
                 ]`,
-                    {user: await e2eGuestUser()},
-                );
+                    options: {user: await e2eGuestUser()},
+                });
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record1Id);
             });
 
             it('non admin user should get one of them with filter on node 2', async () => {
-                const records = await getLibRecords(
-                    `[
-                    {
-                        condition: ${AttributeCondition.EQUAL},
-                        field: "${libTreeAttr}.${permNodeLibName}.id",
-                        value: "${permTreeNodeRecord2Id}"
-                    }
-                ]`,
-                    {user: await e2eGuestUser()},
-                );
+                const records = await getLibRecords({
+                    filters: `[
+                            {
+                                condition: ${AttributeCondition.EQUAL},
+                                field: "${libTreeAttr}.${permNodeLibName}.id",
+                                value: "${permTreeNodeRecord2Id}"
+                            }
+                        ]`,
+                    options: {user: await e2eGuestUser()},
+                });
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
             });
+
+            it('non admin user should get both records when ignoreAccessRecordByDefaultPermission is true', async () => {
+                const records = await getLibRecords({
+                    options: {
+                        user: await e2eGuestUser(),
+                    },
+                    ignoreAccessRecordByDefaultPermission: true,
+                });
+
+                expect(records.length).toBe(2);
+                const ids = records.map(r => r.id);
+                expect(ids).toContain(record1Id);
+                expect(ids).toContain(record2Id);
+            });
         });
     });
 
-    async function getLibRecords(filters?: string, options?: IMakeGraphQlCallOptions) {
+    async function getLibRecords({
+        filters,
+        options,
+        ignoreAccessRecordByDefaultPermission,
+    }: {
+        filters?: string;
+        options?: IMakeGraphQlCallOptions;
+        ignoreAccessRecordByDefaultPermission?: boolean;
+    }) {
         const query = `query {
             records(
                 library: "${libName}",
                 filters: ${filters ?? '[]'},
+                ignoreAccessRecordByDefaultPermission: ${ignoreAccessRecordByDefaultPermission ?? false}
             ) {
                 list {
                     id
