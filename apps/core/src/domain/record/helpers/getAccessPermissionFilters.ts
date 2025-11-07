@@ -31,18 +31,18 @@ export interface IGetAccessPermissionsValue {
 }
 
 export type IGetAccessPermissions = (
-    groupsIds: string[][],
-    library: string,
-    existingFiltersOnTreeIds: string[],
-    deps: IAccessPermissionFilterDeps,
+    params: {
+        groupsIds: string[][];
+        library: string;
+        existingFiltersOnTreeIds: string[];
+        deps: IAccessPermissionFilterDeps;
+        ignoreAccessRecordByDefaultPermission?: boolean;
+    },
     ctx: IQueryInfos,
 ) => Promise<IGetAccessPermissionsValue[]>;
 
 const getAccessPermissionsFilters: IGetAccessPermissions = async (
-    groupsIds,
-    library,
-    existingFiltersOnTreeIds,
-    deps,
+    {groupsIds, library, existingFiltersOnTreeIds, deps, ignoreAccessRecordByDefaultPermission = false},
     ctx,
 ) => {
     const {
@@ -160,7 +160,8 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
             RecordPermissionsActions.ACCESS_RECORD,
         );
 
-        if (!existingFiltersOnTreeIds.includes(treeId)) {
+        // ignoreAccessRecordByDefaultPermission is temporary, all datas are loaded for Bryntum, we expect to change this behavior
+        if (!ignoreAccessRecordByDefaultPermission && !existingFiltersOnTreeIds.includes(treeId)) {
             const nodesIdByPermissionByDefault = await _getNodesIdByPermission(
                 treeId,
                 treeContent,

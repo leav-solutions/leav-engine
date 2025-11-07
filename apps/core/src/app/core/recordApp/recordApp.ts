@@ -254,6 +254,7 @@ export default function ({
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean,
                             searchQuery: String
+                            ignoreAccessRecordByDefaultPermission: Boolean
                         ): RecordsList!
                     }
 
@@ -288,6 +289,7 @@ export default function ({
                                 pagination,
                                 retrieveInactive = false,
                                 searchQuery,
+                                ignoreAccessRecordByDefaultPermission = false,
                             }: IRecordsQueryVariables,
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo,
@@ -319,6 +321,7 @@ export default function ({
                                 withCount: fields.includes('totalCount'),
                                 retrieveInactive,
                                 fulltextSearch: searchQuery,
+                                ignoreAccessRecordByDefaultPermission,
                             };
 
                             if (formattedVersion) {

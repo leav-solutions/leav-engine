@@ -17,6 +17,7 @@ export interface IFindRecordParams {
     retrieveInactive?: boolean;
     fulltextSearch?: string;
     ignorePermissions?: boolean;
+    ignoreAccessRecordByDefaultPermission?: boolean;
 }
 
 export interface ICreateRecordParams {

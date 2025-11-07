@@ -1049,7 +1049,15 @@ export default function ({
             return deleteRecordHelper(library, id, ctx);
         },
         async find({params, ctx}) {
-            const {library, sort, pagination, withCount, retrieveInactive = false, ignorePermissions = false} = params;
+            const {
+                library,
+                sort,
+                pagination,
+                withCount,
+                retrieveInactive = false,
+                ignorePermissions = false,
+                ignoreAccessRecordByDefaultPermission = false,
+            } = params;
             const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort[] = [];
@@ -1202,14 +1210,17 @@ export default function ({
                     .map(f => f.attributes?.[0].linked_tree);
 
                 accessPermissionFilters = await getAccessPermissionFilters(
-                    groupsWithAncestorsId,
-                    library,
-                    existingFiltersOnTreeIds,
                     {
-                        'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-                        'core.infra.tree': treeRepo,
-                        'core.infra.permission': permissionRepo,
-                        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+                        groupsIds: groupsWithAncestorsId,
+                        library,
+                        existingFiltersOnTreeIds,
+                        deps: {
+                            'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+                            'core.infra.tree': treeRepo,
+                            'core.infra.permission': permissionRepo,
+                            'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+                        },
+                        ignoreAccessRecordByDefaultPermission,
                     },
                     ctx,
                 );
