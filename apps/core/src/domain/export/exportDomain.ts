@@ -108,6 +108,13 @@ export default function ({
             }
         }
 
+        if (attribute.format === AttributeFormats.DATE_RANGE) {
+            values = values.map(v => ({
+                ...v,
+                payload: JSON.stringify(v.payload),
+            }));
+        }
+
         return values;
     };
 
@@ -437,6 +444,7 @@ export default function ({
                             id: attr[attr.length - 1],
                             ctx,
                         });
+
                         const value = await _getFormattedValues(
                             attributeProps,
                             fieldValues.flat(Infinity) as IValue[],
