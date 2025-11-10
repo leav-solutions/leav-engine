@@ -12,7 +12,7 @@ import {type IList, type IPaginationParams, type ISortParams} from '_types/list'
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IRecord} from '_types/record';
 import {type ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
-import {TriggerNames} from '../../_types/eventsManager';
+import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition} from '../../_types/record';
 import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
@@ -185,7 +185,7 @@ export default function ({
                         task: {
                             subscribe: withFilter(
                                 () => eventsManager.subscribe([TriggerNames.TASK]),
-                                (payload, variables) => {
+                                (payload: IPubSubTaskData, variables) => {
                                     let toReturn = true;
 
                                     if (typeof variables.filters?.created_by !== 'undefined') {

@@ -4,8 +4,8 @@
 // eslint-disable-next-line max-classes-per-file
 import WebSocket from 'ws';
 import {type Client as GraphqlWsClient, createClient as createGraphqlWsClient} from 'graphql-ws';
-import axios, {Axios, type AxiosResponse} from 'axios';
-import type FormData from 'form-data';
+import axios, {type AxiosResponse} from 'axios';
+import FormData from 'form-data';
 import jwt, {type Algorithm} from 'jsonwebtoken';
 import {type ActionsListConfig} from '_types/actionsList';
 import {type ITreeElement} from '_types/tree';
@@ -119,6 +119,42 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
         }
 
         return res;
+    } catch (e) {
+        if (!(e instanceof E2EGraphQLError)) {
+            console.error('GraphQL query error:', e.message, '\n', e.response?.data ?? '', `- Query was: ${query}`);
+        }
+        throw e;
+    }
+}
+export async function importFileGraphQlCall(query: string, filePath: string, sheets = undefined) {
+    try {
+        const url = await getGraphQLUrl();
+        const token = await e2eAdminUser().getAuthToken();
+
+        const operations = {
+            query,
+            variables: {
+                file: null,
+                sheets
+            }
+        };
+
+        const map = {'0': ['variables.file']};
+
+        const form = new FormData();
+        form.append('operations', JSON.stringify(operations));
+        form.append('map', JSON.stringify(map));
+        form.append('0', require('fs').createReadStream(filePath));
+
+        const headers = {
+            Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
+            ...form.getHeaders(),
+            'x-apollo-operation-name': 'importFile'
+        };
+
+        const response = await axios.post(url, form, {headers});
+
+        return response.data;
     } catch (e) {
         if (!(e instanceof E2EGraphQLError)) {
             console.error('GraphQL query error:', e.message, '\n', e.response?.data ?? '', `- Query was: ${query}`);

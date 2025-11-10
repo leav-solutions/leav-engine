@@ -17,7 +17,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '_types/shared';
 import {type ISystemTranslation} from '_types/systemTranslation';
 import {type ITaskRepo} from '../../infra/task/taskRepo';
-import {TriggerNames} from '../../_types/eventsManager';
+import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
 import {type IList, SortOrder} from '../../_types/list';
 import {
     type ITask,
@@ -307,7 +307,10 @@ export default function ({
             ctx,
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        await eventsManager.sendPubSubEvent(
+            {triggerName: TriggerNames.TASK, data: {task} satisfies IPubSubTaskData},
+            ctx
+        );
 
         return task;
     };
@@ -396,7 +399,10 @@ export default function ({
             (({dbProfiler, ...c}) => c)(ctx),
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        await eventsManager.sendPubSubEvent(
+            {triggerName: TriggerNames.TASK, data: {task} satisfies IPubSubTaskData},
+            ctx
+        );
 
         return task.id;
     };

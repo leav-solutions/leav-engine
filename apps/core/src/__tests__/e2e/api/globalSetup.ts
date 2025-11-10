@@ -68,6 +68,9 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     const sessionRepo: ISessionRepo = coreContainer.cradle['core.infra.session'];
     await sessionRepo.deleteAll();
 
+    // reset worker queue
+    await amqp.consumer.channel.deleteQueue(conf.tasksManager.queues.execOrders);
+
     await initPlugins(conf.pluginsPath, pluginsContainer);
 
     return {coreContainer, dbUtils};
