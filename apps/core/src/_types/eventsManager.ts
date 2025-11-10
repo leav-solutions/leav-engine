@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {type INotificationContent} from './notification';
+import {type ITask} from './tasksManager';
 
 export enum TriggerNames {
     APPLICATION_EVENT = 'APPLICATION_EVENT',
@@ -19,4 +20,8 @@ export interface IPubSubNotificationData {
         date: number;
     };
     recipientUserIds: string[];
+}
+
+export interface IPubSubTaskData {
+    task: ITask;
 }

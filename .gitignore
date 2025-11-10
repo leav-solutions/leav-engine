@@ -56,6 +56,9 @@ logs
 *.odt*
 *.tmp
 
+### Tests datas ###
+!apps/core/src/__tests__/e2e/api/import/datas/*.xlsx
+
 ### Netbeans ###
 *nbproject
 

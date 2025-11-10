@@ -55,6 +55,7 @@
         ".idea",
         "**/ADR.md",
         "**/docs/adr/*.md",
-        "**/_gqlTypes/index.*"
+        "**/_gqlTypes/index.*",
+        "**/*.xlsx"
     ]
 }
