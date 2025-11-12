@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useContext} from 'react';
 import {KitTabs} from 'aristid-ds';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
 import cn from 'classnames';
@@ -16,6 +16,7 @@ interface IPanelsTabsProps {
     enabled: boolean;
     workspaceId: string;
     recordId: string | undefined;
+    where: string | undefined;
     libraryId: string | null;
     panelType: string | null;
     currentPanelId: string;
@@ -26,6 +27,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     enabled,
     workspaceId,
     recordId,
+    where,
     libraryId,
     panelType,
     currentPanelId,
@@ -41,7 +43,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
         libraryId === null || panelType === null
             ? []
             : application.libraries[libraryId][panelType]
-                  .filter(panel => !panel.isStandalone && !panel.hideInSlider)
+                  .filter(panel => !panel.isStandalone && (!panel.hideInSlider || where !== 'slider'))
                   .map(panel => ({
                       key: panel.id,
                       label: localizedTranslation(panel.name, lang),

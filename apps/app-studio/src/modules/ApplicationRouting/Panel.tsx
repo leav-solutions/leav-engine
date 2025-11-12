@@ -51,6 +51,7 @@ export const Panel: FunctionComponent = () => {
                         libraryId={libraryId}
                         panelType={panelType}
                         recordId={currentRecordId}
+                        where={where}
                         currentPanelId={currentPanel.id}
                     />
                 </div>
