@@ -43,7 +43,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
         libraryId === null || panelType === null
             ? []
             : application.libraries[libraryId][panelType]
-                  .filter(panel => !panel.isStandalone && (!panel.hideInSlider || where !== 'slider'))
+                  .filter(panel => !panel.isStandalone && !(where === 'slider' && panel.hideInSlider))
                   .map(panel => ({
                       key: panel.id,
                       label: localizedTranslation(panel.name, lang),
