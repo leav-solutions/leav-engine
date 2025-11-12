@@ -28,6 +28,7 @@ export const validateConfig = (conf: IConfig) => {
             systemUser: {
                 email: Joi.string().email().required(),
             },
+            enableTracer: Joi.boolean().required(),
         }),
         coreMode: Joi.string()
             .valid(...Object.values(CoreMode))
