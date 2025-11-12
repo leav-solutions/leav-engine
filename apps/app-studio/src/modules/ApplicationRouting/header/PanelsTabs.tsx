@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useContext} from 'react';
 import {KitTabs} from 'aristid-ds';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
 import cn from 'classnames';
