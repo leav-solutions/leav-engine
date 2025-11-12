@@ -309,7 +309,7 @@ export default function ({
 
         await eventsManager.sendPubSubEvent(
             {triggerName: TriggerNames.TASK, data: {task} satisfies IPubSubTaskData},
-            ctx
+            ctx,
         );
 
         return task;
@@ -401,7 +401,7 @@ export default function ({
 
         await eventsManager.sendPubSubEvent(
             {triggerName: TriggerNames.TASK, data: {task} satisfies IPubSubTaskData},
-            ctx
+            ctx,
         );
 
         return task.id;

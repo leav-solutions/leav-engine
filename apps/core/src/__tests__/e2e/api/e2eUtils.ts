@@ -135,8 +135,8 @@ export async function importFileGraphQlCall(query: string, filePath: string, she
             query,
             variables: {
                 file: null,
-                sheets
-            }
+                sheets,
+            },
         };
 
         const map = {'0': ['variables.file']};
@@ -149,7 +149,7 @@ export async function importFileGraphQlCall(query: string, filePath: string, she
         const headers = {
             Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
             ...form.getHeaders(),
-            'x-apollo-operation-name': 'importFile'
+            'x-apollo-operation-name': 'importFile',
         };
 
         const response = await axios.post(url, form, {headers});
