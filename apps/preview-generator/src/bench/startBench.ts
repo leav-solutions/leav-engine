@@ -39,5 +39,5 @@ export const startBench = async (jsonFile: string, dest: string, config: IConfig
         await processPreview(msg as ConsumeMessage, config);
     }
 
-    logger.info((Date.now() - begin) / 1000);
+    logger.info(`Time elapsed: ${(Date.now() - begin) / 1000}`);
 };
