@@ -42,7 +42,7 @@ export default function ({
             const library = config.filesManager.rootKeys[message.rootKey];
             await handleFileSystemEvent(message, {library}, ctx);
         } catch (e) {
-            logger.error(`[FilesManager] Error when processing file event msg: ${e.stack}.`, {message});
+            logger.error(`[FilesManager] Error when processing file event msg: ${e.stack}.`, {msgContent: message});
         }
 
         _isWorking = false;

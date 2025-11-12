@@ -83,7 +83,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                     await onMessage(msg);
                 } catch (e) {
                     logger.error(`[${queue}/${routingKey}] Error while processing message: ${e.stack}`, {
-                        message: {
+                        msg: {
                             ...msg,
                             content: msg.content.toString(),
                         },
