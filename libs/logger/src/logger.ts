@@ -6,7 +6,28 @@ import {type ILoggerConfig, defaultLoggerConfig} from './config';
 import {addLocationInfoInLog} from './locationInfoFormatter';
 import {catchErrorFormatter} from './catchErrorFormatter';
 
-export type ILogger = Pick<typeof winston, 'error' | 'warn' | 'info' | 'log' | 'verbose' | 'debug' | 'silly'>;
+// This type prevents adding message and other properties in meta objects to avoid conflict in log output
+type MetaWithoutLoggerProperties = {
+    [key: string]: unknown;
+} & {
+    message?: never;
+    level?: never;
+    timestamp?: never;
+    location?: never;
+    env?: never;
+    app?: never;
+    client?: never;
+    version?: never;
+};
+
+export interface ILogger {
+    error(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
+    warn(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
+    info(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
+    verbose(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
+    debug(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
+    silly(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
+}
 
 export function configureLogger(config: ILoggerConfig): void {
     const level = config.level ?? defaultLoggerConfig.level;

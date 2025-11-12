@@ -47,7 +47,12 @@ const _onMessage = async (
     try {
         previewResponse = JSON.parse(msg.content.toString());
     } catch (e) {
-        logger.error(`[FilesManager] Preview return invalid message: ${e.stack}`, {msg});
+        logger.error(`[FilesManager] Preview return invalid message: ${e.stack}`, {
+            msg: {
+                ...msg,
+                content: msg.content.toString(),
+            },
+        });
         return;
     }
 
