@@ -46,6 +46,7 @@ export const basePanelSchema = z.object({
     id: PanelIdSchema,
     name: z.record(LanguageSchema, z.string()).optional(),
     isStandalone: z.boolean().optional(),
+    hideInSlider: z.boolean().optional(),
 });
 
 export const iframePanelSchema = z.object({

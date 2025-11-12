@@ -10,6 +10,7 @@ import {WorkspacesNavigationMenu} from '../workspaces/WorkspacesNavigationMenu';
 import {Panel} from '../Panel';
 import {PanelContainer} from '../PanelContainer';
 import {AbsolutePaths, UnreachablePaths} from './paths';
+import {RedirectToFirstRecordPanelAllowedInSlider} from '../guards/RedirectToFirstRecordPanelAllowedInSlider';
 
 export const firstLevelRoutes: RouteObject[] = [
     {
@@ -44,9 +45,11 @@ export const nextLevelRoutes: RouteObject[] = [
         path: UnreachablePaths.recordWherePanel,
         element: (
             <RedirectToPreviousPanel>
-                <PanelContainer>
-                    <Panel />
-                </PanelContainer>
+                <RedirectToFirstRecordPanelAllowedInSlider>
+                    <PanelContainer>
+                        <Panel />
+                    </PanelContainer>
+                </RedirectToFirstRecordPanelAllowedInSlider>
             </RedirectToPreviousPanel>
         ),
     },
