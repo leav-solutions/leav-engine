@@ -78,7 +78,8 @@ lint:
   stage: test
   script:
     - yarn workspaces focus --all
-    - yarn run lint --format gitlab
+    - yarn run prettier:check
+    - yarn run lint:check --format gitlab
   cache:
     <<: *yarn_cache
     policy: pull-push
