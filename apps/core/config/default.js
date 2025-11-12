@@ -28,6 +28,7 @@ module.exports = {
         systemUser: {
             email: process.env.SERVER_SYSTEM_USER_EMAIL || 'system@leav-engine.com',
         },
+        enableTracer: envToBool(process.env.SERVER_ENABLE_TRACER, false),
     },
     db: {
         url: process.env.ARANGO_URL,

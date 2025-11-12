@@ -68,6 +68,7 @@ export interface IServer {
     systemUser: {
         email: string;
     };
+    enableTracer: boolean;
 }
 
 export interface IActions {

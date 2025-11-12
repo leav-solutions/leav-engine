@@ -33,6 +33,7 @@ import {type ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken
 import {type HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {type IAppModule} from '_types/shared';
+import {apolloTracerPlugin} from './plugins/apolloTracerPlugin';
 
 export interface IServer {
     init(): Promise<void>;
@@ -308,6 +309,7 @@ export default function ({
 
                 const plugins = [
                     ApolloServerPluginCacheControlDisabled(),
+                    ...(config.server.enableTracer ? [apolloTracerPlugin] : []),
                     {
                         async serverWillStart() {
                             return {
