@@ -12,7 +12,7 @@ import {
     importFileGraphQlCall,
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
-    waitGraphqlWebSocketMessage
+    waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
 import {ImportMode, ImportType} from '../../../../_types/import';
 import {TaskCallbackStatus} from '../../../../_types/tasksManager';
@@ -43,7 +43,7 @@ const waitTaskWebSocket = async client =>
         subscriptionGraphqlQuery,
         {},
         data => data?.task?.status?.includes(TaskCallbackStatus.DONE),
-        {timeoutMs: 20000}
+        {timeoutMs: 20000},
     );
 
 describe('Import', () => {
@@ -57,20 +57,20 @@ describe('Import', () => {
             id: labelAttributeId,
             type: AttributeTypes.SIMPLE,
             format: AttributeFormats.TEXT,
-            label: labelAttributeId
+            label: labelAttributeId,
         });
         await gqlSaveAttribute({
             id: lovAttributeId,
             type: AttributeTypes.SIMPLE,
             format: AttributeFormats.TEXT,
-            label: lovAttributeId
+            label: lovAttributeId,
         });
         await gqlSaveAttribute({
             id: linkAttributeId,
             type: AttributeTypes.SIMPLE_LINK,
             linkedLibrary: linkLibName,
             format: AttributeFormats.TEXT,
-            label: linkAttributeId
+            label: linkAttributeId,
         });
         await gqlSaveLibrary(testLibName, testLibName, [labelAttributeId, lovAttributeId, linkAttributeId]);
 
@@ -79,7 +79,7 @@ describe('Import', () => {
             id: linkLabelAttributeId,
             type: AttributeTypes.SIMPLE,
             format: AttributeFormats.TEXT,
-            label: 'link_test1'
+            label: 'link_test1',
         });
         await gqlSaveLibrary(linkLibName, linkLibName, [linkLabelAttributeId]);
     });
@@ -93,7 +93,7 @@ describe('Import', () => {
 
         const recordsIds = recordsRes.data.data.records.list.map((r: {id: string}) => `"${r.id}"`);
         await makeGraphQlCall(
-            `mutation { deactivateRecords( libraryId: "${testLibName}", recordsIds: [${recordsIds}]) { id } }`
+            `mutation { deactivateRecords( libraryId: "${testLibName}", recordsIds: [${recordsIds}]) { id } }`,
         );
         await makeGraphQlCall(`mutation { purgeInactiveRecords(libraryId: "${testLibName}") { id } }`);
     });
@@ -109,10 +109,10 @@ describe('Import', () => {
             await Promise.all(
                 recordsRes.data.data.records.list.map(async (r: {id: string}) => {
                     await makeGraphQlCall(
-                        `mutation { deactivateRecords( libraryId: "${lib}", recordsIds: ["${r.id}"]) { id } }`
+                        `mutation { deactivateRecords( libraryId: "${lib}", recordsIds: ["${r.id}"]) { id } }`,
                     );
                     await makeGraphQlCall(`mutation { purgeRecord(libraryId: "${lib}", recordId: "${r.id}") { id } }`);
-                })
+                }),
             );
             await gqlSaveLibrary(lib, lib, []);
         }
@@ -146,7 +146,7 @@ describe('Import', () => {
                 `mutation importData($file: Upload!) {
                         importData(file: $file)
                     }`,
-                importFilePath
+                importFilePath,
             );
 
             expect(importResult.data.importData).toMatch(uuidRegExp);
@@ -177,15 +177,15 @@ describe('Import', () => {
                     }`;
                 const importFilePath = path.join(
                     appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx'
+                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx',
                 );
                 const sheets = [
                     {
                         type: ImportType.STANDARD,
                         library: testLibName,
                         mode: ImportMode.INSERT,
-                        mapping: [labelAttributeId, lovAttributeId]
-                    }
+                        mapping: [labelAttributeId, lovAttributeId],
+                    },
                 ];
 
                 const importResult = await importFileGraphQlCall(query, importFilePath, sheets);
@@ -217,22 +217,22 @@ describe('Import', () => {
                 const props = res.data.data.records.list.map(r =>
                     r.properties.map(p => ({
                         attributeId: p.attributeId,
-                        values: p.values.map(v => v.raw_payload)
-                    }))
+                        values: p.values.map(v => v.raw_payload),
+                    })),
                 );
                 expect(props).toEqual([
                     [
                         {attributeId: labelAttributeId, values: ['Label 3']},
-                        {attributeId: lovAttributeId, values: ['Value 3']}
+                        {attributeId: lovAttributeId, values: ['Value 3']},
                     ],
                     [
                         {attributeId: labelAttributeId, values: ['Label 2']},
-                        {attributeId: lovAttributeId, values: ['Value 2']}
+                        {attributeId: lovAttributeId, values: ['Value 2']},
                     ],
                     [
                         {attributeId: labelAttributeId, values: ['Label 1']},
-                        {attributeId: lovAttributeId, values: ['Value 1']}
-                    ]
+                        {attributeId: lovAttributeId, values: ['Value 1']},
+                    ],
                 ]);
                 expect(res.data.data.records.list.length).toBe(3);
             });
@@ -243,15 +243,15 @@ describe('Import', () => {
                     }`;
                 const importFilePath = path.join(
                     appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImportWithEmptyFields.xlsx'
+                    '/src/__tests__/e2e/api/import/datas/datasToImportWithEmptyFields.xlsx',
                 );
                 const sheets = [
                     {
                         type: ImportType.STANDARD,
                         library: testLibName,
                         mode: ImportMode.UPSERT,
-                        mapping: [labelAttributeId, lovAttributeId]
-                    }
+                        mapping: [labelAttributeId, lovAttributeId],
+                    },
                 ];
 
                 const importResult = await importFileGraphQlCall(query, importFilePath, sheets);
@@ -283,22 +283,22 @@ describe('Import', () => {
                 const props = res.data.data.records.list.map(r =>
                     r.properties.map(p => ({
                         attributeId: p.attributeId,
-                        values: p.values.map(v => v.raw_payload)
-                    }))
+                        values: p.values.map(v => v.raw_payload),
+                    })),
                 );
                 expect(props).toEqual([
                     [
                         {attributeId: labelAttributeId, values: ['Label 3']},
-                        {attributeId: lovAttributeId, values: []}
+                        {attributeId: lovAttributeId, values: []},
                     ],
                     [
                         {attributeId: labelAttributeId, values: ['Label 2']},
-                        {attributeId: lovAttributeId, values: []}
+                        {attributeId: lovAttributeId, values: []},
                     ],
                     [
                         {attributeId: labelAttributeId, values: ['Label 1']},
-                        {attributeId: lovAttributeId, values: ['Value 1']}
-                    ]
+                        {attributeId: lovAttributeId, values: ['Value 1']},
+                    ],
                 ]);
                 expect(res.data.data.records.list.length).toBe(3);
             });
@@ -309,7 +309,7 @@ describe('Import', () => {
                     }`;
                 const importFilePath = path.join(
                     appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx'
+                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx',
                 );
                 const sheets = [
                     {
@@ -317,8 +317,8 @@ describe('Import', () => {
                         library: testLibName,
                         mode: ImportMode.UPDATE,
                         mapping: [labelAttributeId, lovAttributeId],
-                        keyIndex: 0
-                    }
+                        keyIndex: 0,
+                    },
                 ];
 
                 // No records exist yet, so update should not create any
@@ -358,7 +358,7 @@ describe('Import', () => {
                     }`;
                 const importFilePath = path.join(
                     appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx'
+                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx',
                 );
 
                 const sheets1 = [
@@ -366,8 +366,8 @@ describe('Import', () => {
                         type: ImportType.STANDARD,
                         library: testLibName,
                         mode: ImportMode.INSERT,
-                        mapping: [labelAttributeId]
-                    }
+                        mapping: [labelAttributeId],
+                    },
                 ];
                 const importResult1 = await importFileGraphQlCall(query, importFilePath, sheets1);
                 expect(importResult1.data.importExcel).toMatch(uuidRegExp);
@@ -392,8 +392,8 @@ describe('Import', () => {
                         mapping: [labelAttributeId, linkLabelAttributeId],
                         keyIndex: 0,
                         linkAttribute: linkAttributeId,
-                        keyToIndex: 1
-                    }
+                        keyToIndex: 1,
+                    },
                 ];
                 const importResultLink = await importFileGraphQlCall(query, importFilePath, sheetsLink);
                 expect(importResultLink.data.importExcel).toMatch(uuidRegExp);
@@ -429,12 +429,12 @@ describe('Import', () => {
                 const labelValues = res.data.data.records.list.flatMap((r: any) =>
                     r.properties
                         .filter((p: any) => p.attributeId === labelAttributeId)
-                        .flatMap((p: any) => p.values.map((v: any) => v.raw_payload))
+                        .flatMap((p: any) => p.values.map((v: any) => v.raw_payload)),
                 );
                 const lovValues = res.data.data.records.list.flatMap((r: any) =>
                     r.properties
                         .filter((p: any) => p.attributeId === linkAttributeId)
-                        .flatMap((p: any) => p.values.map((v: any) => v.payload?.id))
+                        .flatMap((p: any) => p.values.map((v: any) => v.payload?.id)),
                 );
 
                 expect(labelValues.length).toBe(3);
