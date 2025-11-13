@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LibraryBehavior} from '../../../../_types/library';
-import {type MigrationLibraryToCreate} from 'infra/db/helpers/libraryUtils';
+import {type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
 
 const commonLibraryData: Partial<MigrationLibraryToCreate> = {
     system: true,
