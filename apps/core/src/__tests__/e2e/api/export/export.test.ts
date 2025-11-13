@@ -250,11 +250,6 @@ describe('Export', () => {
         graphqlClient.dispose();
     });
 
-    // May be listen with subscription in tasks to wait for task termination
-    async function waitForTaskTerminate(ms: number = 200) {
-        await new Promise(resolve => setTimeout(resolve, ms)); // Wait a bit to ensure task is done
-    }
-
     async function getTask(taskId: string): Promise<ITask> {
         const resTaskQuery = await makeGraphQlCall(
             `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`,
@@ -264,6 +259,20 @@ describe('Export', () => {
         expect(resTaskQuery.status).toBe(200);
         expect(resTaskQuery.data.data.tasks.list.length).toBe(1);
         return resTaskQuery.data.data.tasks.list[0];
+    }
+
+    // Here we wait for task completion (done or failed) with polling because subscription may miss the message if created after task end
+    // Even after mail or websocket notification received, we should ensure task is really completed
+    async function waitForTaskCompletion(id: string, timeout = 5000, interval = 50): Promise<ITask> {
+        const start = Date.now();
+        while (Date.now() - start < timeout) {
+            const task = await getTask(id);
+            if (task.status === TaskStatus.DONE || task.status === TaskStatus.FAILED) {
+                return task;
+            }
+            await new Promise(resolve => setTimeout(resolve, interval));
+        }
+        throw new Error(`Task ${id} did not complete within ${timeout}ms`);
     }
 
     describe('export notifications', () => {
@@ -285,8 +294,7 @@ describe('Export', () => {
                 expect(mailMsg.From.Address).toEqual(config.mailer.from.email);
                 expect(mailMsg.To[0].Address).toEqual(config.server.admin.email);
 
-                await waitForTaskTerminate();
-                const task = await getTask(exportTaskId);
+                const task = await waitForTaskCompletion(exportTaskId);
                 expect(task.status).toBe(TaskStatus.DONE);
                 expect(task.link).toBeDefined();
 
@@ -301,8 +309,7 @@ describe('Export', () => {
                 expect(msg.notification.title).toContain('complete');
                 expect(msg.notification.level).toContain('info');
 
-                await waitForTaskTerminate();
-                const task = await getTask(exportTaskId);
+                const task = await waitForTaskCompletion(exportTaskId);
                 expect(task.status).toBe(TaskStatus.DONE);
                 expect(task.link).toBeDefined();
 
@@ -331,8 +338,7 @@ describe('Export', () => {
                 expect(mailMsg.From.Address).toEqual(config.mailer.from.email);
                 expect(mailMsg.To[0].Address).toEqual(config.server.admin.email);
 
-                await waitForTaskTerminate();
-                const task = await getTask(exportTaskId);
+                const task = await waitForTaskCompletion(exportTaskId);
                 expect(task.status).toBe(TaskStatus.FAILED);
             });
 
@@ -343,8 +349,7 @@ describe('Export', () => {
                 expect(msg.notification.title).toContain('failed');
                 expect(msg.notification.level).toContain('warning');
 
-                await waitForTaskTerminate();
-                const task = await getTask(exportTaskId);
+                const task = await waitForTaskCompletion(exportTaskId);
                 expect(task.status).toBe(TaskStatus.FAILED);
             });
         });
@@ -355,8 +360,7 @@ describe('Export', () => {
             exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
 
             await waitExportWSNotification();
-            await waitForTaskTerminate();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -377,8 +381,7 @@ describe('Export', () => {
                 .data.data.export;
 
             await waitExportWSNotification();
-            await waitForTaskTerminate();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -404,8 +407,7 @@ describe('Export', () => {
             ).data.data.export;
 
             await waitExportWSNotification();
-            await waitForTaskTerminate();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -441,8 +443,7 @@ describe('Export', () => {
             ).data.data.export;
 
             await waitExportWSNotification();
-            await waitForTaskTerminate();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);

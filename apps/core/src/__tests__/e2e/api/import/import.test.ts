@@ -15,7 +15,7 @@ import {
     waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
 import {ImportMode, ImportType} from '../../../../_types/import';
-import {TaskCallbackStatus} from '../../../../_types/tasksManager';
+import {TaskStatus} from '../../../../_types/tasksManager';
 import {type IPubSubTaskData} from '_types/eventsManager';
 
 const uuidRegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -26,25 +26,6 @@ const lovAttributeId = 'create_record_test_lov';
 const linkAttributeId = 'create_record_test_link';
 const linkLibName = 'test_import_link';
 const linkLabelAttributeId = 'create_record_test_link_label';
-
-const subscriptionGraphqlQuery = `
-        subscription {
-            task {
-                id
-                label
-                status
-            }
-        }
-    `;
-
-const waitTaskWebSocket = async client =>
-    waitGraphqlWebSocketMessage<Pick<IPubSubTaskData, 'task'>>(
-        client,
-        subscriptionGraphqlQuery,
-        {},
-        data => data?.task?.status?.includes(TaskCallbackStatus.DONE),
-        {timeoutMs: 20000},
-    );
 
 describe('Import', () => {
     let graphqlClient: GraphqlWsClient;
@@ -132,12 +113,12 @@ describe('Import', () => {
     describe('Import Data', () => {
         it('should throw an error if importData mutation is called with invalid arguments', async () => {
             const query = `mutation importData($file: Upload!) {
-                importExcel(file: $file)
+                importExcel(file: null)
             }`;
-            const invalidFilePath = path.join(appRootPath(), '/src/__tests__/e2e/api/import/datas/doesNotExist.xlsx');
 
-            // this will log a GraphQL query error: ENOENT: no such file or directory...
-            await expect(importFileGraphQlCall(query, invalidFilePath)).rejects.toThrow();
+            await expect(makeGraphQlCall(query, {skipLogErrors: true})).rejects.toThrow(
+                /Request failed with status code 400/,
+            );
         });
         it('should import import.test.json and verify DB state', async () => {
             const importFilePath = path.join(appRootPath(), '/src/__tests__/e2e/api/import/datas/import.test.json');
@@ -151,9 +132,9 @@ describe('Import', () => {
 
             expect(importResult.data.importData).toMatch(uuidRegExp);
 
-            const msg = await waitTaskWebSocket(graphqlClient);
+            const msg = await waitTaskCompleted(importResult.data.importData);
 
-            expect(msg).toBeDefined();
+            expect(msg.task.status).toEqual(TaskStatus.DONE);
 
             const res = await makeGraphQlCall(`{
                     records(
@@ -192,9 +173,9 @@ describe('Import', () => {
 
                 expect(importResult.data.importExcel).toMatch(uuidRegExp);
 
-                const msg = await waitTaskWebSocket(graphqlClient);
+                const msg = await waitTaskCompleted(importResult.data.importExcel);
 
-                expect(msg).toBeDefined();
+                expect(msg.task.status).toEqual(TaskStatus.DONE);
 
                 const res = await makeGraphQlCall(`{
                 records(
@@ -258,9 +239,9 @@ describe('Import', () => {
 
                 expect(importResult.data.importExcel).toMatch(uuidRegExp);
 
-                const msg = await waitTaskWebSocket(graphqlClient);
+                const msg = await waitTaskCompleted(importResult.data.importExcel);
 
-                expect(msg).toBeDefined();
+                expect(msg.task.status).toEqual(TaskStatus.DONE);
 
                 const res = await makeGraphQlCall(`{
                 records(
@@ -325,9 +306,9 @@ describe('Import', () => {
                 const importResult = await importFileGraphQlCall(query, importFilePath, sheets);
                 expect(importResult.data.importExcel).toMatch(uuidRegExp);
 
-                const msg = await waitTaskWebSocket(graphqlClient);
+                const msg = await waitTaskCompleted(importResult.data.importExcel);
 
-                expect(msg).toBeDefined();
+                expect(msg.task.status).toEqual(TaskStatus.DONE);
 
                 const res = await makeGraphQlCall(`{
                     records(
@@ -372,17 +353,17 @@ describe('Import', () => {
                 const importResult1 = await importFileGraphQlCall(query, importFilePath, sheets1);
                 expect(importResult1.data.importExcel).toMatch(uuidRegExp);
 
-                const msg1 = await waitTaskWebSocket(graphqlClient);
+                const msg1 = await waitTaskCompleted(importResult1.data.importExcel);
 
-                expect(msg1).toBeDefined();
+                expect(msg1.task.status).toEqual(TaskStatus.DONE);
 
                 const sheets2 = [{...sheets1[0], library: linkLibName, mapping: [null, linkLabelAttributeId]}];
                 const importResult2 = await importFileGraphQlCall(query, importFilePath, sheets2);
                 expect(importResult2.data.importExcel).toMatch(uuidRegExp);
 
-                const msg2 = await waitTaskWebSocket(graphqlClient);
+                const msg2 = await waitTaskCompleted(importResult2.data.importExcel);
 
-                expect(msg2).toBeDefined();
+                expect(msg2.task.status).toEqual(TaskStatus.DONE);
 
                 const sheetsLink = [
                     {
@@ -398,9 +379,9 @@ describe('Import', () => {
                 const importResultLink = await importFileGraphQlCall(query, importFilePath, sheetsLink);
                 expect(importResultLink.data.importExcel).toMatch(uuidRegExp);
 
-                const msgLink = await waitTaskWebSocket(graphqlClient);
+                const msgLink = await waitTaskCompleted(importResultLink.data.importExcel);
 
-                expect(msgLink).toBeDefined();
+                expect(msgLink.task.status).toEqual(TaskStatus.DONE);
 
                 // Check records in main library
                 const res = await makeGraphQlCall(`{
@@ -463,4 +444,21 @@ describe('Import', () => {
             });
         });
     });
+
+    const waitTaskCompleted = async taskId =>
+        waitGraphqlWebSocketMessage<Pick<IPubSubTaskData, 'task'>>(
+            graphqlClient,
+            `
+                subscription {
+                    task (filters: { id: "${taskId}" }) {
+                        id
+                        label
+                        status
+                    }
+                }
+            `,
+            {},
+            data => [TaskStatus.DONE, TaskStatus.FAILED].includes(data?.task?.status),
+            {timeoutMs: 20000},
+        );
 });

@@ -91,6 +91,7 @@ export class E2EGraphQLError extends Error {
 
 export interface IMakeGraphQlCallOptions {
     user?: IE2EUser;
+    skipLogErrors?: boolean;
 }
 
 export async function makeGraphQlCall(query: string | FormData, options?: IMakeGraphQlCallOptions): Promise<any> {
@@ -120,7 +121,7 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
 
         return res;
     } catch (e) {
-        if (!(e instanceof E2EGraphQLError)) {
+        if (!(e instanceof E2EGraphQLError) && !options?.skipLogErrors) {
             console.error('GraphQL query error:', e.message, '\n', e.response?.data ?? '', `- Query was: ${query}`);
         }
         throw e;
@@ -484,11 +485,21 @@ export async function waitWebSocketMessage<T>(
         }, timeoutMs || 20_000);
 
         webSocket.onmessage = (event: WebSocket.MessageEvent) => {
-            const msg = JSON.parse(event.data.toString());
-            if (acceptMessage(msg)) {
+            try {
+                const msg = JSON.parse(event.data.toString());
+                if (acceptMessage(msg)) {
+                    clearTimeout(timeout);
+                    webSocket.close();
+                    resolve(msg);
+                }
+            } catch (e) {
+                if (e instanceof SyntaxError) {
+                    // Depending on what is received, maybe ignore those message in later code changes
+                    console.warn('Received non-JSON message over WebSocket:', event.data.toString());
+                }
                 clearTimeout(timeout);
                 webSocket.close();
-                resolve(msg);
+                reject(e);
             }
         };
 

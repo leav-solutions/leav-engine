@@ -7,7 +7,7 @@ import {asValue} from 'awilix';
 import {type ITask, TaskPriority, TaskStatus} from '../../../_types/tasksManager';
 import {type IQueryInfos} from '_types/queryInfos';
 
-describe('taskManagerDomain', () => {
+describe('tasksManagerDomain', () => {
     let taskManagerDomain: ITasksManagerDomain;
     const ctx: IQueryInfos = {userId: '42'};
     const fakeWorkerFn = jest.fn();
@@ -78,7 +78,7 @@ describe('taskManagerDomain', () => {
         expect(taskToCancel.status).toBe(TaskStatus.CREATED);
 
         // wait task is running
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await waitForTaskRunning(taskToCancel.id);
 
         const taskToCancelRunning = await getTask(taskToCancel.id);
         expect(taskToCancelRunning.status).toBe(TaskStatus.RUNNING);
@@ -136,5 +136,17 @@ describe('taskManagerDomain', () => {
             await new Promise(resolve => setTimeout(resolve, interval));
         }
         throw new Error(`Task ${id} did not complete within ${timeout}ms`);
+    }
+
+    async function waitForTaskRunning(id: string, timeout = 5000, interval = 50): Promise<ITask> {
+        const start = Date.now();
+        while (Date.now() - start < timeout) {
+            const task = await getTask(id);
+            if (task.status === TaskStatus.RUNNING) {
+                return task;
+            }
+            await new Promise(resolve => setTimeout(resolve, interval));
+        }
+        throw new Error(`Task ${id} did not started within ${timeout}ms`);
     }
 });
