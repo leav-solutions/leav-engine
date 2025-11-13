@@ -4,7 +4,7 @@
 import {v4 as uuidv4} from 'uuid';
 import {type IConfig} from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
-import {adminsGroupId, filesAdminsGroupId, systemUserId} from '../../_constants/users';
+import {systemUserId} from '../../_constants/users';
 
 interface IDeps {
     config?: IConfig;
@@ -20,7 +20,7 @@ export default function ({config = null}: IDeps): GetSystemQueryContext {
         userId: systemUserId,
         lang: config.lang.default,
         queryId: uuidv4(),
-        groupsId: [adminsGroupId, filesAdminsGroupId],
+        groupsId: [],
         errors: [],
         trigger,
     });

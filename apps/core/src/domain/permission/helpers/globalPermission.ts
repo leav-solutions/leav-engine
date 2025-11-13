@@ -6,12 +6,13 @@ import {type PermissionsActions, type PermissionTypes} from '../../../_types/per
 import {type IDefaultPermissionHelper} from './defaultPermission';
 import {type IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type GetDefaultGlobalPermission} from '../_types';
 
 interface IGetGlobalPermissionParams {
     type: PermissionTypes;
     applyTo?: string;
     action: PermissionsActions;
-    getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;
+    getDefaultGlobalPermission?: GetDefaultGlobalPermission;
 }
 
 interface IGetInheritedGlobalPermissionParams {
@@ -19,15 +20,7 @@ interface IGetInheritedGlobalPermissionParams {
     applyTo?: string;
     userGroupNodeId: string | null;
     action: PermissionsActions;
-    getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => boolean;
-}
-
-interface IGetDefaultGlobalPermissionParams {
-    type?: PermissionTypes;
-    applyTo?: string;
-    userId?: string;
-    action?: PermissionsActions;
-    ctx: IQueryInfos;
+    getDefaultGlobalPermission?: GetDefaultGlobalPermission;
 }
 
 export interface IGlobalPermissionHelper {
@@ -47,7 +40,7 @@ export default function ({
 }: IGlobalPermissionDeps): IGlobalPermissionHelper {
     return {
         async getGlobalPermission(
-            {type, applyTo, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
+            {type, applyTo, action, getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission},
             ctx,
         ): Promise<boolean> {
             const userGroupsPaths = !!ctx.groupsId
@@ -67,12 +60,18 @@ export default function ({
                 action,
                 userGroupsPaths,
                 applyTo,
-                getDefaultPermission,
+                getDefaultGlobalPermission,
                 ctx,
             });
         },
         async getInheritedGlobalPermission(
-            {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
+            {
+                type,
+                applyTo,
+                userGroupNodeId,
+                action,
+                getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission,
+            },
             ctx,
         ): Promise<boolean> {
             // Get perm for user group's parent
@@ -87,7 +86,7 @@ export default function ({
                 action,
                 userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
                 applyTo,
-                getDefaultPermission,
+                getDefaultGlobalPermission,
                 ctx,
             });
         },

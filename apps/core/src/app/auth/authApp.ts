@@ -29,7 +29,7 @@ import {type IncomingHttpHeaders} from 'http';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type IServerRouteAppModule} from 'interface/server';
-import {adminsGroupId, filesAdminsGroupId} from '../../_constants/users';
+import {adminsGroupId, systemUserId} from '../../_constants/users';
 import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
 import {type ISessionRepo} from '../../infra/session/sessionRepo';
 
@@ -143,8 +143,8 @@ export default function ({
 
     const _getSystemContextFromQuery = (req: Request, trigger: string): IQueryInfos => ({
         ...initQueryContext(req),
-        userId: config.defaultUserId,
-        groupsId: [adminsGroupId, filesAdminsGroupId],
+        userId: systemUserId,
+        groupsId: [],
         trigger,
     });
 

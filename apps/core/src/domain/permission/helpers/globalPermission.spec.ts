@@ -64,7 +64,7 @@ describe('globalPermissionsHelper', () => {
                     type: PermissionTypes.LIBRARY,
                     action: LibraryPermissionsActions.ACCESS_RECORD,
                     applyTo: 'test_lib',
-                    getDefaultPermission: () => false,
+                    getDefaultGlobalPermission: () => false,
                 },
                 ctx,
             );
@@ -116,7 +116,7 @@ describe('globalPermissionsHelper', () => {
                     action: LibraryPermissionsActions.ACCESS_RECORD,
                     applyTo: 'test_lib',
                     userGroupNodeId: '12345',
-                    getDefaultPermission: () => false,
+                    getDefaultGlobalPermission: () => false,
                 },
                 ctx,
             );

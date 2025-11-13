@@ -15,7 +15,7 @@ import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {
-    type IGetDefaultPermissionParams,
+    type IGetDefaultGlobalPermissionParams,
     type IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams,
 } from './_types';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
@@ -85,7 +85,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                           attributeId,
                           ctx,
                       })
-                    : defaultPermHelper.getDefaultPermission();
+                    : defaultPermHelper.getDefaultPermission({ctx});
             }
 
             const treesAttrValues = await Promise.all(
@@ -138,7 +138,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
             {action, attributeId, userGroupId, permTree, permTreeNode},
             ctx: IQueryInfos,
         ): Promise<boolean> {
-            const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
+            const _getDefaultPermission = (params: IGetDefaultGlobalPermissionParams) =>
                 permByUserGroupsHelper.getPermissionByUserGroups({
                     type: PermissionTypes.ATTRIBUTE,
                     action,

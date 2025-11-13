@@ -130,7 +130,8 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
             }
 
             // null is used for "all elements" of the tree (root node)
-            const rootPermission = permissionsByTreeTarget['nodeId:null'] ?? defaultPermHelper.getDefaultPermission();
+            const rootPermission =
+                permissionsByTreeTarget['nodeId:null'] ?? defaultPermHelper.getDefaultPermission({ctx});
             const computedPermissionTree = _computePermissionTree(treeContent, rootPermission, permissionsByTreeTarget);
             const nodesIdsByPermission = _getNodesIdsByPermissionFromTree(computedPermissionTree);
             nodesIdsByPermission[rootPermission].push('null'); // add the null permission info for records not linked to the tree
