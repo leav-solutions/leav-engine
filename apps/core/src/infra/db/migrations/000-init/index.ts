@@ -23,7 +23,7 @@ import {type MigrationApplicationToCreate, systemApplications} from './systemApp
 import {systemAttributes} from './systemAttributes';
 import {systemLibraries} from './systemLibraries';
 import {systemTrees} from './systemTrees';
-import {createAttributes, createLibraries, createTrees} from 'infra/db/helpers/libraryUtils';
+import {createAttributes, createLibraries, createTrees} from '../../helpers/libraryUtils';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

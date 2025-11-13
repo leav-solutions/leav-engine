@@ -4,7 +4,7 @@
 import {type IAttributeForRepo} from 'infra/attribute/attributeRepo';
 import {ActionsListEvents} from '../../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {commonAttributeData} from 'infra/db/helpers/libraryUtils';
+import {commonAttributeData} from '../../helpers/libraryUtils';
 
 const previewStatusSubFields = [
     {

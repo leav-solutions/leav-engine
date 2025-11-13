@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {commonAttributeData, type MigrationLibraryToCreate} from 'infra/db/helpers/libraryUtils';
+import {commonAttributeData, type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
 import {
     THREAD_STATUSES_TREE_ID,
     COMMENTS_LIBRARY_ID,

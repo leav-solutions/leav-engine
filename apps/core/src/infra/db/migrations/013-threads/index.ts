@@ -11,7 +11,7 @@ import {
     createLibraries,
     createTrees,
     linkLibraryAttributes,
-} from 'infra/db/helpers/libraryUtils';
+} from '../../helpers/libraryUtils';
 import {commentAttributes, commentLibrary} from './comments';
 import {threadLibrary, threadsAttributes} from './threads';
 import {statusesAttributes, statusesLibrary, threadStatusTree} from './statuses';

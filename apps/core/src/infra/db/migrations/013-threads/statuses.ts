@@ -5,7 +5,7 @@ import {
     commonAttributeData,
     type MigrationLibraryToCreate,
     type MigrationTreeToCreate,
-} from 'infra/db/helpers/libraryUtils';
+} from '../../helpers/libraryUtils';
 import {
     STATUSES_COLOR_ATTRIBUTE_ID,
     STATUSES_LABEL_ATTRIBUTE_ID,
