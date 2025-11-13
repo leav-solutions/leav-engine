@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {LIB_COLLECTION_NAME, type ILibraryRepo} from 'infra/library/libraryRepo';
+import {LIB_COLLECTION_NAME, type ILibraryRepo} from '../../library/libraryRepo';
 import {type IDbService} from '../dbService';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IAttributeForRepo, type IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IAttributeForRepo, type IAttributeRepo} from '../../attribute/attributeRepo';
 import {aql} from 'arangojs';
 import {CollectionType} from 'arangojs/collection';
-import {type ITree} from '_types/tree';
+import {type ITree} from '../../../_types/tree';
 import {type Override} from '@leav/utils';
-import {type ILibraryDbEvent} from '_types/library';
-import {getNodesCollectionName} from 'infra/tree/helpers/utils';
-import {ActionsListEvents} from '_types/actionsList';
+import {type ILibraryDbEvent} from '../../../_types/library';
+import {getNodesCollectionName} from '../../tree/helpers/utils';
+import {ActionsListEvents} from '../../../_types/actionsList';
 
 export type MigrationLibraryToCreate = Override<
     ILibraryDbEvent,
