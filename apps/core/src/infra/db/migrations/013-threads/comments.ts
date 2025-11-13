@@ -9,9 +9,9 @@ import {
     THREAD_COMMENTS_ATTRIBUTE_ID,
     THREADS_LIBRARY_ID,
 } from './constants';
-import {AttributeFormats, AttributeTypes} from '_types/attribute';
-import {type IAttributeForRepo} from 'infra/attribute/attributeRepo';
-import {LibraryBehavior} from '_types/library';
+import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
+import {LibraryBehavior} from '../../../../_types/library';
 
 export const commentAttributes: IAttributeForRepo[] = [
     {
