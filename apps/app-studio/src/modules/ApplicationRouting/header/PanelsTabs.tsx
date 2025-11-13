@@ -16,6 +16,7 @@ interface IPanelsTabsProps {
     enabled: boolean;
     workspaceId: string;
     recordId: string | undefined;
+    where: string | undefined;
     libraryId: string | null;
     panelType: string | null;
     currentPanelId: string;
@@ -26,6 +27,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     enabled,
     workspaceId,
     recordId,
+    where,
     libraryId,
     panelType,
     currentPanelId,
@@ -41,7 +43,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
         libraryId === null || panelType === null
             ? []
             : application.libraries[libraryId][panelType]
-                  .filter(panel => !panel.isStandalone)
+                  .filter(panel => !panel.isStandalone && !(where === 'slider' && panel.hideInSlider))
                   .map(panel => ({
                       key: panel.id,
                       label: localizedTranslation(panel.name, lang),

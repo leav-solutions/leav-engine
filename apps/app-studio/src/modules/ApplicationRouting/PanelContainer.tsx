@@ -73,12 +73,13 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                             libraryId={libraryId}
                             panelType={panelType}
                             recordId={recordId}
+                            where={where}
                             currentPanelId={currentPanel.id}
                             className={popupHeaderTabs}
                         />
                     </div>
                 }
-                footer={<div id={SUBMIT_BUTTONS_PORTAL} />}
+                footer={currentPanel.type === 'creationForm' ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 showCloseIcon
                 close={closeContainer}
             >
