@@ -236,9 +236,9 @@
     },
     "notifications": {
         "export_complete_title": "L’export demandé est terminé",
-        "export_complete_message": "Vous avez demander un export le {{date}}. Le processus s’est terminé correctement. Rendez vous sur le lien ci-dessous pour récupérer votre export.",
-        "export_error_title": "L’export demandé à échoué",
-        "export_error_message": "Vous avez demander un export le {{date}}. Le processus ne s’est terminé correctement. Veuillez contacter votre administrateur."
+        "export_complete_message": "Vous avez demandé un export le {{date}}. Le processus s’est terminé correctement. Rendez-vous sur le lien ci-dessous pour récupérer votre export.",
+        "export_error_title": "L’export demandé a échoué",
+        "export_error_message": "Vous avez demandé un export le {{date}}. Le processus ne s’est pas terminé correctement. Veuillez contacter votre administrateur."
     },
     "indexation": {
         "index_database": "Indexation {{library}}"
