@@ -237,7 +237,7 @@
 
     "notifications": {
         "export_complete_title": "The requested export is complete",
-        "export_complete_message": "You requested an export on {{date}}. The process completed successfully. Go to the link below to retrieve your export.",
+        "export_complete_message": "You requested an export on {{date}}. The export is ready, click the link below to retrieve it.",
         "export_error_title": "The requested export has failed",
         "export_error_message": "You requested an export on {{date}}. The process did not complete successfully. Please contact your administrator."
     },
