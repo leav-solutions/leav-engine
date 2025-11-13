@@ -747,31 +747,8 @@ const valueDomain = function ({
             );
         }
 
-        // Validate value
-        const validationErrors = await validateValue({
-            ...valueChecksParams,
-            attributeProps,
-            deps: {
-                attributeDomain,
-                recordRepo,
-                valueRepo,
-                treeRepo,
-            },
-            ctx,
-        });
-
-        if (Object.keys(validationErrors).length) {
-            // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
-            const joinRecordPayload = await _maybeCreateJoinRecord(validationErrors, attributeProps, value, ctx);
-            if (joinRecordPayload) {
-                value.payload = joinRecordPayload;
-            } else {
-                throw new ValidationError<IValue>(validationErrors);
-            }
-        }
-
         // Prepare value
-        const valuesToSave = await prepareValue({
+        const preparedValues = await prepareValue({
             ...valueChecksParams,
             deps: {
                 actionsListDomain,
@@ -781,7 +758,40 @@ const valueDomain = function ({
             ctx,
         });
 
-        const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
+        await Promise.all(
+            preparedValues.map(async preparedValue => {
+                const validationErrors = await validateValue({
+                    ...valueChecksParams,
+                    value: preparedValue,
+                    attributeProps,
+                    deps: {
+                        attributeDomain,
+                        recordRepo,
+                        valueRepo,
+                        treeRepo,
+                    },
+                    ctx,
+                });
+
+                if (Object.keys(validationErrors).length) {
+                    // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
+                    const joinRecordPayload = await _maybeCreateJoinRecord(
+                        validationErrors,
+                        attributeProps,
+                        preparedValue,
+                        ctx,
+                    );
+
+                    if (joinRecordPayload) {
+                        preparedValue.payload = joinRecordPayload;
+                    } else {
+                        throw new ValidationError<IValue>(validationErrors);
+                    }
+                }
+            }),
+        );
+
+        const {allSavedValues, areValuesIdentical} = await preparedValues.reduce(
             async (promiseAcc, valueToSave) => {
                 const acc = await promiseAcc;
                 const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
@@ -804,7 +814,7 @@ const valueDomain = function ({
 
         if (!areValuesIdentical) {
             await updateRecordLastModif(library, recordId, ctx);
-            allSavedValues.forEach(async savedValue => {
+            allSavedValues.forEach(savedValue => {
                 sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
             });
         }
@@ -969,35 +979,7 @@ const valueDomain = function ({
                             }
                         }
 
-                        // Validate value
-                        const validationErrors = await validateValue({
-                            ...{...valueChecksParams, attributeProps},
-                            deps: {
-                                attributeDomain,
-                                recordRepo,
-                                valueRepo,
-                                treeRepo,
-                            },
-                            ctx,
-                        });
-
-                        if (Object.keys(validationErrors).length) {
-                            // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
-                            const joinRecordPayload = await _maybeCreateJoinRecord(
-                                validationErrors,
-                                attributeProps,
-                                value,
-                                ctx,
-                            );
-                            if (joinRecordPayload) {
-                                value.payload = joinRecordPayload;
-                            } else {
-                                throw new ValidationError<IValue>(validationErrors);
-                            }
-                        }
-
-                        // Prepare value
-                        const valuesToSave = await prepareValue({
+                        const preparedValues = await prepareValue({
                             ...valueChecksParams,
                             deps: {
                                 actionsListDomain,
@@ -1007,7 +989,40 @@ const valueDomain = function ({
                             ctx,
                         });
 
-                        const saveResult = await valuesToSave.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
+                        await Promise.all(
+                            preparedValues.map(async preparedValue => {
+                                const validationErrors = await validateValue({
+                                    ...valueChecksParams,
+                                    value: preparedValue,
+                                    attributeProps,
+                                    deps: {
+                                        attributeDomain,
+                                        recordRepo,
+                                        valueRepo,
+                                        treeRepo,
+                                    },
+                                    ctx,
+                                });
+
+                                if (Object.keys(validationErrors).length) {
+                                    // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
+                                    const joinRecordPayload = await _maybeCreateJoinRecord(
+                                        validationErrors,
+                                        attributeProps,
+                                        preparedValue,
+                                        ctx,
+                                    );
+
+                                    if (joinRecordPayload) {
+                                        preparedValue.payload = joinRecordPayload;
+                                    } else {
+                                        throw new ValidationError<IValue>(validationErrors);
+                                    }
+                                }
+                            }),
+                        );
+
+                        const saveResult = await preparedValues.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
                             const prevAcc = await acc;
                             const savedValues =
                                 !keepEmpty && !valueToSave.payload && !!valueToSave.id_value
