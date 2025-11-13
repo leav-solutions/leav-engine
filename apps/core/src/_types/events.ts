@@ -11,7 +11,11 @@ import {type IRecord} from './record';
 import {type IValue} from './value';
 import {type IVersionProfile} from './versionProfile';
 import {type IPermission} from './permissions';
-import {type ITree} from './tree';
+import {type ITreeDbEvent, type ITree} from './tree';
+
+// Event data should be object, not string/number/boolean to avoid elasticsearch index errors like:
+// parsing_exception: Failed to parse object: expecting token of type [START_OBJECT] but found [VALUE_STRING]
+type OnlyObject<T> = T extends object ? T : never;
 
 /**
  * Maybe move all DBPayloadData types in @leav/utils type to allow event consumers outside core to use them
@@ -19,8 +23,8 @@ import {type ITree} from './tree';
  */
 export interface IDbPayloadInternal<DBPayloadAction extends EventAction> extends IDbPayload {
     action: DBPayloadAction;
-    before?: IDBPayloadData<DBPayloadAction>; // Value before the event
-    after?: IDBPayloadData<DBPayloadAction>; // Value after the event
+    before?: OnlyObject<IDBPayloadData<DBPayloadAction>>; // Value before the event
+    after?: OnlyObject<IDBPayloadData<DBPayloadAction>>; // Value after the event
 }
 
 interface IDBPayloadDataMap {
@@ -39,9 +43,9 @@ interface IDBPayloadDataMap {
     [EventAction.LIBRARY_DELETE]: ILibraryDbEvent;
     [EventAction.VERSION_PROFILE_SAVE]: IVersionProfile;
     [EventAction.VERSION_PROFILE_DELETE]: IVersionProfile;
-    [EventAction.TREE_ADD_ELEMENT]: string;
-    [EventAction.TREE_DELETE_ELEMENT]: string;
-    [EventAction.TREE_MOVE_ELEMENT]: string;
+    [EventAction.TREE_ADD_ELEMENT]: ITreeDbEvent;
+    [EventAction.TREE_DELETE_ELEMENT]: ITreeDbEvent;
+    [EventAction.TREE_MOVE_ELEMENT]: ITreeDbEvent;
     [EventAction.TREE_SAVE]: ITree;
     [EventAction.TREE_DELETE]: ITree;
     [EventAction.PERMISSION_SAVE]: IPermission;

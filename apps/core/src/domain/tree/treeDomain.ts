@@ -366,8 +366,8 @@ export default function ({
                         libraryId: record.library,
                     },
                 },
-                before: parentNodeBefore ?? null,
-                after: parentNode ?? null,
+                before: parentNodeBefore ? {parentNode: {id: parentNodeBefore}} : null,
+                after: parentNode ? {parentNode: {id: parentNode}} : null,
             },
             ctx,
         );
