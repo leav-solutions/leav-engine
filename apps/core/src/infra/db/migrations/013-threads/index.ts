@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IMigration} from '_types/migration';
+import {type IMigration} from '../../../../_types/migration';
 import {type IDbService} from '../../dbService';
 import {type ILibraryRepo} from '../../../library/libraryRepo';
 import {type IAttributeRepo} from '../../../attribute/attributeRepo';
@@ -17,8 +17,8 @@ import {threadLibrary, threadsAttributes} from './threads';
 import {statusesAttributes, statusesLibrary, threadStatusTree} from './statuses';
 import {aql} from 'arangojs';
 import {COMMENTS_LIBRARY_ID, THREADS_LIBRARY_ID} from './constants';
-import {AttributeTypes} from '_types/attribute';
-import {DISCUSSION_THREADS_ATTRIBUTE_ID} from '_constants/attributes';
+import {AttributeTypes} from '../../../../_types/attribute';
+import {DISCUSSION_THREADS_ATTRIBUTE_ID} from '../../../../_constants/attributes';
 
 interface IDeps {
     'core.infra.db.dbService': IDbService;
