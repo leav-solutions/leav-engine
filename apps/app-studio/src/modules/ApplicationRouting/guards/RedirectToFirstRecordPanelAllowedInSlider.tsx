@@ -4,7 +4,7 @@
 import {type FunctionComponent} from 'react';
 import {generatePath, Navigate, useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
-import {AbsolutePaths} from '../router/paths';
+import {RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 
 export const RedirectToFirstRecordPanelAllowedInSlider: FunctionComponent = ({children}) => {
@@ -13,7 +13,8 @@ export const RedirectToFirstRecordPanelAllowedInSlider: FunctionComponent = ({ch
 
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
-    if (!currentPanel.hideInSlider || where !== 'slider') {
+    const currentPanelShouldBeHidden = currentPanel.hideInSlider && where === 'slider';
+    if (!currentPanelShouldBeHidden) {
         return <>{children}</>;
     }
 
@@ -33,13 +34,10 @@ export const RedirectToFirstRecordPanelAllowedInSlider: FunctionComponent = ({ch
     return (
         <Navigate
             replace
-            to={generatePath(AbsolutePaths.recordPanel, {
-                workspaceId,
-                panelId,
-                recordId,
-                where,
+            to={generatePath(RelativePaths.changeLastRecordPanel, {
                 recordPanelId: firstRecordPanelAllowedInSlider.id,
             })}
+            relative="path"
         />
     );
 };

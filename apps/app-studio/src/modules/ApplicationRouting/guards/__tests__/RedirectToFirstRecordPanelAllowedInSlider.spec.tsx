@@ -181,15 +181,11 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
         render(<RedirectToFirstRecordPanelAllowedInSlider />);
 
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);
-        expect(spyGeneratePath).toHaveBeenCalledWith('/:workspaceId/:panelId/:recordId/:where/:recordPanelId/*', {
-            workspaceId,
-            panelId: currentPanelId,
-            recordId: currentRecordId,
-            where,
+        expect(spyGeneratePath).toHaveBeenCalledWith('../:recordPanelId', {
             recordPanelId: firstAllowedPanelId,
         });
 
         expect(spyNavigate).toHaveBeenCalledTimes(1);
-        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/completePath'}, {});
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/completePath', relative: 'path'}, {});
     });
 });
