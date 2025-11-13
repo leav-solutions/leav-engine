@@ -132,12 +132,12 @@ describe('Import', () => {
     describe('Import Data', () => {
         it('should throw an error if importData mutation is called with invalid arguments', async () => {
             const query = `mutation importData($file: Upload!) {
-                importExcel(file: $file)
+                importExcel(file: null)
             }`;
-            const invalidFilePath = path.join(appRootPath(), '/src/__tests__/e2e/api/import/datas/doesNotExist.xlsx');
 
-            // this will log a GraphQL query error: ENOENT: no such file or directory...
-            await expect(importFileGraphQlCall(query, invalidFilePath)).rejects.toThrow();
+            await expect(makeGraphQlCall(query, {skipLogErrors: true})).rejects.toThrow(
+                /Request failed with status code 400/,
+            );
         });
         it('should import import.test.json and verify DB state', async () => {
             const importFilePath = path.join(appRootPath(), '/src/__tests__/e2e/api/import/datas/import.test.json');
