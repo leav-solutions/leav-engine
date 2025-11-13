@@ -25,7 +25,6 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
 
     const isLibraryPanel = panelType === 'libraryPanels';
     const isFullpagePanel = !where || where === 'fullpage';
-    const avatarSize = isFullpagePanel ? 'l' : 'm';
 
     if (!enabled) {
         return null;
@@ -43,14 +42,10 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
                 <LibraryIdCard
                     libraryId={libraryId}
                     title={localizedTranslation(currentPanel.name, lang)}
-                    avatarSize={avatarSize}
+                    avatarSize="l"
                 />
             ) : (
-                <RecordIdCard
-                    libraryId={libraryId}
-                    currentRecordId={currentRecordId ?? recordId}
-                    avatarSize={avatarSize}
-                />
+                <RecordIdCard libraryId={libraryId} currentRecordId={currentRecordId ?? recordId} avatarSize="l" />
             )}
             {!isFullpagePanel && !isLibraryPanel && (
                 <ExpandCollapseCurrentPanelButton recordId={recordId} where={where} recordPanelId={recordPanelId} />

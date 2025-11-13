@@ -50,6 +50,7 @@ export const useDeactivateMassAction = ({
         () => ({
             label: t('explorer.massAction.deactivate'),
             icon: <FaTrash />,
+            deselectAll: true,
             callback: massSelectionFilter => {
                 KitModal.confirm({
                     width: '100%',

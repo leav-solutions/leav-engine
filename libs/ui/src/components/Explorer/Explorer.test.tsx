@@ -2220,6 +2220,7 @@ describe('Explorer', () => {
             // GIVEN a simple mass action
             const testMassAction = {
                 label: 'test mass action',
+                deselectAll: true,
                 icon: <FaBeer />,
                 callback: jest.fn(),
             };
@@ -2295,6 +2296,7 @@ describe('Explorer', () => {
             // GIVEN a simple mass action
             const testMassAction = {
                 label: 'test mass action',
+                deselectAll: true,
                 icon: <FaBeer />,
                 callback: jest.fn(),
             };
@@ -2378,6 +2380,7 @@ describe('Explorer', () => {
             // AND a simple mass test action
             const testMassAction = {
                 label: 'test mass action',
+                deselectAll: true,
                 icon: <FaBeer />,
                 callback: jest.fn(),
             };
@@ -2501,6 +2504,7 @@ describe('Explorer', () => {
             // AND a simple mass test action is set
             const testMassAction = {
                 label: 'test mass action',
+                deselectAll: true,
                 icon: <FaBeer />,
                 callback: jest.fn(),
             };

@@ -36,6 +36,7 @@ export const useExportMassAction = ({
         () => ({
             label: t('explorer.massAction.export'),
             icon: <FaFileExport />,
+            deselectAll: false,
             callback: massSelectionFilter => {
                 KitModal.confirm({
                     width: '100%',
@@ -55,6 +56,8 @@ export const useExportMassAction = ({
                     okText: t('global.confirm') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {
+                        const total =
+                            view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
                         try {
                             const {data, error} = await exportQuery({
                                 variables: {
@@ -70,27 +73,24 @@ export const useExportMassAction = ({
                                 (errorWithExtensions as any).extensions = graphQLError?.extensions;
                                 throw errorWithExtensions;
                             }
-                            const total =
-                                view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
+
                             KitAlert.success({
                                 showIcon: true,
                                 duration: SUCCESS_ALERT_DURATION,
-                                message: t('explorer.massAction.export_message'),
+                                message: t('explorer.massAction.export_message', {count: total}),
                                 description: t('explorer.massAction.export_description', {
-                                    count: data?.export.length,
+                                    count: total,
                                     total,
                                 }),
                                 closable: true,
                             });
                             onExport?.(massSelectionFilter, view.massSelection);
-                            // Reset selection when export is done
-                            dispatch({type: ViewSettingsActionTypes.SET_SELECTED_KEYS, payload: []});
                         } catch (e) {
                             if (e.extensions?.code === 'CUSTOM_CONFIG_ERROR') {
                                 KitAlert.error({
                                     showIcon: true,
                                     duration: ERROR_ALERT_DURATION,
-                                    message: t('error.error_occurred'),
+                                    message: t('error.error_occurred', {count: total}),
                                     description: t('explorer.massAction.export_config_error_description', {
                                         library: view.libraryId,
                                     }),
@@ -101,7 +101,7 @@ export const useExportMassAction = ({
                                     showIcon: true,
                                     duration: ERROR_ALERT_DURATION,
                                     message: t('error.error_occurred'),
-                                    description: t('explorer.massAction.export_error_description'),
+                                    description: t('explorer.massAction.export_error_description', {count: total}),
                                     closable: true,
                                 });
                             }
