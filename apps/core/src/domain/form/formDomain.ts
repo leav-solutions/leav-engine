@@ -41,7 +41,7 @@ import {
 } from '../../_types/permissions';
 import {getElementValues} from './helpers/getElementValues';
 import {mustIncludeElement} from './helpers/mustIncludeElement';
-import {baseAttributes} from '../../_constants/attributes';
+import {BASE_ATTRIBUTES} from '../../_constants/attributes';
 
 export interface IFormDomain {
     getFormsByLib({
@@ -133,7 +133,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
         ];
 
         const attributes = (await attributeDomain.getLibraryAttributes(library, ctx)).filter(
-            attr => !baseAttributes.includes(attr?.id),
+            attr => !BASE_ATTRIBUTES.includes(attr?.id),
         );
 
         const attributesElements = attributes.map((att, index): IFormElement => {
