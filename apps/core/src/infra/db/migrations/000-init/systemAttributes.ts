@@ -4,25 +4,7 @@
 import {type IAttributeForRepo} from 'infra/attribute/attributeRepo';
 import {ActionsListEvents} from '../../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-
-const commonAttributeData = {
-    system: true,
-    required: false,
-    multiple_values: false,
-    versions_conf: {versionable: false},
-    readonly: false,
-    actions_list: {
-        [ActionsListEvents.GET_VALUE]: [],
-        [ActionsListEvents.SAVE_VALUE]: [
-            {
-                id: 'validateFormat',
-                name: 'Validate Format',
-                is_system: true,
-            },
-        ],
-        [ActionsListEvents.DELETE_VALUE]: [],
-    },
-};
+import {commonAttributeData} from 'infra/db/helpers/libraryUtils';
 
 const previewStatusSubFields = [
     {

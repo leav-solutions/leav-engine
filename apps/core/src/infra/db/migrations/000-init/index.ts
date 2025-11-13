@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {CollectionType} from 'arangojs/collection';
 import * as bcrypt from 'bcryptjs';
 import {type i18n} from 'i18next';
 import {type IPermissionRepo} from 'infra/permission/permissionRepo';
@@ -14,7 +13,7 @@ import {adminsGroupId, filesAdminsGroupId} from '../../../../_constants/users';
 import {SortOrder} from '../../../../_types/list';
 import {PermissionTypes, TreeNodePermissionsActions} from '../../../../_types/permissions';
 import {type IView, ViewSizes, ViewTypes} from '../../../../_types/views';
-import {type IAttributeForRepo, type IAttributeRepo} from '../../../attribute/attributeRepo';
+import {type IAttributeRepo} from '../../../attribute/attributeRepo';
 import {type ILibraryRepo, LIB_COLLECTION_NAME} from '../../../library/libraryRepo';
 import {getEdgesCollectionName, getNodesCollectionName} from '../../../tree/helpers/utils';
 import {VIEWS_COLLECTION_NAME} from '../../../view/_types';
@@ -22,8 +21,9 @@ import {type IDbService} from '../../dbService';
 import {coreCollections, type IMigrationCoreCollection} from './coreCollections';
 import {type MigrationApplicationToCreate, systemApplications} from './systemApplications';
 import {systemAttributes} from './systemAttributes';
-import {type MigrationLibraryToCreate, systemLibraries} from './systemLibraries';
-import {type MigrationTreeToCreate, systemTrees} from './systemTrees';
+import {systemLibraries} from './systemLibraries';
+import {systemTrees} from './systemTrees';
+import {createAttributes, createLibraries, createTrees} from 'infra/db/helpers/libraryUtils';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -46,110 +46,10 @@ export default function ({
     const systemUserId = String(config.defaultUserId);
     const now = moment().unix();
 
-    const _createAttributes = async (attributes: IAttributeForRepo[], ctx: IQueryInfos) => {
-        for (const attribute of attributes) {
-            // Check if attribute already exists
-            const attributeFromDb = await attributeRepo.getAttributes({
-                params: {
-                    filters: {
-                        id: attribute.id,
-                    },
-                    strictFilters: true,
-                    withCount: false,
-                },
-                ctx,
-            });
-
-            // It already exists, move on
-            if (attributeFromDb.list.length) {
-                continue;
-            }
-
-            // Let's create it
-            await attributeRepo.createAttribute({
-                attrData: {...attribute},
-                ctx,
-            });
-        }
-    };
-
     const _createCollections = async (collections: IMigrationCoreCollection[], ctx: IQueryInfos) => {
         for (const collection of collections) {
             if (!(await dbService.collectionExists(collection.name))) {
                 await dbService.createCollection(collection.name, collection.type);
-            }
-        }
-    };
-
-    const _createLibraries = async (libraries: MigrationLibraryToCreate[], ctx: IQueryInfos) => {
-        for (const lib of libraries) {
-            // Check if library already exists
-            const libsCollec = await dbService.db.collection(LIB_COLLECTION_NAME);
-            const existingLib = await dbService.execute({
-                query: aql`
-                    FOR lib IN ${libsCollec}
-                        FILTER lib._key == ${lib._key}
-                        RETURN lib
-                `,
-                ctx,
-            });
-
-            // If not, create it
-            if (!existingLib.length) {
-                const {attributes, fullTextAttributes, ...libData} = lib;
-                // Insert in libraries collection
-                await dbService.execute({
-                    query: aql`INSERT ${libData} INTO ${libsCollec} RETURN NEW`,
-                    ctx,
-                });
-
-                // Save its attributes
-                await libraryRepo.saveLibraryAttributes({
-                    libId: lib._key,
-                    attributes,
-                    ctx,
-                });
-
-                await libraryRepo.saveLibraryFullTextAttributes({
-                    libId: lib._key,
-                    fullTextAttributes,
-                    ctx,
-                });
-            }
-
-            // Ensure collection exists for this library
-            if (!(await dbService.collectionExists(lib._key))) {
-                await dbService.createCollection(lib._key);
-            }
-        }
-    };
-
-    const _createTrees = async (trees: MigrationTreeToCreate[], ctx: IQueryInfos) => {
-        for (const tree of trees) {
-            const treeFromDb = await dbService.execute({
-                query: aql`
-                    FOR t IN core_trees
-                        FILTER t._key == ${tree._key}
-                    RETURN t._key
-                `,
-                ctx,
-            });
-
-            if (!treeFromDb.length) {
-                await dbService.execute({
-                    query: aql`INSERT ${tree} INTO core_trees RETURN NEW`,
-                    ctx,
-                });
-            }
-
-            const edgeCollecName = `core_edge_tree_${tree._key}`;
-            if (!(await dbService.collectionExists(edgeCollecName))) {
-                await dbService.createCollection(edgeCollecName, CollectionType.EDGE_COLLECTION);
-            }
-
-            const nodesCollectionName = getNodesCollectionName(tree._key);
-            if (!(await dbService.collectionExists(nodesCollectionName))) {
-                await dbService.createCollection(nodesCollectionName);
             }
         }
     };
@@ -367,9 +267,9 @@ export default function ({
     return {
         async run(ctx) {
             await _createCollections(coreCollections, ctx);
-            await _createAttributes(systemAttributes, ctx);
-            await _createLibraries(systemLibraries, ctx);
-            await _createTrees(systemTrees, ctx);
+            await createAttributes(systemAttributes, attributeRepo, ctx);
+            await createLibraries(systemLibraries, dbService, libraryRepo, ctx);
+            await createTrees(systemTrees, dbService, ctx);
             await _createUsersGroups(ctx);
             await _createUsers(ctx);
             await _createApplications(systemApplications, ctx);

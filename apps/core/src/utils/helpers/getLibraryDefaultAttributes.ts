@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {BASE_ATTRIBUTES} from '../../_constants/attributes';
 import {FilesAttributes} from '../../_types/filesManager';
 import {LibraryBehavior, USERS_LIBRARY} from '../../_types/library';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './getPreviewsAttributes';
@@ -11,7 +12,7 @@ export default (behavior: LibraryBehavior, libraryId: string): string[] => {
     };
 
     const commonAttributes = [
-        ...['id', 'created_at', 'created_by', 'modified_at', 'modified_by', 'active'],
+        ...BASE_ATTRIBUTES,
         ...(libraryCommonAttributes[libraryId] ? libraryCommonAttributes[libraryId] : []),
     ];
 
