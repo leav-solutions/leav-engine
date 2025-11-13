@@ -12,10 +12,10 @@ import {
     STATUSES_LIBRARY_ID,
     THREAD_STATUSES_TREE_ID,
 } from './constants';
-import {TreeBehavior} from '_types/tree';
-import {LibraryBehavior} from '_types/library';
-import {type IAttributeForRepo} from 'infra/attribute/attributeRepo';
-import {AttributeFormats, AttributeTypes} from '_types/attribute';
+import {TreeBehavior} from '../../../../_types/tree';
+import {LibraryBehavior} from '../../../../_types/library';
+import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
+import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 
 export const statusesAttributes: IAttributeForRepo[] = [
     {
