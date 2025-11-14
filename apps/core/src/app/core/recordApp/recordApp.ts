@@ -464,7 +464,6 @@ export default function ({
                                                 recordId: parent.record.id,
                                                 attributeId: parent.attributeId,
                                             },
-                                            userId: ctx.userId,
                                             ctx,
                                         }),
                                     ]),
@@ -498,7 +497,6 @@ export default function ({
                                     type: PermissionTypes.RECORD,
                                     applyTo: record.library,
                                     action: action as RecordPermissionsActions,
-                                    userId: ctx.userId,
                                     target: {
                                         recordId: record.id,
                                     },

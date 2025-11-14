@@ -105,7 +105,6 @@ describe('recordPermissionDomain', () => {
 
             const perm = await recordPermDomain.getRecordPermission({
                 action: RecordPermissionsActions.ACCESS_RECORD,
-                userId: '987654',
                 library: 'test_lib',
                 recordId: '123456',
                 ctx,
@@ -130,7 +129,6 @@ describe('recordPermissionDomain', () => {
 
             const perm = await recordPermDomain.getRecordPermission({
                 action: RecordPermissionsActions.ACCESS_RECORD,
-                userId: '987654',
                 library: 'test_lib',
                 recordId: '123456',
                 ctx,

@@ -39,7 +39,6 @@ export default function ({
 
         const canCreate = await libraryPermissionDomain.getLibraryPermission({
             action: LibraryPermissionsActions.CREATE_RECORD,
-            userId: ctx.userId,
             libraryId: library,
             ctx,
         });

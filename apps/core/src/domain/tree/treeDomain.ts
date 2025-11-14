@@ -380,7 +380,7 @@ export default function ({
 
             // Check permissions
             const action = isExistingTree ? AdminPermissionsActions.EDIT_TREE : AdminPermissionsActions.CREATE_TREE;
-            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
@@ -441,7 +441,7 @@ export default function ({
         async deleteTree(id, ctx) {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_TREE;
-            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
@@ -631,14 +631,12 @@ export default function ({
                         treeId,
                         action: TreeNodePermissionsActions.EDIT_CHILDREN,
                         nodeId: parentBefore.id,
-                        userId: ctx.userId,
                         ctx,
                     });
                 } else {
                     canEditSourceChildren = await treePermissionDomain.getTreePermission({
                         treeId,
                         action: TreePermissionsActions.EDIT_CHILDREN,
-                        userId: ctx.userId,
                         ctx,
                     });
                 }
@@ -649,13 +647,11 @@ export default function ({
                           treeId,
                           action: TreeNodePermissionsActions.EDIT_CHILDREN,
                           nodeId: parentTo,
-                          userId: ctx.userId,
                           ctx,
                       })
                     : await treePermissionDomain.getTreePermission({
                           treeId,
                           action: TreePermissionsActions.EDIT_CHILDREN,
-                          userId: ctx.userId,
                           ctx,
                       });
 
@@ -722,7 +718,6 @@ export default function ({
                 treeId,
                 action: TreeNodePermissionsActions.DETACH,
                 nodeId,
-                userId: ctx.userId,
                 ctx,
             });
 
@@ -761,7 +756,6 @@ export default function ({
             const isTreeAccessible = await treePermissionDomain.getTreePermission({
                 treeId,
                 action: TreePermissionsActions.ACCESS_TREE,
-                userId: ctx.userId,
                 ctx,
             });
 

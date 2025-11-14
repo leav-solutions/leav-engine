@@ -409,7 +409,6 @@ export default function ({
                 if (fileExists.totalCount && file.replace) {
                     const canEdit = await libraryPermissionDomain.getLibraryPermission({
                         action: LibraryPermissionsActions.EDIT_RECORD,
-                        userId: ctx.userId,
                         libraryId: library,
                         ctx,
                     });

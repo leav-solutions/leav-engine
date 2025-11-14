@@ -113,7 +113,6 @@ export default function ({
                 applyTo: treeId,
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 target: {nodeId: treeNode.id},
-                userId: ctx.userId,
                 ctx,
             });
 
@@ -458,7 +457,6 @@ export default function ({
                                     children.list.map(treeNode =>
                                         recordPermissionDomain.evaluateTreeValueRecordPermission({
                                             action: childrenAsRecordValuePermissionFilter.action,
-                                            userId: ctx.userId,
                                             libraryId: childrenAsRecordValuePermissionFilter.libraryId,
                                             attributeId: childrenAsRecordValuePermissionFilter.attributeId,
                                             nodeId: treeNode.id,
@@ -629,7 +627,6 @@ export default function ({
                                     type: PermissionTypes.TREE,
                                     applyTo: tree.id,
                                     action: action as TreePermissionsActions,
-                                    userId: ctx.userId,
                                     ctx,
                                 });
 
@@ -711,7 +708,6 @@ export default function ({
                                     type: PermissionTypes.TREE_NODE,
                                     applyTo: treeNode.treeId,
                                     action: action as TreeNodePermissionsActions,
-                                    userId: ctx.userId,
                                     target: {nodeId: treeNode.id},
                                     ctx,
                                 });
@@ -740,7 +736,6 @@ export default function ({
                                     type: PermissionTypes.TREE_NODE,
                                     applyTo: treeNode.treeId,
                                     action: action as TreeNodePermissionsActions,
-                                    userId: ctx.userId,
                                     target: {nodeId: treeNode.id},
                                     ctx,
                                 });
@@ -762,7 +757,6 @@ export default function ({
                         ): Promise<boolean> =>
                             recordPermissionDomain.evaluateTreeValueRecordPermission({
                                 action: RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
-                                userId: ctx.userId,
                                 libraryId: treeNode.accessRecordByDefaultPermission.libraryId,
                                 attributeId: treeNode.accessRecordByDefaultPermission.attributeId,
                                 nodeId: treeNode.id,

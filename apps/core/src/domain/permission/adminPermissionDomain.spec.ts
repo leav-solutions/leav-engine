@@ -26,7 +26,6 @@ describe('PermissionDomain', () => {
 
             const perm = await permDomain.getAdminPermission({
                 action: AdminPermissionsActions.ACCESS_ATTRIBUTES,
-                userId: '12345',
                 ctx,
             });
 

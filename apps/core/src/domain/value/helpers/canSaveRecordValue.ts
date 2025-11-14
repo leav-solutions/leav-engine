@@ -45,7 +45,6 @@ const _canSaveMetadata = async (
 
         const canUpdateField = await deps.recordAttributePermissionDomain.getRecordAttributePermission(
             permToCheck,
-            ctx.userId,
             field,
             library,
             recordId,
@@ -78,7 +77,6 @@ export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecord
     // Check permission
     const canSaveRecord = await deps.recordPermissionDomain.getRecordPermission({
         action: RecordPermissionsActions.EDIT_RECORD,
-        userId: ctx.userId,
         library,
         recordId,
         ctx,
@@ -92,7 +90,6 @@ export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecord
 
     const isAllowed = await deps.recordAttributePermissionDomain.getRecordAttributePermission(
         permToCheck,
-        ctx.userId,
         attributeProps.id,
         library,
         recordId,

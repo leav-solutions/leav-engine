@@ -114,7 +114,6 @@ export default function ({
 
         const perm = await recordAttributePermissionDomain.getRecordAttributePermission(
             RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
-            ctx.userId,
             attributeId,
             library,
             record.id,

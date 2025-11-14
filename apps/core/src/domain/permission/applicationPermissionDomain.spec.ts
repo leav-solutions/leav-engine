@@ -28,7 +28,6 @@ describe('applicationPermissionDomain', () => {
             const perm = await permDomain.getApplicationPermission({
                 action: ApplicationPermissionsActions.ACCESS_APPLICATION,
                 applicationId: 'test_app',
-                userId: '12345',
                 ctx,
             });
 

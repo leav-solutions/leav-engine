@@ -20,7 +20,6 @@ export default function ({
     const getApplicationPermission = async ({
         action,
         applicationId,
-        userId,
         ctx,
     }: IGetApplicationPermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(

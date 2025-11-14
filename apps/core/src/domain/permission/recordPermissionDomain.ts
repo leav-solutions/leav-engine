@@ -68,14 +68,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
     } = deps;
 
     return {
-        async evaluateTreeValueRecordPermission({
-            action,
-            userId,
-            libraryId,
-            attributeId,
-            nodeId,
-            ctx,
-        }): Promise<boolean> {
+        async evaluateTreeValueRecordPermission({action, libraryId, attributeId, nodeId, ctx}): Promise<boolean> {
             const attribute = (await attributeDomain.getLibraryAttributes(libraryId, ctx)).find(
                 a => a.id === attributeId,
             );
@@ -97,7 +90,6 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 {
                     type: PermissionTypes.RECORD,
                     action,
-                    userId,
                     applyTo: libraryId,
                     treeValues: {
                         [attributeId]: [nodeId],
@@ -110,14 +102,13 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                         libraryPermissionDomain.getLibraryPermission({
                             action: action as unknown as LibraryPermissionsActions,
                             libraryId,
-                            userId: ctx.userId,
                             ctx,
                         }),
                 },
                 ctx,
             );
         },
-        async getRecordPermission({action, userId, library, recordId, ctx}): Promise<boolean> {
+        async getRecordPermission({action, library, recordId, ctx}): Promise<boolean> {
             const libProps = await getCoreEntityById<ILibrary>('library', library, ctx);
 
             if (!libProps) {
@@ -133,7 +124,6 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 return libraryPermissionDomain.getLibraryPermission({
                     action: libraryPermissionAction,
                     libraryId: library,
-                    userId,
                     ctx,
                 });
             }
@@ -163,7 +153,6 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 {
                     type: PermissionTypes.RECORD,
                     action,
-                    userId,
                     applyTo: library,
                     treeValues: valuesByAttr,
                     permissions_conf: libProps.permissions_conf,
@@ -171,7 +160,6 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                         libraryPermissionDomain.getLibraryPermission({
                             action: params.action as LibraryPermissionsActions,
                             libraryId: params.applyTo,
-                            userId: params.userId,
                             ctx,
                         }),
                 },

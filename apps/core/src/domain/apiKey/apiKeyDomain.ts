@@ -100,7 +100,7 @@ export default function ({
             const isNewKey = !apiKey.id;
 
             const action = isNewKey ? AdminPermissionsActions.CREATE_API_KEY : AdminPermissionsActions.EDIT_API_KEY;
-            const canSaveApiKey = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveApiKey = await adminPermissionDomain.getAdminPermission({action, ctx});
             if (!canSaveApiKey) {
                 throw new PermissionError(action);
             }
@@ -174,7 +174,7 @@ export default function ({
             const keyProps = await this.getApiKeyProperties({id, ctx});
 
             const action = AdminPermissionsActions.DELETE_API_KEY;
-            const canDeleteApiKey = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canDeleteApiKey = await adminPermissionDomain.getAdminPermission({action, ctx});
 
             if (!canDeleteApiKey) {
                 throw new PermissionError(action);

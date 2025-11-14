@@ -133,7 +133,6 @@ export default function ({
                 !(await permissionDomain.isAllowed({
                     type: PermissionTypes.ADMIN,
                     action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
-                    userId: ctx.userId,
                     ctx,
                 }))
             ) {
@@ -146,7 +145,6 @@ export default function ({
             const isAllowed = await permissionDomain.isAllowed({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
-                userId: ctx.userId,
                 ctx,
             });
 

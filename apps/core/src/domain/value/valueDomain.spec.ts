@@ -999,7 +999,7 @@ describe('ValueDomain', () => {
                 const mockRecordAttrPermForbidDom: Mockify<IRecordAttributePermissionDomain> = {
                     getRecordAttributePermission: jest
                         .fn()
-                        .mockImplementation((a, u, attrId) => Promise.resolve(attrId !== 'meta_attribute')),
+                        .mockImplementation((a, attrId) => Promise.resolve(attrId !== 'meta_attribute')),
                 };
                 const valDomain = valueDomain({
                     ...depsBase,

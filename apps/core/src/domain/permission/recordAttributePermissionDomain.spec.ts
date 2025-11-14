@@ -100,7 +100,6 @@ describe('AttributePermissionDomain', () => {
 
             const perm = await recordAttrPermDomain.getRecordAttributePermission(
                 RecordAttributePermissionsActions.EDIT_VALUE,
-                '12345',
                 'test_attr',
                 'test_lib',
                 '987654',
@@ -134,7 +133,6 @@ describe('AttributePermissionDomain', () => {
 
             const perm = await recordAttrPermDomain.getRecordAttributePermission(
                 RecordAttributePermissionsActions.EDIT_VALUE,
-                '12345',
                 'test_attr',
                 'test_lib',
                 '987654',

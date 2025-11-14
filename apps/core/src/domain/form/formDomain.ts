@@ -98,7 +98,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
         recordId && libraryId
             ? recordAttributePermissionDomain.getRecordAttributePermission(
                   RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
-                  ctx.userId,
                   attribute,
                   libraryId,
                   recordId,
@@ -417,7 +416,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 !(await libraryPermissionDomain.getLibraryPermission({
                     libraryId: form.library,
                     action: permToCheck,
-                    userId: ctx.userId,
                     ctx,
                 }))
             ) {
@@ -474,7 +472,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 !(await libraryPermissionDomain.getLibraryPermission({
                     action: permToCheck,
                     libraryId: library,
-                    userId: ctx.userId,
                     ctx,
                 }))
             ) {

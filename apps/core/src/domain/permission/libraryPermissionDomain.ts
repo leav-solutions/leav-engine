@@ -17,12 +17,7 @@ interface IDeps {
 export default function ({
     'core.domain.permission.helpers.globalPermission': globalPermHelper,
 }: IDeps): ILibraryPermissionDomain {
-    const getLibraryPermission = async ({
-        action,
-        libraryId,
-        userId,
-        ctx,
-    }: IGetLibraryPermissionParams): Promise<boolean> =>
+    const getLibraryPermission = async ({action, libraryId, ctx}: IGetLibraryPermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.LIBRARY,

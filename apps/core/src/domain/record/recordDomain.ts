@@ -885,7 +885,6 @@ export default function ({
                 recordsToActivate.map(async recordId => {
                     const hasCreatePermission = await recordPermissionDomain.getRecordPermission({
                         action: RecordPermissionsActions.CREATE_RECORD,
-                        userId: ctx.userId,
                         library: libraryId,
                         recordId,
                         ctx,
@@ -922,7 +921,6 @@ export default function ({
                 recordsToDeactivate.map(async recordId => {
                     const hasDeletePermission = await recordPermissionDomain.getRecordPermission({
                         action: RecordPermissionsActions.DELETE_RECORD,
-                        userId: ctx.userId,
                         library: libraryId,
                         recordId,
                         ctx,

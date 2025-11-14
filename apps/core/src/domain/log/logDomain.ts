@@ -35,7 +35,6 @@ export default function ({
                     action: RecordPermissionsActions.ACCESS_RECORD,
                     recordId: filters.topic.record.id,
                     library: filters.topic.record.libraryId,
-                    userId: ctx.userId,
                     ctx,
                 });
                 if (!canAccessRecord) {

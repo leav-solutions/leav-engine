@@ -29,7 +29,6 @@ describe('TreeNodeLibraryPermissionDomain', () => {
                 action: TreeNodePermissionsActions.EDIT_CHILDREN,
                 treeId: 'test_tree',
                 libraryId: 'test_lib',
-                userId: '12345',
                 ctx,
             });
 

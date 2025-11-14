@@ -68,7 +68,7 @@ export interface IPermissionDomain {
         ctx,
     }: IGetInheritedPermissionsParams): Promise<boolean>;
 
-    isAllowed({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
+    isAllowed({type, action, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
 
     getActionsByType(params: IGetActionsByTypeParams): ILabeledPermissionsAction[];
 
@@ -184,7 +184,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         const action = AdminPermissionsActions.EDIT_PERMISSION;
         const canSavePermission = await adminPermissionDomain.getAdminPermission({
             action,
-            userId: ctx.userId,
             ctx,
         });
 
@@ -347,7 +346,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         return perm;
     };
 
-    const isAllowed = async ({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean> => {
+    const isAllowed = async ({type, action, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean> => {
         let perm: boolean;
 
         switch (type) {
@@ -358,7 +357,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
 
                 perm = await recordPermissionDomain.getRecordPermission({
                     action: action as RecordPermissionsActions,
-                    userId,
                     library: applyTo,
                     recordId: target.recordId,
                     ctx,
@@ -386,7 +384,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
 
                 perm = await recordAttributePermissionDomain.getRecordAttributePermission(
                     action as RecordAttributePermissionsActions,
-                    userId,
                     target.attributeId,
                     applyTo,
                     target.recordId,
@@ -399,7 +396,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await libraryPermissionDomain.getLibraryPermission({
                     action,
                     libraryId: applyTo,
-                    userId,
                     ctx,
                 });
                 break;
@@ -416,7 +412,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 action = action as AdminPermissionsActions;
                 perm = await adminPermissionDomain.getAdminPermission({
                     action,
-                    userId,
                     ctx,
                 });
                 break;
@@ -425,7 +420,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await treePermissionDomain.getTreePermission({
                     action,
                     treeId: applyTo,
-                    userId,
                     ctx,
                 });
                 break;
@@ -438,7 +432,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
 
                 perm = await treeNodePermissionDomain.getTreeNodePermission({
                     action: action as TreeNodePermissionsActions,
-                    userId,
                     treeId: applyTo,
                     nodeId: target.nodeId,
                     ctx,
@@ -449,7 +442,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
 
                 perm = await treeLibraryPermissionDomain.getTreeLibraryPermission({
                     action: action as TreeNodePermissionsActions,
-                    userId,
                     treeId,
                     libraryId,
                     ctx,
@@ -460,7 +452,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await applicationPermissionDomain.getApplicationPermission({
                     action,
                     applicationId: applyTo,
-                    userId,
                     ctx,
                 });
                 break;

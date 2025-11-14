@@ -28,7 +28,6 @@ describe('LibraryPermissionDomain', () => {
             const perm = await permDomain.getLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS_RECORD,
                 libraryId: 'test_tree',
-                userId: '12345',
                 ctx,
             });
 

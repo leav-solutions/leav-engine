@@ -55,7 +55,6 @@ export default function ({
         async saveSettings({settings, ctx}) {
             const canSave = await adminPermissionDomain.getAdminPermission({
                 action: AdminPermissionsActions.EDIT_GLOBAL_SETTINGS,
-                userId: ctx.userId,
                 ctx,
             });
 

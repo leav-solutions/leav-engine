@@ -422,7 +422,6 @@ const valueDomain = function ({
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.EDIT_RECORD,
-            userId: ctx.userId,
             library,
             recordId,
             ctx,
@@ -434,7 +433,6 @@ const valueDomain = function ({
 
         const isAllowedToDelete = await recordAttributePermissionDomain.getRecordAttributePermission(
             RecordAttributePermissionsActions.EDIT_VALUE,
-            ctx.userId,
             attribute,
             library,
             recordId,

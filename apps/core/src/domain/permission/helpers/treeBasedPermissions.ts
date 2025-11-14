@@ -90,7 +90,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         params: IGetTreeBasedPermissionParams,
         ctx: IQueryInfos,
     ): Promise<boolean> => {
-        const {type, action, userId, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
+        const {type, action, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
 
         const userGroupsPaths = !!ctx.groupsId
             ? await Promise.all(
@@ -105,7 +105,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             : [];
 
         if (!permissions_conf.permissionTreeAttributes.length) {
-            return getDefaultPermission({action, type, applyTo, userId, userGroups: userGroupsPaths, ctx});
+            return getDefaultPermission({action, type, applyTo, userGroups: userGroupsPaths, ctx});
         }
 
         const treePerms = await Promise.all(
@@ -120,7 +120,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                     permTreeId: permTreeAttrProps.linked_tree,
                     permTreeValues: treeValues[permTreeAttr],
                     getDefaultGlobalPermission: () =>
-                        getDefaultPermission({action, type, applyTo, userId, userGroups: userGroupsPaths, ctx}),
+                        getDefaultPermission({action, type, applyTo, userGroups: userGroupsPaths, ctx}),
                     ctx,
                 });
             }),

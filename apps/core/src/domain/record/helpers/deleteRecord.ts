@@ -38,7 +38,6 @@ export default function ({
         // Check permission
         const canDelete = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.DELETE_RECORD,
-            userId: ctx.userId,
             library,
             recordId: id,
             ctx,

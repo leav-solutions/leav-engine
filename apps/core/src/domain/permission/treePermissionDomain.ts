@@ -16,7 +16,7 @@ interface IDeps {
 export default function ({
     'core.domain.permission.helpers.globalPermission': globalPermHelper,
 }: IDeps): ITreePermissionDomain {
-    const getTreePermission = async ({action, treeId, userId, ctx}: IGetTreePermissionParams): Promise<boolean> =>
+    const getTreePermission = async ({action, treeId, ctx}: IGetTreePermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.TREE,

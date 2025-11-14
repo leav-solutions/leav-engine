@@ -270,7 +270,6 @@ export default function ({
                                     type: PermissionTypes.APPLICATION,
                                     applyTo: appData.id,
                                     action: action as ApplicationPermissionsActions,
-                                    userId: ctx.userId,
                                     ctx,
                                 });
 
@@ -380,7 +379,6 @@ export default function ({
                             type: PermissionTypes.APPLICATION,
                             action: ApplicationPermissionsActions.ACCESS_APPLICATION,
                             applyTo: application.id,
-                            userId: payload.userId,
                             ctx: req.ctx,
                         });
 
