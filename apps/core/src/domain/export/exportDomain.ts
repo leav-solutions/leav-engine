@@ -14,7 +14,7 @@ import {type i18n} from 'i18next';
 import {pick, set} from 'lodash';
 import path from 'path';
 import {type IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
+import * as crypto from 'node:crypto';
 import type * as Config from '../../_types/config';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
@@ -299,7 +299,7 @@ export default function ({
             const {attributes, columnLabels} = await _extractAttributesAndColumnsFromProfile(profile, library, ctx);
 
             if (typeof task?.id === 'undefined') {
-                const newTaskId = uuidv4();
+                const newTaskId = crypto.randomUUID();
 
                 logger.debug(`Creating export task "${newTaskId}" for library "${library}"`);
                 await tasksManager.createTask(

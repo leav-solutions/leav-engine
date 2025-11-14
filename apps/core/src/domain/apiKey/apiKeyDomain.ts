@@ -9,7 +9,6 @@ import {type i18n} from 'i18next';
 import {type IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
 import dayjs from 'dayjs';
 import {type IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
 import {type IApiKey, type IGetCoreApiKeysParams} from '_types/apiKey';
 import {type IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../../errors/AuthenticationError';
@@ -18,6 +17,7 @@ import {Errors} from '../../_types/errors';
 import {type IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IConfig} from '../../_types/config';
+import * as crypto from 'node:crypto';
 
 export interface IApiKeyDomain {
     getApiKeys(params: {params?: IGetCoreApiKeysParams; ctx: IQueryInfos}): Promise<IList<IApiKey>>;
@@ -133,7 +133,7 @@ export default function ({
 
             let keyString: string;
             if (isNewKey) {
-                keyString = uuidv4();
+                keyString = crypto.randomUUID();
                 dataToSave.key = await _hashApiKey(keyString);
                 dataToSave.createdAt = now;
                 dataToSave.createdBy = modifier;
