@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {ActionsListIOTypes, type IActionsListFunction, type IActionsListFunctionResult} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 import cloneDeep from 'lodash/cloneDeep';
@@ -35,7 +35,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 name: 'universal',
                 type: 'string',
                 description:
-                    'Date format for every languages. If "localized" parameter is defined, this parameter is ignored. Available formats: https://momentjs.com/docs/#/displaying/format/.',
+                    'Date format for every languages. If "localized" parameter is defined, this parameter is ignored. Available formats: https://day.js.org/docs/en/display/format',
                 required: false,
                 helper_value: 'DD/MM/YYYY HH:mm:ss',
             },
@@ -67,7 +67,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 }
 
                 if (!localized && universal) {
-                    elementValue.payload = moment.unix(numberVal).format(universal); // TODO: replace moment by dayjs
+                    elementValue.payload = dayjs.unix(numberVal).format(universal);
                     return elementValue;
                 }
 

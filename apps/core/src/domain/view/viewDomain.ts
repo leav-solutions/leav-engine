@@ -4,7 +4,7 @@
 import {type IValidateHelper} from 'domain/helpers/validate';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IViewRepo} from 'infra/view/_types';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {type IUtils} from 'utils/utils';
 import {type IList} from '_types/list';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -84,7 +84,7 @@ export default function ({
                 }
             }
 
-            const now = moment().unix();
+            const now = dayjs().unix();
 
             const viewToSave: IView = {
                 ...view,

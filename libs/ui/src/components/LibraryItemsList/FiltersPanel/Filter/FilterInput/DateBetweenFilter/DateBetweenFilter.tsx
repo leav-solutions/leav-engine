@@ -26,7 +26,7 @@ const DateBetweenFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
         updateFilterValue({...filter.value, value: {from: String(dateFrom.unix()), to: String(dateTo.unix())}});
     };
 
-    const momentValue: [dayjs.Dayjs, dayjs.Dayjs] = dateRangeValue
+    const dayjsRange: [dayjs.Dayjs, dayjs.Dayjs] = dateRangeValue
         ? [dayjs(Number(dateRangeValue.from) * 1000), dayjs(Number(dateRangeValue.to) * 1000)]
         : null;
 
@@ -35,7 +35,7 @@ const DateBetweenFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
             popupStyle={{background: themeVars.defaultBg}}
             disabled={!filter.active}
             onChange={_handleChange}
-            value={momentValue}
+            value={dayjsRange}
         />
     );
 };

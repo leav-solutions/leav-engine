@@ -5,7 +5,7 @@ import {EventAction} from '@leav/utils';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {type IRecordRepo} from 'infra/record/recordRepo';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {CORE_IN_CREATION_BY, type IRecord} from '../../../_types/record';
@@ -29,9 +29,9 @@ export default function ({
 }: IDeps): CreateRecordHelper {
     return async ({library, active, ctx}) => {
         const recordData = {
-            created_at: moment().unix(),
+            created_at: dayjs().unix(),
             created_by: String(ctx.userId),
-            modified_at: moment().unix(),
+            modified_at: dayjs().unix(),
             modified_by: String(ctx.userId),
             active,
             ...(!active && {[CORE_IN_CREATION_BY]: String(ctx.userId)}),

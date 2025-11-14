@@ -7,7 +7,7 @@ import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomai
 import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {type i18n} from 'i18next';
 import {type IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import {type IApiKey, type IGetCoreApiKeysParams} from '_types/apiKey';
@@ -112,16 +112,16 @@ export default function ({
 
             const defaultParams: Partial<IApiKey> = {
                 label: '',
-                createdAt: moment().unix(),
+                createdAt: dayjs().unix(),
                 createdBy: String(ctx.userId),
-                modifiedAt: moment().unix(),
+                modifiedAt: dayjs().unix(),
                 modifiedBy: String(ctx.userId),
                 expiresAt: null,
                 userId: null,
             };
 
             const modifier = String(ctx.userId);
-            const now = moment().unix();
+            const now = dayjs().unix();
 
             const {key, ...inputApiKeyData} = apiKey; // NEVER save the key from user input
 

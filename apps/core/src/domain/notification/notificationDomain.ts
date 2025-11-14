@@ -5,7 +5,7 @@ import {logger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {type INotificationChannel, type ICreateNotification, type INotification} from '_types/notification';
 import {type IQueryInfos} from '_types/queryInfos';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export interface INotificationDomain {
     createNotification(notification: ICreateNotification, ctx: IQueryInfos): Promise<void>;
@@ -71,7 +71,7 @@ export default function ({
                 );
 
                 const notifications: INotification[] = notification.recipients.userIds.map(userId => ({
-                    date: moment().unix(),
+                    date: dayjs().unix(),
                     recipientUserId: userId,
                     content: notification.content,
                 }));

@@ -21,7 +21,7 @@ import {type IPubSubNotificationData} from '_types/eventsManager';
 import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import moment from 'moment/moment';
+import dayjs from 'dayjs';
 
 describe('Export', () => {
     const exportLibName = 'export_lib';
@@ -211,8 +211,8 @@ describe('Export', () => {
                             exportLibName,
                             recordId1,
                             toCleanJSON({
-                                from: moment('1987-06-07 12:00:00').unix(),
-                                to: moment('1987-06-09 12:00:00').unix(),
+                                from: dayjs('1987-06-07 12:00:00').unix(),
+                                to: dayjs('1987-06-09 12:00:00').unix(),
                             }),
                         );
                         await gqlSaveValue(
@@ -220,8 +220,8 @@ describe('Export', () => {
                             exportLibName,
                             recordId2,
                             toCleanJSON({
-                                from: moment('1987-06-07 12:00:00').unix(),
-                                to: moment('1987-06-09 12:00:00').unix(),
+                                from: dayjs('1987-06-07 12:00:00').unix(),
+                                to: dayjs('1987-06-09 12:00:00').unix(),
                             }),
                         );
                         break;

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IRecordRepo} from 'infra/record/recordRepo';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {type IUtils} from 'utils/utils';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IRecord} from '_types/record';
@@ -27,7 +27,7 @@ export default function ({
             libraryId: library,
             recordData: {
                 id: recordId,
-                modified_at: moment().unix(),
+                modified_at: dayjs().unix(),
                 modified_by: String(ctx.userId),
             },
             ctx,

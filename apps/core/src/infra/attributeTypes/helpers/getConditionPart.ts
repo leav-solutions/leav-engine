@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, type AqlLiteral, literal, type GeneratedAqlQuery} from 'arangojs/aql';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {AttributeFormats, type IAttribute} from '../../../_types/attribute';
 import {AttributeCondition, type IDateFilterValue} from '../../../_types/record';
 
@@ -77,13 +77,13 @@ export default function (): GetConditionPart {
                             "days"
                         ) == true`;
             case AttributeCondition.NEXT_MONTH: {
-                const now = moment().unix();
-                const nextMonth = moment().add(31, 'days').unix();
+                const now = dayjs().unix();
+                const nextMonth = dayjs().add(31, 'days').unix();
                 return aql`(${valueField} >= ${now} AND ${valueField} <=${nextMonth})`;
             }
             case AttributeCondition.LAST_MONTH: {
-                const now = moment().unix();
-                const lastMonth = moment().subtract(31, 'days').unix();
+                const now = dayjs().unix();
+                const lastMonth = dayjs().subtract(31, 'days').unix();
                 return aql`(${valueField} >= ${lastMonth} AND ${valueField} <=${now})`;
             }
             case AttributeCondition.START_ON:

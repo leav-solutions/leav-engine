@@ -10,7 +10,7 @@ import mergeWith from 'lodash/mergeWith';
 import partialRight from 'lodash/partialRight';
 import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import os from 'os';
 import pathLib from 'path';
 import {type ActionsListConfig} from '_types/actionsList';
@@ -265,10 +265,10 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         getDefaultActionsList,
         getLibraryDefaultAttributes,
         timestampToDate(t) {
-            return moment.unix(Number(t)).toDate();
+            return dayjs.unix(Number(t)).toDate();
         },
         dateToTimestamp(d) {
-            return moment(d).unix();
+            return dayjs(d).unix();
         },
         isStandardAttribute(attribute) {
             return attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
