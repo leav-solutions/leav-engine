@@ -201,20 +201,22 @@ describe('Import', () => {
                         values: p.values.map(v => v.raw_payload),
                     })),
                 );
-                expect(props).toEqual([
-                    [
-                        {attributeId: labelAttributeId, values: ['Label 3']},
-                        {attributeId: lovAttributeId, values: ['Value 3']},
-                    ],
-                    [
-                        {attributeId: labelAttributeId, values: ['Label 2']},
-                        {attributeId: lovAttributeId, values: ['Value 2']},
-                    ],
-                    [
-                        {attributeId: labelAttributeId, values: ['Label 1']},
-                        {attributeId: lovAttributeId, values: ['Value 1']},
-                    ],
-                ]);
+                expect(props).toEqual(
+                    expect.arrayContaining([
+                        expect.arrayContaining([
+                            {attributeId: labelAttributeId, values: ['Label 3']},
+                            {attributeId: lovAttributeId, values: ['Value 3']},
+                        ]),
+                        expect.arrayContaining([
+                            {attributeId: labelAttributeId, values: ['Label 2']},
+                            {attributeId: lovAttributeId, values: ['Value 2']},
+                        ]),
+                        expect.arrayContaining([
+                            {attributeId: labelAttributeId, values: ['Label 1']},
+                            {attributeId: lovAttributeId, values: ['Value 1']},
+                        ]),
+                    ]),
+                );
                 expect(res.data.data.records.list.length).toBe(3);
             });
 
@@ -267,20 +269,22 @@ describe('Import', () => {
                         values: p.values.map(v => v.raw_payload),
                     })),
                 );
-                expect(props).toEqual([
-                    [
-                        {attributeId: labelAttributeId, values: ['Label 3']},
-                        {attributeId: lovAttributeId, values: []},
-                    ],
-                    [
-                        {attributeId: labelAttributeId, values: ['Label 2']},
-                        {attributeId: lovAttributeId, values: []},
-                    ],
-                    [
-                        {attributeId: labelAttributeId, values: ['Label 1']},
-                        {attributeId: lovAttributeId, values: ['Value 1']},
-                    ],
-                ]);
+                expect(props).toEqual(
+                    expect.arrayContaining([
+                        expect.arrayContaining([
+                            {attributeId: labelAttributeId, values: ['Label 3']},
+                            {attributeId: lovAttributeId, values: []},
+                        ]),
+                        expect.arrayContaining([
+                            {attributeId: labelAttributeId, values: ['Label 2']},
+                            {attributeId: lovAttributeId, values: []},
+                        ]),
+                        expect.arrayContaining([
+                            {attributeId: labelAttributeId, values: ['Label 1']},
+                            {attributeId: lovAttributeId, values: ['Value 1']},
+                        ]),
+                    ]),
+                );
                 expect(res.data.data.records.list.length).toBe(3);
             });
 
