@@ -215,6 +215,7 @@ export async function gqlSaveAttribute(params: {
     linkedTree?: string;
     multipleValues?: boolean;
     reverseLink?: string;
+    unique?: boolean;
     actionsList?: ActionsListConfig;
     required?: boolean;
 }) {
@@ -230,6 +231,7 @@ export async function gqlSaveAttribute(params: {
         linkedLibrary,
         linkedTree,
         multipleValues,
+        unique,
         reverseLink,
         actionsList,
         required,
@@ -290,6 +292,7 @@ export async function gqlSaveAttribute(params: {
                 multiple_values: ${multipleValues ? 'true' : 'false'},
                 actions_list: ${actionsList ? _convertActionsList(actionsList) : 'null'}
                 required: ${required ? 'true' : 'false'}
+                unique: ${unique ? 'true' : 'false'}
             }
         ) { id }
     }`;

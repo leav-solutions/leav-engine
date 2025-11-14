@@ -22,6 +22,7 @@ describe('Values', () => {
     const attrAdvancedReverseLinkToSimpleLinkName = 'values_attribute_test_adv_reverse_link_to_simple_link';
     const attrTreeName = 'values_attribute_test_tree';
     const attrDateRangeName = 'test_attr_date_range';
+    const attrUniqueWithLowercaseName = 'values_attribute_test_unique_lowercase';
 
     let recordId: string;
     let recordIdBatch: string;
@@ -167,6 +168,20 @@ describe('Values', () => {
             label: 'Test attr date range',
         });
 
+        await gqlSaveAttribute({
+            id: attrUniqueWithLowercaseName,
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.TEXT,
+            label: 'Test attr simple unique ',
+            unique: true,
+            actionsList: {
+                saveValue: [
+                    {id: 'validateFormat', name: 'validateFormat'},
+                    {id: 'toLowercase', name: 'toLowercase'},
+                ],
+            },
+        });
+
         // Create library to use in tree
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {id: "${treeLibName}", label: {en: "Test tree lib"}}) { id }
@@ -207,7 +222,8 @@ describe('Values', () => {
                         "${attrAdvancedReverseLinkToSimpleLinkName}",
                         "${attrSimpleExtendedName}",
                         "${attrTreeName}",
-                        "${attrDateRangeName}"
+                        "${attrDateRangeName}",
+                        "${attrUniqueWithLowercaseName}"
                     ]
                 }) { id }
             }`);
@@ -301,6 +317,36 @@ describe('Values', () => {
                     }
                 }
           }`),
+        ).rejects.toThrow(/This value has already been registered"/);
+    });
+
+    test('Save same value once prepared on unique attribute', async () => {
+        await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordUniqueId}",
+                    attribute: "${attrUniqueWithLowercaseName}",
+                    value: {payload: "test@mail.com"}) {
+                        id_value
+                        ... on Value {
+                            payload
+                        }
+                    }
+            }`);
+
+        await expect(
+            makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrUniqueWithLowercaseName}",
+                    value: {payload: "test@MAIL.com"}) {
+                        id_value
+                        ... on Value {
+                            payload
+                        }
+                    }
+            }`),
         ).rejects.toThrow(/This value has already been registered"/);
     });
 
