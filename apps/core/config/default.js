@@ -108,7 +108,18 @@ module.exports = {
         default: process.env.LANG_DEFAULT || 'en',
     },
     permissions: {
-        default: true,
+        everybody: {
+            default: true,
+            admin: {
+                default: false,
+            },
+            application: {
+                admin_application: false,
+            },
+        },
+        adminGroup: {
+            default: true,
+        },
         enableCache: envToBool(process.env.PERMISSIONS_ENABLE_CACHE, true),
     },
     amqp: {

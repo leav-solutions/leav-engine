@@ -43,6 +43,7 @@ import {
     type IIsAllowedParams,
     type PermByActionsRes,
 } from './_types';
+import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
 
 export interface IPermissionDomain {
     savePermission(permData: IPermission, ctx: IQueryInfos): Promise<IPermission>;
@@ -86,6 +87,7 @@ export interface IPermissionDomainDeps {
     'core.domain.permission.treeNode': ITreeNodePermissionDomain;
     'core.domain.permission.treeLibrary': ITreeLibraryPermissionDomain;
     'core.domain.permission.application': IApplicationPermissionDomain;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.permission': IPermissionRepo;
     'core.infra.cache.cacheService': ICachesService;
@@ -106,6 +108,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         'core.domain.permission.treeNode': treeNodePermissionDomain,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain,
         'core.domain.permission.application': applicationPermissionDomain,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.domain.eventsManager': eventsManagerDomain,
         'core.infra.permission': permissionRepo,
         'core.infra.cache.cacheService': cacheService,
@@ -222,8 +225,16 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         });
 
         return actions.reduce((actionsPerms, action) => {
+            const forcedAdminDefaultPermission = defaultPermHelper.getAdminDefaultPermissionOrNull({
+                type,
+                action,
+                userGroups: [[{id: usersGroupId}]],
+                ctx,
+            });
             actionsPerms[action] =
-                perms !== null && typeof perms.actions[action] !== 'undefined' ? perms.actions[action] : null;
+                perms !== null && typeof perms.actions[action] !== 'undefined'
+                    ? (perms.actions[action] ?? forcedAdminDefaultPermission)
+                    : forcedAdminDefaultPermission;
 
             return actionsPerms;
         }, {});

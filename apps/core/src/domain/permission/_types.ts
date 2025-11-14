@@ -94,11 +94,8 @@ export interface IGetApplicationPermissionParams {
 }
 
 export interface IGetDefaultGlobalPermissionParams extends IGetDefaultPermissionParams {
-    type?: PermissionTypes;
     applyTo?: string;
     userId?: string;
-    userGroups?: TreePath[];
-    action?: PermissionsActions;
 }
 
 export type GetDefaultGlobalPermission = (params: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;

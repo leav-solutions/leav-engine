@@ -3,6 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Options} from 'amqplib';
 import {type IKeyValue} from './shared';
+import {
+    type PermissionsActions,
+    type AdminPermissionsActions,
+    type ApplicationPermissionsActions,
+    type AttributePermissionsActions,
+    type LibraryPermissionsActions,
+    type PermissionTypes,
+    type RecordAttributePermissionsActions,
+    type RecordPermissionsActions,
+    type TreeNodePermissionsActions,
+    type TreePermissionsActions,
+} from './permissions';
 
 export interface IConfig {
     coreMode: CoreMode;
@@ -149,8 +161,26 @@ export interface ILang {
     default: string;
 }
 
-export interface IPermissions {
+type IPermissionsByActions<PermissionActions extends PermissionsActions> = {[P in PermissionActions]?: boolean} & {
+    default?: boolean;
+};
+
+interface IPermissionsByTypesAndActions {
     default: boolean;
+    [PermissionTypes.ADMIN]?: IPermissionsByActions<AdminPermissionsActions>;
+    [PermissionTypes.APPLICATION]?: IPermissionsByActions<ApplicationPermissionsActions>;
+    [PermissionTypes.ATTRIBUTE]?: IPermissionsByActions<AttributePermissionsActions>;
+    [PermissionTypes.LIBRARY]?: IPermissionsByActions<LibraryPermissionsActions>;
+    [PermissionTypes.RECORD]?: IPermissionsByActions<RecordPermissionsActions>;
+    [PermissionTypes.RECORD_ATTRIBUTE]?: IPermissionsByActions<RecordAttributePermissionsActions>;
+    [PermissionTypes.TREE]?: IPermissionsByActions<TreePermissionsActions>;
+    [PermissionTypes.TREE_NODE]?: IPermissionsByActions<TreeNodePermissionsActions>;
+    [PermissionTypes.TREE_LIBRARY]?: IPermissionsByActions<TreeNodePermissionsActions>;
+}
+
+export interface IPermissions {
+    everybody: IPermissionsByTypesAndActions;
+    adminGroup: IPermissionsByTypesAndActions;
     enableCache: boolean;
 }
 

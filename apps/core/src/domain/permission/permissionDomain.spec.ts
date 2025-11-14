@@ -47,6 +47,7 @@ const depsBase: ToAny<IPermissionDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.permission': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
     translator: {},
     config: {},
 };
