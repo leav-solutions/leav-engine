@@ -5,7 +5,7 @@ import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
 import {type i18n} from 'i18next';
 import {type IPermissionRepo} from 'infra/permission/permissionRepo';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {type IConfig} from '_types/config';
 import {type IMigration} from '_types/migration';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -44,7 +44,7 @@ export default function ({
 }: IDeps = {}): IMigration {
     const adminUserId = '1';
     const systemUserId = String(config.defaultUserId);
-    const now = moment().unix();
+    const now = dayjs().unix();
 
     const _createCollections = async (collections: IMigrationCoreCollection[], ctx: IQueryInfos) => {
         for (const collection of collections) {

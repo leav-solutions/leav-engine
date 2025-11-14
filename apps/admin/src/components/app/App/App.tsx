@@ -36,6 +36,8 @@ import UserContext from '../../shared/UserContext';
 import {type IUserContext} from '../../shared/UserContext/UserContext';
 import Home from '../Home';
 import MessagesDisplay from '../MessagesDisplay';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 
 const App = (): JSX.Element => {
     const {t, i18n} = useTranslation();
@@ -72,6 +74,10 @@ const App = (): JSX.Element => {
 
     const currentApp = applicationData?.applications?.list?.[0];
     const globalSettings = globalSettingsData?.globalSettings;
+
+    useEffect(() => {
+        dayjs.extend(duration);
+    }, []);
 
     useEffect(() => {
         if (!globalSettings || !currentApp) {

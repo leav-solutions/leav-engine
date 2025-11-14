@@ -8,7 +8,7 @@ import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDo
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
 import {type IValueRepo} from 'infra/value/valueRepo';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IAttribute} from '../../../_types/attribute';
 import {type ISaveValue, type IValue, type IValueVersion} from '../../../_types/value';
@@ -73,11 +73,11 @@ export default async (
 
     const valueToSave = {
         ...value,
-        modified_at: moment().unix(),
+        modified_at: dayjs().unix(),
     };
 
     if (!valueExists) {
-        valueToSave.created_at = moment().unix();
+        valueToSave.created_at = dayjs().unix();
     }
 
     let reverseLink: IAttribute;

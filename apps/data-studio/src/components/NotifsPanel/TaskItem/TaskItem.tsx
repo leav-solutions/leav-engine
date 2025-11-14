@@ -4,13 +4,13 @@
 import {DeleteOutlined, DownloadOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
 import {Button, List, Popconfirm, Progress, Space, Tooltip, Typography} from 'antd';
-import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {isCompletedTask, isExceptionTask, localizedTranslation} from 'utils';
 import {TaskStatus} from '_gqlTypes/globalTypes';
 import {getFileUrl} from '../../../utils';
 import {type INotif} from '../NotifsPanel';
+import dayjs from 'dayjs';
 
 const WrapperProgress = styled.div<{$isCanceled: boolean}>`
     & .ant-progress-text {
@@ -19,7 +19,7 @@ const WrapperProgress = styled.div<{$isCanceled: boolean}>`
 `;
 
 const _getTaskDuration = (startedAt: number, completedAt: number): string => {
-    const d = moment.duration(moment(completedAt).diff(moment(startedAt)));
+    const d = dayjs.duration(dayjs(completedAt).diff(dayjs(startedAt)));
     return `${d.hours() + 'h'} ${d.minutes() + 'm'} ${d.seconds() + 's'}`;
 };
 

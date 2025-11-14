@@ -7,10 +7,10 @@ import {Table, Progress, Icon} from 'semantic-ui-react';
 import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {TaskStatus} from '_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
-import moment from 'moment';
 import {type Column} from '../Tasks/Tasks';
 import useLang from 'hooks/useLang';
 import {localizedTranslation} from '@leav/utils';
+import dayjs from 'dayjs';
 
 interface ITasksListProps {
     striped?: boolean;
@@ -23,7 +23,7 @@ interface ITasksListProps {
 
 const _getTaskDuration = (startedAt: number, completedAt: number): string => {
     const d =
-        !startedAt || !completedAt ? moment.duration(0) : moment.duration(moment(completedAt).diff(moment(startedAt)));
+        !startedAt || !completedAt ? dayjs.duration(0) : dayjs.duration(dayjs(completedAt).diff(dayjs(startedAt)));
 
     return `${d.hours() + 'h'} ${d.minutes() + 'm'} ${d.seconds() + 's'}`;
 };

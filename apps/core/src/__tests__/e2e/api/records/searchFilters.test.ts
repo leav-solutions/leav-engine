@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {
@@ -478,25 +478,25 @@ describe('searchFilters', () => {
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdYesterday,
-                    String(moment().subtract(1, 'days').unix()), // yesterday
+                    String(dayjs().subtract(1, 'days').unix()), // yesterday
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdTomorrow,
-                    String(moment().add(1, 'days').unix()), // tomorrow
+                    String(dayjs().add(1, 'days').unix()), // tomorrow
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdNextMonth,
-                    String(moment().add(29, 'days').unix()), // next month (= next 31 days)
+                    String(dayjs().add(29, 'days').unix()), // next month (= next 31 days)
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdLastMonth,
-                    String(moment().subtract(29, 'days').unix()), // last month (= last 31 days)
+                    String(dayjs().subtract(29, 'days').unix()), // last month (= last 31 days)
                 );
             });
 
@@ -750,21 +750,21 @@ describe('searchFilters', () => {
                     dateRangeAttributeId,
                     libraryId,
                     recordId1,
-                    toCleanJSON({from: moment('1987-06-07 12:00:00').unix(), to: moment('1987-06-09 12:00:00').unix()}),
+                    toCleanJSON({from: dayjs('1987-06-07 12:00:00').unix(), to: dayjs('1987-06-09 12:00:00').unix()}),
                 );
 
                 await gqlSaveValue(
                     dateRangeAttributeId,
                     libraryId,
                     recordId2,
-                    toCleanJSON({from: moment('2021-12-20 12:00:00').unix(), to: moment('2021-12-20 16:00:00').unix()}),
+                    toCleanJSON({from: dayjs('2021-12-20 12:00:00').unix(), to: dayjs('2021-12-20 16:00:00').unix()}),
                 );
 
                 await gqlSaveValue(
                     dateRangeAttributeId,
                     libraryId,
                     recordId3,
-                    toCleanJSON({from: moment('2021-12-25 12:00:00').unix(), to: moment('2021-12-25 16:00:00').unix()}),
+                    toCleanJSON({from: dayjs('2021-12-25 12:00:00').unix(), to: dayjs('2021-12-25 16:00:00').unix()}),
                 );
             });
 
@@ -775,7 +775,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
-                            value: "${moment('1987-06-08 12:00:00').unix()}"
+                            value: "${dayjs('1987-06-08 12:00:00').unix()}"
                         }]) {
                             list {id}
                         }
@@ -794,7 +794,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.START_ON},
-                            value: "${moment('1987-06-07 08:00:00').unix()}"
+                            value: "${dayjs('1987-06-07 08:00:00').unix()}"
                         }]) {
                             list {id}
                         }
@@ -813,7 +813,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.START_BEFORE},
-                            value: "${moment('1987-06-10 08:00:00').unix()}"
+                            value: "${dayjs('1987-06-10 08:00:00').unix()}"
                         }]) {
                             list {id}
                         }
@@ -832,7 +832,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.START_AFTER},
-                            value: "${moment('2021-12-19 08:00:00').unix()}"
+                            value: "${dayjs('2021-12-19 08:00:00').unix()}"
                         }]) {
                             list {id}
                         }
@@ -852,7 +852,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.END_ON},
-                            value: "${moment('1987-06-09 08:00:00').unix()}"
+                            value: "${dayjs('1987-06-09 08:00:00').unix()}"
                         }]) {
                             list {id}
                         }
@@ -871,7 +871,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.END_BEFORE},
-                            value: "${moment('1987-06-10 08:00:00').unix()}"
+                            value: "${dayjs('1987-06-10 08:00:00').unix()}"
                         }]) {
                             list {id}
                         }
@@ -890,7 +890,7 @@ describe('searchFilters', () => {
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.END_AFTER},
-                            value: "${moment('2021-12-21 08:00:00').unix()}"
+                            value: "${dayjs('2021-12-21 08:00:00').unix()}"
                         }]) {
                             list {id}
                         }
