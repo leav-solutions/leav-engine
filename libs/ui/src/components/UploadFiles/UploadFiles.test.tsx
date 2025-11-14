@@ -11,10 +11,6 @@ import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import UploadFiles from './UploadFiles';
 import {App} from 'antd';
 
-jest.mock('uuid', () => ({
-    v4: jest.fn(() => 'uid'),
-}));
-
 jest.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));

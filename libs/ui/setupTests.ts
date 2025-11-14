@@ -6,6 +6,7 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+import {webcrypto} from 'node:crypto';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
@@ -24,3 +25,8 @@ window.matchMedia = query => ({
 
 jest.mock('_ui/hooks/useSharedTranslation');
 jest.mock('_ui/_utils/isDevEnv');
+
+Object.defineProperty(globalThis, 'crypto', {
+    value: webcrypto,
+    writable: true,
+});

@@ -12,7 +12,6 @@ import {type PossibleSubmitButtons, type SubmitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
-import {v4 as uuidv4} from 'uuid';
 import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
@@ -75,7 +74,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<SubmitButtonsName | null>(null);
-    const formElementId = useRef(uuidv4());
+    const formElementId = useRef(window.crypto.randomUUID());
     const [isCreation, setIsCreation] = useState(!record);
     const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
     const [purgeRecordMutation] = usePurgeRecordMutation();

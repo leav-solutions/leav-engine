@@ -10,7 +10,7 @@ import Joi from 'joi';
 import {nanoid} from 'nanoid';
 import process from 'process';
 import {type IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
+import * as crypto from 'node:crypto';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -386,7 +386,7 @@ export default function ({
     ): Promise<string> => {
         const task = await taskRepo.createTask(
             {
-                id: id ?? uuidv4(),
+                id: id ?? crypto.randomUUID(),
                 label,
                 func,
                 startAt: startAt ?? utils.getUnixTime(),

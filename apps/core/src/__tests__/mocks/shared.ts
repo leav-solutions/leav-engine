@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IQueryInfos} from '_types/queryInfos';
 import {adminsGroupId, filesAdminsGroupId, systemUserId} from '../../_constants/users';
-import {v4 as uuidv4} from 'uuid';
+import * as crypto from 'node:crypto';
 
 export const mockCtx: IQueryInfos = {
     userId: '1',
@@ -15,7 +15,7 @@ export const mockCtx: IQueryInfos = {
 export const mockSystemQueryContext: IQueryInfos = {
     userId: systemUserId,
     lang: 'en',
-    queryId: uuidv4(),
+    queryId: crypto.randomUUID(),
     groupsId: [adminsGroupId, filesAdminsGroupId],
     errors: [],
 };

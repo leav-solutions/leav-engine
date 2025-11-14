@@ -19,7 +19,6 @@ import {
     type UploadFile,
 } from 'antd';
 import {useState} from 'react';
-import {v4 as uuidv4} from 'uuid';
 import {useUser} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
@@ -102,7 +101,7 @@ function UploadFiles({
         fileList: files,
         disabled: status !== 'process' || loading,
         beforeUpload: async (file: UploadFile) => {
-            file.uid = uuidv4();
+            file.uid = window.crypto.randomUUID();
             setFiles(prevState => prevState.concat([file]));
 
             return false;

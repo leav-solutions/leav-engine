@@ -10,7 +10,6 @@ import {type CookieOptions, type NextFunction, type Request, type Response} from
 import useragent from 'express-useragent';
 import jwt, {type Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
-import {v4 as uuidv4} from 'uuid';
 import {type IConfig} from '_types/config';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -32,6 +31,7 @@ import {type IServerRouteAppModule} from 'interface/server';
 import {adminsGroupId, systemUserId} from '../../_constants/users';
 import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
 import {type ISessionRepo} from '../../infra/session/sessionRepo';
+import * as crypto from 'node:crypto';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
@@ -111,7 +111,7 @@ export default function ({
         jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
             expiresIn: String(config.auth.refreshTokenExpiration),
-            jwtid: uuidv4(),
+            jwtid: crypto.randomUUID(),
         });
 
     const _getAuthCookieArgs = (

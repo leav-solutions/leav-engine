@@ -21,7 +21,7 @@ import {ValidatorResultError} from 'jsonschema/lib/helpers';
 import {nanoid} from 'nanoid';
 import path from 'path';
 import {type IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
+import * as crypto from 'node:crypto';
 import type * as Config from '_types/config';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -681,7 +681,7 @@ export default function ({
             }
 
             if (!forceNoTask && typeof task?.id === 'undefined') {
-                const newTaskId = uuidv4();
+                const newTaskId = crypto.randomUUID();
 
                 await tasksManagerDomain.createTask(
                     {
@@ -820,7 +820,7 @@ export default function ({
             const {filename, ctx, excelMapping} = params;
 
             if (typeof task?.id === 'undefined') {
-                const newTaskId = uuidv4();
+                const newTaskId = crypto.randomUUID();
 
                 await tasksManagerDomain.createTask(
                     {

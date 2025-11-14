@@ -32,7 +32,6 @@ import {ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/attributeType';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {v4 as uuid} from 'uuid';
 import {valueListTextConditions} from './filter-items/filter-type/useConditionOptionsByType';
 
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | UIFilter): filter is ValidFieldFilter =>
@@ -141,7 +140,7 @@ export const useTransformFilters = () => {
                         // TODO : save filter values as string[] when filter and handle fields with libraries
                         value: filter.value ? [filter.value] : [],
                         hidden: filter.hidden ?? false,
-                        id: uuid(),
+                        id: window.crypto.randomUUID(),
                         condition: (filter.condition as RecordFilterCondition) ?? null,
                         attribute: {
                             ...filterAttributeBase,
@@ -155,7 +154,7 @@ export const useTransformFilters = () => {
                         field: filter.field,
                         value: filter.value ?? null,
                         hidden: filter.hidden ?? false,
-                        id: uuid(),
+                        id: window.crypto.randomUUID(),
                         condition: (filter.condition as RecordFilterCondition) ?? null,
                         attribute: {
                             ...filterAttributeBase,
@@ -175,7 +174,7 @@ export const useTransformFilters = () => {
                         field: filter.field,
                         value: filter.value ?? null,
                         hidden: filter.hidden ?? false,
-                        id: uuid(),
+                        id: window.crypto.randomUUID(),
                         condition: filter.condition,
                         attribute: {
                             ...filterAttributeBase,
@@ -191,7 +190,7 @@ export const useTransformFilters = () => {
                         // TODO : save filter values as string[] when filter and handle fields with libraries
                         value: filter.value ? [filter.value] : [],
                         hidden: filter.hidden ?? false,
-                        id: uuid(),
+                        id: window.crypto.randomUUID(),
                         condition: filter.condition,
                         attribute: {
                             ...filterAttributeBase,
@@ -206,7 +205,7 @@ export const useTransformFilters = () => {
                         field: filter.field,
                         value: filter.value ?? null,
                         hidden: filter.hidden ?? false,
-                        id: uuid(),
+                        id: window.crypto.randomUUID(),
                         condition: filter.condition,
                         attribute: {
                             ...filterAttributeBase,
@@ -227,7 +226,7 @@ export const useTransformFilters = () => {
                     // TODO : save filter values as string[] when tree filter and handle fields with libraries
                     value: filter.value ? [filter.value] : null,
                     hidden: filter.hidden ?? false,
-                    id: uuid(),
+                    id: window.crypto.randomUUID(),
                     attribute: {
                         ...filterAttributeBase,
                         linkedTree: attributeData.linked_tree!,

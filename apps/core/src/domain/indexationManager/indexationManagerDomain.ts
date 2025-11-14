@@ -13,7 +13,7 @@ import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {type i18n} from 'i18next';
 import Joi from 'joi';
 import {difference, intersectionBy, isEqual} from 'lodash';
-import {v4 as uuidv4} from 'uuid';
+import * as crypto from 'node:crypto';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -380,7 +380,7 @@ export default function ({
         params: IIndexDatabaseParams,
         task: ITaskFuncParams,
     ) {
-        const newTaskId = uuidv4();
+        const newTaskId = crypto.randomUUID();
 
         await tasksManagerDomain.createTask(
             {
