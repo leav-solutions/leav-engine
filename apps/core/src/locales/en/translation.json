@@ -118,7 +118,8 @@
             "validateURL": "Validate URL",
             "excelCalculation": "Excel calculation",
             "inheritanceCalculation": "Héritage",
-            "toUppercase": "Convert to Uppercase"
+            "toUppercase": "Convert to Uppercase",
+            "toLowercase": "Convert to Lowercase"
         },
         "descriptions": {
             "encrypt": "Encrypt value",
@@ -138,7 +139,8 @@
             "validateRegex": "Check if value is a string matching given regex",
             "excelCalculation": "Runs an Excel formula. You can insert attributes values, ex : {getValue(label)} will be replace by the value of attribute with identifier label. The input value of the action is available under {input()}. Do not start formula with a \"=\". Usable functions : input(), first(), last(), firstDate(), lastDate(), sum(), avg(), concat(separator), getValue(id_attribut). Ex : {getValue(linked_products).getValue(price).sum()",
             "inheritanceCalculation": "Runs an heritage. Usable functions : first(), last(), firstDate(), lastDate(), dedup(), getValue(id_attribute). Ex : getValue(linked_products).getValue(picture).dedup()",
-            "toUppercase": "Convert string to uppercase"
+            "toUppercase": "Convert string to uppercase",
+            "toLowercase": "Convert string to lowercase"
         }
     },
     "permissions": {

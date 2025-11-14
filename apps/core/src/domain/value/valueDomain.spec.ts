@@ -1129,9 +1129,12 @@ describe('ValueDomain', () => {
                 };
 
                 const mockALThrowsDomain: Mockify<IActionsListDomain> = {
-                    runActionsList: jest.fn().mockImplementation(() => {
-                        throw new ValidationError({test_attr: Errors.ERROR});
-                    }),
+                    runActionsList: jest
+                        .fn()
+                        .mockImplementationOnce(mockActionsListDomain.runActionsList)
+                        .mockImplementation(() => {
+                            throw new ValidationError({test_attr: Errors.ERROR});
+                        }),
                 };
 
                 const valDomain = valueDomain({
