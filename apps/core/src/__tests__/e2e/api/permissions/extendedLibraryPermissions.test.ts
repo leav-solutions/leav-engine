@@ -276,7 +276,7 @@ describe('ExtendedLibraryPermissions', () => {
             });
 
             it('non admin user should get only one of them', async () => {
-                const records = await getLibRecords({options: {user: await e2eGuestUser()}});
+                const records = await getLibRecords({options: {user: e2eGuestUser()}});
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
@@ -291,7 +291,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord1Id}"
                     }
                 ]`,
-                    options: {user: await e2eGuestUser()},
+                    options: {user: e2eGuestUser()},
                 });
 
                 expect(records.length).toBe(0);
@@ -306,7 +306,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord2Id}"
                     }
                 ]`,
-                    options: {user: await e2eGuestUser()},
+                    options: {user: e2eGuestUser()},
                 });
 
                 expect(records.length).toBe(1);
@@ -458,7 +458,7 @@ describe('ExtendedLibraryPermissions', () => {
             });
 
             it('non admin user should get only one of them', async () => {
-                const records = await getLibRecords({options: {user: await e2eGuestUser()}});
+                const records = await getLibRecords({options: {user: e2eGuestUser()}});
 
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
@@ -473,7 +473,7 @@ describe('ExtendedLibraryPermissions', () => {
                         value: "${permTreeNodeRecord1Id}"
                     }
                 ]`,
-                    options: {user: await e2eGuestUser()},
+                    options: {user: e2eGuestUser()},
                 });
 
                 expect(records.length).toBe(1);
@@ -489,7 +489,7 @@ describe('ExtendedLibraryPermissions', () => {
                                 value: "${permTreeNodeRecord2Id}"
                             }
                         ]`,
-                    options: {user: await e2eGuestUser()},
+                    options: {user: e2eGuestUser()},
                 });
 
                 expect(records.length).toBe(1);
@@ -499,7 +499,7 @@ describe('ExtendedLibraryPermissions', () => {
             it('non admin user should get both records when ignoreAccessRecordByDefaultPermission is true', async () => {
                 const records = await getLibRecords({
                     options: {
-                        user: await e2eGuestUser(),
+                        user: e2eGuestUser(),
                     },
                     ignoreAccessRecordByDefaultPermission: true,
                 });

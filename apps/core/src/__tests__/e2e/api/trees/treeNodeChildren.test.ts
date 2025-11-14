@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
@@ -118,7 +120,7 @@ describe('Trees', () => {
                     permission: {
                         type: ${PermissionTypes.RECORD},
                         applyTo: "${testLibName}",
-                        usersGroup: null,
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         permissionTreeTarget: {
                             tree: "${testTreeName}", nodeId: "${recordNode1}"
                         },
@@ -141,7 +143,8 @@ describe('Trees', () => {
                 }
             }`);
 
-        const res = await makeGraphQlCall(`{
+        const res = await makeGraphQlCall(
+            `{
             rootChildren: treeNodeChildren(
                 treeId: "${testTreeName}",
                 childrenAsRecordValuePermissionFilter: {
@@ -155,7 +158,11 @@ describe('Trees', () => {
                     id
                 }
               }
-        }`);
+        }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
@@ -171,7 +178,7 @@ describe('Trees', () => {
                     permission: {
                         type: ${PermissionTypes.RECORD},
                         applyTo: "${testLibName}",
-                        usersGroup: null,
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         permissionTreeTarget: {
                             tree: "${testTreeName}", nodeId: "${recordNode1}"
                         },
@@ -194,7 +201,8 @@ describe('Trees', () => {
                 }
             }`);
 
-        const res = await makeGraphQlCall(`{
+        const res = await makeGraphQlCall(
+            `{
             rootChildren: treeNodeChildren(
                 treeId: "${testTreeName}",
                 accessRecordByDefaultPermission: {
@@ -208,7 +216,11 @@ describe('Trees', () => {
                     accessRecordByDefaultPermission
                 }
               }
-        }`);
+        }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();

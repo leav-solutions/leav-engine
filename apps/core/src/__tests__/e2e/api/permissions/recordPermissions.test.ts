@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
-    gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -19,13 +19,11 @@ describe('Records permissions', () => {
     const testLibId = 'test_lib_record_permission';
     const testLibAttrId = 'test_attr_record_permission';
 
+    let subNonAdminGroupId: string;
+
     let permTreeElemId: string;
     let permTreeElemIdForMultiVal1: string;
     let permTreeElemIdForMultiVal2: string;
-    let adminsTreeElemId: string;
-
-    let usersGroupRecordId: string;
-    let usersGroupElemId: string;
 
     let testLibRecordId: string;
     let testLibRecordIdForMultival: string;
@@ -52,15 +50,12 @@ describe('Records permissions', () => {
             library: permTreeLibName,
         });
 
-        adminsTreeElemId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(adminsTreeElemId);
-
-        // Add a group under admins group
-        usersGroupRecordId = await gqlCreateRecord('users_groups');
-        usersGroupElemId = await gqlAddElemToTree(
+        // Add a group under non admin group
+        const subNonAdminsGroupRecordId = await gqlCreateRecord('users_groups');
+        subNonAdminGroupId = await gqlAddElemToTree(
             'users_groups',
-            {id: usersGroupRecordId, library: 'users_groups'},
-            adminsTreeElemId,
+            {id: subNonAdminsGroupRecordId, library: 'users_groups'},
+            e2eNonAdminGroupId(),
         );
 
         // Create library using permission tree
@@ -125,7 +120,7 @@ describe('Records permissions', () => {
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${adminsTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                     },
@@ -154,7 +149,7 @@ describe('Records permissions', () => {
             permissions(
                 type: record,
                 applyTo: "${testLibId}",
-                usersGroup: "${adminsTreeElemId}",
+                usersGroup: "${e2eNonAdminGroupId()}",
                 permissionTreeTarget: {
                     tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                 },
@@ -188,7 +183,8 @@ describe('Records permissions', () => {
         expect(resSaveLib.data.data.saveLibrary.permissions_conf).toBeDefined();
         expect(resSaveLib.data.errors).toBeUndefined();
 
-        const resIsAllowed = await makeGraphQlCall(`query {
+        const resIsAllowed = await makeGraphQlCall(
+            `query {
             isAllowed(
                 type: record,
                 actions: [delete_record],
@@ -198,7 +194,11 @@ describe('Records permissions', () => {
                 name
                 allowed
             }
-        }`);
+        }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
 
         expect(resIsAllowed.status).toBe(200);
         expect(resIsAllowed.data.data.isAllowed).toBeDefined();
@@ -207,20 +207,25 @@ describe('Records permissions', () => {
         expect(resIsAllowed.data.errors).toBeUndefined();
 
         await expect(
-            makeGraphQlCall(`mutation {
+            makeGraphQlCall(
+                `mutation {
             deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {id}
-        }`),
+        }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            ),
         ).rejects.toThrow(/Action forbidden/);
     });
 
     test('Handle inheritance on subgroups', async () => {
-        // Save a permission on the root of "perm tree" and admins group
+        // Save a permission on the root of "perm tree" and non-admins group
         await makeGraphQlCall(`mutation {
             savePermission(
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${adminsTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: null
                     },
@@ -245,7 +250,7 @@ describe('Records permissions', () => {
                 type: record,
                 applyTo: "${testLibId}",
                 actions: [create_record],
-                userGroupNodeId: "${adminsTreeElemId}",
+                userGroupNodeId: "${e2eNonAdminGroupId()}",
                 permissionTreeTarget: {
                     tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                 }
@@ -254,7 +259,7 @@ describe('Records permissions', () => {
                 type: record,
                 applyTo: "${testLibId}",
                 actions: [create_record],
-                userGroupNodeId: "${usersGroupElemId}",
+                userGroupNodeId: "${subNonAdminGroupId}",
                 permissionTreeTarget: {
                     tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                 }
@@ -275,7 +280,7 @@ describe('Records permissions', () => {
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${adminsTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: "${nodePermTreeElemForMultival1}"
                     },
@@ -288,7 +293,7 @@ describe('Records permissions', () => {
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${adminsTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: "${nodePermTreeElemForMultival2}"
                     },
@@ -299,7 +304,8 @@ describe('Records permissions', () => {
             ) { type }
         }`);
 
-        const resIsAllowed = await makeGraphQlCall(`query {
+        const resIsAllowed = await makeGraphQlCall(
+            `query {
             isAllowed(
                 type: record,
                 actions: [delete_record],
@@ -309,7 +315,11 @@ describe('Records permissions', () => {
                 name
                 allowed
             }
-        }`);
+        }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
 
         expect(resIsAllowed.status).toBe(200);
         expect(resIsAllowed.data.data.isAllowed[0].name).toBe('delete_record');

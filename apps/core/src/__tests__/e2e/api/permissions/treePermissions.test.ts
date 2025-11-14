@@ -2,24 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
-    gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAdminsGroupNodeId,
     gqlSaveTree,
     makeGraphQlCall,
 } from '../e2eUtils';
 
 describe('TreePermissions', () => {
     const permTreeName = 'tree_permissions_test_tree';
-    let allUsersTreeElemId: string;
 
     beforeAll(async () => {
         // Create tree
         await gqlSaveTree(permTreeName, 'Test tree', ['users']);
-
-        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemId);
     });
 
     describe('Defined permission', () => {
@@ -29,7 +25,7 @@ describe('TreePermissions', () => {
                     permission: {
                         type: tree,
                         applyTo: "${permTreeName}",
-                        usersGroup: "${allUsersTreeElemId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         actions: [
                             {name: access_tree, allowed: true},
                             {name: detach, allowed: false},
@@ -54,7 +50,7 @@ describe('TreePermissions', () => {
                 permissions(
                     type: tree,
                     applyTo: "${permTreeName}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     actions: [
                         access_tree,
                         detach,
@@ -74,7 +70,8 @@ describe('TreePermissions', () => {
             ]);
             expect(resGetTreePerm.data.errors).toBeUndefined();
 
-            const resIsAllowed = await makeGraphQlCall(`{
+            const resIsAllowed = await makeGraphQlCall(
+                `{
                 isAllowed(
                     type: tree,
                     actions: [
@@ -87,7 +84,11 @@ describe('TreePermissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([

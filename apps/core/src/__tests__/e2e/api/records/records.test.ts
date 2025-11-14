@@ -4,6 +4,8 @@
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition, TreeCondition} from '../../../../_types/record';
 import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
@@ -627,7 +629,7 @@ describe('Records', () => {
                     permission: {
                         type: record_attribute,
                         applyTo: "${testAttributeId}",
-                        usersGroup: null,
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         permissionTreeTarget: {
                             tree: "${testTreeName}", nodeId: "${recordNode}"
                         },
@@ -642,7 +644,8 @@ describe('Records', () => {
             // Set a value for the tree attribute on which permissions are based
             await gqlSaveValue(testTreeAttributeId, testLibName, recordId, recordNode);
 
-            const result = await makeGraphQlCall(`{
+            const result = await makeGraphQlCall(
+                `{
                 records(
                     library: "${testLibName}",
                     filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
@@ -657,7 +660,11 @@ describe('Records', () => {
                         }
                     }
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(result.data.errors).toBeUndefined();
             expect(result.status).toBe(200);

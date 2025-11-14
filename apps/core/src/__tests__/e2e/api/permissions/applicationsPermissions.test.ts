@@ -1,29 +1,24 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlAddUserToGroup, gqlGetAdminsGroupNodeId, gqlSaveApplication, makeGraphQlCall} from '../e2eUtils';
+import {e2eNonAdminGroupId, e2eNonAdminUser, gqlSaveApplication, makeGraphQlCall} from '../e2eUtils';
 
 describe('ApplicationsPermissions', () => {
     const testAppId = 'test_permissions_app';
 
-    let allUsersTreeElemNodeId: string;
-
     beforeAll(async () => {
         // Create library to use in permissions tree
         await gqlSaveApplication(testAppId, 'Test app permissions', 'permission-app');
-
-        allUsersTreeElemNodeId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemNodeId);
     });
 
     test('Save and get application permissions', async () => {
-        // Save admin permissions
+        // Save non-admin permissions
         const resSaveLibPerm = await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
                         type: application,
                         applyTo: "${testAppId}",
-                        usersGroup: "${allUsersTreeElemNodeId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         actions: [
                             {name: access_application, allowed: true},
                             {name: admin_application, allowed: false}
@@ -49,7 +44,7 @@ describe('ApplicationsPermissions', () => {
                 permissions(
                     type: application,
                     applyTo: "${testAppId}",
-                    usersGroup: "${allUsersTreeElemNodeId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     actions: [admin_application]
                 ) {
                     name
@@ -62,7 +57,8 @@ describe('ApplicationsPermissions', () => {
 
         expect(resGetLibPerm.data.data.permissions).toEqual([{name: 'admin_application', allowed: false}]);
 
-        const resIsAllowed = await makeGraphQlCall(`query {
+        const resIsAllowed = await makeGraphQlCall(
+            `query {
                 isAllowed(
                     type: application,
                     actions: [admin_application],
@@ -71,7 +67,11 @@ describe('ApplicationsPermissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
 
         expect(resIsAllowed.status).toBe(200);
         expect(resIsAllowed.data.errors).toBeUndefined();

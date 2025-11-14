@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
+import {logger} from '@leav/logger';
 import fsremaned from 'fs';
 import path from 'path';
 import {type AwilixContainer} from 'awilix';
@@ -19,6 +20,13 @@ import {type IDbUtils} from 'infra/db/dbUtils';
 import {type IServer} from 'interface/server';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 import {type ITasksManagerInterface} from 'interface/tasksManager';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {USERS_GROUPS_LIBRARY, USERS_LIBRARY} from '../../../_types/library';
+import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IGlobalThis} from './e2eUtils';
+
+declare const globalThis: IGlobalThis;
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -94,6 +102,73 @@ const _createRequiredDirectories = async conf => {
     }
 };
 
+const _createUsersAndGroups = async (coreContainer: AwilixContainer) => {
+    const recordDomain: IRecordDomain = coreContainer.cradle['core.domain.record'];
+    const treeDomain: ITreeDomain = coreContainer.cradle['core.domain.tree'];
+    const getSystemQueryContext: GetSystemQueryContext = coreContainer.cradle['core.utils.getSystemQueryContext'];
+    const systemCtx = getSystemQueryContext();
+
+    logger.verbose('Creating guest and non-admin users...');
+    const guestUserRecord = await recordDomain.createRecord({
+        library: USERS_LIBRARY,
+        ctx: systemCtx,
+        values: [
+            {
+                attribute: 'email',
+                payload: 'guest@aristid.com',
+            },
+        ],
+    });
+
+    globalThis.guestUser = {
+        userId: guestUserRecord.record.id,
+        groupsId: [],
+    };
+
+    const nonAdminGroupRecord = await recordDomain.createRecord({
+        library: USERS_GROUPS_LIBRARY,
+        ctx: systemCtx,
+        values: [
+            {
+                attribute: 'label',
+                payload: 'non-admin',
+            },
+        ],
+    });
+
+    const nonAdminGroupNode = await treeDomain.addElement({
+        treeId: 'users_groups',
+        element: {
+            id: nonAdminGroupRecord.record.id,
+            library: USERS_GROUPS_LIBRARY,
+        },
+        parent: null,
+        ctx: systemCtx,
+    });
+
+    globalThis.nonAdminGroupId = nonAdminGroupNode.id;
+
+    const nonAdminUserRecord = await recordDomain.createRecord({
+        library: USERS_LIBRARY,
+        ctx: systemCtx,
+        values: [
+            {
+                attribute: 'email',
+                payload: 'non-admin@aristid.com',
+            },
+            {
+                attribute: 'user_groups',
+                payload: nonAdminGroupNode.id,
+            },
+        ],
+    });
+
+    globalThis.nonAdminUser = {
+        userId: nonAdminUserRecord.record.id,
+        groupsId: [nonAdminGroupNode.id],
+    };
+};
+
 export async function setup() {
     try {
         await _setupFakePlugin();
@@ -115,6 +190,8 @@ export async function setup() {
         await server.initConsumers();
         await tasksManager.initMaster();
         await tasksManager.initWorker();
+
+        await _createUsersAndGroups(coreContainer);
     } catch (e) {
         console.error(e);
         console.error(e.stack);

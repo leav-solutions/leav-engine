@@ -18,8 +18,14 @@ import {
     type IEmbeddedAttribute,
 } from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
-import {USERS_LIBRARY} from '../../../_types/library';
-import {logger} from '@leav/logger';
+
+// Share some global variables from global setup to tests
+export interface IGlobalThis {
+    guestUser: IE2EUserParams;
+    nonAdminUser: IE2EUserParams;
+    nonAdminGroupId: string;
+}
+declare const globalThis: IGlobalThis;
 
 interface IE2EUser {
     getAuthToken: () => Promise<string>;
@@ -50,29 +56,11 @@ const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
 
 export const e2eAdminUser = (): IE2EUser => e2eUser({userId: adminUserId, groupsId: [adminsGroupId]});
 
-let guestUserId;
-export const e2eGuestUser = async (): Promise<IE2EUser> => {
-    if (!guestUserId) {
-        logger.verbose('Creating guest user...');
-        const res = await makeGraphQlCall(
-            `mutation {
-            createRecord(library: "${USERS_LIBRARY}", data: {
-                values: [{
-                        attribute: "email",
-                        payload: "guest@aristid.com"
-                    }]
-                }
-            ) {
-                record {
-                    id
-                }
-            }
-        }`,
-        );
-        guestUserId = res.data.data.createRecord.record.id;
-    }
-    return e2eUser({userId: guestUserId, groupsId: []});
-};
+export const e2eGuestUser = (): IE2EUser => e2eUser(globalThis.guestUser);
+
+export const e2eNonAdminUser = (): IE2EUser => e2eUser(globalThis.nonAdminUser);
+
+export const e2eNonAdminGroupId = (): string => globalThis.nonAdminGroupId;
 
 export async function getGraphQLUrl() {
     const conf = await getConfig();
@@ -337,23 +325,6 @@ export async function gqlCreateRecord(library: string): Promise<string> {
     );
 
     return res.data.data.c.record.id;
-}
-
-export async function gqlGetAdminsGroupNodeId() {
-    return adminsGroupId;
-}
-
-export async function gqlAddUserToGroup(groupNodeId: string) {
-    const userGroupAttrId = 'user_groups';
-    await makeGraphQlCall(
-        `mutation {
-        saveValue(library: "users", recordId: "1", attribute: "${userGroupAttrId}", value: {
-            payload: "${groupNodeId}"
-        }) {
-            id_value
-        }
-    }`,
-    );
 }
 
 /**
