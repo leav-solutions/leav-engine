@@ -1,6 +1,6 @@
 {
     "name": "@leav/app-root-path",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "description": "Module to get app root path",
     "scripts": {
         "test": "jest -c jest-config.json",
