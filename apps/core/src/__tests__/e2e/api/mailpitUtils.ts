@@ -27,6 +27,13 @@ interface IMailpitMsgFull extends IMailpitMsgLight {
     Text: string;
 }
 
+interface IMailpitSearchResult {
+    messages: IMailpitMsgLight[];
+    total: number;
+    unread: number;
+    //...
+}
+
 // https://mailpit.axllent.org/docs/api-v1/websocket/
 interface IMailpitWebSocketMsg {
     Type: string;
@@ -54,4 +61,33 @@ export async function waitMailpitMessage(acceptMessage: (msg: IMailpitMsgLight) 
     });
 
     return msg.data;
+}
+
+export async function deleteMailpitMessagesBySearch(search: string): Promise<void> {
+    const mailpitAddress = await getMailpitAddress();
+    await axios.delete(`http://${mailpitAddress}/api/v1/search?query=${encodeURIComponent(search)}`);
+}
+
+export async function searchMailpitMessages(search: string): Promise<IMailpitSearchResult> {
+    const mailpitAddress = await getMailpitAddress();
+    const msg = await axios.get<IMailpitSearchResult>(
+        `http://${mailpitAddress}/api/v1/search?query=${encodeURIComponent(search)}`,
+    );
+    return msg.data;
+}
+
+export async function waitForMailpitSearchMessage(
+    search: string,
+    timeoutMs: number = 5000,
+    intervalMs: number = 20,
+): Promise<IMailpitMsgLight[]> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+        const result = await searchMailpitMessages(search);
+        if (result.messages.length > 0) {
+            return result.messages;
+        }
+        await new Promise(res => setTimeout(res, intervalMs));
+    }
+    throw new Error(`No messages found for search "${search}" within ${timeoutMs}ms`);
 }

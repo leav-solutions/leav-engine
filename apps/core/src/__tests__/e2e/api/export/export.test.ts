@@ -16,7 +16,7 @@ import {
     toCleanJSON,
     waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
-import {waitMailpitMessage} from '../mailpitUtils';
+import {deleteMailpitMessagesBySearch, waitForMailpitSearchMessage, waitMailpitMessage} from '../mailpitUtils';
 import {type IPubSubNotificationData} from '_types/eventsManager';
 import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
@@ -276,6 +276,16 @@ describe('Export', () => {
     }
 
     describe('export notifications', () => {
+        beforeEach(async () => {
+            // Clean mailpit messages before each test
+            await deleteMailpitMessagesBySearch('export');
+        });
+
+        afterEach(async () => {
+            // Ensure mailpit is receive after each test to delete messages before next test
+            await waitForMailpitSearchMessage('export');
+        });
+
         describe('should notify success', () => {
             beforeEach(async () => {
                 // use defaultProfile if no specified
