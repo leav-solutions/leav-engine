@@ -897,14 +897,16 @@ const valueDomain = function ({
                 values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
 
-            return _runActionsList({
-                listName: ActionsListEvents.GET_VALUE,
-                values,
-                attribute: attr,
-                record: {id: recordId},
-                library,
-                ctx,
-            });
+            return options?.skipActions
+                ? values
+                : _runActionsList({
+                      listName: ActionsListEvents.GET_VALUE,
+                      values,
+                      attribute: attr,
+                      record: {id: recordId},
+                      library,
+                      ctx,
+                  });
         },
         saveValue,
         async saveValueBatch({

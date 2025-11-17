@@ -132,6 +132,7 @@ export interface IValuesOptions {
     version?: IValueVersion;
     forceArray?: boolean;
     forceGetAllValues?: boolean;
+    skipActions?: boolean;
     [optionName: string]: any;
 }
 

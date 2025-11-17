@@ -20,6 +20,7 @@ import {type ToAny} from '../../../utils/utils';
 import {adminsGroupId} from '../../../_constants/users';
 import {mockCtx, mockSystemQueryContext} from '../../../__tests__/mocks/shared';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
+import {type IUserDomain} from 'domain/user/userDomain';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),
@@ -57,8 +58,12 @@ describe('authApp', () => {
                 deleteData: global.__mockPromise(),
             };
 
+            const userDomain: Mockify<IUserDomain> = {
+                verifyPassword: global.__mockPromise(true),
+            };
+
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromiseMultiple([[{raw_payload: 'admin'}], [{payload: {id: 'id'}}]]),
+                getValues: global.__mockPromise([{payload: {id: 'id'}}]),
             };
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -80,6 +85,7 @@ describe('authApp', () => {
                 'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
+                'core.domain.user': userDomain as IUserDomain,
                 config: mockConfig as IConfig,
             });
 

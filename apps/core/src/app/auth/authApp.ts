@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as bcrypt from 'bcryptjs';
 import {type IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type IUserDomain} from 'domain/user/userDomain';
@@ -13,7 +12,7 @@ import ms from 'ms';
 import {type IConfig} from '_types/config';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type IStandardValue, type ITreeValue} from '_types/value';
+import {type ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {ACCESS_TOKEN_COOKIE_NAME, type ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
@@ -364,15 +363,7 @@ export default function ({
 
                         // Check if password is correct
                         const user = users.list[0];
-                        const userPwd: IStandardValue[] = await valueDomain.getValues({
-                            library: 'users',
-                            recordId: user.id,
-                            attribute: 'password',
-                            ctx: systemCtx,
-                        });
-
-                        const isValidPwd =
-                            !!userPwd[0]?.raw_payload && (await bcrypt.compare(password, userPwd[0].raw_payload));
+                        const isValidPwd = await userDomain.verifyPassword(user.id, password, systemCtx);
 
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
@@ -398,6 +389,7 @@ export default function ({
 
                         return res.status(200).json({});
                     } catch (err) {
+                        logger.error(`Auth authenticate error ${err.stack}`);
                         return next(err);
                     }
                 },
