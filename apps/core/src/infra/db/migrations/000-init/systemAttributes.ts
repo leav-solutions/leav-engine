@@ -199,8 +199,8 @@ export const systemAttributes: IAttributeForRepo[] = [
             ],
             getValue: [
                 {
-                    id: 'toBoolean',
-                    name: 'To Boolean',
+                    id: 'maskValue',
+                    name: 'Mask Value',
                     is_system: true,
                 },
             ],

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import * as bcrypt from 'bcryptjs';
 import ValidationError from '../../errors/ValidationError';
 import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import {type IPermissionDomain} from 'domain/permission/permissionDomain';
@@ -16,6 +17,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IUserIdentity, type IUserData} from '_types/userData';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {type IStandardValue} from '_types/value';
 import {type IValueDomain} from 'domain/value/valueDomain';
 import {USERS_LIBRARY} from '../../_types/library';
 
@@ -40,6 +42,7 @@ export interface IUserDomain {
         lang: 'fr' | 'en',
         ctx: IQueryInfos,
     ): Promise<void>;
+    verifyPassword(userId: string, password: string, ctx: IQueryInfos): Promise<boolean>;
 }
 
 export interface IUserDomainDeps {
@@ -163,6 +166,17 @@ export default function ({
             }
 
             return res;
+        },
+        async verifyPassword(userId, password, ctx): Promise<boolean> {
+            const userPwd: IStandardValue[] = await valueDomain.getValues({
+                library: USERS_LIBRARY,
+                recordId: userId,
+                attribute: 'password',
+                ctx,
+                options: {skipActions: true},
+            });
+
+            return !!userPwd[0]?.payload && bcrypt.compare(password, userPwd[0].payload);
         },
     };
 }

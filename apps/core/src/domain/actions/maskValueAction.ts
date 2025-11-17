@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
 
+export const MASKED_VALUE = '●●●●●●●';
+
 export default function (): IActionsListFunction {
     return {
         id: 'maskValue',
@@ -15,10 +17,14 @@ export default function (): IActionsListFunction {
             const _isValueDefined = value =>
                 value !== null && value !== '' && (typeof value !== 'object' || Object.keys(value).length);
 
-            const computedValues = values.map(elementValue => ({
-                ...elementValue,
-                payload: _isValueDefined(elementValue.payload) ? '●●●●●●●' : '',
-            }));
+            const computedValues = values.map(elementValue => {
+                const payloadDefined = _isValueDefined(elementValue.payload);
+                return {
+                    ...elementValue,
+                    payload: payloadDefined ? MASKED_VALUE : '',
+                    raw_payload: payloadDefined ? MASKED_VALUE : '',
+                };
+            });
 
             return {values: computedValues, errors: []};
         },
