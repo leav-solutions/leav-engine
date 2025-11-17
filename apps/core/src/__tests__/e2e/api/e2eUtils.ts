@@ -489,11 +489,16 @@ export async function waitWebSocketMessage<T>(
 
         webSocket.onmessage = (event: WebSocket.MessageEvent) => {
             try {
-                const msg = JSON.parse(event.data.toString());
-                if (acceptMessage(msg)) {
-                    clearTimeout(timeout);
-                    webSocket.close();
-                    resolve(msg);
+                // Mailpit can send multiple JSON messages in one event separated by new lines
+                const lines = event.data.toString().split('\n').filter(Boolean);
+                for (const line of lines) {
+                    const msg = JSON.parse(line);
+                    if (acceptMessage(msg)) {
+                        clearTimeout(timeout);
+                        webSocket.close();
+                        resolve(msg);
+                        return;
+                    }
                 }
             } catch (e) {
                 if (e instanceof SyntaxError) {
