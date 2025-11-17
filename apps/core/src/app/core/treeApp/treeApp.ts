@@ -17,7 +17,7 @@ import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {TriggerNames} from '../../../_types/eventsManager';
 import {
     PermissionTypes,
-    type RecordPermissionsActions,
+    RecordPermissionsActions,
     TreeNodePermissionsActions,
     TreePermissionsActions,
 } from '../../../_types/permissions';
@@ -246,6 +246,7 @@ export default function ({
                         record: Record!,
                         linkedRecords(attribute: ID): [Record!],
                         permissions: TreeNodePermissions!
+                        accessRecordByDefaultPermission: Boolean
                     }
 
                     type TreeNodeLightList {
@@ -309,6 +310,11 @@ export default function ({
                         action: RecordPermissionsActions!
                     }
 
+                    input AccessRecordByDefaultPermissionInput {
+                        libraryId: ID!,
+                        attributeId: ID!,
+                    }
+
                     extend type Query {
                         trees(
                             filters: TreesFiltersInput,
@@ -323,7 +329,13 @@ export default function ({
 
                         # Retrieve direct children of a node. If node is not specified, retrieves root children
                         # childrenAsRecordValuePermissionFilter is used to filter children by record permission if setted as value of a tree attribute
-                        treeNodeChildren(treeId: ID!, node: ID, pagination: Pagination, childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput): TreeNodeLightList!
+                        treeNodeChildren(
+                            treeId: ID!,
+                            node: ID,
+                            pagination: Pagination,
+                            childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput,
+                            accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput
+                        ): TreeNodeLightList!
 
                         # Retrieve full tree content form tree root, as an object.
                         fullTreeContent(treeId: ID!): FullTreeContent
@@ -406,6 +418,7 @@ export default function ({
                                 node,
                                 pagination,
                                 childrenAsRecordValuePermissionFilter,
+                                accessRecordByDefaultPermission,
                             }: {
                                 treeId: string;
                                 node?: string;
@@ -414,6 +427,10 @@ export default function ({
                                     libraryId: string;
                                     attributeId: string;
                                     action: RecordPermissionsActions;
+                                };
+                                accessRecordByDefaultPermission?: {
+                                    libraryId: string;
+                                    attributeId: string;
                                 };
                             },
                             ctx: IQueryInfos,
@@ -458,7 +475,7 @@ export default function ({
 
                             return {
                                 ...children,
-                                list: children.list.map(child => ({...child, treeId})),
+                                list: children.list.map(child => ({...child, treeId, accessRecordByDefaultPermission})),
                             };
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
@@ -732,6 +749,25 @@ export default function ({
                             }, Promise.resolve({}));
                         },
                         ancestors: _getAncestors,
+                        accessRecordByDefaultPermission: (
+                            treeNode: ITreeNode & {
+                                treeId?: string;
+                                accessRecordByDefaultPermission?: {
+                                    libraryId: string;
+                                    attributeId: string;
+                                };
+                            },
+                            _,
+                            ctx: IQueryInfos,
+                        ): Promise<boolean> =>
+                            recordPermissionDomain.evaluateTreeValueRecordPermission({
+                                action: RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
+                                userId: ctx.userId,
+                                libraryId: treeNode.accessRecordByDefaultPermission.libraryId,
+                                attributeId: treeNode.accessRecordByDefaultPermission.attributeId,
+                                nodeId: treeNode.id,
+                                ctx,
+                            }),
                     },
                 },
             };

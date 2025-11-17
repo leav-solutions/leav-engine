@@ -164,4 +164,63 @@ describe('Trees', () => {
         expect(res.data.data.rootChildren.list).toHaveLength(1);
         expect(res.data.data.rootChildren.list[0].id).toBe(recordNode2);
     });
+
+    test('Get Trees node children with accessRecordByDefaultPermission', async () => {
+        await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: ${PermissionTypes.RECORD},
+                        applyTo: "${testLibName}",
+                        usersGroup: null,
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode1}"
+                        },
+                        actions: [
+                            {name: ${RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT}, allowed: false}
+                        ]
+                    }
+                ) {
+                    type
+                    applyTo
+                    usersGroup
+                    permissionTreeTarget {
+                        tree
+                        nodeId
+                    }
+                    actions {
+                        allowed
+                        name
+                    }
+                }
+            }`);
+
+        const res = await makeGraphQlCall(`{
+            rootChildren: treeNodeChildren(
+                treeId: "${testTreeName}",
+                accessRecordByDefaultPermission: {
+                    libraryId: "${testLibName}",
+                    attributeId: "${treeAttributeId}"
+                }
+            ) {
+                totalCount
+                list {
+                    id
+                    accessRecordByDefaultPermission
+                }
+              }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.rootChildren.totalCount).toBe(2);
+        expect(res.data.data.rootChildren.list).toHaveLength(2);
+        expect(res.data.data.rootChildren.list[0]).toMatchObject({
+            id: recordNode1,
+            accessRecordByDefaultPermission: false,
+        });
+        expect(res.data.data.rootChildren.list[1]).toMatchObject({
+            id: recordNode2,
+            accessRecordByDefaultPermission: true,
+        });
+    });
 });
