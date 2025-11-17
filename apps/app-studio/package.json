@@ -1,7 +1,7 @@
 {
     "name": "app-studio",
     "description": "Generic application to create a workflow from a configuration",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "private": true,
     "stableVersion": "0.1.0",
     "scripts": {
