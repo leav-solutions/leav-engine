@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {MASKED_VALUE} from '../../../../_constants/values';
 import {USERS_LIBRARY} from '../../../../_types/library';
 import {makeGraphQlCall} from '../e2eUtils';
 
@@ -71,7 +72,7 @@ describe('Mask users password', () => {
         const record = res.data.data.records.list[0];
         const passwordValue = record.properties.find(p => p.attributeId === 'password').values[0];
 
-        expect(passwordValue.raw_payload).toBe('●●●●●●●');
-        expect(passwordValue.payload).toBe('●●●●●●●');
+        expect(passwordValue.raw_payload).toBe(MASKED_VALUE);
+        expect(passwordValue.payload).toBe(MASKED_VALUE);
     });
 });
