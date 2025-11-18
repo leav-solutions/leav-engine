@@ -96,7 +96,7 @@ const allowedTypeOperator = {
     object: [AttributeCondition.BETWEEN],
 };
 
-interface IDeps {
+export interface IFindRecordsHelperDeps {
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.attribute': IAttributeDomain;
@@ -122,7 +122,7 @@ export default function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
     'core.infra.permission': permissionRepo,
     'core.utils': utils,
-}: IDeps): FindRecordsHelper {
+}: IFindRecordsHelperDeps): FindRecordsHelper {
     const _isNumericCondition = (condition: AttributeCondition): boolean =>
         condition === AttributeCondition.VALUES_COUNT_EQUAL ||
         condition === AttributeCondition.VALUES_COUNT_GREATER_THAN ||

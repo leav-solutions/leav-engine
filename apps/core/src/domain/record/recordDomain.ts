@@ -12,16 +12,15 @@ import {type IUtils} from 'utils/utils';
 import type * as Config from '_types/config';
 import {type IListWithCursor} from '_types/list';
 import {type IPreview} from '_types/preview';
-import {type ISaveValue, type IStandardValue, type ITreeValue, type IValue, type IValuesOptions} from '_types/value';
+import {type ISaveValue, type ITreeValue, type IValue, type IValuesOptions} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import {TypeGuards} from '../../utils';
-import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
+import {AttributeFormats} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {type ILibrary, LibraryBehavior} from '../../_types/library';
-import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {RecordPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -37,12 +36,12 @@ import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain
 import {isRecordWithId, type SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {type ICreateRecordResult, type ICreateRecordValueError, type IFindRecordParams} from './_types';
 import {type IFormRepo} from 'infra/form/formRepo';
-import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type DeleteRecordHelper} from './helpers/deleteRecord';
 import {type CreateRecordHelper} from './helpers/createRecord';
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {type ILogger} from '@leav/logger';
 import {type FindRecordsHelper} from './helpers/findRecords';
+import {type GetRecordFieldValueHelper} from './helpers/getRecordFieldValue';
 
 export const ATTRIBUTE_ACTIVE = 'active';
 
@@ -103,6 +102,7 @@ export interface IRecordDomain {
      * @param params.options
      * @param params.ctx
      */
+    // FIXME: GetRecordFieldValue should be in value domain
     getRecordFieldValue({
         library,
         record,
@@ -148,12 +148,12 @@ export interface IRecordDomainDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.value': IValueDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
-    'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.record.helpers.findRecords': FindRecordsHelper;
+    'core.domain.record.helpers.getRecordFieldValue': GetRecordFieldValueHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.form': IFormRepo;
@@ -170,8 +170,8 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.domain.value': valueDomain,
     'core.domain.permission.record': recordPermissionDomain,
-    'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.record.helpers.findRecords': findRecordsHelper,
+    'core.domain.record.helpers.getRecordFieldValue': getRecordFieldValueHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.record.helpers.createRecord': createRecordHelper,
@@ -185,57 +185,6 @@ export default function ({
     'core.utils': utils,
     translator,
 }: IRecordDomainDeps): IRecordDomain {
-    /**
-     * Extract value from record if it's available (attribute simple), or fetch it from DB
-     *
-     * @param record
-     * @param attribute
-     * @param library
-     * @param options
-     * @param ctx
-     */
-    const _extractRecordValue = async (
-        record: IRecord,
-        attribute: IAttribute,
-        library: string,
-        options: IValuesOptions,
-        ctx: IQueryInfos,
-    ): Promise<IValue[]> => {
-        let values: IValue[];
-
-        if (attribute.id && typeof record[attribute.id] !== 'undefined') {
-            // Format attribute field into simple value
-            values = [
-                {
-                    payload:
-                        attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
-                            ? {id: record[attribute.id]}
-                            : record[attribute.id],
-                },
-            ];
-
-            // Apply actionsList
-            values = await valueDomain.runActionsList({
-                listName: ActionsListEvents.GET_VALUE,
-                values,
-                attribute,
-                record,
-                library,
-                ctx,
-            });
-        } else {
-            values = await valueDomain.getValues({
-                library,
-                recordId: record.id,
-                attribute: attribute.id,
-                options,
-                ctx,
-            });
-        }
-
-        return values;
-    };
-
     const _getPreviews = async ({
         conf,
         lib,
@@ -892,105 +841,7 @@ export default function ({
             return deleteRecordHelper(library, id, ctx);
         },
         getRecordIdentity: _getRecordIdentity,
-        async getRecordFieldValue({library, record, attributeId, options, ctx}) {
-            const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
-            if (!libraryAttributes.map(a => a.id).includes(attributeId)) {
-                throw new ValidationError({
-                    [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}},
-                });
-            }
-
-            const perm = await recordAttributePermissionDomain.getRecordAttributePermission(
-                RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
-                ctx.userId,
-                attributeId,
-                library,
-                record.id,
-                ctx,
-            );
-
-            if (!perm) {
-                return [];
-            }
-
-            const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-            let values = await _extractRecordValue(record, attrProps, library, options, ctx);
-
-            const hasNoValue = values.length === 0;
-            if (hasNoValue) {
-                values = [
-                    {
-                        payload: null,
-                    },
-                ];
-            }
-
-            let formattedValues = await Promise.all(
-                values.map(async v => {
-                    const formattedValue = await valueDomain.formatValue({
-                        attribute: attrProps,
-                        value: v,
-                        record,
-                        library,
-                        ctx,
-                    });
-
-                    if (attrProps.metadata_fields && formattedValue.metadata) {
-                        for (const metadataField of attrProps.metadata_fields) {
-                            if (!formattedValue.metadata[metadataField]) {
-                                continue;
-                            }
-
-                            const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                                id: metadataField,
-                                ctx,
-                            });
-
-                            const computedMetadata = await valueDomain.runActionsList({
-                                listName: ActionsListEvents.GET_VALUE,
-                                attribute: metadataAttributeProps,
-                                library,
-                                values: [formattedValue.metadata[metadataField] as IStandardValue],
-                                ctx,
-                            });
-
-                            formattedValue.metadata[metadataField] = computedMetadata[0];
-                        }
-                    }
-
-                    return formattedValue;
-                }),
-            );
-
-            // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
-            formattedValues = formattedValues.reduce((acc, v) => {
-                if (Array.isArray(v.payload)) {
-                    acc = [
-                        ...acc,
-                        ...v.payload.map(vpart => ({
-                            value: vpart,
-                            attribute: v.attribute,
-                        })),
-                    ];
-                } else {
-                    acc.push(v);
-                }
-                return acc;
-            }, []);
-
-            if (hasNoValue) {
-                // remove null values or values that do not represent a record
-                formattedValues = formattedValues.filter(
-                    v =>
-                        v.payload !== null &&
-                        typeof v.payload !== 'undefined' &&
-                        typeof v.payload === 'object' &&
-                        v.payload.hasOwnProperty('id') &&
-                        v.payload.hasOwnProperty('library'),
-                );
-            }
-            return formattedValues;
-        },
+        getRecordFieldValue: getRecordFieldValueHelper,
         async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
