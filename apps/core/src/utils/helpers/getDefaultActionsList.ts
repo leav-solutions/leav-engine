@@ -83,8 +83,8 @@ export default (attribute: IAttribute): ActionsListConfig => {
                 ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
-                        id: 'toBoolean',
-                        name: 'To Boolean',
+                        id: 'maskValue',
+                        name: 'Mask Value',
                         is_system: true,
                     },
                 ],

@@ -4,6 +4,7 @@
 import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {type ITask, TaskStatus} from '../../../../_types/tasksManager';
 import {getConfig} from '../../../../config';
+import {MASKED_VALUE} from '../../../../_constants/values';
 import {
     gqlAddElemToTree,
     gqlCreateRecord,
@@ -468,7 +469,7 @@ describe('Export', () => {
                         '123',
                         '1761837010063',
                         '{"to":550238400,"from":550065600}',
-                        'true',
+                        MASKED_VALUE,
                         'true',
                         '#FF5733',
                         'rich text',
@@ -478,7 +479,7 @@ describe('Export', () => {
                         '123',
                         '1761837010063',
                         '{"to":550238400,"from":550065600}',
-                        'true',
+                        MASKED_VALUE,
                         'true',
                         '#FF5733',
                         'rich text',
