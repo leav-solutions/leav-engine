@@ -71,3 +71,7 @@ export interface ITreeEvent {
     parentNodeBefore?: ITreeNodeLight & {treeId: string};
     order: number;
 }
+
+export interface ITreeDbEvent {
+    parentNode: {id: string};
+}
