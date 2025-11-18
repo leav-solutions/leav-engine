@@ -5,7 +5,14 @@ import {type AqlLiteral, AqlQuery, type GeneratedAqlQuery} from 'arangojs/aql';
 import {type IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition, type IRecordFilterOption} from '../../_types/record';
-import {type ISaveValueByAttributeType, type IValueByAttributeType, type IValuesOptions} from '../../_types/value';
+import {
+    type IBaseValueByAttributeType,
+    type IValuesOccurrences,
+    type ISaveValueByAttributeType,
+    type IValueByAttributeType,
+    type IValuesOptions,
+    type IValueVersion,
+} from '../../_types/value';
 import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
 import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
 import {type IAttributeAdvancedRepo} from './attributeAdvancedRepo';
@@ -189,6 +196,20 @@ export interface IAttributeTypeRepo<
         forceGetAllValues: boolean;
         ctx: IQueryInfos;
     }): Promise<Value[][]>;
+
+    countValuesOccurrences?({
+        library,
+        attribute,
+        recordIds,
+        options,
+        ctx,
+    }: {
+        library: string;
+        attribute: IAttribute;
+        recordIds: string[];
+        options?: {version?: IValueVersion};
+        ctx: IQueryInfos;
+    }): Promise<IValuesOccurrences<IBaseValueByAttributeType[AttributeType]>>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value

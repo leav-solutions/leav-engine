@@ -7,7 +7,7 @@ import {type IDbService} from 'infra/db/dbService';
 import {type IConfig} from '_types/config';
 import {type IAttribute} from '_types/attribute';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type ISaveValue, type IValue} from '_types/value';
+import {type IValuesOccurrences, type ISaveValue, type IValue, type IValueVersion, type IBaseValue} from '_types/value';
 import {
     type IAttributeTypesRepo,
     type IAttributeWithRevLink,
@@ -125,6 +125,20 @@ export interface IValueRepo {
         valueId: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
+
+    countValuesOccurrences?({
+        library,
+        attribute,
+        recordIds,
+        options,
+        ctx,
+    }: {
+        library: string;
+        attribute: IAttribute; // For now only tree attributes are supported, so dont need IAttributeWithRevLink
+        recordIds: string[];
+        options?: {version?: IValueVersion};
+        ctx: IQueryInfos;
+    }): Promise<IValuesOccurrences>;
 
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
 
@@ -246,6 +260,21 @@ export default function ({
                 recordId,
                 attribute,
                 valueId,
+                ctx,
+            });
+        },
+        countValuesOccurrences({library, attribute, recordIds, options, ctx}): Promise<IValuesOccurrences> {
+            const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
+            if (!typeRepo.countValuesOccurrences) {
+                throw new Error(
+                    `Attribute type repo for type "${attribute.type}" does not implement countValuesOccurrences method`,
+                );
+            }
+            return typeRepo.countValuesOccurrences({
+                library,
+                attribute,
+                recordIds,
+                options,
                 ctx,
             });
         },

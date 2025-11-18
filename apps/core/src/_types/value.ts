@@ -65,7 +65,7 @@ export interface IGenericValue extends ICommonGenericSaveValue {
     isCalculated?: boolean;
 }
 
-export interface IStandardValue extends IGenericValue {
+export interface IStandardBaseValue {
     /**
      * Computed value after get actions on attribute are done
      * TODO remove that any when possible
@@ -79,7 +79,7 @@ export interface IStandardValue extends IGenericValue {
     raw_payload?: any;
 }
 
-export interface ILinkValue extends IGenericValue {
+export interface ILinkBaseValue {
     /**
      * Linked record
      * TODO remove optional when possible
@@ -87,7 +87,7 @@ export interface ILinkValue extends IGenericValue {
     payload?: IRecord;
 }
 
-export interface ITreeValue extends IGenericValue {
+export interface ITreeBaseValue {
     /**
      * Linked tree node
      * TODO remove optional when possible
@@ -95,6 +95,14 @@ export interface ITreeValue extends IGenericValue {
     payload?: ITreeNode;
     treeId: string;
 }
+
+export interface IStandardValue extends IGenericValue, IStandardBaseValue {}
+
+export interface ILinkValue extends IGenericValue, ILinkBaseValue {}
+
+export interface ITreeValue extends IGenericValue, ITreeBaseValue {}
+
+export type IBaseValue = IStandardBaseValue | ILinkBaseValue | ITreeBaseValue;
 
 export type IValue = IStandardValue | ILinkValue | ITreeValue;
 
@@ -166,4 +174,22 @@ export interface ISaveValueByAttributeType {
     [AttributeTypes.ADVANCED]: ISaveStandardValue;
     [AttributeTypes.ADVANCED_LINK]: ISaveLinkValue;
     [AttributeTypes.TREE]: ISaveTreeValue;
+}
+
+export interface IBaseValueByAttributeType {
+    [AttributeTypes.SIMPLE]: IStandardBaseValue;
+    [AttributeTypes.SIMPLE_LINK]: ILinkBaseValue;
+    [AttributeTypes.ADVANCED]: IStandardBaseValue;
+    [AttributeTypes.ADVANCED_LINK]: ILinkBaseValue;
+    [AttributeTypes.TREE]: ITreeBaseValue;
+}
+
+export type IValuesOccurrences<SimpleValueType extends IBaseValue = IBaseValue> = Array<{
+    value: SimpleValueType;
+    count: number;
+}>;
+
+export interface IValuesOccurrencesResult<BaseValueType extends IBaseValue = IBaseValue> {
+    occurrences: IValuesOccurrences<BaseValueType>;
+    noValueCount: number;
 }

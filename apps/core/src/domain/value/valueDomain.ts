@@ -15,20 +15,22 @@ import {type IValueRepo} from 'infra/value/valueRepo';
 import {type IUtils} from 'utils/utils';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
-import {type IRecord} from '_types/record';
+import {type IRecordFilterLight, type IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, type IAttribute, ValueVersionMode} from '../../_types/attribute';
+import {AttributeTypes, type IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {type ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
+    type IValueVersion,
     type IFindValueTree,
     type ISaveValue,
     type IStandardValue,
     type IValue,
     type IValuesOptions,
+    type IValuesOccurrencesResult,
 } from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -45,6 +47,7 @@ import {type DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 import {type CreateRecordHelper} from 'domain/record/helpers/createRecord';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
+import {type FindRecordsHelper} from 'domain/record/helpers/findRecords';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -127,6 +130,20 @@ export interface IValueDomain {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
+    countValuesOccurrences({
+        libraryId,
+        attributeId,
+        recordFilters,
+        options,
+        ctx,
+    }: {
+        libraryId: string;
+        attributeId: string;
+        recordFilters: IRecordFilterLight[];
+        options?: {version?: IValueVersion};
+        ctx: IQueryInfos;
+    }): Promise<IValuesOccurrencesResult>;
+
     runActionsList(params: IRunActionListParams): Promise<IValue[]>;
 }
 
@@ -144,6 +161,7 @@ export interface IValueDomainDeps {
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
+    'core.domain.record.helpers.findRecords': FindRecordsHelper;
     'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.domain.versionProfile': IVersionProfileDomain;
@@ -168,6 +186,7 @@ const valueDomain = function ({
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.record.helpers.findRecords': findRecordsHelper,
     'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
     'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
@@ -1090,6 +1109,64 @@ const valueDomain = function ({
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
         },
         formatValue: _formatValue,
+        async countValuesOccurrences({libraryId, attributeId, recordFilters, options, ctx}) {
+            await validate.validateLibrary(libraryId, ctx);
+            await validate.validateLibraryAttribute(libraryId, attributeId, ctx);
+
+            const attribute = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+
+            if (attribute.type !== AttributeTypes.TREE) {
+                throw new ValidationError({
+                    [attributeId]: {
+                        msg: Errors.UNSUPPORTED_ATTRIBUTE_TYPE,
+                        vars: {attributeType: attribute.type},
+                    },
+                });
+            }
+            if (attribute.multiple_values) {
+                throw new ValidationError({
+                    [attributeId]: {
+                        msg: Errors.UNSUPPORTED_ATTRIBUTE_MULTI_VALUE,
+                        vars: {},
+                    },
+                });
+            }
+            // If the attribute has an actions list to get value, we cannot retrieve occurrences with countValuesOccurrences
+            // In that case, we should use getRecordFieldValue for each record instead and aggregate the results, which is less efficient
+            // May be check only excelCalculation or inheritanceCalculation actions because theirs are not idempotent !
+            // https://gitlab.aristid.com/dev/leav/leav/-/merge_requests/1351#note_193389
+            if (attribute.actions_list?.getValue?.length) {
+                throw new ValidationError({
+                    [attributeId]: {
+                        msg: Errors.UNSUPPORTED_ATTRIBUTE_WITH_ACTIONS,
+                        vars: {},
+                    },
+                });
+            }
+
+            const records = await findRecordsHelper({
+                params: {
+                    library: libraryId,
+                    filters: recordFilters,
+                    options: {version: options?.version},
+                    retrieveInactive: false,
+                    withCount: false,
+                },
+                ctx,
+            });
+
+            const occurrences = await valueRepo.countValuesOccurrences({
+                library: libraryId,
+                attribute,
+                recordIds: records.list.map(r => r.id),
+                options,
+                ctx,
+            });
+
+            const noValueCount = records.list.length - occurrences.reduce((acc, curr) => acc + curr.count, 0);
+
+            return {occurrences, noValueCount};
+        },
         runActionsList: _runActionsList,
     };
 };
