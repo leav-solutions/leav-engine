@@ -4,9 +4,11 @@
 /** @type {import('vite').UserConfig} */
 
 import {defineConfig} from 'vite';
-import pluginRewriteAll from 'vite-plugin-rewrite-all'; // Fixes bug when passing reset password key in URL
 import {commonConfig} from '../../vite-config-common';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
+
+// Fixes bug when passing reset password key in URL
+import pluginRewriteAll from 'vite-plugin-rewrite-all';
 
 export default () => {
     const defaultConf = commonConfig(__dirname);

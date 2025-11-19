@@ -8,8 +8,7 @@ import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-com
 import {dynamicBase} from 'vite-plugin-dynamic-base';
 import {browserslistToTargets} from 'lightningcss';
 import browserslist from 'browserslist';
-
-const targets = browserslistToTargets(browserslist('>= 0.25%'));
+import packageJson from './package.json';
 
 export default () =>
     defineConfig({
@@ -23,20 +22,31 @@ export default () =>
         css: {
             transformer: 'lightningcss',
             lightningcss: {
-                targets,
+                targets: browserslistToTargets(browserslist(packageJson.browserslist.production)),
             },
         },
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/app-studio',
         build: {
+            sourcemap: true,
             rollupOptions: {
                 onwarn(warning, warn) {
-                    // Suppress "Module level directives cause errors when bundled" warnings
+                    // Suppress 'Module level directives cause errors when bundled, "use client" in <file_name>' warnings from Antd
                     if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+                        return;
+                    }
+                    // Suppress 'Error when using sourcemap for reporting an error: Can't resolve original location of error.' warnings from Antd
+                    // https://github.com/ant-design/ant-design/issues/46273
+                    if (
+                        warning.code === 'SOURCEMAP_ERROR' &&
+                        warning.message.includes(
+                            "Error when using sourcemap for reporting an error: Can't resolve original location of error.",
+                        ) &&
+                        warning.message.includes('node_modules/antd/es')
+                    ) {
                         return;
                     }
                     warn(warning);
                 },
             },
-            sourcemap: true,
         },
     });

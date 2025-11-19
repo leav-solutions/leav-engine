@@ -125,7 +125,7 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
 
     const profile = data?.versionProfiles?.list.length ? omit(data?.versionProfiles?.list?.[0], '__typename') : null;
 
-    const isReadOnly = !userData?.permissions?.[PermissionsActions.admin_edit_version_profile] ?? false;
+    const isReadOnly = !(userData?.permissions?.[PermissionsActions.admin_edit_version_profile] ?? false);
     const formErrors = error?.graphQLErrors?.length ? error.graphQLErrors[0] : null;
     const headerLabel = profile?.label ? localizedTranslation(profile.label, lang) : t('version_profiles.new');
 

@@ -146,7 +146,7 @@ function LibrariesList({
         },
     ];
 
-    const tableData: LibraryType[] = ([...data?.libraries?.list] ?? [])
+    const tableData: LibraryType[] = [...(data?.libraries?.list ?? [])]
         .filter(lib => {
             // Do not display already selected libraries unless showSelected is true
             if (!showSelected && selected.find(selectedLib => selectedLib === lib.id)) {

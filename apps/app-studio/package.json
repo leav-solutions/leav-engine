@@ -59,9 +59,9 @@
         "@types/react": "18.2.14",
         "@types/react-dom": "18.2.6",
         "@types/styled-components": "5.1.26",
-        "@vitejs/plugin-react": "3.1.0",
+        "@vitejs/plugin-react": "5.1.1",
         "babel-jest": "29.7.0",
-        "browserslist": "4.24.4",
+        "browserslist": "4.28.0",
         "identity-obj-proxy": "3.0.0",
         "jest": "30.1.3",
         "jest-environment-jsdom": "30.1.2",
@@ -72,10 +72,10 @@
         "ts-jest": "29.4.2",
         "ts-jest-mock-import-meta": "1.3.1",
         "typescript": "5.5.3",
-        "vite": "4.5.14",
+        "vite": "7.2.2",
         "vite-jest": "0.1.4",
-        "vite-plugin-dynamic-base": "0.4.9",
-        "vite-plugin-svgr": "2.4.0"
+        "vite-plugin-dynamic-base": "1.2.0",
+        "vite-plugin-svgr": "4.5.0"
     },
     "browserslist": {
         "production": [

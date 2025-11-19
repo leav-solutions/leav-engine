@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type FunctionComponent, useEffect} from 'react';
+import {useSearchParams} from 'react-router-dom';
 import {
     ErrorDisplay,
     ErrorDisplayTypes,
@@ -11,20 +13,18 @@ import {
     Loading,
     useLang,
 } from '@leav/ui';
-import {useApplicationContext} from 'context/ApplicationContext';
+import styled from 'styled-components';
+import {useTranslation} from 'react-i18next';
+import {FaEye} from 'react-icons/all';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
-import {type FunctionComponent, useEffect, useRef} from 'react';
-import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {type IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
-import {useSearchParams} from 'react-router-dom';
-import {FaBeer, FaEye} from 'react-icons/all';
-import styled from 'styled-components';
 import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
+import {useApplicationContext} from 'context/ApplicationContext';
 
 interface ILibraryHomeProps {
     library?: string;
