@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
-    gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -22,7 +22,6 @@ describe('Permissions', () => {
 
     let permTreeElemId: string;
     let nodePermTreeElem: string;
-    let allUsersTreeElemNodeId: string;
     let testLibRecordId: string;
 
     beforeAll(async () => {
@@ -35,9 +34,6 @@ describe('Permissions', () => {
         // Create an element to insert in permissions tree
         permTreeElemId = await gqlCreateRecord(permTreeLibName);
         nodePermTreeElem = await gqlAddElemToTree(permTreeName, {id: permTreeElemId, library: permTreeLibName});
-
-        allUsersTreeElemNodeId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemNodeId);
 
         // Create a library using this perm tree
         await gqlSaveAttribute({
@@ -106,7 +102,7 @@ describe('Permissions', () => {
                     permission: {
                         type: record_attribute,
                         applyTo: "${testPermAttrId}",
-                        usersGroup: "${allUsersTreeElemNodeId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         permissionTreeTarget: {
                             tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                         },
@@ -133,7 +129,8 @@ describe('Permissions', () => {
             // Link attribute to library
             await gqlSaveLibrary(permTreeLibName, 'Test Lib', [testLibAttrId, testPermAttrId]);
 
-            const resIsAllowed = await makeGraphQlCall(`query {
+            const resIsAllowed = await makeGraphQlCall(
+                `query {
                 isAllowed(
                     type: record_attribute,
                     actions: [edit_value],
@@ -143,7 +140,11 @@ describe('Permissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
@@ -152,7 +153,8 @@ describe('Permissions', () => {
             expect(resIsAllowed.data.errors).toBeUndefined();
 
             // Call isAllowed a second time to check result from cache.
-            const resIsAllowedCached = await makeGraphQlCall(`query {
+            const resIsAllowedCached = await makeGraphQlCall(
+                `query {
                 isAllowed(
                     type: record_attribute,
                     actions: [edit_value],
@@ -162,7 +164,11 @@ describe('Permissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowedCached.status).toBe(200);
             expect(resIsAllowedCached.data.data.isAllowed).toBeDefined();
@@ -172,7 +178,8 @@ describe('Permissions', () => {
 
             // Apply permission
             await expect(
-                makeGraphQlCall(`mutation {
+                makeGraphQlCall(
+                    `mutation {
                 saveValue(
                     library: "${testLibId}",
                     recordId: "${testLibRecordId}",
@@ -181,7 +188,11 @@ describe('Permissions', () => {
                 ) {
                     id_value
                 }
-            }`),
+            }`,
+                    {
+                        user: e2eNonAdminUser(),
+                    },
+                ),
             ).rejects.toThrow(/This library does not use this attribute/);
         });
     });
@@ -193,7 +204,7 @@ describe('Permissions', () => {
                 savePermission(
                     permission: {
                         type: admin,
-                        usersGroup: "${allUsersTreeElemNodeId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         actions: [
                             {name: admin_create_library, allowed: true},
                             {name: admin_edit_library, allowed: true},
@@ -225,7 +236,7 @@ describe('Permissions', () => {
             const resGetAdminPerm = await makeGraphQlCall(`{
                 permissions(
                     type: admin,
-                    usersGroup: "${allUsersTreeElemNodeId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     actions: [admin_create_library]
                 ) {
                     name
@@ -237,7 +248,8 @@ describe('Permissions', () => {
             expect(resGetAdminPerm.data.data.permissions).toEqual([{name: 'admin_create_library', allowed: true}]);
             expect(resGetAdminPerm.data.errors).toBeUndefined();
 
-            const resIsAllowed = await makeGraphQlCall(`query {
+            const resIsAllowed = await makeGraphQlCall(
+                `query {
                 isAllowed(
                     type: admin,
                     actions: [admin_create_library]
@@ -245,7 +257,11 @@ describe('Permissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
@@ -263,7 +279,7 @@ describe('Permissions', () => {
                     permission: {
                         type: library,
                         applyTo: "${testLibId}",
-                        usersGroup: "${allUsersTreeElemNodeId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         actions: [
                             {name: access_record, allowed: true},
                             {name: edit_record, allowed: true},
@@ -290,7 +306,7 @@ describe('Permissions', () => {
                 permissions(
                     type: library,
                     applyTo: "${testLibId}",
-                    usersGroup: "${allUsersTreeElemNodeId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     actions: [access_record]
                 ) {
                     name
@@ -302,7 +318,8 @@ describe('Permissions', () => {
             expect(resGetLibPerm.data.data.permissions).toEqual([{name: 'access_record', allowed: true}]);
             expect(resGetLibPerm.data.errors).toBeUndefined();
 
-            const resIsAllowed = await makeGraphQlCall(`query {
+            const resIsAllowed = await makeGraphQlCall(
+                `query {
                 isAllowed(
                     type: library,
                     actions: [access_record],
@@ -311,7 +328,11 @@ describe('Permissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toBeDefined();
@@ -563,7 +584,7 @@ describe('Permissions', () => {
                             type: admin,
                             usersGroup: "${nodeUserGroupId1}",
                             actions: [
-                                {name: admin_create_attribute, allowed: false},
+                                {name: admin_create_attribute, allowed: true},
                             ]
                         }
                     ) { type }
@@ -580,7 +601,7 @@ describe('Permissions', () => {
                 `);
 
                 expect(permHeritGroup.data.data.p[0].name).toBe('admin_create_attribute');
-                expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
             });
 
             test('Retrieve herited permissions from default permission', async () => {
@@ -595,7 +616,7 @@ describe('Permissions', () => {
                 `);
 
                 expect(permHeritGroup.data.data.p[0].name).toBe('admin_create_attribute');
-                expect(permHeritGroup.data.data.p[0].allowed).toBe(true);
+                expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
             });
         });
     });

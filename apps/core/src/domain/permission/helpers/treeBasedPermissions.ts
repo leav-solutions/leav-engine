@@ -92,10 +92,6 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
     ): Promise<boolean> => {
         const {type, action, userId, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
 
-        if (!permissions_conf.permissionTreeAttributes.length) {
-            return getDefaultPermission({action, applyTo, userId, ctx});
-        }
-
         const userGroupsPaths = !!ctx.groupsId
             ? await Promise.all(
                   ctx.groupsId.map(async groupId =>
@@ -108,6 +104,10 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
               )
             : [];
 
+        if (!permissions_conf.permissionTreeAttributes.length) {
+            return getDefaultPermission({action, type, applyTo, userId, userGroups: userGroupsPaths, ctx});
+        }
+
         const treePerms = await Promise.all(
             permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                 const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
@@ -119,7 +119,8 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                     userGroupsPaths,
                     permTreeId: permTreeAttrProps.linked_tree,
                     permTreeValues: treeValues[permTreeAttr],
-                    getDefaultGlobalPermission: () => getDefaultPermission({action, applyTo, userId, ctx}),
+                    getDefaultGlobalPermission: () =>
+                        getDefaultPermission({action, type, applyTo, userId, userGroups: userGroupsPaths, ctx}),
                     ctx,
                 });
             }),
@@ -187,7 +188,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             return inheritedTargetPathPermission;
         }
 
-        return getDefaultPermission({action, applyTo, userGroups: [groupAncestors], ctx});
+        return getDefaultPermission({action, type, applyTo, userGroups: [groupAncestors], ctx});
     };
 
     return {

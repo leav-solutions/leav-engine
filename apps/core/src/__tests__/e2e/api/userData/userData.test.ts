@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import {e2eNonAdminGroupId, e2eNonAdminUser, makeGraphQlCall} from '../e2eUtils';
 
 describe('User Data', () => {
     test('save and get user data', async () => {
@@ -91,6 +91,7 @@ describe('User Data', () => {
             savePermission(
                 permission: {
                   type: admin
+                  usersGroup: "${e2eNonAdminGroupId()}",
                   actions: [{ name: admin_manage_global_preferences, allowed: false }]
                 }
               ) {
@@ -115,25 +116,35 @@ describe('User Data', () => {
         );
 
         await expect(
-            makeGraphQlCall(`mutation {
-            saveUserData(
-               key: "test",
-               value: "data",
-               global: true
-              ) {
-                global
-                data
-            }
-        }`),
+            makeGraphQlCall(
+                `mutation {
+                    saveUserData(
+                        key: "test",
+                        value: "data",
+                        global: true
+                    ) {
+                        global
+                        data
+                    }
+                }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            ),
         ).rejects.toThrow(/Action forbidden/);
 
         await expect(
-            makeGraphQlCall(`{
-            userData(
-               keys: ["test_global"],
-               global: true
-              ) { global data }
-        }`),
+            makeGraphQlCall(
+                `{
+                    userData(
+                        keys: ["test_global"],
+                        global: true
+                    ) { global data }
+                }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            ),
         ).rejects.toThrow(/Action forbidden/);
     });
 });

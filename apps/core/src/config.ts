@@ -7,9 +7,44 @@ import Joi from 'joi';
 import {CoreMode, type IConfig} from './_types/config';
 import {env as appEnv} from './env';
 import {logger} from '@leav/logger';
-import notification from 'domain/notification';
+import {
+    AdminPermissionsActions,
+    ApplicationPermissionsActions,
+    AttributePermissionsActions,
+    LibraryPermissionsActions,
+    PermissionTypes,
+    RecordAttributePermissionsActions,
+    RecordPermissionsActions,
+    TreeNodePermissionsActions,
+    TreePermissionsActions,
+} from './_types/permissions';
 
 export const validateConfig = (conf: IConfig) => {
+    const permissionsByActionsSchema = (permissionActions: Record<string, string>) => {
+        const schemaShape: Record<string, Joi.Schema> = {
+            default: Joi.boolean(),
+        };
+
+        Object.values(permissionActions).forEach(action => {
+            schemaShape[action] = Joi.boolean();
+        });
+
+        return Joi.object().keys(schemaShape);
+    };
+
+    const permissionsByTypeAndActions = Joi.object().keys({
+        default: Joi.boolean().required(),
+        [PermissionTypes.RECORD]: permissionsByActionsSchema(RecordPermissionsActions),
+        [PermissionTypes.RECORD_ATTRIBUTE]: permissionsByActionsSchema(RecordAttributePermissionsActions),
+        [PermissionTypes.ADMIN]: permissionsByActionsSchema(AdminPermissionsActions),
+        [PermissionTypes.LIBRARY]: permissionsByActionsSchema(LibraryPermissionsActions),
+        [PermissionTypes.ATTRIBUTE]: permissionsByActionsSchema(AttributePermissionsActions),
+        [PermissionTypes.TREE]: permissionsByActionsSchema(TreePermissionsActions),
+        [PermissionTypes.TREE_NODE]: permissionsByActionsSchema(TreeNodePermissionsActions),
+        [PermissionTypes.TREE_LIBRARY]: permissionsByActionsSchema(TreeNodePermissionsActions),
+        [PermissionTypes.APPLICATION]: permissionsByActionsSchema(ApplicationPermissionsActions),
+    });
+
     const configSchema = Joi.object().keys({
         server: Joi.object().keys({
             host: Joi.string().required(),
@@ -111,7 +146,8 @@ export const validateConfig = (conf: IConfig) => {
             default: Joi.string().required(),
         }),
         permissions: Joi.object().keys({
-            default: Joi.boolean().required(),
+            everybody: permissionsByTypeAndActions.required(),
+            adminGroup: permissionsByTypeAndActions.required(),
             enableCache: Joi.boolean().required(),
         }),
         amqp: Joi.object().keys({

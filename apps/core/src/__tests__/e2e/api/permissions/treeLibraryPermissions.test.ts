@@ -1,18 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    gqlAddElemToTree,
-    gqlAddUserToGroup,
-    gqlGetAdminsGroupNodeId,
-    gqlSaveLibrary,
-    makeGraphQlCall,
-} from '../e2eUtils';
+import {e2eNonAdminGroupId, e2eNonAdminUser, gqlAddElemToTree, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 
 describe('TreeLibraryPermissions', () => {
     const permTreeName = 'tree_library_permissions_test_tree';
     const treeLibId = 'tree_library_permissions_test_lib';
-    let allUsersTreeElemId;
 
     beforeAll(async () => {
         // Create tree
@@ -32,9 +25,6 @@ describe('TreeLibraryPermissions', () => {
                 id
             }
         }`);
-
-        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemId);
     });
 
     describe('Defined permission', () => {
@@ -44,7 +34,7 @@ describe('TreeLibraryPermissions', () => {
                     permission: {
                         type: tree_library,
                         applyTo: "${permTreeName}/${treeLibId}",
-                        usersGroup: "${allUsersTreeElemId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         actions: [
                             {name: access_tree, allowed: true},
                             {name: detach, allowed: false},
@@ -69,7 +59,7 @@ describe('TreeLibraryPermissions', () => {
                 permissions(
                     type: tree_library,
                     applyTo: "${permTreeName}/${treeLibId}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     actions: [
                         access_tree,
                         detach,
@@ -89,7 +79,8 @@ describe('TreeLibraryPermissions', () => {
             ]);
             expect(resGetTreePerm.data.errors).toBeUndefined();
 
-            const resIsAllowed = await makeGraphQlCall(`{
+            const resIsAllowed = await makeGraphQlCall(
+                `{
                 isAllowed(
                     type: tree_library,
                     actions: [
@@ -102,7 +93,11 @@ describe('TreeLibraryPermissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([

@@ -7,11 +7,10 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {
     AttributePermissionsActions,
     PermissionTypes,
-    type RecordAttributePermissionsActions,
+    RecordAttributePermissionsActions,
 } from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IAttributePermissionDomain} from './attributePermissionDomain';
-import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {
@@ -37,11 +36,18 @@ export interface IRecordAttributePermissionDomain {
     ): Promise<boolean>;
 }
 
+const recordAttributeToAttributePermissionsMapping: Record<
+    RecordAttributePermissionsActions,
+    AttributePermissionsActions
+> = {
+    [RecordAttributePermissionsActions.ACCESS_ATTRIBUTE]: AttributePermissionsActions.ACCESS_ATTRIBUTE,
+    [RecordAttributePermissionsActions.EDIT_VALUE]: AttributePermissionsActions.EDIT_VALUE,
+};
+
 export interface IRecordAttributePermissionDomainDeps {
     'core.domain.permission.attribute': IAttributePermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute': IAttributeDomain;
     'core.infra.value': IValueRepo;
@@ -53,7 +59,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
         'core.domain.permission.attribute': attrPermissionDomain,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
         'core.domain.attribute': attributeDomain,
         'core.infra.value': valueRepo,
@@ -73,19 +78,13 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                 typeof attrProps.permissions_conf === 'undefined' ||
                 !attrProps.permissions_conf.permissionTreeAttributes.length
             ) {
-                // Check if action is present in library permissions
-                const isAttrAction =
-                    Object.values(AttributePermissionsActions).indexOf(
-                        action as unknown as AttributePermissionsActions,
-                    ) !== -1;
-
-                return isAttrAction
-                    ? attrPermissionDomain.getAttributePermission({
-                          action: action as unknown as AttributePermissionsActions,
-                          attributeId,
-                          ctx,
-                      })
-                    : defaultPermHelper.getDefaultPermission({ctx});
+                // If attribute permission is not extended (type RECORD_ATTRIBUTE), we fallback to simple ATTRIBUTE permission
+                const attrPermissionAction = recordAttributeToAttributePermissionsMapping[action];
+                return attrPermissionDomain.getAttributePermission({
+                    action: attrPermissionAction,
+                    attributeId,
+                    ctx,
+                });
             }
 
             const treesAttrValues = await Promise.all(

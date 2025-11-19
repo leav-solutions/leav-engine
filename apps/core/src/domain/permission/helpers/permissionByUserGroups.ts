@@ -11,7 +11,7 @@ import getPermissionCacheKey from './getPermissionCacheKey';
 import {type ICachesService} from '../../../infra/cache/cacheService';
 import {type IConfig} from '_types/config';
 import {type GetDefaultGlobalPermission} from '../_types';
-import {systemUserId} from '../../../_constants/users';
+import {adminsGroupId, systemUserId} from '../../../_constants/users';
 
 export interface IPermissionByUserGroupsHelperDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;
@@ -61,7 +61,15 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
 
             // we reverse to have this group paths order: from current user groups to the added root group
             const reversedGroupsPath = userGroupsPaths.length
-                ? userGroupsPaths.map(path => [...path].reverse().concat({id: null}))
+                ? userGroupsPaths.map(path => {
+                      const groupPathFromLeavToRoot = [...path].reverse();
+                      if (path[0]?.id === adminsGroupId) {
+                          // root is admins group, do not add everybody group for admins group path
+                          return groupPathFromLeavToRoot;
+                      }
+                      // add group null for everybody group
+                      return groupPathFromLeavToRoot.concat({id: null});
+                  })
                 : [[{id: null}]];
 
             // we reverse the tree target path to have it from the current target
@@ -69,8 +77,6 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             if (treeTarget) {
                 reversedTreeTargetPath = [...treeTarget.path].reverse();
             }
-
-            const defaultPermission = await getDefaultGlobalPermission({ctx});
 
             const _execute = async () => {
                 const _getPermission = async (groupPath: TreePath, targetPath?: TreePath): Promise<boolean> => {
@@ -100,7 +106,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                         return _getPermission(groupPath, newTargetPath);
                     }
 
-                    return defaultPermission;
+                    return getDefaultGlobalPermission({type, action, userGroups: [groupPath], ctx});
                 };
 
                 const userPerms = await Promise.all(
@@ -114,8 +120,8 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             if (config.permissions.enableCache) {
                 // generate a cache key based on params
                 const key = reversedTreeTargetPath?.length
-                    ? `${treeTarget.tree}:${reversedTreeTargetPath.map(({id}) => id).join('_')}:default_${defaultPermission}`
-                    : `default_${defaultPermission}`;
+                    ? `${treeTarget.tree}:${reversedTreeTargetPath.map(({id}) => id).join('_')}`
+                    : 'default';
                 const cacheKey = getPermissionCacheKey(
                     reversedGroupsPath.map(path => path[0].id),
                     type,

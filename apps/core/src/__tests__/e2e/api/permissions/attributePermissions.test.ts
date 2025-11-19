@@ -2,17 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {
-    gqlAddElemToTree,
-    gqlAddUserToGroup,
-    gqlGetAdminsGroupNodeId,
-    gqlSaveAttribute,
-    makeGraphQlCall,
-} from '../e2eUtils';
+import {e2eNonAdminGroupId, e2eNonAdminUser, gqlAddElemToTree, gqlSaveAttribute, makeGraphQlCall} from '../e2eUtils';
 
 describe('AttributePermissions', () => {
     const permAttrName = 'attribute_permissions_test_attr';
-    let allUsersTreeElemId;
 
     beforeAll(async () => {
         // Create attribute
@@ -22,9 +15,6 @@ describe('AttributePermissions', () => {
             label: 'Test attr',
             format: AttributeFormats.TEXT,
         });
-
-        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemId);
     });
 
     describe('Defined permission', () => {
@@ -34,7 +24,7 @@ describe('AttributePermissions', () => {
                     permission: {
                         type: attribute,
                         applyTo: "${permAttrName}",
-                        usersGroup: "${allUsersTreeElemId}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
                         actions: [
                             {name: access_attribute, allowed: true},
                             {name: edit_value, allowed: false},
@@ -58,7 +48,7 @@ describe('AttributePermissions', () => {
                 permissions(
                     type: attribute,
                     applyTo: "${permAttrName}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     actions: [
                         access_attribute,
                         edit_value
@@ -76,7 +66,8 @@ describe('AttributePermissions', () => {
             ]);
             expect(resGetAttrPerm.data.errors).toBeUndefined();
 
-            const resIsAllowed = await makeGraphQlCall(`{
+            const resIsAllowed = await makeGraphQlCall(
+                `{
                 isAllowed(
                     type: attribute,
                     actions: [
@@ -88,7 +79,11 @@ describe('AttributePermissions', () => {
                     name
                     allowed
                 }
-            }`);
+            }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([

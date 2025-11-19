@@ -7,9 +7,13 @@ import {type IValueRepo} from 'infra/value/valueRepo';
 import {type ILibrary} from '_types/library';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {LibraryPermissionsActions, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
+import {
+    LibraryPermissionsActions,
+    PermissionsRelations,
+    PermissionTypes,
+    RecordPermissionsActions,
+} from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
-import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
@@ -30,11 +34,18 @@ export interface IRecordPermissionDomain {
     evaluateTreeValueRecordPermission(params: IEstimateTreeValueRecordPermissionParams): Promise<boolean>;
 }
 
+const recordToLibraryPermissionsMapping: Record<RecordPermissionsActions, LibraryPermissionsActions> = {
+    [RecordPermissionsActions.ACCESS_RECORD]: LibraryPermissionsActions.ACCESS_RECORD,
+    [RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT]: LibraryPermissionsActions.ACCESS_RECORD,
+    [RecordPermissionsActions.CREATE_RECORD]: LibraryPermissionsActions.CREATE_RECORD,
+    [RecordPermissionsActions.EDIT_RECORD]: LibraryPermissionsActions.EDIT_RECORD,
+    [RecordPermissionsActions.DELETE_RECORD]: LibraryPermissionsActions.DELETE_RECORD,
+};
+
 export interface IRecordPermissionDomainDeps {
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -48,7 +59,6 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
         'core.domain.permission.library': libraryPermissionDomain,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
         'core.domain.attribute': attributeDomain,
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
@@ -118,19 +128,14 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 typeof libProps.permissions_conf === 'undefined' ||
                 !libProps.permissions_conf.permissionTreeAttributes.length
             ) {
-                // Check if action is present in library permissions
-                const isLibAction =
-                    Object.values(LibraryPermissionsActions).indexOf(action as unknown as LibraryPermissionsActions) !==
-                    -1;
-
-                return isLibAction
-                    ? libraryPermissionDomain.getLibraryPermission({
-                          action: action as unknown as LibraryPermissionsActions,
-                          libraryId: library,
-                          userId,
-                          ctx,
-                      })
-                    : defaultPermHelper.getDefaultPermission({ctx});
+                // If library permission is not extended (type RECORD), we fallback to simple LIBRARY permission
+                const libraryPermissionAction = recordToLibraryPermissionsMapping[action];
+                return libraryPermissionDomain.getLibraryPermission({
+                    action: libraryPermissionAction,
+                    libraryId: library,
+                    userId,
+                    ctx,
+                });
             }
 
             const treesAttrValues = await Promise.all(

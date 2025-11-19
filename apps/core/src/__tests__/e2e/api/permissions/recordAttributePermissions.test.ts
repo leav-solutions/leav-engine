@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
+    e2eNonAdminGroupId,
     gqlAddElemToTree,
-    gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -18,7 +17,6 @@ describe('RecordAttributePermissions', () => {
     const permTreeLibName = 'record_attribute_permissions_tree_lib';
     const permTreeName = 'record_attribute_permissions_tree';
 
-    let allUsersTreeElemId: string;
     let treeElemId1: string;
     let nodeElem1: string;
     let treeElemId2: string;
@@ -38,9 +36,6 @@ describe('RecordAttributePermissions', () => {
         treeElemId1 = await gqlCreateRecord(permTreeLibName);
         treeElemId2 = await gqlCreateRecord(permTreeLibName);
 
-        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemId);
-
         nodeElem1 = await gqlAddElemToTree(permTreeName, {id: treeElemId1, library: permTreeLibName});
         nodeElem2 = await gqlAddElemToTree(permTreeName, {id: treeElemId2, library: permTreeLibName}, nodeElem1);
 
@@ -50,7 +45,7 @@ describe('RecordAttributePermissions', () => {
                 permission: {
                     type: record_attribute,
                     applyTo: "${permAttrName}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
                         nodeId: "${nodeElem1}"
@@ -70,7 +65,7 @@ describe('RecordAttributePermissions', () => {
                 permissions(
                     type: record_attribute,
                     applyTo: "${permAttrName}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
                         nodeId: "${nodeElem1}"
