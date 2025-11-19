@@ -217,4 +217,61 @@ describe('PanelHeader', () => {
         expect(expandButton).not.toBeInTheDocument();
         expect(collapseButton).not.toBeInTheDocument();
     });
+
+    it('should not display expand/collapse button when hideExpandCollapseButton is true', async () => {
+        spyUseParams.mockReturnValue({
+            recordId: '1234567890',
+            recordPanelId: 'panel123',
+            where: 'slider',
+        });
+        spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
+        spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
+
+        render(<PanelHeader enabled hideExpandCollapseButton />);
+
+        const expandButton = screen.queryByRole('button', {name: /expand/i});
+        const collapseButton = screen.queryByRole('button', {name: /collapse/i});
+        expect(expandButton).not.toBeInTheDocument();
+        expect(collapseButton).not.toBeInTheDocument();
+    });
+
+    it('should display OpenFlapButton components for record panels', async () => {
+        spyUseParams.mockReturnValue({
+            recordId: '1234567890',
+            recordPanelId: 'panel123',
+            where: 'slider',
+        });
+        spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
+        spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
+
+        render(<PanelHeader enabled />);
+
+        const informationButton = screen.queryByRole('button', {name: /information/i});
+        const discussionButton = screen.queryByRole('button', {name: /discussion/i});
+        expect(informationButton).toBeInTheDocument();
+        expect(discussionButton).toBeInTheDocument();
+    });
+
+    it('should not display OpenFlapButton components for library panels', async () => {
+        spyRetrievePanelDetails.mockReturnValue({
+            libraryId: 'test',
+            panelType: 'libraryPanels',
+            currentPanel: {
+                id: '1',
+                name: {
+                    fr: 'un',
+                },
+                type: 'explorer',
+                actions: [],
+            },
+        });
+        spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
+
+        render(<PanelHeader enabled />);
+
+        const informationButton = screen.queryByRole('button', {name: /information/i});
+        const discussionButton = screen.queryByRole('button', {name: /discussion/i});
+        expect(informationButton).not.toBeInTheDocument();
+        expect(discussionButton).not.toBeInTheDocument();
+    });
 });

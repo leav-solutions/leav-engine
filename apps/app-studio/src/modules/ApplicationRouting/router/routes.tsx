@@ -36,13 +36,16 @@ export const firstLevelRoutes: RouteObject[] = [
     },
 ];
 
+// recordWherePanelWithFlap route need to be before the recordWherePanel because router will match the first route that matches the path
+const recordWherePanelPaths = [UnreachablePaths.recordWherePanelWithFlap, UnreachablePaths.recordWherePanel];
+
 export const nextLevelRoutes: RouteObject[] = [
     {
         path: UnreachablePaths.record,
         element: <RedirectToFirstRecordPanel />,
     },
-    {
-        path: UnreachablePaths.recordWherePanel,
+    ...recordWherePanelPaths.map(recordWherePanelPath => ({
+        path: recordWherePanelPath,
         element: (
             <RedirectToPreviousPanel>
                 <RedirectToFirstRecordPanelAllowedInSlider>
@@ -52,5 +55,5 @@ export const nextLevelRoutes: RouteObject[] = [
                 </RedirectToFirstRecordPanelAllowedInSlider>
             </RedirectToPreviousPanel>
         ),
-    },
+    })),
 ];

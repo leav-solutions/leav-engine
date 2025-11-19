@@ -1,0 +1,12 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type FunctionComponent} from 'react';
+import {useParams} from 'react-router-dom';
+
+export const FlapContent: FunctionComponent = ({}) => {
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
+        useParams();
+
+    return <>{flapPanelId}</>;
+};

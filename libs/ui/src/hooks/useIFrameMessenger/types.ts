@@ -90,6 +90,9 @@ export type NavigateToPanelMessage = IMessageBase & {
         libraryId: LibraryId;
         panelId?: PanelId;
         recordId?: string;
+        flapRecordId?: string;
+        flapLibraryId?: LibraryId;
+        flapPanelId?: 'info-history' | 'comment';
     };
 };
 

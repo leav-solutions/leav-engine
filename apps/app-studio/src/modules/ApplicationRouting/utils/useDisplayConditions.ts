@@ -4,6 +4,8 @@
 import {useLocation, useMatch, useParams} from 'react-router-dom';
 import {AbsolutePaths} from '../router/paths';
 
+const SPLIT_FLAP_PATH_LENGTH = 4;
+
 export const useDisplayConditions = () => {
     const location = useLocation();
     const {
@@ -17,8 +19,18 @@ export const useDisplayConditions = () => {
     // :workspaceId/:panelId/(*):recordId/fullpage/:recordPanelId(*)
     const _isFullpageRecordPanel = where === 'fullpage';
 
+    const _nextLevelPanelInLocationPathname = location.pathname.split(`/${recordId}/${where}/${recordPanelId}`)[1];
+    const _nextLevelPanelInLocationPathnameSplitted = _nextLevelPanelInLocationPathname?.split('/').filter(Boolean);
+
     // :workspaceId/:panelId/(*):recordId/:where/:recordPanelId
-    const _isLastRecordPanel = location.pathname.split(`/${recordId}/${where}/${recordPanelId}`)[1] === '';
+    const _hasNoNextLevelRecordPanel = _nextLevelPanelInLocationPathname === '';
+
+    // :workspaceId/:panelId/(*):recordId/:where/:recordPanelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId/
+    const _isNextLevelOnlyAFlap =
+        _nextLevelPanelInLocationPathnameSplitted?.length === SPLIT_FLAP_PATH_LENGTH &&
+        _nextLevelPanelInLocationPathnameSplitted?.[0] === 'flap';
+
+    const _isLastRecordPanel = _hasNoNextLevelRecordPanel || _isNextLevelOnlyAFlap;
 
     // (*):recordId/fullpage/:recordPanelId(*)
     const _hasOtherFullpagePanelInNextLevels = nextLevelPaths.includes('fullpage');

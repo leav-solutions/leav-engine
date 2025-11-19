@@ -2,8 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {FLAP_TARGET_ID} from '../../constants';
+import {FlapContent} from './content/FlapContent';
 
-import {flapTarget} from './layout.module.css';
-
-export const FlagTarget: FunctionComponent = () => <div id={FLAP_TARGET_ID} className={flapTarget} />;
+export const Flap: FunctionComponent = () => <FlapContent />;

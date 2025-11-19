@@ -8,36 +8,45 @@ import cn from 'classnames';
 import {SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
-import {SIDE_PANEL_TARGET_ID} from '../../constants';
+import {FLAP_FULLPAGE_TARGET_ID, SIDE_PANEL_TARGET_ID} from '../../constants';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
 import {PanelHeader} from './header/PanelHeader';
 import {PanelsTabs} from './header/PanelsTabs';
+import {FlapContainer} from './FlapContainer';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {useDisplayConditions} from './utils/useDisplayConditions';
-
-import {selfContainingPanel, popupFormPanel, popupHeader, popupHeaderTabs, sliderFormPanel} from './panel.module.css';
+import {
+    selfContainingPanel,
+    popupFormPanel,
+    popupHeader,
+    popupHeaderTabs,
+    sliderFormPanel,
+    popupContent,
+} from './panel.module.css';
 
 export const PanelContainer: FunctionComponent = ({children}) => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
+        useParams();
     const navigate = useNavigate();
     const refPanel = useRef<KitSidePanelRef | null>(null);
+    const refFlap = useRef<KitSidePanelRef | null>(null);
     const [refDivToInsertSidePanel, setRefDivToInsertSidePanel] = useState<HTMLDivElement | null>(null);
+    const [refDivToInsertFlapPanel, setRefDivToInsertFlapPanel] = useState<HTMLDivElement | null>(null);
     const match = useMatch(AbsolutePaths.recordPanel);
 
     const {isLastLevelRecordPanel} = useDisplayConditions();
 
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
 
-    const closeContainer = () => {
-        // We delete `recordId/where/recordPanelId` from the URL
-        navigate(RelativePaths.closeCurrentPanel, {relative: 'path'});
-    };
-
     useEffect(() => {
         setRefDivToInsertSidePanel(document.getElementById(SIDE_PANEL_TARGET_ID) as HTMLDivElement);
-    }, []);
+
+        if (where === 'fullpage') {
+            setRefDivToInsertFlapPanel(document.getElementById(FLAP_FULLPAGE_TARGET_ID) as HTMLDivElement);
+        }
+    }, [where]);
 
     useEffect(() => {
         if (isLastLevelRecordPanel && where === 'slider') {
@@ -48,11 +57,26 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         match.pathname /* `match.pathname` is used to detect changes in the URL to re-open the side panel */,
     ]);
 
+    useEffect(() => {
+        refFlap.current?.open();
+    }, [
+        refDivToInsertFlapPanel,
+        match.pathname /* `match.pathname` is used to detect changes in the URL to re-open the side panel */,
+    ]);
+
     if (!isLastLevelRecordPanel) {
         return <>{children}</>;
     }
 
+    const hasFlapPanel = flapPanelId !== undefined;
     const isFormPanel = ['editionForm', 'creationForm'].includes(currentPanel.type);
+
+    const closeContainer = () => {
+        const closingPath = hasFlapPanel
+            ? RelativePaths.closeCurrentPanel + '/' + RelativePaths.closeFlapPanel
+            : RelativePaths.closeCurrentPanel;
+        navigate(closingPath, {relative: 'path'});
+    };
 
     if (where === 'popup') {
         // TODO: We might need to handle a isSelfContainingPanel case like in the slider case.
@@ -83,7 +107,10 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 showCloseIcon
                 close={closeContainer}
             >
-                {children}
+                <div className={popupContent}>
+                    {children}
+                    {hasFlapPanel && <FlapContainer ref={refFlap} />}
+                </div>
             </KitModal>
         );
     }
@@ -112,14 +139,14 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                           })}
                           ref={refPanel}
                           size="l"
-                          headerExtra={<PanelHeader enabled />}
+                          headerExtra={<PanelHeader actionPosition="right" enabled />}
                           onCloseAfterAnimation={closeContainer}
                           floating
                           closable
                           showSeparator
                           closeOnEsc
                       >
-                          {children}
+                          {hasFlapPanel ? <FlapContainer ref={refFlap} /> : children}
                       </KitSidePanel>
                   ),
                   refDivToInsertSidePanel,
@@ -128,5 +155,12 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     }
 
     // Should only happen on where === 'fullpage'
-    return <>{children}</>;
+    return (
+        <>
+            {children}
+            {hasFlapPanel &&
+                refDivToInsertFlapPanel &&
+                createPortal(<FlapContainer ref={refFlap} />, refDivToInsertFlapPanel)}
+        </>
+    );
 };

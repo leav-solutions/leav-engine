@@ -6,25 +6,24 @@ import {faDownLeftAndUpRightToCenter, faUpRightAndDownLeftFromCenter} from '@for
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {KitButton, KitTooltip} from 'aristid-ds';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from '../router/paths';
 import {useTranslation} from 'react-i18next';
 
-interface IExpandCollapseCurrentPanelButtonProps {
-    recordId: string;
-    where: string;
-    recordPanelId: string;
-}
-
-export const ExpandCollapseCurrentPanelButton: FunctionComponent<IExpandCollapseCurrentPanelButtonProps> = ({
-    recordId,
-    where,
-    recordPanelId,
-}) => {
+export const ExpandCollapseCurrentPanelButton: FunctionComponent = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} = useParams();
 
     const isCurrentPanelInSlider = where === 'slider';
+
+    const hasFlapAlreadyOpen = flapPanelId !== undefined;
+
+    let path = isCurrentPanelInSlider ? RelativePaths.openCurrentPanelInPopup : RelativePaths.openCurrentPanelInSlider;
+
+    if (hasFlapAlreadyOpen) {
+        path = RelativePaths.closeFlapPanel + '/' + path + '/' + RelativePaths.openFlap;
+    }
 
     return (
         <KitTooltip
@@ -40,18 +39,7 @@ export const ExpandCollapseCurrentPanelButton: FunctionComponent<IExpandCollapse
                     />
                 }
                 onClick={() => {
-                    navigate(
-                        generatePath(
-                            isCurrentPanelInSlider
-                                ? RelativePaths.openCurrentPanelInPopup
-                                : RelativePaths.openCurrentPanelInSlider,
-                            {
-                                recordId,
-                                recordPanelId,
-                            },
-                        ),
-                        {relative: 'path'},
-                    );
+                    navigate(generatePath(path, {recordId, recordPanelId}), {relative: 'path'});
                 }}
             />
         </KitTooltip>
