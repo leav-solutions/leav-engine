@@ -27,6 +27,13 @@
     display: flex;
 }
 
+.popupContent {
+    flex: auto;
+    display: flex;
+    overflow: hidden;
+    height: 100%;
+}
+
 .popupHeaderTabs {
     margin: auto;
 }

@@ -21,35 +21,49 @@ export const useNavigateToPanel = (): {
     const [application] = useApplicationSettingsContext();
 
     return {
-        navigateToPanel: ({libraryId, recordId, where, panelId}) => {
+        navigateToPanel: ({libraryId, recordId, where, panelId, flapRecordId, flapLibraryId, flapPanelId}) => {
             if (recordId === undefined) {
                 // TODO: manage panels without recordId
                 return;
             }
+
+            const shouldOpenFlap =
+                flapRecordId !== undefined && flapLibraryId !== undefined && flapPanelId !== undefined;
+
+            const panelPath = shouldOpenFlap
+                ? RelativePaths.nextLevelPanel + '/' + RelativePaths.openFlap
+                : RelativePaths.nextLevelPanel;
 
             if (panelId === undefined) {
                 if (
                     application.libraries[libraryId] === undefined ||
                     application.libraries[libraryId].recordPanels[0] === undefined
                 ) {
+                    // TODO: manage panels without recordPanelId (ex: structure_item with comment)
                     return;
                 }
                 const firstRecordPanelId = application.libraries[libraryId].recordPanels[0].id;
 
                 return navigate(
-                    generatePath(RelativePaths.nextLevelPanel, {
+                    generatePath(panelPath, {
                         recordId,
                         where,
                         recordPanelId: firstRecordPanelId,
+                        flapRecordId,
+                        flapLibraryId,
+                        flapPanelId,
                     }),
                 );
             }
 
             return navigate(
-                generatePath(RelativePaths.nextLevelPanel, {
+                generatePath(panelPath, {
                     recordId,
                     where,
                     recordPanelId: panelId,
+                    flapRecordId,
+                    flapLibraryId,
+                    flapPanelId,
                 }),
             );
         },

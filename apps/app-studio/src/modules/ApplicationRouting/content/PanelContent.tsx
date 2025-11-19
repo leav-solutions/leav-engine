@@ -4,7 +4,7 @@
 import {type FunctionComponent, useEffect, useState} from 'react';
 import {EditRecordPage} from '@leav/ui';
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
-import {FLAP_TARGET_ID} from '../../../constants';
+import {FLAP_FULLPAGE_TARGET_ID} from '../../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
@@ -20,7 +20,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
     const [sidebarContainer, setSidebarContainer] = useState<HTMLElement>();
 
     useEffect(() => {
-        const element = document.getElementById(FLAP_TARGET_ID);
+        const element = document.getElementById(FLAP_FULLPAGE_TARGET_ID);
         if (element) {
             setSidebarContainer(element);
         }

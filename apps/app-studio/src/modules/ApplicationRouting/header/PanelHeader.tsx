@@ -10,14 +10,18 @@ import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {LibraryIdCard} from './LibraryIdCard';
 import {RecordIdCard} from './RecordIdCard';
 import {KitSpace} from 'aristid-ds';
-import {panelHeaderInSlider} from './panelHeader.module.css';
+import {panelHeaderActionPositionRight} from './panelHeader.module.css';
 import {ExpandCollapseCurrentPanelButton} from './ExpandCollapseCurrentPanelButton';
+import {ToggleFlapButton} from './ToggleFlapButton';
+import {FLAP_COMMENT_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
 import cn from 'classnames';
 
-export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?: string}> = ({
-    enabled,
-    currentRecordId,
-}) => {
+export const PanelHeader: FunctionComponent<{
+    enabled: boolean;
+    currentRecordId?: string;
+    hideExpandCollapseButton?: boolean;
+    actionPosition?: 'left' | 'right';
+}> = ({enabled, currentRecordId, hideExpandCollapseButton = false, actionPosition = 'left'}) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
@@ -33,7 +37,7 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
     return (
         <KitSpace
             className={cn({
-                [panelHeaderInSlider]: where === 'slider',
+                [panelHeaderActionPositionRight]: actionPosition === 'right',
             })}
             direction="horizontal"
             align="center"
@@ -47,8 +51,12 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
             ) : (
                 <RecordIdCard libraryId={libraryId} currentRecordId={currentRecordId ?? recordId} avatarSize="l" />
             )}
-            {!isFullpagePanel && !isLibraryPanel && (
-                <ExpandCollapseCurrentPanelButton recordId={recordId} where={where} recordPanelId={recordPanelId} />
+            {!isLibraryPanel && (
+                <KitSpace direction="horizontal">
+                    <ToggleFlapButton targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID} libraryId={libraryId} />
+                    <ToggleFlapButton targetFlapPanelId={FLAP_COMMENT_PANEL_ID} libraryId={libraryId} />
+                    {!isFullpagePanel && !hideExpandCollapseButton && <ExpandCollapseCurrentPanelButton />}
+                </KitSpace>
             )}
         </KitSpace>
     );

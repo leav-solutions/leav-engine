@@ -11,12 +11,16 @@ export const UnreachablePaths = {
     workspace: '/:workspaceId/*',
     record: ':recordId',
     recordWherePanel: ':recordId/:where/:recordPanelId/*',
+    recordWherePanelWithFlap: ':recordId/:where/:recordPanelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId/*',
 };
 
 export const RelativePaths = {
+    openFlap: 'flap/:flapRecordId/:flapLibraryId/:flapPanelId',
     nextLevelPanel: ':recordId/:where/:recordPanelId',
     closeCurrentPanel: '../../..',
+    closeFlapPanel: '../../../..',
     changeLastRecordPanel: '../:recordPanelId',
+    changeLastFlapPanel: '../:flapPanelId',
     openCurrentPanelInPopup: '../../../:recordId/popup/:recordPanelId',
     openCurrentPanelInSlider: '../../../:recordId/slider/:recordPanelId',
 };
