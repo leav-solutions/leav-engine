@@ -24,83 +24,131 @@ const attributeDataThrough = {
     linkedLibrary: {id: 'toto'},
     type: AttributeType.simple_link,
 };
+const attributeDataTree = {
+    label: 'tree',
+    format: AttributeFormat.text,
+    id: 'tree',
+    linkedTree: {id: 'tree_id'},
+    type: AttributeType.tree,
+};
 
 const filtersReducer = filtersReducerBase(null);
 
 describe('ViewSettings Reducer', () => {
     describe(`Action ${FiltersActionTypes.ADD_FILTER} test`, () => {
-        describe('adding filters', () => {
-            test('can add new filter', () => {
-                const state = filtersReducer(
-                    {
-                        ...filtersInitialState,
-                        filters: [
-                            {
-                                id: 'id1',
-                                attribute: attributeDataStandard,
-                                field: 'first',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: 'test',
-                            },
-                            {
-                                id: 'id2',
-                                attribute: attributeDataLink,
-                                field: 'second',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: 'test',
-                            },
-                            {
-                                id: 'id3',
-                                attribute: attributeDataThrough,
-                                field: 'third',
-                                condition: ThroughConditionFilter.THROUGH,
-                                subField: 'thirdSub',
-                                subCondition: null,
-                                value: 'test',
-                            },
-                        ],
-                    },
-                    {
-                        type: FiltersActionTypes.ADD_FILTER,
-                        payload: {
+        test('can add new filter', () => {
+            const state = filtersReducer(
+                {
+                    ...filtersInitialState,
+                    filters: [
+                        {
+                            id: 'id1',
                             attribute: attributeDataStandard,
-                            field: 'fourth',
+                            field: 'first',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: 'test',
                         },
-                    },
-                );
-                expect(state.filters).toHaveLength(4);
-                expect(state.filters).toEqual([
-                    {
-                        id: 'id1',
-                        attribute: attributeDataStandard,
-                        field: 'first',
-                        condition: RecordFilterCondition.EQUAL,
-                        value: 'test',
-                    },
-                    {
-                        id: 'id2',
-                        attribute: attributeDataLink,
-                        field: 'second',
-                        condition: RecordFilterCondition.EQUAL,
-                        value: 'test',
-                    },
-                    {
-                        id: 'id3',
-                        attribute: attributeDataThrough,
-                        field: 'third',
-                        condition: ThroughConditionFilter.THROUGH,
-                        subField: 'thirdSub',
-                        subCondition: null,
-                        value: 'test',
-                    },
-                    {
-                        id: expect.any(String),
+                        {
+                            id: 'id2',
+                            attribute: attributeDataLink,
+                            field: 'second',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: 'test',
+                        },
+                        {
+                            id: 'id3',
+                            attribute: attributeDataThrough,
+                            field: 'third',
+                            condition: ThroughConditionFilter.THROUGH,
+                            subField: 'thirdSub',
+                            subCondition: null,
+                            value: 'test',
+                        },
+                    ],
+                },
+                {
+                    type: FiltersActionTypes.ADD_FILTER,
+                    payload: {
                         attribute: attributeDataStandard,
                         field: 'fourth',
-                        condition: RecordFilterCondition.CONTAINS,
-                        value: null,
                     },
-                ]);
+                },
+            );
+            expect(state.filters).toHaveLength(4);
+            expect(state.filters).toEqual([
+                {
+                    id: 'id1',
+                    attribute: attributeDataStandard,
+                    field: 'first',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: 'test',
+                },
+                {
+                    id: 'id2',
+                    attribute: attributeDataLink,
+                    field: 'second',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: 'test',
+                },
+                {
+                    id: 'id3',
+                    attribute: attributeDataThrough,
+                    field: 'third',
+                    condition: ThroughConditionFilter.THROUGH,
+                    subField: 'thirdSub',
+                    subCondition: null,
+                    value: 'test',
+                },
+                {
+                    id: expect.any(String),
+                    attribute: attributeDataStandard,
+                    field: 'fourth',
+                    condition: RecordFilterCondition.CONTAINS,
+                    value: null,
+                },
+            ]);
+        });
+
+        test('should add filter with default values from initialFilters when attribute matches', () => {
+            const initialViewFilterValue = 'default value';
+            const state = filtersReducer(
+                {
+                    ...filtersInitialState,
+                    filters: [
+                        {
+                            id: 'id1',
+                            attribute: attributeDataTree,
+                            field: 'first',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: 'test',
+                        },
+                    ],
+                    initialFilters: [
+                        {
+                            id: 'initial-id',
+                            attribute: attributeDataTree,
+                            field: 'second',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: initialViewFilterValue,
+                        },
+                    ],
+                },
+                {
+                    type: FiltersActionTypes.ADD_FILTER,
+                    payload: {
+                        attribute: attributeDataTree,
+                        field: 'second',
+                    },
+                },
+            );
+
+            expect(state.filters).toHaveLength(2);
+            expect(state.filters[1]).toEqual({
+                id: 'initial-id',
+                attribute: attributeDataTree,
+                field: 'second',
+                condition: RecordFilterCondition.EQUAL,
+                value: initialViewFilterValue,
             });
         });
     });

@@ -121,24 +121,35 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
         condition = AttributeConditionFilter.EQUAL;
     }
 
-    const filterToAdd = isUIFilterTree(payload as UIFilter)
-        ? {
-              ...payload,
-              id: uuid(),
-              field: Array.isArray(payload.field) ? payload.field : [payload.field],
-              condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
-                  ? null
-                  : (getFirstConditionByFilterType(payload as UIFilter) as RecordFilterCondition[])[0],
-              value: null,
-          }
-        : {
-              ...payload,
-              field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
-              id: uuid(),
-              condition,
-              value: null,
-              valuesList: hasValueList ? payload.attribute.valuesList : undefined,
-          };
+    let filterToAdd;
+    if (isUIFilterTree(payload as UIFilter)) {
+        const filterWithDefaultValues = state.initialFilters.find(
+            initialFilter => initialFilter.attribute.id === payload.attribute.id,
+        );
+        if (filterWithDefaultValues !== undefined) {
+            filterToAdd = filterWithDefaultValues;
+        } else {
+            filterToAdd = {
+                ...payload,
+                id: uuid(),
+                field: Array.isArray(payload.field) ? payload.field : [payload.field],
+                condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
+                    ? null
+                    : (getFirstConditionByFilterType(payload as UIFilter) as RecordFilterCondition[])[0],
+                value: null,
+            };
+        }
+    } else {
+        filterToAdd = {
+            ...payload,
+            field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
+            id: uuid(),
+            condition,
+            value: null,
+            valuesList: hasValueList ? payload.attribute.valuesList : undefined,
+        };
+    }
+
     return {
         ...state,
         filters: [...state.filters, filterToAdd],

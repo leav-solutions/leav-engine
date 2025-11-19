@@ -1,12 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ReactNode, useEffect, useMemo, useReducer, useState} from 'react';
+import {useEffect, useMemo, useReducer, useState} from 'react';
 import {filtersReducer} from './filtersReducer';
 import {filtersInitialState} from './filtersInitialState';
 import {type AttributesById, useTransformFilters} from '../useTransformFilters';
 import {type GetViewsListQuery, useExplorerAttributesQuery, useGetViewsListQuery} from '_ui/_gqlTypes';
 import {type FiltersOperator, type UIFilter} from '../_types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useGetTreeFilters} from './useGetTreeFilters';
 
 export interface IFiltersProviderProps {
     libraryId: string | null;
@@ -15,6 +17,7 @@ export interface IFiltersProviderProps {
     filtersOperator?: FiltersOperator;
     ignoreViewByDefault?: boolean;
     pinFilters?: boolean;
+    skip: boolean;
 }
 
 export const useFiltersReducer = ({
@@ -23,7 +26,9 @@ export const useFiltersReducer = ({
     filters,
     filtersOperator = 'AND',
     ignoreViewByDefault = false,
+    skip,
 }: IFiltersProviderProps) => {
+    const {t} = useSharedTranslation();
     const [refetchViews, setRefetchViews] = useState(false);
     const [filtersData, dispatch] = useReducer(filtersReducer(setRefetchViews), {
         ...filtersInitialState,
@@ -40,11 +45,13 @@ export const useFiltersReducer = ({
         data: viewData,
         loading: viewsLoading,
     } = useGetViewsListQuery({
-        skip: libraryId === null && !needToReload,
+        skip: skip || (libraryId === null && !needToReload),
         variables: {
             libraryId: libraryId as string,
         },
     });
+
+    const {data: treeFilters, loading: treeFiltersLoading} = useGetTreeFilters({libraryId, skip});
 
     let userView: GetViewsListQuery['views']['list'][number] | undefined;
     if (viewId) {
@@ -78,9 +85,9 @@ export const useFiltersReducer = ({
     );
 
     useEffect(() => {
-        if (!viewsLoading) {
+        if (!viewsLoading && !treeFiltersLoading) {
             setRefetchViews(false);
-            const uiFilters = toUIFilters({filters: allFilters ?? [], attributesDataById});
+            const uiFilters = toUIFilters({filters: allFilters ?? [], treeFilters, attributesDataById, t});
             dispatch({
                 type: 'RESET',
                 payload: {
@@ -94,7 +101,7 @@ export const useFiltersReducer = ({
                 },
             });
         }
-    }, [attributesDataById, viewsLoading]);
+    }, [attributesDataById, viewsLoading, treeFiltersLoading]);
 
     return {filtersData, dispatch};
 };

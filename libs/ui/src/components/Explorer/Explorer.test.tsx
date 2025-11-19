@@ -22,6 +22,7 @@ import * as useColumnWidth from './useColumnWidth';
 import {type IExplorerRef} from './Explorer';
 import ResizeObserver from 'resize-observer-polyfill';
 import * as attributeDetailsModule from '_ui/components/Explorer/manage-view-settings/_shared/useAttributeDetailsData';
+import {mockLibrarySimple} from '_ui/__mocks__/common/library';
 
 global.ResizeObserver = ResizeObserver;
 
@@ -36,6 +37,14 @@ jest.mock('_ui/components/UploadFiles', () => ({
 jest.mock('_ui/components/CreateDirectory', () => ({
     CreateDirectory: () => <div>{CreateDirectoryMock}</div>,
 }));
+
+jest.mock('_ui/components/Filters/context/useGetTreeFilters', () => ({
+    useGetTreeFilters: () => ({
+        data: {},
+        loading: false,
+    }),
+}));
+
 const editRecordFn = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: ({onCreate, onClose, ...props}) => {

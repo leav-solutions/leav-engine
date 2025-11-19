@@ -7,7 +7,7 @@ import {Spin} from 'antd';
 import {type EventDataNode} from 'antd/lib/tree';
 import {type ITreeNodeWithRecord} from '_ui/types';
 import {type ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
-import {defaultPaginationPageSize, ErrorDisplay} from '../..';
+import {defaultPaginationPageSize, ErrorDisplay} from '../../index';
 import {TreeNodeTitle} from './TreeNodeTitle';
 import {_isObjectSelection, type ITreeMap, type ITreeMapElement} from './_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

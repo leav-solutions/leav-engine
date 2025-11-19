@@ -102,11 +102,19 @@ const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilter
         if (idx === 0 && filter.value && filter.value.length > 1) {
             filtersWithOperators.push({operator: RecordFilterOperator.OPEN_BRACKET});
         }
-        filtersWithOperators.push({
-            value: recordId,
-            condition: filter.condition,
-            field: Array.isArray(filter.field) ? filter.field[idx] : filter.field,
-        });
+        if (isUIFilterTree(filter) && filter.nodes && filter.nodes.length > 0) {
+            filtersWithOperators.push({
+                value: recordId,
+                condition: filter.condition,
+                field: `${filter.attribute.id}.${filter.nodes[idx].libraryId}.id`,
+            });
+        } else {
+            filtersWithOperators.push({
+                value: recordId,
+                condition: filter.condition,
+                field: Array.isArray(filter.field) ? filter.field[idx] : filter.field,
+            });
+        }
         if (filter.value && idx < filter.value.length - 1) {
             filtersWithOperators.push({
                 operator:

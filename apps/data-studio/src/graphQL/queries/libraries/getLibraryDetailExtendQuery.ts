@@ -224,6 +224,12 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                     edit_record
                     delete_record
                 }
+                permissions_conf {
+                    permissionTreeAttributes {
+                        id
+                    }
+                }
+
             }
         }
     }

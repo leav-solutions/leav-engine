@@ -26,6 +26,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AccessRecordByDefaultPermissionInput = {
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+};
+
 export type ActionConfigurationInput = {
   error_message?: InputMaybe<Scalars['SystemTranslationOptional']>;
   id: Scalars['ID'];
@@ -202,9 +207,12 @@ export enum AvailableLanguage {
 
 export type CampaignToRenew = {
   category?: InputMaybe<Scalars['String']>;
+  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   endDate: Scalars['String'];
   id: Scalars['String'];
   label: Scalars['String'];
+  mixed: Scalars['Boolean'];
+  opTrade?: InputMaybe<Scalars['String']>;
   startDate: Scalars['String'];
   thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   type?: InputMaybe<Scalars['String']>;
@@ -310,17 +318,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -972,15 +969,19 @@ export type AttributesByLibLinkAttributeFragment = { linked_library?: { id: stri
 
 export type LibraryLightFragment = { id: string, label?: any | null, icon?: { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | null };
 
-export type LibraryDetailsFragment = { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
+export type LibraryDetailsFragment = { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_tree?: { id: string } | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
 
 export type LibraryAttributesLinkAttributeFragment = { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null };
 
-export type LibraryAttributesStandardAttributeTreeAttributeFragment = { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null };
+export type LibraryAttributesStandardAttributeFragment = { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null };
 
-export type LibraryAttributesFragment = LibraryAttributesLinkAttributeFragment | LibraryAttributesStandardAttributeTreeAttributeFragment;
+export type LibraryAttributesTreeAttributeFragment = { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_tree?: { id: string } | null };
+
+export type LibraryAttributesFragment = LibraryAttributesLinkAttributeFragment | LibraryAttributesStandardAttributeFragment | LibraryAttributesTreeAttributeFragment;
 
 export type LibraryLinkAttributeDetailsFragment = { linked_library?: { id: string, behavior: LibraryBehavior } | null };
+
+export type LibraryTreeAttributeDetailsFragment = { linked_tree?: { id: string } | null };
 
 export type LibraryPreviewsSettingsFragment = { label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } };
 
@@ -1240,7 +1241,7 @@ export type GetLibraryByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetLibraryByIdQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null }> } | null };
+export type GetLibraryByIdQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_tree?: { id: string } | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null }> } | null };
 
 export type GetLibraryPermissionsQueryVariables = Exact<{
   libraryId?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
@@ -1261,7 +1262,7 @@ export type SaveLibraryMutationVariables = Exact<{
 }>;
 
 
-export type SaveLibraryMutation = { saveLibrary: { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null } };
+export type SaveLibraryMutation = { saveLibrary: { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_tree?: { id: string } | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -1498,6 +1499,14 @@ export type SaveViewMutationVariables = Exact<{
 
 
 export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+
+export type TreeFilterByDefaultValuesQueryVariables = Exact<{
+  treeId: Scalars['ID'];
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
+}>;
+
+
+export type TreeFilterByDefaultValuesQuery = { treeNodeChildren: { list: Array<{ accessRecordByDefaultPermission?: boolean | null, id: string, record: { id: string, whoAmI: { label?: string | null, id: string, library: { id: string } } } }> } };
 
 export type GetAttributesByLibWithPermissionsQueryVariables = Exact<{
   library: Scalars['String'];
@@ -1748,6 +1757,13 @@ export const LibraryLinkAttributeDetailsFragmentDoc = gql`
   }
 }
     `;
+export const LibraryTreeAttributeDetailsFragmentDoc = gql`
+    fragment LibraryTreeAttributeDetails on TreeAttribute {
+  linked_tree {
+    id
+  }
+}
+    `;
 export const LibraryAttributesFragmentDoc = gql`
     fragment LibraryAttributes on Attribute {
   id
@@ -1756,8 +1772,10 @@ export const LibraryAttributesFragmentDoc = gql`
   type
   format
   ...LibraryLinkAttributeDetails
+  ...LibraryTreeAttributeDetails
 }
-    ${LibraryLinkAttributeDetailsFragmentDoc}`;
+    ${LibraryLinkAttributeDetailsFragmentDoc}
+${LibraryTreeAttributeDetailsFragmentDoc}`;
 export const LibraryPreviewsSettingsFragmentDoc = gql`
     fragment LibraryPreviewsSettings on LibraryPreviewsSettings {
   label
@@ -4751,6 +4769,63 @@ export function useSaveViewMutation(baseOptions?: Apollo.MutationHookOptions<Sav
 export type SaveViewMutationHookResult = ReturnType<typeof useSaveViewMutation>;
 export type SaveViewMutationResult = Apollo.MutationResult<SaveViewMutation>;
 export type SaveViewMutationOptions = Apollo.BaseMutationOptions<SaveViewMutation, SaveViewMutationVariables>;
+export const TreeFilterByDefaultValuesDocument = gql`
+    query TreeFilterByDefaultValues($treeId: ID!, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
+  treeNodeChildren(
+    treeId: $treeId
+    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
+  ) {
+    list {
+      accessRecordByDefaultPermission
+      id
+      record {
+        id
+        whoAmI {
+          label
+          id
+          library {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTreeFilterByDefaultValuesQuery__
+ *
+ * To run a query within a React component, call `useTreeFilterByDefaultValuesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTreeFilterByDefaultValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTreeFilterByDefaultValuesQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
+ *   },
+ * });
+ */
+export function useTreeFilterByDefaultValuesQuery(baseOptions: Apollo.QueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
+      }
+export function useTreeFilterByDefaultValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
+        }
+export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
+        }
+export type TreeFilterByDefaultValuesQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesQuery>;
+export type TreeFilterByDefaultValuesLazyQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesLazyQuery>;
+export type TreeFilterByDefaultValuesSuspenseQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesSuspenseQuery>;
+export type TreeFilterByDefaultValuesQueryResult = Apollo.QueryResult<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>;
 export const GetAttributesByLibWithPermissionsDocument = gql`
     query getAttributesByLibWithPermissions($library: String!) {
   attributes(filters: {libraries: [$library]}) {

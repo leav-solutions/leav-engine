@@ -43,7 +43,7 @@ const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: Defa
 };
 
 const MockFilterscontextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({children}) => {
-    const {filtersData, dispatch} = useFiltersReducer({libraryId: 'my_lib'});
+    const {filtersData, dispatch} = useFiltersReducer({libraryId: 'my_lib', skip: false});
     return <FiltersContext.Provider value={{filtersData, dispatch}}>{children}</FiltersContext.Provider>;
 };
 

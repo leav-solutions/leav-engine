@@ -23,15 +23,15 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
 }) => {
     const {t} = useSharedTranslation();
 
-    const [selectedNodes, setSelectedNodes] = useState<ITreeNodeWithRecord[]>([]);
+    const [selectedNodesIds, setSelectedNodesIds] = useState<string[]>((filter.nodes ?? []).map(node => node.nodeId));
 
     const {conditionOptionsByType: availableConditionsOptions} = useConditionsOptionsByType(filter);
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         if (selected) {
-            setSelectedNodes(prev => [...prev, node]);
+            setSelectedNodesIds(prev => [...prev, node.id]);
         } else {
-            setSelectedNodes(prev => prev.filter(selectedValue => selectedValue.id !== node.id));
+            setSelectedNodesIds(prev => prev.filter(selectedValue => selectedValue !== node.id));
         }
     };
 
@@ -41,7 +41,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
 
     useEffect(() => {
         if (filter.value == null) {
-            setSelectedNodes([]);
+            setSelectedNodesIds([]);
         }
     }, [filter]);
 
@@ -70,7 +70,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             .map(node => `${filter.attribute.id}.${node.record?.whoAmI?.library?.id}.id`);
 
     const _handleOnCheck = (selection: ITreeNodeWithRecord[]) => {
-        setSelectedNodes(selection.filter(node => !node?.disabled));
+        setSelectedNodesIds(selection.filter(node => !node?.disabled).map(node => node.id));
 
         const records = _getRecursiveChildrenRecord(selection);
         const fields = _getRecursiveFieldsFromLibraries(selection);
@@ -100,7 +100,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             {showSearch && (
                 <SelectTreeNode
                     treeId={filter.attribute.linkedTree?.id ?? ''}
-                    selectedNodes={selectedNodes.map(node => node.id)}
+                    selectedNodes={selectedNodesIds}
                     onSelect={_handleOnSelect}
                     onCheck={_handleOnCheck}
                     multiple

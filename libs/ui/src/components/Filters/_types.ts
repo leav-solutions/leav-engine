@@ -89,6 +89,7 @@ export interface IUIFilterTree extends Omit<IUIFilterBase, 'value' | 'formattedV
     condition: RecordFilterCondition | null;
     value: string[] | null;
     formattedValue?: string[] | null;
+    nodes?: null | Array<{nodeId: string; libraryId: string}>;
     field: string[];
 }
 

@@ -8,7 +8,6 @@ import {type IUserView} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
 import {type IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
-import {useTransformFilters, type ValidFiltersArgument} from '_ui/components/Filters/useTransformFilters';
 import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
 import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
 import {type ValidFilter} from '../Filters/_types';
@@ -17,7 +16,6 @@ export const useLoadView = () => {
     const {view, dispatch} = useViewSettingsContext();
     const {dispatch: filtersDispatch} = useFiltersContext();
     const {closeSettingsPanel} = useEditSettings();
-    const {toUIFilters, toValidFilters} = useTransformFilters();
     const currentView = useRef<IUserView | null>(null);
 
     const [fetchAttributes] = useExplorerAttributesLazyQuery({
