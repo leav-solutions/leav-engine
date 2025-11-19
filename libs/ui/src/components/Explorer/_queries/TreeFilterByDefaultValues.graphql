@@ -1,0 +1,18 @@
+query TreeFilterByDefaultValues($treeId: ID!, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
+  treeNodeChildren(treeId: $treeId, accessRecordByDefaultPermission: $accessRecordByDefaultPermission) {
+    list {
+      accessRecordByDefaultPermission
+      id
+      record {
+        id
+        whoAmI {
+          label
+          id
+          library {
+            id
+          }
+        }
+      }
+    }
+  }
+}

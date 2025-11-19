@@ -14,6 +14,12 @@ export const libraryDetailsFragment = gql`
         }
     }
 
+    fragment LibraryTreeAttributeDetails on TreeAttribute {
+        linked_tree {
+            id
+        }
+    }
+
     fragment LibraryAttributes on Attribute {
         id
         label
@@ -21,6 +27,7 @@ export const libraryDetailsFragment = gql`
         type
         format
         ...LibraryLinkAttributeDetails
+        ...LibraryTreeAttributeDetails
     }
 
     fragment LibraryPreviewsSettings on LibraryPreviewsSettings {

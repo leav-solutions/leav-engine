@@ -4,6 +4,7 @@
 import {
     type AttributeDetailsLinkAttributeFragment,
     type AttributeDetailsTreeAttributeFragment,
+    AttributeFormat,
     AttributeType,
     type ExplorerAttributesQuery,
     type ExplorerLinkAttributeQuery,
@@ -33,6 +34,9 @@ import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {valueListTextConditions} from './filter-items/filter-type/useConditionOptionsByType';
+import dayjs from 'dayjs';
+import {type TFunction} from 'i18next';
+import {type ITreeFilters} from './context/useGetTreeFilters';
 
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | UIFilter): filter is ValidFieldFilter =>
     !!filter.field;
@@ -114,10 +118,14 @@ export const useTransformFilters = () => {
 
     const toUIFilters = ({
         filters,
+        treeFilters,
         attributesDataById,
+        t,
     }: {
         filters: ValidFilter[];
+        treeFilters: ITreeFilters;
         attributesDataById: AttributesById;
+        t: TFunction;
     }): UIFilter[] =>
         (filters ?? []).reduce<UIFilter[]>((acc, filter) => {
             if (!attributesDataById[filter.field]) {
@@ -150,9 +158,19 @@ export const useTransformFilters = () => {
                     };
                     acc.push(newFilter);
                 } else {
+                    let formattedValue: string;
+                    if (attributeData.format === AttributeFormat.boolean && filter.value) {
+                        formattedValue = filter.value === 'true' ? t('explorer.true') : t('explorer.false');
+                    }
+
+                    if (attributeData.format === AttributeFormat.date && filter.value) {
+                        formattedValue = dayjs(filter.value).format('YYYY-MM-DD');
+                    }
+
                     const newFilter: IUIFilterStandard = {
                         field: filter.field,
                         value: filter.value ?? null,
+                        formattedValue,
                         hidden: filter.hidden ?? false,
                         id: window.crypto.randomUUID(),
                         condition: (filter.condition as RecordFilterCondition) ?? null,
@@ -224,7 +242,21 @@ export const useTransformFilters = () => {
                 const newFilter: IUIFilterTree = {
                     field: [filter.field],
                     // TODO : save filter values as string[] when tree filter and handle fields with libraries
-                    value: filter.value ? [filter.value] : null,
+                    value: filter.value
+                        ? [filter.value]
+                        : treeFilters[filter.field]
+                          ? treeFilters[filter.field].map(tree => tree.value)
+                          : null,
+                    formattedValue: filter.value
+                        ? [filter.value]
+                        : treeFilters[filter.field]
+                          ? treeFilters[filter.field].map(tree => tree.label)
+                          : undefined,
+                    nodes: filter.value
+                        ? undefined
+                        : treeFilters[filter.field]
+                          ? treeFilters[filter.field].map(tree => ({libraryId: tree.libraryId, nodeId: tree.nodeId}))
+                          : undefined,
                     hidden: filter.hidden ?? false,
                     id: window.crypto.randomUUID(),
                     attribute: {

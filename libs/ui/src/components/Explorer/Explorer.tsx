@@ -176,6 +176,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             filters: defaultViewSettings?.filters ?? undefined,
             filtersOperator: defaultViewSettings?.filtersOperator ?? undefined,
             ignoreViewByDefault,
+            skip: viewSettingsLoading,
         });
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
