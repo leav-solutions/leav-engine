@@ -9433,7 +9433,7 @@ __metadata:
   resolution: "@leav/app-root-path@workspace:libs/app-root-path"
   dependencies:
     "@types/jest": "npm:29.0.2"
-    app-root-path: "npm:3.0.0"
+    app-root-path: "npm:3.1.0"
     jest: "npm:29.0.3"
     prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
@@ -14274,13 +14274,6 @@ __metadata:
   bin:
     apollo: bin/run
   checksum: a9dd28e4e1212c5cfa9cc6615473ef6ff13611cfb1ade83305b79607556aca06fc31e982fed7063ad4156ca1177db009484adc260049111fc7364b491cb7d870
-  languageName: node
-  linkType: hard
-
-"app-root-path@npm:3.0.0":
-  version: 3.0.0
-  resolution: "app-root-path@npm:3.0.0"
-  checksum: 7bec64f1f9a90f47920cddce0d013a015c5f7c612700e7ad56c1d8f797f72bf7ef5664491b3d0421843cc89a4e14c2c03ab7a7c5127250e6c6bcaa8d2cf192fe
   languageName: node
   linkType: hard
 

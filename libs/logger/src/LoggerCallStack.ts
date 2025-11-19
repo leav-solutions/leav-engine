@@ -38,7 +38,7 @@ export class LoggerCallStack {
                 Error.stackTraceLimit++;
 
                 previousStackLinesLength = stackLines.length;
-                stackLines = this.getStackLines();
+                stackLines = this.getStackLines() as string[];
             }
         }
 
@@ -60,7 +60,7 @@ export class LoggerCallStack {
             }
         }
 
-        let callerInfo: ICallerInfo;
+        let callerInfo: ICallerInfo | null;
 
         do {
             callerInfo = this.detectCallLineIndexInStack(stackLines);
@@ -68,7 +68,7 @@ export class LoggerCallStack {
             if (!callerInfo) {
                 Error.stackTraceLimit++;
 
-                stackLines = this.getStackLines();
+                stackLines = this.getStackLines() as string[];
             }
         } while (
             !callerInfo &&

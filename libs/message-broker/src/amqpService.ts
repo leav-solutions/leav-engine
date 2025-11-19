@@ -23,8 +23,8 @@ interface IDeps {
 }
 
 export default async function ({config}: IDeps): Promise<IAmqpService> {
-    let publisher: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
-    let consumer: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
+    let publisher: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel} = {} as any;
+    let consumer: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel} = {} as any;
 
     const _init = async () => {
         const publisherConnection = await amqp.connect(config.connOpt);
@@ -33,7 +33,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
         const consumerConnection = await amqp.connect(config.connOpt);
         const consumerChannel = await consumerConnection.createConfirmChannel();
-        await consumerChannel.prefetch(config.prefetch);
+        config.prefetch && (await consumerChannel.prefetch(config.prefetch));
 
         publisher = {connection: publisherConnection, channel: publisherChannel};
         consumer = {connection: consumerConnection, channel: consumerChannel};

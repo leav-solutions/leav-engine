@@ -82,7 +82,7 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
         close: async () => {
             if (server && typeof server.close === 'function') {
                 await new Promise<void>((resolve, reject) => {
-                    server.close((err?: Error) => {
+                    server?.close((err?: Error) => {
                         if (err) {
                             reject(err);
                         } else {

@@ -13,6 +13,13 @@ import {AttributeType} from './types/attributes';
 import {FileType} from './types/files';
 import {type IKeyValue} from './types/helpers';
 
+const extensionsTyped = extensions as {
+    [extension: string]: {
+        mime: string;
+        type: FileType;
+    };
+};
+
 export const getGraphqlTypeFromLibraryName = (library: string): string =>
     flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
 
@@ -50,9 +57,11 @@ export const localizedTranslation = (translations: Record<string, string>, avail
  */
 export const stringToColor = (str: string | null = '', format = 'hsl', saturation = 30, luminosity = 80): string => {
     let hash = 0;
-    for (let i = 0; i < (str ?? '').length; i++) {
-        // eslint-disable-next-line no-bitwise
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    if (str) {
+        for (let i = 0; i < str.length; i++) {
+            // eslint-disable-next-line no-bitwise
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
     }
 
     const hue = hash % 360;
@@ -147,30 +156,33 @@ export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: strin
     Object.keys(obj ?? {}).map(key => ({name: key, value: obj[key]}));
 
 export const nameValArrayToObj = (
-    arr: Array<{}> = [],
+    arr: Array<Record<string, any>> = [],
     keyFieldName = 'name',
     valueFieldName = 'value',
-): {[key: string]: any} =>
+): Record<string, any> | null =>
     Array.isArray(arr) && arr.length
-        ? arr.reduce((formattedElem, elem) => {
-              formattedElem[elem[keyFieldName]] = elem[valueFieldName];
+        ? arr.reduce(
+              (formattedElem, elem) => {
+                  formattedElem[elem[keyFieldName]] = elem[valueFieldName];
 
-              return formattedElem;
-          }, {})
+                  return formattedElem;
+              },
+              {} as Record<string, any>,
+          )
         : null;
 
-export const getFileType = (fileName: string): FileType => {
+export const getFileType = (fileName: string): FileType | null => {
     if (!fileName) {
         return null;
     }
 
     const extension = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
 
-    if (!extensions[extension]) {
+    if (!extensionsTyped[extension]) {
         return FileType.OTHER;
     }
 
-    const type = extensions[extension].type;
+    const type = extensionsTyped[extension].type;
 
     return type;
 };
@@ -182,9 +194,9 @@ export const getFileType = (fileName: string): FileType => {
  */
 export const getCallStack = (depth = 2): string[] => {
     const callersStartDepth = 3;
-    const callers = new Error().stack.split('\n').slice(callersStartDepth, callersStartDepth + depth);
+    const callers = new Error().stack?.split('\n').slice(callersStartDepth, callersStartDepth + depth);
 
-    return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
+    return callers?.map(c => c.trim().split(' ').splice(1).join(' @ ')) || [];
 };
 
 export const getInitials = (label: string, length = 2) => {
@@ -266,7 +278,7 @@ export const simpleStringHash = (str: string) => {
 };
 
 export const getFlagByLang = (lang: string): string => {
-    const flagsByLang = {
+    const flagsByLang: Record<string, string> = {
         en: '🇬🇧', // English
         es: '🇪🇸', // Spanish
         fr: '🇫🇷', // French
