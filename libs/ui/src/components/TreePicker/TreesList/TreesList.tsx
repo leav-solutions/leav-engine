@@ -143,7 +143,7 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
         },
     ];
 
-    const tableData: TreeType[] = ([...data?.trees?.list] ?? [])
+    const tableData: TreeType[] = [...(data?.trees?.list ?? [])]
         .filter(tree => {
             // Do not display already selected libraries
             if (!showSelected && selected.find(selectedTree => selectedTree === tree.id)) {

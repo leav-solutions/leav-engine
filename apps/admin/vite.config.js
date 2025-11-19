@@ -20,6 +20,8 @@ export default () => {
                 {find: 'themingVar', replacement: path.resolve(__dirname, './src/themingVar')},
                 {find: '../../theme.config', replacement: path.resolve(__dirname, './src/semantic-ui/theme.config')},
                 {find: 'semantic-ui/site', replacement: path.resolve(__dirname, './src/semantic-ui/site')},
+                {find: 'react', replacement: path.resolve(__dirname, './node_modules/react')},
+                {find: 'react-dom', replacement: path.resolve(__dirname, './node_modules/react-dom')},
             ],
         },
         plugins: [

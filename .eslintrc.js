@@ -2,9 +2,9 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
     env: {browser: true, node: true, es6: true},
-    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*', '**/__generated__/**'],
+    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*', '**/__generated__/**', '.eslintrc.js'],
     parser: '@typescript-eslint/parser',
-    parserOptions: {tsconfigRootDir: __dirname, project: ['./tsconfig.json']},
+    parserOptions: {tsconfigRootDir: __dirname, project: './tsconfig.json'},
     plugins: ['@typescript-eslint', 'react-refresh', 'no-only-tests'],
     settings: {react: {version: 'latest'}},
     extends: ['plugin:@aristid/recommended'],

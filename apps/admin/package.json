@@ -2,7 +2,21 @@
     "name": "admin",
     "description": "Administration",
     "version": "1.5.0",
-    "main": "src/index.tsx",
+    "private": true,
+    "stableVersion": "0.1.0",
+    "scripts": {
+        "start": "vite",
+        "build": "vite build",
+        "build:install": "yarn run build --outDir ../core/applications/admin --emptyOutDir",
+        "test": "jest",
+        "test:ci": "jest --maxWorkers=2",
+        "test:commit": "jest --maxWorkers=50% --onlyChanged",
+        "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin/src/_gqlTypes",
+        "create_comp": "scripts/createComponent.js",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p .",
+        "postinstall": "node scripts/fixSemanticUiCss.js"
+    },
     "dependencies": {
         "@apollo/client": "3.8.1",
         "@reduxjs/toolkit": "1.7.1",
@@ -40,19 +54,6 @@
         "uuid": "7.0.3",
         "yup": "0.32.11"
     },
-    "scripts": {
-        "start": "vite",
-        "build": "vite build",
-        "build:install": "yarn run build --outDir ../core/applications/admin --emptyOutDir",
-        "test": "jest",
-        "test:ci": "jest --maxWorkers=2",
-        "test:commit": "jest --maxWorkers=50% --onlyChanged",
-        "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin/src/_gqlTypes",
-        "create_comp": "scripts/createComponent.js",
-        "tscheck": "tsc --noEmit -p .",
-        "tscheck:watch": "tsc -w --noEmit -p .",
-        "postinstall": "node scripts/fixSemanticUiCss.js"
-    },
     "devDependencies": {
         "@semantic-ui-react/craco-less": "2.0.2",
         "@testing-library/jest-dom": "5.11.9",
@@ -79,7 +80,7 @@
         "@types/styled-components": "4.1.6",
         "@types/testing-library__jest-dom": "5.9.5",
         "@types/uuid": "8.0.0",
-        "@vitejs/plugin-react": "3.1.0",
+        "@vitejs/plugin-react": "5.1.1",
         "apollo": "2.34.0",
         "babel-jest": "30.1.2",
         "commander": "2.19.0",
@@ -95,7 +96,7 @@
         "ts-jest": "29.4.2",
         "ts-jest-mock-import-meta": "1.0.0",
         "typescript": "5.5.3",
-        "vite": "4.5.14",
+        "vite": "7.2.2",
         "vite-jest": "0.1.4"
     },
     "browserslist": {
@@ -109,7 +110,5 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    },
-    "homepage": ".",
-    "stableVersion": "0.1.0"
+    }
 }
