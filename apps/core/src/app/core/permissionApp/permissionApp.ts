@@ -190,14 +190,11 @@ export default function ({
                 resolvers: {
                     Query: {
                         async isAllowed(_, {type, applyTo, actions, target}, ctx) {
-                            const {userId} = ctx;
-
                             return Promise.all(
                                 actions.map(async action => {
                                     const perm = await permissionDomain.isAllowed({
                                         type,
                                         action,
-                                        userId,
                                         applyTo,
                                         target,
                                         ctx,

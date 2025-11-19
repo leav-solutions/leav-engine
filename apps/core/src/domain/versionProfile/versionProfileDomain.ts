@@ -87,7 +87,6 @@ export default function ({
 
             const canSave = await adminPermissionDomain.getAdminPermission({
                 action: actionToCheck,
-                userId: ctx.userId,
                 ctx,
             });
 
@@ -166,7 +165,6 @@ export default function ({
             const actionToCheck = AdminPermissionsActions.DELETE_VERSION_PROFILE;
             const canDelete = await adminPermissionDomain.getAdminPermission({
                 action: actionToCheck,
-                userId: ctx.userId,
                 ctx,
             });
 

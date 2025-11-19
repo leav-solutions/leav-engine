@@ -813,7 +813,7 @@ describe('formDomain', () => {
             };
 
             const mockRecordAttributePermissionDomainForbidden: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: jest.fn(async (action, userId, attributeId) => {
+                getRecordAttributePermission: jest.fn(async (action, attributeId) => {
                     switch (attributeId) {
                         case 'allowed_attribute':
                             return true;
@@ -907,7 +907,7 @@ describe('formDomain', () => {
             };
 
             const mockRecordAttributePermissionDomainForbidden: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: jest.fn(async (action, userId, attributeId) => {
+                getRecordAttributePermission: jest.fn(async (action, attributeId) => {
                     switch (attributeId) {
                         case 'allowed_attribute':
                             return true;

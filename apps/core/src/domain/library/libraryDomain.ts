@@ -178,7 +178,7 @@ export default function ({
                 : [];
 
             // Check permissions
-            const permCheck = await checkSavePermission(existingLib, ctx.userId, {adminPermissionDomain}, ctx);
+            const permCheck = await checkSavePermission(existingLib, {adminPermissionDomain}, ctx);
             if (!permCheck.canSave) {
                 throw new PermissionError(permCheck.action);
             }
@@ -330,7 +330,7 @@ export default function ({
         async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_LIBRARY;
-            const canSaveLibrary = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSaveLibrary = await adminPermissionDomain.getAdminPermission({action, ctx});
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);

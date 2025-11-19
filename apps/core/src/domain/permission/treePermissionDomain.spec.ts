@@ -28,7 +28,6 @@ describe('TreePermissionDomain', () => {
             const perm = await permDomain.getTreePermission({
                 action: TreePermissionsActions.ACCESS_TREE,
                 treeId: 'test_tree',
-                userId: '12345',
                 ctx,
             });
 

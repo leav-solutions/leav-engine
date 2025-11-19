@@ -203,7 +203,6 @@ describe('TreeBasedPermissionDomain', () => {
         const params: IGetTreeBasedPermissionParams = {
             type: PermissionTypes.RECORD_ATTRIBUTE,
             action: RecordPermissionsActions.ACCESS_RECORD,
-            userId: '987654',
             applyTo: 'test_lib',
             treeValues: {
                 category: ['321654'],

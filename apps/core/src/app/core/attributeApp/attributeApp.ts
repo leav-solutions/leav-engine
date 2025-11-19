@@ -101,14 +101,12 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                   recordId: record.id,
                                   attributeId: attributeData.id,
                               },
-                              userId: ctx.userId,
                               ctx,
                           }
                         : {
                               type: PermissionTypes.ATTRIBUTE,
                               applyTo: attributeData.id,
                               action: action as AttributePermissionsActions,
-                              userId: ctx.userId,
                               ctx,
                           },
                 );

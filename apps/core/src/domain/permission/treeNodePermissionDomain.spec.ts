@@ -142,7 +142,6 @@ describe('treeNodePermissionDomain', () => {
 
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.EDIT_CHILDREN,
-                userId: ctx.userId,
                 nodeId: '123456',
                 treeId: 'test',
                 ctx,
@@ -170,7 +169,6 @@ describe('treeNodePermissionDomain', () => {
 
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
-                userId: ctx.userId,
                 nodeId: '123456',
                 treeId: 'test',
                 ctx,
@@ -206,7 +204,6 @@ describe('treeNodePermissionDomain', () => {
 
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
-                userId: ctx.userId,
                 nodeId: '123456',
                 treeId: 'test',
                 ctx,

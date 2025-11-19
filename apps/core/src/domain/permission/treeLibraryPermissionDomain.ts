@@ -21,7 +21,6 @@ export default function ({
         action,
         treeId,
         libraryId,
-        userId,
         getDefaultTreeLibraryPermission,
         ctx,
     }: IGetTreeLibraryPermissionParams): Promise<boolean> =>

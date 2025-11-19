@@ -23,7 +23,6 @@ import {type IRecordInCreationBypassHelper} from './helpers/recordInCreationBypa
 export interface IRecordAttributePermissionDomain {
     getRecordAttributePermission(
         action: RecordAttributePermissionsActions,
-        userGroupId: string,
         attributeId: string,
         recordLibrary: string,
         recordId: string,
@@ -67,7 +66,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
     return {
         async getRecordAttributePermission(
             action: RecordAttributePermissionsActions,
-            userId: string,
             attributeId: string,
             recordLibrary: string,
             recordId: string,
@@ -116,7 +114,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                 {
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action,
-                    userId,
                     applyTo: attributeId,
                     treeValues: valuesByAttr,
                     permissions_conf: attrProps.permissions_conf,

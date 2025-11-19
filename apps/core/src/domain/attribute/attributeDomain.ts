@@ -250,7 +250,7 @@ export default function ({
             const action = isExistingAttr
                 ? AdminPermissionsActions.EDIT_ATTRIBUTE
                 : AdminPermissionsActions.CREATE_ATTRIBUTE;
-            const canSavePermission = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSavePermission = await adminPermissionDomain.getAdminPermission({action, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
@@ -340,7 +340,7 @@ export default function ({
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_ATTRIBUTE;
-            const canSavePermission = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            const canSavePermission = await adminPermissionDomain.getAdminPermission({action, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);

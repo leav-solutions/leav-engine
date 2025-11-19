@@ -51,7 +51,6 @@ export type PermByActionsRes = {[name: string]: boolean | null} | null;
 
 export interface IGetAdminPermissionParams {
     action: AdminPermissionsActions;
-    userId: string;
     ctx: IQueryInfos;
 }
 
@@ -64,14 +63,12 @@ export interface IGetInheritedAdminPermissionParams {
 export interface IGetLibraryPermissionParams {
     action: LibraryPermissionsActions;
     libraryId: string;
-    userId: string;
     ctx: IQueryInfos;
 }
 
 export interface IGetTreePermissionParams {
     action: TreePermissionsActions;
     treeId: string;
-    userId: string;
     ctx: IQueryInfos;
 }
 
@@ -81,7 +78,6 @@ export interface IGetTreeLibraryPermissionParams {
     action: TreeNodePermissionsActions;
     treeId: string;
     libraryId: string;
-    userId: string;
     getDefaultTreeLibraryPermission?: GetDefaultTreeLibraryPermission;
     ctx: IQueryInfos;
 }
@@ -89,20 +85,17 @@ export interface IGetTreeLibraryPermissionParams {
 export interface IGetApplicationPermissionParams {
     action: ApplicationPermissionsActions;
     applicationId: string;
-    userId: string;
     ctx: IQueryInfos;
 }
 
 export interface IGetDefaultGlobalPermissionParams extends IGetDefaultPermissionParams {
     applyTo?: string;
-    userId?: string;
 }
 
 export type GetDefaultGlobalPermission = (params: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;
 
 export interface IGetTreeNodePermissionParams {
     action: TreeNodePermissionsActions;
-    userId: string;
     nodeId: string;
     treeId: string;
     ctx: IQueryInfos;
@@ -172,7 +165,6 @@ export interface IGetInheritedPermissionsParams {
 export interface IIsAllowedParams {
     type: PermissionTypes;
     action: PermissionsActions;
-    userId: string;
     applyTo?: string;
     target?: IPermissionTarget;
     ctx: IQueryInfos;
@@ -193,7 +185,6 @@ export interface IGetRecordAttributeHeritedPermissionsParams {
 export interface IGetTreeBasedPermissionParams {
     type: PermissionTypes;
     action: PermissionsActions;
-    userId: string;
     applyTo: string;
     treeValues: {[treeAttributeId: string]: string[]};
     permissions_conf: ITreePermissionsConf;
@@ -211,7 +202,6 @@ export interface IGetInheritedTreeBasedPermissionParams {
 
 export interface IGetRecordPermissionParams {
     action: RecordPermissionsActions;
-    userId: string;
     library: string;
     recordId: string;
     ctx: IQueryInfos;
@@ -228,7 +218,6 @@ export interface IGetInheritedRecordPermissionParams {
 
 export interface IEstimateTreeValueRecordPermissionParams {
     action: RecordPermissionsActions;
-    userId: string;
     libraryId: string;
     attributeId: string;
     nodeId: string;

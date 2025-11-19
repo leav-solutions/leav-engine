@@ -224,7 +224,6 @@ export default function ({
 
         const isLibraryAccessible = await libraryPermissionDomain.getLibraryPermission({
             libraryId: params.library,
-            userId: ctx.userId,
             action: LibraryPermissionsActions.ACCESS_LIBRARY,
             ctx,
         });

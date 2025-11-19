@@ -279,7 +279,6 @@ export default function ({
                                     type: PermissionTypes.LIBRARY,
                                     applyTo: libData.id,
                                     action: action as LibraryPermissionsActions,
-                                    userId: ctx.userId,
                                     ctx,
                                 });
 

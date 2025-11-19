@@ -59,13 +59,12 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
 
     const _getPermByTreeNode = async (params: {
         action: TreeNodePermissionsActions;
-        userId: string;
         treeId: string;
         permConf: ITreeNodePermissionsConf;
         treeElement: ITreeElement;
         ctx: IQueryInfos;
     }): Promise<boolean | null> => {
-        const {action, userId, treeId, permConf, treeElement, ctx} = params;
+        const {action, treeId, permConf, treeElement, ctx} = params;
         const {id: recordId, library} = treeElement;
 
         if (!permConf?.[library]) {
@@ -73,7 +72,6 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 action,
                 treeId,
                 libraryId: library,
-                userId,
                 ctx,
                 getDefaultTreeLibraryPermission: () => null,
             });
@@ -103,7 +101,6 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 action,
                 treeId,
                 libraryId: library,
-                userId,
                 ctx,
                 getDefaultTreeLibraryPermission: () => null,
             });
@@ -112,7 +109,6 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             {
                 type: PermissionTypes.TREE_NODE,
                 action,
-                userId,
                 applyTo: `${treeId}/${library}`,
                 treeValues: valuesByAttr,
                 permissions_conf: permConf[library],
@@ -123,14 +119,13 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
     };
 
     return {
-        async getTreeNodePermission({action, userId, nodeId, treeId, ctx}): Promise<boolean> {
+        async getTreeNodePermission({action, nodeId, treeId, ctx}): Promise<boolean> {
             // Retrieve permissions conf for this node library
             // Call repo instead of domain to avoid some cyclic reference issues
             const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
             if (!nodeRecord) {
                 return treePermissionDomain.getTreePermission({
                     action: action as unknown as TreePermissionsActions,
-                    userId,
                     treeId,
                     ctx,
                 });
@@ -148,7 +143,6 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             // Retrieve permissions for this element, based on tree permissions conf
             const elemPerm = await _getPermByTreeNode({
                 action: action as unknown as TreeNodePermissionsActions,
-                userId,
                 treeId,
                 permConf: treeData.permissions_conf,
                 treeElement: nodeElement,
@@ -175,7 +169,6 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
 
                 const parentPerm = await _getPermByTreeNode({
                     action,
-                    userId,
                     treeId,
                     permConf: treeData.permissions_conf,
                     treeElement: parentNode,
@@ -190,7 +183,6 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             // Nothing found on all ancestors
             return treePermissionDomain.getTreePermission({
                 action: action as unknown as TreePermissionsActions,
-                userId,
                 treeId,
                 ctx,
             });

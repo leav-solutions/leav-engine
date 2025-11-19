@@ -128,7 +128,6 @@ describe('PermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: '123',
                 ctx,
             });
 
@@ -149,7 +148,6 @@ describe('PermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.LIBRARY,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: '123',
                 applyTo: 'test_lib',
                 ctx,
             });
@@ -171,7 +169,6 @@ describe('PermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.ATTRIBUTE,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: '123',
                 applyTo: 'test_attr',
                 ctx,
             });
@@ -193,7 +190,6 @@ describe('PermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.RECORD,
                 action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                userId: '123',
                 applyTo: 'test_lib',
                 target: {
                     recordId: '1345',
@@ -220,7 +216,6 @@ describe('PermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
                     action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                    userId: '123',
                     applyTo: 'test_lib',
                     ctx,
                 }),
@@ -231,7 +226,6 @@ describe('PermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
                     action: AdminPermissionsActions.CREATE_ATTRIBUTE,
-                    userId: '123',
                     applyTo: 'test_lib',
                     target: {},
                     ctx,
@@ -252,7 +246,6 @@ describe('PermissionDomain', () => {
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.RECORD_ATTRIBUTE,
                 action: RecordAttributePermissionsActions.EDIT_VALUE,
-                userId: '123',
                 applyTo: 'test_lib',
                 target: {
                     recordId: '1345',
@@ -280,7 +273,6 @@ describe('PermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action: RecordAttributePermissionsActions.EDIT_VALUE,
-                    userId: '123',
                     applyTo: 'test_lib',
                     ctx,
                 }),
@@ -291,7 +283,6 @@ describe('PermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action: RecordAttributePermissionsActions.EDIT_VALUE,
-                    userId: '123',
                     applyTo: 'test_lib',
                     target: {},
                     ctx,
@@ -303,7 +294,6 @@ describe('PermissionDomain', () => {
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action: RecordAttributePermissionsActions.EDIT_VALUE,
-                    userId: '123',
                     applyTo: 'test_lib',
                     target: {
                         recordId: '12345',
