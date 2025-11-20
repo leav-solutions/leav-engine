@@ -5,8 +5,6 @@ import winston from 'winston';
 import {catchErrorFormatter} from './catchErrorFormatter';
 
 describe('catchErrorFormatter', () => {
-    const fakeFormat = winston.format(info => info)();
-
     const initialErrorStackTraceLimit = Error.stackTraceLimit;
     beforeEach(() => {
         Error.stackTraceLimit = 10; // default in prod
@@ -28,7 +26,7 @@ describe('catchErrorFormatter', () => {
 
         const logger = winston.createLogger({
             level: 'error',
-            format: format(),
+            format: format?.(),
             transports: [new winston.transports.Console({silent: true})],
         });
 
@@ -47,7 +45,7 @@ describe('catchErrorFormatter', () => {
 
         const logger = winston.createLogger({
             level: 'error',
-            format: catchErrorFormatter(onErrorLog)(),
+            format: catchErrorFormatter(onErrorLog)?.(),
             transports: [new winston.transports.Console({silent: true})],
         });
 
@@ -74,7 +72,7 @@ describe('catchErrorFormatter', () => {
 
         const logger = winston.createLogger({
             level: 'info',
-            format: format(),
+            format: format?.(),
             transports: [new winston.transports.Console({silent: true})],
         });
 

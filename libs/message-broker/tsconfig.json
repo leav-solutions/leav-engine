@@ -3,6 +3,9 @@
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
-    "isolatedModules": false
+    "isolatedModules": false,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
   },
 }

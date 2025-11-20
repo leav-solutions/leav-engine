@@ -64,6 +64,6 @@ describe('amqp', () => {
     test('Publish a message with priority', async () => {
         await amqpServ.publish('exchange', 'someRoutingKey', JSON.stringify({test: 'Some value'}), 3);
 
-        expect(mockAmqpChannel.publish.mock.calls[0][3].priority).toBe(3);
+        expect(mockAmqpChannel.publish?.mock.calls[0][3].priority).toBe(3);
     });
 });

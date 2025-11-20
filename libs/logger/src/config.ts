@@ -65,7 +65,7 @@ export interface ILoggerConfig {
 
 // duplicate of libs/config-manager/src/envTo.ts
 // to avoid adding this dependency here for now
-export function envToBool(value: string, defaultValue = false) {
+export function envToBool(value?: string, defaultValue = false) {
     const v = value?.trim().toLowerCase();
     if (v === 'true' || v === '1' || v === 'yes') {
         return true;
@@ -76,7 +76,7 @@ export function envToBool(value: string, defaultValue = false) {
     return defaultValue;
 }
 
-export const defaultLoggerConfig: ILoggerConfig & Required<Omit<ILoggerConfig, 'onErrorLog'>> = {
+export const defaultLoggerConfig: ILoggerConfig & Required<Omit<ILoggerConfig, 'onErrorLog' | 'destinationFile'>> = {
     level: process.env.LOG_LEVEL || 'info',
     silent: envToBool(process.env.LOG_SILENT, process.env.TS_JEST === '1'),
     destinationFile: process.env.LOG_FILE,
