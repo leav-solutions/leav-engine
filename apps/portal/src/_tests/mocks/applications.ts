@@ -17,6 +17,7 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
     endpoint: 'my-app',
     permissions: {
         access_application: true,
+        admin_application: true,
         __typename: 'ApplicationPermissions',
     },
     type: ApplicationType.internal,

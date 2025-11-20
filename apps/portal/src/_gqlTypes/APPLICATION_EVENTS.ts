@@ -33,6 +33,7 @@ export interface APPLICATION_EVENTS_applicationEvent_application_icon {
 
 export interface APPLICATION_EVENTS_applicationEvent_application_permissions {
     access_application: boolean;
+    admin_application: boolean;
 }
 
 export interface APPLICATION_EVENTS_applicationEvent_application {

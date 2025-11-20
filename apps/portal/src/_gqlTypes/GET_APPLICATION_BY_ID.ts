@@ -33,6 +33,7 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon {
 
 export interface GET_APPLICATION_BY_ID_applications_list_permissions {
     access_application: boolean;
+    admin_application: boolean;
 }
 
 export interface GET_APPLICATION_BY_ID_applications_list {
