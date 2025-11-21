@@ -340,6 +340,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 showSorts={showSorts}
                                 isMassSelectionAll={isMassSelectionAll}
                                 headless={hideTableHeader}
+                                canRemoveFilters={view?.enableConfigureView ?? false}
                                 selectAllButton={hideSelectAllAction ? null : selectAllButton}
                                 viewSettingsLoading={viewSettingsLoading}
                             >
