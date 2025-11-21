@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
-import * as ApplicationSettingsContext from '../../../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import * as ApplicationSettingsContext from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../../types';
 import {useNavigateToIframe} from '../useNavigateToIframe';
 
@@ -12,7 +12,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
 }));
 
-jest.mock('../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
+jest.mock('../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
 }));
 

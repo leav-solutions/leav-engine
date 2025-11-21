@@ -8,12 +8,12 @@ import * as ReactRouter from 'react-router-dom';
 import * as Utils from '../../utils/retrievePanelDetails';
 import * as LibraryIdCardComponent from '../LibraryIdCard';
 import * as RecordIdCardComponent from '../RecordIdCard';
-import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../types';
 import {PanelHeader} from '../PanelHeader';
 import {MockedLangContextProvider} from '@leav/ui';
 
-jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
+jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
 }));
 

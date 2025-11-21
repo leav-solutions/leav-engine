@@ -5,9 +5,9 @@ import {render, screen} from '_ui/_tests/testUtils';
 import {WorkspacesNavigationMenu} from '../WorkspacesNavigationMenu';
 import {type Application} from '../../types';
 import {InitTheme} from '../../../../config/theme/InitTheme';
-import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 
-jest.mock('../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
+jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
 }));
 

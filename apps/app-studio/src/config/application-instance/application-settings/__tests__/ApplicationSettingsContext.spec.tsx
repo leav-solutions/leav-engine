@@ -4,7 +4,8 @@
 import {type FunctionComponent} from 'react';
 import {render, screen} from '_ui/_tests/testUtils';
 import * as GraphQLClient from '../../../../__generated__';
-import {InitApplicationSettingProvider, useApplicationSettingsContext} from '../ApplicationSettingsContext';
+import {InitApplicationSettingProvider} from '../InitApplicationSettingProvider';
+import {useApplicationSettingsContext} from '../useApplicationSettingsContext';
 
 describe('ApplicationSettingsContext component', () => {
     let useGetApplicationDataByEndpointQuerySpy: jest.SpyInstance;

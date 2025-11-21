@@ -19782,12 +19782,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-refresh@npm:0.4.3":
-  version: 0.4.3
-  resolution: "eslint-plugin-react-refresh@npm:0.4.3"
+"eslint-plugin-react-refresh@npm:0.4.24":
+  version: 0.4.24
+  resolution: "eslint-plugin-react-refresh@npm:0.4.24"
   peerDependencies:
-    eslint: ">=7"
-  checksum: c8b331ed87d8a6c4fb9161da254b7e02f884ead0427d149dc9b0c09c524b4341f65a19f3e9d7d84f740f8cd94f25889994a3537d6fd015bbd42dfab5d4a24214
+    eslint: ">=8.40"
+  checksum: 5e7f0e9e854f1fcf56dcfca5f9e068ba0e1e3f7b47428991d5d5f9549dfc94261d6200fb7a1a1a76861cd787f17f2366dfd4f27a082d7f7815a0201a0b434dd3
   languageName: node
   linkType: hard
 
@@ -26710,7 +26710,7 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:6.5.1"
     eslint-plugin-no-only-tests: "npm:3.3.0"
     eslint-plugin-react-hooks: "npm:4.4.0"
-    eslint-plugin-react-refresh: "npm:0.4.3"
+    eslint-plugin-react-refresh: "npm:0.4.24"
     husky: "npm:6.0.0"
     jest-watch-typeahead: "npm:2.2.0"
     license-check-and-add: "npm:3.0.5"

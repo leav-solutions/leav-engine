@@ -5,7 +5,7 @@ import {type FunctionComponent, useContext} from 'react';
 import {LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useParams} from 'react-router-dom';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {LibraryIdCard} from './LibraryIdCard';
 import {RecordIdCard} from './RecordIdCard';

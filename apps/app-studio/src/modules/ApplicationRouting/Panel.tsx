@@ -4,7 +4,7 @@
 import {type FunctionComponent} from 'react';
 import {useParams, useRoutes} from 'react-router-dom';
 import cn from 'classnames';
-import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {PanelContent} from './content/PanelContent';
 import {nextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
