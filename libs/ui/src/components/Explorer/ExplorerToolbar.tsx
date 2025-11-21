@@ -43,9 +43,19 @@ export const ExplorerToolbar: FunctionComponent<{
     showFilters: boolean;
     showSorts: boolean;
     headless: boolean;
+    canRemoveFilters: boolean;
     selectAllButton: ReactNode | null;
     viewSettingsLoading: boolean;
-}> = ({isMassSelectionAll, showFilters, showSorts, headless, selectAllButton, viewSettingsLoading, children}) => {
+}> = ({
+    isMassSelectionAll,
+    showFilters,
+    showSorts,
+    headless,
+    canRemoveFilters,
+    selectAllButton,
+    viewSettingsLoading,
+    children,
+}) => {
     const {t} = useSharedTranslation();
 
     return (
@@ -56,6 +66,7 @@ export const ExplorerToolbar: FunctionComponent<{
                         selectAllButton={selectAllButton}
                         showFilters={showFilters}
                         showSorts={showSorts}
+                        canRemoveFilters={canRemoveFilters}
                         isMassSelectionAll={isMassSelectionAll}
                     />
                 )}

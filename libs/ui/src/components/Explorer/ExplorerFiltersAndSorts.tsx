@@ -25,15 +25,16 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     isMassSelectionAll: boolean;
     showFilters: boolean;
     showSorts: boolean;
+    canRemoveFilters: boolean;
     selectAllButton: ReactNode | null;
-}> = ({isMassSelectionAll, showFilters, showSorts, selectAllButton}) => {
+}> = ({isMassSelectionAll, showFilters, showSorts, canRemoveFilters, selectAllButton}) => {
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
     const {sort} = view;
 
     const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
-    const {filtersProps} = useFilters();
+    const {filtersProps} = useFilters(!canRemoveFilters);
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
     // const visibleFilters = filters.filter(filterItem => !filterItem.hidden);
