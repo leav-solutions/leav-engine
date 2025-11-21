@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
 import {generatePath, Navigate, useParams} from 'react-router-dom';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths} from '../router/paths';
 
 export const RedirectToFirstPanel: FunctionComponent = () => {

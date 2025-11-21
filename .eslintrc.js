@@ -167,7 +167,10 @@ module.exports = {
         'brace-style': ['error', '1tbs'],
         'object-curly-spacing': ['error', 'never'],
         'func-call-spacing': ['error', 'never'],
-        'react-refresh/only-export-components': 'warn',
+        'react-refresh/only-export-components': [
+            'error',
+            {allowConstantExport: true}, // recommended for Vite
+        ],
     },
     overrides: [
         {

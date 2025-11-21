@@ -9,7 +9,7 @@ import {InitUser} from './config/user/InitUser';
 import {InitTheme} from './config/theme/InitTheme';
 import {InitNotificationsSubscription} from '@leav/ui';
 import {InitRouting} from './config/router/InitRouting';
-import {InitApplicationSettingProvider} from './config/application-instance/application-settings/ApplicationSettingsContext';
+import {InitApplicationSettingProvider} from './config/application-instance/application-settings/InitApplicationSettingProvider';
 import {InitDocumentTitle} from './config/application-instance/document-title/InitDocumentTitle';
 import {GuardAccess} from './config/application-instance/guard-access/GuardAccess';
 import {InitLayout} from './modules/layout/InitLayout';

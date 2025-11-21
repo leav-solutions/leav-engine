@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type IconProp} from '@fortawesome/fontawesome-svg-core';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {useMenuOpenStorage} from './useMenuOpenStorage';
 import {UnreachablePaths} from '../router/paths';
 

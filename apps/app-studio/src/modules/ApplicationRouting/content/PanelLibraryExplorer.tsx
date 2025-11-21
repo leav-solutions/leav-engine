@@ -7,7 +7,7 @@ import {useNavigate} from 'react-router-dom';
 import {type ItemActions, type ExplorerProps} from '../types';
 import {mapToCommonExplorerProps} from './explorer-panel/mapperToCommonExplorerProps';
 import {mapperToItemActions} from './explorer-panel/mapperToItemActions';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 
 import {explorerContainer} from './panelContent.module.css';
 
