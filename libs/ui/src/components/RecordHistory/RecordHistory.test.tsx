@@ -136,8 +136,8 @@ describe('RecordHistory', () => {
         await userEvent.click(showMoreToggleButton);
 
         expect(screen.queryAllByTestId('log-entry')).toHaveLength(3);
-        expect(showMoreToggleButton).toBeVisible();
-        showMoreToggleButton.textContent.match(/record_history\.hide_history/);
+        const hideHistoryButton = screen.getByText(/record_history\.hide_history/);
+        expect(hideHistoryButton).toBeVisible();
         expect(screen.getByTestId('show-more')).toBeInTheDocument();
 
         // Simulate third page fetch
@@ -167,14 +167,14 @@ describe('RecordHistory', () => {
         rerender(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
 
         expect(screen.queryAllByTestId('log-entry')).toHaveLength(5);
-        expect(showMoreToggleButton).toBeVisible();
-        showMoreToggleButton.textContent.match(/record_history\.hide_history/);
+        const hideHistoryButtonAfterFetch = screen.getByText(/record_history\.hide_history/);
+        expect(hideHistoryButtonAfterFetch).toBeVisible();
 
         // Hide logs, keep only first log as in initial state
-        await userEvent.click(showMoreToggleButton);
+        await userEvent.click(hideHistoryButtonAfterFetch);
 
         expect(screen.queryAllByTestId('log-entry')).toHaveLength(1);
-        expect(showMoreToggleButton).toBeVisible();
-        showMoreToggleButton.textContent.match(/record_history\.show_history/);
+        const showHistoryButtonAgain = screen.getByText(/record_history\.show_history/);
+        expect(showHistoryButtonAgain).toBeVisible();
     });
 });

@@ -97,6 +97,9 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                             libraryId={libraryId}
                             panelType={panelType}
                             recordId={recordId}
+                            flapRecordId={flapRecordId}
+                            flapLibraryId={flapLibraryId}
+                            flapPanelId={flapPanelId}
                             where={where}
                             currentPanelId={currentPanel.id}
                             className={popupHeaderTabs}
@@ -106,6 +109,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 footer={currentPanel.type === 'creationForm' ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 showCloseIcon
                 close={closeContainer}
+                fullscreen
             >
                 <div className={popupContent}>
                     {children}

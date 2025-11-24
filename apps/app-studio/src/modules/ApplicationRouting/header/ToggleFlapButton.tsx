@@ -9,10 +9,10 @@ import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from '../router/paths';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
-import {type FLAP_COMMENT_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
+import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
 
 interface IToggleFlapButtonProps {
-    targetFlapPanelId: typeof FLAP_COMMENT_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;
+    targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;
     libraryId: string;
 }
 
@@ -34,6 +34,7 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({tar
                 size="m"
                 aria-label={buttonTitle}
                 icon={<FontAwesomeIcon icon={buttonIcon} />}
+                active={isTargetFlapAlreadyOpen}
                 onClick={() => {
                     if (isTargetFlapAlreadyOpen) {
                         return navigate(RelativePaths.closeFlapPanel, {relative: 'path'});

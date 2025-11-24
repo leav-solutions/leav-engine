@@ -1,0 +1,47 @@
+query getRecordInformation($library: ID!, $filters: [RecordFilterInput]) {
+    records(library: $library, filters: $filters) {
+        list {
+            created_by: property(attribute: "created_by") {
+                ... on LinkValue {
+                    payload {
+                        id
+                        email: properties(attributeIds: ["email"]) {
+                            values {
+                                ... on Value {
+                                    payload
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            modified_by: property(attribute: "modified_by") {
+                ... on LinkValue {
+                    payload {
+                        id
+                        email: properties(attributeIds: ["email"]) {
+                            values {
+                                ... on Value {
+                                    payload
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            created_at: property(attribute: "created_at") {
+                ... on Value {
+                    payload
+                }
+            }
+            modified_at: property(attribute: "created_at") {
+                ... on Value {
+                    payload
+                }
+            }
+            library: library {
+                label
+            }
+        }
+    }
+}
