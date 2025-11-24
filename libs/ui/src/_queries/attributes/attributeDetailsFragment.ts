@@ -12,6 +12,7 @@ export const attributeDetailsFragment = gql`
         readonly
         label
         description
+        required
         multiple_values
         multi_link_display_option
         multi_tree_display_option
