@@ -7,8 +7,8 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
 import cn from 'classnames';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {AbsolutePaths, RelativePaths} from '../router/paths';
+import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {AbsolutePaths, RelativePaths} from '../../router/paths';
 
 import {scrollable} from './panelsTabs.module.css';
 

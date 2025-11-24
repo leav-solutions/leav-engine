@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {RelativePaths} from '../router/paths';
+import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
 
 export const ExpandCollapseCurrentPanelButton: FunctionComponent = () => {

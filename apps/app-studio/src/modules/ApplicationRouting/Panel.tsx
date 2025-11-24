@@ -9,7 +9,7 @@ import {PanelContent} from './content/PanelContent';
 import {nextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {useDisplayConditions} from './utils/useDisplayConditions';
-import {PanelsTabs} from './header/PanelsTabs';
+import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {PanelHeader} from './header/PanelHeader';
 
 import {content, fullpageContent, fullpagePage, page, pageHeader} from './panel.module.css';

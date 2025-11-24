@@ -6,7 +6,7 @@ import {KitBreadcrumb, KitIdCard, KitTypography} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from '@leav/utils';
 import {NEW_RECORD_ID, LangContext} from '@leav/ui';
-import {useGetLibraryNameQuery, useGetRecordIdCardQuery} from '../../../__generated__';
+import {useGetLibraryNameQuery, useGetRecordIdCardQuery} from '../../../../__generated__';
 import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
 import {RecordIdCardDescription} from './RecordIdCardDescription';
 
