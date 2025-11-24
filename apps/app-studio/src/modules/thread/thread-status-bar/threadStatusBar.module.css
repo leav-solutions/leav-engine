@@ -1,0 +1,10 @@
+.statusBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+}
+
+.statusSelect {
+    width: 150px;
+}

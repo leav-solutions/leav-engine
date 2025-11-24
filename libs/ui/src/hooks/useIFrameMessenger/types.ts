@@ -12,6 +12,7 @@ import {
     type PanelIdSchema,
     type PanelSchema,
     type PanelIFrameSchema,
+    type FlapPanelIdSchema,
 } from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
@@ -83,6 +84,8 @@ export type Where = z.infer<typeof WhereSchema>;
 
 type PanelIFrame = z.infer<typeof PanelIFrameSchema>;
 
+type FlapPanelId = z.infer<typeof FlapPanelIdSchema>;
+
 export type NavigateToPanelMessage = IMessageBase & {
     type: 'navigate-to-panel';
     data: {
@@ -92,7 +95,7 @@ export type NavigateToPanelMessage = IMessageBase & {
         recordId?: string;
         flapRecordId?: string;
         flapLibraryId?: LibraryId;
-        flapPanelId?: 'info-history' | 'comment';
+        flapPanelId?: FlapPanelId;
     };
 };
 
@@ -125,6 +128,19 @@ export type MessageToPanelMessage = IMessageBase & {
     };
 };
 
+export type OpenFlapPanelMessage = IMessageBase & {
+    type: 'open-flap-panel';
+    data: {
+        flapRecordId: string;
+        flapLibraryId: LibraryId;
+        flapPanelId: FlapPanelId;
+    };
+};
+
+export type CloseFlapPanelMessage = IMessageBase & {
+    type: 'close-flap-panel';
+};
+
 export type MessageToParent =
     | ModalConfirmMessage
     | AlertMessage
@@ -135,7 +151,9 @@ export type MessageToParent =
     | NavigateToPanelMessage
     | ClosePanelMessage
     | NavigateToIframeMessage
-    | MessageToPanelMessage;
+    | MessageToPanelMessage
+    | OpenFlapPanelMessage
+    | CloseFlapPanelMessage;
 
 export type MessageFromParent =
     | (IMessageBase & {
@@ -179,5 +197,7 @@ export interface IUseIFrameMessengerOptions {
         onNavigateToPanel?: (data: NavigateToPanelMessage['data']) => void;
         onClosePanel?: (data: ClosePanelMessage['data']) => void;
         onNavigateToIframe?: (data: NavigateToIframeMessage['data']) => void;
+        onOpenFlapPanel?: (data: OpenFlapPanelMessage['data']) => void;
+        onCloseFlapPanel?: () => void;
     };
 }

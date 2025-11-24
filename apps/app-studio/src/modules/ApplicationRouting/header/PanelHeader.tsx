@@ -19,9 +19,10 @@ import cn from 'classnames';
 export const PanelHeader: FunctionComponent<{
     enabled: boolean;
     currentRecordId?: string;
+    currentLibraryId?: string;
     hideExpandCollapseButton?: boolean;
     actionPosition?: 'left' | 'right';
-}> = ({enabled, currentRecordId, hideExpandCollapseButton = false, actionPosition = 'left'}) => {
+}> = ({enabled, currentRecordId, currentLibraryId, hideExpandCollapseButton = false, actionPosition = 'left'}) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
@@ -49,12 +50,24 @@ export const PanelHeader: FunctionComponent<{
                     avatarSize="l"
                 />
             ) : (
-                <RecordIdCard libraryId={libraryId} currentRecordId={currentRecordId ?? recordId} avatarSize="l" />
+                <RecordIdCard
+                    libraryId={currentLibraryId ?? libraryId}
+                    currentRecordId={currentRecordId ?? recordId}
+                    avatarSize="l"
+                />
             )}
             {!isLibraryPanel && (
                 <KitSpace direction="horizontal">
-                    <ToggleFlapButton targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID} libraryId={libraryId} />
-                    <ToggleFlapButton targetFlapPanelId={FLAP_THREAD_PANEL_ID} libraryId={libraryId} />
+                    <ToggleFlapButton
+                        targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}
+                        targetRecordId={currentRecordId ?? recordId}
+                        targetLibraryId={currentLibraryId ?? libraryId}
+                    />
+                    <ToggleFlapButton
+                        targetFlapPanelId={FLAP_THREAD_PANEL_ID}
+                        targetRecordId={currentRecordId ?? recordId}
+                        targetLibraryId={currentLibraryId ?? libraryId}
+                    />
                     {!isFullpagePanel && !hideExpandCollapseButton && <ExpandCollapseCurrentPanelButton />}
                 </KitSpace>
             )}

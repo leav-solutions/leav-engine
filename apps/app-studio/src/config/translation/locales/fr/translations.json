@@ -42,6 +42,11 @@
         "history": "Historique",
         "unknown_user": "Utilisateur inconnu"
     },
+    "threads": {
+        "reply_placeholder": "Répondre dans le fil de discussion",
+        "post_error_title": "Envoi du message impossible",
+        "status": "Statut de la discussion"
+    },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
         "PERMISSION_ERROR": "Vous n'avez pas les droits pour effectuer cette opération",

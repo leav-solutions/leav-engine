@@ -13,7 +13,7 @@ import {flapContainer} from './flap.module.css';
 export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
     const navigate = useNavigate();
 
-    const {workspaceId, panelId, recordId, where} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
 
     if (where === 'slider') {
         return <Flap />;
@@ -24,7 +24,15 @@ export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
             className={flapContainer}
             ref={refFlap}
             size="l"
-            headerExtra={<PanelHeader enabled hideExpandCollapseButton actionPosition="right" />}
+            headerExtra={
+                <PanelHeader
+                    enabled
+                    hideExpandCollapseButton
+                    actionPosition="right"
+                    currentRecordId={flapRecordId}
+                    currentLibraryId={flapLibraryId}
+                />
+            }
             onCloseAfterAnimation={() => {
                 navigate(RelativePaths.closeFlapPanel, {relative: 'path'});
             }}

@@ -1,0 +1,14 @@
+query GetThreadStatusOptions {
+    treeNodeChildren(treeId: "discussion_thread_statuses_tree") {
+        list {
+            id
+            record {
+                label: property(attribute: "statuses_label") {
+                    ... on Value {
+                        payload
+                    }
+                }
+            }
+        }
+    }
+}

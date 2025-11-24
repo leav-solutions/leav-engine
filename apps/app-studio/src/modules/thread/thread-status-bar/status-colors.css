@@ -1,0 +1,16 @@
+/* TODO: handle colors in DS */
+.kit-select-option-icon:has(.fa-check) {
+    background-color: var(--general-utilities-success-medium);
+}
+
+.kit-select-option-icon .fa-check {
+    color: var(--general-utilities-success-default);
+}
+
+.kit-select-option-icon:has(.fa-spinner) {
+    background-color: var(--general-utilities-warning-medium);
+}
+
+.kit-select-option-icon .fa-spinner {
+    color: var(--general-utilities-warning-default);
+}

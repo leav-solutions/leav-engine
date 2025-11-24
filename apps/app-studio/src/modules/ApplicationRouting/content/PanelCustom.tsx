@@ -8,8 +8,9 @@ import {useOpenAlert} from './custom-panel-message-handlers/useOpenAlert';
 import {useOpenConfirmModal} from './custom-panel-message-handlers/useOpenConfirmModal';
 import {useNavigateToPanel} from './custom-panel-message-handlers/useNavigateToPanel';
 import {useNavigateToIframe} from './custom-panel-message-handlers/useNavigateToIframe';
+import {useOpenFlapPanel} from './custom-panel-message-handlers/useOpenFlapPanel';
 import {useClosePanel} from './custom-panel-message-handlers/useClosePanel';
-
+import {useCloseFlapPanel} from './custom-panel-message-handlers/useCloseFlapPanel';
 import {iframe} from './panelCustom.module.css';
 
 interface IPanelCustomProps {
@@ -25,6 +26,8 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {openNotification} = useOpenNotification();
     const {openAlert} = useOpenAlert();
     const {openConfirmModal} = useOpenConfirmModal();
+    const {openFlapPanel} = useOpenFlapPanel();
+    const {closeFlapPanel} = useCloseFlapPanel();
 
     const {changeLangInAllFrames} = useIFrameMessenger({
         handlers: {
@@ -33,6 +36,8 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
             onNotification: openNotification,
             onNavigateToPanel: navigateToPanel,
             onNavigateToIframe: navigateToIframe,
+            onOpenFlapPanel: openFlapPanel,
+            onCloseFlapPanel: closeFlapPanel,
             onClosePanel: closePanel,
         },
     });

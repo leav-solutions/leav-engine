@@ -13,10 +13,15 @@ import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../.
 
 interface IToggleFlapButtonProps {
     targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;
-    libraryId: string;
+    targetRecordId: string;
+    targetLibraryId: string;
 }
 
-export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({targetFlapPanelId, libraryId}) => {
+export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
+    targetFlapPanelId,
+    targetRecordId,
+    targetLibraryId,
+}) => {
     const navigate = useNavigate();
     const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} = useParams();
     const {t} = useTranslation();
@@ -26,7 +31,8 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({tar
     const buttonIcon = isInfoAndHistoryFlap ? faInfo : faComment;
 
     const hasFlapAlreadyOpen = flapPanelId !== undefined;
-    const isTargetFlapAlreadyOpen = targetFlapPanelId === flapPanelId;
+    const isTargetFlapAlreadyOpen =
+        targetRecordId === flapRecordId && targetLibraryId === flapLibraryId && targetFlapPanelId === flapPanelId;
 
     return (
         <KitTooltip title={buttonTitle} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
@@ -41,11 +47,16 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({tar
                     }
 
                     navigate(
-                        generatePath(hasFlapAlreadyOpen ? RelativePaths.changeLastFlapPanel : RelativePaths.openFlap, {
-                            flapRecordId: recordId,
-                            flapLibraryId: libraryId,
-                            flapPanelId: targetFlapPanelId,
-                        }),
+                        generatePath(
+                            hasFlapAlreadyOpen
+                                ? RelativePaths.closeFlapPanel + '/' + RelativePaths.openFlap
+                                : RelativePaths.openFlap,
+                            {
+                                flapRecordId: targetRecordId,
+                                flapLibraryId: targetLibraryId,
+                                flapPanelId: targetFlapPanelId,
+                            },
+                        ),
                         {relative: 'path'},
                     );
                 }}

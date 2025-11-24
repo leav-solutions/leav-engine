@@ -12,6 +12,8 @@ export const FontAwesomeIconSchema = z.string().regex(FONT_AWESOME_ICON_REGEX).o
 
 export const WhereSchema = z.union([z.literal('popup'), z.literal('slider'), z.literal('fullpage')]);
 
+export const FlapPanelIdSchema = z.union([z.literal('info-history'), z.literal('thread')]);
+
 export const ExplorerPropsSchema = z.object({
     showSearch: z.boolean().optional(),
     showFilters: z.boolean().optional(),
