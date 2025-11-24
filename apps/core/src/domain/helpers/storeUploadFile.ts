@@ -3,7 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import fs from 'fs';
-import {type FileUpload} from 'graphql-upload';
+
+// eslint-disable-next-line import/extensions
+import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import progress, {type Progress} from 'progress-stream';
 
 export type StoreUploadFileFunc = (

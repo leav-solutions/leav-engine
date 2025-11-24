@@ -7,7 +7,9 @@ import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomai
 import * as fs from 'fs';
 import {type GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
-import {GraphQLUpload} from 'graphql-upload';
+
+// eslint-disable-next-line import/extensions
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import {type i18n} from 'i18next';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';

@@ -20,7 +20,7 @@
         "@leav/ui": "workspace:libs/ui",
         "antd": "5.22.2",
         "aristid-ds": "14.0.0-cb7dc4f",
-        "graphql": "15.0.0",
+        "graphql": "16.12.0",
         "i18next": "22.5.0",
         "i18next-browser-languagedetector": "7.0.2",
         "i18next-http-backend": "2.1.1",
