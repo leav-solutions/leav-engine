@@ -1,0 +1,21 @@
+.sidePanel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin: calc(var(--general-spacing-s) * 1px) 0 0 calc(var(--general-spacing-m) * 1px);
+    padding-right: calc(var(--general-spacing-m) * 1px);
+}
+
+.center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

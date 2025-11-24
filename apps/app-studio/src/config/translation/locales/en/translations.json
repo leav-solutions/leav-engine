@@ -42,6 +42,11 @@
         "history": "History",
         "unknown_user": "Unknown user"
     },
+    "threads": {
+        "reply_placeholder": "Reply in thread",
+        "post_error_title": "Unable to send message",
+        "status": "Discussion status"
+    },
     "errors": {
         "INTERNAL_ERROR": "An internal error occurred",
         "PERMISSION_ERROR": "You are not allowed to perform this operation",

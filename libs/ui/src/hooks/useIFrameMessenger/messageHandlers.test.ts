@@ -26,6 +26,8 @@ describe('MessageHandlers', () => {
                 navigateToPanel: expect.any(Function),
                 navigateToIframe: expect.any(Function),
                 closePanel: expect.any(Function),
+                openFlapPanel: expect.any(Function),
+                closeFlapPanel: expect.any(Function),
             });
         });
 

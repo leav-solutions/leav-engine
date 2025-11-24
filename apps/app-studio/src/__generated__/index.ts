@@ -28,6 +28,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AccessRecordByDefaultPermissionInput = {
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+};
+
 export type Action = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
@@ -225,17 +230,6 @@ export type ApplicationsList = {
   totalCount: Scalars['Int'];
 };
 
-export type Asset = {
-  creative: Creative;
-  id: Scalars['String'];
-  key?: Maybe<Scalars['String']>;
-  processingId?: Maybe<Scalars['String']>;
-  processingIndex?: Maybe<Scalars['Int']>;
-  progressPercentage?: Maybe<Scalars['Int']>;
-  store?: Maybe<Store>;
-  template: Template;
-};
-
 export type Attachment = {
   label: Scalars['String'];
   url: Scalars['String'];
@@ -367,37 +361,14 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type Campaign = {
-  assetsCount?: Maybe<Scalars['Int']>;
-  creatives: Array<Creative>;
-  deliveryPlatforms: Array<DeliveryPlatform>;
-  digram: Scalars['String'];
-  failedAssetsCount?: Maybe<Scalars['Int']>;
-  generationStartedAt?: Maybe<Scalars['String']>;
-  generationStatus?: Maybe<GenerationStatus>;
-  generationStatusUpdatedAt?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  imagePreview?: Maybe<ImagePreview>;
-  label: Scalars['String'];
-  offers: Array<Offer>;
-  stores: Array<Store>;
-  sublabel: Scalars['String'];
-  successfulAssetsCount?: Maybe<Scalars['Int']>;
-};
-
-export type CampaignAssetGenerationState = {
-  assetsCount: Scalars['Int'];
-  failedAssetsCount: Scalars['Int'];
-  generationStartedAt: Scalars['String'];
-  generationStatusUpdatedAt: Scalars['String'];
-  successfulAssetsCount: Scalars['Int'];
-};
-
 export type CampaignToRenew = {
   category?: InputMaybe<Scalars['String']>;
+  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   endDate: Scalars['String'];
   id: Scalars['String'];
   label: Scalars['String'];
+  mixed: Scalars['Boolean'];
+  opTrade?: InputMaybe<Scalars['String']>;
   startDate: Scalars['String'];
   thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   type?: InputMaybe<Scalars['String']>;
@@ -425,14 +396,6 @@ export type CreateRecordResult = {
   valuesErrors?: Maybe<Array<ValueBatchError>>;
 };
 
-export type Creative = {
-  assets: Array<Asset>;
-  id: Scalars['String'];
-  label: Scalars['String'];
-  offers: Array<Offer>;
-  templates: Array<Template>;
-};
-
 export type DateRangeValue = {
   from?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
@@ -441,25 +404,6 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean'];
   id: Scalars['ID'];
-};
-
-export type DeliveryMedia = {
-  deliveryPlatform: DeliveryPlatform;
-  id: Scalars['String'];
-  label: Scalars['String'];
-  templates?: Maybe<Array<Template>>;
-};
-
-
-export type DeliveryMediaTemplatesArgs = {
-  campaignId?: InputMaybe<Scalars['String']>;
-};
-
-export type DeliveryPlatform = {
-  deliveryMedias?: Maybe<Array<DeliveryMedia>>;
-  id: Scalars['String'];
-  imagePreview?: Maybe<ImagePreview>;
-  label: Scalars['String'];
 };
 
 export type EmbeddedAttribute = {
@@ -622,17 +566,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GenericValue = {
   attribute: Attribute;
   created_at?: Maybe<Scalars['Int']>;
@@ -682,14 +615,6 @@ export enum IoTypes {
   object = 'object',
   string = 'string'
 }
-
-export type ImagePreview = {
-  big: Scalars['String'];
-  huge: Scalars['String'];
-  medium: Scalars['String'];
-  small: Scalars['String'];
-  tiny: Scalars['String'];
-};
 
 export enum ImportMode {
   insert = 'insert',
@@ -1008,8 +933,6 @@ export type Mutation = {
   activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean'];
-  createCreative: Creative;
-  createCreativesAuto?: Maybe<Array<Creative>>;
   createDirectory: Record;
   createEmptyRecord: CreateRecordResult;
   createRecord: CreateRecordResult;
@@ -1019,7 +942,6 @@ export type Mutation = {
   deleteAttribute: Attribute;
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
-  deleteOffer?: Maybe<Scalars['Boolean']>;
   deleteRecord: Record;
   deleteTasks: Scalars['Boolean'];
   deleteTree: Tree;
@@ -1027,18 +949,13 @@ export type Mutation = {
   deleteVersionProfile: VersionProfile;
   deleteView: View;
   forcePreviewsGeneration: Scalars['Boolean'];
-  generateAndSendJsonToDigitalHub?: Maybe<Scalars['Boolean']>;
-  generateCreativeMasterAssets: Array<Asset>;
-  generateCreativesAssets: Array<Asset>;
   importConfig: Scalars['ID'];
   importData: Scalars['ID'];
   importExcel: Scalars['ID'];
   indexRecords: Scalars['Boolean'];
-  linkOfferToCampaign?: Maybe<Scalars['Boolean']>;
   moveOrCopyCampaignThematic: MoveThematicResult;
   purgeInactiveRecords: Array<Record>;
   purgeRecord: Record;
-  rankOffers?: Maybe<Scalars['Boolean']>;
   renewCampaigns: Array<RenewCampaignsResult>;
   saveApiKey: ApiKey;
   saveApplication: Application;
@@ -1078,19 +995,6 @@ export type MutationActivateRecordsArgs = {
 
 export type MutationCancelTaskArgs = {
   taskId: Scalars['ID'];
-};
-
-
-export type MutationCreateCreativeArgs = {
-  campaignId: Scalars['String'];
-  deliveryMediaId: Scalars['String'];
-  offersIds: Array<Scalars['String']>;
-};
-
-
-export type MutationCreateCreativesAutoArgs = {
-  campaignId: Scalars['String'];
-  deliveryMediaIds: Array<Scalars['String']>;
 };
 
 
@@ -1145,11 +1049,6 @@ export type MutationDeleteLibraryArgs = {
 };
 
 
-export type MutationDeleteOfferArgs = {
-  offerId: Scalars['String'];
-};
-
-
 export type MutationDeleteRecordArgs = {
   id?: InputMaybe<Scalars['ID']>;
   library?: InputMaybe<Scalars['ID']>;
@@ -1193,21 +1092,6 @@ export type MutationForcePreviewsGenerationArgs = {
 };
 
 
-export type MutationGenerateAndSendJsonToDigitalHubArgs = {
-  campaignId: Scalars['String'];
-};
-
-
-export type MutationGenerateCreativeMasterAssetsArgs = {
-  creativeId: Scalars['String'];
-};
-
-
-export type MutationGenerateCreativesAssetsArgs = {
-  campaignId: Scalars['String'];
-};
-
-
 export type MutationImportConfigArgs = {
   clear?: InputMaybe<Scalars['Boolean']>;
   file: Scalars['Upload'];
@@ -1233,12 +1117,6 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationLinkOfferToCampaignArgs = {
-  campaignId: Scalars['String'];
-  offerId: Scalars['String'];
-};
-
-
 export type MutationMoveOrCopyCampaignThematicArgs = {
   copyFraming: Scalars['Boolean'];
   fromCampaignId: Scalars['String'];
@@ -1256,12 +1134,6 @@ export type MutationPurgeInactiveRecordsArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID'];
   recordId: Scalars['ID'];
-};
-
-
-export type MutationRankOffersArgs = {
-  campaignId: Scalars['String'];
-  orderedOfferIds: Array<Scalars['String']>;
 };
 
 
@@ -1397,14 +1269,6 @@ export enum NotificationLevel {
   info = 'info',
   warning = 'warning'
 }
-
-export type Offer = {
-  digram: Scalars['String'];
-  id: Scalars['String'];
-  imagePreview?: Maybe<ImagePreview>;
-  label: Scalars['String'];
-  sublabel: Scalars['String'];
-};
 
 export type Pagination = {
   limit: Scalars['Int'];
@@ -1566,12 +1430,6 @@ export type Query = {
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
   availableActions?: Maybe<Array<Action>>;
-  calculatedCampaignAssetsNumber?: Maybe<Scalars['Int']>;
-  campaign?: Maybe<Campaign>;
-  campaignMasterStore?: Maybe<Store>;
-  campaigns: Array<Campaign>;
-  creative?: Maybe<Creative>;
-  deliveryMedia?: Maybe<DeliveryMedia>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']>;
   export: Scalars['String'];
   forms?: Maybe<FormsList>;
@@ -1620,31 +1478,6 @@ export type QueryAttributesArgs = {
   filters?: InputMaybe<AttributesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortAttributes>;
-};
-
-
-export type QueryCalculatedCampaignAssetsNumberArgs = {
-  campaignId: Scalars['String'];
-};
-
-
-export type QueryCampaignArgs = {
-  campaignId: Scalars['String'];
-};
-
-
-export type QueryCampaignMasterStoreArgs = {
-  campaignId: Scalars['String'];
-};
-
-
-export type QueryCreativeArgs = {
-  creativeId: Scalars['String'];
-};
-
-
-export type QueryDeliveryMediaArgs = {
-  deliveryMediaId: Scalars['String'];
 };
 
 
@@ -1761,6 +1594,7 @@ export type QueryTreeContentArgs = {
 
 
 export type QueryTreeNodeChildrenArgs = {
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
   childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
   node?: InputMaybe<Scalars['ID']>;
   pagination?: InputMaybe<Pagination>;
@@ -2114,12 +1948,6 @@ export type StandardStringValuesListConf = {
 
 export type StandardValuesListConf = StandardDateRangeValuesListConf | StandardStringValuesListConf;
 
-export type Store = {
-  deliveryMedia: DeliveryMedia;
-  id: Scalars['String'];
-  label: Scalars['String'];
-};
-
 export type StreamProgress = {
   delta?: Maybe<Scalars['Int']>;
   eta?: Maybe<Scalars['Int']>;
@@ -2133,8 +1961,6 @@ export type StreamProgress = {
 
 export type Subscription = {
   applicationEvent: ApplicationEvent;
-  assetState?: Maybe<Scalars['String']>;
-  campaignAssetGenerationState?: Maybe<CampaignAssetGenerationState>;
   notification: Notification;
   recordUpdate: RecordUpdateEvent;
   task: Task;
@@ -2145,17 +1971,6 @@ export type Subscription = {
 
 export type SubscriptionApplicationEventArgs = {
   filters?: InputMaybe<ApplicationEventFiltersInput>;
-};
-
-
-export type SubscriptionAssetStateArgs = {
-  campaignId?: InputMaybe<Scalars['String']>;
-  creativeId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type SubscriptionCampaignAssetGenerationStateArgs = {
-  campaignId: Scalars['String'];
 };
 
 
@@ -2234,15 +2049,6 @@ export enum TaskType {
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int'];
-};
-
-export type Template = {
-  deliveryMedia: DeliveryMedia;
-  format: Scalars['String'];
-  id: Scalars['String'];
-  label: Scalars['String'];
-  offersCount: Scalars['Int'];
-  storeSpecific: Scalars['Boolean'];
 };
 
 export type Tree = {
@@ -2387,6 +2193,7 @@ export type TreeNodeLinkedRecordsArgs = {
 };
 
 export type TreeNodeLight = {
+  accessRecordByDefaultPermission?: Maybe<Scalars['Boolean']>;
   ancestors?: Maybe<Array<TreeNode>>;
   childrenCount?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
@@ -2749,6 +2556,19 @@ export type GetRecordInformationQueryVariables = Exact<{
 
 export type GetRecordInformationQuery = { records: { list: Array<{ created_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, modified_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, created_at: Array<{ payload?: any | null }>, modified_at: Array<{ payload?: any | null }>, library: { label?: any | null } }> } };
 
+export type GetThreadStatusOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetThreadStatusOptionsQuery = { treeNodeChildren: { list: Array<{ id: string, record: { label: Array<{ payload?: any | null }> } }> } };
+
+export type GetThreadQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+  recordId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetThreadQuery = { records: { list: Array<{ threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
+
 
 export const GetApplicationDataByEndpointDocument = gql`
     query GetApplicationDataByEndpoint($endpoint: String!) {
@@ -3058,3 +2878,144 @@ export type GetRecordInformationQueryHookResult = ReturnType<typeof useGetRecord
 export type GetRecordInformationLazyQueryHookResult = ReturnType<typeof useGetRecordInformationLazyQuery>;
 export type GetRecordInformationSuspenseQueryHookResult = ReturnType<typeof useGetRecordInformationSuspenseQuery>;
 export type GetRecordInformationQueryResult = Apollo.QueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
+export const GetThreadStatusOptionsDocument = gql`
+    query GetThreadStatusOptions {
+  treeNodeChildren(treeId: "discussion_thread_statuses_tree") {
+    list {
+      id
+      record {
+        label: property(attribute: "statuses_label") {
+          ... on Value {
+            payload
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetThreadStatusOptionsQuery__
+ *
+ * To run a query within a React component, call `useGetThreadStatusOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetThreadStatusOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetThreadStatusOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetThreadStatusOptionsQuery(baseOptions?: Apollo.QueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
+      }
+export function useGetThreadStatusOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
+        }
+export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
+        }
+export type GetThreadStatusOptionsQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsQuery>;
+export type GetThreadStatusOptionsLazyQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsLazyQuery>;
+export type GetThreadStatusOptionsSuspenseQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsSuspenseQuery>;
+export type GetThreadStatusOptionsQueryResult = Apollo.QueryResult<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>;
+export const GetThreadDocument = gql`
+    query GetThread($libraryId: ID!, $recordId: String) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      threads: property(attribute: "discussion_threads") {
+        ... on LinkValue {
+          payload {
+            id
+            label: property(attribute: "label") {
+              ... on Value {
+                payload
+              }
+            }
+            status: property(attribute: "discussion_threads_status") {
+              ... on TreeValue {
+                payload {
+                  id
+                }
+              }
+            }
+            comments: property(attribute: "discussion_threads_comments") {
+              ... on LinkValue {
+                payload {
+                  id
+                  content: property(attribute: "discussion_comments_text") {
+                    ... on Value {
+                      payload
+                    }
+                  }
+                  author: property(attribute: "created_by") {
+                    ... on LinkValue {
+                      payload {
+                        id
+                        name: property(attribute: "login") {
+                          ... on Value {
+                            payload
+                          }
+                        }
+                      }
+                    }
+                  }
+                  createdAt: property(attribute: "created_at") {
+                    ... on Value {
+                      raw_payload
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetThreadQuery__
+ *
+ * To run a query within a React component, call `useGetThreadQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetThreadQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetThreadQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      recordId: // value for 'recordId'
+ *   },
+ * });
+ */
+export function useGetThreadQuery(baseOptions: Apollo.QueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
+      }
+export function useGetThreadLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
+        }
+export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
+        }
+export type GetThreadQueryHookResult = ReturnType<typeof useGetThreadQuery>;
+export type GetThreadLazyQueryHookResult = ReturnType<typeof useGetThreadLazyQuery>;
+export type GetThreadSuspenseQueryHookResult = ReturnType<typeof useGetThreadSuspenseQuery>;
+export type GetThreadQueryResult = Apollo.QueryResult<GetThreadQuery, GetThreadQueryVariables>;

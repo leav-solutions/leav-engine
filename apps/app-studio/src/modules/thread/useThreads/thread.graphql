@@ -1,0 +1,54 @@
+query GetThread($libraryId: ID!, $recordId: String) {
+    records(library: $libraryId, filters: [{ field: "id", condition: EQUAL, value: $recordId }]) {
+        list {
+            threads: property(attribute: "discussion_threads") {
+                ... on LinkValue {
+                    payload {
+                        id
+                        label: property(attribute: "label") {
+                            ... on Value {
+                                payload
+                            }
+                        }
+                        status: property(attribute: "discussion_threads_status") {
+                            ... on TreeValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                        comments: property(attribute: "discussion_threads_comments") {
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                    content: property(attribute: "discussion_comments_text") {
+                                        ... on Value {
+                                            payload
+                                        }
+                                    }
+                                    author: property(attribute: "created_by") {
+                                        ... on LinkValue {
+                                            payload {
+                                                id
+                                                name: property(attribute: "login") {
+                                                    ... on Value {
+                                                        payload
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    createdAt: property(attribute: "created_at") {
+                                        ... on Value {
+                                            raw_payload
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

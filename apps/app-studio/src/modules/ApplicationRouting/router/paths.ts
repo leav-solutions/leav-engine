@@ -20,7 +20,6 @@ export const RelativePaths = {
     closeCurrentPanel: '../../..',
     closeFlapPanel: '../../../..',
     changeLastRecordPanel: '../:recordPanelId',
-    changeLastFlapPanel: '../:flapPanelId',
     openCurrentPanelInPopup: '../../../:recordId/popup/:recordPanelId',
     openCurrentPanelInSlider: '../../../:recordId/slider/:recordPanelId',
 };

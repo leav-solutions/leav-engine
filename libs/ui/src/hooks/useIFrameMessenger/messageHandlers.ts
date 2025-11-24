@@ -20,6 +20,8 @@ import {
     type NotificationMessage,
     packetId,
     type SimpleMessage,
+    type OpenFlapPanelMessage,
+    type CloseFlapPanelMessage,
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
@@ -134,6 +136,12 @@ export const initClientHandlers: (
         case 'navigate-to-iframe':
             options?.handlers?.onNavigateToIframe?.(message.data);
             break;
+        case 'open-flap-panel':
+            options?.handlers?.onOpenFlapPanel?.(message.data);
+            break;
+        case 'close-flap-panel':
+            options?.handlers?.onCloseFlapPanel?.();
+            break;
         default:
             break;
     }
@@ -189,5 +197,11 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     messageToPanel: (data: MessageToPanelMessage['data']) => {
         dispatch?.({type: 'message-to-panel', data});
+    },
+    openFlapPanel: (data: OpenFlapPanelMessage['data']) => {
+        dispatch?.({type: 'open-flap-panel', data});
+    },
+    closeFlapPanel: () => {
+        dispatch?.({type: 'close-flap-panel'});
     },
 });

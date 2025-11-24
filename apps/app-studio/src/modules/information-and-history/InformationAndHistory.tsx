@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useParams} from 'react-router-dom';
 import {KitDivider} from 'aristid-ds';
-import {retrievePanelDetails} from '../ApplicationRouting/utils/retrievePanelDetails';
 import {InformationAndHistoryHeader} from './InformationAndHistoryHeader';
 import {
     informationAndHistoryContainer,
@@ -12,20 +11,17 @@ import {
 } from './informationAndHistory.module.css';
 import {RecordInformation} from './record-information/RecordInformation';
 import {RecordHistoryContainer} from './record-history/RecordHistoryContainer';
-import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 
 export const InformationAndHistory = () => {
-    const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
-    const {libraryId} = retrievePanelDetails({application, recordPanelId});
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
 
     return (
         <div className={informationAndHistoryContainer}>
             <InformationAndHistoryHeader />
             <div className={informationAndHistoryContentContainer}>
-                <RecordInformation recordId={recordId} libraryId={libraryId} />
+                <RecordInformation recordId={flapRecordId} libraryId={flapLibraryId} />
                 <KitDivider className={informationAndHistoryDivider} />
-                <RecordHistoryContainer recordId={recordId} libraryId={libraryId} />
+                <RecordHistoryContainer recordId={flapRecordId} libraryId={flapLibraryId} />
             </div>
         </div>
     );

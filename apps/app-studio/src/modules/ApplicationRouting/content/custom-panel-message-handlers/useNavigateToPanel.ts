@@ -8,10 +8,13 @@ import {RelativePaths} from '../../router/paths';
 
 /**
  * Navigate to an already defined panel from an iframe panel.
+ * If flapRecordId, flapLibraryId and flapPanelId are provided, open record panel with a flap panel.
  *
  * Do nothing if panelId is `undefined` in the current application configuration.
  *
- * Example: From `:where/:panelId`, navigate to `/:where/:panelId/:recordId/:where/:panelId`
+ * Example:
+ * - From `:where/:panelId`, navigate to `/:where/:panelId/:recordId/:where/:panelId`
+ * - From `:where/:panelId`, navigate to `/:where/:panelId/:recordId/:where/:panelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId`
  */
 export const useNavigateToPanel = (): {
     navigateToPanel: IUseIFrameMessengerOptions['handlers']['onNavigateToPanel'];
