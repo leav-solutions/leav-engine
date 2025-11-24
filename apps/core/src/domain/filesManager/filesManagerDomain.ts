@@ -14,7 +14,9 @@ import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermission
 import {type SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IValueDomain} from 'domain/value/valueDomain';
-import {type FileUpload} from 'graphql-upload';
+
+// eslint-disable-next-line import/extensions
+import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import {type i18n} from 'i18next';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import Joi from 'joi';

@@ -2,7 +2,8 @@
     "testEnvironment": "node",
     "moduleFileExtensions": [
         "ts",
-        "js"
+        "js",
+        "mjs"
     ],
     "transform": {
         "\\.(ts|tsx)$": [
@@ -10,8 +11,18 @@
             {
                 "isolatedModules": true
             }
+        ],
+        "\\.mjs$": [
+            "ts-jest",
+            {
+                "isolatedModules": true,
+                "useESM": true
+            }
         ]
     },
+    "transformIgnorePatterns": [
+        "node_modules/(?!graphql-upload)"
+    ],
     "globalSetup": "<rootDir>/src/__tests__/global-setup.ts",
     "testRegex": ".spec.(ts)$",
     "setupFiles": [

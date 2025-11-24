@@ -6,7 +6,9 @@ import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import express, {Express, type NextFunction, type Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
-import {type FileUpload} from 'graphql-upload';
+
+// eslint-disable-next-line import/extensions
+import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import {type IConfig} from '_types/config';
 import {type IRequestWithContext} from '_types/express';
 import {type IAppGraphQLSchema} from '_types/graphql';

@@ -15,7 +15,7 @@ import cors from 'cors';
 import express, {type NextFunction, type Response, type Express} from 'express';
 import fs from 'fs';
 import {GraphQLError} from 'graphql';
-import {graphqlUploadExpress} from 'graphql-upload';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import {type ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';

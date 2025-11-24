@@ -4,7 +4,12 @@
 import fs from 'fs';
 import {type StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {type IImportDomain} from 'domain/import/importDomain';
-import {type FileUpload, GraphQLUpload} from 'graphql-upload';
+
+// eslint-disable-next-line import/extensions
+import {type FileUpload} from 'graphql-upload/Upload.mjs';
+
+// eslint-disable-next-line import/extensions
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import {nanoid} from 'nanoid';
 import {type IUtils} from 'utils/utils';
 import type * as Config from '_types/config';
