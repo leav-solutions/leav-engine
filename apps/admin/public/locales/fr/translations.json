@@ -237,7 +237,7 @@
             "attribute": "Attribut",
             "library": "Bibliothèque",
             "record": "Entités",
-            "tree": "Classement",
+            "tree": "Arbre",
             "admin": "Administration",
             "application": "Application"
         },
@@ -247,7 +247,7 @@
             "libraries": "Bibliothèques",
             "attributes": "Attributs",
             "tasks": "Tâches",
-            "trees": "Classements",
+            "trees": "Arbres",
             "permissions": "Permissions",
             "preferences": "Préférences",
             "applications": "Applications",
