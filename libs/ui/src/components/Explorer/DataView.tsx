@@ -133,9 +133,10 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             dataIndex: USELESS,
             width: getFieldColumnWidth(attributesProperties[attributeName]),
             shouldCellUpdate: (record, prevRecord) =>
-                attributeName === WHO_AM_I_COLUMN
+                isMassSelectionAll ||
+                (attributeName === WHO_AM_I_COLUMN
                     ? record.whoAmI !== prevRecord.whoAmI
-                    : record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
+                    : record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName]),
             render: (_, item) =>
                 attributeName === WHO_AM_I_COLUMN ? (
                     <TableNameCell item={item} itemActions={itemActions} />

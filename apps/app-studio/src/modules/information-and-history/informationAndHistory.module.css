@@ -1,0 +1,30 @@
+.informationAndHistoryContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.informationAndHistoryContentContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.informationAndHistoryHeader {
+    h4 {
+        margin-bottom: 0;
+        padding: 0 calc(var(--general-spacing-m) * 1px);
+        height: var(--general-header-height);
+        align-content: center;
+    }
+}
+
+.informationAndHistoryDivider {
+    &div[role='separator'] {
+        width: auto;
+        min-width: auto;
+        margin: calc(var(--general-spacing-m) * 1px);
+    }
+}

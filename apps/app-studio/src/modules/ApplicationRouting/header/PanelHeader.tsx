@@ -13,7 +13,7 @@ import {KitSpace} from 'aristid-ds';
 import {panelHeaderActionPositionRight} from './panelHeader.module.css';
 import {ExpandCollapseCurrentPanelButton} from './ExpandCollapseCurrentPanelButton';
 import {ToggleFlapButton} from './ToggleFlapButton';
-import {FLAP_COMMENT_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
+import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
 import cn from 'classnames';
 
 export const PanelHeader: FunctionComponent<{
@@ -54,7 +54,7 @@ export const PanelHeader: FunctionComponent<{
             {!isLibraryPanel && (
                 <KitSpace direction="horizontal">
                     <ToggleFlapButton targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID} libraryId={libraryId} />
-                    <ToggleFlapButton targetFlapPanelId={FLAP_COMMENT_PANEL_ID} libraryId={libraryId} />
+                    <ToggleFlapButton targetFlapPanelId={FLAP_THREAD_PANEL_ID} libraryId={libraryId} />
                     {!isFullpagePanel && !hideExpandCollapseButton && <ExpandCollapseCurrentPanelButton />}
                 </KitSpace>
             )}

@@ -19,6 +19,9 @@ interface IPanelsTabsProps {
     where: string | undefined;
     libraryId: string | null;
     panelType: string | null;
+    flapRecordId: string | undefined;
+    flapLibraryId: string | undefined;
+    flapPanelId: string | undefined;
     currentPanelId: string;
     className?: string;
 }
@@ -30,6 +33,9 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     where,
     libraryId,
     panelType,
+    flapRecordId,
+    flapLibraryId,
+    flapPanelId,
     currentPanelId,
     className,
 }) => {
@@ -38,6 +44,8 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     const navigate = useNavigate();
 
     const isRecordPanel = recordId !== undefined;
+
+    const hasFlapAlreadyOpen = flapPanelId !== undefined;
 
     const tabItems: ComponentProps<typeof KitTabs>['items'] =
         libraryId === null || panelType === null
@@ -51,21 +59,44 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
 
     const onChangeTab: ComponentProps<typeof KitTabs>['onChange'] = key => {
         const currentTab = tabItems.find(tab => tab.key === key);
-        if (currentTab) {
-            if (isRecordPanel) {
-                return navigate(
-                    // Navigation between record panels should be historized in url
-                    generatePath(RelativePaths.changeLastRecordPanel, {
-                        recordPanelId: currentTab.key,
-                    }),
-                    {relative: 'path'},
-                );
-            } else {
-                // Navigation between library panels should not be historized in url
-                // Case of workspace directly into a record
-                return navigate(generatePath(AbsolutePaths.panel, {workspaceId, panelId: currentTab.key}));
-            }
+
+        if (!currentTab) {
+            return;
         }
+
+        if (hasFlapAlreadyOpen) {
+            return navigate(
+                // Navigation between record panels should be historized in url
+                generatePath(
+                    RelativePaths.closeFlapPanel +
+                        '/' +
+                        RelativePaths.changeLastRecordPanel +
+                        '/' +
+                        RelativePaths.openFlap,
+                    {
+                        recordPanelId: currentTab.key,
+                        flapRecordId,
+                        flapLibraryId,
+                        flapPanelId,
+                    },
+                ),
+                {relative: 'path'},
+            );
+        }
+
+        if (isRecordPanel) {
+            return navigate(
+                // Navigation between record panels should be historized in url
+                generatePath(RelativePaths.changeLastRecordPanel, {
+                    recordPanelId: currentTab.key,
+                }),
+                {relative: 'path'},
+            );
+        }
+
+        // Navigation between library panels should not be historized in url
+        // Case of workspace directly into a record
+        return navigate(generatePath(AbsolutePaths.panel, {workspaceId, panelId: currentTab.key}));
     };
 
     return (

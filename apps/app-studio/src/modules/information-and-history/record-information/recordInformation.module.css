@@ -1,0 +1,14 @@
+.recordInformationContainer {
+    padding: calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-m) * 1px) 0 calc(var(--general-spacing-m) * 1px);
+}
+
+.recordInformationLabel {
+    display: flex;
+    width: 130px;
+}
+
+.recordInformationUserInfo {
+    &a[role='link'] {
+        display: inline-flex;
+    }
+}

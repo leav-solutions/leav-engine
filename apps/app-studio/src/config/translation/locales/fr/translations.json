@@ -31,6 +31,17 @@
         "submit": "Valider",
         "yes": "Oui"
     },
+    "information_and_history": {
+        "system_information": "Informations système",
+        "id": "Identifiant",
+        "library": "Bibliothèque",
+        "creation": "Création",
+        "last_modification": "Dernière modification",
+        "created_at": "Le {{date}} par",
+        "modified_at": "Le {{date}} par",
+        "history": "Historique",
+        "unknown_user": "Utilisateur inconnu"
+    },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
         "PERMISSION_ERROR": "Vous n'avez pas les droits pour effectuer cette opération",

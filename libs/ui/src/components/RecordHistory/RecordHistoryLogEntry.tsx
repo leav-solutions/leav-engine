@@ -5,15 +5,22 @@ import {localizedTranslation} from '@leav/utils';
 import {AttributeFormat, LogAction} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitSpace, KitTypography} from 'aristid-ds';
+import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
 import {type FunctionComponent} from 'react';
 import {type LogEntry, type LogEntryAttribute, type LogEntryData, type LogEntryValue} from './_types';
+import styled from 'styled-components';
 
 interface IRecordHistoryLogEntryProps {
     index: number;
     logEntry: LogEntry;
 }
+
+const StyledLinkButton = styled(KitButton)`
+    &[role='link'] {
+        display: inline-flex;
+    }
+`;
 
 export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProps> = ({index, logEntry}) => {
     const {t} = useSharedTranslation();
@@ -28,9 +35,9 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     const getUserString = () => {
         const email = user?.properties[0]?.values[0]?.payload;
         return email ? (
-            <a href={`mailto:${email}`} style={{textDecoration: 'underline'}}>
+            <StyledLinkButton type="link" href={`mailto:${email}`}>
                 {email}
-            </a>
+            </StyledLinkButton>
         ) : (
             user?.id || t('record_history.unknown_user')
         );
@@ -54,16 +61,16 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     const formatValue = (logData: LogEntryData) => {
         if (attribute?.format === AttributeFormat.rich_text) {
             return (
-                <KitTypography.AdvancedParagraph size="fontSize7" ellipsis={{rows: 4, expandable: true}}>
+                <KitTypography.AdvancedParagraph size="fontSize5" ellipsis={{rows: 4, expandable: true}}>
                     {logData.asString}
                 </KitTypography.AdvancedParagraph>
             );
         }
-        return <KitTypography.Text size="fontSize7">{logData.asString}</KitTypography.Text>;
+        return <KitTypography.Text size="fontSize5">{logData.asString}</KitTypography.Text>;
     };
 
     const formatValueChange = () => {
-        const noValue = <KitTypography.Text size="fontSize7">{t('record_history.no_value')}</KitTypography.Text>;
+        const noValue = <KitTypography.Text size="fontSize5">{t('record_history.no_value')}</KitTypography.Text>;
 
         if (attribute?.multiple_values) {
             const uniqValue = !hasBefore && hasAfter ? after : hasBefore && !hasAfter ? before : null;
@@ -79,7 +86,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         return (
             <KitSpace size="xxs" direction="horizontal" wrap>
                 {hasBefore ? formatValue(before) : noValue}
-                <KitTypography.Text size="fontSize7"> → </KitTypography.Text>
+                <KitTypography.Text size="fontSize5"> → </KitTypography.Text>
                 {hasAfter ? formatValue(after) : noValue}
             </KitSpace>
         );
@@ -89,11 +96,11 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         case LogAction.VALUE_SAVE:
         case LogAction.VALUE_DELETE:
             return (
-                <KitSpace key={index} size="none" direction="vertical">
-                    <KitTypography.Text size="fontSize7">
+                <KitSpace key={index} size="xxs" direction="vertical">
+                    <KitTypography.Text size="fontSize5">
                         {getUserString()} {getActionString()} <strong>{getAttributeLabel()}</strong>
                     </KitTypography.Text>
-                    <KitTypography.Text size="fontSize7">{getDateString()}</KitTypography.Text>
+                    <KitTypography.Text size="fontSize5">{getDateString()}</KitTypography.Text>
                     {formatValueChange()}
                 </KitSpace>
             );

@@ -19,15 +19,17 @@ interface IRecordHistoryProps {
 }
 
 const StyledDivContentWrapper = styled.div`
-    margin-top: calc(var(--general-spacing-s) * 1px);
+    margin-top: calc(var(--general-spacing-xs) * 1px);
     flex: 1 1 0;
     overflow-y: auto;
 `;
 
-const StyledKitButtonShow = styled(KitButton)`
-    margin: 4px;
-`;
-
+// TODO: This component should be moved to /apps/app-studio/src/modules/information-and-history/record-history/ when he will no longer be used by RecordSummary and ValuesSummary (those components will be removed in the future)
+// Also when component will be moved
+// - put together translations with information_and_history
+// - remove usage of styled-components
+// - instead of a record we could receive a recordId and a libraryId directly
+// - remove styling of StyledDivContentWrapper that will no longer be necessary
 export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, attributeId}) => {
     const {t} = useSharedTranslation();
     const [showAllHistory, setShowAllHistory] = useState<boolean>(false);
@@ -40,10 +42,12 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
     });
 
     if (loading && logs.length === 0) {
+        // TODO: Add a better loading state
         return <Loading />;
     }
 
     if (inError) {
+        //TODO: Add a better error state
         return <ErrorDisplay message={t('record_history.error_fetching')} />;
     }
 
@@ -59,17 +63,6 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
         <StyledDivContentWrapper>
             <RecordHistoryGoUpButton>
                 <KitSpace size="s" direction="vertical">
-                    {total > 1 && (
-                        <StyledKitButtonShow
-                            type="secondary"
-                            size="s"
-                            onClick={() => setShowAllHistory(!showAllHistory)}
-                        >
-                            {showAllHistory
-                                ? t('record_history.hide_history', {total})
-                                : t('record_history.show_history', {total})}
-                        </StyledKitButtonShow>
-                    )}
                     {showAllHistory && (
                         <>
                             {logs.map((logEntry, index) => (
@@ -79,6 +72,13 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
                         </>
                     )}
                     {!showAllHistory && <RecordHistoryLogEntry key={0} index={0} logEntry={logs[0]} />}
+                    {total > 1 && (
+                        <KitButton type="secondary" size="s" onClick={() => setShowAllHistory(!showAllHistory)}>
+                            {showAllHistory
+                                ? t('record_history.hide_history', {total})
+                                : t('record_history.show_history', {total})}
+                        </KitButton>
+                    )}
                 </KitSpace>
             </RecordHistoryGoUpButton>
         </StyledDivContentWrapper>

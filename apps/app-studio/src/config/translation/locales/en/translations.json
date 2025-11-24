@@ -31,6 +31,17 @@
         "submit": "Submit",
         "yes": "Yes"
     },
+    "information_and_history": {
+        "system_information": "System information",
+        "id": "Identifier",
+        "library": "Library",
+        "creation": "Creation",
+        "last_modification": "Last modification",
+        "created_at": "On {{date}} by",
+        "modified_at": "On {{date}} by",
+        "history": "History",
+        "unknown_user": "Unknown user"
+    },
     "errors": {
         "INTERNAL_ERROR": "An internal error occurred",
         "PERMISSION_ERROR": "You are not allowed to perform this operation",

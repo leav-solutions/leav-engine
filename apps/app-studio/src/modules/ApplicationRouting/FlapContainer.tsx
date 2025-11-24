@@ -8,6 +8,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from './router/paths';
 import {PanelHeader} from './header/PanelHeader';
 import {Flap} from './Flap';
+import {flapContainer} from './flap.module.css';
 
 export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
     const navigate = useNavigate();
@@ -20,6 +21,7 @@ export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
 
     return (
         <KitSidePanel
+            className={flapContainer}
             ref={refFlap}
             size="l"
             headerExtra={<PanelHeader enabled hideExpandCollapseButton actionPosition="right" />}

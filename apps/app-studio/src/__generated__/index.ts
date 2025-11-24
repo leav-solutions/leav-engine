@@ -225,6 +225,22 @@ export type ApplicationsList = {
   totalCount: Scalars['Int'];
 };
 
+export type Asset = {
+  creative: Creative;
+  id: Scalars['String'];
+  key?: Maybe<Scalars['String']>;
+  processingId?: Maybe<Scalars['String']>;
+  processingIndex?: Maybe<Scalars['Int']>;
+  progressPercentage?: Maybe<Scalars['Int']>;
+  store?: Maybe<Store>;
+  template: Template;
+};
+
+export type Attachment = {
+  label: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type Attribute = {
   actions_list?: Maybe<ActionsListConfiguration>;
   compute: Scalars['Boolean'];
@@ -351,6 +367,48 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type Campaign = {
+  assetsCount?: Maybe<Scalars['Int']>;
+  creatives: Array<Creative>;
+  deliveryPlatforms: Array<DeliveryPlatform>;
+  digram: Scalars['String'];
+  failedAssetsCount?: Maybe<Scalars['Int']>;
+  generationStartedAt?: Maybe<Scalars['String']>;
+  generationStatus?: Maybe<GenerationStatus>;
+  generationStatusUpdatedAt?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String'];
+  offers: Array<Offer>;
+  stores: Array<Store>;
+  sublabel: Scalars['String'];
+  successfulAssetsCount?: Maybe<Scalars['Int']>;
+};
+
+export type CampaignAssetGenerationState = {
+  assetsCount: Scalars['Int'];
+  failedAssetsCount: Scalars['Int'];
+  generationStartedAt: Scalars['String'];
+  generationStatusUpdatedAt: Scalars['String'];
+  successfulAssetsCount: Scalars['Int'];
+};
+
+export type CampaignToRenew = {
+  category?: InputMaybe<Scalars['String']>;
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  label: Scalars['String'];
+  startDate: Scalars['String'];
+  thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -367,6 +425,14 @@ export type CreateRecordResult = {
   valuesErrors?: Maybe<Array<ValueBatchError>>;
 };
 
+export type Creative = {
+  assets: Array<Asset>;
+  id: Scalars['String'];
+  label: Scalars['String'];
+  offers: Array<Offer>;
+  templates: Array<Template>;
+};
+
 export type DateRangeValue = {
   from?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
@@ -375,6 +441,25 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean'];
   id: Scalars['ID'];
+};
+
+export type DeliveryMedia = {
+  deliveryPlatform: DeliveryPlatform;
+  id: Scalars['String'];
+  label: Scalars['String'];
+  templates?: Maybe<Array<Template>>;
+};
+
+
+export type DeliveryMediaTemplatesArgs = {
+  campaignId?: InputMaybe<Scalars['String']>;
+};
+
+export type DeliveryPlatform = {
+  deliveryMedias?: Maybe<Array<DeliveryMedia>>;
+  id: Scalars['String'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String'];
 };
 
 export type EmbeddedAttribute = {
@@ -537,6 +622,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GenericValue = {
   attribute: Attribute;
   created_at?: Maybe<Scalars['Int']>;
@@ -571,6 +667,10 @@ export type GlobalSettingsInput = {
   settings?: InputMaybe<Scalars['JSONObject']>;
 };
 
+export type Greeting = {
+  content: Scalars['String'];
+};
+
 export type HeritedPermissionAction = {
   allowed: Scalars['Boolean'];
   name: PermissionsActions;
@@ -582,6 +682,14 @@ export enum IoTypes {
   object = 'object',
   string = 'string'
 }
+
+export type ImagePreview = {
+  big: Scalars['String'];
+  huge: Scalars['String'];
+  medium: Scalars['String'];
+  small: Scalars['String'];
+  tiny: Scalars['String'];
+};
 
 export enum ImportMode {
   insert = 'insert',
@@ -880,6 +988,16 @@ export type Logs = {
   total: Scalars['Int'];
 };
 
+export type MoveThematicResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematic?: Maybe<MoveThematicResultThematic>;
+};
+
+export type MoveThematicResultThematic = {
+  id: Scalars['ID'];
+  id_value: Scalars['ID'];
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -890,6 +1008,8 @@ export type Mutation = {
   activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean'];
+  createCreative: Creative;
+  createCreativesAuto?: Maybe<Array<Creative>>;
   createDirectory: Record;
   createEmptyRecord: CreateRecordResult;
   createRecord: CreateRecordResult;
@@ -899,6 +1019,7 @@ export type Mutation = {
   deleteAttribute: Attribute;
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
+  deleteOffer?: Maybe<Scalars['Boolean']>;
   deleteRecord: Record;
   deleteTasks: Scalars['Boolean'];
   deleteTree: Tree;
@@ -906,12 +1027,19 @@ export type Mutation = {
   deleteVersionProfile: VersionProfile;
   deleteView: View;
   forcePreviewsGeneration: Scalars['Boolean'];
+  generateAndSendJsonToDigitalHub?: Maybe<Scalars['Boolean']>;
+  generateCreativeMasterAssets: Array<Asset>;
+  generateCreativesAssets: Array<Asset>;
   importConfig: Scalars['ID'];
   importData: Scalars['ID'];
   importExcel: Scalars['ID'];
   indexRecords: Scalars['Boolean'];
+  linkOfferToCampaign?: Maybe<Scalars['Boolean']>;
+  moveOrCopyCampaignThematic: MoveThematicResult;
   purgeInactiveRecords: Array<Record>;
   purgeRecord: Record;
+  rankOffers?: Maybe<Scalars['Boolean']>;
+  renewCampaigns: Array<RenewCampaignsResult>;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -928,6 +1056,7 @@ export type Mutation = {
   treeAddElement: TreeNode;
   treeDeleteElement: Scalars['ID'];
   treeMoveElement: TreeNode;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   upload: Array<UploadData>;
 };
@@ -949,6 +1078,19 @@ export type MutationActivateRecordsArgs = {
 
 export type MutationCancelTaskArgs = {
   taskId: Scalars['ID'];
+};
+
+
+export type MutationCreateCreativeArgs = {
+  campaignId: Scalars['String'];
+  deliveryMediaId: Scalars['String'];
+  offersIds: Array<Scalars['String']>;
+};
+
+
+export type MutationCreateCreativesAutoArgs = {
+  campaignId: Scalars['String'];
+  deliveryMediaIds: Array<Scalars['String']>;
 };
 
 
@@ -1003,6 +1145,11 @@ export type MutationDeleteLibraryArgs = {
 };
 
 
+export type MutationDeleteOfferArgs = {
+  offerId: Scalars['String'];
+};
+
+
 export type MutationDeleteRecordArgs = {
   id?: InputMaybe<Scalars['ID']>;
   library?: InputMaybe<Scalars['ID']>;
@@ -1046,6 +1193,21 @@ export type MutationForcePreviewsGenerationArgs = {
 };
 
 
+export type MutationGenerateAndSendJsonToDigitalHubArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type MutationGenerateCreativeMasterAssetsArgs = {
+  creativeId: Scalars['String'];
+};
+
+
+export type MutationGenerateCreativesAssetsArgs = {
+  campaignId: Scalars['String'];
+};
+
+
 export type MutationImportConfigArgs = {
   clear?: InputMaybe<Scalars['Boolean']>;
   file: Scalars['Upload'];
@@ -1071,6 +1233,21 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationLinkOfferToCampaignArgs = {
+  campaignId: Scalars['String'];
+  offerId: Scalars['String'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicArgs = {
+  copyFraming: Scalars['Boolean'];
+  fromCampaignId: Scalars['String'];
+  moveThematic: Scalars['Boolean'];
+  thematicId: Scalars['String'];
+  toCampaignId: Scalars['String'];
+};
+
+
 export type MutationPurgeInactiveRecordsArgs = {
   libraryId: Scalars['String'];
 };
@@ -1079,6 +1256,18 @@ export type MutationPurgeInactiveRecordsArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID'];
   recordId: Scalars['ID'];
+};
+
+
+export type MutationRankOffersArgs = {
+  campaignId: Scalars['String'];
+  orderedOfferIds: Array<Scalars['String']>;
+};
+
+
+export type MutationRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  pacId: Scalars['String'];
 };
 
 
@@ -1179,6 +1368,11 @@ export type MutationTreeMoveElementArgs = {
 };
 
 
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
+};
+
+
 export type MutationUpdateViewArgs = {
   view: ViewInputPartial;
 };
@@ -1188,6 +1382,28 @@ export type MutationUploadArgs = {
   files: Array<FileInput>;
   library: Scalars['String'];
   nodeId: Scalars['String'];
+};
+
+export type Notification = {
+  attachments?: Maybe<Array<Attachment>>;
+  date: Scalars['Int'];
+  level: NotificationLevel;
+  message: Scalars['String'];
+  relatedEntities?: Maybe<Array<RelatedEntity>>;
+  title: Scalars['String'];
+};
+
+export enum NotificationLevel {
+  info = 'info',
+  warning = 'warning'
+}
+
+export type Offer = {
+  digram: Scalars['String'];
+  id: Scalars['String'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String'];
+  sublabel: Scalars['String'];
 };
 
 export type Pagination = {
@@ -1350,12 +1566,19 @@ export type Query = {
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
   availableActions?: Maybe<Array<Action>>;
+  calculatedCampaignAssetsNumber?: Maybe<Scalars['Int']>;
+  campaign?: Maybe<Campaign>;
+  campaignMasterStore?: Maybe<Store>;
+  campaigns: Array<Campaign>;
+  creative?: Maybe<Creative>;
+  deliveryMedia?: Maybe<DeliveryMedia>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']>;
   export: Scalars['String'];
   forms?: Maybe<FormsList>;
   fullTreeContent?: Maybe<Scalars['FullTreeContent']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
+  greeting: Greeting;
   inheritedPermissions?: Maybe<Array<HeritedPermissionAction>>;
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']>>;
@@ -1367,7 +1590,6 @@ export type Query = {
   plugins: Array<Plugin>;
   recordForm?: Maybe<RecordForm>;
   records: RecordsList;
-  runActionsListAndFormatOnValue: Array<Value>;
   tasks: TasksList;
   treeContent: Array<TreeNode>;
   treeNodeChildren: TreeNodeLightList;
@@ -1401,6 +1623,31 @@ export type QueryAttributesArgs = {
 };
 
 
+export type QueryCalculatedCampaignAssetsNumberArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type QueryCampaignArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type QueryCampaignMasterStoreArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type QueryCreativeArgs = {
+  creativeId: Scalars['String'];
+};
+
+
+export type QueryDeliveryMediaArgs = {
+  deliveryMediaId: Scalars['String'];
+};
+
+
 export type QueryDoesFileExistAsChildArgs = {
   filename: Scalars['String'];
   parentNode?: InputMaybe<Scalars['ID']>;
@@ -1409,10 +1656,9 @@ export type QueryDoesFileExistAsChildArgs = {
 
 
 export type QueryExportArgs = {
-  attributes?: InputMaybe<Array<Scalars['ID']>>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   library: Scalars['ID'];
-  startAt?: InputMaybe<Scalars['Int']>;
+  profile?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1491,18 +1737,12 @@ export type QueryRecordFormArgs = {
 
 export type QueryRecordsArgs = {
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  ignoreAccessRecordByDefaultPermission?: InputMaybe<Scalars['Boolean']>;
   library: Scalars['ID'];
   multipleSort?: InputMaybe<Array<RecordSortInput>>;
   pagination?: InputMaybe<RecordsPagination>;
   retrieveInactive?: InputMaybe<Scalars['Boolean']>;
   searchQuery?: InputMaybe<Scalars['String']>;
-  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
-};
-
-
-export type QueryRunActionsListAndFormatOnValueArgs = {
-  library?: InputMaybe<Scalars['ID']>;
-  value?: InputMaybe<ValueBatchInput>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
@@ -1746,6 +1986,24 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
+export type RelatedEntity = {
+  label: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type RenewCampaignsResult = {
+  campaign_id?: Maybe<Scalars['ID']>;
+  original_campaign_id: Scalars['ID'];
+  record?: Maybe<Record>;
+  valuesErrors?: Maybe<Array<ValueBatchError>>;
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SheetInput = {
   keyIndex?: InputMaybe<Scalars['Int']>;
   keyToIndex?: InputMaybe<Scalars['Int']>;
@@ -1856,6 +2114,12 @@ export type StandardStringValuesListConf = {
 
 export type StandardValuesListConf = StandardDateRangeValuesListConf | StandardStringValuesListConf;
 
+export type Store = {
+  deliveryMedia: DeliveryMedia;
+  id: Scalars['String'];
+  label: Scalars['String'];
+};
+
 export type StreamProgress = {
   delta?: Maybe<Scalars['Int']>;
   eta?: Maybe<Scalars['Int']>;
@@ -1869,6 +2133,9 @@ export type StreamProgress = {
 
 export type Subscription = {
   applicationEvent: ApplicationEvent;
+  assetState?: Maybe<Scalars['String']>;
+  campaignAssetGenerationState?: Maybe<CampaignAssetGenerationState>;
+  notification: Notification;
   recordUpdate: RecordUpdateEvent;
   task: Task;
   treeEvent: TreeEvent;
@@ -1878,6 +2145,17 @@ export type Subscription = {
 
 export type SubscriptionApplicationEventArgs = {
   filters?: InputMaybe<ApplicationEventFiltersInput>;
+};
+
+
+export type SubscriptionAssetStateArgs = {
+  campaignId?: InputMaybe<Scalars['String']>;
+  creativeId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type SubscriptionCampaignAssetGenerationStateArgs = {
+  campaignId: Scalars['String'];
 };
 
 
@@ -1956,6 +2234,15 @@ export enum TaskType {
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int'];
+};
+
+export type Template = {
+  deliveryMedia: DeliveryMedia;
+  format: Scalars['String'];
+  id: Scalars['String'];
+  label: Scalars['String'];
+  offersCount: Scalars['Int'];
+  storeSpecific: Scalars['Boolean'];
 };
 
 export type Tree = {
@@ -2454,6 +2741,14 @@ export type GetRecordIdCardQueryVariables = Exact<{
 
 export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
 
+export type GetRecordInformationQueryVariables = Exact<{
+  library: Scalars['ID'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type GetRecordInformationQuery = { records: { list: Array<{ created_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, modified_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, created_at: Array<{ payload?: any | null }>, modified_at: Array<{ payload?: any | null }>, library: { label?: any | null } }> } };
+
 
 export const GetApplicationDataByEndpointDocument = gql`
     query GetApplicationDataByEndpoint($endpoint: String!) {
@@ -2680,3 +2975,86 @@ export type GetRecordIdCardQueryHookResult = ReturnType<typeof useGetRecordIdCar
 export type GetRecordIdCardLazyQueryHookResult = ReturnType<typeof useGetRecordIdCardLazyQuery>;
 export type GetRecordIdCardSuspenseQueryHookResult = ReturnType<typeof useGetRecordIdCardSuspenseQuery>;
 export type GetRecordIdCardQueryResult = Apollo.QueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
+export const GetRecordInformationDocument = gql`
+    query getRecordInformation($library: ID!, $filters: [RecordFilterInput]) {
+  records(library: $library, filters: $filters) {
+    list {
+      created_by: property(attribute: "created_by") {
+        ... on LinkValue {
+          payload {
+            id
+            email: properties(attributeIds: ["email"]) {
+              values {
+                ... on Value {
+                  payload
+                }
+              }
+            }
+          }
+        }
+      }
+      modified_by: property(attribute: "modified_by") {
+        ... on LinkValue {
+          payload {
+            id
+            email: properties(attributeIds: ["email"]) {
+              values {
+                ... on Value {
+                  payload
+                }
+              }
+            }
+          }
+        }
+      }
+      created_at: property(attribute: "created_at") {
+        ... on Value {
+          payload
+        }
+      }
+      modified_at: property(attribute: "created_at") {
+        ... on Value {
+          payload
+        }
+      }
+      library: library {
+        label
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRecordInformationQuery__
+ *
+ * To run a query within a React component, call `useGetRecordInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecordInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecordInformationQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useGetRecordInformationQuery(baseOptions: Apollo.QueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
+      }
+export function useGetRecordInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
+        }
+export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
+        }
+export type GetRecordInformationQueryHookResult = ReturnType<typeof useGetRecordInformationQuery>;
+export type GetRecordInformationLazyQueryHookResult = ReturnType<typeof useGetRecordInformationLazyQuery>;
+export type GetRecordInformationSuspenseQueryHookResult = ReturnType<typeof useGetRecordInformationSuspenseQuery>;
+export type GetRecordInformationQueryResult = Apollo.QueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;

@@ -16,7 +16,8 @@ import {content, fullpageContent, fullpagePage, page, pageHeader} from './panel.
 
 export const Panel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
+        useParams();
 
     const NextLevelRoutes = useRoutes(nextLevelRoutes);
 
@@ -51,6 +52,9 @@ export const Panel: FunctionComponent = () => {
                         libraryId={libraryId}
                         panelType={panelType}
                         recordId={currentRecordId}
+                        flapRecordId={flapRecordId}
+                        flapLibraryId={flapLibraryId}
+                        flapPanelId={flapPanelId}
                         where={where}
                         currentPanelId={currentPanel.id}
                     />
