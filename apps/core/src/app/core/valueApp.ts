@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IKeyValue, objectToNameValueArray, Override} from '@leav/utils';
+import {type IKeyValue, objectToNameValueArray} from '@leav/utils';
 import {type ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
@@ -11,14 +11,7 @@ import {type IUtils} from 'utils/utils';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IRecord} from '_types/record';
-import {
-    type IStandardValue,
-    type ITreeValue,
-    type IValue,
-    type IValueFromGql,
-    type IValueVersion,
-    type IValueVersionFromGql,
-} from '_types/value';
+import {type IBaseValue, type IStandardValue, type ITreeValue, type IValue, type IValueVersion} from '_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
@@ -229,6 +222,31 @@ export default function ({
                         metadata: [ValueMetadataInput]
                     }
 
+                    interface GenericValueOccurrences {
+                        count: Int!
+                    }
+
+                    type TreeValueOccurrences implements GenericValueOccurrences {
+                        value: TreeNode!
+                        count: Int!
+                    }
+
+                    type ValuesOccurrences {
+                        occurrences: [GenericValueOccurrences!]!
+                        noValueCount: Int!
+                    }
+
+                    extend type Query {
+                        countValuesOccurrences(
+                            library: ID!,
+                            """ Attribute should be tree and mono valued """
+                            attribute: ID!,
+                            """ Filters to apply on records, same filters as for records query """
+                            recordFilters: [RecordFilterInput],
+                            version: [ValueVersionInput],
+                        ): ValuesOccurrences
+                    }
+
                     extend type Mutation {
                         # Save one value
                         saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): [GenericValue!]!
@@ -247,6 +265,37 @@ export default function ({
                     }
                 `,
                 resolvers: {
+                    Query: {
+                        async countValuesOccurrences(
+                            _,
+                            {library, attribute, recordFilters, version},
+                            ctx: IQueryInfos,
+                        ): Promise<{
+                            occurrences: Array<{value: IBaseValue; attribute: string; count: number}>;
+                            noValueCount: number;
+                        }> {
+                            const formattedVersion =
+                                Array.isArray(version) && version.length
+                                    ? version.reduce((allVers, vers) => {
+                                          allVers[vers.treeId] = vers.treeNodeId;
+                                          return allVers;
+                                      }, {})
+                                    : null;
+
+                            const {occurrences, noValueCount} = await valueDomain.countValuesOccurrences({
+                                libraryId: library,
+                                attributeId: attribute,
+                                recordFilters,
+                                options: {version: formattedVersion},
+                                ctx,
+                            });
+
+                            return {
+                                occurrences: occurrences.map(occ => ({...occ, attribute})), // add attribute for GenericRecordValueOccurrences.__resolveType
+                                noValueCount,
+                            };
+                        },
+                    },
                     Mutation: {
                         async saveValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
                             const valToSave = {
@@ -320,6 +369,20 @@ export default function ({
                                 value: valToDelete,
                                 ctx,
                             });
+                        },
+                    },
+                    GenericValueOccurrences: {
+                        __resolveType: async (fieldValue, ctx) => {
+                            const attribute = Array.isArray(fieldValue)
+                                ? fieldValue[0].attribute
+                                : fieldValue.attribute;
+                            const attrProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+                            switch (attrProps.type) {
+                                case AttributeTypes.TREE:
+                                    return 'TreeValueOccurrences';
+                                default:
+                                    return null;
+                            }
                         },
                     },
                     GenericValue: {

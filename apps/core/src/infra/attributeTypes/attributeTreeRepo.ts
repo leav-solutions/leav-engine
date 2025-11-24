@@ -10,7 +10,7 @@ import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_typ
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
-import {type ITreeValue, type IValueEdge} from '../../_types/value';
+import {type IValuesOccurrences, type ITreeValue, type IValueEdge, type ITreeBaseValue} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
@@ -323,6 +323,60 @@ export default function ({
                     ) || []
                 );
             });
+        },
+        async countValuesOccurrences({
+            library,
+            attribute,
+            recordIds,
+            options,
+            ctx,
+        }): Promise<IValuesOccurrences<ITreeBaseValue>> {
+            if (!attribute.linked_tree) {
+                return [];
+            }
+
+            if (attribute.multiple_values) {
+                throw new Error('countValuesOccurrences is not supported for multiple values tree attributes.');
+            }
+
+            const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+
+            // For all recordIds, retrieve edge._to and count the occurrences of each node (record)
+            const queryParts = [
+                aql`
+                FOR recordId IN ${recordIds}
+                    FOR edge IN ${valuesLinksCollec}
+                        FILTER edge._from == CONCAT(${library}, '/', recordId) 
+                        AND edge.attribute == ${attribute.id}
+                `,
+            ];
+            queryParts.push(
+                options?.version ? aql`FILTER edge.version == ${options.version}` : aql`FILTER edge.version == null`,
+            );
+            queryParts.push(
+                aql`
+                    LET node = DOCUMENT(edge._to)
+                    COLLECT nodeRec = node WITH COUNT INTO occurrences
+                    RETURN {value: nodeRec, count: occurrences}
+            `,
+            );
+
+            const query = join(queryParts);
+            const res = await dbService.execute<
+                Array<{value: {_key: string; libraryId: string; recordId: string}; count: number}>
+            >({query, ctx});
+
+            return res.map(({value, count}) => ({
+                value: {
+                    id: value._key,
+                    treeId: attribute.linked_tree,
+                    record: {
+                        id: value.recordId,
+                        library: value.libraryId,
+                    },
+                },
+                count,
+            }));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
