@@ -11,7 +11,7 @@ interface IIdCardProps {
 }
 
 export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
-    const {id, label, preview, subLabel} = item;
+    const {id, label, preview, subLabel, color} = item;
     const itemLabel = label ?? id;
     const avatarProps: IKitAvatar = {label: itemLabel};
 
@@ -19,5 +19,12 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
         avatarProps.src = preview.small;
     }
 
-    return <KitIdCard avatarProps={avatarProps} title={label ?? id} description={subLabel ?? undefined} />;
+    return (
+        <KitIdCard
+            avatarProps={avatarProps}
+            title={label ?? id}
+            description={subLabel ?? undefined}
+            color={color ?? undefined}
+        />
+    );
 };
