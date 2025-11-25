@@ -263,7 +263,7 @@ To use it in a project, just add it with a `yarn add @leav/my_lib`.
 Then, in your code, you can import it and use it like a regular package:
 
 ```typescript
-import { mySuperFunc } from '@leav/my_lib'
+import {mySuperFunc} from '@leav/my_lib'
 
 mySuperFunc();
 ```
@@ -336,7 +336,8 @@ End-to-end or integration testing needs to be run inside the container as it sta
 This can be done by either:
 
 - Need to run with mailpit: `docker compose --profile mail up -d`
-- Running a shell in the *core* container and executing `yarn run test:e2e` or `yarn run test:e2e:api` or `yarn run test:integration`
+- Running a shell in the *core* container and executing `yarn run test:e2e` or `yarn run test:e2e:api` or
+  `yarn run test:integration`
 - Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
 
 ---
@@ -464,15 +465,27 @@ login/password default authentification mechanism.
    ```
 
 4. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
-    - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
 
-        ```
-        yarn run fronts:build:install
+- Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
 
-        docker stop docker-login-1 docker-portal-1 docker-admin-1 docker-data-studio-1 docker-app-studio-1
-        ```
+    ```
+    yarn run fronts:build:install
 
-    - Build apps to [`/applications`](./apps/core/applications) and register under new paths
+    docker stop docker-login-1 docker-portal-1 docker-admin-1 docker-data-studio-1 docker-app-studio-1
+    ```
+
+- Build apps to [`/applications`](./apps/core/applications) and register under new paths
+
+### 📦 Dependency Management
+
+This project uses Renovate to automatically manage dependency updates. Renovate scans the repository and creates Merge
+Requests (MRs) for outdated packages. (https://docs.renovatebot.com)
+
+- Configuration: Project-specific settings are located in renovate.json.
+- Global Runner: The bot is executed via the internal runner at GitLab Renovate
+  Runner. (https://gitlab.aristid.com/dev/renovate-runner )
+- Schedule: Updates run weekly on Mondays at 7:20 AM.
+- Limits: To prevent noise, Renovate is capped at creating a maximum of 5 MRs per execution.
 
 ### Credentials
 

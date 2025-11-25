@@ -1,0 +1,24 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:recommended"],
+    "baseBranches": ["develop"],
+    "prHourlyLimit": 5,
+    "dependencyDashboard": true,
+    "packageRules": [
+        {
+            "matchDatasources": ["*"],
+            "description": "Disable all managers",
+            "enabled": false
+        },
+        {
+            "description": "Enable npm detection",
+            "enabled": true,
+            "matchManagers": ["npm"]
+        },
+        {
+            "description": "Group all patch updates into one PR",
+            "matchUpdateTypes": ["patch"],
+            "groupName": "all patch updates"
+        }
+    ]
+}
