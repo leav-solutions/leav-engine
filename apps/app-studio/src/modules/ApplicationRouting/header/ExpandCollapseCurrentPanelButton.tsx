@@ -17,13 +17,11 @@ export const ExpandCollapseCurrentPanelButton: FunctionComponent = () => {
 
     const isCurrentPanelInSlider = where === 'slider';
 
+    const panelPath = isCurrentPanelInSlider
+        ? RelativePaths.openCurrentPanelInPopup
+        : RelativePaths.openCurrentPanelInSlider;
+
     const hasFlapAlreadyOpen = flapPanelId !== undefined;
-
-    let path = isCurrentPanelInSlider ? RelativePaths.openCurrentPanelInPopup : RelativePaths.openCurrentPanelInSlider;
-
-    if (hasFlapAlreadyOpen) {
-        path = RelativePaths.closeFlapPanel + '/' + path + '/' + RelativePaths.openFlap;
-    }
 
     return (
         <KitTooltip
@@ -39,7 +37,23 @@ export const ExpandCollapseCurrentPanelButton: FunctionComponent = () => {
                     />
                 }
                 onClick={() => {
-                    navigate(generatePath(path, {recordId, recordPanelId}), {relative: 'path'});
+                    if (hasFlapAlreadyOpen) {
+                        return navigate(
+                            generatePath(
+                                RelativePaths.closeFlapPanel + '/' + panelPath + '/' + RelativePaths.openFlap,
+                                {
+                                    recordId,
+                                    recordPanelId,
+                                    flapRecordId,
+                                    flapLibraryId,
+                                    flapPanelId,
+                                },
+                            ),
+                            {relative: 'path'},
+                        );
+                    }
+
+                    return navigate(generatePath(panelPath, {recordId, recordPanelId}), {relative: 'path'});
                 }}
             />
         </KitTooltip>

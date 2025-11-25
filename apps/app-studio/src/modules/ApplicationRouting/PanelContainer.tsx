@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, useEffect, useRef, useState} from 'react';
+import {type FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
@@ -30,15 +30,13 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
     const navigate = useNavigate();
-    const refPanel = useRef<KitSidePanelRef | null>(null);
-    const refFlap = useRef<KitSidePanelRef | null>(null);
     const [refDivToInsertSidePanel, setRefDivToInsertSidePanel] = useState<HTMLDivElement | null>(null);
     const [refDivToInsertFlapPanel, setRefDivToInsertFlapPanel] = useState<HTMLDivElement | null>(null);
-    const match = useMatch(AbsolutePaths.recordPanel);
-
     const {isLastLevelRecordPanel} = useDisplayConditions();
-
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
+    const match = useMatch(AbsolutePaths.recordPanel);
+    const hasFlapPanel = flapPanelId !== undefined;
+    const isFormPanel = ['editionForm', 'creationForm'].includes(currentPanel.type);
 
     useEffect(() => {
         setRefDivToInsertSidePanel(document.getElementById(SIDE_PANEL_TARGET_ID) as HTMLDivElement);
@@ -48,28 +46,27 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         }
     }, [where]);
 
-    useEffect(() => {
-        if (isLastLevelRecordPanel && where === 'slider') {
-            refPanel.current?.open();
-        }
-    }, [
-        refDivToInsertSidePanel,
-        match.pathname /* `match.pathname` is used to detect changes in the URL to re-open the side panel */,
-    ]);
+    const setPanelRef = useCallback(
+        (panelRef: KitSidePanelRef | null) => {
+            if (panelRef && isLastLevelRecordPanel && where === 'slider') {
+                panelRef.open();
+            }
+        },
+        [isLastLevelRecordPanel, where, match.pathname],
+    );
 
-    useEffect(() => {
-        refFlap.current?.open();
-    }, [
-        refDivToInsertFlapPanel,
-        match.pathname /* `match.pathname` is used to detect changes in the URL to re-open the side panel */,
-    ]);
+    const setFlapRef = useCallback(
+        (flapRef: KitSidePanelRef | null) => {
+            if (hasFlapPanel && flapRef) {
+                flapRef.open();
+            }
+        },
+        [hasFlapPanel, match.pathname],
+    );
 
     if (!isLastLevelRecordPanel) {
         return <>{children}</>;
     }
-
-    const hasFlapPanel = flapPanelId !== undefined;
-    const isFormPanel = ['editionForm', 'creationForm'].includes(currentPanel.type);
 
     const closeContainer = () => {
         const closingPath = hasFlapPanel
@@ -113,7 +110,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             >
                 <div className={popupContent}>
                     {children}
-                    {hasFlapPanel && <FlapContainer ref={refFlap} />}
+                    {hasFlapPanel && <FlapContainer ref={setFlapRef} />}
                 </div>
             </KitModal>
         );
@@ -127,7 +124,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                   isSelfContainingPanel ? (
                       <KitSidePanel
                           className={selfContainingPanel}
-                          ref={refPanel}
+                          ref={setPanelRef}
                           size="l"
                           onCloseAfterAnimation={closeContainer}
                           floating
@@ -141,7 +138,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                           className={cn({
                               [sliderFormPanel]: isFormPanel,
                           })}
-                          ref={refPanel}
+                          ref={setPanelRef}
                           size="l"
                           headerExtra={<PanelHeader actionPosition="right" enabled />}
                           onCloseAfterAnimation={closeContainer}
@@ -150,7 +147,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                           showSeparator
                           closeOnEsc
                       >
-                          {hasFlapPanel ? <FlapContainer ref={refFlap} /> : children}
+                          {hasFlapPanel ? <FlapContainer ref={setFlapRef} /> : children}
                       </KitSidePanel>
                   ),
                   refDivToInsertSidePanel,
@@ -164,7 +161,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             {children}
             {hasFlapPanel &&
                 refDivToInsertFlapPanel &&
-                createPortal(<FlapContainer ref={refFlap} />, refDivToInsertFlapPanel)}
+                createPortal(<FlapContainer ref={setFlapRef} />, refDivToInsertFlapPanel)}
         </>
     );
 };
