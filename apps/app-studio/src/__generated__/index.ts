@@ -579,6 +579,10 @@ export type GenericValue = {
   version?: Maybe<Array<Maybe<ValueVersion>>>;
 };
 
+export type GenericValueOccurrences = {
+  count: Scalars['Int'];
+};
+
 export type GlobalSettings = {
   defaultApp: Scalars['String'];
   favicon?: Maybe<Record>;
@@ -598,10 +602,6 @@ export type GlobalSettingsInput = {
   icon?: InputMaybe<GlobalSettingsFileInput>;
   name?: InputMaybe<Scalars['String']>;
   settings?: InputMaybe<Scalars['JSONObject']>;
-};
-
-export type Greeting = {
-  content: Scalars['String'];
 };
 
 export type HeritedPermissionAction = {
@@ -1430,13 +1430,13 @@ export type Query = {
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
   availableActions?: Maybe<Array<Action>>;
+  countValuesOccurrences?: Maybe<ValuesOccurrences>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']>;
   export: Scalars['String'];
   forms?: Maybe<FormsList>;
   fullTreeContent?: Maybe<Scalars['FullTreeContent']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
-  greeting: Greeting;
   inheritedPermissions?: Maybe<Array<HeritedPermissionAction>>;
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']>>;
@@ -1478,6 +1478,14 @@ export type QueryAttributesArgs = {
   filters?: InputMaybe<AttributesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortAttributes>;
+};
+
+
+export type QueryCountValuesOccurrencesArgs = {
+  attribute: Scalars['ID'];
+  library: Scalars['ID'];
+  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
 
@@ -2250,6 +2258,11 @@ export type TreeValue = GenericValue & {
   version?: Maybe<Array<Maybe<ValueVersion>>>;
 };
 
+export type TreeValueOccurrences = GenericValueOccurrences & {
+  count: Scalars['Int'];
+  value: TreeNode;
+};
+
 export type TreeValuesListConf = {
   allowFreeEntry?: Maybe<Scalars['Boolean']>;
   allowListUpdate?: Maybe<Scalars['Boolean']>;
@@ -2385,6 +2398,11 @@ export type ValuesListConfInput = {
   allowListUpdate?: InputMaybe<Scalars['Boolean']>;
   enable: Scalars['Boolean'];
   values?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type ValuesOccurrences = {
+  noValueCount: Scalars['Int'];
+  occurrences: Array<GenericValueOccurrences>;
 };
 
 export type ValuesVersionsConf = {
@@ -2543,6 +2561,7 @@ export type GetLibraryNameQuery = { libraries?: { list: Array<{ label?: any | nu
 export type GetRecordIdCardQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   libraryId: Scalars['ID'];
+  ignoreAccessRecordByDefaultPermission: Scalars['Boolean'];
 }>;
 
 
@@ -2743,10 +2762,11 @@ export type GetLibraryNameLazyQueryHookResult = ReturnType<typeof useGetLibraryN
 export type GetLibraryNameSuspenseQueryHookResult = ReturnType<typeof useGetLibraryNameSuspenseQuery>;
 export type GetLibraryNameQueryResult = Apollo.QueryResult<GetLibraryNameQuery, GetLibraryNameQueryVariables>;
 export const GetRecordIdCardDocument = gql`
-    query GetRecordIdCard($id: String, $libraryId: ID!) {
+    query GetRecordIdCard($id: String, $libraryId: ID!, $ignoreAccessRecordByDefaultPermission: Boolean!) {
   records(
     library: $libraryId
     filters: [{field: "id", condition: EQUAL, value: $id}]
+    ignoreAccessRecordByDefaultPermission: $ignoreAccessRecordByDefaultPermission
   ) {
     list {
       id
@@ -2776,6 +2796,7 @@ export const GetRecordIdCardDocument = gql`
  *   variables: {
  *      id: // value for 'id'
  *      libraryId: // value for 'libraryId'
+ *      ignoreAccessRecordByDefaultPermission: // value for 'ignoreAccessRecordByDefaultPermission'
  *   },
  * });
  */

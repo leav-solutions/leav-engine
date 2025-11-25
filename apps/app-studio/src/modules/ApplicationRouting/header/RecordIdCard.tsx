@@ -21,6 +21,7 @@ export const RecordIdCard: FunctionComponent<{
         variables: {
             id: currentRecordId,
             libraryId,
+            ignoreAccessRecordByDefaultPermission: true,
         },
         skip: !currentRecordId || !libraryId,
     });
