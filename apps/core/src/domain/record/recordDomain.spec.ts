@@ -32,7 +32,6 @@ import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain, {ATTRIBUTE_ACTIVE, type IRecordDomainDeps} from './recordDomain';
-import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
 import {type IFormRepo} from 'infra/form/formRepo';
@@ -69,7 +68,6 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.infra.form': jest.fn(),
     translator: {},
     'core.domain.record.helpers.findRecords': jest.fn(),
-    'core.domain.record.helpers.getRecordFieldValue': jest.fn(),
 };
 
 describe('RecordDomain', () => {
@@ -246,6 +244,7 @@ describe('RecordDomain', () => {
 
             const mockValueDomain: Mockify<IValueDomain> = {
                 saveValue: global.__mockPromise([{payload: true}]),
+                getRecordFieldValue: jest.fn(),
             };
 
             const recDomain = recordDomain({
@@ -264,7 +263,6 @@ describe('RecordDomain', () => {
                 }),
                 'core.utils': mockUtils as IUtils,
             });
-            recDomain.getRecordFieldValue = jest.fn();
 
             const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
             const activatedRecord = await recDomain.activateNewRecord({
@@ -640,6 +638,29 @@ describe('RecordDomain', () => {
                         },
                     ],
                 ]),
+                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_payload: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image',
+                                  },
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  payload: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  },
+                              },
+                    ]),
+                ),
             };
 
             const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -673,30 +694,6 @@ describe('RecordDomain', () => {
                 'core.utils': mockUtilsRecordIdentity as IUtils,
                 config: mockConfig as Config.IConfig,
             });
-
-            recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                Promise.resolve([
-                    attributeId === 'previews'
-                        ? {
-                              raw_payload: {
-                                  small: 'small_fake-image',
-                                  medium: 'medium_fake-image',
-                                  big: 'big_fake-image',
-                              },
-                          }
-                        : {
-                              ...mockStandardValue,
-                              payload: {
-                                  ...mockRecord,
-                                  previews: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              },
-                          },
-                ]),
-            );
 
             const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -757,6 +754,29 @@ describe('RecordDomain', () => {
                             },
                         ],
                     ]),
+                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                        Promise.resolve([
+                            attributeId === 'previews'
+                                ? {
+                                      raw_payload: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  }
+                                : {
+                                      ...mockStandardValue,
+                                      payload: {
+                                          ...mockRecord,
+                                          previews: {
+                                              small: 'small_fake-image',
+                                              medium: 'medium_fake-image',
+                                              big: 'big_fake-image',
+                                          },
+                                      },
+                                  },
+                        ]),
+                    ),
                 };
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -779,30 +799,6 @@ describe('RecordDomain', () => {
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
                 });
-
-                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                    Promise.resolve([
-                        attributeId === 'previews'
-                            ? {
-                                  raw_payload: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              }
-                            : {
-                                  ...mockStandardValue,
-                                  payload: {
-                                      ...mockRecord,
-                                      previews: {
-                                          small: 'small_fake-image',
-                                          medium: 'medium_fake-image',
-                                          big: 'big_fake-image',
-                                      },
-                                  },
-                              },
-                    ]),
-                );
 
                 const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -842,6 +838,29 @@ describe('RecordDomain', () => {
                             },
                         ],
                     ]),
+                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                        Promise.resolve([
+                            attributeId === 'previews'
+                                ? {
+                                      raw_payload: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  }
+                                : {
+                                      ...mockStandardValue,
+                                      payload: {
+                                          ...mockRecord,
+                                          previews: {
+                                              small: 'small_fake-image',
+                                              medium: 'medium_fake-image',
+                                              big: 'big_fake-image',
+                                          },
+                                      },
+                                  },
+                        ]),
+                    ),
                 };
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -864,30 +883,6 @@ describe('RecordDomain', () => {
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
                 });
-
-                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                    Promise.resolve([
-                        attributeId === 'previews'
-                            ? {
-                                  raw_payload: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              }
-                            : {
-                                  ...mockStandardValue,
-                                  payload: {
-                                      ...mockRecord,
-                                      previews: {
-                                          small: 'small_fake-image',
-                                          medium: 'medium_fake-image',
-                                          big: 'big_fake-image',
-                                      },
-                                  },
-                              },
-                    ]),
-                );
 
                 const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -928,6 +923,29 @@ describe('RecordDomain', () => {
                             },
                         ],
                     ]),
+                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                        Promise.resolve([
+                            attributeId === 'previews'
+                                ? {
+                                      raw_payload: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  }
+                                : {
+                                      ...mockStandardValue,
+                                      payload: {
+                                          ...mockRecord,
+                                          previews: {
+                                              small: 'small_fake-image',
+                                              medium: 'medium_fake-image',
+                                              big: 'big_fake-image',
+                                          },
+                                      },
+                                  },
+                        ]),
+                    ),
                 };
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -950,30 +968,6 @@ describe('RecordDomain', () => {
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
                 });
-
-                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                    Promise.resolve([
-                        attributeId === 'previews'
-                            ? {
-                                  raw_payload: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              }
-                            : {
-                                  ...mockStandardValue,
-                                  payload: {
-                                      ...mockRecord,
-                                      previews: {
-                                          small: 'small_fake-image',
-                                          medium: 'medium_fake-image',
-                                          big: 'big_fake-image',
-                                      },
-                                  },
-                              },
-                    ]),
-                );
 
                 const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -1013,6 +1007,29 @@ describe('RecordDomain', () => {
                             },
                         ],
                     ]),
+                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                        Promise.resolve([
+                            attributeId === 'previews'
+                                ? {
+                                      raw_payload: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  }
+                                : {
+                                      ...mockStandardValue,
+                                      payload: {
+                                          ...mockRecord,
+                                          previews: {
+                                              small: 'small_fake-image',
+                                              medium: 'medium_fake-image',
+                                              big: 'big_fake-image',
+                                          },
+                                      },
+                                  },
+                        ]),
+                    ),
                 };
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -1035,30 +1052,6 @@ describe('RecordDomain', () => {
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
                 });
-
-                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                    Promise.resolve([
-                        attributeId === 'previews'
-                            ? {
-                                  raw_payload: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              }
-                            : {
-                                  ...mockStandardValue,
-                                  payload: {
-                                      ...mockRecord,
-                                      previews: {
-                                          small: 'small_fake-image',
-                                          medium: 'medium_fake-image',
-                                          big: 'big_fake-image',
-                                      },
-                                  },
-                              },
-                    ]),
-                );
 
                 const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -1099,6 +1092,29 @@ describe('RecordDomain', () => {
                             },
                         ],
                     ]),
+                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                        Promise.resolve([
+                            attributeId === 'previews'
+                                ? {
+                                      raw_payload: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  }
+                                : {
+                                      ...mockStandardValue,
+                                      payload: {
+                                          ...mockRecord,
+                                          previews: {
+                                              small: 'small_fake-image',
+                                              medium: 'medium_fake-image',
+                                              big: 'big_fake-image',
+                                          },
+                                      },
+                                  },
+                        ]),
+                    ),
                 };
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -1121,30 +1137,6 @@ describe('RecordDomain', () => {
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
                 });
-
-                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                    Promise.resolve([
-                        attributeId === 'previews'
-                            ? {
-                                  raw_payload: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              }
-                            : {
-                                  ...mockStandardValue,
-                                  payload: {
-                                      ...mockRecord,
-                                      previews: {
-                                          small: 'small_fake-image',
-                                          medium: 'medium_fake-image',
-                                          big: 'big_fake-image',
-                                      },
-                                  },
-                              },
-                    ]),
-                );
 
                 const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -1184,6 +1176,29 @@ describe('RecordDomain', () => {
                             },
                         ],
                     ]),
+                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) =>
+                        Promise.resolve([
+                            attributeId === 'previews'
+                                ? {
+                                      raw_payload: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image',
+                                      },
+                                  }
+                                : {
+                                      ...mockStandardValue,
+                                      payload: {
+                                          ...mockRecord,
+                                          previews: {
+                                              small: 'small_fake-image',
+                                              medium: 'medium_fake-image',
+                                              big: 'big_fake-image',
+                                          },
+                                      },
+                                  },
+                        ]),
+                    ),
                 };
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -1206,30 +1221,6 @@ describe('RecordDomain', () => {
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
                 });
-
-                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
-                    Promise.resolve([
-                        attributeId === 'previews'
-                            ? {
-                                  raw_payload: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image',
-                                  },
-                              }
-                            : {
-                                  ...mockStandardValue,
-                                  payload: {
-                                      ...mockRecord,
-                                      previews: {
-                                          small: 'small_fake-image',
-                                          medium: 'medium_fake-image',
-                                          big: 'big_fake-image',
-                                      },
-                                  },
-                              },
-                    ]),
-                );
 
                 const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -1282,6 +1273,12 @@ describe('RecordDomain', () => {
                                 },
                             ],
                         ]),
+                        getRecordFieldValue: global.__mockPromise([
+                            {
+                                ...mockStandardValue,
+                                payload: mockRecord,
+                            },
+                        ]),
                     };
 
                     const recDomain = recordDomain({
@@ -1295,13 +1292,6 @@ describe('RecordDomain', () => {
                         config: mockConfig as Config.IConfig,
                         translator: mockTranslatorWithOptions as i18n,
                     });
-
-                    recDomain.getRecordFieldValue = global.__mockPromise([
-                        {
-                            ...mockStandardValue,
-                            payload: mockRecord,
-                        },
-                    ]);
 
                     const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
 

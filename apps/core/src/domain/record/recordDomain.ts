@@ -41,7 +41,6 @@ import {type CreateRecordHelper} from './helpers/createRecord';
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {type ILogger} from '@leav/logger';
 import {type FindRecordsHelper} from './helpers/findRecords';
-import {type GetRecordFieldValueHelper} from './helpers/getRecordFieldValue';
 
 export const ATTRIBUTE_ACTIVE = 'active';
 
@@ -91,18 +90,8 @@ export interface IRecordDomain {
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
     /**
-     * Get the value of targeted attribute with actions applied on it including metadata.
-     *
-     * Avoid requesting DB if attribute already found in `record` param.
-     *
-     * @param {Object} params
-     * @param params.library
-     * @param params.record Could be emulated with only `{ id: <real_id> }`
-     * @param params.attributeId
-     * @param params.options
-     * @param params.ctx
+     * @deprecated use valueDomain.getRecordFieldValue instead
      */
-    // FIXME: GetRecordFieldValue should be in value domain
     getRecordFieldValue({
         library,
         record,
@@ -153,7 +142,6 @@ export interface IRecordDomainDeps {
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.record.helpers.findRecords': FindRecordsHelper;
-    'core.domain.record.helpers.getRecordFieldValue': GetRecordFieldValueHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.form': IFormRepo;
@@ -171,7 +159,6 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.record.helpers.findRecords': findRecordsHelper,
-    'core.domain.record.helpers.getRecordFieldValue': getRecordFieldValueHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.record.helpers.createRecord': createRecordHelper,
@@ -841,7 +828,7 @@ export default function ({
             return deleteRecordHelper(library, id, ctx);
         },
         getRecordIdentity: _getRecordIdentity,
-        getRecordFieldValue: getRecordFieldValueHelper,
+        getRecordFieldValue: valueDomain.getRecordFieldValue,
         async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
