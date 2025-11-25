@@ -25,9 +25,9 @@ export const TreeNodeList: FunctionComponent<IDisplayTreeNodeProps> = ({
             <TreeNodeItem
                 key={index}
                 isReadOnly={isReadOnly}
-                color={value.treeValue.record.whoAmI.color}
-                label={value.treeValue.record.whoAmI.label}
-                ancestors={value.treeValue.ancestors}
+                color={value.treeValue?.record.whoAmI.color}
+                label={value.treeValue?.record.whoAmI.label}
+                ancestors={value.treeValue?.ancestors}
                 canDelete={
                     !isReadOnly &&
                     ((attribute.required && attribute.multiple_values && backendValues.length > 1) ||
