@@ -1342,7 +1342,12 @@ const valueDomain = function ({
                 ctx,
             });
 
-            const noValueCount = records.list.length - occurrences.reduce((acc, curr) => acc + curr.count, 0);
+            // occurrences count may result in approximative results if some records multiple values on the attribute in db
+            // Its is important for front to not have a negative number
+            const noValueCount = Math.max(
+                records.list.length - occurrences.reduce((acc, curr) => acc + curr.count, 0),
+                0,
+            );
 
             return {occurrences, noValueCount};
         },
