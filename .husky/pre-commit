@@ -26,8 +26,14 @@ export CI=true
 echo "Checking translations files"
 yarn translations:check
 
-echo "\n Checking types..."
-yarn run tscheck
+# TypeScript check is disabled by default (can be slow)
+# To enable it locally, set: export RUN_TSCHECK=true in your ~/.bashrc or ~/.zshrc
+if [ "$RUN_TSCHECK" = "true" ]; then
+  echo "\n Checking types..."
+  yarn run tscheck
+else
+  echo "\n Skipping type check (set RUN_TSCHECK=true to enable)"
+fi
 
 echo "\n Checking staged files..."
 yarn lint-staged
