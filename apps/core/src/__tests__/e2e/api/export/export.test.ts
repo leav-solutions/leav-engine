@@ -318,7 +318,7 @@ describe('Export', () => {
 
                 expect(msg).toBeDefined();
                 expect(msg.notification.title).toContain('complete');
-                expect(msg.notification.level).toContain('info');
+                expect(msg.notification.level).toContain('success');
 
                 const task = await waitForTaskCompletion(exportTaskId);
                 expect(task.status).toBe(TaskStatus.DONE);
@@ -358,7 +358,7 @@ describe('Export', () => {
 
                 expect(msg).toBeDefined();
                 expect(msg.notification.title).toContain('failed');
-                expect(msg.notification.level).toContain('warning');
+                expect(msg.notification.level).toContain('error');
 
                 const task = await waitForTaskCompletion(exportTaskId);
                 expect(task.status).toBe(TaskStatus.FAILED);

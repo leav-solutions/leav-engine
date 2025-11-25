@@ -492,7 +492,7 @@ export default function ({
                 await notificationDomain.createNotification(
                     {
                         content: {
-                            level: 'info',
+                            level: 'success',
                             title: translator.t('notifications.export_complete_title', {lng: ctx.lang}),
                             message: translator.t('notifications.export_complete_message', {
                                 lng: ctx.lang,
@@ -522,7 +522,7 @@ export default function ({
                 await notificationDomain.createNotification(
                     {
                         content: {
-                            level: 'warning',
+                            level: 'error',
                             title: translator.t('notifications.export_error_title', {lng: ctx.lang}),
                             message: translator.t('notifications.export_error_message', {
                                 lng: ctx.lang,

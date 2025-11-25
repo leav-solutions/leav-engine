@@ -21,7 +21,7 @@ export interface INotification {
 }
 
 export interface INotificationContent {
-    level: 'info' | 'warning';
+    level: 'success' | 'info' | 'warning' | 'error';
     title: string;
     message: string;
     relatedEntities?: Array<{
