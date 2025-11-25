@@ -1,7 +1,7 @@
 {
     "name": "data-studio",
     "description": "Generic application to manage your data",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "icons": [
         {
             "src": "favicon-leav.svg",
