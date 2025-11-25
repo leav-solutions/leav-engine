@@ -226,6 +226,10 @@
         "export_description": {
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
+        },
+        "save_value_bulk": {
+            "label": "Edition multiple de l'attribute {{attributeId}} dans la librairie {{libraryId}}",
+            "description": "Edition multiple"
         }
     },
     "import": {
@@ -243,7 +247,11 @@
         "export_complete_title": "L’export demandé est terminé",
         "export_complete_message": "Vous avez demandé un export le {{date}}. Votre export est prêt, cliquez sur le lien pour le récupérer.",
         "export_error_title": "L’export demandé à échoué",
-        "export_error_message": "Vous avez demandé un export le {{date}}. Le processus ne s’est pas terminé correctement. Veuillez contacter votre administrateur."
+        "export_error_message": "Vous avez demandé un export le {{date}}. Le processus ne s’est pas terminé correctement. Veuillez contacter votre administrateur.",
+        "save_value_bulk_complete_title": "Edition multiple terminée",
+        "save_value_bulk_error_title": "Édition multiple échouée",
+        "save_value_bulk_error_message": "L'édition multiple demandée le {{date}} a échoué. Veuillez contacter votre administrateur.",
+        "save_value_bulk_complete_message": "{{successNumber}}/{{total}} éléments pour lesquels vous disposez des permissions nécessaires ont été modifiés. Les autres élements restent inchangés."
     },
     "indexation": {
         "index_database": "Indexation {{library}}"

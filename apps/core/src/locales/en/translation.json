@@ -226,6 +226,10 @@
         "export_description": {
             "elements_retrieval": "Elements retrieval",
             "excel_writing": "Excel file writing"
+        },
+        "save_value_bulk": {
+            "label": "Bulk edition for attribute {{attributeId}} in library {{libraryId}}",
+            "description": "Bulk edition"
         }
     },
     "import": {
@@ -244,7 +248,11 @@
         "export_complete_title": "The requested export is complete",
         "export_complete_message": "You requested an export on {{date}}. The export is ready, click the link below to retrieve it.",
         "export_error_title": "The requested export has failed",
-        "export_error_message": "You requested an export on {{date}}. The process did not complete successfully. Please contact your administrator."
+        "export_error_message": "You requested an export on {{date}}. The process did not complete successfully. Please contact your administrator.",
+        "save_value_bulk_complete_title": "Bulk edition completed",
+        "save_value_bulk_error_title": "Bulk edition failed",
+        "save_value_bulk_error_message": "The bulk edition you requested on {{date}} failed. Please contact your administrator.",
+        "save_value_bulk_complete_message": "{{number}}/{{total}} items for which you have the necessary permissions have been modified. The other items remain unchanged."
     },
     "indexation": {
         "index_database": "Indexation {{library}}"

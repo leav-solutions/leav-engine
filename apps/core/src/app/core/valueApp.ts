@@ -11,11 +11,19 @@ import {type IUtils} from 'utils/utils';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IRecord} from '_types/record';
-import {type IBaseValue, type IStandardValue, type ITreeValue, type IValue, type IValueVersion} from '_types/value';
+import {
+    type ISaveValue,
+    type IBaseValue,
+    type IStandardValue,
+    type ITreeValue,
+    type IValue,
+    type IValueVersion,
+} from '_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
@@ -23,6 +31,7 @@ interface IDeps {
     'core.domain.value': IValueDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.record': IRecordDomain;
+    'core.domain.value.tasks.saveValueBulk': ISaveValueBulkTask;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
     'core.utils': IUtils;
 }
@@ -30,6 +39,7 @@ interface IDeps {
 export default function ({
     'core.domain.value': valueDomain,
     'core.domain.record': recordDomain,
+    'core.domain.value.tasks.saveValueBulk': saveValueBulkTask,
     'core.domain.attribute': attributeDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.utils': utils,
@@ -44,6 +54,19 @@ export default function ({
             });
         }
         return formattedVersion;
+    };
+
+    const _prepareInputValue = (value: any): ISaveValue => {
+        const valueToSave = {
+            ...value,
+            payload: value.payload ?? value.value,
+            version: convertVersionFromGqlFormat(value.version),
+            metadata: utils.nameValArrayToObj(value.metadata),
+        };
+
+        valueToSave.payload = isEmptyValue(valueToSave) ? EMPTY_VALUE : valueToSave.payload;
+
+        return valueToSave;
     };
 
     const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
@@ -222,6 +245,11 @@ export default function ({
                         metadata: [ValueMetadataInput]
                     }
 
+                    input MapValueInput {
+                        before: ID,
+                        after: ID
+                    }
+
                     interface GenericValueOccurrences {
                         count: Int!
                     }
@@ -253,6 +281,7 @@ export default function ({
 
                         # Save values for several attributes at once.
                         # If deleteEmpty is true, empty values will be deleted
+                        """ Save multiple values for a single record """
                         saveValueBatch(
                             library: ID,
                             recordId: ID,
@@ -260,6 +289,9 @@ export default function ({
                             values: [ValueBatchInput],
                             deleteEmpty: Boolean
                         ): saveValueBatchResult!
+
+                        """ Save values in bulk for all records matching the filters """
+                        saveValueBulk(libraryId: ID!, recordsFilters: [RecordFilterInput]!, attributeId: ID!, mapValues: [MapValueInput!]!): ID!
 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
                     }
@@ -297,51 +329,46 @@ export default function ({
                         },
                     },
                     Mutation: {
-                        async saveValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
-                            const valToSave = {
-                                ...value,
-                                payload: value.payload ?? value.value,
-                                version: convertVersionFromGqlFormat(value.version),
-                                metadata: utils.nameValArrayToObj(value.metadata),
-                            };
-
-                            valToSave.payload = isEmptyValue(valToSave) ? EMPTY_VALUE : valToSave.payload;
-
-                            const savedValues = await valueDomain.saveValue({
+                        async saveValue(
+                            _: never,
+                            {library, recordId, attribute, value},
+                            ctx: IQueryInfos,
+                        ): Promise<IValue[]> {
+                            return valueDomain.saveValue({
                                 library,
                                 recordId,
                                 attribute,
-                                value: valToSave,
+                                value: _prepareInputValue(value),
                                 ctx,
                             });
-
-                            return savedValues;
                         },
-                        async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
-                            // Convert version
-                            const versionToUse = convertVersionFromGqlFormat(version);
-                            const convertedValues = values.map(val => {
-                                const valToSave = {
-                                    ...val,
-                                    payload: val.payload ?? val.value,
-                                    version: versionToUse,
-                                    metadata: utils.nameValArrayToObj(val.metadata),
-                                };
-
-                                valToSave.payload = isEmptyValue(valToSave) ? EMPTY_VALUE : valToSave.payload;
-
-                                return valToSave;
+                        async saveValueBulk(
+                            _: never,
+                            {libraryId, recordsFilters, attributeId, mapValues},
+                            ctx: IQueryInfos,
+                        ): Promise<string> {
+                            return saveValueBulkTask.saveValueBulk({
+                                libraryId,
+                                recordsFilters,
+                                attributeId,
+                                mapValues,
+                                ctx,
                             });
-
+                        },
+                        async saveValueBatch(
+                            _: never,
+                            {library, recordId, version, values, deleteEmpty},
+                            ctx: IQueryInfos,
+                        ) {
                             const savedValues = await valueDomain.saveValueBatch({
                                 library,
                                 recordId,
-                                values: convertedValues,
+                                values: values.map(_prepareInputValue),
                                 ctx,
                                 keepEmpty: !deleteEmpty,
                             });
 
-                            const res = {
+                            return {
                                 ...savedValues,
                                 values: savedValues.values.map(val => ({
                                     ...val,
@@ -351,10 +378,12 @@ export default function ({
                                             : null,
                                 })),
                             };
-
-                            return res;
                         },
-                        async deleteValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
+                        async deleteValue(
+                            _: never,
+                            {library, recordId, attribute, value},
+                            ctx: IQueryInfos,
+                        ): Promise<IValue[]> {
                             const valToDelete =
                                 value?.payload || value?.value
                                     ? {
@@ -386,7 +415,7 @@ export default function ({
                         },
                     },
                     GenericValue: {
-                        __resolveType: async (fieldValue, ctx) => {
+                        __resolveType: async (fieldValue, ctx: IQueryInfos) => {
                             const attribute = Array.isArray(fieldValue)
                                 ? fieldValue[0].attribute
                                 : fieldValue.attribute;
@@ -420,8 +449,8 @@ export default function ({
                     },
                 },
             };
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-            return fullSchema;
+
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
     };
 }
