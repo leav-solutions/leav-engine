@@ -19,6 +19,7 @@ export const applicationDetailsFragment = gql`
         }
         permissions {
             access_application
+            admin_application
         }
     }
 `;

@@ -62,12 +62,16 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
     );
 
     const actions: ComponentProps<typeof KitRedirectCard>['actions'] = [
-        {
-            key: '1',
-            label: t('application.edit'),
-            icon: <FontAwesomeIcon icon={faPencil} />,
-            onClick: event => _handleOpenEditAppModal(event as MouseEvent),
-        },
+        ...(application.permissions.admin_application
+            ? [
+                  {
+                      key: '1',
+                      label: t('application.edit'),
+                      icon: <FontAwesomeIcon icon={faPencil} />,
+                      onClick: event => _handleOpenEditAppModal(event as MouseEvent),
+                  },
+              ]
+            : []),
         {
             key: '2',
             label: t(isFavorite ? 'application.favorite.remove' : 'application.favorite.add'),

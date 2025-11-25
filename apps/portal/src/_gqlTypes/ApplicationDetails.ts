@@ -33,6 +33,7 @@ export interface ApplicationDetails_icon {
 
 export interface ApplicationDetails_permissions {
     access_application: boolean;
+    admin_application: boolean;
 }
 
 export interface ApplicationDetails {
