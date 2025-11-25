@@ -251,7 +251,7 @@
         "save_value_bulk_complete_title": "Edition multiple terminée",
         "save_value_bulk_error_title": "Édition multiple échouée",
         "save_value_bulk_error_message": "L'édition multiple demandée le {{date}} a échoué. Veuillez contacter votre administrateur.",
-        "save_value_bulk_complete_message": "{{successNumber}}/{{total}} éléments pour lesquels vous disposez des permissions nécessaires ont été modifiés. Les autres élements restent inchangés."
+        "save_value_bulk_complete_message": "{{number}}/{{total}} éléments pour lesquels vous disposez des permissions nécessaires ont été modifiés. Les autres élements restent inchangés."
     },
     "indexation": {
         "index_database": "Indexation {{library}}"
