@@ -73,7 +73,6 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
                         RelativePaths.closeCurrentPanel +
                         '/' +
                         RelativePaths.nextLevelPanel,
-
                     {
                         recordId,
                         where,
