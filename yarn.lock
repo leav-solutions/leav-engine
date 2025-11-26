@@ -15097,7 +15097,6 @@ __metadata:
     chokidar: "npm:3.5.3"
     jest: "npm:29.0.3"
     lodash: "npm:4.17.21"
-    nodemon: "npm:1.19.4"
     prettier: "npm:3.3.3"
     redis: "npm:5.10.0"
     ts-jest: "npm:29.0.1"
