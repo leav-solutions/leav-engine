@@ -15095,7 +15095,6 @@ __metadata:
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:3.5.3"
-    dateformat: "npm:5.0.3"
     jest: "npm:29.0.3"
     lodash: "npm:4.17.21"
     nodemon: "npm:1.19.4"
@@ -18162,13 +18161,6 @@ __metadata:
   version: 1.30.1
   resolution: "date-fns@npm:1.30.1"
   checksum: 24c0937f4e5704f25627c9d1e92e1fe03cd6165d9f32334b7f923a737a57ef992c287cad0694356071e617fbbfa6bd10dec9192ea9035a3e6d0745b9d1594883
-  languageName: node
-  linkType: hard
-
-"dateformat@npm:5.0.3":
-  version: 5.0.3
-  resolution: "dateformat@npm:5.0.3"
-  checksum: e7ef2f48faa8edd8a64c94b4ec1fe700777cd2f9db6411e76115eac7773255eef3cf12142568a90a665dfe90a7832a2af06e3d4ea3a0fac3727c3a7a4eac2568
   languageName: node
   linkType: hard
 
