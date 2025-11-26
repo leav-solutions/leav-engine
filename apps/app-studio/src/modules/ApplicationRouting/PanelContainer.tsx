@@ -92,9 +92,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                             libraryId={libraryId}
                             panelType={panelType}
                             recordId={recordId}
-                            flapRecordId={flapRecordId}
-                            flapLibraryId={flapLibraryId}
-                            flapPanelId={flapPanelId}
+                            hasFlapPanel={hasFlapPanel}
                             where={where}
                             currentPanelId={currentPanel.id}
                             className={popupHeaderTabs}

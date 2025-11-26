@@ -19,9 +19,7 @@ interface IPanelsTabsProps {
     where: string | undefined;
     libraryId: string | null;
     panelType: string | null;
-    flapRecordId: string | undefined;
-    flapLibraryId: string | undefined;
-    flapPanelId: string | undefined;
+    hasFlapPanel: boolean;
     currentPanelId: string;
     className?: string;
 }
@@ -33,9 +31,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     where,
     libraryId,
     panelType,
-    flapRecordId,
-    flapLibraryId,
-    flapPanelId,
+    hasFlapPanel,
     currentPanelId,
     className,
 }) => {
@@ -44,8 +40,6 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     const navigate = useNavigate();
 
     const isRecordPanel = recordId !== undefined;
-
-    const hasFlapAlreadyOpen = flapPanelId !== undefined;
 
     const tabItems: ComponentProps<typeof KitTabs>['items'] =
         libraryId === null || panelType === null
@@ -64,7 +58,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
             return;
         }
 
-        if (hasFlapAlreadyOpen) {
+        if (hasFlapPanel) {
             return navigate(
                 // Navigation between record panels should be historized in url
                 generatePath(

@@ -29,6 +29,8 @@ export const Panel: FunctionComponent = () => {
 
     const currentRecordId = isFirstPanel && currentWorkspace.type === 'record' ? currentWorkspace.recordId : recordId;
 
+    const hasFlapPanel = flapPanelId !== undefined;
+
     return isLastFullpagePanel || isLastLevelRecordPanel ? (
         <section
             className={cn(page, {
@@ -52,9 +54,7 @@ export const Panel: FunctionComponent = () => {
                         libraryId={libraryId}
                         panelType={panelType}
                         recordId={currentRecordId}
-                        flapRecordId={flapRecordId}
-                        flapLibraryId={flapLibraryId}
-                        flapPanelId={flapPanelId}
+                        hasFlapPanel={hasFlapPanel}
                         where={where}
                         currentPanelId={currentPanel.id}
                     />
