@@ -16,9 +16,10 @@
  *  When EditRecord will handle it's own header and EditRecordModal/Page will be removed, maybe this will no longer be needed
  *  Careful with focused inputs, their borders might be cut by the padding
  */
-.popupFormPanel {
+.popupPanel {
     div > div:nth-child(2) {
         padding: 0;
+        flex-direction: unset;
     }
 }
 

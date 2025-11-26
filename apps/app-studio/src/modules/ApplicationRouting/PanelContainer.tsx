@@ -18,7 +18,7 @@ import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {useDisplayConditions} from './utils/useDisplayConditions';
 import {
     selfContainingPanel,
-    popupFormPanel,
+    popupPanel,
     popupHeader,
     popupHeaderTabs,
     sliderFormPanel,
@@ -79,9 +79,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         // TODO: We might need to handle a isSelfContainingPanel case like in the slider case.
         return (
             <KitModal
-                className={cn({
-                    [popupFormPanel]: isFormPanel,
-                })}
+                className={popupPanel}
                 isOpen
                 height="80vh" // TODO: We might need to change the height and width later (eg: form case). Need to be discussed with PO's and UX's.
                 width="90vw"
