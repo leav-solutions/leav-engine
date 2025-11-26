@@ -23,8 +23,10 @@ export default function ({'core.domain.eventsManager': eventsManager = null}: ID
             const baseSchema = {
                 typeDefs: `
                     enum NotificationLevel {
+                        success
                         info
                         warning
+                        error
                     }
 
                     type TaskLink {

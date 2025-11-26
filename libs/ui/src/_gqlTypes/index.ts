@@ -205,25 +205,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  category?: InputMaybe<Scalars['String']>;
-  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  label: Scalars['String'];
-  mixed: Scalars['Boolean'];
-  opTrade?: InputMaybe<Scalars['String']>;
-  startDate: Scalars['String'];
-  thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  type?: InputMaybe<Scalars['String']>;
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  startDate: Scalars['String'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -487,7 +468,9 @@ export enum MultiDisplayOption {
 }
 
 export enum NotificationLevel {
+  error = 'error',
   info = 'info',
+  success = 'success',
   warning = 'warning'
 }
 

@@ -174,7 +174,7 @@ export default function ({
             await notificationDomain.createNotification(
                 {
                     content: {
-                        level: 'info',
+                        level: 'success',
                         title: translator.t('notifications.save_value_bulk_complete_title', {
                             lng: ctx.lang,
                         }),
@@ -203,7 +203,7 @@ export default function ({
             await notificationDomain.createNotification(
                 {
                     content: {
-                        level: 'warning',
+                        level: 'error',
                         title: translator.t('notifications.save_value_bulk_error_title', {
                             lng: ctx.lang,
                         }),

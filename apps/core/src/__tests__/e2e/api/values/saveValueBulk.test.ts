@@ -210,7 +210,7 @@ describe('saveValueBulk', () => {
 
             expect(task.status).toBe(TaskStatus.DONE);
             expect(notification.title).toContain('Bulk');
-            expect(notification.level).toContain('info');
+            expect(notification.level).toContain('success');
             expect(notification.message).toContain('1/1');
         });
 
@@ -236,7 +236,7 @@ describe('saveValueBulk', () => {
             expect(task.status).toBe(TaskStatus.DONE);
 
             expect(notification.title).toContain('Bulk');
-            expect(notification.level).toContain('info');
+            expect(notification.level).toContain('success');
             expect(notification.message).toContain('0/1');
         });
 
@@ -260,7 +260,7 @@ describe('saveValueBulk', () => {
 
             expect(task.status).toBe(TaskStatus.FAILED);
             expect(notification.title).toContain('Bulk');
-            expect(notification.level).toContain('warning');
+            expect(notification.level).toContain('error');
             expect(notification.message).toContain('failed');
         });
     });

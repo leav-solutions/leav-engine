@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Dispatch, useMemo} from 'react';
 import {FaFileExport} from 'react-icons/fa';
-import {KitAlert, KitModal} from 'aristid-ds';
+import {KitAlert, KitModal, useKitNotification} from 'aristid-ds';
 import {useExportLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState} from '../manage-view-settings';
 import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
-import {ERROR_ALERT_DURATION, SUCCESS_ALERT_DURATION} from '_ui/constants';
+import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
 
 /**
  * Hook that provides a mass action configuration for exporting selected or all items
@@ -29,6 +29,7 @@ export const useExportMassAction = ({
     onExport?: IMassActions['callback'];
 }>) => {
     const {t} = useSharedTranslation();
+    const {kitNotification} = useKitNotification();
 
     const [exportQuery] = useExportLazyQuery();
 
@@ -74,16 +75,15 @@ export const useExportMassAction = ({
                                 throw errorWithExtensions;
                             }
 
-                            KitAlert.success({
-                                showIcon: true,
-                                duration: SUCCESS_ALERT_DURATION,
+                            kitNotification.info({
                                 message: t('explorer.massAction.export_message', {count: total}),
                                 description: t('explorer.massAction.export_description', {
                                     count: total,
                                     total,
                                 }),
-                                closable: true,
+                                duration: INFO_NOTIFICATION_DURATION_SECONDS,
                             });
+
                             onExport?.(massSelectionFilter, view.massSelection);
                         } catch (e) {
                             if (e.extensions?.code === 'CUSTOM_CONFIG_ERROR') {
