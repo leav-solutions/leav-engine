@@ -23,7 +23,7 @@ export const startWatch = async () => {
     // or we create a hash of the rootPath if no rootKey
     const rootKey = config.rootKey || Crypto.createHash('md5').update(config.rootPath).digest('hex');
 
-    createClient(config.redis.host, config.redis.port);
+    await createClient(config.redis.host, config.redis.port);
 
     if (config.amqp) {
         const amqpConfig: Options.Connect = {
