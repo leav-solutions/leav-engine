@@ -33,13 +33,21 @@ export const start = async (
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
     const delay = (watchParams && watchParams.delay) || 100;
+    const usePolling = (watchParams && watchParams.usePolling) || false;
+    const pollingInterval = (watchParams && watchParams.pollingInterval) || 100;
     // if absolute path given, we use it here to not display the name of the root folder in message
     const cwd = rootPathProps.charAt(0).indexOf('/') === 0 ? rootPathProps : '.';
+
+    if (usePolling) {
+        logger.info(`Using polling every ${pollingInterval}ms for watching files`);
+    }
 
     const watcher = chokidar.watch(rootPathProps, {
         ignoreInitial: false, // use init for redis
         alwaysStat: true, // always give stats for add and update event
         awaitWriteFinish: watcherConfig, // wait for copy to finish before trigger event
+        usePolling,
+        interval: pollingInterval,
         cwd,
     });
 
