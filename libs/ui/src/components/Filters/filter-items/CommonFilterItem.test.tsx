@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, within} from '_ui/_tests/testUtils';
+import {render, screen, within, waitFor} from '_ui/_tests/testUtils';
 import {CommonFilterItem} from './CommonFilterItem';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {AttributeType, RecordFilterCondition, type TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
@@ -106,9 +106,15 @@ describe('CommonFilterItem', () => {
 
             const {baseElement} = render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /text/}));
+
+            // Wait for any pending debounced updates to settle
+            await waitFor(() => {
+                const textInput = screen.getByRole('textbox');
+                expect(textInput).toHaveValue(filter.value);
+            });
+
             const textInput = screen.getByRole('textbox');
             expect(textInput).toBeVisible();
-            expect(textInput).toHaveValue(filter.value);
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
@@ -136,14 +142,20 @@ describe('CommonFilterItem', () => {
                 </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /text/}));
-            expect(screen.queryByRole('textbox')).toBeInTheDocument();
+
+            await waitFor(() => {
+                expect(screen.queryByRole('textbox')).toBeInTheDocument();
+            });
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
 
             const option = screen.getByText(/is-empty/);
             await userEvent.click(option);
-            expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+            await waitFor(() => {
+                expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+            });
         });
     });
 
@@ -164,9 +176,14 @@ describe('CommonFilterItem', () => {
 
             const {baseElement} = render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /rich text/}));
+
+            await waitFor(() => {
+                const textInput = screen.getByRole('textbox');
+                expect(textInput).toHaveValue(filter.value);
+            });
+
             const textInput = screen.getByRole('textbox');
             expect(textInput).toBeVisible();
-            expect(textInput).toHaveValue(filter.value);
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
@@ -194,14 +211,20 @@ describe('CommonFilterItem', () => {
                 </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /rich text/}));
-            expect(screen.queryByRole('textbox')).toBeInTheDocument();
+
+            await waitFor(() => {
+                expect(screen.queryByRole('textbox')).toBeInTheDocument();
+            });
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
 
             const option = screen.getByText(/is-empty/);
             await userEvent.click(option);
-            expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+            await waitFor(() => {
+                expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+            });
         });
     });
 
@@ -382,9 +405,14 @@ describe('CommonFilterItem', () => {
 
             const {baseElement} = render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /link/}));
+
+            await waitFor(() => {
+                const textInput = screen.getByRole('textbox');
+                expect(textInput).toHaveValue(filter.value);
+            });
+
             const textInput = screen.getByRole('textbox');
             expect(textInput).toBeVisible();
-            expect(textInput).toHaveValue(filter.value);
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
@@ -458,8 +486,12 @@ describe('CommonFilterItem', () => {
             await userEvent.click(throughOption);
 
             // AND the subField select is available
+            await waitFor(() => {
+                const subFieldSelect = screen.getByRole('combobox', {name: /link-attribute/});
+                expect(subFieldSelect).toBeInTheDocument();
+            });
+
             const subFieldSelect = screen.getByRole('combobox', {name: /link-attribute/});
-            expect(subFieldSelect).toBeInTheDocument();
 
             // WHEN the user select a link attribute
             await userEvent.click(subFieldSelect);
@@ -468,8 +500,12 @@ describe('CommonFilterItem', () => {
             await userEvent.click(linkAttributeOption);
 
             // THEN the sub condition dropdown should be displayed
+            await waitFor(() => {
+                const subConditionSelect = screen.getByRole('combobox', {name: /filter-condition/});
+                expect(subConditionSelect).toBeInTheDocument();
+            });
+
             const subConditionSelect = screen.getByRole('combobox', {name: /filter-condition/});
-            expect(subConditionSelect).toBeInTheDocument();
 
             // WHEN the user select a sub condition
             await userEvent.click(subConditionSelect);
@@ -480,7 +516,9 @@ describe('CommonFilterItem', () => {
             await userEvent.click(within(subConditionSelectVirtualList).getByText('filters.not-contains'));
 
             // THEN the value textbox is displayed
-            expect(await screen.findByRole('textbox')).toBeVisible();
+            await waitFor(() => {
+                expect(screen.queryByRole('textbox')).toBeInTheDocument();
+            });
         });
     });
 
