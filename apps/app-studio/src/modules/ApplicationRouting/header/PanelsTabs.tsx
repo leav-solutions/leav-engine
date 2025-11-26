@@ -70,14 +70,13 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
                 generatePath(
                     RelativePaths.closeFlapPanel +
                         '/' +
-                        RelativePaths.changeLastRecordPanel +
+                        RelativePaths.closeCurrentPanel +
                         '/' +
-                        RelativePaths.openFlap,
+                        RelativePaths.nextLevelPanel,
                     {
+                        recordId,
+                        where,
                         recordPanelId: currentTab.key,
-                        flapRecordId,
-                        flapLibraryId,
-                        flapPanelId,
                     },
                 ),
                 {relative: 'path'},
