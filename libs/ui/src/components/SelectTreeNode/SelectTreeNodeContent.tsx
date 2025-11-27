@@ -222,6 +222,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     };
 
     const _handleCheck: ComponentProps<typeof KitTree>['onCheck'] = selection => {
+        if (!canSelectRoot && Array.isArray(selection) && selection.includes(tree.id)) {
+            return;
+        }
         const checkedKeys = _isObjectSelection(selection) ? selection.checked : selection;
         const nodes = checkedKeys.map(key => treeMap[key]);
         onCheck(nodes);
