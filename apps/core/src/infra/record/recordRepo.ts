@@ -314,11 +314,13 @@ export default function ({
                     const libraryAccessVariable = `${libraryId + '_access_' + accessPermissionFilter.attribute.id}`;
                     const libraryAccessAuthorizedVariable = `${libraryId + '_access_authorized_' + accessPermissionFilter.attribute.id}`;
 
+                    const limitOne = literal(!accessPermissionFilter.attribute.multiple_values ? 'LIMIT 1' : '');
                     queryParts.push(aql`LET ${literal(libraryAccessDefinedVariable)}=
                         FLATTEN(
                         FOR rv, re IN 1 OUTBOUND r._id
                         ${VALUES_LINKS_COLLECTION}
                         FILTER re.attribute == ${accessPermissionFilter.attribute.id}
+                        ${limitOne}
                         RETURN rv._key
                     )`);
                     //if none, we set 'null'
