@@ -23,27 +23,25 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
 }) => {
     const {t} = useSharedTranslation();
 
-    const [selectedNodesIds, setSelectedNodesIds] = useState<string[]>((filter.nodes ?? []).map(node => node.nodeId));
+    const selectedNodesIds = (filter.nodes ?? []).map(node => node.nodeId);
 
     const {conditionOptionsByType: availableConditionsOptions} = useConditionsOptionsByType(filter);
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
+        let newSelectedIds: string[];
         if (selected) {
-            setSelectedNodesIds(prev => [...prev, node.id]);
+            newSelectedIds = [...selectedNodesIds, node.id];
         } else {
-            setSelectedNodesIds(prev => prev.filter(selectedValue => selectedValue !== node.id));
+            newSelectedIds = selectedNodesIds.filter(selectedValue => selectedValue !== node.id);
         }
+        onFilterChange({
+            ...filter,
+            nodes: newSelectedIds.map(id => ({nodeId: id, libraryId: node.record.whoAmI.library.id})),
+        });
     };
 
-    const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
+    const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition =>
         onFilterChange({...filter, condition});
-    };
-
-    useEffect(() => {
-        if (filter.value == null) {
-            setSelectedNodesIds([]);
-        }
-    }, [filter]);
 
     const _getRecursiveChildrenRecord = (nodes: ITreeNodeWithRecord[]): IRecordIdentity[] => {
         const records: IRecordIdentity[] = [];
@@ -70,13 +68,17 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             .map(node => `${filter.attribute.id}.${node.record?.whoAmI?.library?.id}.id`);
 
     const _handleOnCheck = (selection: ITreeNodeWithRecord[]) => {
-        setSelectedNodesIds(selection.filter(node => !node?.disabled).map(node => node.id));
+        const newSelectedNodes = selection.filter(node => !node?.disabled);
 
         const records = _getRecursiveChildrenRecord(selection);
         const fields = _getRecursiveFieldsFromLibraries(selection);
 
         onFilterChange({
             ...filter,
+            nodes: newSelectedNodes.map(node => ({
+                nodeId: node.id,
+                libraryId: node.record?.whoAmI.library.id ?? records[0]?.whoAmI.library.id ?? '',
+            })),
             value: records.map(record => record.id),
             formattedValue: records.map(record => record.whoAmI.label).filter(Boolean),
             condition: filter.condition ?? RecordFilterCondition.EQUAL,
@@ -104,7 +106,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
                     onSelect={_handleOnSelect}
                     onCheck={_handleOnCheck}
                     multiple
-                    canSelectRoot
+                    canSelectRoot={false}
                     checkStrictly={false}
                     checkable
                     loadRecursively={true}

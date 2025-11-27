@@ -161,7 +161,6 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
     ...state,
     filters: state.filters.map(filter => {
         if (filter.id === payload.id) {
-            // TODO Add initial Filters State
             const initialFilter = state.initialFilters.find(({id}) => id === payload.id);
             if (initialFilter) {
                 return initialFilter;

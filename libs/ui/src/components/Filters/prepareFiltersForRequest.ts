@@ -106,7 +106,7 @@ const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilter
             filtersWithOperators.push({
                 value: recordId,
                 condition: filter.condition,
-                field: `${filter.attribute.id}.${filter.nodes[idx].libraryId}.id`,
+                field: `${filter.attribute.id}.${filter.nodes[0].libraryId}.id`,
             });
         } else {
             filtersWithOperators.push({
