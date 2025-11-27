@@ -604,6 +604,10 @@ export type GlobalSettingsInput = {
   settings?: InputMaybe<Scalars['JSONObject']>;
 };
 
+export type Greeting = {
+  content: Scalars['String'];
+};
+
 export type HeritedPermissionAction = {
   allowed: Scalars['Boolean'];
   name: PermissionsActions;
@@ -913,6 +917,11 @@ export type Logs = {
   total: Scalars['Int'];
 };
 
+export type MapValueInput = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+};
+
 export type MoveThematicResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   thematic?: Maybe<MoveThematicResultThematic>;
@@ -967,7 +976,10 @@ export type Mutation = {
   saveTree: Tree;
   saveUserData: UserData;
   saveValue: Array<GenericValue>;
+  /**  Save multiple values for a single record  */
   saveValueBatch: SaveValueBatchResult;
+  /**  Save values in bulk for all records matching the filters  */
+  saveValueBulk: Scalars['ID'];
   saveVersionProfile: VersionProfile;
   saveView: View;
   treeAddElement: TreeNode;
@@ -1207,6 +1219,14 @@ export type MutationSaveValueBatchArgs = {
 };
 
 
+export type MutationSaveValueBulkArgs = {
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+  mapValues: Array<MapValueInput>;
+  recordsFilters: Array<InputMaybe<RecordFilterInput>>;
+};
+
+
 export type MutationSaveVersionProfileArgs = {
   versionProfile: VersionProfileInput;
 };
@@ -1437,6 +1457,7 @@ export type Query = {
   fullTreeContent?: Maybe<Scalars['FullTreeContent']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
+  greeting: Greeting;
   inheritedPermissions?: Maybe<Array<HeritedPermissionAction>>;
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']>>;
@@ -2051,7 +2072,8 @@ export enum TaskType {
   EXPORT = 'EXPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
-  INDEXATION = 'INDEXATION'
+  INDEXATION = 'INDEXATION',
+  SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
@@ -2567,6 +2589,14 @@ export type GetRecordIdCardQueryVariables = Exact<{
 
 export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
 
+export type PanelAttributeCountQueryVariables = Exact<{
+  library: Scalars['ID'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type PanelAttributeCountQuery = { records: { totalCount?: number | null } };
+
 export type GetRecordInformationQueryVariables = Exact<{
   library: Scalars['ID'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
@@ -2816,6 +2846,47 @@ export type GetRecordIdCardQueryHookResult = ReturnType<typeof useGetRecordIdCar
 export type GetRecordIdCardLazyQueryHookResult = ReturnType<typeof useGetRecordIdCardLazyQuery>;
 export type GetRecordIdCardSuspenseQueryHookResult = ReturnType<typeof useGetRecordIdCardSuspenseQuery>;
 export type GetRecordIdCardQueryResult = Apollo.QueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
+export const PanelAttributeCountDocument = gql`
+    query panelAttributeCount($library: ID!, $filters: [RecordFilterInput]) {
+  records(library: $library, filters: $filters) {
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __usePanelAttributeCountQuery__
+ *
+ * To run a query within a React component, call `usePanelAttributeCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePanelAttributeCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePanelAttributeCountQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function usePanelAttributeCountQuery(baseOptions: Apollo.QueryHookOptions<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>(PanelAttributeCountDocument, options);
+      }
+export function usePanelAttributeCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>(PanelAttributeCountDocument, options);
+        }
+export function usePanelAttributeCountSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>(PanelAttributeCountDocument, options);
+        }
+export type PanelAttributeCountQueryHookResult = ReturnType<typeof usePanelAttributeCountQuery>;
+export type PanelAttributeCountLazyQueryHookResult = ReturnType<typeof usePanelAttributeCountLazyQuery>;
+export type PanelAttributeCountSuspenseQueryHookResult = ReturnType<typeof usePanelAttributeCountSuspenseQuery>;
+export type PanelAttributeCountQueryResult = Apollo.QueryResult<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>;
 export const GetRecordInformationDocument = gql`
     query getRecordInformation($library: ID!, $filters: [RecordFilterInput]) {
   records(library: $library, filters: $filters) {

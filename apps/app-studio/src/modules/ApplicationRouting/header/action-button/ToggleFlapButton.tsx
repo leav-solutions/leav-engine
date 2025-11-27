@@ -6,10 +6,10 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {RelativePaths} from '../router/paths';
+import {RelativePaths} from '../../router/paths';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
-import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
+import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../../constants';
 
 interface IToggleFlapButtonProps {
     targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;

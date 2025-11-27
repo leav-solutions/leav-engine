@@ -11,7 +11,7 @@ import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/typ
 import {FLAP_FULLPAGE_TARGET_ID, SIDE_PANEL_TARGET_ID} from '../../constants';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {PanelHeader} from './header/PanelHeader';
-import {PanelsTabs} from './header/PanelsTabs';
+import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {FlapContainer} from './FlapContainer';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
@@ -92,9 +92,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                             libraryId={libraryId}
                             panelType={panelType}
                             recordId={recordId}
-                            flapRecordId={flapRecordId}
-                            flapLibraryId={flapLibraryId}
-                            flapPanelId={flapPanelId}
+                            hasFlapPanel={hasFlapPanel}
                             where={where}
                             currentPanelId={currentPanel.id}
                             className={popupHeaderTabs}

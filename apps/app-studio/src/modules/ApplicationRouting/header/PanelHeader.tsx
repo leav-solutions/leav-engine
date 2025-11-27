@@ -7,12 +7,12 @@ import {localizedTranslation} from '@leav/utils';
 import {useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
-import {LibraryIdCard} from './LibraryIdCard';
-import {RecordIdCard} from './RecordIdCard';
+import {LibraryIdCard} from './id-card/LibraryIdCard';
+import {RecordIdCard} from './id-card/RecordIdCard';
 import {KitSpace} from 'aristid-ds';
 import {panelHeaderActionPositionRight} from './panelHeader.module.css';
-import {ExpandCollapseCurrentPanelButton} from './ExpandCollapseCurrentPanelButton';
-import {ToggleFlapButton} from './ToggleFlapButton';
+import {ExpandCollapseCurrentPanelButton} from './action-button/ExpandCollapseCurrentPanelButton';
+import {ToggleFlapButton} from './action-button/ToggleFlapButton';
 import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
 import cn from 'classnames';
 

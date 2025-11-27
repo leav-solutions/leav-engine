@@ -5,7 +5,7 @@ import {type FunctionComponent, useContext} from 'react';
 import {KitIdCard} from 'aristid-ds';
 import {LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {useGetLibraryNameQuery} from '../../../__generated__';
+import {useGetLibraryNameQuery} from '../../../../__generated__';
 import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
 
 interface ILibraryIdCardProps {

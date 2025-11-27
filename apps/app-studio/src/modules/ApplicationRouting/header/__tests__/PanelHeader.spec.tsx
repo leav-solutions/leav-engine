@@ -6,8 +6,8 @@ import {render as renderRTL} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as ReactRouter from 'react-router-dom';
 import * as Utils from '../../utils/retrievePanelDetails';
-import * as LibraryIdCardComponent from '../LibraryIdCard';
-import * as RecordIdCardComponent from '../RecordIdCard';
+import * as LibraryIdCardComponent from '../id-card/LibraryIdCard';
+import * as RecordIdCardComponent from '../id-card/RecordIdCard';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../types';
 import {PanelHeader} from '../PanelHeader';
@@ -24,11 +24,11 @@ jest.mock('react-router-dom', () => ({
     generatePath: jest.fn(),
 }));
 
-jest.mock('../LibraryIdCard', () => ({
+jest.mock('../id-card/LibraryIdCard', () => ({
     LibraryIdCard: jest.fn(),
 }));
 
-jest.mock('../RecordIdCard', () => ({
+jest.mock('../id-card/RecordIdCard', () => ({
     RecordIdCard: jest.fn(),
 }));
 

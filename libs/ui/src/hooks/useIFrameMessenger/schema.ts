@@ -68,15 +68,15 @@ export const creationPanelSchema = z.object({
     attributeSource: z.string(),
 });
 
-const baseExplorerPanelSchema = z.object({
+export const baseExplorerPanelSchema = z.object({
     type: z.literal('explorer'),
     viewId: z.string().optional(),
     actions: ItemActionsSchema,
 });
 
-const linkExplorerPanelSchema = z.object({
+export const attributeExplorerPanelSchema = z.object({
     attributeSource: z.string(),
-    libraryId: LibraryIdSchema.optional(),
+    libraryId: LibraryIdSchema,
     explorerProps: ExplorerPropsSchema.optional(),
 });
 
@@ -84,7 +84,9 @@ const libraryExplorerPanelSchema = z.object({
     explorerProps: ExplorerPropsSchema.optional(),
 });
 
-const explorerPanelSchema = baseExplorerPanelSchema.and(z.union([linkExplorerPanelSchema, libraryExplorerPanelSchema]));
+const explorerPanelSchema = baseExplorerPanelSchema.and(
+    z.union([attributeExplorerPanelSchema, libraryExplorerPanelSchema]),
+);
 
 export const PanelSchema = basePanelSchema.and(
     z.union([explorerPanelSchema, iframePanelSchema, editionPanelSchema, creationPanelSchema]),

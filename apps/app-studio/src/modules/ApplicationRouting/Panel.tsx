@@ -9,7 +9,7 @@ import {PanelContent} from './content/PanelContent';
 import {nextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {useDisplayConditions} from './utils/useDisplayConditions';
-import {PanelsTabs} from './header/PanelsTabs';
+import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {PanelHeader} from './header/PanelHeader';
 
 import {content, fullpageContent, fullpagePage, page, pageHeader} from './panel.module.css';
@@ -28,6 +28,8 @@ export const Panel: FunctionComponent = () => {
     const currentWorkspace = application.workspaces.find(({id}) => id === workspaceId);
 
     const currentRecordId = isFirstPanel && currentWorkspace.type === 'record' ? currentWorkspace.recordId : recordId;
+
+    const hasFlapPanel = flapPanelId !== undefined;
 
     return isLastFullpagePanel || isLastLevelRecordPanel ? (
         <section
@@ -52,9 +54,7 @@ export const Panel: FunctionComponent = () => {
                         libraryId={libraryId}
                         panelType={panelType}
                         recordId={currentRecordId}
-                        flapRecordId={flapRecordId}
-                        flapLibraryId={flapLibraryId}
-                        flapPanelId={flapPanelId}
+                        hasFlapPanel={hasFlapPanel}
                         where={where}
                         currentPanelId={currentPanel.id}
                     />

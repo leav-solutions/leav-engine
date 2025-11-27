@@ -13,6 +13,8 @@ import {
     type PanelSchema,
     type PanelIFrameSchema,
     type FlapPanelIdSchema,
+    type attributeExplorerPanelSchema,
+    type baseExplorerPanelSchema,
 } from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
@@ -75,6 +77,10 @@ export type UnregisterMessage = IMessageBase & {
 };
 
 export type Panel = z.infer<typeof PanelSchema>;
+
+export type AttributeExplorerPanel = Panel &
+    z.infer<typeof baseExplorerPanelSchema> &
+    z.infer<typeof attributeExplorerPanelSchema>;
 
 export type LibraryId = z.infer<typeof LibraryIdSchema>;
 
