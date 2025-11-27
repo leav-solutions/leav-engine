@@ -42,6 +42,7 @@ import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
 import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
 import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
 import {useExportMassAction} from './actions-mass/useExportMassAction';
+import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -80,7 +81,7 @@ export interface IExplorerProps {
     emptyPlaceholder?: ReactNode;
     defaultActionsForItem?: Array<'replaceLink' | 'remove' | 'activate'>;
     defaultPrimaryActions?: Array<'create'>;
-    defaultMassActions?: Array<'deactivate' | 'export'>;
+    defaultMassActions?: Array<'deactivate' | 'export' | 'editAttribute'>;
     defaultViewSettings?: DefaultViewSettings;
     defaultCallbacks?: {
         item?: {
@@ -153,7 +154,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             ignoreViewByDefault = false,
             defaultActionsForItem = ['replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
-            defaultMassActions = ['deactivate'],
+            defaultMassActions = ['deactivate', 'editAttribute'],
             defaultCallbacks,
             defaultViewSettings,
             joinLibraryContext,
@@ -261,6 +262,12 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onExport: defaultCallbacks?.mass?.export,
         });
 
+        const {editAttributeMassAction, editAttributeMassActionModal} = useEditAttributeMassAction({
+            isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('editAttribute'),
+            store: {view},
+            totalCount,
+        });
+
         const {deactivateMassAction} = useDeactivateMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch: viewSettingsDispatch},
@@ -291,7 +298,13 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             filtersStore: filtersData,
             totalCount,
             allVisibleKeys,
-            massActions: [exportMassAction, deactivateMassAction, unlinkMassAction, ...massActions].filter(Boolean),
+            massActions: [
+                exportMassAction,
+                editAttributeMassAction,
+                deactivateMassAction,
+                unlinkMassAction,
+                ...massActions,
+            ].filter(Boolean),
             snackbarId: massActionSnackbarId,
         });
 
@@ -394,6 +407,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                         {replaceItemModal}
                         {createModal}
                         {linkModal}
+                        {editAttributeMassActionModal}
                     </ViewSettingsContext.Provider>
                 </FiltersContext.Provider>
                 <KitSnackBarProvider id={massActionSnackbarId} />

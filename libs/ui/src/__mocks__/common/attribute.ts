@@ -49,6 +49,7 @@ export const mockAttributeWithDetails: AttributeDetailsFragment = {
     },
     unique: false,
     readonly: false,
+    required: false,
     multiple_values: false,
 };
 

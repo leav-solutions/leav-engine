@@ -18,6 +18,7 @@ fragment AttributesByLibAttributeWithPermissions on Attribute {
     label
     multiple_values
     system
+    required
     readonly
     compute
     permissions {

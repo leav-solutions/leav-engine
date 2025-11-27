@@ -24,7 +24,9 @@ export const ExplorerPropsSchema = z.object({
     noPagination: z.literal(true).optional(),
     showActionsLabels: z.boolean().optional(),
     defaultPrimaryActions: z.array(z.union([z.literal('create')])).optional(),
-    defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional(),
+    defaultMassActions: z
+        .array(z.union([z.literal('deactivate'), z.literal('export'), z.literal('editAttribute')]))
+        .optional(),
     defaultActionsForItem: z
         .array(z.union([z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
         .optional(),
