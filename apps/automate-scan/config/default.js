@@ -33,5 +33,4 @@ module.exports = {
         usePolling: envToBool(process.env.WATCHER_USE_POLLING, false),
         pollingInterval: envToNumber(process.env.WATCHER_POLLING_INTERVAL, 100),
     },
-    verbose: false,
 };

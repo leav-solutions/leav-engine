@@ -24,7 +24,6 @@ export interface IWatcherParams {
      * Only when usePolling is true, interval to poll for changes in milliseconds
      */
     pollingInterval?: number;
-    verbose?: boolean | 'very';
 }
 
 export interface IConfig {
@@ -47,14 +46,12 @@ export interface IConfig {
         routingKey: string;
         type: string;
     };
-    watcher?: Omit<IWatcherParams, 'verbose'>;
-    verbose?: IWatcherParams['verbose'];
+    watcher?: IWatcherParams;
 }
 
 export interface IParams {
     rootPath: string;
     rootKey: string;
-    verbose: IWatcherParams['verbose'];
     amqp?: IAmqpParams;
 }
 

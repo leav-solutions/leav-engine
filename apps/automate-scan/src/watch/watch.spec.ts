@@ -62,7 +62,6 @@ describe('test checkEvent', () => {
 
     test('Init - add a file', async () => {
         const params: IParamsExtends = {
-            verbose: false,
             ready: false,
             rootPath: '/files',
             rootKey,
@@ -76,7 +75,6 @@ describe('test checkEvent', () => {
 
     test('Init - add a folder', async () => {
         const params = {
-            verbose: false,
             ready: false,
             timeout: 0,
             rootPath: '/files',
@@ -91,7 +89,6 @@ describe('test checkEvent', () => {
 
     test('Add a file', async () => {
         const params = {
-            verbose: false,
             ready: true,
             timeout: 0,
             rootPath: '/files',
@@ -105,7 +102,6 @@ describe('test checkEvent', () => {
 
     test('Add a dir', async () => {
         const params = {
-            verbose: false,
             ready: true,
             timeout: 0,
             rootPath: '/files',
@@ -119,7 +115,6 @@ describe('test checkEvent', () => {
 
     test('Unlink a file', async () => {
         const params = {
-            verbose: false,
             ready: true,
             timeout: 0,
             rootPath: '/files',
@@ -133,7 +128,6 @@ describe('test checkEvent', () => {
 
     test('Unlink a dir', async () => {
         const params = {
-            verbose: false,
             ready: true,
             timeout: 0,
             rootPath: '/files',
@@ -147,7 +141,6 @@ describe('test checkEvent', () => {
 
     test('Update a file', async () => {
         const params = {
-            verbose: false,
             ready: true,
             timeout: 0,
             rootPath: '/files',
@@ -163,7 +156,6 @@ describe('test checkEvent', () => {
         expect.assertions(1);
 
         const params = {
-            verbose: false,
             ready: true,
             rootPath: '/files',
             rootKey,
@@ -185,7 +177,6 @@ describe('test checkEvent', () => {
         });
 
         const params = {
-            verbose: false,
             ready: true,
             rootPath: '/files',
             rootKey,
@@ -207,7 +198,6 @@ describe('test checkEvent', () => {
         });
 
         const params = {
-            verbose: false,
             ready: true,
             rootPath: '/files',
             rootKey,

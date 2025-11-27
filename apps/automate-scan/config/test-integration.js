@@ -16,5 +16,4 @@ module.exports = {
         routingKey: 'files.event',
         type: process.env.AMQP_TYPE || 'direct',
     },
-    verbose: true,
 };
