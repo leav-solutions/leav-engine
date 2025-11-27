@@ -5,12 +5,13 @@ import {type ComponentProps, type FunctionComponent, useContext} from 'react';
 import {KitTabs} from 'aristid-ds';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {localizedTranslation} from '@leav/utils';
-import {LangContext} from '@leav/ui';
+import {LangContext} from '_ui/contexts/LangContext';
 import cn from 'classnames';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths, RelativePaths} from '../../router/paths';
-
 import {scrollable} from './panelsTabs.module.css';
+import {useGetPanelsAttributeCounts} from './panels-attribute-counts/useGetPanelsAttributeCounts';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelsTabsProps {
     enabled: boolean;
@@ -39,17 +40,30 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
     const {lang} = useContext(LangContext);
     const navigate = useNavigate();
 
-    const isRecordPanel = recordId !== undefined;
-
-    const tabItems: ComponentProps<typeof KitTabs>['items'] =
+    const panelsToDisplay =
         libraryId === null || panelType === null
             ? []
-            : application.libraries[libraryId][panelType]
-                  .filter(panel => !panel.isStandalone && !(where === 'slider' && panel.hideInSlider))
-                  .map(panel => ({
-                      key: panel.id,
-                      label: localizedTranslation(panel.name, lang),
-                  }));
+            : application.libraries[libraryId][panelType].filter(
+                  panel => !panel.isStandalone && !(where === 'slider' && panel.hideInSlider),
+              );
+
+    const attributeExplorerPanels = panelsToDisplay.filter(
+        (panel): panel is Panel & {type: 'explorer'; attributeSource: string; libraryId?: string} =>
+            panel.type === 'explorer' && 'attributeSource' in panel,
+    );
+
+    const {panelsCounts} = useGetPanelsAttributeCounts({
+        panels: attributeExplorerPanels,
+        recordId,
+    });
+
+    const isRecordPanel = recordId !== undefined;
+
+    const tabItems: ComponentProps<typeof KitTabs>['items'] = panelsToDisplay.map(panel => ({
+        key: panel.id,
+        label: localizedTranslation(panel.name, lang),
+        badgeCount: panelsCounts[panel.id] ?? undefined,
+    }));
 
     const onChangeTab: ComponentProps<typeof KitTabs>['onChange'] = key => {
         const currentTab = tabItems.find(tab => tab.key === key);
