@@ -2,9 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+interface IAuthenticationErrorOptions {
+    retryAuthenticationFlow?: boolean;
+}
+
 export default class AuthenticationError extends Error {
-    public constructor(message = 'Unauthorized') {
-        super();
-        this.message = message;
+    public readonly retryAuthenticationFlow: boolean;
+    public constructor(message = 'Unauthorized', options: IAuthenticationErrorOptions = {}) {
+        super(message);
+        this.retryAuthenticationFlow = options.retryAuthenticationFlow ?? false;
     }
 }

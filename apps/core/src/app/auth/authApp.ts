@@ -330,6 +330,26 @@ export default function ({
                         const originalUrl = await oidcClientService.getOriginalUrl(queryId);
                         return res.redirect(originalUrl);
                     } catch (err) {
+                        // We may have AuthenticationError because our oidc_verificationKeys is expired in redis
+                        // it has a max duration of 10 min (MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS)
+                        // If our refresh token expire, after 2h (REFRESH_TOKEN_TTL),
+                        // then we are redirected to keycloak to verify our authentication with a new oidc_verificationKeys, but there is more than 10 min between
+                        // the redirection and the validation, so our oidc_verificationKeys are expired.
+                        // Redirect in background tab in browser while user do something else for ex ?
+                        //
+                        // So, in that case, redirect to home page to trigger a new login flow with new oidc_verificationKeys
+                        if (err instanceof AuthenticationError && err.retryAuthenticationFlow) {
+                            // Add temporary feature flag in config to be able to disable this behavior if needed
+                            if (config.auth.oidc.retryAuthenticationFlowAfterExpiry) {
+                                logger.warn('Retrying authentication flow due to expired OIDC verification keys');
+                                return res.redirect(config.server.publicUrl);
+                            } else {
+                                logger.warn(
+                                    'Not retrying authentication flow due to configuration, but would have redirect if enabled.',
+                                );
+                            }
+                        }
+
                         logger.error(`Auth oidc verify error ${err.stack}`);
                         return next(err);
                     }

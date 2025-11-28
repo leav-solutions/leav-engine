@@ -44,10 +44,10 @@ export default function ({
     const _getCodeVerifierRedirectUriByQueryId = async (queryId: string): Promise<AuthRedirectStoredData> => {
         const cacheContent = await sessionRepo.getData([_buildAuthVerificationKeysCacheKey(queryId)]);
         if (cacheContent === undefined) {
-            throw new AuthenticationError('Unauthorized');
+            throw new AuthenticationError('Unauthorized', {retryAuthenticationFlow: true});
         }
         if (cacheContent[0] === null) {
-            throw new AuthenticationError('Unauthorized');
+            throw new AuthenticationError('Unauthorized', {retryAuthenticationFlow: true});
         }
         return JSON.parse(cacheContent[0]) as AuthRedirectStoredData;
     };

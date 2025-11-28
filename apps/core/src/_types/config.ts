@@ -130,6 +130,7 @@ export interface IAuth {
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim: string;
               enableAutoProvisioning: boolean;
+              retryAuthenticationFlowAfterExpiry: boolean;
           };
     testApiKey?: string;
 }

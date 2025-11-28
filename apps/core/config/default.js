@@ -66,6 +66,10 @@ module.exports = {
             skipLogoutConfirmationPage: envToBool(process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE, false),
             idTokenUserClaim: process.env.ID_TOKEN_USER_CLAIM || 'email',
             enableAutoProvisioning: envToBool(process.env.OIDC_ENABLE_AUTO_PROVISIONING, false),
+            retryAuthenticationFlowAfterExpiry: envToBool(
+                process.env.OIDC_RETRY_AUTHENTICATION_FLOW_AFTER_EXPIRY,
+                true,
+            ),
         },
         testApiKey: process.env.TEST_API_KEY, // /!\ do not use in production /!\
     },
