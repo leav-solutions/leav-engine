@@ -56,7 +56,7 @@ export const PanelHeader: FunctionComponent<{
                     avatarSize="l"
                 />
             )}
-            {!isLibraryPanel && (
+            {!isLibraryPanel && currentPanel.type !== 'creationForm' && (
                 <KitSpace direction="horizontal">
                     <ToggleFlapButton
                         targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}
