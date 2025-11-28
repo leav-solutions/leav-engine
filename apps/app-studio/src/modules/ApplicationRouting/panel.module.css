@@ -23,6 +23,14 @@
     }
 }
 
+.popupCreationFormPanel {
+    & > div > div > div {
+        height: auto;
+        max-height: 80vh;
+        width: 656px;
+    }
+}
+
 .popupHeader {
     width: 100%;
     display: flex;
