@@ -68,6 +68,7 @@ export const creationPanelSchema = z.object({
     type: z.literal('creationForm'),
     formId: z.string(),
     attributeSource: z.string(),
+    isStandalone: z.literal(true),
 });
 
 export const baseExplorerPanelSchema = z.object({
