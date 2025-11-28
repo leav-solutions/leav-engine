@@ -240,6 +240,12 @@ export default function ({
             },
         }),
         registerRoute(app) {
+            config.auth.debugLog &&
+                app.use('/auth', async (req, res, next) => {
+                    // log request
+                    logger.silly(`Auth request: ${req.method} ${req.originalUrl}`);
+                    next();
+                });
             app.get(
                 '/auth/oidc/verify/:identifierBase64Url',
                 async (
@@ -597,72 +603,77 @@ export default function ({
             });
         },
         async validateRequestToken({apiKey, headers, cookies}, res) {
-            const systemCtx = getSystemQueryContext('validateToken');
+            try {
+                const systemCtx = getSystemQueryContext('validateToken');
 
-            const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
-            const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
+                const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+                const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
 
-            const getUserGroups = async (uid: string): Promise<string[]> => {
-                const userGroups = (await valueDomain.getValues({
-                    library: USERS_LIBRARY,
-                    recordId: uid,
-                    attribute: USERS_GROUP_ATTRIBUTE_NAME,
-                    ctx: systemCtx,
-                })) as ITreeValue[];
-                return userGroups.map(g => g.payload?.id);
-            };
+                const getUserGroups = async (uid: string): Promise<string[]> => {
+                    const userGroups = (await valueDomain.getValues({
+                        library: USERS_LIBRARY,
+                        recordId: uid,
+                        attribute: USERS_GROUP_ATTRIBUTE_NAME,
+                        ctx: systemCtx,
+                    })) as ITreeValue[];
+                    return userGroups.map(g => g.payload?.id);
+                };
 
-            let userId: string;
-            let groupsId: string[];
+                let userId: string;
+                let groupsId: string[];
 
-            if (accessToken) {
-                try {
-                    const payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
+                if (accessToken) {
+                    try {
+                        const payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
+                        userId = payload.userId;
+                        if (!userId) {
+                            throw new AuthenticationError('Invalid accessToken');
+                        }
+                        groupsId = payload.groupsId;
+                    } catch (e: any) {
+                        // We could have a time race condition here, there is a delta between the time the token is signed and the time the cookie is created
+                        // We could end up with a token expired (from jwt) but not yet from the cookie
+                        // To avoid this, we check if the error is a token expired error, and if so, we regenerate the tokens
+                        if (e.name === 'TokenExpiredError' && refreshToken) {
+                            const refreshPayload = await _verifyRefreshToken(refreshToken, headers);
+                            await _generateAccessAndRefreshTokens(refreshPayload.userId, headers, res, systemCtx);
+                            userId = refreshPayload.userId;
+                            groupsId = await getUserGroups(userId);
+                        } else {
+                            throw new AuthenticationError('Invalid accessToken');
+                        }
+                    }
+                } else if (refreshToken) {
+                    const payload = await _verifyRefreshToken(refreshToken, headers);
+                    await _generateAccessAndRefreshTokens(payload.userId, headers, res, systemCtx);
                     userId = payload.userId;
-                    if (!userId) {
-                        throw new AuthenticationError('Invalid accessToken');
+                    groupsId = await getUserGroups(userId);
+                } else {
+                    if (!apiKey) {
+                        throw new AuthenticationError('No api key provided');
                     }
-                    groupsId = payload.groupsId;
-                } catch (e: any) {
-                    // We could have a time race condition here, there is a delta between the time the token is signed and the time the cookie is created
-                    // We could end up with a token expired (from jwt) but not yet from the cookie
-                    // To avoid this, we check if the error is a token expired error, and if so, we regenerate the tokens
-                    if (e.name === 'TokenExpiredError' && refreshToken) {
-                        const refreshPayload = await _verifyRefreshToken(refreshToken, headers);
-                        await _generateAccessAndRefreshTokens(refreshPayload.userId, headers, res, systemCtx);
-                        userId = refreshPayload.userId;
-                        groupsId = await getUserGroups(userId);
-                    } else {
-                        throw new AuthenticationError('Invalid accessToken');
+
+                    const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx: systemCtx});
+
+                    const hasExpired = apiKeyData.expiresAt && new Date(apiKeyData.expiresAt) < new Date();
+                    if (hasExpired) {
+                        throw new AuthenticationError('API key expired');
                     }
-                }
-            } else if (refreshToken) {
-                const payload = await _verifyRefreshToken(refreshToken, headers);
-                await _generateAccessAndRefreshTokens(payload.userId, headers, res, systemCtx);
-                userId = payload.userId;
-                groupsId = await getUserGroups(userId);
-            } else {
-                if (!apiKey) {
-                    throw new AuthenticationError('No api key provided');
+
+                    userId = apiKeyData.userId;
+                    groupsId = await getUserGroups(userId);
                 }
 
-                const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx: systemCtx});
+                await _checkIfUserExistsById(userId, systemCtx);
 
-                const hasExpired = apiKeyData.expiresAt && new Date(apiKeyData.expiresAt) < new Date();
-                if (hasExpired) {
-                    throw new AuthenticationError('API key expired');
-                }
-
-                userId = apiKeyData.userId;
-                groupsId = await getUserGroups(userId);
+                return {
+                    userId,
+                    groupsId,
+                };
+            } catch (err) {
+                config.auth.debugLog && logger.error(`Auth validateRequestToken error ${err.stack}`);
+                throw err;
             }
-
-            await _checkIfUserExistsById(userId, systemCtx);
-
-            return {
-                userId,
-                groupsId,
-            };
         },
         authenticateWithOIDCService: async (req, res) => {
             if (!config.auth.oidc.enable) {
@@ -678,6 +689,7 @@ export default function ({
                 redirectUri: `${config.server.publicUrl}/auth/oidc/verify/${identifierBase64Url}`,
                 queryId,
             });
+            config.auth.debugLog && logger.debug('Redirecting to OIDC login url', {oidcLoginUrl});
 
             return res.redirect(oidcLoginUrl);
         },

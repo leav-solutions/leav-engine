@@ -7,6 +7,7 @@ import AuthenticationError from '../../errors/AuthenticationError';
 import {type IConfig} from '../../_types/config';
 import ms from 'ms';
 import {type ISessionRepo} from '../session/sessionRepo';
+import {logger} from '@leav/logger';
 
 const AUTH_VERIFICATION_KEYS_HEADER = 'oidc_verificationKeys';
 const ORIGINAL_URL_HEADER = 'oidc_originalUrl';
@@ -44,6 +45,10 @@ export default function ({
 
     const _getCodeVerifierRedirectUriByQueryId = async (queryId: string): Promise<AuthRedirectStoredData> => {
         const cacheContent = await sessionRepo.getData([_buildAuthVerificationKeysCacheKey(queryId)]);
+        config.auth.debugLog &&
+            logger.silly(
+                `OIDC _getCodeVerifierRedirectUriByQueryId key=${_buildAuthVerificationKeysCacheKey(queryId)}`,
+            );
         if (cacheContent === undefined) {
             throw new AuthenticationError('Unauthorized', {retryAuthenticationFlow: true});
         }
@@ -53,18 +58,29 @@ export default function ({
         return JSON.parse(cacheContent[0]) as AuthRedirectStoredData;
     };
 
-    const _writeCodeVerifierRedirectUriByQueryId = (queryId: string, data: AuthRedirectStoredData): Promise<void> =>
-        sessionRepo.storeData({
+    const _writeCodeVerifierRedirectUriByQueryId = (queryId: string, data: AuthRedirectStoredData): Promise<void> => {
+        config.auth.debugLog &&
+            logger.silly(
+                `OIDC _writeCodeVerifierRedirectUriByQueryId key=${_buildAuthVerificationKeysCacheKey(queryId)}`,
+            );
+        return sessionRepo.storeData({
             key: _buildAuthVerificationKeysCacheKey(queryId),
             data: JSON.stringify(data),
             expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS,
         });
+    };
 
-    const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) =>
-        sessionRepo.deleteData([_buildAuthVerificationKeysCacheKey(queryId)]);
+    const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) => {
+        config.auth.debugLog &&
+            logger.silly(
+                `OIDC _deleteCodeVerifierRedirectUriByQueryId key=${_buildAuthVerificationKeysCacheKey(queryId)}`,
+            );
+        return sessionRepo.deleteData([_buildAuthVerificationKeysCacheKey(queryId)]);
+    };
 
     const _getTokenSetByUserId = async (userId: string): Promise<TokenSet> => {
         const cacheContent = await sessionRepo.getData([_buildTokensCacheKey(userId)]);
+        config.auth.debugLog && logger.silly(`OIDC _getTokenSetByUserId key=${_buildTokensCacheKey(userId)}`);
         if (cacheContent === undefined) {
             throw new AuthenticationError('Unauthorized');
         }
@@ -74,12 +90,14 @@ export default function ({
         return new TokenSet(JSON.parse(cacheContent[0]));
     };
 
-    const _writeTokensSetByUserId = (userId: string, tokens: TokenSet): Promise<void> =>
-        sessionRepo.storeData({
+    const _writeTokensSetByUserId = (userId: string, tokens: TokenSet): Promise<void> => {
+        config.auth.debugLog && logger.silly(`OIDC _writeTokensSetByUserId key=${_buildTokensCacheKey(userId)}`);
+        return sessionRepo.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
             expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60,
         });
+    };
 
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
         sessionRepo.storeData({
@@ -112,6 +130,7 @@ export default function ({
         },
         getAuthorizationUrl: async ({redirectUri, queryId}) => {
             const codeVerifier = generators.codeVerifier();
+
             await _writeCodeVerifierRedirectUriByQueryId(queryId, [codeVerifier, redirectUri]);
 
             return oidcClient.authorizationUrl({

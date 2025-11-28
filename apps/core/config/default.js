@@ -72,6 +72,7 @@ module.exports = {
             ),
         },
         testApiKey: process.env.TEST_API_KEY, // /!\ do not use in production /!\
+        debugLog: envToBool(process.env.AUTH_DEBUG_LOG, false),
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',

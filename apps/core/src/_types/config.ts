@@ -133,6 +133,11 @@ export interface IAuth {
               retryAuthenticationFlowAfterExpiry: boolean;
           };
     testApiKey?: string;
+
+    /**
+     * Enable some silly/debug/error logs in auth/oidc services
+     */
+    debugLog?: boolean;
 }
 
 export interface IMailer {

@@ -121,6 +121,7 @@ export const validateConfig = (conf: IConfig) => {
                 retryAuthenticationFlowAfterExpiry: Joi.boolean(),
             }),
             testApiKey: Joi.string(),
+            debugLog: Joi.boolean(),
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),
