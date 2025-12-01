@@ -20,7 +20,6 @@ import PermissionError from '../../../errors/PermissionError';
 import {type ITasksManagerDomain} from '../../tasksManager/tasksManagerDomain';
 import {type INotificationDomain} from '../../notification/notificationDomain';
 import {logger} from '@leav/logger';
-import LeavError from '../../../errors/LeavError';
 
 export interface ISaveValueBulkParams {
     libraryId: string;
