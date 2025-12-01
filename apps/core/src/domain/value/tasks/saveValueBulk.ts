@@ -18,6 +18,7 @@ import {type ITaskFuncParams, TaskPriority, TaskType} from '../../../_types/task
 import crypto from 'node:crypto';
 import PermissionError from '../../../errors/PermissionError';
 import {type ITasksManagerDomain} from '../../tasksManager/tasksManagerDomain';
+import {NotificationChannels} from '_types/notification';
 import {type INotificationDomain} from '../../notification/notificationDomain';
 import {logger} from '@leav/logger';
 
@@ -191,6 +192,7 @@ export default function ({
                     },
                     emitterUserId: ctx.userId,
                     priority: 'normal',
+                    channels: [NotificationChannels.WEB_SOCKET],
                 },
                 ctx,
             );
@@ -218,6 +220,7 @@ export default function ({
                     },
                     emitterUserId: ctx.userId,
                     priority: 'normal',
+                    channels: [NotificationChannels.WEB_SOCKET],
                 },
                 ctx,
             );

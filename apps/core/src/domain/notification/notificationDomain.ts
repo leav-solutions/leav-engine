@@ -3,7 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {type IConfig} from '_types/config';
-import {type INotificationChannel, type ICreateNotification, type INotification} from '_types/notification';
+import {
+    type INotificationChannel,
+    type ICreateNotification,
+    type INotification,
+    type NotificationChannels,
+} from '_types/notification';
 import {type IQueryInfos} from '_types/queryInfos';
 import dayjs from 'dayjs';
 
@@ -26,24 +31,31 @@ export default function ({
         return notificationsDisabled();
     }
 
-    const channels: INotificationChannel[] = [
+    const enabledChannels: INotificationChannel[] = [
         ...((config.notification.email.enable && [emailChannel]) || []),
         ...((config.notification.webSocket.enable && [webSocketChannel]) || []),
     ];
+    const defaultChannelsType = enabledChannels.map(c => c.type);
 
-    logger.verbose(`Notification system enabled with channels: ${channels.map(c => c.type).join(', ')}`);
+    logger.verbose(`Notification system enabled with channels: ${enabledChannels.map(c => c.type).join(', ')}`);
 
-    const sendNotificationsViaChannels = (notifications: INotification[], ctx: IQueryInfos): Promise<void[]> =>
+    const sendNotificationsViaChannels = (
+        notifications: INotification[],
+        filterChannelsType: NotificationChannels[],
+        ctx: IQueryInfos,
+    ): Promise<void[]> =>
         Promise.all(
-            channels.map(async channel => {
-                try {
-                    await channel.sendNotifications(notifications, ctx);
-                } catch (error) {
-                    logger.error(
-                        `Error sending ${notifications.length} notifications via channel ${channel.type}: ${error.message}`,
-                    );
-                }
-            }),
+            enabledChannels
+                .filter(channel => filterChannelsType.includes(channel.type))
+                .map(async channel => {
+                    try {
+                        await channel.sendNotifications(notifications, ctx);
+                    } catch (error) {
+                        logger.error(
+                            `Error sending ${notifications.length} notifications via channel ${channel.type}: ${error.message}`,
+                        );
+                    }
+                }),
         );
 
     return {
@@ -78,7 +90,7 @@ export default function ({
 
                 // save notifications to the database
 
-                await sendNotificationsViaChannels(notifications, ctx);
+                await sendNotificationsViaChannels(notifications, notification.channels || defaultChannelsType, ctx);
             } catch (error) {
                 logger.error(`Error creating notification: ${error.message}`);
             }

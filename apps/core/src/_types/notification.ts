@@ -55,6 +55,11 @@ export interface ICreateNotification {
     priority: 'urgent' | 'normal';
 
     content: INotificationContent;
+
+    /**
+     * Channels to send the notification to (if not set, all channels will be used)
+     */
+    channels?: NotificationChannels[];
 }
 
 export enum NotificationChannels {
