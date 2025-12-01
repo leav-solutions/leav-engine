@@ -12,6 +12,7 @@ const AUTH_VERIFICATION_KEYS_HEADER = 'oidc_verificationKeys';
 const ORIGINAL_URL_HEADER = 'oidc_originalUrl';
 const TOKENS_HEADER = 'oidc_tokens';
 const MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS = 1_000 * 60 * 10;
+const MAX_TIME_OIDC_ORIGINAL_URL_IN_MS = 1_000 * 60 * 60 * 24; // 24 hours
 
 type AuthRedirectStoredData = [codeVerifier: string, redirectUri: string];
 
@@ -84,18 +85,12 @@ export default function ({
         sessionRepo.storeData({
             key: _buildOriginalUrlCacheKey(queryId),
             data: originalUrl,
-            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS,
+            expiresIn: MAX_TIME_OIDC_ORIGINAL_URL_IN_MS,
         });
 
     const _getOriginalUrlByQueryId = async (queryId: string) => {
         const cacheContent = await sessionRepo.getData([_buildOriginalUrlCacheKey(queryId)]);
-        if (cacheContent === undefined) {
-            throw new AuthenticationError('Unauthorized');
-        }
-        if (cacheContent[0] === null) {
-            throw new AuthenticationError('Unauthorized');
-        }
-        return cacheContent[0];
+        return cacheContent?.[0] || config.server.publicUrl;
     };
 
     const _deleteOriginalUrlByQueryId = (queryId: string) =>

@@ -341,8 +341,11 @@ export default function ({
                         if (err instanceof AuthenticationError && err.retryAuthenticationFlow) {
                             // Add temporary feature flag in config to be able to disable this behavior if needed
                             if (config.auth.oidc.retryAuthenticationFlowAfterExpiry) {
-                                logger.warn('Retrying authentication flow due to expired OIDC verification keys');
-                                return res.redirect(config.server.publicUrl);
+                                const originalUrl = await oidcClientService.getOriginalUrl(queryId);
+                                logger.warn(
+                                    `Retrying authentication flow due to expired OIDC verification keys, redirect to original URL ${originalUrl}`,
+                                );
+                                return res.redirect(originalUrl);
                             } else {
                                 logger.warn(
                                     'Not retrying authentication flow due to configuration, but would have redirect if enabled.',
