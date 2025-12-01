@@ -48,6 +48,7 @@ export const ItemActionsSchema = z
 
 export const basePanelSchema = z.object({
     id: PanelIdSchema,
+    icon: FontAwesomeIconSchema,
     name: z.record(LanguageSchema, z.string()).optional(),
     isStandalone: z.boolean().optional(),
     hideInSlider: z.boolean().optional(),
