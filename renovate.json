@@ -4,6 +4,9 @@
     "baseBranches": ["develop"],
     "prHourlyLimit": 5,
     "dependencyDashboard": true,
+    "lockFileMaintenance": {
+        "enabled": true
+    },
     "packageRules": [
         {
             "matchDatasources": ["*"],
