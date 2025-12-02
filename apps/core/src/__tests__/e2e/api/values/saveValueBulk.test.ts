@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
     gqlSaveAttribute,
     gqlSaveTree,
@@ -14,7 +16,6 @@ import {AttributeCondition} from '../../../../_types/record';
 import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {type IPubSubNotificationData, type IPubSubTaskData} from '_types/eventsManager';
 import {TaskStatus} from '../../../../_types/tasksManager';
-import {adminsGroupId} from '../../../../_constants/users';
 
 describe('saveValueBulk', () => {
     let graphqlClient: GraphqlWsClient;
@@ -39,7 +40,7 @@ describe('saveValueBulk', () => {
     let treeNodeId3: string;
 
     beforeAll(async () => {
-        graphqlClient = await makeWebSocketGraphQlCall();
+        graphqlClient = await makeWebSocketGraphQlCall({user: e2eNonAdminUser()});
 
         await gqlSaveAttribute({
             id: attrSimpleName,
@@ -133,14 +134,12 @@ describe('saveValueBulk', () => {
         noNodeRecordId4 = resRecord.data.data.c4.record.id;
         node3RecordId5 = resRecord.data.data.c5.record.id;
 
-        graphqlClient = await makeWebSocketGraphQlCall();
-
         await makeGraphQlCall(`mutation {
             savePermission(
                 permission: {
                     type: record,
                     applyTo: "${testLibName}",
-                    usersGroup: "${adminsGroupId}",
+                    usersGroup: "${e2eNonAdminGroupId()}",
                     permissionTreeTarget: {
                         tree: "${treeName}", nodeId: "${treeNodeId3}"
                     },
@@ -203,7 +202,8 @@ describe('saveValueBulk', () => {
                 )
             }`;
 
-            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
+            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
+                .saveValueBulk;
 
             const {notification} = await waitSaveValueBulkWSNotification();
             const {task} = await waitTaskCompleted(saveValueBulkTaskId);
@@ -228,7 +228,8 @@ describe('saveValueBulk', () => {
                 )
             }`;
 
-            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
+            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
+                .saveValueBulk;
 
             const {notification} = await waitSaveValueBulkWSNotification();
             const {task} = await waitTaskCompleted(saveValueBulkTaskId);
@@ -254,7 +255,8 @@ describe('saveValueBulk', () => {
                 )
             }`;
 
-            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
+            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
+                .saveValueBulk;
             const {notification} = await waitSaveValueBulkWSNotification();
             const {task} = await waitTaskCompleted(saveValueBulkTaskId);
 
