@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, useContext} from 'react';
+import {type ComponentProps, type FunctionComponent, useContext, useMemo} from 'react';
 import {KitTabs} from 'aristid-ds';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {localizedTranslation} from '@leav/utils';
@@ -12,6 +12,7 @@ import {AbsolutePaths, RelativePaths} from '../../router/paths';
 import {scrollable} from './panelsTabs.module.css';
 import {useGetPanelsAttributeCounts} from './panels-attribute-counts/useGetPanelsAttributeCounts';
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 interface IPanelsTabsProps {
     enabled: boolean;
@@ -59,11 +60,23 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
 
     const isRecordPanel = recordId !== undefined;
 
-    const tabItems: ComponentProps<typeof KitTabs>['items'] = panelsToDisplay.map(panel => ({
-        key: panel.id,
-        label: localizedTranslation(panel.name, lang),
-        badgeCount: panelsCounts[panel.id] ?? undefined,
-    }));
+    const tabItems: ComponentProps<typeof KitTabs>['items'] = useMemo(
+        () =>
+            panelsToDisplay.map(panel => {
+                // As suggested by FontAwesome documentation, we need this workaround to use the string notation
+                // More info: https://docs.fontawesome.com/web/use-with/react/add-icons#workaround
+                // @ts-expect-error: Type 'string' is not assignable to type 'IconProp'
+                const icon: IconProp = `fa-solid ${panel?.icon}`;
+
+                return {
+                    key: panel.id,
+                    label: localizedTranslation(panel.name, lang),
+                    icon: panel?.icon ? <FontAwesomeIcon icon={icon} /> : undefined,
+                    badgeCount: panelsCounts[panel.id] ?? undefined,
+                };
+            }),
+        [panelsToDisplay, lang, panelsCounts],
+    );
 
     const onChangeTab: ComponentProps<typeof KitTabs>['onChange'] = key => {
         const currentTab = tabItems.find(tab => tab.key === key);
