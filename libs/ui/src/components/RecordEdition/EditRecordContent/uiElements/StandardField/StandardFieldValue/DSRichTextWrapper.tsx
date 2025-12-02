@@ -9,7 +9,17 @@ import {type KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/type
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
-const isEmptyValue = value => !value || value === '<p></p>';
+const LEADING_EMPTY_P_TAG = /^<p>(\s|&nbsp;)*<\/p>/;
+const TRAILING_EMPTY_P_TAG = /(<p>(\s|&nbsp;)*<\/p>)+$/;
+
+const cleanRichTextValue = (value: string) => {
+    if (!value) {
+        return null;
+    }
+    const cleanedValue = value.replace(LEADING_EMPTY_P_TAG, '').replace(TRAILING_EMPTY_P_TAG, '').trim();
+
+    return cleanedValue === '' ? null : cleanedValue;
+};
 
 export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<KitRichTextProps>> = ({
     value,
@@ -52,9 +62,9 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
         setIsFocused(true);
     };
 
-    const _handleOnBlur = async inputValue => {
+    const _handleOnBlur = async (inputValue: string) => {
         setHasChanged(false);
-        const valueToSubmit = isEmptyValue(inputValue) ? null : inputValue;
+        const valueToSubmit = cleanRichTextValue(inputValue);
         if (!hasChanged) {
             onChange(valueToSubmit);
             setIsFocused(false);
