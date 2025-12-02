@@ -23,6 +23,7 @@ import {
     popupHeaderTabs,
     sliderFormPanel,
     popupContent,
+    popupCreationFormPanel,
 } from './panel.module.css';
 
 export const PanelContainer: FunctionComponent = ({children}) => {
@@ -36,7 +37,8 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
     const match = useMatch(AbsolutePaths.recordPanel);
     const hasFlapPanel = flapPanelId !== undefined;
-    const isFormPanel = ['editionForm', 'creationForm'].includes(currentPanel.type);
+    const isCreationFormPanel = currentPanel.type === 'creationForm';
+    const isFormPanel = isCreationFormPanel || currentPanel.type === 'editionForm';
 
     useEffect(() => {
         setRefDivToInsertSidePanel(document.getElementById(SIDE_PANEL_TARGET_ID) as HTMLDivElement);
@@ -80,9 +82,11 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         return (
             <KitModal
                 className={popupPanel}
-                isOpen
-                height="80vh" // TODO: We might need to change the height and width later (eg: form case). Need to be discussed with PO's and UX's.
-                width="90vw"
+                portalClassName={cn({
+                    [popupCreationFormPanel]: isCreationFormPanel,
+                })}
+                width={isCreationFormPanel ? 'revert-layer' : undefined} // Use revert-layer to inherit the width from the popupCreationFormPanel (as modal use html with style attribute)
+                height={isCreationFormPanel ? 'revert-layer' : undefined} // Use revert-layer to inherit the height from the popupCreationFormPanel (as modal use html with style attribute)
                 title={
                     <div className={popupHeader}>
                         <PanelHeader enabled />
@@ -99,10 +103,11 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                         />
                     </div>
                 }
-                footer={currentPanel.type === 'creationForm' ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
+                footer={isCreationFormPanel ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 showCloseIcon
                 close={closeContainer}
-                fullscreen
+                fullscreen={!isCreationFormPanel}
+                isOpen
             >
                 <div className={popupContent}>
                     {children}

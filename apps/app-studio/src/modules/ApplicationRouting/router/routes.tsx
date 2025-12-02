@@ -11,6 +11,7 @@ import {Panel} from '../Panel';
 import {PanelContainer} from '../PanelContainer';
 import {AbsolutePaths, UnreachablePaths} from './paths';
 import {RedirectToFirstRecordPanelAllowedInSlider} from '../guards/RedirectToFirstRecordPanelAllowedInSlider';
+import {RedirectCreationFormPanelToPopup} from '../guards/RedirectCreationFormPanelToPopup';
 
 export const firstLevelRoutes: RouteObject[] = [
     {
@@ -49,9 +50,11 @@ export const nextLevelRoutes: RouteObject[] = [
         element: (
             <RedirectToPreviousPanel>
                 <RedirectToFirstRecordPanelAllowedInSlider>
-                    <PanelContainer>
-                        <Panel />
-                    </PanelContainer>
+                    <RedirectCreationFormPanelToPopup>
+                        <PanelContainer>
+                            <Panel />
+                        </PanelContainer>
+                    </RedirectCreationFormPanelToPopup>
                 </RedirectToFirstRecordPanelAllowedInSlider>
             </RedirectToPreviousPanel>
         ),
