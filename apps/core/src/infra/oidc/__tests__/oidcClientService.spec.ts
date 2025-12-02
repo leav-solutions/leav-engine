@@ -8,11 +8,21 @@ import {type IConfig} from '../../../_types/config';
 import {type ISessionRepo} from '../../session/sessionRepo';
 
 describe('OIDCClientService', () => {
+    const defaultConfig = {
+        auth: {
+            refreshTokenExpiration: '5',
+            oidc: {
+                verificationKeysExpiration: '10',
+            },
+        },
+    } as IConfig;
+
     it('Should return oidcClient instance', () => {
         const oidcClientMock = {};
 
         const oidcClientService = createOIDCClientService({
             'core.infra.oidcClient': oidcClientMock as OidcClient,
+            config: defaultConfig,
         });
 
         expect(oidcClientService.oidcClient).toBe(oidcClientMock);
@@ -25,15 +35,10 @@ describe('OIDCClientService', () => {
                 storeData: jest.fn(),
             };
 
-            const config = {
-                auth: {
-                    refreshTokenExpiration: '1',
-                },
-            };
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
-                config: config as IConfig,
+                config: defaultConfig,
             });
 
             await oidcClientService.saveOIDCTokens({
@@ -49,7 +54,7 @@ describe('OIDCClientService', () => {
             expect(sessionRepoMock.storeData).toHaveBeenCalledWith({
                 key: 'oidc_tokens:userId',
                 data: '{"access_token":"access_token","refresh_token":"refresh_token","expires_at":42}',
-                expiresIn: 60_000 + Number(config.auth.refreshTokenExpiration),
+                expiresIn: 60_000 + Number(defaultConfig.auth.refreshTokenExpiration),
             });
         });
     });
@@ -74,6 +79,7 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
             const expectedResponse = await oidcClientService.getTokensFromCodes(getTokensParams);
 
@@ -99,6 +105,7 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
 
             await expect(async () => oidcClientService.getTokensFromCodes(getTokensParams)).rejects.toThrow(
@@ -116,6 +123,7 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
 
             await expect(async () => oidcClientService.getTokensFromCodes(getTokensParams)).rejects.toThrow(
@@ -138,6 +146,7 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
 
             await oidcClientService.checkTokensValidity({userId});
@@ -156,6 +165,7 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
             await expect(async () => oidcClientService.checkTokensValidity({userId})).rejects.toThrow('Unauthorized');
             expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
@@ -170,6 +180,7 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
             await expect(async () => oidcClientService.checkTokensValidity({userId})).rejects.toThrow('Unauthorized');
             expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
@@ -191,13 +202,17 @@ describe('OIDCClientService', () => {
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
                 'core.infra.session': sessionRepoMock as ISessionRepo,
+                config: defaultConfig,
             });
 
             const expectedResponse = await oidcClientService.getAuthorizationUrl({redirectUri, queryId});
 
             expect(sessionRepoMock.storeData).toHaveBeenCalledTimes(1);
             expect(sessionRepoMock.storeData).toHaveBeenCalledWith(
-                expect.objectContaining({expiresIn: 600_000, key: 'oidc_verificationKeys:queryId'}),
+                expect.objectContaining({
+                    expiresIn: Number(defaultConfig.auth.oidc.verificationKeysExpiration),
+                    key: 'oidc_verificationKeys:queryId',
+                }),
             );
             expect(oidcClientMock.authorizationUrl).toHaveBeenCalledWith(
                 expect.objectContaining({

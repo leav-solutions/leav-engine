@@ -121,6 +121,7 @@ export interface IAuth {
               postLogoutRedirectUri?: string;
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim?: string;
+              verificationKeysExpiration: string;
           }
         | {
               enable: true;
@@ -130,8 +131,15 @@ export interface IAuth {
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim: string;
               enableAutoProvisioning: boolean;
+              retryAuthenticationFlowAfterExpiry: boolean;
+              verificationKeysExpiration: string;
           };
     testApiKey?: string;
+
+    /**
+     * Enable some silly/debug/error logs in auth/oidc services
+     */
+    debugLog?: boolean;
 }
 
 export interface IMailer {

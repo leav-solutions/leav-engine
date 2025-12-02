@@ -66,8 +66,14 @@ module.exports = {
             skipLogoutConfirmationPage: envToBool(process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE, false),
             idTokenUserClaim: process.env.ID_TOKEN_USER_CLAIM || 'email',
             enableAutoProvisioning: envToBool(process.env.OIDC_ENABLE_AUTO_PROVISIONING, false),
+            retryAuthenticationFlowAfterExpiry: envToBool(
+                process.env.OIDC_RETRY_AUTHENTICATION_FLOW_AFTER_EXPIRY,
+                true,
+            ),
+            verificationKeysExpiration: process.env.OIDC_VERIFICATION_KEYS_EXPIRATION || '10m',
         },
         testApiKey: process.env.TEST_API_KEY, // /!\ do not use in production /!\
+        debugLog: envToBool(process.env.AUTH_DEBUG_LOG, false),
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',

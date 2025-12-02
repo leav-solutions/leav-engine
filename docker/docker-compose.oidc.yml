@@ -49,7 +49,7 @@ services:
             - '8080:8080'
 
     postgres:
-        image: postgres
+        image: postgres:17
         environment:
             POSTGRES_DB: keycloak
             POSTGRES_USER: keycloak
