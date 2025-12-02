@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import ValidationError from '../../errors/ValidationError';
 import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
 import {readFile} from 'fs/promises';
 import handlebars from 'handlebars';
 import {type i18n} from 'i18next';
@@ -48,6 +49,7 @@ export interface IUserDomain {
 export interface IUserDomainDeps {
     config: Config.IConfig;
     'core.domain.value': IValueDomain;
+    'core.domain.record': IRecordDomain;
     'core.domain.permissions': IPermissionDomain;
     'core.infra.userData': IUserDataRepo;
     'core.domain.permission': IPermissionDomain;
@@ -64,6 +66,7 @@ export enum UserCoreDataKeys {
 export default function ({
     config,
     'core.domain.value': valueDomain,
+    'core.domain.record': recordDomain,
     'core.infra.userData': userDataRepo,
     'core.domain.permission': permissionDomain,
     'core.infra.mailer.mailerService': mailerService,
@@ -86,9 +89,17 @@ export default function ({
 
     return {
         async getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity> {
+            const recordIdentity = await recordDomain.getRecordIdentity(
+                {
+                    library: USERS_LIBRARY,
+                    id: userId,
+                },
+                ctx,
+            );
             return {
                 id: userId,
                 getEmail: () => getUserEmail(userId, ctx),
+                getLabel: () => recordIdentity.getLabel?.(),
             };
         },
         async sendResetPasswordEmail(

@@ -17,4 +17,6 @@ export interface IUserIdentity {
      * @throw if user have no email
      */
     getEmail: () => Promise<string>;
+
+    getLabel: () => Promise<string>;
 }
