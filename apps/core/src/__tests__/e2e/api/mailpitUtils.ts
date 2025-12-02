@@ -56,10 +56,14 @@ export async function waitMailpitMessage(acceptMessage: (msg: IMailpitMsgLight) 
         {timeoutMs: 20000},
     );
 
-    const msg = await axios.get<IMailpitMsgFull>(`http://${mailpitAddress}/api/v1/message/${mailMsg.Data.ID}`, {
+    return getMailpitMessage(mailMsg.Data.ID);
+}
+
+export async function getMailpitMessage(messageId: string): Promise<IMailpitMsgFull> {
+    const mailpitAddress = await getMailpitAddress();
+    const msg = await axios.get<IMailpitMsgFull>(`http://${mailpitAddress}/api/v1/message/${messageId}`, {
         responseType: 'json',
     });
-
     return msg.data;
 }
 
