@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
 import {
     type Entrypoint,
@@ -210,7 +210,18 @@ export const useExplorerData = ({
     }, [libraryData, linkData]);
 
     const ids = memoizedData?.records.map(record => record.itemId);
-    useGetRecordUpdatesSubscription({libraries: [libraryId], records: ids}, !libraryId);
+    const {data: updatedData} = useGetRecordUpdatesSubscription({libraries: [libraryId], records: ids}, !libraryId);
+
+    // TOTO: change to useMemo, and use updatedData to update memoizedData with new Data. Good luck !
+    useEffect(() => {
+        if (updatedData) {
+            if (isLibrary) {
+                libraryRefetch();
+            } else {
+                linkRefetch();
+            }
+        }
+    }, [updatedData]);
 
     return {
         data: memoizedData,
