@@ -70,6 +70,7 @@ module.exports = {
                 process.env.OIDC_RETRY_AUTHENTICATION_FLOW_AFTER_EXPIRY,
                 true,
             ),
+            verificationKeysExpiration: process.env.OIDC_VERIFICATION_KEYS_EXPIRATION || '10m',
         },
         testApiKey: process.env.TEST_API_KEY, // /!\ do not use in production /!\
         debugLog: envToBool(process.env.AUTH_DEBUG_LOG, false),

@@ -119,6 +119,7 @@ export const validateConfig = (conf: IConfig) => {
                     otherwise: Joi.boolean(),
                 }),
                 retryAuthenticationFlowAfterExpiry: Joi.boolean(),
+                verificationKeysExpiration: Joi.string().required(),
             }),
             testApiKey: Joi.string(),
             debugLog: Joi.boolean(),

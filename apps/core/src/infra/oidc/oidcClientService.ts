@@ -12,7 +12,6 @@ import {logger} from '@leav/logger';
 const AUTH_VERIFICATION_KEYS_HEADER = 'oidc_verificationKeys';
 const ORIGINAL_URL_HEADER = 'oidc_originalUrl';
 const TOKENS_HEADER = 'oidc_tokens';
-const MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS = 1_000 * 60 * 10;
 const MAX_TIME_OIDC_ORIGINAL_URL_IN_MS = 1_000 * 60 * 60 * 24; // 24 hours
 
 type AuthRedirectStoredData = [codeVerifier: string, redirectUri: string];
@@ -39,6 +38,9 @@ export default function ({
     'core.infra.session': sessionRepo = null,
     config = null,
 }: IDeps = {}): IOIDCClientService {
+    const verificationKeysExpirationInMs = ms(config.auth.oidc.verificationKeysExpiration);
+    const refreshTokenExpirationInMs = ms(config.auth.refreshTokenExpiration) + 1_000 * 60;
+
     const _buildAuthVerificationKeysCacheKey = (queryId: string) => `${AUTH_VERIFICATION_KEYS_HEADER}:${queryId}`;
     const _buildOriginalUrlCacheKey = (queryId: string) => `${ORIGINAL_URL_HEADER}:${queryId}`;
     const _buildTokensCacheKey = (userId: string) => `${TOKENS_HEADER}:${userId}`;
@@ -66,7 +68,7 @@ export default function ({
         return sessionRepo.storeData({
             key: _buildAuthVerificationKeysCacheKey(queryId),
             data: JSON.stringify(data),
-            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS,
+            expiresIn: verificationKeysExpirationInMs,
         });
     };
 
@@ -95,7 +97,7 @@ export default function ({
         return sessionRepo.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
-            expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60,
+            expiresIn: refreshTokenExpirationInMs,
         });
     };
 

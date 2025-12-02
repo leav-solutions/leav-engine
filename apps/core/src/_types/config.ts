@@ -121,6 +121,7 @@ export interface IAuth {
               postLogoutRedirectUri?: string;
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim?: string;
+              verificationKeysExpiration: string;
           }
         | {
               enable: true;
@@ -131,6 +132,7 @@ export interface IAuth {
               idTokenUserClaim: string;
               enableAutoProvisioning: boolean;
               retryAuthenticationFlowAfterExpiry: boolean;
+              verificationKeysExpiration: string;
           };
     testApiKey?: string;
 
