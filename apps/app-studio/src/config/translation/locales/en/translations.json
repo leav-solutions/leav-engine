@@ -29,7 +29,8 @@
         "search": "Search",
         "select": "Select",
         "submit": "Submit",
-        "yes": "Yes"
+        "yes": "Yes",
+        "home": "Home"
     },
     "information_and_history": {
         "system_information": "System information",
