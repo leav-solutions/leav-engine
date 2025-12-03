@@ -9559,7 +9559,7 @@ __metadata:
     "@ant-design/icons": ">=5.2"
     "@apollo/client": ">=3.8.1"
     antd: 5.22.2
-    aristid-ds: 14.0.0-5ef4643
+    aristid-ds: 14.0.0-94337b1
     dayjs: ^1.11.13
     i18next: 22.5
     react: 18.2.0
