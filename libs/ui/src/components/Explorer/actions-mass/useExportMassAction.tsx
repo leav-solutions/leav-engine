@@ -76,7 +76,7 @@ export const useExportMassAction = ({
                             }
 
                             kitNotification.info({
-                                message: t('explorer.massAction.export_message', {count: total}),
+                                message: t('explorer.massAction.export_message'),
                                 description: t('explorer.massAction.export_description', {
                                     count: total,
                                     total,
@@ -90,17 +90,15 @@ export const useExportMassAction = ({
                                 KitAlert.error({
                                     showIcon: true,
                                     duration: ERROR_ALERT_DURATION,
-                                    message: t('error.error_occurred', {count: total}),
-                                    description: t('explorer.massAction.export_config_error_description', {
-                                        library: view.libraryId,
-                                    }),
+                                    message: t('explorer.massAction.export_config_error_message'),
+                                    description: t('explorer.massAction.export_config_error_description'),
                                     closable: true,
                                 });
                             } else {
                                 KitAlert.error({
                                     showIcon: true,
                                     duration: ERROR_ALERT_DURATION,
-                                    message: t('error.error_occurred'),
+                                    message: t('explorer.massAction.export_error_message'),
                                     description: t('explorer.massAction.export_error_description', {count: total}),
                                     closable: true,
                                 });

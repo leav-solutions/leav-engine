@@ -120,7 +120,7 @@ describe('Export', () => {
             graphqlClient,
             subscriptionGraphqlQuery,
             {},
-            data => data?.notification?.title?.includes('export'),
+            data => data?.notification?.title?.includes('Export'),
             {timeoutMs: 20000},
         );
 
@@ -297,11 +297,11 @@ describe('Export', () => {
             test('should notify success by email', async () => {
                 const config = await getConfig();
                 const mailMsg = await waitMailpitMessage(
-                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('export'),
+                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('Export'),
                 );
 
                 expect(mailMsg).toBeDefined();
-                expect(mailMsg.Subject).toContain('complete');
+                expect(mailMsg.Subject).toContain('successfully');
                 expect(mailMsg.From.Address).toEqual(config.mailer.from.email);
                 expect(mailMsg.To[0].Address).toEqual(config.server.admin.email);
 
@@ -317,7 +317,7 @@ describe('Export', () => {
                 const msg = await waitExportWSNotification();
 
                 expect(msg).toBeDefined();
-                expect(msg.notification.title).toContain('complete');
+                expect(msg.notification.title).toContain('successfully');
                 expect(msg.notification.level).toContain('success');
 
                 const task = await waitForTaskCompletion(exportTaskId);
@@ -341,7 +341,7 @@ describe('Export', () => {
                 const config = await getConfig();
 
                 const mailMsg = await waitMailpitMessage(
-                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('export'),
+                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('Export'),
                 );
 
                 expect(mailMsg).toBeDefined();

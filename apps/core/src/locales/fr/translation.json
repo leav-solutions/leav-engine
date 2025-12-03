@@ -244,10 +244,10 @@
         "stats_trees": "{{trees}} éléments placés dans un arbre"
     },
     "notifications": {
-        "export_complete_title": "L’export demandé est terminé",
-        "export_complete_message": "Vous avez demandé un export le {{date}}. Votre export est prêt, cliquez sur le lien pour le récupérer.",
-        "export_error_title": "L’export demandé à échoué",
-        "export_error_message": "Vous avez demandé un export le {{date}}. Le processus ne s’est pas terminé correctement. Veuillez contacter votre administrateur.",
+        "export_complete_title": "Export terminé avec succès",
+        "export_complete_message": "Votre export demandé le {{date}} est prêt. Vous pouvez le télécharger en cliquant sur le lien ci-dessous.",
+        "export_error_title": "L’export demandé a échoué",
+        "export_error_message": "Votre export demandé le {{date}} a échoué. Veuillez contacter votre administrateur.",
         "save_value_bulk_complete_title": "Modification en masse terminée avec succès",
         "save_value_bulk_error_title": "La modification en masse a rencontré une erreur",
         "save_value_bulk_error_message": "Votre demande de modification en masse du {{date}} a échoué. Veuillez contacter votre administrateur.",

@@ -243,12 +243,11 @@
         "stats_elements": "{{created}} elements created, {{updated}} elements updated, {{ignored}} elements ignored",
         "stats_trees": "{{trees}} elements moved in trees"
     },
-
     "notifications": {
-        "export_complete_title": "The requested export is complete",
-        "export_complete_message": "You requested an export on {{date}}. The export is ready, click the link below to retrieve it.",
-        "export_error_title": "The requested export has failed",
-        "export_error_message": "You requested an export on {{date}}. The process did not complete successfully. Please contact your administrator.",
+        "export_complete_title": "Export completed successfully",
+        "export_complete_message": "Export requested on {{date}} is ready. Click the link below to download it.",
+        "export_error_title": "Export has failed",
+        "export_error_message": "Export requested on {{date}} did not complete successfully. Please contact your administrator.",
         "save_value_bulk_complete_title": "Bulk edit completed successfully",
         "save_value_bulk_error_title": "Bulk edit encountered an error",
         "save_value_bulk_error_message": "Your bulk edit request from {{date}} failed. Please contact your administrator.",
