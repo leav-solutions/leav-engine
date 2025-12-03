@@ -52,8 +52,12 @@ export const RootHeader: FunctionComponent = () => {
         <KitHeader
             className={header}
             logo={
-                <Link to={GLOBAL_BASE_URL} className={logo}>
-                    <img src={`${APP_BASE_URL}/assets/aristid-header.svg`} alt="logo-leavengine" title="app-studio" />
+                <Link to="/" className={logo}>
+                    <img
+                        src={`${APP_BASE_URL}/assets/aristid-header.svg`}
+                        alt="logo-leavengine"
+                        title={t('global.home')}
+                    />
                 </Link>
             }
             profile={<KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />}
