@@ -20,35 +20,39 @@ const firstDayOfMonthDateAtNoon = firstDayOfMonthDate
 const presentationDate = 'December 05, 2024';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: null,
+    isCalculatedValues: false,
+    isCalculatedOverrideValues: false,
+    isCalculatedNotOverrideValues: false,
+    calculatedValues: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: true,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: {
-        raw_payload: firstDayOfMonthDateTimestamp,
-    },
+    isCalculatedValues: true,
+    isCalculatedOverrideValues: true,
+    isCalculatedNotOverrideValues: false,
+    calculatedValues: [
+        {
+            raw_payload: firstDayOfMonthDateTimestamp,
+        },
+    ],
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
-    isInheritedValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: null,
+    isInheritedValues: false,
+    isInheritedOverrideValues: false,
+    isInheritedNotOverrideValues: false,
+    inheritedValues: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {
-        raw_payload: firstDayOfMonthDateTimestamp,
-    },
+    isInheritedValues: true,
+    isInheritedOverrideValues: true,
+    isInheritedNotOverrideValues: false,
+    inheritedValues: [
+        {
+            raw_payload: firstDayOfMonthDateTimestamp,
+        },
+    ],
 };
 
 const notRequired = false;
@@ -241,7 +245,7 @@ describe('DSDatePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(
                 expect.any(Object),
-                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload,
+                inheritedFlagsWithInheritedValue.inheritedValues[0].raw_payload,
             );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
@@ -296,7 +300,7 @@ describe('DSDatePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(
                 expect.any(Object),
-                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload,
+                calculatedFlagsWithCalculatedValue.calculatedValues[0].raw_payload,
             );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);

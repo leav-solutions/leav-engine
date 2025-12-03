@@ -4,117 +4,116 @@
 import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 interface IInheritedNotOverride {
-    isInheritedValue: true;
-    isInheritedOverrideValue: false;
-    isInheritedNotOverrideValue: true;
-    inheritedValue: RecordFormElementsValueStandardValue;
+    isInheritedValues: true;
+    isInheritedOverrideValues: false;
+    isInheritedNotOverrideValues: true;
+    inheritedValues: RecordFormElementsValueStandardValue[];
 }
 
 interface IInheritedOverride {
-    isInheritedValue: true;
-    isInheritedOverrideValue: true;
-    isInheritedNotOverrideValue: false;
-    inheritedValue: RecordFormElementsValueStandardValue;
+    isInheritedValues: true;
+    isInheritedOverrideValues: true;
+    isInheritedNotOverrideValues: false;
+    inheritedValues: RecordFormElementsValueStandardValue[];
 }
 
 interface INotInherited {
-    isInheritedValue: false;
-    isInheritedOverrideValue: false;
-    isInheritedNotOverrideValue: false;
-    inheritedValue: null;
+    isInheritedValues: false;
+    isInheritedOverrideValues: false;
+    isInheritedNotOverrideValues: false;
+    inheritedValues: null;
 }
 
 export type InheritedFlags = INotInherited | IInheritedOverride | IInheritedNotOverride;
 
 export const computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): InheritedFlags => {
-    const inheritedValue = fieldValues.find(fieldValue => fieldValue.isInherited);
-    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isInherited && !fieldValue.isCalculated);
+    const inheritedValues = fieldValues.filter(fieldValue => fieldValue.isInherited);
+    const overrideValues = fieldValues.filter(
+        fieldValue => !fieldValue.isInherited && !fieldValue.isCalculated && fieldValue.payload !== null,
+    );
 
-    if (inheritedValue === undefined) {
+    if (inheritedValues.length === 0) {
         return {
-            inheritedValue: null,
-            isInheritedValue: false,
-            isInheritedOverrideValue: false,
-            isInheritedNotOverrideValue: false,
+            inheritedValues: null,
+            isInheritedValues: false,
+            isInheritedOverrideValues: false,
+            isInheritedNotOverrideValues: false,
         };
     }
 
-    const isInheritedValue = true;
-
-    if (!overrideValue || overrideValue.payload === null) {
+    if (overrideValues.length === 0) {
         return {
-            inheritedValue,
-            isInheritedValue,
-            isInheritedNotOverrideValue: true,
-            isInheritedOverrideValue: false,
+            inheritedValues,
+            isInheritedValues: true,
+            isInheritedNotOverrideValues: true,
+            isInheritedOverrideValues: false,
         };
     }
 
     return {
-        inheritedValue,
-        isInheritedValue,
-        isInheritedNotOverrideValue: false,
-        isInheritedOverrideValue: true,
+        inheritedValues,
+        isInheritedValues: true,
+        isInheritedNotOverrideValues: false,
+        isInheritedOverrideValues: true,
     };
 };
 
 interface ICalculatedNotOverride {
-    isCalculatedValue: true;
-    isCalculatedOverrideValue: false;
-    isCalculatedNotOverrideValue: true;
-    calculatedValue: RecordFormElementsValueStandardValue;
+    isCalculatedValues: true;
+    isCalculatedOverrideValues: false;
+    isCalculatedNotOverrideValues: true;
+    calculatedValues: RecordFormElementsValueStandardValue[];
 }
 
 interface ICalculatedOverride {
-    isCalculatedValue: true;
-    isCalculatedOverrideValue: true;
-    isCalculatedNotOverrideValue: false;
-    calculatedValue: RecordFormElementsValueStandardValue;
+    isCalculatedValues: true;
+    isCalculatedOverrideValues: true;
+    isCalculatedNotOverrideValues: false;
+    calculatedValues: RecordFormElementsValueStandardValue[];
 }
 
 interface INotCalculated {
-    isCalculatedValue: false;
-    isCalculatedOverrideValue: false;
-    isCalculatedNotOverrideValue: false;
-    calculatedValue: null;
+    isCalculatedValues: false;
+    isCalculatedOverrideValues: false;
+    isCalculatedNotOverrideValues: false;
+    calculatedValues: null;
 }
 
 export type CalculatedFlags = INotCalculated | ICalculatedOverride | ICalculatedNotOverride;
 
 export const computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): CalculatedFlags => {
-    const calculatedValue = fieldValues.find(
+    const calculatedValues = fieldValues.filter(
         fieldValue => fieldValue.isCalculated !== null && fieldValue.isCalculated !== undefined,
     );
-    const overrideValue = fieldValues.find(
+    const overrideValues = fieldValues.filter(
         fieldValue =>
             (fieldValue.isCalculated === null || fieldValue.isCalculated === undefined) &&
-            (fieldValue.isInherited === null || fieldValue.isInherited === undefined),
+            (fieldValue.isInherited === null || fieldValue.isInherited === undefined) &&
+            fieldValue.payload !== null,
     );
 
-    if (calculatedValue === undefined) {
+    if (calculatedValues.length === 0) {
         return {
-            calculatedValue: null,
-            isCalculatedValue: false,
-            isCalculatedOverrideValue: false,
-            isCalculatedNotOverrideValue: false,
+            calculatedValues: null,
+            isCalculatedValues: false,
+            isCalculatedOverrideValues: false,
+            isCalculatedNotOverrideValues: false,
         };
     }
 
-    const isCalculatedValue = true;
-
-    if (!overrideValue || overrideValue.payload === null) {
+    if (overrideValues.length === 0) {
         return {
-            calculatedValue,
-            isCalculatedValue,
-            isCalculatedNotOverrideValue: true,
-            isCalculatedOverrideValue: false,
+            calculatedValues,
+            isCalculatedValues: true,
+            isCalculatedNotOverrideValues: true,
+            isCalculatedOverrideValues: false,
         };
     }
 
     return {
-        calculatedValue,
-        isCalculatedValue,
-        isCalculatedNotOverrideValue: false,
-        isCalculatedOverrideValue: true,
+        calculatedValues,
+        isCalculatedValues: true,
+        isCalculatedNotOverrideValues: false,
+        isCalculatedOverrideValues: true,
     };
 };

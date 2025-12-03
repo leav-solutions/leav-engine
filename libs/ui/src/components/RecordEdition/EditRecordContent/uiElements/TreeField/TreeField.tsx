@@ -81,7 +81,12 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     const form = AntForm.useFormInstance();
     const fieldErrors = form.getFieldError(attribute.id);
 
-    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
+    // TODO: Temporary const that should be removed (and all it's usages) when we will have a proper way to override multiple values
+    const tmpCantOverrideValues =
+        attribute.multiple_values &&
+        (calculatedFlags.calculatedValues?.length > 1 || inheritedFlags.inheritedValues?.length > 1);
+
+    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly || tmpCantOverrideValues;
     const isFieldInError = fieldErrors.length > 0;
 
     useEffect(() => {

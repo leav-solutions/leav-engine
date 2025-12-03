@@ -13,35 +13,39 @@ const presentationValue = 'Severus Snape';
 const newValue = 'Harry Potter';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: null,
+    isCalculatedValues: false,
+    isCalculatedOverrideValues: false,
+    isCalculatedNotOverrideValues: false,
+    calculatedValues: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: true,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: {
-        raw_payload: newValue,
-    },
+    isCalculatedValues: true,
+    isCalculatedOverrideValues: true,
+    isCalculatedNotOverrideValues: false,
+    calculatedValues: [
+        {
+            raw_payload: newValue,
+        },
+    ],
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
-    isInheritedValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: null,
+    isInheritedValues: false,
+    isInheritedOverrideValues: false,
+    isInheritedNotOverrideValues: false,
+    inheritedValues: null,
 };
 
 const inheritedFlagsWithInheritedValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {
-        raw_payload: newValue,
-    },
+    isInheritedValues: true,
+    isInheritedOverrideValues: true,
+    isInheritedNotOverrideValues: false,
+    inheritedValues: [
+        {
+            raw_payload: newValue,
+        },
+    ],
 };
 
 const notReadonly = false;

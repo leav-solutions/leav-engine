@@ -15,20 +15,27 @@ interface IUseGetPresentationValues {
 export const useGetPresentationValues = ({
     values,
     format,
-    calculatedValue,
-    inheritedValue,
+    calculatedValues,
+    inheritedValues,
 }: {
     values: ValueDetailsValueFragment[];
     format: AttributeFormat;
-    calculatedValue: RecordFormElementsValueStandardValue;
-    inheritedValue: RecordFormElementsValueStandardValue;
+    calculatedValues: RecordFormElementsValueStandardValue[];
+    inheritedValues: RecordFormElementsValueStandardValue[];
 }): IUseGetPresentationValues => {
     const {t} = useSharedTranslation();
 
-    const mappedValues = values.length > 0 ? values : [{}];
+    const effectiveValues =
+        values?.length > 0
+            ? values
+            : calculatedValues?.length > 0
+              ? calculatedValues
+              : inheritedValues?.length > 0
+                ? inheritedValues
+                : [];
 
-    const presentationValues = mappedValues.map(value => {
-        let presentationValue = value.payload || calculatedValue?.payload || inheritedValue?.payload || '';
+    const presentationValues = effectiveValues.map(value => {
+        let presentationValue = value.payload || '';
 
         switch (format) {
             case AttributeFormat.date_range:

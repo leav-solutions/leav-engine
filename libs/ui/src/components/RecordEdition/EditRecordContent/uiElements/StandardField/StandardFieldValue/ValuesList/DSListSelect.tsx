@@ -118,12 +118,13 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
         [searchedString],
     );
 
+    // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (inheritedFlags.isInheritedValue) {
-            setTimeout(() => onChange(inheritedFlags.inheritedValue.raw_value, options), 0);
-        } else if (calculatedFlags.isCalculatedValue) {
-            setTimeout(() => onChange(calculatedFlags.calculatedValue.raw_value, options), 0);
+        if (inheritedFlags.isInheritedValues) {
+            setTimeout(() => onChange(inheritedFlags.inheritedValues[0].raw_value, options), 0);
+        } else if (calculatedFlags.isCalculatedValues) {
+            setTimeout(() => onChange(calculatedFlags.calculatedValues[0].raw_value, options), 0);
         }
         await handleSubmit(null, attribute.id);
     };
@@ -131,7 +132,7 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     const _handleOnChange = async (selectedValue: string) => {
         setHasChanged(true);
         setSearchedString('');
-        if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && selectedValue === '') {
+        if ((inheritedFlags.isInheritedValues || calculatedFlags.isCalculatedValues) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
             return;
         }

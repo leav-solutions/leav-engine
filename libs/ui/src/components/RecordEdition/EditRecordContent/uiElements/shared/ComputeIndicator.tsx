@@ -22,9 +22,9 @@ export const ComputeIndicator: FunctionComponent<IComputeIndicatorProps> = ({cal
     const {t} = useSharedTranslation();
 
     const shouldDisplayComputedIcon =
-        calculatedFlags.isCalculatedNotOverrideValue || inheritedFlags.isInheritedNotOverrideValue;
+        calculatedFlags.isCalculatedNotOverrideValues || inheritedFlags.isInheritedNotOverrideValues;
     const shouldDisplayOverridedIcon =
-        calculatedFlags.isCalculatedOverrideValue || inheritedFlags.isInheritedOverrideValue;
+        calculatedFlags.isCalculatedOverrideValues || inheritedFlags.isInheritedOverrideValues;
 
     return (
         <ComputeIndicatorWrapper>
