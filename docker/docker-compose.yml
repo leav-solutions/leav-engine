@@ -331,7 +331,7 @@ services:
     image: *node_image
     labels:
       - traefik.enable=true
-      - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) && Path(`/app/admin`, `/app/admin/{route:.*}`)) || Host(`admin.leav.localhost`)
+      - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/admin`)) || Host(`admin.leav.localhost`)
       - traefik.http.services.admin.loadbalancer.server.port=3000
       - traefik.http.routers.admin.entrypoints=web
     environment:
@@ -356,7 +356,7 @@ services:
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) && Path(`/app/data-studio`, `/app/data-studio/{route:.*}`)) || Host(`data-studio.leav.localhost`)
+      - traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/data-studio`)) || Host(`data-studio.leav.localhost`)
       - traefik.http.services.data-studio.loadbalancer.server.port=3000
       - traefik.http.routers.data-studio.entrypoints=web
     environment:
@@ -381,7 +381,7 @@ services:
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) && Path(`/app/app-studio`, `/app/app-studio/{route:.*}`)) || Host(`app-studio.leav.localhost`)
+      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/app-studio`)) || Host(`app-studio.leav.localhost`)
       - traefik.http.services.app-studio.loadbalancer.server.port=3000
       - traefik.http.routers.app-studio.entrypoints=web
     environment:
