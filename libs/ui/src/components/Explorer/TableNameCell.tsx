@@ -118,6 +118,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                                 size="m"
                                 aria-label={t('explorer.more-actions') ?? undefined}
                                 icon={<FaEllipsisH />}
+                                onClick={event => event.stopPropagation()}
                             />
                         </KitTooltip>
                     </KitDropDown>

@@ -1482,6 +1482,43 @@ describe('Explorer', () => {
             await user.click(firstRecordRow);
             expect(customAction.callback).toHaveBeenCalled();
         });
+
+        test('Should not call the action on row click if user click on more actions button', async () => {
+            const customActions = [
+                {
+                    label: 'Test 1',
+                    icon: <FaBeer />,
+                    callback: jest.fn(),
+                    useItemActionOnRowClick: true,
+                },
+                {
+                    label: 'Test 2',
+                    icon: <FaAccessibleIcon />,
+                    callback: jest.fn(),
+                },
+                {
+                    label: 'Test 3',
+                    icon: <FaXbox />,
+                    callback: jest.fn(),
+                },
+                {
+                    label: 'Test 4',
+                    icon: <FaJs />,
+                    callback: jest.fn(),
+                },
+            ] satisfies IItemAction[];
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
+
+            expect(customActions[0].callback).not.toHaveBeenCalled();
+        });
     });
 
     describe('Primary Action', () => {
