@@ -44,6 +44,13 @@ import {type FindRecordsHelper} from './helpers/findRecords';
 
 export const ATTRIBUTE_ACTIVE = 'active';
 
+export interface IDuplicateRecordRules {
+    attributesToDuplicate?: Array<{
+        attributeId: string;
+        overrideValueFn?: (id: string) => Promise<string | Array<string | {valuesErrors: ICreateRecordValueError[]}>>;
+    }>;
+}
+
 export interface IRecordDomain {
     /**
      * Create empty record
@@ -129,6 +136,13 @@ export interface IRecordDomain {
     purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 
     purgeRecord(params: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
+
+    duplicateRecords(params: {
+        libraryId: string;
+        recordIds: string[];
+        duplicateRules?: IDuplicateRecordRules;
+        ctx: IQueryInfos;
+    }): Promise<ICreateRecordResult[]>;
 }
 
 export interface IRecordDomainDeps {
@@ -969,6 +983,126 @@ export default function ({
                 id: recordId,
                 ctx,
             });
+        },
+        /**
+         * Duplicates multiple records by copying specified attributes from each source record,
+         * allowing override values as specified in duplicateRules.
+         *
+         * @param {Object} params
+         * @param {string} params.libraryId - The ID of the library containing the records to duplicate.
+         * @param {string[]} params.recordIds - The IDs of the records to duplicate.
+         * @param {IDuplicateRecordRules} [params.duplicateRules] - Rules specifying which attributes to duplicate and override.
+         * @param {IQueryInfos} params.ctx - Context information for the operation.
+         * @returns {Promise<ICreateRecordResult[]>} An array of results for each duplicated record, including errors if any.
+         *
+         * Edge cases:
+         * - If no attributes are provided in `duplicateRules`, new records will be created without duplicated values.
+         * - If an attribute has no value in the source record and no overrideValue, it will not be duplicated for that record.
+         * - If a recordId does not exist, it will be skipped.
+         */
+        async duplicateRecords({libraryId, recordIds, duplicateRules, ctx}): Promise<ICreateRecordResult[]> {
+            const attributesToDuplicate = duplicateRules?.attributesToDuplicate || [];
+
+            try {
+                const allValues = await Promise.all(
+                    recordIds.map(async recordId => {
+                        const values = await Promise.all(
+                            attributesToDuplicate.map(async ({attributeId, overrideValueFn}) => {
+                                if (attributeId === undefined) {
+                                    return null;
+                                }
+                                if (overrideValueFn !== undefined) {
+                                    const overrideValue = await overrideValueFn(recordId);
+                                    let value: Array<{payload: any}> = [];
+                                    if (Array.isArray(overrideValue)) {
+                                        if ('valuesErrors' in overrideValue && overrideValue.valuesErrors) {
+                                            value = [{payload: {valuesErrors: overrideValue.valuesErrors}}];
+                                        }
+                                        value = overrideValue.map(payload => ({payload}));
+                                    } else if (overrideValue) {
+                                        value = [{payload: overrideValue}];
+                                    }
+
+                                    return {
+                                        recordId,
+                                        attribute: attributeId,
+                                        value,
+                                    };
+                                }
+                                const value = await valueDomain.getValues({
+                                    recordId,
+                                    attribute: attributeId,
+                                    library: libraryId,
+                                    ctx,
+                                });
+                                return {recordId, attribute: attributeId, value};
+                            }),
+                        );
+                        return values.filter(Boolean).flat();
+                    }),
+                );
+                const extractPayload = (val: IValue) => (val?.payload?.id ? val.payload.id : (val.payload ?? null));
+
+                const processValues = (attribute: string, value: any[]): ISaveValue[] => {
+                    if (!Array.isArray(value) || value.length === 0) {
+                        return [];
+                    }
+                    return value.map(val => ({
+                        id_value: null,
+                        attribute,
+                        payload: extractPayload(val),
+                    }));
+                };
+
+                const valuesByRecordId = new Map<string, ISaveValue[]>();
+                const valuesErrorsByRecordId = new Map<string, any[]>();
+
+                allValues.flat().forEach(({recordId, attribute, value}) => {
+                    // Check if value contains valuesErrors
+                    if (Array.isArray(value) && value[0]?.payload?.valuesErrors) {
+                        if (!valuesErrorsByRecordId.has(recordId)) {
+                            valuesErrorsByRecordId.set(recordId, []);
+                        }
+                        valuesErrorsByRecordId.get(recordId).push(...value[0].payload?.valuesErrors);
+                        return;
+                    }
+                    if (!valuesByRecordId.has(recordId)) {
+                        valuesByRecordId.set(recordId, []);
+                    }
+                    valuesByRecordId.get(recordId).push(...processValues(attribute, value));
+                });
+
+                const duplicatedRecords = await Promise.all(
+                    Array.from(valuesByRecordId.entries()).map(async ([recordId, values]) => {
+                        if (valuesErrorsByRecordId.has(recordId)) {
+                            return {
+                                record: null,
+                                valuesErrors: valuesErrorsByRecordId.get(recordId),
+                            };
+                        }
+                        return this.createRecord({
+                            library: libraryId,
+                            values,
+                            verifyRequiredAttributes: true,
+                            ctx,
+                        });
+                    }),
+                );
+
+                return duplicatedRecords;
+            } catch (error) {
+                logger.error(`Error in duplicateRecords: ${error.stack}`);
+                return recordIds.map(() => ({
+                    record: null,
+                    valuesErrors: [
+                        {
+                            type: error?.type ?? ErrorTypes.INTERNAL_ERROR,
+                            attribute: error?.attribute ?? null,
+                            message: error && typeof error.message === 'string' ? error.message : String(error),
+                        },
+                    ],
+                }));
+            }
         },
     };
 
