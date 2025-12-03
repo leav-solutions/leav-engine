@@ -52,7 +52,7 @@ export const RootHeader: FunctionComponent = () => {
         <KitHeader
             className={header}
             logo={
-                <Link to={GLOBAL_BASE_URL} className={logo}>
+                <Link to="/" className={logo}>
                     <img src={`${APP_BASE_URL}/assets/aristid-header.svg`} alt="logo-leavengine" title="app-studio" />
                 </Link>
             }
