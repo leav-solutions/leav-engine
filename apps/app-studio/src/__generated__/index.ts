@@ -361,25 +361,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  category?: InputMaybe<Scalars['String']>;
-  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  label: Scalars['String'];
-  mixed: Scalars['Boolean'];
-  opTrade?: InputMaybe<Scalars['String']>;
-  startDate: Scalars['String'];
-  thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  type?: InputMaybe<Scalars['String']>;
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  startDate: Scalars['String'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -404,6 +385,27 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean'];
   id: Scalars['ID'];
+};
+
+export type DiscussionComment = {
+  id: Scalars['ID'];
+};
+
+export type DiscussionCommentInput = {
+  mentions?: InputMaybe<DiscussionMentionsInput>;
+  message: Scalars['String'];
+  targetRecord: DiscussionTargetRecordInput;
+  threadId?: InputMaybe<Scalars['String']>;
+};
+
+export type DiscussionMentionsInput = {
+  url: Scalars['String'];
+  users?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type DiscussionTargetRecordInput = {
+  id: Scalars['String'];
+  libraryId: Scalars['String'];
 };
 
 export type EmbeddedAttribute = {
@@ -602,10 +604,6 @@ export type GlobalSettingsInput = {
   icon?: InputMaybe<GlobalSettingsFileInput>;
   name?: InputMaybe<Scalars['String']>;
   settings?: InputMaybe<Scalars['JSONObject']>;
-};
-
-export type Greeting = {
-  content: Scalars['String'];
 };
 
 export type HeritedPermissionAction = {
@@ -922,16 +920,6 @@ export type MapValueInput = {
   before?: InputMaybe<Scalars['ID']>;
 };
 
-export type MoveThematicResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematic?: Maybe<MoveThematicResultThematic>;
-};
-
-export type MoveThematicResultThematic = {
-  id: Scalars['ID'];
-  id_value: Scalars['ID'];
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -962,10 +950,9 @@ export type Mutation = {
   importData: Scalars['ID'];
   importExcel: Scalars['ID'];
   indexRecords: Scalars['Boolean'];
-  moveOrCopyCampaignThematic: MoveThematicResult;
+  postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   purgeRecord: Record;
-  renewCampaigns: Array<RenewCampaignsResult>;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -985,7 +972,6 @@ export type Mutation = {
   treeAddElement: TreeNode;
   treeDeleteElement: Scalars['ID'];
   treeMoveElement: TreeNode;
-  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   upload: Array<UploadData>;
 };
@@ -1129,12 +1115,8 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationMoveOrCopyCampaignThematicArgs = {
-  copyFraming: Scalars['Boolean'];
-  fromCampaignId: Scalars['String'];
-  moveThematic: Scalars['Boolean'];
-  thematicId: Scalars['String'];
-  toCampaignId: Scalars['String'];
+export type MutationPostDiscussionCommentArgs = {
+  comment?: InputMaybe<DiscussionCommentInput>;
 };
 
 
@@ -1146,12 +1128,6 @@ export type MutationPurgeInactiveRecordsArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID'];
   recordId: Scalars['ID'];
-};
-
-
-export type MutationRenewCampaignsArgs = {
-  campaigns: Array<CampaignToRenew>;
-  pacId: Scalars['String'];
 };
 
 
@@ -1257,11 +1233,6 @@ export type MutationTreeMoveElementArgs = {
   order?: InputMaybe<Scalars['Int']>;
   parentTo?: InputMaybe<Scalars['ID']>;
   treeId: Scalars['ID'];
-};
-
-
-export type MutationUpdateCampaignsDatesArgs = {
-  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1459,7 +1430,6 @@ export type Query = {
   fullTreeContent?: Maybe<Scalars['FullTreeContent']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
-  greeting: Greeting;
   inheritedPermissions?: Maybe<Array<HeritedPermissionAction>>;
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']>>;
@@ -1854,19 +1824,6 @@ export type RecordsPagination = {
 export type RelatedEntity = {
   label: Scalars['String'];
   url: Scalars['String'];
-};
-
-export type RenewCampaignsResult = {
-  campaign_id?: Maybe<Scalars['ID']>;
-  original_campaign_id: Scalars['ID'];
-  record?: Maybe<Record>;
-  valuesErrors?: Maybe<Array<ValueBatchError>>;
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
 };
 
 export type SheetInput = {
@@ -2607,6 +2564,13 @@ export type GetRecordInformationQueryVariables = Exact<{
 
 export type GetRecordInformationQuery = { records: { list: Array<{ created_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, modified_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, created_at: Array<{ payload?: any | null }>, modified_at: Array<{ payload?: any | null }>, library: { label?: any | null } }> } };
 
+export type PostDiscussionCommentMutationVariables = Exact<{
+  comment: DiscussionCommentInput;
+}>;
+
+
+export type PostDiscussionCommentMutation = { postDiscussionComment: { id: string } };
+
 export type GetUsersQueryVariables = Exact<{
   query: Scalars['String'];
   pagination?: InputMaybe<RecordsPagination>;
@@ -2980,6 +2944,39 @@ export type GetRecordInformationQueryHookResult = ReturnType<typeof useGetRecord
 export type GetRecordInformationLazyQueryHookResult = ReturnType<typeof useGetRecordInformationLazyQuery>;
 export type GetRecordInformationSuspenseQueryHookResult = ReturnType<typeof useGetRecordInformationSuspenseQuery>;
 export type GetRecordInformationQueryResult = Apollo.QueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
+export const PostDiscussionCommentDocument = gql`
+    mutation PostDiscussionComment($comment: DiscussionCommentInput!) {
+  postDiscussionComment(comment: $comment) {
+    id
+  }
+}
+    `;
+export type PostDiscussionCommentMutationFn = Apollo.MutationFunction<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>;
+
+/**
+ * __usePostDiscussionCommentMutation__
+ *
+ * To run a mutation, you first call `usePostDiscussionCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePostDiscussionCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [postDiscussionCommentMutation, { data, loading, error }] = usePostDiscussionCommentMutation({
+ *   variables: {
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function usePostDiscussionCommentMutation(baseOptions?: Apollo.MutationHookOptions<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>(PostDiscussionCommentDocument, options);
+      }
+export type PostDiscussionCommentMutationHookResult = ReturnType<typeof usePostDiscussionCommentMutation>;
+export type PostDiscussionCommentMutationResult = Apollo.MutationResult<PostDiscussionCommentMutation>;
+export type PostDiscussionCommentMutationOptions = Apollo.BaseMutationOptions<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>;
 export const GetUsersDocument = gql`
     query GetUsers($query: String!, $pagination: RecordsPagination) {
   records(

@@ -1,0 +1,6 @@
+mutation PostDiscussionComment($comment: DiscussionCommentInput!) {
+    postDiscussionComment(comment: $comment) {
+        id
+    }
+}
+
