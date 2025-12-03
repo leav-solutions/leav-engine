@@ -49,7 +49,7 @@ export const ThreadReplyBox = ({
                 value={message}
                 onChange={setMessage}
                 disabled={isPosting}
-                mini
+                autoLayout
             />
             <KitButton
                 icon={<FontAwesomeIcon icon={faPaperPlane} />}
