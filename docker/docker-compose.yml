@@ -645,7 +645,7 @@ services:
   redis-commander:
     profiles: ["debug"]
     hostname: redis-commander
-    image: rediscommander/redis-commander:latest
+    image: ghcr.io/joeferner/redis-commander:0.9.1
     restart: always
     environment:
       - REDIS_HOSTS=cache:redis:6379:0,session:redis:6379:1
