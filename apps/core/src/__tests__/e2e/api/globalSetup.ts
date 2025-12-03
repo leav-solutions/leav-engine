@@ -25,6 +25,7 @@ import {USERS_GROUPS_LIBRARY, USERS_LIBRARY} from '../../../_types/library';
 import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IGlobalThis} from './e2eUtils';
+import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
 
 declare const globalThis: IGlobalThis;
 
@@ -115,7 +116,7 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer) => {
         values: [
             {
                 attribute: 'email',
-                payload: 'guest@aristid.com',
+                payload: GUEST_USER_EMAIL,
             },
         ],
     });
@@ -154,7 +155,7 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer) => {
         values: [
             {
                 attribute: 'email',
-                payload: 'non-admin@aristid.com',
+                payload: NON_ADMIN_USER_EMAIL,
             },
             {
                 attribute: 'user_groups',

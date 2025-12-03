@@ -28,6 +28,7 @@ export interface IGlobalThis {
 declare const globalThis: IGlobalThis;
 
 interface IE2EUser {
+    userId: string;
     getAuthToken: () => Promise<string>;
 }
 
@@ -37,6 +38,7 @@ interface IE2EUserParams {
 }
 
 const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
+    userId,
     getAuthToken: async () => {
         const conf = await getConfig();
 

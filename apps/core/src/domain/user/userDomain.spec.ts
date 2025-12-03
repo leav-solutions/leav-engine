@@ -23,6 +23,7 @@ const depsBase: ToAny<IUserDomainDeps> = {
     'core.infra.mailer.mailerService': jest.fn(),
     'core.domain.globalSettings': jest.fn(),
     'core.domain.value': jest.fn(),
+    'core.domain.record': jest.fn(),
     'core.utils': jest.fn(),
     translator: {},
 };

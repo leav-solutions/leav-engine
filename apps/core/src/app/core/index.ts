@@ -26,3 +26,4 @@ export {default as userData} from './userDataApp';
 export {default as value} from './valueApp';
 export {default as versionProfile} from './versionProfileApp/versionProfileApp';
 export {default as view} from './viewApp';
+export {default as discussion} from './discussionApp';
