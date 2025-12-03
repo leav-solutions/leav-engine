@@ -1286,7 +1286,9 @@ export type Notification = {
 };
 
 export enum NotificationLevel {
+  error = 'error',
   info = 'info',
+  success = 'success',
   warning = 'warning'
 }
 
@@ -2605,6 +2607,14 @@ export type GetRecordInformationQueryVariables = Exact<{
 
 export type GetRecordInformationQuery = { records: { list: Array<{ created_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, modified_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, created_at: Array<{ payload?: any | null }>, modified_at: Array<{ payload?: any | null }>, library: { label?: any | null } }> } };
 
+export type GetUsersQueryVariables = Exact<{
+  query: Scalars['String'];
+  pagination?: InputMaybe<RecordsPagination>;
+}>;
+
+
+export type GetUsersQuery = { records: { list: Array<{ id: string, label: Array<{ payload?: any | null }> }> } };
+
 export type GetThreadStatusOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2970,6 +2980,58 @@ export type GetRecordInformationQueryHookResult = ReturnType<typeof useGetRecord
 export type GetRecordInformationLazyQueryHookResult = ReturnType<typeof useGetRecordInformationLazyQuery>;
 export type GetRecordInformationSuspenseQueryHookResult = ReturnType<typeof useGetRecordInformationSuspenseQuery>;
 export type GetRecordInformationQueryResult = Apollo.QueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
+export const GetUsersDocument = gql`
+    query GetUsers($query: String!, $pagination: RecordsPagination) {
+  records(
+    library: "users"
+    filters: [{field: "login", condition: NOT_EQUAL, value: ""}, {operator: AND}, {field: "email", condition: NOT_EQUAL, value: ""}, {operator: AND}, {field: "login", condition: CONTAINS, value: $query}]
+    pagination: $pagination
+  ) {
+    list {
+      id
+      label: property(attribute: "login") {
+        ... on Value {
+          payload
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+      }
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const GetThreadStatusOptionsDocument = gql`
     query GetThreadStatusOptions {
   treeNodeChildren(treeId: "discussion_thread_statuses_tree") {
