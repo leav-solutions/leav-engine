@@ -9,6 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {usePostComment} from '../thread-actions/usePostComment';
 import {type IUserContextData} from '_ui/contexts';
 import {replyBox, replyBoxButton} from './threadReplyBox.module.css';
+import {useUsersList} from './useUsersList';
 
 export const ThreadReplyBox = ({
     recordId,
@@ -23,6 +24,7 @@ export const ThreadReplyBox = ({
 }) => {
     const {t} = useTranslation();
     const [message, setMessage] = useState('');
+    const getUsersList = useUsersList();
 
     const {postComment, isPosting} = usePostComment({
         recordId: recordId!,
@@ -42,6 +44,7 @@ export const ThreadReplyBox = ({
         <div className={replyBox}>
             <KitAvatar label={me.userWhoAmI.label} />
             <KitRichText
+                getMentionItems={query => getUsersList(query)}
                 placeholder={t('threads.reply_placeholder')}
                 value={message}
                 onChange={setMessage}
