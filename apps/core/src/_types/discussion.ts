@@ -8,11 +8,11 @@ export interface IDiscussionTargetRecord {
 
 export interface IDiscussionMentions {
     users?: string[];
+    url: string;
 }
 
 export interface IPostDiscussionCommentParams {
     message: string;
-    url: string;
     targetRecord: IDiscussionTargetRecord;
     threadId?: string;
     mentions?: IDiscussionMentions;

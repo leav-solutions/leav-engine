@@ -82,12 +82,11 @@ describe('Discussion', () => {
                 makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "This comment should fail",
-                    url: "${config.server.publicUrl}/record/1",
                     targetRecord: {
                         id: "non_existing_id",
                         libraryId: "${targetLibId}"
                     },
-                    threadId: "${threadId}"
+                    threadId: "${threadId}",
                 }) {
                     id
                 }
@@ -100,12 +99,14 @@ describe('Discussion', () => {
                 makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "This comment should fail",
-                    url: "http://no-matching-domain.com/record/1",
                     targetRecord: {
                         id: "${targetRecordIdWithLabel}",
                         libraryId: "${targetLibId}"
                     },
-                    threadId: "${threadId}"
+                    threadId: "${threadId}",
+                    mentions: {
+                        url: "http://no-matching-domain.com/record/1"
+                    }
                 }) {
                     id
                 }
@@ -119,7 +120,6 @@ describe('Discussion', () => {
             const resPostComment = await makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "${commentMessage}",
-                    url: "${config.server.publicUrl}/record/1",
                     targetRecord: {
                         id: "${targetRecordIdWithLabel}",
                         libraryId: "${targetLibId}"
@@ -205,14 +205,14 @@ describe('Discussion', () => {
             const resPostComment = await makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "${commentMessage}",
-                    url: "${commentUrl}",
                     targetRecord: {
                         id: "${targetRecordIdWithoutLabel}",
                         libraryId: "${targetLibId}"
                     },
                     threadId: "${threadId}",
                     mentions: {
-                        users: [${usersToMention.map(u => `"${u}"`).join(', ')}]
+                        users: [${usersToMention.map(u => `"${u}"`).join(', ')}],
+                        url: "${commentUrl}"
                     }
                 }) {
                     id
@@ -243,7 +243,6 @@ describe('Discussion', () => {
             const resPostComment = await makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "${commentMessage}",
-                    url: "${commentUrl}",
                     targetRecord: {
                         id: "${targetRecordIdWithLabel}",
                         libraryId: "${targetLibId}"
@@ -251,6 +250,7 @@ describe('Discussion', () => {
                     threadId: "${threadId}",
                     mentions: {
                         users: ["${e2eGuestUser().userId}"]
+                        url: "${commentUrl}"
                     }
                 }) {
                     id

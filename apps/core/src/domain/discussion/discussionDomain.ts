@@ -140,8 +140,8 @@ export default function ({
 
             const targetRecord = await checkTargetRecordExists(params.targetRecord, ctx);
             await checkThreadRecordExists(params.threadId, ctx);
+            await checkUrlMatchInstanceConfig(params.mentions?.url);
             await checkMentionedUsersExists(params.mentions?.users, ctx);
-            await checkUrlMatchInstanceConfig(params.url);
 
             // TODO check permission on target record / thread later
 
@@ -205,7 +205,7 @@ export default function ({
                                     label: translator.t('notifications.discussion_comment_mention_link_label', {
                                         lng: ctx.lang,
                                     }),
-                                    url: params.url || config.server.publicUrl,
+                                    url: params.mentions.url || config.server.publicUrl,
                                 },
                             ],
                         },
