@@ -37,6 +37,8 @@ export const ItemActionsSchema = z
         z.object({
             where: WhereSchema,
             what: z.literal('record'),
+            targetPanelId: PanelIdSchema.optional(),
+            targetFlapPanelId: FlapPanelIdSchema.optional(),
             icon: FontAwesomeIconSchema,
             label: z.record(LanguageSchema, z.string()),
             onRowClick: z.boolean().optional(),

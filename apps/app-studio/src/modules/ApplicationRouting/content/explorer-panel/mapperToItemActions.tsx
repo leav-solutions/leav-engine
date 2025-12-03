@@ -29,16 +29,23 @@ export const mapperToItemActions = ({
         // @ts-expect-error: Type 'string' is not assignable to type 'IconProp'
         const icon: IconProp = `fa-solid ${action.icon ? action.icon : 'fa-star-of-life'}`;
 
+        const nextLevelPanelPath = action.targetFlapPanelId
+            ? RelativePaths.nextLevelPanel + '/' + RelativePaths.openFlap
+            : RelativePaths.nextLevelPanel;
+
         return {
             icon: <FontAwesomeIcon icon={icon} />,
             label: localizedTranslation(action.label, lang),
             useItemActionOnRowClick: action.onRowClick,
             callback: item =>
                 navigate(
-                    generatePath(RelativePaths.nextLevelPanel, {
+                    generatePath(nextLevelPanelPath, {
                         recordId: item.itemId,
                         where: action.where,
-                        recordPanelId: application.libraries[libraryId].recordPanels[0].id,
+                        recordPanelId: action.targetPanelId ?? application.libraries[libraryId].recordPanels[0].id,
+                        flapRecordId: item.itemId,
+                        flapLibraryId: libraryId,
+                        flapPanelId: action.targetFlapPanelId,
                     }),
                 ),
         };

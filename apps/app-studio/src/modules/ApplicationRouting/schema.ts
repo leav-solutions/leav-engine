@@ -3,6 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as z from 'zod/v4';
 import {FontAwesomeIconSchema, LanguageSchema, LibraryIdSchema, PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {
+    checkExplorerItemActionTargetPanelIdExistence,
+    checkPanelIdsUniqueness,
+    checkWorkspaceIdsUniqueness,
+} from './schemaValidators';
 
 const WorkspaceId = z.string();
 
@@ -26,13 +31,19 @@ const WorkspaceSchema = z
         ]),
     );
 
-export const ApplicationSchema = z.object({
-    workspaces: z.array(WorkspaceSchema),
-    libraries: z.record(
-        LibraryIdSchema,
-        z.object({
-            libraryPanels: z.array(PanelSchema),
-            recordPanels: z.array(PanelSchema), // TODO: refine to have at least one creation and one edition panels
-        }),
-    ),
-});
+export const ApplicationSchema = z
+    .object({
+        workspaces: z.array(WorkspaceSchema),
+        libraries: z.record(
+            LibraryIdSchema,
+            z.object({
+                libraryPanels: z.array(PanelSchema),
+                recordPanels: z.array(PanelSchema), // TODO: refine to have at least one creation and one edition panels (when explorer will use panels instead of modal form)
+            }),
+        ),
+    })
+    .check(ctx => {
+        checkWorkspaceIdsUniqueness(ctx);
+        checkPanelIdsUniqueness(ctx);
+        checkExplorerItemActionTargetPanelIdExistence(ctx);
+    });
