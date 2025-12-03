@@ -22,7 +22,6 @@ import {type IUtils} from './utils/utils';
 import {logger} from '@leav/logger';
 import {setupLogger} from './utils/logger/logger';
 import {type ILogsCollectorInterface} from './interface/logsCollector';
-import ramService from './infra/cache/ramService';
 
 (async function () {
     let conf: IConfig;
@@ -47,6 +46,12 @@ import ramService from './infra/cache/ramService';
             appType: conf.bugsnag.appType,
             releaseStage: conf.bugsnag.releaseStage,
             logger,
+            metadata: {
+                instance: {
+                    id: conf.instanceId,
+                    url: conf.server.publicUrl,
+                },
+            },
         });
     }
 
