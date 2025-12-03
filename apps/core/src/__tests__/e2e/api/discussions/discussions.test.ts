@@ -10,6 +10,8 @@ import {
     DISCUSSION_THREADS_LIBRARY_ID,
 } from '../../../../_constants/discussions';
 import {adminUserId} from '../../../../_constants/users';
+import {getConfig} from '../../../../config';
+import {type IConfig} from '_types/config';
 import {
     e2eGuestUser,
     e2eNonAdminUser,
@@ -28,8 +30,10 @@ describe('Discussion', () => {
     let targetRecordIdWithLabel: string;
     let targetRecordIdWithoutLabel: string;
     const targetRecordLabelWith = 'Record with label';
+    let config: IConfig;
 
     beforeAll(async () => {
+        config = await getConfig();
         await gqlSaveAttribute({
             id: targetLibLabelAttr,
             label: 'Test attribute',
@@ -78,17 +82,36 @@ describe('Discussion', () => {
                 makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "This comment should fail",
-                    url: "http://example.com/record/1",
                     targetRecord: {
                         id: "non_existing_id",
                         libraryId: "${targetLibId}"
                     },
-                    threadId: "${threadId}"
+                    threadId: "${threadId}",
                 }) {
                     id
                 }
             }`),
             ).rejects.toThrow(/Discussion target with ID .* on library .* does not exist/);
+        });
+
+        test('post comment should throw if url does not match instance public url', async () => {
+            await expect(
+                makeGraphQlCall(`mutation {
+                postDiscussionComment(comment: {
+                    message: "This comment should fail",
+                    targetRecord: {
+                        id: "${targetRecordIdWithLabel}",
+                        libraryId: "${targetLibId}"
+                    },
+                    threadId: "${threadId}",
+                    mentions: {
+                        url: "http://no-matching-domain.com/record/1"
+                    }
+                }) {
+                    id
+                }
+            }`),
+            ).rejects.toThrow(/The provided URL does not match the instance URL configuration/);
         });
 
         test('post comment without user mentions', async () => {
@@ -97,7 +120,6 @@ describe('Discussion', () => {
             const resPostComment = await makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "${commentMessage}",
-                    url: "http://example.com/record/1",
                     targetRecord: {
                         id: "${targetRecordIdWithLabel}",
                         libraryId: "${targetLibId}"
@@ -177,20 +199,20 @@ describe('Discussion', () => {
 
         test('post comment with user mentions should send notification to them', async () => {
             const commentMessage = 'This is a test comment with user mentions';
-            const commentUrl = 'http://example.com/record/1';
+            const commentUrl = `${config.server.publicUrl}/record/1`;
             const usersToMention = [e2eGuestUser().userId, e2eNonAdminUser().userId];
 
             const resPostComment = await makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "${commentMessage}",
-                    url: "${commentUrl}",
                     targetRecord: {
                         id: "${targetRecordIdWithoutLabel}",
                         libraryId: "${targetLibId}"
                     },
                     threadId: "${threadId}",
                     mentions: {
-                        users: [${usersToMention.map(u => `"${u}"`).join(', ')}]
+                        users: [${usersToMention.map(u => `"${u}"`).join(', ')}],
+                        url: "${commentUrl}"
                     }
                 }) {
                     id
@@ -216,12 +238,11 @@ describe('Discussion', () => {
 
         test('post comment with user mentions should send notification to them (with record label)', async () => {
             const commentMessage = 'This is a test comment with user mentions, with record label';
-            const commentUrl = 'http://example.com/record/1';
+            const commentUrl = `${config.server.publicUrl}/record/1`;
 
             const resPostComment = await makeGraphQlCall(`mutation {
                 postDiscussionComment(comment: {
                     message: "${commentMessage}",
-                    url: "${commentUrl}",
                     targetRecord: {
                         id: "${targetRecordIdWithLabel}",
                         libraryId: "${targetLibId}"
@@ -229,6 +250,7 @@ describe('Discussion', () => {
                     threadId: "${threadId}",
                     mentions: {
                         users: ["${e2eGuestUser().userId}"]
+                        url: "${commentUrl}"
                     }
                 }) {
                     id

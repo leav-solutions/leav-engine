@@ -13,6 +13,7 @@ import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type IValueDomain} from 'domain/value/valueDomain';
 import {type IUserDomain} from 'domain/user/userDomain';
 import {type i18n} from 'i18next';
+import {type IConfig} from '_types/config';
 import {
     DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID,
     DISCUSSION_COMMENT_THREAD_ATTRIBUTE_ID,
@@ -36,6 +37,7 @@ export interface IDiscussionDomainDeps {
     'core.domain.value': IValueDomain;
     'core.domain.user': IUserDomain;
     translator: i18n;
+    config: IConfig;
 }
 
 export default function ({
@@ -44,6 +46,7 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.user': userDomain,
     translator,
+    config,
 }: IDiscussionDomainDeps): IDiscussionDomain {
     const checkMentionedUsersExists = async (userMentions: string[] | undefined, ctx: IQueryInfos) => {
         if (userMentions?.length > 0) {
@@ -122,6 +125,12 @@ export default function ({
         return resTargetRecord.list[0];
     };
 
+    const checkUrlMatchInstanceConfig = (url: string | undefined) => {
+        if (url && !url.startsWith(config.server.publicUrl)) {
+            throw new Error('The provided URL does not match the instance URL configuration');
+        }
+    };
+
     return {
         async postDiscussionComment({params, ctx}) {
             // Here we may create the thread later instead of creating it in frontend
@@ -131,6 +140,7 @@ export default function ({
 
             const targetRecord = await checkTargetRecordExists(params.targetRecord, ctx);
             await checkThreadRecordExists(params.threadId, ctx);
+            await checkUrlMatchInstanceConfig(params.mentions?.url);
             await checkMentionedUsersExists(params.mentions?.users, ctx);
 
             // TODO check permission on target record / thread later
@@ -195,7 +205,7 @@ export default function ({
                                     label: translator.t('notifications.discussion_comment_mention_link_label', {
                                         lng: ctx.lang,
                                     }),
-                                    url: params.url,
+                                    url: params.mentions.url || config.server.publicUrl,
                                 },
                             ],
                         },

@@ -15,10 +15,10 @@ interface IDeps {
 
 interface IDiscussionCommentInput {
     message: string;
-    url: string;
     targetRecord: IDiscussionTargetRecord;
     threadId?: string;
     mentions?: {
+        url: string;
         users?: string[];
     };
 }
@@ -32,8 +32,9 @@ export default function ({'core.domain.discussion': discussionDomain}: IDeps): I
                         id: ID!,
                     }
 
-                    input DiscussionMentionInput {
+                    input DiscussionMentionsInput {
                         users: [String!],
+                        url: String!,
                     }
                     input DiscussionTargetRecordInput {
                         id: String!,
@@ -42,10 +43,9 @@ export default function ({'core.domain.discussion': discussionDomain}: IDeps): I
 
                     input DiscussionCommentInput {
                         message: String!,
-                        url: String!,
                         targetRecord: DiscussionTargetRecordInput!,
                         threadId: String,
-                        mentions: DiscussionMentionInput,
+                        mentions: DiscussionMentionsInput,
                     }
 
                     extend type Mutation {
