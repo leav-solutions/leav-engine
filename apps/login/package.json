@@ -8,6 +8,7 @@
         "start": "vite",
         "build": "vite build",
         "build:install": "yarn run build --outDir ../core/applications/login --emptyOutDir",
+        "build:watch": "yarn run build:install --watch",
         "test": "jest",
         "test:ci": "jest --maxWorkers=2",
         "test:commit": "jest --maxWorkers=50% --onlyChanged ",
