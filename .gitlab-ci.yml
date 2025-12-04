@@ -459,7 +459,7 @@ apps/sync-scan-unit-tests:
   alias: rabbitmq
 
 .e2e_service_redis: &e2e_service_redis
-  name: redis:latest
+  name: redis:7.4-alpine3.21
   alias: redis
 
 .e2e_service_mailpit: &e2e_service_mailpit

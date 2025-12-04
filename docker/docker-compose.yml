@@ -2,7 +2,7 @@
 x-node-image: &node_image node:24-alpine3.21
 x-message-broker-image: &message_broker_image "rabbitmq:3.13-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.11.31"
-x-redis-image: &redis_image "redis"
+x-redis-image: &redis_image "redis:7.4-alpine3.21"
 x-arango-image: &arango_image "arangodb:3.12"
 
 x-dir-core: &dir-core /app/apps/core
@@ -645,7 +645,7 @@ services:
   redis-commander:
     profiles: ["debug"]
     hostname: redis-commander
-    image: rediscommander/redis-commander:latest
+    image: ghcr.io/joeferner/redis-commander:0.9.1
     restart: always
     environment:
       - REDIS_HOSTS=cache:redis:6379:0,session:redis:6379:1
