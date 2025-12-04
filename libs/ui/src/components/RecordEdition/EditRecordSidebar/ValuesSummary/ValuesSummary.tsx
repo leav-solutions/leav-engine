@@ -24,7 +24,7 @@ interface IValuesSummaryProps {
     record: IRecordIdentityWhoAmI | null;
     attributeId: string;
     globalValues?: Array<RecordFormElementsValueStandardValue['payload']>;
-    calculatedValue?: RecordFormElementsValueStandardValue['payload'];
+    calculatedValues?: Array<RecordFormElementsValueStandardValue['payload']>;
 }
 
 const calculatedValueKey = '0';
@@ -43,7 +43,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
     record,
     attributeId,
     globalValues = [],
-    calculatedValue,
+    calculatedValues = [],
 }) => {
     const {t} = useSharedTranslation();
 
@@ -70,7 +70,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
     };
 
     const stripedGlobalValues = globalValues.map(stringifyValue);
-    const stripedCalculatedValue = stringifyValue(calculatedValue);
+    const stripedCalculatedValues = calculatedValues.map(stringifyValue);
 
     return (
         <StyledDivContentWrapper>
@@ -84,7 +84,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                 <KitTree
                                     defaultExpandAll
                                     selectedKeys={
-                                        calculatedValue && globalValues.length === 0
+                                        calculatedValues.length > 0 && globalValues.length === 0
                                             ? [calculatedValueKey]
                                             : [globalValueKey]
                                     }
@@ -102,20 +102,21 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                     <span>
                                                         <FaSquareRootAlt /> {t('record_summary.calculated_value')}
                                                     </span>
-                                                    <KitBadge
-                                                        count={stripedCalculatedValue ? 1 : undefined}
-                                                        color="primary"
-                                                    />
+                                                    <KitBadge count={stripedCalculatedValues.length} color="primary" />
                                                 </div>
                                             ),
-                                            children: [
-                                                {
-                                                    key: `${calculatedValueKey}-0`,
-                                                    title: stripedCalculatedValue ?? (
-                                                        <i>{t('record_summary.no_value')}</i>
-                                                    ),
-                                                },
-                                            ],
+                                            children:
+                                                stripedCalculatedValues.length > 0
+                                                    ? stripedCalculatedValues.map((calculatedValue, index) => ({
+                                                          key: `${calculatedValueKey}-${index}`,
+                                                          title: calculatedValue,
+                                                      }))
+                                                    : [
+                                                          {
+                                                              key: `${calculatedValueKey}-${0}`,
+                                                              title: <i>{t('record_summary.no_value')}</i>,
+                                                          },
+                                                      ],
                                         },
                                         {
                                             key: globalValueKey,

@@ -21,13 +21,13 @@ const calculatedValue = 'calculated value';
 
 describe('ValuesSummary', () => {
     it('Should display one tab: values version', async () => {
-        render(<ValuesSummary record={record} attributeId={attributeId} globalValues={[]} calculatedValue={null} />);
+        render(<ValuesSummary record={record} attributeId={attributeId} globalValues={[]} calculatedValues={[]} />);
 
         expect(screen.getByText('record_summary.values_version')).toBeVisible();
     });
 
     it('Should display no value without values', async () => {
-        render(<ValuesSummary record={null} attributeId={attributeId} globalValues={[]} calculatedValue={null} />);
+        render(<ValuesSummary record={null} attributeId={attributeId} globalValues={[]} calculatedValues={[]} />);
 
         expect(screen.getAllByText('record_summary.no_value')).toHaveLength(2);
     });
@@ -38,7 +38,7 @@ describe('ValuesSummary', () => {
                 record={record}
                 attributeId={attributeId}
                 globalValues={multipleValues}
-                calculatedValue={null}
+                calculatedValues={[]}
             />,
         );
 
@@ -53,12 +53,27 @@ describe('ValuesSummary', () => {
                 record={record}
                 attributeId={attributeId}
                 globalValues={[]}
-                calculatedValue={calculatedValue}
+                calculatedValues={[calculatedValue]}
             />,
         );
 
         expect(screen.getByText(calculatedValue)).toBeVisible();
         expect(screen.getByTitle('1')).toBeVisible();
+    });
+
+    it('Should display multiple calculated values with badge', async () => {
+        render(
+            <ValuesSummary
+                record={record}
+                attributeId={attributeId}
+                globalValues={[]}
+                calculatedValues={['calculated1', 'calculated2']}
+            />,
+        );
+
+        expect(screen.getByText('calculated1')).toBeVisible();
+        expect(screen.getByText('calculated2')).toBeVisible();
+        expect(screen.getByTitle('2')).toBeVisible();
     });
 
     it('Should strip global and calculated values', async () => {
@@ -67,7 +82,7 @@ describe('ValuesSummary', () => {
                 record={record}
                 attributeId={attributeId}
                 globalValues={['<div>12</div>']}
-                calculatedValue="<p><span>23</span></p>"
+                calculatedValues={['<p><span>23</span></p>']}
             />,
         );
 
@@ -81,7 +96,7 @@ describe('ValuesSummary', () => {
                 record={record}
                 attributeId={attributeId}
                 globalValues={[{from: 1, to: 2}]}
-                calculatedValue={{from: 3, to: 4}}
+                calculatedValues={[{from: 3, to: 4}]}
             />,
         );
 

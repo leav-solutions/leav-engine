@@ -9,35 +9,39 @@ import userEvent from '@testing-library/user-event';
 import {type CalculatedFlags, type InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: null,
+    isCalculatedValues: false,
+    isCalculatedOverrideValues: false,
+    isCalculatedNotOverrideValues: false,
+    calculatedValues: null,
 };
 
 const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: true,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: {
-        raw_payload: true,
-    },
+    isCalculatedValues: true,
+    isCalculatedOverrideValues: true,
+    isCalculatedNotOverrideValues: false,
+    calculatedValues: [
+        {
+            raw_payload: true,
+        },
+    ],
 };
 
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
-    isInheritedValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: null,
+    isInheritedValues: false,
+    isInheritedOverrideValues: false,
+    isInheritedNotOverrideValues: false,
+    inheritedValues: null,
 };
 
 const inheritedFagsWithInheritedValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {
-        raw_payload: true,
-    },
+    isInheritedValues: true,
+    isInheritedOverrideValues: true,
+    isInheritedNotOverrideValues: false,
+    inheritedValues: [
+        {
+            raw_payload: true,
+        },
+    ],
 };
 
 const notRequired = false;

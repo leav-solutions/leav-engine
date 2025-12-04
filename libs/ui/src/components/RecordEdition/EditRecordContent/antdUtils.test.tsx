@@ -172,6 +172,102 @@ describe('getAntdFormInitialValues', () => {
                 [standardAttributeId]: [''],
             });
         });
+
+        test('Should initialize antd form with calculated values when no user input values', async () => {
+            const standardAttributeId = 'standardAttributeId';
+            const standardElement = {
+                attribute: {
+                    type: AttributeType.advanced,
+                    format: AttributeFormat.text,
+                    multiple_values: true,
+                    id: standardAttributeId,
+                },
+                values: [
+                    {raw_payload: 'calculated1', isCalculated: true},
+                    {raw_payload: 'calculated2', isCalculated: true},
+                ],
+            };
+            const recordForm = {elements: [standardElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [standardAttributeId]: ['calculated1', 'calculated2'],
+            });
+        });
+
+        test('Should initialize antd form with inherited values when no user input or calculated values', async () => {
+            const standardAttributeId = 'standardAttributeId';
+            const standardElement = {
+                attribute: {
+                    type: AttributeType.advanced,
+                    format: AttributeFormat.text,
+                    multiple_values: true,
+                    id: standardAttributeId,
+                },
+                values: [
+                    {raw_payload: 'inherited1', isInherited: true},
+                    {raw_payload: 'inherited2', isInherited: true},
+                ],
+            };
+            const recordForm = {elements: [standardElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [standardAttributeId]: ['inherited1', 'inherited2'],
+            });
+        });
+
+        test('Should prioritize user input over calculated values for multiple values', async () => {
+            const standardAttributeId = 'standardAttributeId';
+            const standardElement = {
+                attribute: {
+                    type: AttributeType.advanced,
+                    format: AttributeFormat.text,
+                    multiple_values: true,
+                    id: standardAttributeId,
+                },
+                values: [
+                    {raw_payload: 'userInput1', id_value: '1'},
+                    {raw_payload: 'userInput2', id_value: '2'},
+                    {raw_payload: 'calculated1', isCalculated: true},
+                    {raw_payload: 'calculated2', isCalculated: true},
+                ],
+            };
+            const recordForm = {elements: [standardElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [standardAttributeId]: ['userInput1', 'userInput2'],
+            });
+        });
+
+        test('Should prioritize calculated values over inherited values for multiple values', async () => {
+            const standardAttributeId = 'standardAttributeId';
+            const standardElement = {
+                attribute: {
+                    type: AttributeType.advanced,
+                    format: AttributeFormat.text,
+                    multiple_values: true,
+                    id: standardAttributeId,
+                },
+                values: [
+                    {raw_payload: 'calculated1', isCalculated: true},
+                    {raw_payload: 'calculated2', isCalculated: true},
+                    {raw_payload: 'inherited1', isInherited: true},
+                    {raw_payload: 'inherited2', isInherited: true},
+                ],
+            };
+            const recordForm = {elements: [standardElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [standardAttributeId]: ['calculated1', 'calculated2'],
+            });
+        });
     });
 
     describe('AttributeFormat.text', () => {

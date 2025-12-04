@@ -17,7 +17,7 @@ import {TypeGuards} from '_ui/components/LibraryItemsList/LibraryItemsListTable/
 export interface IRecordPropertyWithAttribute {
     attribute: RecordFormAttributeFragment;
     globalValues?: Array<RecordFormElementsValueStandardValue['payload']>;
-    calculatedValue?: RecordFormElementsValueStandardValue['payload'];
+    calculatedValues?: Array<RecordFormElementsValueStandardValue['payload']>;
 }
 
 export const EditRecordSidebarContentTypeMap = {
@@ -192,27 +192,26 @@ const editRecordReducer = (
 
                             return value?.payload;
                         }),
-                    calculatedValue: (() => {
-                        const calculatedOrInheritedValue = action.values?.filter(
-                            value => value.isCalculated || value.isInherited,
-                        )?.[0];
+                    calculatedValues:
+                        action.values
+                            ?.filter(value => value.isCalculated || value.isInherited)
+                            .map(calculatedOrInheritedValue => {
+                                if (TypeGuards.isRecordFormElementsValuesLinkValue(calculatedOrInheritedValue)) {
+                                    return (
+                                        calculatedOrInheritedValue.linkValue.whoAmI.label ??
+                                        calculatedOrInheritedValue.linkValue.whoAmI.id
+                                    );
+                                }
 
-                        if (TypeGuards.isRecordFormElementsValuesLinkValue(calculatedOrInheritedValue)) {
-                            return (
-                                calculatedOrInheritedValue.linkValue.whoAmI.label ??
-                                calculatedOrInheritedValue.linkValue.whoAmI.id
-                            );
-                        }
+                                if (TypeGuards.isRecordFormElementsValuesTreeValue(calculatedOrInheritedValue)) {
+                                    return (
+                                        calculatedOrInheritedValue.treeValue.record.whoAmI.label ??
+                                        calculatedOrInheritedValue.treeValue.record.whoAmI.id
+                                    );
+                                }
 
-                        if (TypeGuards.isRecordFormElementsValuesTreeValue(calculatedOrInheritedValue)) {
-                            return (
-                                calculatedOrInheritedValue.treeValue.record.whoAmI.label ??
-                                calculatedOrInheritedValue.treeValue.record.whoAmI.id
-                            );
-                        }
-
-                        return calculatedOrInheritedValue?.payload;
-                    })(),
+                                return calculatedOrInheritedValue?.payload;
+                            }) ?? [],
                 },
                 sidebarContent: newSidebarContent,
             };

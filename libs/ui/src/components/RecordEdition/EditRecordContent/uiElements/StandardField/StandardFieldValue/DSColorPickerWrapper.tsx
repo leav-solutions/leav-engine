@@ -107,19 +107,20 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         onChange(color, hex);
     };
 
+    // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _handleOnClear = async () => {
         setHasChanged(false);
 
-        if (inheritedFlags.isInheritedValue) {
+        if (inheritedFlags.isInheritedValues) {
             setKey(prevKey => prevKey + 1);
 
-            const inheritedColor = new AggregationColor(inheritedFlags.inheritedValue.raw_payload);
-            onChange(inheritedColor, inheritedFlags.inheritedValue.raw_payload);
-        } else if (calculatedFlags.isCalculatedValue) {
+            const inheritedColor = new AggregationColor(inheritedFlags.inheritedValues[0].raw_payload);
+            onChange(inheritedColor, inheritedFlags.inheritedValues[0].raw_payload);
+        } else if (calculatedFlags.isCalculatedValues) {
             setKey(prevKey => prevKey + 1);
 
-            const calculatedColor = new AggregationColor(calculatedFlags.calculatedValue.raw_payload);
-            onChange(calculatedColor, calculatedFlags.calculatedValue.raw_payload);
+            const calculatedColor = new AggregationColor(calculatedFlags.calculatedValues[0].raw_payload);
+            onChange(calculatedColor, calculatedFlags.calculatedValues[0].raw_payload);
         } else {
             onChange(undefined, undefined);
         }
@@ -151,8 +152,8 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             allowClear={
                 !!value &&
                 !attribute.multiple_values &&
-                !inheritedFlags.isInheritedNotOverrideValue &&
-                !calculatedFlags.isCalculatedNotOverrideValue
+                !inheritedFlags.isInheritedNotOverrideValues &&
+                !calculatedFlags.isCalculatedNotOverrideValues
             }
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}

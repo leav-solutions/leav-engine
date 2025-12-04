@@ -108,11 +108,23 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         }
 
         if (isRecordFormElementsMultipleValues(attribute)) {
-            const valuesWithoutCalculatedOrInherited = values.filter(val => val.id_value);
+            const userInputValues = values.filter(val => val.id_value);
+            const calculatedValues = values.filter(val => val.isCalculated);
+            const inheritedValues = values.filter(val => val.isInherited);
+
+            const effectiveValues =
+                userInputValues.length > 0
+                    ? userInputValues
+                    : calculatedValues.length > 0
+                      ? calculatedValues
+                      : inheritedValues.length > 0
+                        ? inheritedValues
+                        : [];
+
             acc[attribute.id] =
-                valuesWithoutCalculatedOrInherited.length === 0
+                effectiveValues.length === 0
                     ? [getEmptyInitialValue(attribute)]
-                    : valuesWithoutCalculatedOrInherited
+                    : effectiveValues
                           .sort((a, b) => Number(a.id_value) - Number(b.id_value))
                           .map(val => formatStandardInitialValue(val, attribute));
             return acc;

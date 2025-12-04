@@ -44,7 +44,7 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
                         record={state.record}
                         attributeId={state.activeAttribute.attribute.id}
                         globalValues={state.activeAttribute.globalValues}
-                        calculatedValue={state.activeAttribute.calculatedValue}
+                        calculatedValues={state.activeAttribute.calculatedValues}
                     />
                 </StyledDivContentWrapper>
             );

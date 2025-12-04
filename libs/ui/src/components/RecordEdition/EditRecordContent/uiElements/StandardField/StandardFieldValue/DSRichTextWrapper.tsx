@@ -48,12 +48,13 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     const isErrors = errors.length > 0;
     const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
+    // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (inheritedFlags.isInheritedValue) {
-            onChange(inheritedFlags.inheritedValue.raw_payload);
-        } else if (calculatedFlags.isCalculatedValue) {
-            onChange(calculatedFlags.calculatedValue.raw_payload);
+        if (inheritedFlags.isInheritedValues) {
+            onChange(inheritedFlags.inheritedValues[0].raw_payload);
+        } else if (calculatedFlags.isCalculatedValues) {
+            onChange(calculatedFlags.calculatedValues[0].raw_payload);
         }
         await handleSubmit(null, attribute.id);
     };
@@ -75,7 +76,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             return;
         }
 
-        if (valueToSubmit === null && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
+        if (valueToSubmit === null && (inheritedFlags.isInheritedValues || calculatedFlags.isCalculatedValues)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }

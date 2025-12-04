@@ -49,7 +49,7 @@ describe('editRecordReducer', () => {
         expect(newState.activeAttribute).toEqual({
             ...mockRecordPropertyWithAttribute,
             globalValues: ['simple'],
-            calculatedValue: 'calculated',
+            calculatedValues: ['calculated'],
         });
         expect(newState.sidebarContent).toBe('valueDetails');
 

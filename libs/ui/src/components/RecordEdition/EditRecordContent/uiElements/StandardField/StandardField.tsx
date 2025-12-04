@@ -157,8 +157,8 @@ const StandardField: FunctionComponent<
         //TODO fix type
         values: backendWithoutCalculatedOrInheritedValues as unknown as ValueDetailsFragment[],
         format: attribute.format,
-        calculatedValue: calculatedFlags.calculatedValue,
-        inheritedValue: inheritedFlags.inheritedValue,
+        calculatedValues: calculatedFlags.calculatedValues,
+        inheritedValues: inheritedFlags.inheritedValues,
     });
 
     const _handleSubmit =
@@ -318,8 +318,13 @@ const StandardField: FunctionComponent<
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
 
+    // TODO: Temporary const that should be removed (and all it's usages) when we will have a proper way to override multiple values
+    const tmpCantOverrideValues =
+        attribute.multiple_values &&
+        (calculatedFlags.calculatedValues?.length > 1 || inheritedFlags.inheritedValues?.length > 1);
+
     const label = localizedTranslation(element.settings.label, lang);
-    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
+    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly || tmpCantOverrideValues;
     const canDeleteAllValues = !isReadOnly && !attribute.required && hasValue && backendValues.length > 1;
     const canDeleteSingleValue =
         !isReadOnly &&

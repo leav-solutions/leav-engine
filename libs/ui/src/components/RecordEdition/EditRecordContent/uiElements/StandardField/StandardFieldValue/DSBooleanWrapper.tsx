@@ -39,11 +39,12 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
 
     const {t} = useSharedTranslation();
 
+    // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _resetToInheritedOrCalculatedValue = () => {
-        if (inheritedFlags.isInheritedValue) {
-            onChange(inheritedFlags.inheritedValue.raw_payload, undefined);
-        } else if (calculatedFlags.isCalculatedValue) {
-            onChange(calculatedFlags.calculatedValue.raw_payload, undefined);
+        if (inheritedFlags.isInheritedValues) {
+            onChange(inheritedFlags.inheritedValues[0].raw_payload, undefined);
+        } else if (calculatedFlags.isCalculatedValues) {
+            onChange(calculatedFlags.calculatedValues[0].raw_payload, undefined);
         }
         handleSubmit(null, attribute.id);
     };
@@ -64,7 +65,7 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
                     {t(_getBooleanValueAsStringForTranslation(value))}
                 </KitTypographyTextStyled>
             </label>
-            {(inheritedFlags.isInheritedOverrideValue || calculatedFlags.isCalculatedOverrideValue) && (
+            {(inheritedFlags.isInheritedOverrideValues || calculatedFlags.isCalculatedOverrideValues) && (
                 <span role="button" onClick={_resetToInheritedOrCalculatedValue}>
                     <FontAwesomeIconStyled aria-label="clear" icon={faCircleXmark} />
                 </span>

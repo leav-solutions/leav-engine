@@ -56,24 +56,25 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const [usePresentationLayout, setUsePresentationLayout] = useState(false);
     useEffect(() => setUsePresentationLayout(!isFocused && !isErrors), [isFocused, isErrors]);
 
+    // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _resetToInheritedOrCalculatedValue = async () => {
         hasChangedRef.current = false;
 
-        if (inheritedFlags.isInheritedValue) {
+        if (inheritedFlags.isInheritedValues) {
             onChange(
                 [
-                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.from)),
-                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.to)),
+                    dayjs.unix(Number(inheritedFlags.inheritedValues[0].raw_payload.from)),
+                    dayjs.unix(Number(inheritedFlags.inheritedValues[0].raw_payload.to)),
                 ],
-                inheritedFlags.inheritedValue.raw_payload,
+                inheritedFlags.inheritedValues[0].raw_payload,
             );
-        } else if (calculatedFlags.isCalculatedValue) {
+        } else if (calculatedFlags.isCalculatedValues) {
             onChange(
                 [
-                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.from)),
-                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.to)),
+                    dayjs.unix(Number(calculatedFlags.calculatedValues[0].raw_payload.from)),
+                    dayjs.unix(Number(calculatedFlags.calculatedValues[0].raw_payload.to)),
                 ],
-                calculatedFlags.calculatedValue.raw_payload,
+                calculatedFlags.calculatedValues[0].raw_payload,
             );
         }
         await handleSubmit(null, attribute.id);
@@ -85,7 +86,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     ) => void = async (rangePickerDates, ...antOnChangeParams) => {
         hasChangedRef.current = true;
 
-        if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && rangePickerDates === null) {
+        if ((inheritedFlags.isInheritedValues || calculatedFlags.isCalculatedValues) && rangePickerDates === null) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
@@ -135,8 +136,8 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             allowClear={
                 !!value &&
                 !attribute.multiple_values &&
-                !inheritedFlags.isInheritedNotOverrideValue &&
-                !calculatedFlags.isCalculatedNotOverrideValue
+                !inheritedFlags.isInheritedNotOverrideValues &&
+                !calculatedFlags.isCalculatedNotOverrideValues
             }
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
