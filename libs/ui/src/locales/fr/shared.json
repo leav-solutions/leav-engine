@@ -763,7 +763,7 @@
             "export_description_one": "Votre demande d’export de {{total, number}} élément a bien été prise en compte. Vous recevrez une notification dès que le fichier sera prêt.",
             "export_description_other": "Votre demande d’export de {{total, number}} éléments a bien été prise en compte. Vous recevrez une notification dès que le fichier sera prêt.",
             "export_error_message": "Erreur d’export",
-            "export_error_description_one": "Une erreur s'est produite lors de l'export de l'enregistrements sélectionné. Veuillez contacter votre administrateur.",
+            "export_error_description_one": "Une erreur s'est produite lors de l'export de l'enregistrement sélectionné. Veuillez contacter votre administrateur.",
             "export_error_description_other": "Une erreur s'est produite lors de l'export des enregistrements sélectionnés. Veuillez contacter votre administrateur.",
             "export_config_error_message": "Erreur de profil d’export",
             "export_config_error_description": "Aucun profil d’export n’est disponible pour cette bibliothèque. Veuillez contacter votre administrateur.",

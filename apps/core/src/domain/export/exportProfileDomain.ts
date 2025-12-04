@@ -4,7 +4,6 @@
 import {type ILibraryDomain} from '../library/libraryDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import Joi from 'joi';
-import ValidationError from '../../errors/ValidationError';
 import {ErrorTypes} from '../../_types/errors';
 import LeavError from '../../errors/LeavError';
 
@@ -56,9 +55,10 @@ export default function ({'core.domain.library': libraryDomain}: IExportProfileD
 
         const isValid = exportProfileConfigSchema.validate(exportProfile);
         if (isValid.error) {
-            throw new ValidationError({
-                msg: `Export profile config is not valid: ${isValid.error.message}`,
-            });
+            throw new LeavError(
+                ErrorTypes.CUSTOM_CONFIG_ERROR,
+                `Export profile config is not valid: ${isValid.error.message}`,
+            );
         }
         return true;
     };
@@ -66,9 +66,7 @@ export default function ({'core.domain.library': libraryDomain}: IExportProfileD
     return {
         async getColumnsFromProfileConfig(profile, library, ctx) {
             if (!library) {
-                throw new ValidationError({
-                    msg: 'Export error: No library provided',
-                });
+                throw new LeavError(ErrorTypes.CUSTOM_CONFIG_ERROR, 'Export error: No library provided');
             }
 
             const libraryProperties = await libraryDomain.getLibraryProperties(library, ctx);

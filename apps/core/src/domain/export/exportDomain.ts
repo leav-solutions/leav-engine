@@ -27,7 +27,6 @@ import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
 import {type INotificationDomain} from 'domain/notification/notificationDomain';
 import {type IExportProfileDomain} from './exportProfileDomain';
-import ValidationError from '../../errors/ValidationError';
 
 export interface IExportParams {
     library: string;
@@ -248,9 +247,10 @@ export default function ({
         const columnLabels = columns?.map(c => c.columnLabel);
 
         if (!attributes || attributes.length === 0) {
-            throw new ValidationError({
-                msg: `No attributes provided for exportExcel function for library ${library}`,
-            });
+            throw new LeavError(
+                ErrorTypes.CUSTOM_CONFIG_ERROR,
+                `No attributes provided for exportExcel function for library ${library}`,
+            );
         }
 
         return {attributes, columnLabels};
