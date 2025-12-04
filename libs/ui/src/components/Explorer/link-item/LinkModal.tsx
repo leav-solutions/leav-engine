@@ -123,6 +123,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
             hideSelectAllAction={(isReplacement || !isMultivalue) && view.entrypoint.type === 'link'}
             valuesList={valuesList}
             allowFreeEntry={allowFreeEntry}
+            isMultivalue={isMultivalue}
             onClose={onClose}
         />
     );

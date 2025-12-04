@@ -59,12 +59,11 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     const {t} = useSharedTranslation();
 
     const [selectedNodes, setSelectedNodes] = useState<ITreeNodeWithRecord[]>([]);
-    const [isMonoValueToReplace, setIsMonoValueToReplace] = useState(false);
 
     const _handleOnSelect: ComponentProps<typeof SelectTreeNode>['onSelect'] = (node, selected) => {
         if (!attribute.multiple_values) {
-            setSelectedNodes(selected ? [node] : []);
-            setIsMonoValueToReplace(true);
+            onConfirm(selected ? [node] : []);
+            onClose();
             return;
         }
 
@@ -101,9 +100,11 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
                     >
                         {t('global.close')}
                     </KitButton>
-                    <KitButton type="primary" icon={<FaCheck />} onClick={_handleOnConfirm}>
-                        {t('global.confirm')}
-                    </KitButton>
+                    {attribute.multiple_values && (
+                        <KitButton type="primary" icon={<FaCheck />} onClick={_handleOnConfirm}>
+                            {t('global.confirm')}
+                        </KitButton>
+                    )}
                 </>
             }
         >
@@ -112,7 +113,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
                 multiple // We want to be able to set as selected in the tree components, the nodes that are already selected and the disabled nodes
                 selectedNodes={[
                     ...selectedNodes.map(node => node.id),
-                    ...(isMonoValueToReplace ? [] : backendValues.map(value => value.treeValue.id)),
+                    ...backendValues.map(value => value.treeValue.id),
                 ]}
                 childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
                 disabledNodes={backendValues.map(value => value.treeValue.id).concat(attribute.linked_tree.id)}

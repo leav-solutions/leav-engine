@@ -88,6 +88,7 @@ export interface IExplorerProps {
             edit?: IItemAction['callback'];
             replaceLink?: (replaceValuesResult: ISubmitMultipleResult) => void;
             remove?: IItemAction['callback'];
+            select?: IItemAction['callback'];
         };
         primary?: {
             create?: ({
@@ -293,7 +294,9 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {setSelectedKeys, selectAllButton} = useMassActions({
             isEnabled:
-                totalCount > 0 && !_isSelectionDisable && (isNotEmpty(defaultMassActions) || isNotEmpty(massActions)),
+                totalCount > 0 &&
+                !_isSelectionDisable &&
+                (isNotEmpty(defaultMassActions) || isNotEmpty(massActions) || !!defaultCallbacks?.item?.select),
             store: {view, dispatch: viewSettingsDispatch},
             filtersStore: filtersData,
             totalCount,
@@ -393,6 +396,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                             disabled: isMassSelectionAll || action.disabled,
                                         }))}
                                     selection={{
+                                        onSelectItem: _isSelectionDisable ? null : defaultCallbacks?.item?.select,
                                         onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
                                         isMassSelectionAll,
                                         selectedKeys: isMassSelectionAll

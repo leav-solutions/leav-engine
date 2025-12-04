@@ -90,6 +90,7 @@ interface IDataViewProps {
         setNewPageSize: (page: number, pageSize: number) => void;
     };
     selection: {
+        onSelectItem?: null | ((selectedItem: IItemData) => void);
         onSelectionChange: null | ((keys: Key[]) => void);
         isMassSelectionAll: boolean;
         selectedKeys: Key[];
@@ -120,7 +121,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll, mode},
+        selection: {onSelectItem, onSelectionChange, selectedKeys, isMassSelectionAll, mode},
         hideTableHeader = false,
     }) => {
         const {t} = useSharedTranslation();
@@ -148,7 +149,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                 ),
         }));
 
-        //TODO: test row click
         const itemActionToUseOnRowClick = itemActions.find(itemAction => itemAction.useItemActionOnRowClick);
 
         const _rowSelection: ComponentProps<typeof KitTable>['rowSelection'] =
@@ -160,7 +160,16 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                       selectedRowKeys: selectedKeys,
                       preserveSelectedRowKeys: true,
                       // TODO: review types from antd directly
-                      onChange: (selectedRowKeys: Key[]) => onSelectionChange(selectedRowKeys),
+                      onChange: (selectedRowKeys: Key[]) => {
+                          const lastSelectedKey = selectedRowKeys[selectedRowKeys.length - 1];
+                          const lastSelectedItem = dataGroupedFilteredSorted.find(data => data.key === lastSelectedKey);
+
+                          onSelectionChange(selectedRowKeys);
+
+                          if (lastSelectedItem) {
+                              onSelectItem?.(lastSelectedItem);
+                          }
+                      },
                       getCheckboxProps: isMassSelectionAll
                           ? () => ({
                                 disabled: true,

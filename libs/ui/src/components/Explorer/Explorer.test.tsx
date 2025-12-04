@@ -1034,6 +1034,26 @@ describe('Explorer', () => {
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeInTheDocument();
         });
 
+        test('should display the selection checkboxes when defaultCallbacks.item.select is provided', () => {
+            const onSelect = jest.fn();
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        defaultMassActions={[]}
+                        massActions={[]}
+                        defaultCallbacks={{item: {select: onSelect}}}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            const tableRows = screen.getAllByRole('row');
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+            const [firstRecordRow] = tableRows;
+            expect(within(firstRecordRow).getByRole('checkbox')).toBeInTheDocument();
+        });
+
         test('should not display the selection checkboxes and button', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1364,6 +1384,33 @@ describe('Explorer', () => {
         );
     });
 
+    test('Should call defaultCallbacks.item.select when a checkbox is clicked', async () => {
+        const onSelect = jest.fn();
+
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    massActions={[]}
+                    defaultCallbacks={{item: {select: onSelect}}}
+                />
+            </Explorer.EditSettingsContextProvider>,
+        );
+
+        const tableRows = screen.getAllByRole('row');
+        const [firstRecordRow] = tableRows;
+        const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+
+        await user.click(within(firstSelectRowCell).getByRole('checkbox'));
+
+        expect(onSelect).toHaveBeenCalledWith(
+            expect.objectContaining({
+                itemId: mockRecords[0].id,
+            }),
+        );
+    });
+
     test('Should call the useGetRecordUpdatesSubscription', async () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1481,6 +1528,43 @@ describe('Explorer', () => {
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.click(firstRecordRow);
             expect(customAction.callback).toHaveBeenCalled();
+        });
+
+        test('Should not call the action on row click if user click on more actions button', async () => {
+            const customActions = [
+                {
+                    label: 'Test 1',
+                    icon: <FaBeer />,
+                    callback: jest.fn(),
+                    useItemActionOnRowClick: true,
+                },
+                {
+                    label: 'Test 2',
+                    icon: <FaAccessibleIcon />,
+                    callback: jest.fn(),
+                },
+                {
+                    label: 'Test 3',
+                    icon: <FaXbox />,
+                    callback: jest.fn(),
+                },
+                {
+                    label: 'Test 4',
+                    icon: <FaJs />,
+                    callback: jest.fn(),
+                },
+            ] satisfies IItemAction[];
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
+
+            expect(customActions[0].callback).not.toHaveBeenCalled();
         });
     });
 
