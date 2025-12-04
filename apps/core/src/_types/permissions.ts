@@ -61,7 +61,6 @@ export enum ApplicationPermissionsActions {
 }
 
 export enum AdminPermissionsActions {
-    ACCESS_LIBRARIES = 'admin_access_libraries',
     CREATE_LIBRARY = 'admin_create_library',
     EDIT_LIBRARY = 'admin_edit_library',
     DELETE_LIBRARY = 'admin_delete_library',
