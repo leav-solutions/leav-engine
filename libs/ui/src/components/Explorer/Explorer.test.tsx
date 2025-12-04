@@ -1034,6 +1034,26 @@ describe('Explorer', () => {
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeInTheDocument();
         });
 
+        test('should display the selection checkboxes when defaultCallbacks.item.select is provided', () => {
+            const onSelect = jest.fn();
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        defaultMassActions={[]}
+                        massActions={[]}
+                        defaultCallbacks={{item: {select: onSelect}}}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            const tableRows = screen.getAllByRole('row');
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+            const [firstRecordRow] = tableRows;
+            expect(within(firstRecordRow).getByRole('checkbox')).toBeInTheDocument();
+        });
+
         test('should not display the selection checkboxes and button', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1360,6 +1380,33 @@ describe('Explorer', () => {
         expect(onRemove).toHaveBeenCalledWith(
             expect.objectContaining({
                 itemId: mockRecords[1].id,
+            }),
+        );
+    });
+
+    test('Should call defaultCallbacks.item.select when a checkbox is clicked', async () => {
+        const onSelect = jest.fn();
+
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    massActions={[]}
+                    defaultCallbacks={{item: {select: onSelect}}}
+                />
+            </Explorer.EditSettingsContextProvider>,
+        );
+
+        const tableRows = screen.getAllByRole('row');
+        const [firstRecordRow] = tableRows;
+        const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+
+        await user.click(within(firstSelectRowCell).getByRole('checkbox'));
+
+        expect(onSelect).toHaveBeenCalledWith(
+            expect.objectContaining({
+                itemId: mockRecords[0].id,
             }),
         );
     });

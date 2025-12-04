@@ -13,6 +13,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type ExplorerSelectionIdsQuery,
     type JoinLibraryContextFragment,
+    RecordFilterCondition,
     useExplorerSelectionIdsLazyQuery,
 } from '_ui/_gqlTypes';
 import {Explorer} from '_ui/components/Explorer';
@@ -67,6 +68,7 @@ interface ISelectRecordForLinkModalProps {
     joinLibraryContext?: JoinLibraryContextFragment;
     selectionMode: ComponentProps<typeof Explorer>['selectionMode'];
     hideSelectAllAction: ComponentProps<typeof Explorer>['hideSelectAllAction'];
+    isMultivalue: boolean;
     onSelectionCompleted: (data: ExplorerSelectionIdsQuery) => void;
     onClose: () => void;
 }
@@ -81,6 +83,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
     selectionMode,
     joinLibraryContext,
     hideSelectAllAction,
+    isMultivalue,
     onSelectionCompleted,
     onClose,
 }) => {
@@ -133,6 +136,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                     panelElement={() => explorerContainerRef.current ?? document.body}
                 >
                     <Explorer
+                        title="SelectRecordForLinkModal"
                         entrypoint={{
                             type: 'library',
                             libraryId: childLibraryId,
@@ -142,23 +146,49 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         showCreateOnNoResultOnly
                         selectionMode={selectionMode}
                         hideSelectAllAction={hideSelectAllAction}
-                        massActions={[
-                            {
-                                label: replacementMode
-                                    ? t('explorer.massAction.replace-link')
-                                    : t('explorer.massAction.add-link'),
-                                deselectAll: true,
-                                icon: replacementMode ? <FaExchangeAlt /> : <FaPlus />,
-                                callback: async massSelectionFilter => {
-                                    await getRecordIdsFromFilters({
-                                        variables: {
-                                            libraryId: childLibraryId,
-                                            filters: massSelectionFilter,
-                                        },
-                                    });
-                                },
-                            },
-                        ]}
+                        massActions={
+                            isMultivalue
+                                ? [
+                                      {
+                                          label: replacementMode
+                                              ? t('explorer.massAction.replace-link')
+                                              : t('explorer.massAction.add-link'),
+                                          deselectAll: true,
+                                          icon: replacementMode ? <FaExchangeAlt /> : <FaPlus />,
+                                          callback: async massSelectionFilter => {
+                                              await getRecordIdsFromFilters({
+                                                  variables: {
+                                                      libraryId: childLibraryId,
+                                                      filters: massSelectionFilter,
+                                                  },
+                                              });
+                                          },
+                                      },
+                                  ]
+                                : []
+                        }
+                        defaultCallbacks={
+                            !isMultivalue
+                                ? {
+                                      item: {
+                                          select: async items => {
+                                              await getRecordIdsFromFilters({
+                                                  variables: {
+                                                      libraryId: childLibraryId,
+                                                      filters: [
+                                                          {
+                                                              field: 'id',
+                                                              condition: RecordFilterCondition.EQUAL,
+                                                              value: items.itemId,
+                                                          },
+                                                      ],
+                                                  },
+                                              });
+                                          },
+                                      },
+                                  }
+                                : {}
+                        }
                         primaryActions={[]}
                         defaultActionsForItem={[]}
                         defaultMassActions={[]}
