@@ -60,7 +60,8 @@ export const useExportMassAction = ({
                         const total =
                             view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
                         try {
-                            const {data, error} = await exportQuery({
+                            const {error} = await exportQuery({
+                                fetchPolicy: 'no-cache',
                                 variables: {
                                     library: view.libraryId,
                                     filters: massSelectionFilter,
