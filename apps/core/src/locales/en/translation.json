@@ -155,6 +155,7 @@
         "edit_record": "Edit",
         "delete_record": "Delete",
         "any_record": "Any record",
+        "admin_access_libraries": "Access libraries",
         "admin_create_library": "Create library",
         "admin_edit_library": "Edit library",
         "admin_delete_library": "Delete library",

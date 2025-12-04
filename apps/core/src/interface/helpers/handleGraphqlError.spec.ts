@@ -113,14 +113,15 @@ describe('handleGraphqlError', () => {
 
     describe('PERMISSION_ERROR', () => {
         it('Should return permission action and a generic message', () => {
-            const originalError: PermissionError<unknown> = new PermissionError(AdminPermissionsActions.ACCESS_TASKS);
+            const originalError: PermissionError<unknown> = new PermissionError(
+                AdminPermissionsActions.ACCESS_LIBRARIES,
+            );
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
                 'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils,
             });
-
             const handledError = errorHandler(_makeError('You shall not pass!', originalError), mockCtx);
 
             expect(handledError.message).toBe('You shall not pass!');
