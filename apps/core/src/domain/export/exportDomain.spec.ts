@@ -464,7 +464,7 @@ describe('exportDomain', () => {
                     profile: 'invalid_profile',
                     ctx: mockCtx,
                 }),
-            ).rejects.toThrow('Invalid request');
+            ).rejects.toThrow('No attributes provided for exportExcel function for library test_library');
 
             expect(mockExportProfileDomain.getColumnsFromProfileConfig).toHaveBeenCalledWith(
                 'invalid_profile',

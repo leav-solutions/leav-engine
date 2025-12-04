@@ -170,7 +170,7 @@ describe('exportProfileDomain', () => {
             const domain = exportProfileDomain(deps);
 
             await expect(domain.getColumnsFromProfileConfig('Profile 1', '', mockCtx)).rejects.toThrow(
-                'Invalid request',
+                'Export error: No library provided',
             );
             expect(mockLibraryDomain.getLibraryProperties).not.toHaveBeenCalled();
         });
@@ -280,7 +280,7 @@ describe('exportProfileDomain', () => {
             const domain = exportProfileDomain(deps);
 
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                /Invalid request/,
+                'Export profile config is not valid: "defaultProfile" is required',
             );
         });
 
@@ -306,7 +306,7 @@ describe('exportProfileDomain', () => {
             const domain = exportProfileDomain(deps);
 
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                /Invalid request/,
+                'Export profile config is not valid: "profiles" does not contain 1 required value(s)',
             );
         });
 
@@ -337,7 +337,7 @@ describe('exportProfileDomain', () => {
             const domain = exportProfileDomain(deps);
 
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                /Invalid request/,
+                'Export profile config is not valid: "profiles[0].columns" does not contain 1 required value(s)',
             );
         });
     });
