@@ -14,6 +14,8 @@ import {
 } from '../../../_types/permissions';
 import {type IInheritedPermissionsQueryParams} from './_types';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
 
 export interface IPluginPermission {
     name: string;
@@ -26,11 +28,13 @@ export type ICorePermissionApp = IAppModule & IGraphqlAppModule;
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.utils.getSystemQueryContext'?: GetSystemQueryContext;
 }
 
 export default function ({
     'core.domain.permission': permissionDomain = null,
     'core.domain.attribute': attributeDomain = null,
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
 }: IDeps = {}): ICorePermissionApp {
     // Format permission data to match graphql schema, where "actions" field format is different
     // TODO: use a custom scalar type?
@@ -47,15 +51,23 @@ export default function ({
     /**
      * Return possibles permissions actions, deduplicated, including plugins actions
      */
-    const _graphqlPermissionsActionsList = (filterType?: PermissionTypes): string => {
+    const _graphqlPermissionsActionsList = async (filterType?: PermissionTypes): Promise<string> => {
         const types = filterType ? [filterType] : Object.values(PermissionTypes);
-        const actions = types.reduce(
-            (acc, type): string[] => [
-                ...acc,
-                ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name),
-            ],
-            [],
-        );
+
+        const actions = await types.reduce(async (acc, type): Promise<string[]> => {
+            const previousTypeActions = await acc;
+
+            return [
+                ...previousTypeActions,
+                ...(
+                    await permissionDomain.getActionsByType({
+                        type,
+                        skipApplyOn: true,
+                        ctx: getSystemQueryContext('_graphqlPermissionsActionsList'),
+                    })
+                ).map(a => a.name),
+            ];
+        }, Promise.resolve([]));
 
         return [...new Set(actions)].join(' ');
     };
@@ -73,11 +85,11 @@ export default function ({
                     }
 
                     enum PermissionsActions {
-                        ${_graphqlPermissionsActionsList()}
+                        ${await _graphqlPermissionsActionsList()}
                     }
     
                     enum RecordPermissionsActions {
-                        ${_graphqlPermissionsActionsList(PermissionTypes.RECORD)}
+                        ${await _graphqlPermissionsActionsList(PermissionTypes.RECORD)}
                     }
     
                     type LabeledPermissionsActions {
@@ -248,8 +260,9 @@ export default function ({
                         permissionsActionsByType(
                             _,
                             {type, applyOn}: {type: PermissionTypes; applyOn?: string},
-                        ): ILabeledPermissionsAction[] {
-                            return permissionDomain.getActionsByType({type, applyOn});
+                            ctx: IQueryInfos,
+                        ): Promise<ILabeledPermissionsAction[]> {
+                            return permissionDomain.getActionsByType({type, applyOn, ctx});
                         },
                     },
                     Mutation: {

@@ -34,6 +34,11 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService),
 };
 
+const mockCtx: IQueryInfos = {
+    userId: '1',
+    queryId: 'permissionDomain.spec',
+};
+
 const depsBase: ToAny<IPermissionDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.permission.library': jest.fn(),
@@ -314,6 +319,7 @@ describe('PermissionDomain', () => {
         test('Return actions by type with registered actions', async () => {
             const permsDomain = permissionDomain({
                 ...depsBase,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 config: mockConfig as IConfig,
                 translator: mockTranslator as i18n,
             });
@@ -322,7 +328,7 @@ describe('PermissionDomain', () => {
             permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm']);
 
             // Retrieve actions
-            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN});
+            const permsByType = await permsDomain.getActionsByType({type: PermissionTypes.ADMIN, ctx: mockCtx});
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
         });
@@ -331,6 +337,7 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({
                 ...depsBase,
                 config: mockConfig as IConfig,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 translator: mockTranslator as i18n,
             });
 
@@ -339,14 +346,19 @@ describe('PermissionDomain', () => {
             permsDomain.registerActions(PermissionTypes.ADMIN, ['other_test_perm'], ['my_other_lib_name']);
 
             // Retrieve actions
-            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN, applyOn: 'my_lib_name'});
+            const permsByType = await permsDomain.getActionsByType({
+                type: PermissionTypes.ADMIN,
+                applyOn: 'my_lib_name',
+                ctx: mockCtx,
+            });
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
             expect(permsByType.findIndex(p => p.name === 'other_test_perm')).toBe(-1);
 
-            const otherPermsByType = permsDomain.getActionsByType({
+            const otherPermsByType = await permsDomain.getActionsByType({
                 type: PermissionTypes.ADMIN,
                 applyOn: 'my_other_lib_name',
+                ctx: mockCtx,
             });
 
             expect(otherPermsByType.findIndex(p => p.name === 'other_test_perm')).toBeGreaterThanOrEqual(0);
@@ -357,6 +369,7 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({
                 ...depsBase,
                 config: mockConfig as IConfig,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 translator: mockTranslator as i18n,
             });
 
@@ -364,7 +377,11 @@ describe('PermissionDomain', () => {
             permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm'], ['my_lib_name']);
 
             // Retrieve actions
-            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN, skipApplyOn: true});
+            const permsByType = await permsDomain.getActionsByType({
+                type: PermissionTypes.ADMIN,
+                skipApplyOn: true,
+                ctx: mockCtx,
+            });
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
         });
