@@ -8,6 +8,7 @@ import {DetailedCellError, HyperFormula} from 'hyperformula';
 import {type IValue} from '_types/value';
 import {
     ActionsListIOTypes,
+    type IActionsListFunctionResult,
     type ActionsListValueType,
     type IActionsListContext,
     type IActionsListFunction,
@@ -69,6 +70,23 @@ export default function ({
         return _replaceAsync(formula, regExp, _processReplacement, context, values);
     };
 
+    const _buildSameValuesResult = (values: IValue[]): IActionsListFunctionResult => ({
+        values: [
+            ...values,
+            {
+                id_value: null,
+                isCalculated: true,
+                modified_at: null,
+                modified_by: null,
+                created_at: null,
+                created_by: null,
+                payload: '',
+                raw_payload: '',
+            },
+        ],
+        errors: [],
+    });
+
     const debug = config.actions.excel.debug ?? false;
     const actionWithHyperformula: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
         values,
@@ -78,22 +96,7 @@ export default function ({
         const {Formula: formula} = params;
 
         if (formula === '') {
-            return {
-                values: [
-                    ...values,
-                    {
-                        id_value: null,
-                        isCalculated: true,
-                        modified_at: null,
-                        modified_by: null,
-                        created_at: null,
-                        created_by: null,
-                        payload: '',
-                        raw_payload: '',
-                    },
-                ],
-                errors: [],
-            };
+            return _buildSameValuesResult(values);
         }
 
         // Prepare formula by replacing variables, adding '=' at the beginning
@@ -102,6 +105,10 @@ export default function ({
             ctx,
             values.map(v => v.payload),
         );
+
+        if (finalFormula === '=') {
+            return _buildSameValuesResult(values);
+        }
 
         // Simulate a sheet with only one cell containing the formula
         const hfInstance = HyperFormula.buildFromArray([[finalFormula]], {
