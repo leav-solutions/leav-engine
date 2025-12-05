@@ -28,5 +28,4 @@ module.exports = {
         },
         delay: 150,
     },
-    verbose: true,
 };

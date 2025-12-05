@@ -15,7 +15,15 @@ export interface IWatcherParams {
         pollInterval: 100;
     };
     delay?: number;
-    verbose?: boolean | 'very';
+
+    /**
+     * For environments where fs events are not supported well (e.g. network drives)
+     */
+    usePolling?: boolean;
+    /**
+     * Only when usePolling is true, interval to poll for changes in milliseconds
+     */
+    pollingInterval?: number;
 }
 
 export interface IConfig {
@@ -38,19 +46,12 @@ export interface IConfig {
         routingKey: string;
         type: string;
     };
-    watcher?: {
-        awaitWriteFinish: {
-            stabilityThreshold: number;
-            pollInterval: number;
-        };
-    };
-    verbose?: IWatcherParams['verbose'];
+    watcher?: IWatcherParams;
 }
 
 export interface IParams {
     rootPath: string;
     rootKey: string;
-    verbose: IWatcherParams['verbose'];
     amqp?: IAmqpParams;
 }
 

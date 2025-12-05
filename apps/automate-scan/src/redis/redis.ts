@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {Tedis} from 'redis-typescript';
+import * as redis from 'redis';
 
-let client: Tedis;
+let client: redis.RedisClientType;
 
 const _slugifyPath = (path: string): string =>
     path
@@ -21,10 +21,12 @@ const _getRedisKey = (path: string): string => {
     return key;
 };
 
-export const createClient = (host: string, port: number) => {
-    client = new Tedis({
-        host,
-        port,
+export const createClient = async (host: string, port: number) => {
+    client = redis.createClient({
+        socket: {
+            host,
+            port,
+        },
     });
 
     client.on('connect', () => undefined);
@@ -33,6 +35,8 @@ export const createClient = (host: string, port: number) => {
         logger.error(`201 - Error with redis because ${err.stack}`);
         process.exit(201);
     });
+
+    await client.connect();
 
     return client;
 };

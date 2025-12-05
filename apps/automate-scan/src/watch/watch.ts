@@ -29,17 +29,24 @@ export const start = async (
     watchParams?: IWatcherParams,
     amqpParams?: IAmqpParams,
 ) => {
-    const verbose = watchParams?.verbose ?? false;
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
     const delay = (watchParams && watchParams.delay) || 100;
+    const usePolling = (watchParams && watchParams.usePolling) || false;
+    const pollingInterval = (watchParams && watchParams.pollingInterval) || 100;
     // if absolute path given, we use it here to not display the name of the root folder in message
     const cwd = rootPathProps.charAt(0).indexOf('/') === 0 ? rootPathProps : '.';
+
+    if (usePolling) {
+        logger.info(`Using polling every ${pollingInterval}ms for watching files`);
+    }
 
     const watcher = chokidar.watch(rootPathProps, {
         ignoreInitial: false, // use init for redis
         alwaysStat: true, // always give stats for add and update event
         awaitWriteFinish: watcherConfig, // wait for copy to finish before trigger event
+        usePolling,
+        interval: pollingInterval,
         cwd,
     });
 
@@ -52,7 +59,6 @@ export const start = async (
                 delay,
                 rootPath: rootPathProps,
                 rootKey,
-                verbose,
                 amqp: amqpParams,
             },
             stats,
@@ -80,7 +86,7 @@ export const checkEvent = async (event: string, path: string, params: IParamsExt
         const isDirectory = manageIsDirectory(stats);
         await _checkMove(event, path, isDirectory, inode, params);
     } else if (isAllowed) {
-        _handleInit(path, stats?.ino, params.verbose);
+        _handleInit(path, stats?.ino);
     }
 };
 
@@ -125,7 +131,6 @@ const _checkMove = async (event: string, path: string, isDirectory: boolean, ino
                                 rootPath: params.rootPath,
                                 rootKey: params.rootKey,
                                 amqp: params.amqp || {},
-                                verbose: params.verbose,
                             },
                             pathBefore,
                         ),
@@ -146,7 +151,6 @@ const _checkMove = async (event: string, path: string, isDirectory: boolean, ino
                         handleEvent(event, path, isDirectory, inode, {
                             rootPath: params.rootPath,
                             rootKey: params.rootKey,
-                            verbose: params.verbose,
                             amqp: params.amqp,
                         }),
                     ),
@@ -169,7 +173,6 @@ export const handleEvent = async (
     const amqp = {
         rootPath: params.rootPath,
         rootKey: params.rootKey,
-        verbose: params.verbose,
         amqp: params.amqp,
     };
 
@@ -235,13 +238,13 @@ export const handleEvent = async (
 // Flag to check if already sending inits to redis
 let working = false;
 
-const _handleInit = async (path: string, inode: number, verbose: IWatcherParams['verbose']) => {
+const _handleInit = async (path: string, inode: number) => {
     inits.push({path, inode}); // add init infos to queue
     initsCount++;
-    _manageRedisInit(verbose);
+    _manageRedisInit();
 };
 
-const _manageRedisInit = async (verbose: IWatcherParams['verbose']) => {
+const _manageRedisInit = async () => {
     // if not already working, shit
     if (!working) {
         working = true;
@@ -253,9 +256,7 @@ const _manageRedisInit = async (verbose: IWatcherParams['verbose']) => {
             if (init) {
                 await setData(init.path, init.inode); // set data in redis and wait until finish
 
-                if (verbose === 'very') {
-                    logger.info(`init ${init.path}`);
-                }
+                logger.silly(`init ${init.path}`);
             }
         }
 

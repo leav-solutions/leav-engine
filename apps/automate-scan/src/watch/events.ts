@@ -18,18 +18,14 @@ export const handleCreate = async (
         generateMsgRabbitMQ('CREATE', null, path, inode, isDirectory, params.rootKey, hashFile),
         params.amqp,
     );
-    if (params.verbose) {
-        logger.info(`CREATE ${path}`);
-    }
+    logger.debug(`CREATE ${path}`);
     return true;
 };
 
 export const handleDelete = async (path: string, inode: number, params: IParams, isDirectory: boolean) => {
     await deleteData(path);
     sendToRabbitMQ(generateMsgRabbitMQ('REMOVE', path, null, inode, isDirectory, params.rootKey), params.amqp);
-    if (params.verbose) {
-        logger.info(`REMOVE ${path}`);
-    }
+    logger.debug(`REMOVE ${path}`);
     return true;
 };
 
@@ -45,9 +41,7 @@ export const handleUpdate = async (
         generateMsgRabbitMQ('UPDATE', path, path, inode, isDirectory, params.rootKey, hashFile),
         params.amqp,
     );
-    if (params.verbose) {
-        logger.info(`UPDATE ${path}`);
-    }
+    logger.debug(`UPDATE ${path}`);
     return true;
 };
 
@@ -61,9 +55,7 @@ export const handleMove = async (
     await updateData(pathAfter, inode, pathBefore);
     sendToRabbitMQ(generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, params.rootKey), params.amqp);
 
-    if (params.verbose) {
-        logger.info(`MOVE ${pathBefore} ${pathAfter}`);
-    }
+    logger.debug(`MOVE ${pathBefore} ${pathAfter}`);
 
     return true;
 };
