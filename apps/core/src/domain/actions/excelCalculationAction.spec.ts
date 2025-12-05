@@ -4,7 +4,6 @@
 import {type ILogger} from '@leav/logger';
 import {type ActionsListValueType, type IActionsListContext} from '_types/actionsList';
 import {type ICalculationVariable, type IVariableValue} from 'domain/helpers/calculationVariable';
-import {type IUtils} from 'utils/utils';
 import excelCalculationAction from './excelCalculationAction';
 import {type IValue} from '_types/value';
 import {Errors} from '../../_types/errors';
@@ -12,27 +11,12 @@ import {mockStandardValue} from '../../__tests__/mocks/value';
 import {type IConfig} from '_types/config';
 
 const mockCalculationsVariable = {
-    processVariableString: async (
-        ctx: IActionsListContext,
-        variable: string,
-        initialValue: ActionsListValueType,
-    ): Promise<IVariableValue[]> => [
-        {
-            payload: `${variable}Value`,
-            raw_payload: `${variable}RawValue`,
-            recordId: '1',
-            library: 'meh',
-        },
-    ],
+    processVariableString: jest.fn(),
 };
 
 const ctx = {userId: 'test_user'};
 
 describe('excelCalculationAction', () => {
-    const mockUtils: Mockify<IUtils> = {
-        translateError: jest.fn().mockReturnValue('Excel calculation error'),
-    };
-
     const mockResultValueBase: IValue = {
         id_value: null,
         isCalculated: true,
@@ -42,6 +26,24 @@ describe('excelCalculationAction', () => {
         created_by: null,
         payload: null,
     };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+        mockCalculationsVariable.processVariableString.mockImplementation(
+            async (
+                context: IActionsListContext,
+                variable: string,
+                initialValue: ActionsListValueType,
+            ): Promise<IVariableValue[]> => [
+                {
+                    payload: `${variable}Value`,
+                    raw_payload: `${variable}RawValue`,
+                    recordId: '1',
+                    library: 'meh',
+                },
+            ],
+        );
+    });
 
     describe('with hyperformula', () => {
         const _excelCalculationAction = excelCalculationAction({
@@ -117,6 +119,40 @@ describe('excelCalculationAction', () => {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
                         raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
+            });
+        });
+
+        test('Replace variables with empty result', async () => {
+            mockCalculationsVariable.processVariableString.mockImplementation(
+                async (): Promise<IVariableValue[]> => [
+                    {
+                        payload: '',
+                        raw_payload: '',
+                        recordId: '1',
+                        library: 'meh',
+                    },
+                ],
+            );
+
+            const action = _excelCalculationAction.action;
+            const res = await action(
+                [],
+                {
+                    Description: 'test empty result',
+                    Formula: '{toto}',
+                },
+                ctx,
+            );
+
+            expect(res).toEqual({
+                errors: [],
+                values: [
+                    {
+                        ...mockResultValueBase,
+                        payload: '',
+                        raw_payload: '',
                     },
                 ],
             });
