@@ -44,7 +44,7 @@
         "@types/react-table": "7.7.12",
         "@types/uuid": "^9",
         "antd": "5.22.2",
-        "aristid-ds": "14.0.0-94337b1",
+        "aristid-ds": "14.0.0-efe44ac",
         "babel-jest": "29.3.1",
         "commander": "9.5.0",
         "graphql": "16.12.0",
