@@ -285,6 +285,13 @@ export default function ({
 
                                 // Format and translate errors before sending them to client
                                 if (errors) {
+                                    logger.error(
+                                        `Graphql request errors [${contextValue.queryId}] on operation ${
+                                            requestContext.operationName
+                                        }: \n  - ${errors.map(e => e.stack).join('\n  - ')}`,
+                                        {operationVariables: requestContext.request.variables},
+                                    );
+
                                     errors = errors.map(e => {
                                         const formattedError = handleGraphqlError(e, contextValue);
                                         e = Object.assign(e, {
