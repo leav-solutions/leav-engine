@@ -162,7 +162,7 @@ export function getFieldError<T>(
     let inputFieldError = '';
     let serverFieldError = '';
     if (get(touchedFields, fieldName)) {
-        inputFieldError = get(inputErrors, fieldName, '');
+        inputFieldError = get(inputErrors, fieldName, '') as string;
     }
 
     if (!!serverErrors) {
