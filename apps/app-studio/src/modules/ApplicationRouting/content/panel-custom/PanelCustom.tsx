@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useContext, useEffect} from 'react';
 import {LangContext, useIFrameMessenger} from '@leav/ui';
-import {useOpenNotification} from './custom-panel-message-handlers/useOpenNotification';
-import {useOpenAlert} from './custom-panel-message-handlers/useOpenAlert';
-import {useOpenConfirmModal} from './custom-panel-message-handlers/useOpenConfirmModal';
-import {useNavigateToPanel} from './custom-panel-message-handlers/useNavigateToPanel';
-import {useNavigateToIframe} from './custom-panel-message-handlers/useNavigateToIframe';
-import {useOpenFlapPanel} from './custom-panel-message-handlers/useOpenFlapPanel';
-import {useClosePanel} from './custom-panel-message-handlers/useClosePanel';
-import {useCloseFlapPanel} from './custom-panel-message-handlers/useCloseFlapPanel';
+import {useOpenNotification} from './message-handlers/useOpenNotification';
+import {useOpenAlert} from './message-handlers/useOpenAlert';
+import {useOpenConfirmModal} from './message-handlers/useOpenConfirmModal';
+import {useNavigateToPanel} from './message-handlers/useNavigateToPanel';
+import {useNavigateToIframe} from './message-handlers/useNavigateToIframe';
+import {useOpenFlapPanel} from './message-handlers/useOpenFlapPanel';
+import {useClosePanel} from './message-handlers/useClosePanel';
+import {useCloseFlapPanel} from './message-handlers/useCloseFlapPanel';
 import {iframe} from './panelCustom.module.css';
 
 interface IPanelCustomProps {
