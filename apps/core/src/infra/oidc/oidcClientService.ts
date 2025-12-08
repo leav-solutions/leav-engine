@@ -93,11 +93,16 @@ export default function ({
     };
 
     const _writeTokensSetByUserId = (userId: string, tokens: TokenSet): Promise<void> => {
-        config.auth.debugLog && logger.silly(`OIDC _writeTokensSetByUserId key=${_buildTokensCacheKey(userId)}`);
+        const expiresIn =
+            typeof tokens.refresh_expires_in === 'number'
+                ? tokens.refresh_expires_in * 1_000
+                : refreshTokenExpirationInMs;
+        config.auth.debugLog &&
+            logger.silly(`OIDC _writeTokensSetByUserId key=${_buildTokensCacheKey(userId)}, expires_in=${expiresIn}`);
         return sessionRepo.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
-            expiresIn: refreshTokenExpirationInMs,
+            expiresIn,
         });
     };
 
