@@ -12392,17 +12392,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.156":
-  version: 4.14.156
-  resolution: "@types/lodash@npm:4.14.156"
-  checksum: 85d4853caa21e54e82d035a7b9c6270475ec082a55e396ec683d1cd527e93396fb66ac2df29a2cf7f856d500b316df1032d495ee13c98275dfcde48e9e50d174
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:4.14.185":
-  version: 4.14.185
-  resolution: "@types/lodash@npm:4.14.185"
-  checksum: 96d08f7c2bef4223d3a16e4f7511941918afe8fd3d6a4aabcbd13478c9ff2556ec4dba26efc1cf370318f575864fcc634a89538d6a747ee89d9d3d8b9b48fea2
+"@types/lodash@npm:4.17.21":
+  version: 4.17.21
+  resolution: "@types/lodash@npm:4.17.21"
+  checksum: 34920830a3bc82ba619cda05e606fef00c148a69b4f19f770645d2587ccdb8e42ef3ddfc174b7884c0c709fc0a1aeb48f7326da969bad12a1464a03efbbe414c
   languageName: node
   linkType: hard
 
@@ -13599,7 +13592,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
-    "@types/lodash": "npm:4.14.156"
+    "@types/lodash": "npm:4.17.21"
     "@types/node": "npm:24.7.2"
     "@types/node-fetch": "npm:2.1.4"
     "@types/react": "npm:16.14.32"
@@ -17498,7 +17491,7 @@ __metadata:
     "@types/jest": "npm:29.5.13"
     "@types/jest-when": "npm:3.5.5"
     "@types/jsonwebtoken": "npm:9.0.10"
-    "@types/lodash": "npm:4.14.185"
+    "@types/lodash": "npm:4.17.21"
     "@types/ms": "npm:0.7.31"
     "@types/node": "npm:24.7.2"
     "@types/nodemailer": "npm:6.4.6"
@@ -18003,7 +17996,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:27.5.2"
-    "@types/lodash": "npm:4.14.185"
+    "@types/lodash": "npm:4.17.21"
     "@types/node": "npm:24.7.2"
     "@types/object-path": "npm:0.11.1"
     "@types/react": "npm:18.2.14"
