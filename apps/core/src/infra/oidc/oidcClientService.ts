@@ -156,14 +156,18 @@ export default function ({
         },
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
-            const tokenSet = await _getTokenSetByUserId(userId);
+            try {
+                const tokenSet = await _getTokenSetByUserId(userId);
 
-            if (tokenSet.expired()) {
-                // FIXME: Many successive calls to this function can happen in parallel, we need to refactor to improve this behavior
-                const newTokenSet = await oidcClient.refresh(tokenSet);
-                // We do not delete the old token set, as it might be needed for a short period of time
-                // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
-                await _writeTokensSetByUserId(userId, newTokenSet);
+                if (tokenSet.expired()) {
+                    // FIXME: Many successive calls to this function can happen in parallel, we need to refactor to improve this behavior
+                    const newTokenSet = await oidcClient.refresh(tokenSet);
+                    // We do not delete the old token set, as it might be needed for a short period of time
+                    // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
+                    await _writeTokensSetByUserId(userId, newTokenSet);
+                }
+            } catch (err) {
+                throw new AuthenticationError('OIDC session expired');
             }
         },
         saveOriginalUrl: ({originalUrl, queryId}) => _writeOriginalUrlByQueryId(queryId, originalUrl),
