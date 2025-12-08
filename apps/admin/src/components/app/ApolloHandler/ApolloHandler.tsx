@@ -18,7 +18,7 @@ import {onError} from '@apollo/client/link/error';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
-import {createClient} from 'graphql-ws';
+import {CloseCode, createClient} from 'graphql-ws';
 import useRedirectToLogin from 'hooks/useRedirectToLogin';
 import {type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -96,7 +96,14 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         createClient({
             url: `${WS_URL}/${API_ENDPOINT}`,
             retryAttempts: Infinity,
-            shouldRetry: () => true,
+            shouldRetry: err => {
+                if (err instanceof CloseEvent && err.code === CloseCode.Forbidden) {
+                    console.info('WebSocket connection forbidden, redirecting to login...');
+                    redirectToLogin();
+                    return false;
+                }
+                return true;
+            },
         }),
     );
 
