@@ -5,10 +5,10 @@ import {type FunctionComponent} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import type * as z from 'zod/v4';
 import {type creationPanelSchema, EditRecordPage, useExecuteSaveValueBatchMutation} from '@leav/ui';
-import {RelativePaths} from '../router/paths';
-import {retrievePanelDetails} from '../utils/retrievePanelDetails';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {useGetPreviousPanelParams} from './panel-creation-form/useGetPreviousPanelParams';
+import {RelativePaths} from '../../router/paths';
+import {retrievePanelDetails} from '../../utils/retrievePanelDetails';
+import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {useGetPreviousPanelParams} from './useGetPreviousPanelParams';
 
 type CreationFormPanel = z.infer<typeof creationPanelSchema>;
 

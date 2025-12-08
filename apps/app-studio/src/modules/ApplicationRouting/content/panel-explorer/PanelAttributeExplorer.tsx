@@ -4,13 +4,12 @@
 import {type FunctionComponent} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Explorer, ThroughConditionFilter, useExecuteSaveValueBatchMutation, useLang} from '@leav/ui';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {mapToCommonExplorerProps} from './explorer-panel/mapperToCommonExplorerProps';
-import {mapperToItemActions} from './explorer-panel/mapperToItemActions';
-import {type ItemActions, type ExplorerProps} from '../types';
-import {AttributeType, RecordFilterCondition} from '../../../__generated__';
-
-import {explorerContainer} from './panelContent.module.css';
+import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
+import {mapperToItemActions} from './mapperToItemActions';
+import {type ItemActions, type ExplorerProps} from '../../types';
+import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
+import {explorerContainer} from './panelExplorer.module.css';
 
 interface IPanelExplorerProps {
     libraryId: string;

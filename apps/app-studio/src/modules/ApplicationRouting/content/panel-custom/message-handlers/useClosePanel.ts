@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLocation, useNavigate} from 'react-router-dom';
 import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
-import {deleteRecordPanelFromURL} from '../../utils/deleteRecordPanelFromURL';
+import {deleteRecordPanelFromURL} from '../../../utils/deleteRecordPanelFromURL';
 
 /**
  * Close the panel from an iframe panel.

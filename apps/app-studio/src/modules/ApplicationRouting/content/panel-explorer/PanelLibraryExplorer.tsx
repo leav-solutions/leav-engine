@@ -4,12 +4,11 @@
 import {type FunctionComponent} from 'react';
 import {Explorer, useLang} from '@leav/ui';
 import {useNavigate} from 'react-router-dom';
-import {type ItemActions, type ExplorerProps} from '../types';
-import {mapToCommonExplorerProps} from './explorer-panel/mapperToCommonExplorerProps';
-import {mapperToItemActions} from './explorer-panel/mapperToItemActions';
-import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
-
-import {explorerContainer} from './panelContent.module.css';
+import {type ItemActions, type ExplorerProps} from '../../types';
+import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
+import {mapperToItemActions} from './mapperToItemActions';
+import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {explorerContainer} from './panelExplorer.module.css';
 
 interface IPanelLibraryExplorerProps {
     libraryId: string;

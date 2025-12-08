@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
-import {RelativePaths} from '../../router/paths';
+import {RelativePaths} from '../../../router/paths';
 import {useNavigate} from 'react-router-dom';
 
 /**
