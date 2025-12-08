@@ -106,7 +106,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
                     onSelect={_handleOnSelect}
                     onCheck={_handleOnCheck}
                     multiple
-                    canSelectRoot={false}
+                    canSelectRoot={true}
                     checkStrictly={false}
                     checkable
                     loadRecursively={true}
