@@ -131,7 +131,9 @@ export default function ({
         getTokensFromCodes: async ({authorizationCode, queryId}) => {
             const [codeVerifier, redirectUri] = await _getCodeVerifierRedirectUriByQueryId(queryId);
             // No need to await delete fn, it's just for clean up
-            _deleteCodeVerifierRedirectUriByQueryId(queryId);
+            _deleteCodeVerifierRedirectUriByQueryId(queryId).catch(err => {
+                logger.error(`Error deleting OIDC code verifier cache for queryId=${queryId}: ${err.message}`);
+            });
 
             return oidcClient.grant({
                 grant_type: 'authorization_code',
@@ -163,7 +165,9 @@ export default function ({
             }
 
             // // No need to await delete fn, it's just for clean up
-            _deleteTokensSetByUserId(userId);
+            _deleteTokensSetByUserId(userId).catch(err => {
+                logger.error(`Error deleting OIDC tokens for userId=${userId}: ${err.message}`);
+            });
             return oidcClient.endSessionUrl(payload);
         },
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
@@ -186,7 +190,9 @@ export default function ({
         getOriginalUrl: async queryId => {
             const originalUrl = await _getOriginalUrlByQueryId(queryId);
             // No need to await delete fn, it's just for clean up
-            _deleteOriginalUrlByQueryId(queryId);
+            _deleteOriginalUrlByQueryId(queryId).catch(err => {
+                logger.error(`Error deleting originalUrl cache for queryId=${queryId}: ${err.message}`);
+            });
             return originalUrl;
         },
     };
