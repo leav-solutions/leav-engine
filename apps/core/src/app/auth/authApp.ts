@@ -135,6 +135,7 @@ export default function ({
             secure: config.auth.cookie.secure,
             expires: new Date(Date.now() + cookieExpires),
             domain: host,
+            path: config.server.basePath || '/',
         };
 
         return [cookieName, value, cookieOptions];
