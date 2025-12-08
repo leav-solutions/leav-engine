@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {createClient} from 'graphql-ws';
-import {gqlPossibleTypes} from '@leav/ui';
+import {CloseCode, createClient} from 'graphql-ws';
+import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {ApolloClient, from, HttpLink, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {type NextLink, type Operation} from '@apollo/client/link/core';
@@ -13,6 +13,7 @@ import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 export const useInitApollo = (
     unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>,
 ) => {
+    const {redirectToLogin} = useRedirectToLogin();
     const errorLink = onError(({graphQLErrors, networkError, operation, forward, response}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
@@ -41,7 +42,14 @@ export const useInitApollo = (
         createClient({
             url: `${WS_URL}/${API_ENDPOINT}`,
             retryAttempts: Infinity,
-            shouldRetry: () => true,
+            shouldRetry: err => {
+                if (err instanceof CloseEvent && err.code === CloseCode.Forbidden) {
+                    console.info('WebSocket connection forbidden, redirect to login...');
+                    redirectToLogin();
+                    return false;
+                }
+                return true;
+            },
         }),
     );
 
