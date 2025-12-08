@@ -101,7 +101,12 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
                         {t('global.close')}
                     </KitButton>
                     {attribute.multiple_values && (
-                        <KitButton type="primary" icon={<FaCheck />} onClick={_handleOnConfirm}>
+                        <KitButton
+                            type="primary"
+                            icon={<FaCheck />}
+                            disabled={selectedNodes.length === 0}
+                            onClick={_handleOnConfirm}
+                        >
                             {t('global.confirm')}
                         </KitButton>
                     )}
