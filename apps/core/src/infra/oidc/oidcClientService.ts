@@ -101,6 +101,11 @@ export default function ({
         });
     };
 
+    const _deleteTokensSetByUserId = (userId: string): Promise<void> => {
+        config.auth.debugLog && logger.silly(`OIDC _deleteTokensSetByUserId key=${_buildTokensCacheKey(userId)}`);
+        return sessionRepo.deleteData([_buildTokensCacheKey(userId)]);
+    };
+
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
         sessionRepo.storeData({
             key: _buildOriginalUrlCacheKey(queryId),
@@ -152,6 +157,8 @@ export default function ({
                 payload.id_token_hint = await _getTokenSetByUserId(userId);
             }
 
+            // // No need to await delete fn, it's just for clean up
+            _deleteTokensSetByUserId(userId);
             return oidcClient.endSessionUrl(payload);
         },
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
