@@ -67,9 +67,6 @@ export default function ({
         newError.message = `[${context.queryId}] ${err.message}`;
         newError.extensions.queryId = context.queryId;
 
-        // @ts-ignore
-        logger.error(`Graphql error: ${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
-
         if (!config.debug) {
             newError.message = `[${context.queryId}] Internal Error`;
             delete newError.extensions?.exception;
