@@ -206,12 +206,18 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         if (node) {
             if (checkable) {
                 const isDeselecting = selectedNodes.includes(node.id);
-                if (isDeselecting) {
+
+                if (isDeselecting && isRoot) {
+                    _handleCheck([], null);
+                } else if (isDeselecting) {
                     const nodeToDeselect = [node.id, ...node.parents, ...getAllDescendants(node.id)];
                     const selectionToKeep = selectedNodes.filter(
                         selectedNode => !nodeToDeselect.includes(selectedNode),
                     );
+
                     _handleCheck(selectionToKeep, null);
+                } else if (isRoot) {
+                    _handleCheck([...getAllDescendants(tree.id), tree.id], null);
                 } else {
                     _handleCheck([...selectedNodes, node.id], null);
                 }
@@ -225,8 +231,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         if (!canSelectRoot && Array.isArray(selection) && selection.includes(tree.id)) {
             return;
         }
+
         const checkedKeys = _isObjectSelection(selection) ? selection.checked : selection;
         const nodes = checkedKeys.map(key => treeMap[key]);
+
         onCheck(nodes);
     };
 
