@@ -56,8 +56,7 @@
         "prettier": "3.3.3",
         "ts-jest": "29.2.5",
         "tsx": "4.20.5",
-        "typescript": "5.5.3",
-        "watch": "1.0.2"
+        "typescript": "5.5.3"
     },
     "dependencies": {
         "@apollo/server": "4.11.0",
