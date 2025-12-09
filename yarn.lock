@@ -5318,13 +5318,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blakeembrey/deque@npm:^1.0.3":
-  version: 1.0.5
-  resolution: "@blakeembrey/deque@npm:1.0.5"
-  checksum: c96cac16d1c9bb0c97039f13db35c252a86fa2c8307d188e0bd4f23e263b5b689b5a059bc50e08e4c358351d76e11fa3490f98de124be6524e5c04c89e352606
-  languageName: node
-  linkType: hard
-
 "@bugsnag/browser@npm:^8.4.0":
   version: 8.4.0
   resolution: "@bugsnag/browser@npm:8.4.0"
@@ -14942,13 +14935,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arrify@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "arrify@npm:2.0.1"
-  checksum: 067c4c1afd182806a82e4c1cb8acee16ab8b5284fbca1ce29408e6e91281c36bb5b612f6ddfbd40a0f7a7e0c75bf2696eb94c027f6e328d6e9c52465c98e4209
-  languageName: node
-  linkType: hard
-
 "asap@npm:^2.0.6, asap@npm:~2.0.3":
   version: 2.0.6
   resolution: "asap@npm:2.0.6"
@@ -16428,7 +16414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.0.0, chokidar@npm:^3.4.0, chokidar@npm:^3.5.2":
+"chokidar@npm:^3.4.0, chokidar@npm:^3.5.2":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
   dependencies:
@@ -17555,7 +17541,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
+"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -22297,7 +22283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:^5.1.1, ignore@npm:^5.1.2, ignore@npm:^5.1.4, ignore@npm:^5.2.0":
+"ignore@npm:^5.1.1, ignore@npm:^5.1.2, ignore@npm:^5.2.0":
   version: 5.2.0
   resolution: "ignore@npm:5.2.0"
   checksum: 30283f05fb7d867ee0e08faebb3e69caba2c6c55092042cd061eac1b37a3e78db72bfcfbb08b3598999344fba3d93a9c693b5401da5faaecc0fb7c2dce87beb4
@@ -27983,7 +27969,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:1.2.7, minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.5, minimist@npm:^1.2.6":
+"minimist@npm:1.2.7, minimist@npm:^1.2.0, minimist@npm:^1.2.5, minimist@npm:^1.2.6":
   version: 1.2.7
   resolution: "minimist@npm:1.2.7"
   checksum: 0202378a8eb1a9d98a44f623f43c89793a095f4bde6981bda29f6ae61e82a15c18b1690b5efc4c66ddbd402a3e9b7175e6ebdabb2b28037c279ac823b7360e00
@@ -28742,24 +28728,6 @@ __metadata:
   dependencies:
     wrappy: "npm:1"
   checksum: cd0a88501333edd640d95f0d2700fbde6bff20b3d4d9bdc521bdd31af0656b5706570d6c6afe532045a20bb8dc0849f8332d6f2a416e0ba6d3d3b98806c7db68
-  languageName: node
-  linkType: hard
-
-"onchange@npm:6.1.1":
-  version: 6.1.1
-  resolution: "onchange@npm:6.1.1"
-  dependencies:
-    "@blakeembrey/deque": "npm:^1.0.3"
-    arrify: "npm:^2.0.0"
-    chokidar: "npm:^3.0.0"
-    cross-spawn: "npm:^7.0.1"
-    ignore: "npm:^5.1.4"
-    minimist: "npm:^1.2.3"
-    supports-color: "npm:^7.0.0"
-    tree-kill: "npm:^1.2.2"
-  bin:
-    onchange: cli.js
-  checksum: c9b47e2ee21aefa233c3610e0d216b4f1d0d25d7c969e5745b9bcd3cccb2bcc1fea1651fa7a3e15530ab00843d6d1fc12c5baab428cce1b6be10ae5421e03cba
   languageName: node
   linkType: hard
 
@@ -29605,7 +29573,6 @@ __metadata:
     amqplib: "npm:0.10.9"
     fast-xml-parser: "npm:5.2.5"
     jest: "npm:29.0.3"
-    onchange: "npm:6.1.1"
     prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
     tsx: "npm:4.20.5"
@@ -34508,15 +34475,6 @@ __metadata:
   version: 0.3.9
   resolution: "traverse@npm:0.3.9"
   checksum: ffbb8460a934f271b7b7ae654e676f740d81037d6c20ab9fd05781cfdf644929f494399b5cb3aa3db4ab69cbfef06ff8f885560d523ca49b7da33763f6c4c9f1
-  languageName: node
-  linkType: hard
-
-"tree-kill@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "tree-kill@npm:1.2.2"
-  bin:
-    tree-kill: cli.js
-  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
   languageName: node
   linkType: hard
 
