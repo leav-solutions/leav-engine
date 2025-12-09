@@ -54,8 +54,9 @@ export const RootHeader: FunctionComponent = () => {
             logo={
                 <Link to="/" className={logo}>
                     <img
+                        // Do not change the aristid-header.svg icon - it is overriden by xstream app
                         src={`${APP_BASE_URL}/assets/aristid-header.svg`}
-                        alt="logo-leavengine"
+                        alt={t('global.home')}
                         title={t('global.home')}
                     />
                 </Link>

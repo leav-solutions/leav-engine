@@ -13,6 +13,10 @@
         width: 200px;
         display: flex;
         align-items: center;
+
+        img {
+            height: initial;
+        }
     }
 }
 

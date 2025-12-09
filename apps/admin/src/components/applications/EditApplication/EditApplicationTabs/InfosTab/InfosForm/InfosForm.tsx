@@ -91,7 +91,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
     let idValidator = yup
         .string()
         .required()
-        .matches(/^[a-z0-9_]+$/);
+        .matches(/^[a-z0-9_-]+$/);
 
     if (isNewApp) {
         // TODO: ID unicity validation is not debounced. As it's not trivial to implement, check future implementation
@@ -160,26 +160,6 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             const name: string = data.name;
 
             await setFieldValue(name, value);
-        };
-
-        const _handleChangeNoLibraries = async (e, data) => {
-            const value = data.checked;
-
-            await setFieldValue('libraries', value ? null : []);
-
-            if (!isNewApp) {
-                submitForm();
-            }
-        };
-
-        const _handleChangeNoTrees = async (e, data) => {
-            const value = data.checked;
-
-            await setFieldValue('trees', value ? null : []);
-
-            if (!isNewApp) {
-                submitForm();
-            }
         };
 
         const _handleChangeWithSubmit = async (e, data) => {
