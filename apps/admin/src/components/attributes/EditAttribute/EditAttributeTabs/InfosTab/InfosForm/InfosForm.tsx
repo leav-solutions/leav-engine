@@ -127,7 +127,7 @@ function InfosForm({
     let idValidator = yup
         .string()
         .required()
-        .matches(/^[a-z0-9_]+$/);
+        .matches(/^[a-z0-9_-]+$/);
 
     if (isNewAttribute) {
         // TODO: ID unicity validation is not debounced. As it's not trivial to implement, check future implementation
