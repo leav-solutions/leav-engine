@@ -111,6 +111,12 @@ export interface IAuth {
     cookie: {
         sameSite: 'none' | 'lax' | 'strict';
         secure: boolean;
+        /**
+         * Do not set cookie domain to avoid sharing cookies between subdomains
+         * https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/Cookies#domain
+         * @default false
+         */
+        withDomain: boolean;
     };
     resetPasswordExpiration: string;
     oidc:

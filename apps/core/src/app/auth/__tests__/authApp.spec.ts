@@ -150,7 +150,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/campaigns-manager',
             });
 
@@ -159,7 +159,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/campaigns-manager',
             });
         });
@@ -292,7 +292,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/',
             });
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
@@ -300,7 +300,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/',
             });
         });
@@ -361,7 +361,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/',
             });
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
@@ -369,7 +369,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/',
             });
         });
@@ -517,7 +517,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/',
             });
 
@@ -526,7 +526,7 @@ describe('authApp', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/',
             });
         });

@@ -92,6 +92,7 @@ export const validateConfig = (conf: IConfig) => {
             cookie: {
                 sameSite: Joi.string().valid('none', 'lax', 'strict'),
                 secure: Joi.boolean(),
+                withDomain: Joi.boolean().required(),
             },
             resetPasswordExpiration: Joi.string().required(),
             oidc: Joi.object().keys({

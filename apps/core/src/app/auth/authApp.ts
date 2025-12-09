@@ -126,7 +126,7 @@ export default function ({
                         : config.auth.refreshTokenExpiration,
                 ),
             ) - ONE_MINUTE; // we subtract one minute to avoid overlapping the access token
-        if (!host) {
+        if (config.auth.cookie.withDomain && !host) {
             throw new AuthenticationError('Missing host, cannot scope cookie domain.');
         }
         const cookieOptions: CookieOptions = {
@@ -134,7 +134,7 @@ export default function ({
             sameSite: config.auth.cookie.sameSite,
             secure: config.auth.cookie.secure,
             expires: new Date(Date.now() + cookieExpires),
-            domain: host,
+            domain: config.auth.cookie.withDomain ? host : undefined,
             path: config.server.basePath || '/',
         };
 

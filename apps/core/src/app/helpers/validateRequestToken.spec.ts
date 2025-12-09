@@ -251,7 +251,7 @@ describe('validateRequestToken', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/campaigns-manager',
             });
 
@@ -260,7 +260,7 @@ describe('validateRequestToken', () => {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
-                domain: 'host',
+                domain: undefined,
                 path: '/campaigns-manager',
             });
         });
@@ -325,7 +325,7 @@ describe('validateRequestToken', () => {
             httpOnly: true,
             sameSite: 'lax',
             secure: false,
-            domain: 'host',
+            domain: undefined,
             path: '/campaigns-manager',
         });
         expect(responseMock.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token_2', {
@@ -333,7 +333,7 @@ describe('validateRequestToken', () => {
             httpOnly: true,
             sameSite: 'lax',
             secure: false,
-            domain: 'host',
+            domain: undefined,
             path: '/campaigns-manager',
         });
 
