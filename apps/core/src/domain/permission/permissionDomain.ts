@@ -70,7 +70,7 @@ export interface IPermissionDomain {
 
     isAllowed({type, action, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
 
-    getActionsByType(params: IGetActionsByTypeParams): ILabeledPermissionsAction[];
+    getActionsByType(params: IGetActionsByTypeParams): Promise<ILabeledPermissionsAction[]>;
 
     registerActions(type: PermissionTypes, actions: string[], applyOn?: string[]): void;
 
@@ -215,6 +215,15 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
     const getPermissionsByActions = async (params: IGetPermissionsByActionsParams): Promise<PermByActionsRes> => {
         const {type, applyTo, actions, usersGroupNodeId: usersGroupId, permissionTreeTarget, ctx} = params;
 
+        const canAccessPermissions = await adminPermissionDomain.getAdminPermission({
+            action: AdminPermissionsActions.ACCESS_PERMISSIONS,
+            ctx,
+        });
+
+        if (!canAccessPermissions) {
+            throw new PermissionError(AdminPermissionsActions.ACCESS_PERMISSIONS);
+        }
+
         const perms = await permissionRepo.getPermissions({
             type,
             applyTo,
@@ -247,7 +256,16 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         permissionTreeTarget,
         ctx,
     }: IGetInheritedPermissionsParams): Promise<boolean> => {
-        let perm;
+        const canAccessPermissions = await adminPermissionDomain.getAdminPermission({
+            action: AdminPermissionsActions.ACCESS_PERMISSIONS,
+            ctx,
+        });
+
+        if (!canAccessPermissions) {
+            throw new PermissionError(AdminPermissionsActions.ACCESS_PERMISSIONS);
+        }
+
+        let perm: boolean;
         switch (type) {
             case PermissionTypes.RECORD:
                 perm = await recordPermissionDomain.getInheritedRecordPermission({
@@ -260,7 +278,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
-                perm = recordAttributePermissionDomain.getInheritedRecordAttributePermission(
+                perm = await recordAttributePermissionDomain.getInheritedRecordAttributePermission(
                     {
                         attributeId: applyTo,
                         action: action as RecordAttributePermissionsActions,
@@ -460,11 +478,21 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         return perm;
     };
 
-    const getActionsByType = ({
+    const getActionsByType = async ({
         type,
         applyOn,
+        ctx,
         skipApplyOn = false,
-    }: IGetActionsByTypeParams): ILabeledPermissionsAction[] => {
+    }: IGetActionsByTypeParams): Promise<ILabeledPermissionsAction[]> => {
+        const canAccessPermissions = await adminPermissionDomain.getAdminPermission({
+            action: AdminPermissionsActions.ACCESS_PERMISSIONS,
+            ctx,
+        });
+
+        if (!canAccessPermissions) {
+            throw new PermissionError(AdminPermissionsActions.ACCESS_PERMISSIONS);
+        }
+
         let perms = [];
         switch (type) {
             case PermissionTypes.ADMIN:

@@ -62,6 +62,7 @@ describe('apiKeyDomain', () => {
 
             const domain = apiKeyDomain({
                 ...depsBase,
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.infra.apiKey': mockRepo as IApiKeyRepo,
             });
 

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {e2eAdminUser, e2eNonAdminUser, makeGraphQlCall} from '../../e2eUtils';
+import {e2eAdminUser, e2eGuestUser, makeGraphQlCall} from '../../e2eUtils';
 
 describe('ApiKeyAdminPermissions', () => {
     let apiKeyId: string;
@@ -37,6 +37,14 @@ describe('ApiKeyAdminPermissions', () => {
 
     const gqlDeleteQuery = (id: string) => `mutation { deleteApiKey(id: "${id}") { id } }`;
 
+    const gqlGetQuery = `query {
+            apiKeys {
+                list {
+                    id
+                }
+            }
+        }`;
+
     beforeAll(async () => {
         const res = await makeGraphQlCall(gqlCreateQuery);
 
@@ -51,9 +59,7 @@ describe('ApiKeyAdminPermissions', () => {
 
     describe('create apiKey', () => {
         it('Should not be authorized to create a new apiKey', async () => {
-            await expect(makeGraphQlCall(gqlCreateQuery, {user: e2eNonAdminUser()})).rejects.toThrow(
-                /Action forbidden/,
-            );
+            await expect(makeGraphQlCall(gqlCreateQuery, {user: e2eGuestUser()})).rejects.toThrow(/Action forbidden/);
         });
 
         it('Should be authorized to create an apiKey', async () => {
@@ -66,9 +72,19 @@ describe('ApiKeyAdminPermissions', () => {
         });
     });
 
+    describe('access api keys', () => {
+        it('Should not be authorized to get api keys', async () => {
+            await expect(makeGraphQlCall(gqlGetQuery, {user: e2eGuestUser()})).rejects.toThrow(/Action forbidden/);
+        });
+
+        it('Should be authorized to get api keys', async () => {
+            await expect(makeGraphQlCall(gqlGetQuery, {user: e2eAdminUser()})).resolves.toBeDefined();
+        });
+    });
+
     describe('edit apiKey', () => {
         it('Should not be authorized to edit an apiKey', async () => {
-            await expect(makeGraphQlCall(gqlEditQuery(apiKeyId), {user: e2eNonAdminUser()})).rejects.toThrow(
+            await expect(makeGraphQlCall(gqlEditQuery(apiKeyId), {user: e2eGuestUser()})).rejects.toThrow(
                 /Action forbidden/,
             );
         });
@@ -84,7 +100,7 @@ describe('ApiKeyAdminPermissions', () => {
 
     describe('delete apiKey', () => {
         it('Should not be authorized to delete an apiKey', async () => {
-            await expect(makeGraphQlCall(gqlDeleteQuery(apiKeyId), {user: e2eNonAdminUser()})).rejects.toThrow(
+            await expect(makeGraphQlCall(gqlDeleteQuery(apiKeyId), {user: e2eGuestUser()})).rejects.toThrow(
                 /Action forbidden/,
             );
         });

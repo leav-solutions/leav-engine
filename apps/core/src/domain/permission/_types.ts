@@ -171,6 +171,7 @@ export interface IIsAllowedParams {
 }
 export interface IGetActionsByTypeParams {
     type: PermissionTypes;
+    ctx: IQueryInfos;
     applyOn?: string;
     skipApplyOn?: boolean;
 }

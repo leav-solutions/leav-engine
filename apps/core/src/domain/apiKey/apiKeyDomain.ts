@@ -76,6 +76,15 @@ export default function ({
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
             }
 
+            const canAccessAPIKeys = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.ACCESS_API_KEYS,
+                ctx,
+            });
+
+            if (!canAccessAPIKeys) {
+                throw new PermissionError(AdminPermissionsActions.ACCESS_API_KEYS);
+            }
+
             const keys = await apiKeyRepo.getApiKeys({params: initializedParams, ctx});
 
             return {
