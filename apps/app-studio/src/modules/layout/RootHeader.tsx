@@ -33,7 +33,7 @@ export const RootHeader: FunctionComponent = () => {
                             />
                         }
                     >
-                        {t('sign_out')}
+                        {t('global.sign_out')}
                     </KitButton>
                 ),
                 onClick: () => logout(),
