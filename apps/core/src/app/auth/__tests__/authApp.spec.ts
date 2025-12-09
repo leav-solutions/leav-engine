@@ -78,6 +78,9 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                 },
+                server: {
+                    basePath: '/campaigns-manager',
+                },
             };
 
             const authApp = createAuthApp({
@@ -148,6 +151,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/campaigns-manager',
             });
 
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
@@ -156,6 +160,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/campaigns-manager',
             });
         });
     });
@@ -248,6 +253,7 @@ describe('authApp', () => {
                     },
                     oidc: {enable: false},
                 },
+                server: {},
             };
 
             const authApp = createAuthApp({
@@ -287,6 +293,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/',
             });
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
                 expires: expect.any(Date),
@@ -294,6 +301,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/',
             });
         });
 
@@ -310,6 +318,7 @@ describe('authApp', () => {
                     },
                     oidc: {enable: true},
                 },
+                server: {},
             };
 
             const authApp = createAuthApp({
@@ -353,6 +362,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/',
             });
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
                 expires: expect.any(Date),
@@ -360,6 +370,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/',
             });
         });
     });
@@ -373,6 +384,7 @@ describe('authApp', () => {
                     cookie: {},
                     oidc: {enable: true},
                 },
+                server: {},
             };
 
             const authApp = createAuthApp({
@@ -442,6 +454,7 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                 },
+                server: {},
             };
 
             const authApp = createAuthApp({
@@ -505,6 +518,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/',
             });
 
             expect(response.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
@@ -513,6 +527,7 @@ describe('authApp', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/',
             });
         });
     });
@@ -558,6 +573,7 @@ describe('authApp', () => {
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'},
                 },
+                server: {},
             };
 
             const mockRecordDomain = {
@@ -700,6 +716,7 @@ describe('authApp', () => {
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true},
                 },
+                server: {},
             };
 
             const mockRecordDomain = {
@@ -786,6 +803,7 @@ describe('authApp', () => {
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true},
                 },
+                server: {},
             };
 
             const mockRecordDomain = {

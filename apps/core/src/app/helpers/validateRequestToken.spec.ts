@@ -41,6 +41,9 @@ describe('validateRequestToken', () => {
         lang: {
             default: 'en',
         },
+        server: {
+            basePath: '/campaigns-manager',
+        },
     };
 
     const mockRecordDomain: Mockify<IRecordDomain> = {
@@ -249,6 +252,7 @@ describe('validateRequestToken', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/campaigns-manager',
             });
 
             expect(responseMock.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
@@ -257,6 +261,7 @@ describe('validateRequestToken', () => {
                 sameSite: 'lax',
                 secure: false,
                 domain: 'host',
+                path: '/campaigns-manager',
             });
         });
     });
@@ -321,6 +326,7 @@ describe('validateRequestToken', () => {
             sameSite: 'lax',
             secure: false,
             domain: 'host',
+            path: '/campaigns-manager',
         });
         expect(responseMock.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token_2', {
             expires: expect.any(Date),
@@ -328,6 +334,7 @@ describe('validateRequestToken', () => {
             sameSite: 'lax',
             secure: false,
             domain: 'host',
+            path: '/campaigns-manager',
         });
 
         expect(result).toEqual({
