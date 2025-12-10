@@ -2,19 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const {envToBool} = require('@leav/config-manager');
-const {release} = require('os');
 
 module.exports = {
     server: {
-        allowIntrospection: true,
+        allowIntrospection: envToBool(process.env.SERVER_ALLOW_INTROSPECTION, true),
     },
     auth: {
-        refreshTokenExpiration: '99y',
         cookie: {
-            secure: false,
+            secure: envToBool(process.env.AUTH_COOKIE_SECURE, false),
         },
     },
-    debug: true,
+    debug: envToBool(process.env.DEBUG, true),
     dbProfiler: {
         enable: envToBool(process.env.DB_PROFILER_ENABLE, true),
     },
@@ -23,8 +21,7 @@ module.exports = {
     },
     actions: {
         excel: {
-            useNewHyperformula: true,
-            debug: false,
+            useNewHyperformula: envToBool(process.env.ACTIONS_EXCEL_USE_NEW_HYPERFORMULA, true),
         },
     },
 };
