@@ -28,6 +28,7 @@
 }
 
 .flapFullpageTarget,
-.sidePanelTarget {
+.sidePanelTarget,
+.activityCenterTarget {
     position: relative;
 }

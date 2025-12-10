@@ -30,5 +30,13 @@
     },
     "record_edition": {
         "new_record": "Créer"
+    },
+    "activity_center": {
+        "title": "Centre d'activité",
+        "open": "Ouvrir le centre d'activité",
+        "close": "Fermer le centre d'activité"
+    },
+    "temporary": {
+        "upcoming": "À venir"
     }
 }

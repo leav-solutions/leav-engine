@@ -30,5 +30,13 @@
     },
     "record_edition": {
         "new_record": "Create"
+    },
+    "activity_center": {
+        "title": "Activity center",
+        "open": "Open activity center",
+        "close": "Close activity center"
+    },
+    "temporary": {
+        "upcoming": "upcoming"
     }
 }
