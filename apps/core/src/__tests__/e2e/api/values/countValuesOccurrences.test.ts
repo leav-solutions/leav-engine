@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordPermissionsActions} from '../../../../_types/permissions';
 import {AttributeTypes} from '../../../../_types/attribute';
-import {gqlAddElemToTree, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {e2eGuestUser, gqlAddElemToTree, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
 import {AttributeCondition} from '../../../..//_types/record';
 
 describe('countValuesOccurrences', () => {
@@ -313,7 +313,9 @@ describe('countValuesOccurrences', () => {
             }
         }`;
 
-        const res = await makeGraphQlCall(gqlQuery);
+        const res = await makeGraphQlCall(gqlQuery, {
+            user: e2eGuestUser(),
+        });
 
         return res.data.data.countValuesOccurrences;
     }

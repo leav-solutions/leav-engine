@@ -123,13 +123,12 @@ export default function ({
         async getAllPermissionsForTree({type, applyTo, actionKey, treeId, groupsIds, ctx}): Promise<IPermission[]> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
 
-            // we add null to groupsIds to retrieve the "all users" permission
             const query = aql`
                 FOR p IN ${col}
                 FILTER p.type == ${type}
                     AND p.applyTo == ${applyTo}
                     AND p.permissionTreeTarget.tree == ${treeId}
-                    AND p.usersGroup IN ${[...(groupsIds ?? []), null]}
+                    AND p.usersGroup IN ${groupsIds}
                     AND HAS(p.actions, ${actionKey})
                 RETURN p
             `;
