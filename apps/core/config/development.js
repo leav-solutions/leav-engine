@@ -8,7 +8,10 @@ module.exports = {
         allowIntrospection: envToBool(process.env.SERVER_ALLOW_INTROSPECTION, true),
     },
     auth: {
+        // avoid login frequently in development
+        refreshTokenExpiration: process.env.REFRESH_TOKEN_TTL || '2d',
         cookie: {
+            // in development, allow non secure cookies for http
             secure: envToBool(process.env.AUTH_COOKIE_SECURE, false),
         },
     },
