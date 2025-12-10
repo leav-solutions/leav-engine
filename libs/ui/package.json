@@ -1,6 +1,6 @@
 {
     "name": "@leav/ui",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "description": "Shared React components and hooks",
     "scripts": {
         "prepublishOnly": "yarn build",
