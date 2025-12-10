@@ -2590,7 +2590,7 @@ export type GetThreadQueryVariables = Exact<{
 }>;
 
 
-export type GetThreadQuery = { records: { list: Array<{ threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
+export type GetThreadQuery = { records: { list: Array<{ permissions: { edit_record: boolean }, threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
 
 
 export const GetApplicationDataByEndpointDocument = gql`
@@ -3084,6 +3084,9 @@ export const GetThreadDocument = gql`
     filters: [{field: "id", condition: EQUAL, value: $recordId}]
   ) {
     list {
+      permissions {
+        edit_record
+      }
       threads: property(attribute: "discussion_threads") {
         ... on LinkValue {
           payload {

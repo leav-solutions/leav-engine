@@ -14,8 +14,9 @@ export const Thread: FunctionComponent = () => {
     const {userData} = useUser();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
 
-    const {threads, loading} = useThreads(flapRecordId, flapLibraryId);
+    const {threads, loading, editRecordPermission} = useThreads(flapRecordId, flapLibraryId);
     const mainThread = threads[0];
+    const showReplyBox = userData && (editRecordPermission || mainThread);
 
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +54,7 @@ export const Thread: FunctionComponent = () => {
                 <KitEmpty className={center} />
             )}
             <KitDivider noMargin />
-            {userData && (
+            {showReplyBox && (
                 <ThreadReplyBox
                     recordId={flapRecordId}
                     libraryId={flapLibraryId}
