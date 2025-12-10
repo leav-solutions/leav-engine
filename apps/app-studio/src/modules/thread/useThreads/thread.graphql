@@ -1,6 +1,9 @@
 query GetThread($libraryId: ID!, $recordId: String) {
     records(library: $libraryId, filters: [{ field: "id", condition: EQUAL, value: $recordId }]) {
         list {
+            permissions {
+                edit_record
+            }
             threads: property(attribute: "discussion_threads") {
                 ... on LinkValue {
                     payload {
