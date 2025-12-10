@@ -5,7 +5,7 @@ import {forwardRef, type ReactNode} from 'react';
 import {RootHeader} from './RootHeader';
 import {FlapFullpageTarget} from './FlapFullpageTarget';
 import {SidePanelTarget} from './SidePanelTarget';
-
+import {ActivityCenterTarget} from './ActivityCenterTarget';
 import {layout, mainContent} from './layout.module.css';
 
 export const RootLayout = forwardRef<HTMLDivElement, {children: ReactNode}>(({children}, ref) => (
@@ -16,6 +16,7 @@ export const RootLayout = forwardRef<HTMLDivElement, {children: ReactNode}>(({ch
             {children}
             <FlapFullpageTarget />
             <SidePanelTarget />
+            <ActivityCenterTarget />
         </section>
     </main>
 ));

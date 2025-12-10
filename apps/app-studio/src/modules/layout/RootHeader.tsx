@@ -11,7 +11,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import {LanguageSelector} from '../switch-language/LanguageSelector';
 import {header, logo} from './layout.module.css';
-import {APP_BASE_URL, GLOBAL_BASE_URL} from '../../constants';
+import {APP_BASE_URL} from '../../constants';
+import {ToggleActivityCenterButton} from '../../modules/activity-center/ToggleActivityCenterButton';
 
 export const RootHeader: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -33,7 +34,7 @@ export const RootHeader: FunctionComponent = () => {
                             />
                         }
                     >
-                        {t('sign_out')}
+                        {t('global.sign_out')}
                     </KitButton>
                 ),
                 onClick: () => logout(),
@@ -61,7 +62,12 @@ export const RootHeader: FunctionComponent = () => {
                     />
                 </Link>
             }
-            profile={<KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />}
+            extraRight={
+                <>
+                    <ToggleActivityCenterButton />
+                    <KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />
+                </>
+            }
             langSwitcher={<LanguageSelector />}
         />
     );

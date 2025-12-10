@@ -15,6 +15,7 @@ export const ATTRIBUTE_ID = 'id';
 
 export const FLAP_FULLPAGE_TARGET_ID = 'flap-fullpage-target';
 export const SIDE_PANEL_TARGET_ID = 'side-panel-target';
+export const ACTIVITY_CENTER_TARGET_ID = 'activity-center-target';
 
 export const FLAP_THREAD_PANEL_ID = 'thread';
 export const FLAP_INFO_AND_HISTORY_PANEL_ID = 'info-history';
