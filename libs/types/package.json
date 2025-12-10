@@ -1,6 +1,6 @@
 {
     "name": "@aristid/leav-types",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "description": "Shared Leav types",
     "scripts": {
         "tscheck": "",
