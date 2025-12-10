@@ -54,7 +54,7 @@ module.exports = {
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
             secure: envToBool(process.env.AUTH_COOKIE_SECURE, true),
-            withDomain: envToBool(process.env.AUTH_COOKIE_SECURE, false),
+            withDomain: envToBool(process.env.AUTH_COOKIE_WITH_DOMAIN, false),
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {
