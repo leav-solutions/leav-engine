@@ -91,12 +91,12 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
             true: [],
             false: [],
         };
-        for (const groupWithAncestor of groupsIdsWithAncestorsId) {
+        for (const groupWithAncestors of groupsIdsWithAncestorsId) {
             // we add null at the end of the list to get permissions defined for "all users" when the group is not admin
             // same algo as in apps/core/src/domain/permission/helpers/permissionByUserGroups.ts
             // TODO refactor to avoid code duplication
             const groupWithRootAncestorIfNotAdmin =
-                _.last(groupWithAncestor) === adminsGroupId ? groupWithAncestor : [...groupWithAncestor, null];
+                _.last(groupWithAncestors) === adminsGroupId ? groupWithAncestors : [...groupWithAncestors, null];
 
             // we calc permissions group by group.
             // groupWithAncestor contains [definedGroupId, parentId, grandParentId, ...]
