@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
+import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes} from '@leav/utils';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IValidateHelper} from 'domain/helpers/validate';
 import {type ILibraryDomain} from 'domain/library/libraryDomain';
 import {type IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
-import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
@@ -35,13 +34,14 @@ import {
 } from '../../_types/forms';
 import {type IList, SortOrder} from '../../_types/list';
 import {
+    AdminPermissionsActions,
     AttributePermissionsActions,
-    LibraryPermissionsActions,
     RecordAttributePermissionsActions,
 } from '../../_types/permissions';
 import {getElementValues} from './helpers/getElementValues';
 import {mustIncludeElement} from './helpers/mustIncludeElement';
 import {BASE_ATTRIBUTES} from '../../_constants/attributes';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 export interface IFormDomain {
     getFormsByLib({
@@ -69,9 +69,9 @@ export interface IFormDomainDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.record': IRecordDomain;
-    'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.tree': ITreeDomain;
     'core.infra.form': IFormRepo;
@@ -83,10 +83,10 @@ export interface IFormDomainDeps {
 export default function (deps: IFormDomainDeps): IFormDomain {
     const {
         'core.domain.attribute': attributeDomain,
-        'core.domain.permission.library': libraryPermissionDomain,
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
         'core.domain.permission.attribute': attributePermissionDomain,
         'core.domain.helpers.validate': validateHelper,
+        'core.domain.permission.admin': adminPermissionDomain,
         'core.domain.tree': treeDomain,
         'core.infra.form': formRepo,
         'core.utils': utils,
@@ -187,6 +187,15 @@ export default function (deps: IFormDomainDeps): IFormDomain {
 
     return {
         async getFormsByLib({library, params, ctx}): Promise<IList<IForm>> {
+            const canAccessForms = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.EDIT_LIBRARY,
+                ctx,
+            });
+
+            if (!canAccessForms) {
+                throw new PermissionError(AdminPermissionsActions.EDIT_LIBRARY);
+            }
+
             const filters = {...params?.filters, library};
             const initializedParams = {...params, filters};
 
@@ -380,6 +389,16 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             return forms.list[0];
         },
         async saveForm({form, ctx}): Promise<IForm> {
+            // Check permissions
+            const canSaveForm = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.EDIT_LIBRARY,
+                ctx,
+            });
+
+            if (!canSaveForm) {
+                throw new PermissionError(AdminPermissionsActions.EDIT_LIBRARY);
+            }
+
             const defaultParams: IFormStrict = {
                 id: '',
                 library: '',
@@ -409,18 +428,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             const dataToSave = existingForm
                 ? {...defaultParams, ...forms.list[0], ...form}
                 : {...defaultParams, ...form};
-
-            // Check permissions
-            const permToCheck = LibraryPermissionsActions.ADMIN_LIBRARY;
-            if (
-                !(await libraryPermissionDomain.getLibraryPermission({
-                    libraryId: form.library,
-                    action: permToCheck,
-                    ctx,
-                }))
-            ) {
-                throw new PermissionError(permToCheck);
-            }
 
             await validateHelper.validateLibrary(dataToSave.library, ctx);
 
@@ -466,16 +473,13 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 : formRepo.createForm({formData: dataToSave, ctx});
         },
         async deleteForm({library, id, ctx}): Promise<IForm> {
-            // Check permissions
-            const permToCheck = LibraryPermissionsActions.ADMIN_LIBRARY;
-            if (
-                !(await libraryPermissionDomain.getLibraryPermission({
-                    action: permToCheck,
-                    libraryId: library,
-                    ctx,
-                }))
-            ) {
-                throw new PermissionError(permToCheck);
+            const canDeleteForm = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.EDIT_LIBRARY,
+                ctx,
+            });
+
+            if (!canDeleteForm) {
+                throw new PermissionError(AdminPermissionsActions.EDIT_LIBRARY);
             }
 
             const filters: IFormFilterOptions = {library, id};
