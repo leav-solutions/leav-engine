@@ -153,6 +153,7 @@ export const validateConfig = (conf: IConfig) => {
             everybody: permissionsByTypeAndActions.required(),
             adminGroup: permissionsByTypeAndActions.required(),
             enableCache: Joi.boolean().required(),
+            enableAccessRecordByDefaultBackendFilter: Joi.boolean().required(),
         }),
         amqp: Joi.object().keys({
             connOpt: Joi.object().keys({
