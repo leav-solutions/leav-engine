@@ -32,6 +32,7 @@ import {type ITreeRepo} from '../../../infra/tree/treeRepo';
 import {type GetCoreEntityByIdFunc} from '../../helpers/getCoreEntityById';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {type IDefaultPermissionHelper} from '../../permission/helpers/defaultPermission';
+import {type IConfig} from '_types/config';
 
 /**
  * Search records
@@ -108,6 +109,7 @@ export interface IFindRecordsHelperDeps {
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.infra.permission': IPermissionRepo;
+    config: IConfig;
 }
 
 export default function ({
@@ -122,6 +124,7 @@ export default function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
     'core.infra.permission': permissionRepo,
     'core.utils': utils,
+    config,
 }: IFindRecordsHelperDeps): FindRecordsHelper {
     const _isNumericCondition = (condition: AttributeCondition): boolean =>
         condition === AttributeCondition.VALUES_COUNT_EQUAL ||
@@ -377,7 +380,9 @@ export default function ({
                         'core.infra.permission': permissionRepo,
                         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
                     },
-                    ignoreAccessRecordByDefaultPermission,
+                    ignoreAccessRecordByDefaultPermission: config.permissions.enableAccessRecordByDefaultBackendFilter
+                        ? ignoreAccessRecordByDefaultPermission
+                        : true,
                 },
                 ctx,
             );

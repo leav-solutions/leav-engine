@@ -330,7 +330,8 @@ describe('ExtendedLibraryPermissions', () => {
         });
     });
 
-    describe('disable access_record_by_default on node 1 for everybody', () => {
+    // Skip test suite as feature behind a flag not enabled by default, may be remove in future
+    describe.skip('disable access_record_by_default on node 1 for everybody', () => {
         beforeAll(async () => {
             await makeGraphQlCall(
                 `mutation {
