@@ -5,6 +5,7 @@ import _ from 'lodash';
 import {type IAttribute} from '_types/attribute';
 import {type ILibrary} from '_types/library';
 import {PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
+import {adminsGroupId} from '../../../_constants/users';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type ITreeNode} from '_types/tree';
 import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
@@ -90,7 +91,13 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
             true: [],
             false: [],
         };
-        for (const groupWithAncestor of groupsIdsWithAncestorsId) {
+        for (const groupWithAncestors of groupsIdsWithAncestorsId) {
+            // we add null at the end of the list to get permissions defined for "all users" when the group is not admin
+            // same algo as in apps/core/src/domain/permission/helpers/permissionByUserGroups.ts
+            // TODO refactor to avoid code duplication
+            const groupWithRootAncestorIfNotAdmin =
+                _.last(groupWithAncestors) === adminsGroupId ? groupWithAncestors : [...groupWithAncestors, null];
+
             // we calc permissions group by group.
             // groupWithAncestor contains [definedGroupId, parentId, grandParentId, ...]
             const permissions = await permissionRepo.getAllPermissionsForTree({
@@ -98,7 +105,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
                 applyTo: library,
                 actionKey: action,
                 treeId,
-                groupsIds: groupWithAncestor,
+                groupsIds: groupWithRootAncestorIfNotAdmin,
                 ctx,
             });
 
@@ -135,7 +142,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
                 defaultPermHelper.getDefaultPermission({
                     type: PermissionTypes.RECORD,
                     action,
-                    userGroups: [groupWithAncestor.map(gId => ({id: gId}))],
+                    userGroups: [groupWithRootAncestorIfNotAdmin.map(gId => ({id: gId}))],
                     ctx,
                 });
             const computedPermissionTree = _computePermissionTree(treeContent, rootPermission, permissionsByTreeTarget);

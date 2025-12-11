@@ -6,6 +6,8 @@ import {AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {
     e2eGuestUser,
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
@@ -14,7 +16,6 @@ import {
     type IMakeGraphQlCallOptions,
     makeGraphQlCall,
 } from '../e2eUtils';
-import {adminsGroupId} from '../../../../_constants/users';
 
 // Extended library permissions using a tree with a library for tree elements
 // particularly apps/core/src/domain/record/helpers/getAccessPermissionFilters.ts
@@ -188,7 +189,11 @@ describe('ExtendedLibraryPermissions', () => {
         });
 
         it('record should get only one of them', async () => {
-            const records = await getLibRecords({});
+            const records = await getLibRecords({
+                options: {
+                    user: e2eNonAdminUser(),
+                },
+            });
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record2Id);
@@ -203,6 +208,9 @@ describe('ExtendedLibraryPermissions', () => {
                     value: "${permTreeNodeRecord1Id}"
                 }
             ]`,
+                options: {
+                    user: e2eNonAdminUser(),
+                },
             });
 
             expect(records.length).toBe(0);
@@ -217,6 +225,9 @@ describe('ExtendedLibraryPermissions', () => {
                     value: "${permTreeNodeRecord2Id}"
                 }
             ]`,
+                options: {
+                    user: e2eNonAdminUser(),
+                },
             });
 
             expect(records.length).toBe(1);
@@ -231,7 +242,7 @@ describe('ExtendedLibraryPermissions', () => {
                         permission: {
                             type: record,
                             applyTo: "${libName}",
-                            usersGroup: "${adminsGroupId}",
+                            usersGroup: "${e2eNonAdminGroupId()}",
                             permissionTreeTarget: {
                                 tree: "${permTreeName}", nodeId: "${permTreeNode1Id}"
                             },
@@ -253,7 +264,7 @@ describe('ExtendedLibraryPermissions', () => {
                         permission: {
                             type: record,
                             applyTo: "${libName}",
-                            usersGroup: "${adminsGroupId}",
+                            usersGroup: "${e2eNonAdminGroupId()}",
                             permissionTreeTarget: {
                                 tree: "${permTreeName}", nodeId: "${permTreeNode1Id}"
                             },
@@ -270,7 +281,11 @@ describe('ExtendedLibraryPermissions', () => {
 
             // To improve those test, would be fine to be able to make call as another user than admin
             it('record should get all records', async () => {
-                const records = await getLibRecords({});
+                const records = await getLibRecords({
+                    options: {
+                        user: e2eNonAdminUser(),
+                    },
+                });
 
                 expect(records.length).toBe(2);
             });
@@ -361,7 +376,11 @@ describe('ExtendedLibraryPermissions', () => {
         });
 
         it('record should get only one of them', async () => {
-            const records = await getLibRecords({});
+            const records = await getLibRecords({
+                options: {
+                    user: e2eNonAdminUser(),
+                },
+            });
 
             expect(records.length).toBe(1);
             expect(records[0].id).toBe(record2Id);
@@ -375,6 +394,9 @@ describe('ExtendedLibraryPermissions', () => {
                     value: "${permTreeNodeRecord1Id}"
                 }
             ]`,
+                options: {
+                    user: e2eNonAdminUser(),
+                },
             });
 
             expect(records.length).toBe(1);
@@ -390,6 +412,9 @@ describe('ExtendedLibraryPermissions', () => {
                     value: "${permTreeNodeRecord2Id}"
                 }
             ]`,
+                options: {
+                    user: e2eNonAdminUser(),
+                },
             });
 
             expect(records.length).toBe(1);
@@ -413,7 +438,7 @@ describe('ExtendedLibraryPermissions', () => {
                         permission: {
                             type: record,
                             applyTo: "${libName}",
-                            usersGroup: "${adminsGroupId}",
+                            usersGroup: "${e2eNonAdminGroupId()}",
                             permissionTreeTarget: {
                                 tree: "${permTreeName}", nodeId: "${permTreeNode1Id}"
                             },
@@ -435,7 +460,7 @@ describe('ExtendedLibraryPermissions', () => {
                         permission: {
                             type: record,
                             applyTo: "${libName}",
-                            usersGroup: "${adminsGroupId}",
+                            usersGroup: "${e2eNonAdminGroupId()}",
                             permissionTreeTarget: {
                                 tree: "${permTreeName}", nodeId: "${permTreeNode1Id}"
                             },
@@ -452,7 +477,11 @@ describe('ExtendedLibraryPermissions', () => {
 
             // To improve those test, would be fine to be able to make call as another user than admin
             it('record should get all records', async () => {
-                const records = await getLibRecords({});
+                const records = await getLibRecords({
+                    options: {
+                        user: e2eNonAdminUser(),
+                    },
+                });
 
                 expect(records.length).toBe(2);
             });
