@@ -1,6 +1,6 @@
 {
     "name": "@leav/config-manager",
-    "version": "1.5.3",
+    "version": "1.5.3-1",
     "description": "Module to load project configuration, allowing config overrides based on environment",
     "scripts": {
         "test": "jest -c jest-config.json",
