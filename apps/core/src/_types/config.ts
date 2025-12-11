@@ -196,6 +196,7 @@ export interface IPermissions {
     everybody: IPermissionsByTypesAndActions;
     adminGroup: IPermissionsByTypesAndActions;
     enableCache: boolean;
+    enableAccessRecordByDefaultBackendFilter: boolean;
 }
 
 export interface IAmqp {
