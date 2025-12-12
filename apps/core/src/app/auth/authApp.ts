@@ -301,7 +301,9 @@ export default function ({
                             user = createdUser;
                             // if the user has role admin, put it in the admin group (id = 1)
                             if (
-                                decodedAccessToken?.resource_access[config.auth.oidc.clientId]?.roles?.includes('admin')
+                                decodedAccessToken?.resource_access?.[config.auth.oidc.clientId]?.roles?.includes(
+                                    'admin',
+                                )
                             ) {
                                 await valueDomain.saveValue({
                                     library: 'users',
