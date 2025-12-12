@@ -72,7 +72,9 @@ export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: b
             );
 
             const attributeRecords = treeResponse.reduce((acc, item) => {
-                acc[item.attributeId] = item.recordIds;
+                if (item.recordIds.length > 0) {
+                    acc[item.attributeId] = item.recordIds;
+                }
                 return acc;
             }, {});
 
