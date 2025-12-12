@@ -55,7 +55,7 @@ export const ThreadReplyBox = ({
                 value={message}
                 onChange={setMessage}
                 disabled={isPosting}
-                autoLayout
+                style={{width: '100%', height: '100%'}}
                 ref={ref}
             />
             <KitButton

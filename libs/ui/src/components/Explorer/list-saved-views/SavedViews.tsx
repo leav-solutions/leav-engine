@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {KitRadio, KitSpace, KitTypography, useKitNotification} from 'aristid-ds';
+import {KitRadio, KitSpace, KitTypography, KitNotification} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {localizedTranslation} from '@leav/utils';
@@ -18,6 +18,7 @@ import {IoCopy} from 'react-icons/io5';
 import {type IUserView} from '../_types';
 import classNames from 'classnames';
 import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
+import {INFO_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -77,7 +78,6 @@ const StyledCopySpan = styled.span`
 
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
-    const {kitNotification} = useKitNotification();
     const {availableLangs} = useLang();
     const {view} = useViewSettingsContext();
     const {loadView} = useLoadView();
@@ -130,10 +130,10 @@ export const SavedViews: FunctionComponent = () => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 await navigator.clipboard.writeText(viewItem.id || '');
-                                                kitNotification.info({
+                                                KitNotification.info({
                                                     message: `Id : ${viewItem?.id}`,
                                                     description: t('explorer.viewList.copied'),
-                                                    duration: 3,
+                                                    duration: INFO_NOTIFICATION_DURATION_SECONDS,
                                                 });
                                             }}
                                         >
@@ -168,10 +168,10 @@ export const SavedViews: FunctionComponent = () => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
                                                     await navigator.clipboard.writeText(viewItem.id || '');
-                                                    kitNotification.info({
+                                                    KitNotification.info({
                                                         message: `Id : ${viewItem?.id}`,
                                                         description: t('explorer.viewList.copied'),
-                                                        duration: 3,
+                                                        duration: INFO_NOTIFICATION_DURATION_SECONDS,
                                                     });
                                                 }}
                                             >

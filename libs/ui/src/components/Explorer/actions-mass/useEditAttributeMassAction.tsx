@@ -17,7 +17,7 @@ import {EditTreeAttributeValuesMapping} from './edit-attribute/EditTreeAttribute
 import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassActionModal';
 import {useListEditableAttributeHook} from './edit-attribute/useListEditableAttributeHook';
 import {useCountValuesOccurrencesHook} from './edit-attribute/useCountValuesOccurrencesHook';
-import {KitAlert, useKitNotification} from 'aristid-ds';
+import {KitAlert, KitNotification} from 'aristid-ds';
 import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
 import {Loading} from '_ui/components/Loading';
 
@@ -39,7 +39,6 @@ export const useEditAttributeMassAction = ({
     }
 
     const {t} = useSharedTranslation();
-    const {kitNotification} = useKitNotification();
 
     const [selectedAttribute, setSelectedAttribute] = useState<AttributeDetailsFragment | undefined>(undefined);
     const [massSelectionFilter, setMassSelectionFilter] = useState<RecordFilterInput[]>([]);
@@ -108,7 +107,7 @@ export const useEditAttributeMassAction = ({
             });
 
             closeModal();
-            kitNotification.info({
+            KitNotification.info({
                 message: t('explorer.massAction.editAttribute_submit_notification_title'),
                 description: t('explorer.massAction.editAttribute_submit_notification_description', {
                     counter: bulkCounter,
