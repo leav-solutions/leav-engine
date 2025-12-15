@@ -113,6 +113,81 @@ describe('DependentValuesTreeAttributePermissions', () => {
         });
     });
 
+    describe('save wrong attribute with permissions_conf_dependent_values', () => {
+        it('should fail if dependent is unknown', async () => {
+            await expect(
+                gqlSaveAttribute({
+                    id: testAttrName,
+                    label: 'Test Dependent Values Tree Attribute with unknown dependent',
+                    type: AttributeTypes.TREE,
+                    linkedTree: testTreeName,
+                    multipleValues: false,
+                    permissions_conf_dependent_values: {
+                        dependentValuesTreeAttributes: ['unknown_attribute_id'],
+                    },
+                }),
+            ).rejects.toThrow(/Invalid attributes: unknown_attribute_id/);
+        });
+
+        it('should fail if attribute has wrong type', async () => {
+            await expect(
+                gqlSaveAttribute({
+                    id: 'test_dependent_values_tree_attribute_link',
+                    label: 'Test Dependent Values Tree Attribute with wrong type',
+                    type: AttributeTypes.SIMPLE_LINK,
+                    linkedTree: testTreeName,
+                    permissions_conf_dependent_values: {
+                        dependentValuesTreeAttributes: [testAttrName],
+                    },
+                }),
+            ).rejects.toThrow(
+                /Cannot save permissions dependent values: attribute type is simple_link, must be of type tree/,
+            );
+        });
+
+        it('should fail if dependent values tree attribute has wrong type', async () => {
+            await gqlSaveAttribute({
+                id: 'test_dependent_values_tree_attribute_simple',
+                label: 'Test Attr simple',
+                type: AttributeTypes.SIMPLE,
+            });
+
+            await expect(
+                gqlSaveAttribute({
+                    id: 'test_dependent_values_tree_attribute_with_simple',
+                    label: 'Test Dependent Values Tree Attribute with dependent simple type',
+                    type: AttributeTypes.TREE,
+                    linkedTree: testTreeName,
+                    permissions_conf_dependent_values: {
+                        dependentValuesTreeAttributes: ['test_dependent_values_tree_attribute_simple'],
+                    },
+                }),
+            ).rejects.toThrow(/Invalid attributes: test_dependent_values_tree_attribute_simple/);
+        });
+
+        it('should fail if dependent values tree attribute is tree but multi value', async () => {
+            await gqlSaveAttribute({
+                id: 'test_dependent_values_tree_attribute_tree_multivalue',
+                label: 'Test Attr tree multivalue',
+                type: AttributeTypes.TREE,
+                linkedTree: testTreeName,
+                multipleValues: true,
+            });
+
+            await expect(
+                gqlSaveAttribute({
+                    id: 'test_dependent_values_tree_attribute_with_tree_multivalue',
+                    label: 'Test Dependent Values Tree Attribute with dependent tree multivalue',
+                    type: AttributeTypes.TREE,
+                    linkedTree: testTreeName,
+                    permissions_conf_dependent_values: {
+                        dependentValuesTreeAttributes: ['test_dependent_values_tree_attribute_tree_multivalue'],
+                    },
+                }),
+            ).rejects.toThrow(/Invalid attributes: test_dependent_values_tree_attribute_tree_multivalue/);
+        });
+    });
+
     async function getAttribute(attrName: string): Promise<IAttribute> {
         const result = await makeGraphQlCall(
             `{attributes(filters: {id: "${attrName}"}) { 
