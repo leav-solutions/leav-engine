@@ -134,6 +134,13 @@ export interface ITreePermissionsConf {
     relation: PermissionsRelations;
 }
 
+export interface ITreePermissionsDependentValuesConf {
+    /**
+     * IDs of attributes used for permissions
+     */
+    dependentValuesTreeAttributes: string[];
+}
+
 export interface IPermissionsTreeTarget {
     /**
      * Tree ID

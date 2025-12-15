@@ -9,6 +9,7 @@ import {
     type ILabeledPermissionsAction,
     type IPermission,
     type ITreePermissionsConf,
+    type ITreePermissionsDependentValuesConf,
     PermissionsRelations,
     PermissionTypes,
 } from '../../../_types/permissions';
@@ -120,6 +121,14 @@ export default function ({
                     input Treepermissions_confInput {
                         permissionTreeAttributes: [ID!]!,
                         relation: PermissionsRelation!
+                    }
+
+                    type TreePermissionsDependentValuesConf {
+                        dependentValuesTreeAttributes: [Attribute!]!,
+                    }
+
+                    input TreePermissionsDependentValuesConfInput {
+                        dependentValuesTreeAttributes: [ID!]!,
                     }
 
                     # If id and library are not specified, permission will apply to tree root
@@ -295,6 +304,17 @@ export default function ({
                             return parent.permissionTreeAttributes
                                 ? Promise.all(
                                       parent.permissionTreeAttributes.map(attrId =>
+                                          attributeDomain.getAttributeProperties({id: attrId, ctx}),
+                                      ),
+                                  )
+                                : [];
+                        },
+                    },
+                    TreePermissionsDependentValuesConf: {
+                        dependentValuesTreeAttributes(parent: ITreePermissionsDependentValuesConf, _, ctx) {
+                            return parent.dependentValuesTreeAttributes
+                                ? Promise.all(
+                                      parent.dependentValuesTreeAttributes.map(attrId =>
                                           attributeDomain.getAttributeProperties({id: attrId, ctx}),
                                       ),
                                   )
