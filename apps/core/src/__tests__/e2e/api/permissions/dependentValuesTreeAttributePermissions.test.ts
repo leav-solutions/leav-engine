@@ -1,8 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {AttributeDependentValuesPermissionsActions, PermissionTypes} from '../../../../_types/permissions';
 import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
-import {gqlSaveAttribute, gqlSaveLibrary, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlSaveAttribute,
+    gqlSaveLibrary,
+    gqlSaveTree,
+    makeGraphQlCall,
+} from '../e2eUtils';
 
 describe('DependentValuesTreeAttributePermissions', () => {
     const testAttrName = 'test_dependent_values_tree_attribute_itself';
@@ -10,9 +18,21 @@ describe('DependentValuesTreeAttributePermissions', () => {
     const testTreeLibraryName = 'test_dependent_values_tree_attribute_tree_library';
     const testTreeName = 'test_dependent_values_tree_attribute_attr_tree';
 
+    let treeNode1Id: string;
+    let treeNode2Id: string;
+    let treeNode3Id: string;
+
     beforeAll(async () => {
         await gqlSaveLibrary(testTreeLibraryName, 'Test node lib', []);
         await gqlSaveTree(testTreeName, 'Attribute tree', [testTreeLibraryName]);
+
+        const treeNodeRecord1Id = await gqlCreateRecord(testTreeLibraryName);
+        const treeNodeRecord2Id = await gqlCreateRecord(testTreeLibraryName);
+        const treeNodeRecord3Id = await gqlCreateRecord(testTreeLibraryName);
+
+        treeNode1Id = await gqlAddElemToTree(testTreeName, {id: treeNodeRecord1Id, library: testTreeLibraryName});
+        treeNode2Id = await gqlAddElemToTree(testTreeName, {id: treeNodeRecord2Id, library: testTreeLibraryName});
+        treeNode3Id = await gqlAddElemToTree(testTreeName, {id: treeNodeRecord3Id, library: testTreeLibraryName});
 
         await gqlSaveAttribute({
             id: testAttrName,
@@ -46,13 +66,110 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 expect.objectContaining({id: testAttrName}),
             ]);
         });
+
+        describe('can not move from node1 to node2', () => {
+            const setupPermission = (allowed: boolean | null) =>
+                makeGraphQlCall(
+                    `mutation {
+                    savePermission(
+                        permission: {
+                            type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                            applyTo: "${testAttrName}",
+                            usersGroup: null,
+                            permissionTreeTarget: {
+                                tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                            },
+                            dependentTreeTargets: [
+                                { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                            ],
+                            actions: [
+                                {name: ${AttributeDependentValuesPermissionsActions.SET_VALUE}, allowed: ${allowed}},
+                            ]
+                        }
+                    ) { 
+                        type
+                    }
+                }`,
+                );
+
+            beforeAll(async () => {
+                await setupPermission(false);
+            });
+
+            afterAll(async () => {
+                // Clean permissions
+                await setupPermission(null);
+            });
+
+            it('should have setup permission to use dependent values', async () => {
+                const result = await makeGraphQlCall(
+                    `{
+                    permissions(
+                        type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                        applyTo: "${testAttrName}",
+                        usersGroup: null,
+                        actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                        },
+                        dependentTreeTargets: [
+                            { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                        ]
+                    ) {
+                        name
+                        allowed
+                    }
+                }`,
+                );
+
+                expect(result.data.data.permissions.length).toBe(1);
+                expect(result.data.data.permissions[0].name).toBe(AttributeDependentValuesPermissionsActions.SET_VALUE);
+                expect(result.data.data.permissions[0].allowed).toBe(false);
+
+                // with diff targeting, should inherit (null)
+                const result2 = await makeGraphQlCall(
+                    `{
+                    permissions(
+                        type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                        applyTo: "${testAttrName}",
+                        usersGroup: null,
+                        actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${treeNode3Id}"
+                        },
+                        dependentTreeTargets: [
+                            { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                        ]
+                    ) {
+                        name
+                        allowed
+                    }
+                }`,
+                );
+
+                expect(result2.data.data.permissions[0].allowed).toBe(null);
+            });
+        });
     });
 
     describe('another tree attribute exists', () => {
         const anotherAttrName = 'another_dependent_values_tree_attribute';
         const anotherTreeName = 'another_dependent_values_tree_attribute_attr_tree';
+        let anotherTreeNodeAId: string;
+        let anotherTreeNodeBId: string;
+
         beforeAll(async () => {
             await gqlSaveTree(anotherTreeName, 'Another Attribute tree', [testTreeLibraryName]);
+            const treeNodeRecordAId = await gqlCreateRecord(testTreeLibraryName);
+            const treeNodeRecordBId = await gqlCreateRecord(testTreeLibraryName);
+            anotherTreeNodeAId = await gqlAddElemToTree(anotherTreeName, {
+                id: treeNodeRecordAId,
+                library: testTreeLibraryName,
+            });
+            anotherTreeNodeBId = await gqlAddElemToTree(anotherTreeName, {
+                id: treeNodeRecordBId,
+                library: testTreeLibraryName,
+            });
 
             await gqlSaveAttribute({
                 id: anotherAttrName,
@@ -109,6 +226,71 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     expect.objectContaining({id: anotherAttrName}),
                     expect.objectContaining({id: testAttrName}),
                 ]);
+            });
+
+            describe('can not move from anotherNodeA/node1 to node2', () => {
+                const setupPermission = (allowed: boolean | null) =>
+                    makeGraphQlCall(
+                        `mutation {
+                    savePermission(
+                        permission: {
+                            type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                            applyTo: "${testAttrName}",
+                            usersGroup: null,
+                            permissionTreeTarget: {
+                                tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                            },
+                            dependentTreeTargets: [
+                                { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                            ],
+                            actions: [
+                                {name: ${AttributeDependentValuesPermissionsActions.SET_VALUE}, allowed: ${allowed}},
+                            ]
+                        }
+                    ) { 
+                        type
+                    }
+                }`,
+                    );
+
+                beforeAll(async () => {
+                    await setupPermission(false);
+                });
+
+                afterAll(async () => {
+                    // Clean permissions
+                    await setupPermission(null);
+                });
+
+                it('should have setup permission to use dependent values', async () => {
+                    const result = await makeGraphQlCall(
+                        `{
+                    permissions(
+                        type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                        applyTo: "${testAttrName}",
+                        usersGroup: null,
+                        actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                        },
+                        dependentTreeTargets: [
+                            { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                            { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                        ]
+                    ) {
+                        name
+                        allowed
+                    }
+                }`,
+                    );
+
+                    expect(result.data.data.permissions.length).toBe(1);
+                    expect(result.data.data.permissions[0].name).toBe(
+                        AttributeDependentValuesPermissionsActions.SET_VALUE,
+                    );
+                    expect(result.data.data.permissions[0].allowed).toBe(false);
+                });
             });
         });
     });

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getCoreDep} from '../integrationTestUtils';
 import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type IPermissionRepo} from 'infra/permission/permissionRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
 
@@ -11,5 +12,7 @@ export const getLibraryRepo = (): ILibraryRepo => getCoreDep<ILibraryRepo>('core
 export const getRecordRepo = (): IRecordRepo => getCoreDep<IRecordRepo>('core.infra.record');
 
 export const getTreeRepo = (): ITreeRepo => getCoreDep<ITreeRepo>('core.infra.tree');
+
+export const getPermissionRepo = (): IPermissionRepo => getCoreDep<IPermissionRepo>('core.infra.permission');
 
 export * from '../integrationTestUtils';

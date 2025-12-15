@@ -9,6 +9,7 @@ export enum PermissionTypes {
     ADMIN = 'admin',
     LIBRARY = 'library',
     ATTRIBUTE = 'attribute',
+    ATTRIBUTE_DEPENDENT_VALUES = 'attribute_dependent_values',
     TREE = 'tree',
     TREE_NODE = 'tree_node',
     TREE_LIBRARY = 'tree_library',
@@ -42,6 +43,10 @@ export enum RecordAttributePermissionsActions {
 export enum AttributePermissionsActions {
     ACCESS_ATTRIBUTE = 'access_attribute',
     EDIT_VALUE = 'edit_value',
+}
+
+export enum AttributeDependentValuesPermissionsActions {
+    SET_VALUE = 'set_value',
 }
 
 export enum TreePermissionsActions {
@@ -104,6 +109,7 @@ export type PermissionsActions =
     | RecordAttributePermissionsActions
     | AdminPermissionsActions
     | AttributePermissionsActions
+    | AttributeDependentValuesPermissionsActions
     | TreePermissionsActions
     | TreeNodePermissionsActions
     | ApplicationPermissionsActions;
@@ -153,6 +159,10 @@ export interface IPermissionsTreeTarget {
     nodeId: string | null;
 }
 
+export interface IPermissionsDependentTreeTarget extends IPermissionsTreeTarget {
+    attributeId: string;
+}
+
 export interface IPermission {
     /**
      * Permission type
@@ -177,6 +187,13 @@ export interface IPermission {
 
     /**
      * What element on permissions tree is concerned by this permission
+     * In case of type PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES, this is the value tree target
      */
     permissionTreeTarget?: IPermissionsTreeTarget;
+
+    /**
+     * For dependent values tree attribute permissions, the list of attributes on which this permission depends
+     * Only for PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES
+     */
+    dependentTreeTargets?: IPermissionsDependentTreeTarget[];
 }

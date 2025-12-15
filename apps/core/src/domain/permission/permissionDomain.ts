@@ -15,6 +15,7 @@ import {Errors} from '../../_types/errors';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
+    AttributeDependentValuesPermissionsActions,
     AttributePermissionsActions,
     type ILabeledPermissionsAction,
     type IPermission,
@@ -53,6 +54,7 @@ export interface IPermissionDomain {
         actions,
         usersGroupNodeId,
         permissionTreeTarget,
+        dependentTreeTargets,
         ctx,
     }: IGetPermissionsByActionsParams): Promise<PermByActionsRes>;
 
@@ -213,7 +215,15 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
     };
 
     const getPermissionsByActions = async (params: IGetPermissionsByActionsParams): Promise<PermByActionsRes> => {
-        const {type, applyTo, actions, usersGroupNodeId: usersGroupId, permissionTreeTarget, ctx} = params;
+        const {
+            type,
+            applyTo,
+            actions,
+            usersGroupNodeId: usersGroupId,
+            permissionTreeTarget,
+            dependentTreeTargets,
+            ctx,
+        } = params;
 
         const canAccessPermissions = await adminPermissionDomain.getAdminPermission({
             action: AdminPermissionsActions.ACCESS_PERMISSIONS,
@@ -229,6 +239,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
             applyTo,
             usersGroupNodeId: usersGroupId,
             permissionTreeTarget,
+            dependentTreeTargets,
             ctx,
         });
 
@@ -506,6 +517,9 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 break;
             case PermissionTypes.ATTRIBUTE:
                 perms = Object.values(AttributePermissionsActions);
+                break;
+            case PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES:
+                perms = Object.values(AttributeDependentValuesPermissionsActions);
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
                 perms = Object.values(RecordAttributePermissionsActions);

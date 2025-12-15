@@ -5,6 +5,7 @@ import {aql} from 'arangojs';
 import {type IDbDocument} from 'infra/db/_types';
 import {type IQueryInfos} from '_types/queryInfos';
 import {
+    type IPermissionsDependentTreeTarget,
     type IPermission,
     type IPermissionsTreeTarget,
     type PermissionsActions,
@@ -20,12 +21,14 @@ export interface IPermissionRepo {
         applyTo,
         usersGroupNodeId,
         permissionTreeTarget,
+        dependentTreeTargets,
         ctx,
     }: {
         type: PermissionTypes;
         applyTo: string;
         usersGroupNodeId: string | null;
         permissionTreeTarget?: IPermissionsTreeTarget;
+        dependentTreeTargets?: IPermissionsDependentTreeTarget[];
         ctx: IQueryInfos;
     }): Promise<IPermission | null>;
     getAllPermissionsForTree({
@@ -76,6 +79,7 @@ export default function ({
                 applyTo: dbPermData.applyTo,
                 usersGroup: dbPermData.usersGroup,
                 permissionTreeTarget: dbPermData.permissionTreeTarget,
+                dependentTreeTargets: dbPermData.dependentTreeTargets,
             };
 
             const res = await dbService.execute({
@@ -101,6 +105,7 @@ export default function ({
             applyTo = null,
             usersGroupNodeId,
             permissionTreeTarget = null,
+            dependentTreeTargets = null,
             ctx,
         }): Promise<IPermission | null> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
@@ -113,6 +118,7 @@ export default function ({
                     AND p.applyTo == ${applyTo}
                     AND p.usersGroup == ${userGroupToFilter}
                     AND p.permissionTreeTarget == ${permissionTreeTarget}
+                    AND p.dependentTreeTargets == ${dependentTreeTargets}
                 RETURN p
             `;
 

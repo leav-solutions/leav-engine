@@ -143,6 +143,20 @@ export default function ({
                         nodeId: ID
                     }
 
+                    # Only for dependent values tree attribute permissions (PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES)
+                    type PermissionsDependTreeTarget {
+                        attributeId: ID!,
+                        tree: ID!,
+                        nodeId: ID,
+                    }
+
+                    # Only for dependent values tree attribute permissions (PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES)
+                    input PermissionsDependTreeTargetInput {
+                        attributeId: ID!,
+                        tree: ID!,
+                        nodeId: ID
+                    }
+
                     # A "null" users groups means this permission applies at root level. A "null" on tree target's
                     # id for tree-based permission means it applies to root level on this tree.
                     type Permission {
@@ -150,7 +164,8 @@ export default function ({
                         applyTo: ID,
                         usersGroup: ID,
                         actions: [PermissionAction!]!,
-                        permissionTreeTarget: PermissionsTreeTarget
+                        permissionTreeTarget: PermissionsTreeTarget,
+                        dependentTreeTargets: [PermissionsDependTreeTarget!]
                     }
 
                     # If users group is not specified, permission will be saved at root level.
@@ -161,7 +176,8 @@ export default function ({
                         applyTo: ID,
                         usersGroup: ID,
                         actions: [PermissionActionInput!]!,
-                        permissionTreeTarget: PermissionsTreeTargetInput
+                        permissionTreeTarget: PermissionsTreeTargetInput,
+                        dependentTreeTargets: [PermissionsDependTreeTargetInput!]
                     }
 
                     # Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
@@ -189,7 +205,8 @@ export default function ({
                             applyTo: ID,
                             actions: [PermissionsActions!]!,
                             usersGroup: ID,
-                            permissionTreeTarget: PermissionsTreeTargetInput
+                            permissionTreeTarget: PermissionsTreeTargetInput,
+                            dependentTreeTargets: [PermissionsDependTreeTargetInput!]
                         ): [PermissionAction!],
 
                         # Return inherited permissions only for given user group
@@ -225,13 +242,18 @@ export default function ({
                                 }),
                             );
                         },
-                        async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}, ctx) {
+                        async permissions(
+                            _,
+                            {type, applyTo, actions, usersGroup, permissionTreeTarget, dependentTreeTargets},
+                            ctx,
+                        ) {
                             const perms = await permissionDomain.getPermissionsByActions({
                                 type,
                                 applyTo,
                                 actions,
                                 usersGroupNodeId: usersGroup,
                                 permissionTreeTarget,
+                                dependentTreeTargets,
                                 ctx,
                             });
 
