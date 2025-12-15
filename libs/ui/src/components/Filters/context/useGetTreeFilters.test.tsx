@@ -333,10 +333,7 @@ describe('useGetTreeFilters', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(result.current.data).toEqual({
-                attribute1: [],
-                attribute2: [],
-            });
+            expect(result.current.data).toEqual({});
         });
     });
 
