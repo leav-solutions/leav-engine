@@ -12,7 +12,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
 }));
 
-jest.mock('../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
+jest.mock('../../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
 }));
 

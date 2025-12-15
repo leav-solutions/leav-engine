@@ -72,22 +72,30 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                 <IdCard item={item.whoAmI} />
             </StyledIdCard>
             <StyledActionsList className="actions-list">
-                {itemsActionsWithCallbackToDisplay.map(({label, icon, isDanger, callback, disabled}, actionIndex) => (
-                    <KitTooltip
-                        key={actionIndex}
-                        title={resolveItemActionProp(item, label)}
-                        mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-                    >
-                        <KitButton
-                            size="m"
-                            aria-label={resolveItemActionProp(item, label)}
-                            icon={resolveItemActionProp(item, icon)}
-                            onClick={event => _handleButtonClick(event, callback)}
-                            danger={resolveItemActionProp(item, isDanger)}
-                            disabled={resolveItemActionProp(item, disabled)}
-                        />
-                    </KitTooltip>
-                ))}
+                {itemsActionsWithCallbackToDisplay.map(
+                    ({label, icon, isDanger, callback, disabled, useItemDeletePermission}, actionIndex) => {
+                        const disabledButton = useItemDeletePermission
+                            ? !item.canDelete
+                            : resolveItemActionProp(item, disabled);
+
+                        return (
+                            <KitTooltip
+                                key={actionIndex}
+                                title={resolveItemActionProp(item, label)}
+                                mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
+                            >
+                                <KitButton
+                                    size="m"
+                                    aria-label={resolveItemActionProp(item, label)}
+                                    icon={resolveItemActionProp(item, icon)}
+                                    onClick={event => _handleButtonClick(event, callback)}
+                                    danger={resolveItemActionProp(item, isDanger)}
+                                    disabled={disabledButton}
+                                />
+                            </KitTooltip>
+                        );
+                    },
+                )}
                 {isMoreThanThreeActions && (
                     <KitDropDown
                         placement="bottomRight"

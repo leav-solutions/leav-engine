@@ -82,6 +82,7 @@ export const baseExplorerPanelSchema = z.object({
 
 export const attributeExplorerPanelSchema = z.object({
     attributeSource: z.string(),
+    deactivateOnUnlink: z.boolean().optional(),
     libraryId: LibraryIdSchema,
     explorerProps: ExplorerPropsSchema.optional(),
 });

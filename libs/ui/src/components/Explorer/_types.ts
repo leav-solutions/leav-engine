@@ -48,6 +48,7 @@ export interface IItemAction {
     isDanger?: boolean | ((item: IItemData) => boolean);
     disabled?: boolean | ((item: IItemData) => boolean);
     useItemActionOnRowClick?: boolean;
+    useItemDeletePermission?: boolean; //TODO: Add for PanelAttributeExplorer custom action (should be deleted later)
 }
 
 export interface IPrimaryAction {
