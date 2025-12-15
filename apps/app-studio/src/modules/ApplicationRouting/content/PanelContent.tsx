@@ -5,10 +5,10 @@ import {type FunctionComponent, useEffect, useState} from 'react';
 import {EditRecordPage} from '@leav/ui';
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {FLAP_FULLPAGE_TARGET_ID} from '../../../constants';
-import {PanelCustom} from './PanelCustom';
-import {PanelLibraryExplorer} from './PanelLibraryExplorer';
-import {PanelAttributeExplorer} from './PanelAttributeExplorer';
-import {PanelCreationForm} from './PanelCreationForm';
+import {PanelCustom} from './panel-custom/PanelCustom';
+import {PanelLibraryExplorer} from './panel-explorer/PanelLibraryExplorer';
+import {PanelAttributeExplorer} from './panel-explorer/PanelAttributeExplorer';
+import {PanelCreationForm} from './panel-creation-form/PanelCreationForm';
 
 interface IPanelContentProps {
     panel: Panel;
@@ -54,12 +54,14 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
         if ('attributeSource' in panel) {
             return (
                 <PanelAttributeExplorer
-                    libraryId={panel.libraryId}
+                    libraryIdSource={panel.libraryId}
                     attributeSource={panel.attributeSource}
+                    deactivateOnUnlink={panel.deactivateOnUnlink}
                     viewId={panel.viewId}
                     explorerProps={panel.explorerProps}
                     actions={panel.actions}
                     recordId={recordId}
+                    libraryId={libraryId}
                 />
             );
         }
