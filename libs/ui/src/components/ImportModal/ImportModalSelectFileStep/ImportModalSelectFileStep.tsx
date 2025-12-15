@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
 import {message, Space, Spin} from 'antd';
-import {KitAlert, KitUpload, useKitNotification} from 'aristid-ds';
+import {KitAlert, KitUpload, KitNotification} from 'aristid-ds';
 import {type IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
 import {useState} from 'react';
 import {read as xlsxRead, utils as xlsxUtils} from 'xlsx';
@@ -18,6 +18,7 @@ import {
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
 import {type ISheet} from '../_types';
+import {ERROR_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
 
 interface IImportModalSelectFileStepsProps {
     onGetAttributes: (library: string) => Promise<AttributesByLibAttributeFragment[]>;
@@ -28,7 +29,6 @@ const defaultMode = ImportMode.upsert;
 
 function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStepsProps): JSX.Element {
     const {t} = useSharedTranslation();
-    const {kitNotification} = useKitNotification();
 
     const {state, dispatch} = useImportReducerContext();
     const {file} = state;
@@ -189,9 +189,10 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     dispatch({type: ImportReducerActionTypes.SET_OK_BTN, okBtn: res});
                 } catch (error) {
                     const errorMessage = error?.message ?? t('error.error_occurred');
-                    kitNotification.error({
+                    KitNotification.error({
                         message: t('error.error_occurred'),
                         description: errorMessage,
+                        duration: ERROR_NOTIFICATION_DURATION_SECONDS,
                     });
                 }
             };
@@ -205,9 +206,10 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
             };
 
             reader.onerror = e => {
-                kitNotification.error({
+                KitNotification.error({
                     message: t('error.error_occurred'),
                     description: reader.error?.message ?? '',
+                    duration: ERROR_NOTIFICATION_DURATION_SECONDS,
                 });
             };
 

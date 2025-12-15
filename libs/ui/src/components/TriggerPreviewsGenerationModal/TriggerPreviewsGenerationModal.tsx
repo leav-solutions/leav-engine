@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {Checkbox, Divider, Modal, Tree} from 'antd';
-import {useKitNotification} from 'aristid-ds';
+import {KitNotification} from 'aristid-ds';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
@@ -14,6 +14,7 @@ import {
 import useLang from '../../hooks/useLang';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
+import {INFO_NOTIFICATION_DURATION_SECONDS, SUCCESS_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
 
 interface ITriggerPreviewsGenerationModalProps {
     libraryId: string;
@@ -32,8 +33,6 @@ function TriggerPreviewsGenerationModal({
 }: ITriggerPreviewsGenerationModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-
-    const {kitNotification} = useKitNotification();
 
     const [isFailedOnlyChecked, setIsFailedOnlyChecked] = useState(false);
     const [checkedSizes, setCheckedSizes] = useState<string[]>([]);
@@ -79,9 +78,17 @@ function TriggerPreviewsGenerationModal({
             const isSuccess = result.data?.forcePreviewsGeneration ?? false;
 
             if (isSuccess) {
-                kitNotification.success({description: null, message: t('files.previews_generation_success')});
+                KitNotification.success({
+                    description: null,
+                    message: t('files.previews_generation_success'),
+                    duration: SUCCESS_NOTIFICATION_DURATION_SECONDS,
+                });
             } else {
-                kitNotification.info({description: null, message: t('files.previews_generation_nothing_to_do')});
+                KitNotification.info({
+                    description: null,
+                    message: t('files.previews_generation_nothing_to_do'),
+                    duration: INFO_NOTIFICATION_DURATION_SECONDS,
+                });
             }
 
             onClose();

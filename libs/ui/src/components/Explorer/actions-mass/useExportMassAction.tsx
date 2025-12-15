@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Dispatch, useMemo} from 'react';
 import {FaFileExport} from 'react-icons/fa';
-import {KitAlert, KitModal, useKitNotification} from 'aristid-ds';
+import {KitAlert, KitModal, KitNotification} from 'aristid-ds';
 import {useExportLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
@@ -29,7 +29,6 @@ export const useExportMassAction = ({
     onExport?: IMassActions['callback'];
 }>) => {
     const {t} = useSharedTranslation();
-    const {kitNotification} = useKitNotification();
 
     const [exportQuery] = useExportLazyQuery();
 
@@ -76,7 +75,7 @@ export const useExportMassAction = ({
                                 throw errorWithExtensions;
                             }
 
-                            kitNotification.info({
+                            KitNotification.info({
                                 message: t('explorer.massAction.export_message'),
                                 description: t('explorer.massAction.export_description', {
                                     count: total,

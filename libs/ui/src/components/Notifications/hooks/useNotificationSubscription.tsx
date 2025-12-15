@@ -3,13 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useNotificationSubscription} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitButton, KitSpace, useKitNotification} from 'aristid-ds';
+import {KitButton, KitSpace, KitNotification, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
 import {FaDownload} from 'react-icons/fa';
 
 export const useNotificationsSubscription = () => {
     const {t} = useSharedTranslation();
-    const {kitNotification} = useKitNotification();
     return useNotificationSubscription({
         onData: ({data}) => {
             if (!data?.data?.notification?.title) {
@@ -17,14 +16,18 @@ export const useNotificationsSubscription = () => {
             }
             const {level, title, message, attachments, relatedEntities, date} = data.data.notification;
 
-            const kitNotificationLevel = typeof kitNotification[level] === 'function' ? level : 'open';
+            const kitNotificationLevel = typeof KitNotification[level] === 'function' ? level : 'info';
 
-            kitNotification[kitNotificationLevel]({
+            KitNotification[kitNotificationLevel]({
                 message: title,
                 description: message,
-                messageExtra: dayjs.unix(date).format('HH:mm DD/MM/YYYY'), // messageExtra not displayed !
+                messageExtra: (
+                    <KitTypography.Text size="fontSize7">
+                        {dayjs.unix(date).format('HH:mm DD/MM/YYYY')}
+                    </KitTypography.Text>
+                ),
                 duration: 10,
-                btn: (
+                footer: (
                     <KitSpace direction="horizontal" size="xs">
                         {attachments?.map(attachment => (
                             <KitButton

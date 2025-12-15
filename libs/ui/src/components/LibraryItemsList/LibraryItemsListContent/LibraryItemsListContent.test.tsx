@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import {mockPreviews} from '_ui/__mocks__/common/record';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import {getRecordsFromLibraryQuery} from '_ui/_queries/records/getRecordsFromLibraryQuery';
+import {KitNotification} from 'aristid-ds';
 
 let menuItemListNotifyNewCreationMock;
 const labelMenuItemList = 'MenuItemList';
@@ -24,18 +25,18 @@ jest.mock('_ui/components/LibraryItemsList/LibraryItemsListEmpty', () => ({notif
     return <div>{labelLibraryItemsListEmpty}</div>;
 });
 
-const kitNotificationMock = {
-    success: jest.fn(),
-};
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
-    useKitNotification: () => ({
-        kitNotification: kitNotificationMock,
-    }),
-}));
-
 jest.spyOn(useGetRecordUpdatesSubscription, 'useGetRecordUpdatesSubscription').mockReturnValue({
     loading: false,
+});
+
+jest.mock('aristid-ds', () => {
+    const actual = jest.requireActual('aristid-ds');
+    return {
+        ...actual,
+        KitNotification: {
+            success: jest.fn(),
+        },
+    };
 });
 
 describe('<LibraryItemsListContent/>', () => {
@@ -120,10 +121,11 @@ describe('<LibraryItemsListContent/>', () => {
 
             await userEvent.click(screen.getByText(labelMenuItemList));
 
-            expect(kitNotificationMock.success).toHaveBeenCalledTimes(1);
-            expect(kitNotificationMock.success).toHaveBeenCalledWith({
+            expect(KitNotification.success).toHaveBeenCalledTimes(1);
+            expect(KitNotification.success).toHaveBeenCalledWith({
                 message: 'items_list.created_in_success.message',
                 description: '',
+                duration: 5,
             });
         });
     });

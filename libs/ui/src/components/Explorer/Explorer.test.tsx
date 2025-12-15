@@ -72,17 +72,6 @@ jest.mock('@uidotdev/usehooks', () => ({
     useMeasure: () => [jest.fn(), {height: 100, width: 100}],
 }));
 
-const kitNotificationMock = {
-    success: jest.fn(),
-    info: jest.fn(),
-};
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
-    useKitNotification: () => ({
-        kitNotification: kitNotificationMock,
-    }),
-}));
-
 const simpleMockAttribute = {
     id: 'simple_attribute',
     label: {
