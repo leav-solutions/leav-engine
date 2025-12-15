@@ -24,6 +24,9 @@ import {TriggerNames} from '../../_types/eventsManager';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {AdminPermissionsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
@@ -44,6 +47,7 @@ export interface IIndexationManagerDomainDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.infra.indexation.indexationService': IIndexationService;
+    'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.tasksManager': ITasksManagerDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.utils.logger': ILogger;
@@ -57,6 +61,7 @@ export default function ({
     'core.domain.record': recordDomain,
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.tasksManager': tasksManagerDomain,
     'core.infra.indexation.indexationService': indexationService,
     'core.domain.eventsManager': eventsManager,
@@ -462,6 +467,17 @@ export default function ({
 
             logger.info('Indexation Manager is ready. Waiting for events... 👀');
         },
-        indexDatabase: _indexDatabase,
+        indexDatabase: async (params: IIndexDatabaseParams, task?: ITaskFuncParams) => {
+            const canEditLibrary = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.EDIT_LIBRARY,
+                ctx: params.ctx,
+            });
+
+            if (!canEditLibrary) {
+                throw new PermissionError(AdminPermissionsActions.EDIT_LIBRARY);
+            }
+
+            return _indexDatabase(params, task);
+        },
     };
 }

@@ -14,6 +14,7 @@ import {AttributeCondition} from '../../_types/record';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type ILogger} from '@leav/logger';
 import {type ToAny} from 'utils/utils';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -50,6 +51,7 @@ const depsBase: ToAny<IIndexationManagerDomainDeps> = {
     'core.domain.library': jest.fn(),
     'core.domain.attribute': jest.fn(),
     'core.infra.indexation.indexationService': jest.fn(),
+    'core.domain.permission.admin': jest.fn(),
     'core.domain.tasksManager': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.utils.logger': jest.fn(),
@@ -81,6 +83,10 @@ describe('Indexation Manager', () => {
             queues: {pubsub_events_prefix: 'test_pubsub_events-'},
         },
     };
+
+    const mockAdminPermDomain = {
+        getAdminPermission: global.__mockPromise(true),
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     test('Init message listening', async () => {
         const mockAmqpService: Mockify<IAmqpService> = {
@@ -149,6 +155,7 @@ describe('Indexation Manager', () => {
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
             'core.infra.indexation.indexationService': mockIndexationService as IIndexationService,
+            'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
         });
 
         await indexation.indexDatabase({findRecordParams: {library: 'test'}, ctx}, {id: 'fakeTaskId'});
