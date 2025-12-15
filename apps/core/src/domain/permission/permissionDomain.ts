@@ -30,6 +30,7 @@ import {
 import {type IAdminPermissionDomain} from './adminPermissionDomain';
 import {type IApplicationPermissionDomain} from './applicationPermissionDomain';
 import {type IAttributePermissionDomain} from './attributePermissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from './attributeDependentValuesPermissionDomain';
 import getPermissionCachePatternKey from './helpers/getPermissionCachePatternKey';
 import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {type IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
@@ -84,6 +85,7 @@ export interface IPermissionDomainDeps {
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.permission.attributeDependentValues': IAttributeDependentValuesPermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.tree': ITreePermissionDomain;
     'core.domain.permission.treeNode': ITreeNodePermissionDomain;
@@ -105,6 +107,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         'core.domain.permission.record': recordPermissionDomain,
         'core.domain.permission.library': libraryPermissionDomain,
         'core.domain.permission.attribute': attributePermissionDomain,
+        'core.domain.permission.attributeDependentValues': attributeDependentValuesPermissionDomain,
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
         'core.domain.permission.tree': treePermissionDomain,
         'core.domain.permission.treeNode': treeNodePermissionDomain,
@@ -377,6 +380,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
 
     const isAllowed = async ({type, action, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean> => {
         let perm: boolean;
+        const errors: string[] = [];
 
         switch (type) {
             case PermissionTypes.RECORD:
@@ -392,7 +396,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
-                const errors: string[] = [];
                 if (!target) {
                     throw new ValidationError({target: Errors.MISSING_TARGET});
                 }
@@ -433,6 +436,36 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 perm = await attributePermissionDomain.getAttributePermission({
                     action,
                     attributeId: applyTo,
+                    ctx,
+                });
+
+                break;
+            case PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES:
+                action = action as AttributeDependentValuesPermissionsActions;
+                if (!target) {
+                    throw new ValidationError({target: Errors.MISSING_TARGET});
+                }
+
+                if (!target.recordId) {
+                    errors.push('recordId');
+                }
+
+                if (!target.libraryId) {
+                    errors.push('libraryId');
+                }
+
+                if (errors.length) {
+                    throw new ValidationError({
+                        target: {msg: Errors.MISSING_FIELDS, vars: {fields: errors.join(', ')}},
+                    });
+                }
+
+                perm = await attributeDependentValuesPermissionDomain.getAttributeDependentValuesPermission({
+                    action,
+                    attributeId: applyTo,
+                    recordLibrary: target.libraryId,
+                    recordId: target.recordId,
+                    valueNodeId: target.nodeId, // may be null
                     ctx,
                 });
 

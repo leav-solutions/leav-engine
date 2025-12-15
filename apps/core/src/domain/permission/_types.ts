@@ -36,6 +36,7 @@ export interface IGetSimplePermissionsParams {
     action: PermissionsActions;
     usersGroupNodeId: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
+    dependentTreeTargets?: IPermissionsDependentTreeTarget[];
     ctx: IQueryInfos;
 }
 

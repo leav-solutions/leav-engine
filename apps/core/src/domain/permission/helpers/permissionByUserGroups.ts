@@ -5,7 +5,11 @@ import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {type ISimplePermissionHelper} from './simplePermission';
 import {type IDefaultPermissionHelper} from './defaultPermission';
 import {type TreePath} from '../../../_types/tree';
-import {type PermissionsActions, type PermissionTypes} from '../../../_types/permissions';
+import {
+    type IPermissionsDependentTreeTarget,
+    type PermissionsActions,
+    type PermissionTypes,
+} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import getPermissionCacheKey from './getPermissionCacheKey';
 import {type ICachesService} from '../../../infra/cache/cacheService';
@@ -27,6 +31,7 @@ interface IGetPermissionByUserGroupsParams {
     userGroupsPaths: TreePath[]; // from the most general to the most specific (no root required)
     applyTo?: string;
     treeTarget?: {tree: string; path: TreePath}; // from the most general to the most specific (add root if needed)
+    dependentTreeTargets?: IPermissionsDependentTreeTarget[];
     getDefaultGlobalPermission?: GetDefaultGlobalPermission;
     ctx: IQueryInfos;
 }
@@ -51,6 +56,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             userGroupsPaths,
             applyTo = null,
             treeTarget = null,
+            dependentTreeTargets = null,
             getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission,
             ctx,
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
@@ -92,6 +98,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                                     nodeId: targetPath[0].id,
                                 },
                             }),
+                            dependentTreeTargets,
                             ctx,
                         });
 
@@ -119,15 +126,19 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
 
             if (config.permissions.enableCache) {
                 // generate a cache key based on params
+                const dependentTreeTargetForKey = dependentTreeTargets?.length
+                    ? `${dependentTreeTargets.map(dtt => `${dtt.tree}:${dtt.nodeId}`).join('+')}:`
+                    : '';
                 const key = reversedTreeTargetPath?.length
                     ? `${treeTarget.tree}:${reversedTreeTargetPath.map(({id}) => id).join('_')}`
                     : 'default';
+
                 const cacheKey = getPermissionCacheKey(
                     reversedGroupsPath.map(path => path[0].id),
                     type,
                     applyTo,
                     action,
-                    key,
+                    dependentTreeTargetForKey + key,
                 );
 
                 return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});

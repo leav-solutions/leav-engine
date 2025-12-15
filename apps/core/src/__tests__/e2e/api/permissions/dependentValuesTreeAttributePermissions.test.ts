@@ -4,6 +4,7 @@
 import {AttributeDependentValuesPermissionsActions, PermissionTypes} from '../../../../_types/permissions';
 import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
 import {
+    e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
@@ -21,6 +22,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
     let treeNode1Id: string;
     let treeNode2Id: string;
     let treeNode3Id: string;
+    let recordId: string;
 
     beforeAll(async () => {
         await gqlSaveLibrary(testTreeLibraryName, 'Test node lib', []);
@@ -97,7 +99,6 @@ describe('DependentValuesTreeAttributePermissions', () => {
             });
 
             afterAll(async () => {
-                // Clean permissions
                 await setupPermission(null);
             });
 
@@ -148,6 +149,29 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 );
 
                 expect(result2.data.data.permissions[0].allowed).toBe(null);
+            });
+
+            describe('record have node1 value', () => {
+                beforeEach(async () => {
+                    const resCreateRecord = await makeGraphQlCall(`mutation {
+                    c1: createRecord(library: "${testLibraryName}", data: {
+                        values: [{ attribute: "${testAttrName}", payload: "${treeNode1Id}"}]
+                    }) { record {id} },
+                }`);
+                    recordId = resCreateRecord.data.data.c1.record.id;
+                });
+
+                it('should not be allowed to set value node2', async () => {
+                    expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+                });
+
+                it('should be allowed to set value node3', async () => {
+                    expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+                });
+
+                it('should be allowed to set value null', async () => {
+                    expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(true);
+                });
             });
         });
     });
@@ -259,7 +283,6 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 });
 
                 afterAll(async () => {
-                    // Clean permissions
                     await setupPermission(null);
                 });
 
@@ -290,6 +313,145 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         AttributeDependentValuesPermissionsActions.SET_VALUE,
                     );
                     expect(result.data.data.permissions[0].allowed).toBe(false);
+                });
+
+                describe('record have anotherNodeA/node1 value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                    c1: createRecord(library: "${testLibraryName}", data: {
+                        values: [
+                            { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeAId}"},
+                            { attribute: "${testAttrName}", payload: "${treeNode1Id}"}
+                        ]
+                    }) { record {id} },
+                }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should not be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+                    });
+
+                    it('should be allowed to set value node3', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+                    });
+
+                    it('should be allowed to set value null', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(true);
+                    });
+                });
+            });
+
+            describe('can not move from anotherNodeA/null to node2', () => {
+                const setupPermission = (allowed: boolean | null) =>
+                    makeGraphQlCall(
+                        `mutation {
+                    savePermission(
+                        permission: {
+                            type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                            applyTo: "${testAttrName}",
+                            usersGroup: null,
+                            permissionTreeTarget: {
+                                tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                            },
+                            dependentTreeTargets: [
+                                { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                { tree: "${testTreeName}", nodeId: null, attributeId: "${testAttrName}" }
+                            ],
+                            actions: [
+                                {name: ${AttributeDependentValuesPermissionsActions.SET_VALUE}, allowed: ${allowed}},
+                            ]
+                        }
+                    ) { 
+                        type
+                    }
+                }`,
+                    );
+
+                beforeAll(async () => {
+                    await setupPermission(false);
+                });
+
+                afterAll(async () => {
+                    await setupPermission(null);
+                });
+
+                describe('record have anotherNodeA/null value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                    c1: createRecord(library: "${testLibraryName}", data: {
+                        values: [
+                            { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeAId}"},
+                        ]
+                    }) { record {id} },
+                }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should not be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+                    });
+
+                    it('should be allowed to set value node3', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+                    });
+                });
+            });
+
+            describe('can not move from anotherNodeA/node1 to null (all tree with inheritance)', () => {
+                const setupPermission = (allowed: boolean | null) =>
+                    makeGraphQlCall(
+                        `mutation {
+                    savePermission(
+                        permission: {
+                            type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                            applyTo: "${testAttrName}",
+                            usersGroup: null,
+                            permissionTreeTarget: {
+                                tree: "${testTreeName}", nodeId: null
+                            },
+                            dependentTreeTargets: [
+                                { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                            ],
+                            actions: [
+                                {name: ${AttributeDependentValuesPermissionsActions.SET_VALUE}, allowed: ${allowed}},
+                            ]
+                        }
+                    ) { 
+                        type
+                    }
+                }`,
+                    );
+
+                beforeAll(async () => {
+                    await setupPermission(false);
+                });
+
+                afterAll(async () => {
+                    await setupPermission(null);
+                });
+
+                describe('record have anotherNodeA/node1 value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                    c1: createRecord(library: "${testLibraryName}", data: {
+                        values: [
+                            { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeAId}"},
+                            { attribute: "${testAttrName}", payload: "${treeNode1Id}"}
+                        ]
+                    }) { record {id} },
+                }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should not be allowed to set value null', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(false);
+                    });
+
+                    it('should be allowed to set value node3', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(false); // inheritance
+                    });
                 });
             });
         });
@@ -389,4 +551,29 @@ describe('DependentValuesTreeAttributePermissions', () => {
         expect(result.data.data.attributes.list.length).toBe(1);
         return result.data.data.attributes.list[0];
     }
+
+    const isNonAdminAllowedToSetValueOnRecord = async (targetValue: string | null) => {
+        const resIsAllowed = await makeGraphQlCall(
+            `query {
+                isAllowed(
+                    type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                    actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                    applyTo: "${testAttrName}",
+                    target: {
+                        recordId: "${recordId}",
+                        libraryId: "${testLibraryName}",
+                        nodeId: ${targetValue === null ? 'null' : `"${targetValue}"`}
+                    }
+                ) {
+                    name
+                    allowed
+                }
+            }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
+
+        return resIsAllowed.data.data.isAllowed[0].allowed;
+    };
 });

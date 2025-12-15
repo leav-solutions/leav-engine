@@ -43,6 +43,7 @@ const depsBase: ToAny<IPermissionDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.permission.library': jest.fn(),
     'core.domain.permission.record': jest.fn(),
+    'core.domain.permission.attributeDependentValues': jest.fn(),
     'core.domain.permission.attribute': jest.fn(),
     'core.domain.permission.recordAttribute': jest.fn(),
     'core.domain.permission.tree': jest.fn(),
