@@ -72,4 +72,16 @@ describe('LibrariesAdminPermissions', () => {
             await expect(makeGraphQlCall(gqlMutation, {user: e2eAdminUser()})).resolves.toBeDefined();
         });
     });
+
+    describe('index library', () => {
+        it('Should not be authorized to index a library', async () => {
+            const gqlMutation = `mutation { indexRecords(libraryId: "${libraryId}") }`;
+            await expect(makeGraphQlCall(gqlMutation, {user: e2eGuestUser()})).rejects.toThrow(/Action forbidden/);
+        });
+
+        it('Should be authorized to index a library', async () => {
+            const gqlMutation = `mutation { indexRecords(libraryId: "${libraryId}") }`;
+            await expect(makeGraphQlCall(gqlMutation, {user: e2eAdminUser()})).resolves.toBeDefined();
+        });
+    });
 });
