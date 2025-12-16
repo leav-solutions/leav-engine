@@ -15,6 +15,7 @@ import {toggleActivityCenterButton} from './activityCenter.module.css';
 
 export const ToggleActivityCenterButton = () => {
     const {t} = useTranslation();
+    const [hasBeenOpened, setHasBeenOpened] = useState(false);
     const [isActivityCenterOpen, setIsActivityCenterOpen] = useState(false);
     const [refDivToInsertSidePanel, setRefDivToInsertSidePanel] = useState<HTMLDivElement | null>(null);
     const activityCenterSidePanelRef = useRef<KitSidePanelRef | null>(null);
@@ -35,6 +36,13 @@ export const ToggleActivityCenterButton = () => {
         }
     }, [activityCenterSidePanelRef.current, isActivityCenterOpen]);
 
+    const handleToggleActivityCenter = () => {
+        if (!hasBeenOpened) {
+            setHasBeenOpened(true);
+        }
+        setIsActivityCenterOpen(prev => !prev);
+    };
+
     // TODO: Later we should fetch the user's new activities from the backend
     const userHasNewActivity = false;
     const toggleButtonLabel = isActivityCenterOpen ? t('activity_center.close') : t('activity_center.open');
@@ -50,11 +58,12 @@ export const ToggleActivityCenterButton = () => {
                         active={isActivityCenterOpen}
                         icon={<FontAwesomeIcon icon={faBell} />}
                         aria-label={toggleButtonLabel}
-                        onClick={() => setIsActivityCenterOpen(!isActivityCenterOpen)}
+                        onClick={handleToggleActivityCenter}
                     />
                 </KitBadge>
             </KitTooltip>
             {refDivToInsertSidePanel &&
+                hasBeenOpened &&
                 createPortal(
                     <KitSidePanel ref={activityCenterSidePanelRef} size="m" floating closeOnEsc useChildrenOnly>
                         <KitSidePanelHeader
