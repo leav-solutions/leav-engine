@@ -199,6 +199,7 @@ export interface IPermissions {
     adminGroup: IPermissionsByTypesAndActions;
     enableCache: boolean;
     enableAccessRecordByDefaultBackendFilter: boolean;
+    enableAttributeDependentValuesPermissions: boolean;
 }
 
 export interface IAmqp {
