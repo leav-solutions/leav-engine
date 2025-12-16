@@ -35,7 +35,29 @@
     "activity_center": {
         "title": "Activity center",
         "open": "Open activity center",
-        "close": "Close activity center"
+        "close": "Close activity center",
+        "long_tasks": "Long tasks",
+        "notifications": "Notifications",
+        "progress": "Progress",
+        "tasks": {
+            "no_tasks": "No tasks yet",
+            "started_at": "Started at",
+            "completed_at": "Completed at",
+            "duration": "Duration",
+            "duration_less_than_minute": "less than a minute",
+            "duration_minutes": "{{minutes}} min",
+            "duration_hours_minutes": "{{hours}} h {{minutes}} min",
+            "status": {
+                "CREATED": "Created",
+                "CANCELED": "Cancel",
+                "INTERRUPTED": "Interrupted",
+                "DONE": "Done",
+                "FAILED": "Error",
+                "PENDING": "Pending",
+                "PENDING_CANCEL": "Pending cancel",
+                "RUNNING": "Running"
+            }
+        }
     },
     "temporary": {
         "upcoming": "upcoming"
@@ -44,5 +66,9 @@
         "delete_item": "Delete",
         "delete_link": "Delete this link?",
         "delete_link_description": "You are about to delete this link."
+    },
+    "error": {
+        "title": "Error loading data",
+        "description": "A technical error has occurred, please reload the page. If the error persists, please contact the Aristid support."
     }
 }

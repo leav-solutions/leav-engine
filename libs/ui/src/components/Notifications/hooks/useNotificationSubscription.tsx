@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useNotificationSubscription} from '_ui/_gqlTypes';
+import {SUBSCRIPTION_NOTIFICATION_DURATION} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitSpace, KitNotification, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
@@ -19,6 +20,7 @@ export const useNotificationsSubscription = () => {
             const kitNotificationLevel = typeof KitNotification[level] === 'function' ? level : 'info';
 
             KitNotification[kitNotificationLevel]({
+                closable: true,
                 message: title,
                 description: message,
                 messageExtra: (
@@ -26,7 +28,7 @@ export const useNotificationsSubscription = () => {
                         {dayjs.unix(date).format('HH:mm DD/MM/YYYY')}
                     </KitTypography.Text>
                 ),
-                duration: 10,
+                duration: SUBSCRIPTION_NOTIFICATION_DURATION,
                 footer: (
                     <KitSpace direction="horizontal" size="xs">
                         {attachments?.map(attachment => (

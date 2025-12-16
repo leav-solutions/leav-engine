@@ -34,7 +34,7 @@ import MenuItemListSelected from '../MenuItemListSelected';
 import Sidebar from '../Sidebar';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitNotification} from 'aristid-ds';
-import {SUCCESS_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
+import {SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
 
 const MenuWrapper = styled.div`
     border-bottom: 1px solid rgb(235, 237, 240);
@@ -263,7 +263,8 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         KitNotification.success({
             message: t('items_list.created_in_success.message'),
             description: '',
-            duration: SUCCESS_NOTIFICATION_DURATION_SECONDS,
+            duration: SUCCESS_NOTIFICATION_DURATION,
+            closable: true,
         });
     };
 

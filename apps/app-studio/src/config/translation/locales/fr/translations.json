@@ -35,7 +35,29 @@
     "activity_center": {
         "title": "Centre d'activité",
         "open": "Ouvrir le centre d'activité",
-        "close": "Fermer le centre d'activité"
+        "close": "Fermer le centre d'activité",
+        "long_tasks": "Tâches longues",
+        "notifications": "Notifications",
+        "progress": "Progression",
+        "tasks": {
+            "no_tasks": "Aucune tâche pour l'instant",
+            "started_at": "Démarré le",
+            "completed_at": "Terminée le",
+            "duration": "Durée",
+            "duration_less_than_minute": "moins d'une minute",
+            "duration_minutes": "{{minutes}} min",
+            "duration_hours_minutes": "{{hours}} h {{minutes}} min",
+            "status": {
+                "CREATED": "Créée",
+                "CANCELED": "Annulée",
+                "INTERRUPTED": "Interrompue",
+                "DONE": "Terminée",
+                "FAILED": "En erreur",
+                "PENDING": "En attente",
+                "PENDING_CANCEL": "En annulation",
+                "RUNNING": "En cours"
+            }
+        }
     },
     "temporary": {
         "upcoming": "À venir"
@@ -44,5 +66,9 @@
         "delete_item": "Supprimer",
         "delete_link": "Supprimer ce lien ?",
         "delete_link_description": "Vous êtes sur le point de supprimer ce lien."
-    }    
+    },
+    "error": {
+        "title": "Erreur de chargement des données",
+        "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid."
+    }
 }

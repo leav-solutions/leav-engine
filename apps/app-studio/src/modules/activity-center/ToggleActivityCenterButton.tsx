@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {faBell} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {KitBadge, KitButton, KitSidePanel, KitTooltip} from 'aristid-ds';
+import {KitBadge, KitButton, KitSidePanel, KitSidePanelHeader, KitTooltip} from 'aristid-ds';
 import {ACTIVITY_CENTER_TARGET_ID} from '../../constants';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -56,16 +56,13 @@ export const ToggleActivityCenterButton = () => {
             </KitTooltip>
             {refDivToInsertSidePanel &&
                 createPortal(
-                    <KitSidePanel
-                        ref={activityCenterSidePanelRef}
-                        size="m"
-                        idCardProps={{title: t('activity_center.title')}}
-                        onClose={() => setIsActivityCenterOpen(false)}
-                        floating
-                        closable
-                        showSeparator
-                        closeOnEsc
-                    >
+                    <KitSidePanel ref={activityCenterSidePanelRef} size="m" floating closeOnEsc useChildrenOnly>
+                        <KitSidePanelHeader
+                            idCardProps={{title: t('activity_center.title')}}
+                            showSeparator
+                            closable
+                            onClose={() => setIsActivityCenterOpen(false)}
+                        />
                         <ActivityCenter />
                     </KitSidePanel>,
                     refDivToInsertSidePanel,

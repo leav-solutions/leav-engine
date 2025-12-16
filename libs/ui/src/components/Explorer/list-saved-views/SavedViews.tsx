@@ -18,7 +18,7 @@ import {IoCopy} from 'react-icons/io5';
 import {type IUserView} from '../_types';
 import classNames from 'classnames';
 import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
-import {INFO_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
+import {INFO_NOTIFICATION_DURATION} from '_ui/constants';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -133,7 +133,8 @@ export const SavedViews: FunctionComponent = () => {
                                                 KitNotification.info({
                                                     message: `Id : ${viewItem?.id}`,
                                                     description: t('explorer.viewList.copied'),
-                                                    duration: INFO_NOTIFICATION_DURATION_SECONDS,
+                                                    duration: INFO_NOTIFICATION_DURATION,
+                                                    closable: true,
                                                 });
                                             }}
                                         >
@@ -171,7 +172,8 @@ export const SavedViews: FunctionComponent = () => {
                                                     KitNotification.info({
                                                         message: `Id : ${viewItem?.id}`,
                                                         description: t('explorer.viewList.copied'),
-                                                        duration: INFO_NOTIFICATION_DURATION_SECONDS,
+                                                        duration: INFO_NOTIFICATION_DURATION,
+                                                        closable: true,
                                                     });
                                                 }}
                                             >

@@ -9,7 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState} from '../manage-view-settings';
 import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
-import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
+import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 
 /**
  * Hook that provides a mass action configuration for exporting selected or all items
@@ -81,7 +81,8 @@ export const useExportMassAction = ({
                                     count: total,
                                     total,
                                 }),
-                                duration: INFO_NOTIFICATION_DURATION_SECONDS,
+                                duration: INFO_NOTIFICATION_DURATION,
+                                closable: true,
                             });
 
                             onExport?.(massSelectionFilter, view.massSelection);

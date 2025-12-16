@@ -1,3 +1,23 @@
 .toggleActivityCenterButton {
     color: var(--general-utilities-main-deepDark);
 }
+
+.activityCenterTabs {
+    padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+}
+
+.activityCenterTabContent {
+    overflow-y: auto;
+    padding: 0 calc(var(--general-spacing-m) * 1px) 0 calc(var(--general-spacing-m) * 1px);
+    margin-bottom: calc(var(--general-spacing-s) * 1px);
+}
+
+.activityCenterTabEmptyContent {
+    height: 100%;
+    align-content: center;
+}
+
+.activityCenterTag {
+    margin-inline-end: 0;
+    margin-left: calc(var(--general-spacing-xs) * 1px);
+}

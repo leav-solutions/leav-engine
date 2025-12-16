@@ -2556,6 +2556,20 @@ export type PanelAttributeCountQueryVariables = Exact<{
 
 export type PanelAttributeCountQuery = { records: { totalCount?: number | null } };
 
+export type GetUserTasksQueryVariables = Exact<{
+  filters?: InputMaybe<TaskFiltersInput>;
+}>;
+
+
+export type GetUserTasksQuery = { tasks: { list: Array<{ id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null }> } };
+
+export type SubscribeToUserTasksSubscriptionVariables = Exact<{
+  filters?: InputMaybe<TaskFiltersInput>;
+}>;
+
+
+export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null } };
+
 export type GetRecordInformationQueryVariables = Exact<{
   library: Scalars['ID'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
@@ -2861,6 +2875,96 @@ export type PanelAttributeCountQueryHookResult = ReturnType<typeof usePanelAttri
 export type PanelAttributeCountLazyQueryHookResult = ReturnType<typeof usePanelAttributeCountLazyQuery>;
 export type PanelAttributeCountSuspenseQueryHookResult = ReturnType<typeof usePanelAttributeCountSuspenseQuery>;
 export type PanelAttributeCountQueryResult = Apollo.QueryResult<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>;
+export const GetUserTasksDocument = gql`
+    query getUserTasks($filters: TaskFiltersInput) {
+  tasks(filters: $filters) {
+    list {
+      id
+      status
+      label
+      created_at
+      startedAt
+      completedAt
+      progress {
+        description
+        percent
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserTasksQuery__
+ *
+ * To run a query within a React component, call `useGetUserTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserTasksQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useGetUserTasksQuery(baseOptions?: Apollo.QueryHookOptions<GetUserTasksQuery, GetUserTasksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserTasksQuery, GetUserTasksQueryVariables>(GetUserTasksDocument, options);
+      }
+export function useGetUserTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserTasksQuery, GetUserTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserTasksQuery, GetUserTasksQueryVariables>(GetUserTasksDocument, options);
+        }
+export function useGetUserTasksSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserTasksQuery, GetUserTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserTasksQuery, GetUserTasksQueryVariables>(GetUserTasksDocument, options);
+        }
+export type GetUserTasksQueryHookResult = ReturnType<typeof useGetUserTasksQuery>;
+export type GetUserTasksLazyQueryHookResult = ReturnType<typeof useGetUserTasksLazyQuery>;
+export type GetUserTasksSuspenseQueryHookResult = ReturnType<typeof useGetUserTasksSuspenseQuery>;
+export type GetUserTasksQueryResult = Apollo.QueryResult<GetUserTasksQuery, GetUserTasksQueryVariables>;
+export const SubscribeToUserTasksDocument = gql`
+    subscription subscribeToUserTasks($filters: TaskFiltersInput) {
+  task(filters: $filters) {
+    id
+    status
+    label
+    created_at
+    startedAt
+    completedAt
+    progress {
+      description
+      percent
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubscribeToUserTasksSubscription__
+ *
+ * To run a query within a React component, call `useSubscribeToUserTasksSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToUserTasksSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscribeToUserTasksSubscription({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useSubscribeToUserTasksSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscribeToUserTasksSubscription, SubscribeToUserTasksSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SubscribeToUserTasksSubscription, SubscribeToUserTasksSubscriptionVariables>(SubscribeToUserTasksDocument, options);
+      }
+export type SubscribeToUserTasksSubscriptionHookResult = ReturnType<typeof useSubscribeToUserTasksSubscription>;
+export type SubscribeToUserTasksSubscriptionResult = Apollo.SubscriptionResult<SubscribeToUserTasksSubscription>;
 export const GetRecordInformationDocument = gql`
     query getRecordInformation($library: ID!, $filters: [RecordFilterInput]) {
   records(library: $library, filters: $filters) {
