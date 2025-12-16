@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeDependentValuesPermissionsActions, PermissionTypes} from '../../../../_types/permissions';
 import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
+import {AttributeCondition} from '../../../../_types/record';
+import {type ITreeValue} from '_types/value';
 import {
     e2eNonAdminUser,
     gqlAddElemToTree,
@@ -163,14 +165,26 @@ describe('DependentValuesTreeAttributePermissions', () => {
 
                 it('should not be allowed to set value node2', async () => {
                     expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+
+                    await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
+                    const values = await getRecordAttributeTestValues();
+                    expect(values[0].payload.id).toBe(treeNode1Id);
                 });
 
                 it('should be allowed to set value node3', async () => {
                     expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+
+                    await saveRecordAttributeTestValue(treeNode3Id);
+                    const values = await getRecordAttributeTestValues();
+                    expect(values[0].payload.id).toBe(treeNode3Id);
                 });
 
                 it('should be allowed to set value null', async () => {
                     expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(true);
+
+                    await deleteRecordAttributeTestValue((await getRecordAttributeTestValues())[0].id_value);
+                    const values = await getRecordAttributeTestValues();
+                    expect(values.length).toBe(0);
                 });
             });
         });
@@ -226,6 +240,100 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 expect(attribute.permissions_conf_dependent_values.dependentValuesTreeAttributes).toEqual([
                     expect.objectContaining({id: anotherAttrName}),
                 ]);
+            });
+
+            describe('can not move from anotherNodeA to node2', () => {
+                const setupPermission = (allowed: boolean | null) =>
+                    makeGraphQlCall(
+                        `mutation {
+                            savePermission(
+                                permission: {
+                                    type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                                    applyTo: "${testAttrName}",
+                                    usersGroup: null,
+                                    permissionTreeTarget: {
+                                        tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                                    },
+                                    dependentTreeTargets: [
+                                        { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                    ],
+                                    actions: [
+                                        {name: ${AttributeDependentValuesPermissionsActions.SET_VALUE}, allowed: ${allowed}},
+                                    ]
+                                }
+                            ) { 
+                                type
+                            }
+                        }`,
+                    );
+
+                beforeAll(async () => {
+                    await setupPermission(false);
+                });
+
+                afterAll(async () => {
+                    await setupPermission(null);
+                });
+
+                describe('record have anotherNodeA/node1 value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                            c1: createRecord(library: "${testLibraryName}", data: {
+                                values: [
+                                    { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeAId}"},
+                                    { attribute: "${testAttrName}", payload: "${treeNode1Id}"}
+                                ]
+                            }) { record {id} },
+                        }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should not be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+
+                        await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode1Id);
+                    });
+
+                    it('should be allowed to set value node3', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+
+                        await saveRecordAttributeTestValue(treeNode3Id);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode3Id);
+                    });
+
+                    it('should be allowed to set value null', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(true);
+
+                        await deleteRecordAttributeTestValue((await getRecordAttributeTestValues())[0].id_value);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values.length).toBe(0);
+                    });
+                });
+
+                describe('record have anotherNodeB/node1 value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                            c1: createRecord(library: "${testLibraryName}", data: {
+                                values: [
+                                    { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeBId}"},
+                                    { attribute: "${testAttrName}", payload: "${treeNode1Id}"}
+                                ]
+                            }) { record {id} },
+                        }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(true);
+
+                        await saveRecordAttributeTestValue(treeNode2Id);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode2Id);
+                    });
+                });
             });
         });
 
@@ -318,26 +426,38 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 describe('record have anotherNodeA/node1 value', () => {
                     beforeEach(async () => {
                         const resCreateRecord = await makeGraphQlCall(`mutation {
-                    c1: createRecord(library: "${testLibraryName}", data: {
-                        values: [
-                            { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeAId}"},
-                            { attribute: "${testAttrName}", payload: "${treeNode1Id}"}
-                        ]
-                    }) { record {id} },
-                }`);
+                            c1: createRecord(library: "${testLibraryName}", data: {
+                                values: [
+                                    { attribute: "${anotherAttrName}", payload: "${anotherTreeNodeAId}"},
+                                    { attribute: "${testAttrName}", payload: "${treeNode1Id}"}
+                                ]
+                            }) { record {id} },
+                        }`);
                         recordId = resCreateRecord.data.data.c1.record.id;
                     });
 
                     it('should not be allowed to set value node2', async () => {
                         expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+
+                        await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode1Id);
                     });
 
                     it('should be allowed to set value node3', async () => {
                         expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+
+                        await saveRecordAttributeTestValue(treeNode3Id);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode3Id);
                     });
 
                     it('should be allowed to set value null', async () => {
                         expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(true);
+
+                        await deleteRecordAttributeTestValue((await getRecordAttributeTestValues())[0].id_value);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values.length).toBe(0);
                     });
                 });
             });
@@ -390,10 +510,18 @@ describe('DependentValuesTreeAttributePermissions', () => {
 
                     it('should not be allowed to set value node2', async () => {
                         expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+
+                        await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values).toHaveLength(0);
                     });
 
                     it('should be allowed to set value node3', async () => {
                         expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+
+                        await saveRecordAttributeTestValue(treeNode3Id);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode3Id);
                     });
                 });
             });
@@ -447,10 +575,71 @@ describe('DependentValuesTreeAttributePermissions', () => {
 
                     it('should not be allowed to set value null', async () => {
                         expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(false);
+
+                        await expect(
+                            deleteRecordAttributeTestValue((await getRecordAttributeTestValues())[0].id_value),
+                        ).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode1Id);
                     });
 
-                    it('should be allowed to set value node3', async () => {
-                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(false); // inheritance
+                    it('should be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false); // inheritance
+
+                        await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode1Id);
+                    });
+
+                    describe('can move from anotherNodeA/node1 to node2 by overriding inherited permission', () => {
+                        const setupOverridePermission = (allowed: boolean | null) =>
+                            makeGraphQlCall(
+                                `mutation {
+                                    savePermission(
+                                        permission: {
+                                            type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                                            applyTo: "${testAttrName}",
+                                            usersGroup: null,
+                                            permissionTreeTarget: {
+                                                tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                                            },
+                                            dependentTreeTargets: [
+                                                { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                                { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                                            ],
+                                            actions: [
+                                                {name: ${AttributeDependentValuesPermissionsActions.SET_VALUE}, allowed: ${allowed}},
+                                            ]
+                                        }
+                                    ) { 
+                                        type
+                                    }
+                                }`,
+                            );
+
+                        beforeAll(async () => {
+                            await setupOverridePermission(true);
+                        });
+
+                        afterAll(async () => {
+                            await setupOverridePermission(null);
+                        });
+
+                        it('should not be allowed to set value node3', async () => {
+                            expect(await isNonAdminAllowedToSetValueOnRecord(null)).toBe(false);
+
+                            await expect(saveRecordAttributeTestValue(treeNode3Id)).rejects.toThrow(/Action forbidden/);
+                            const values = await getRecordAttributeTestValues();
+                            expect(values[0].payload.id).toBe(treeNode1Id);
+                        });
+
+                        it('should be allowed to set value node2', async () => {
+                            expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(true);
+
+                            await saveRecordAttributeTestValue(treeNode2Id);
+                            const values = await getRecordAttributeTestValues();
+                            expect(values[0].payload.id).toBe(treeNode2Id);
+                        });
                     });
                 });
             });
@@ -575,5 +764,75 @@ describe('DependentValuesTreeAttributePermissions', () => {
         );
 
         return resIsAllowed.data.data.isAllowed[0].allowed;
+    };
+
+    const saveRecordAttributeTestValue = async (nodeId: string) => {
+        await makeGraphQlCall(
+            `mutation {
+                saveValue(
+                    library: "${testLibraryName}",
+                    recordId: "${recordId}",
+                    attribute: "${testAttrName}",
+                    value: {payload: "${nodeId}"}) {
+                        id_value
+
+                        ... on TreeValue {
+                            payload {
+                                id
+                                record {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
+    };
+
+    const deleteRecordAttributeTestValue = async (idValue: string) => {
+        await makeGraphQlCall(
+            `mutation {
+                deleteValue(
+                    library: "${testLibraryName}",
+                    recordId: "${recordId}",
+                    attribute: "${testAttrName}",
+                    value: {id_value: "${idValue}"}) {
+                        id_value
+                    }
+                }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
+    };
+
+    const getRecordAttributeTestValues = async (): Promise<ITreeValue[]> => {
+        const resGet2 = await makeGraphQlCall(`
+                {
+                    records(
+                        library: "${testLibraryName}",
+                        filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                    ) {
+                        list {
+                            id
+                            property(attribute: "${testAttrName}") {
+                                id_value
+                                ... on TreeValue {
+                                    payload {
+                                        id
+                                        record {
+                                            id
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+        return resGet2.data.data.records.list[0].property;
     };
 });

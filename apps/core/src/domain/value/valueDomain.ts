@@ -21,7 +21,11 @@ import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes, type IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {type ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
-import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {
+    AttributeDependentValuesPermissionsActions,
+    RecordAttributePermissionsActions,
+    RecordPermissionsActions,
+} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     type IValueVersion,
@@ -35,6 +39,7 @@ import {
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';
+import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import canSaveRecordValue from './helpers/canSaveRecordValue';
@@ -169,6 +174,7 @@ export interface IValueDomainDeps {
     config: Config.IConfig;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.permission.attributeDependentValues': IAttributeDependentValuesPermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -195,6 +201,7 @@ const valueDomain = function ({
     config,
     'core.domain.actionsList': actionsListDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.permission.attributeDependentValues': attributeDependentValuesPermissionDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.eventsManager': eventsManager,
@@ -533,6 +540,22 @@ const valueDomain = function ({
 
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
+        if (attributeProps.type === AttributeTypes.TREE) {
+            const canModifyToValue =
+                await attributeDependentValuesPermissionDomain.getAttributeDependentValuesPermission({
+                    action: AttributeDependentValuesPermissionsActions.SET_VALUE,
+                    attributeId: attributeProps.id,
+                    recordLibrary: library,
+                    recordId,
+                    valueNodeId: null,
+                    ctx,
+                });
+
+            if (!canModifyToValue) {
+                throw new PermissionError(AttributeDependentValuesPermissionsActions.SET_VALUE);
+            }
+        }
+
         let reverseLink: IAttribute | undefined;
         if (!!attributeProps.reverse_link) {
             reverseLink = await attributeDomain.getAttributeProperties({
@@ -816,6 +839,7 @@ const valueDomain = function ({
             ...valueChecksParams,
             ctx,
             deps: {
+                attributeDependentValuesPermissionDomain,
                 recordPermissionDomain,
                 recordAttributePermissionDomain,
                 config,
@@ -1164,6 +1188,7 @@ const valueDomain = function ({
                                 ...valueChecksParams,
                                 ctx,
                                 deps: {
+                                    attributeDependentValuesPermissionDomain,
                                     recordPermissionDomain,
                                     recordAttributePermissionDomain,
                                     config,
