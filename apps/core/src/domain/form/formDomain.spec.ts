@@ -22,12 +22,13 @@ import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import formDomain, {type IFormDomainDeps} from './formDomain';
 import {AttributeTypes} from '../../_types/attribute';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const depsBase: ToAny<IFormDomainDeps> = {
     'core.domain.library': jest.fn(),
     'core.domain.attribute': jest.fn(),
     'core.domain.record': jest.fn(),
-    'core.domain.permission.library': jest.fn(),
+    'core.domain.permission.admin': jest.fn(),
     'core.domain.permission.recordAttribute': jest.fn(),
     'core.domain.permission.attribute': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
@@ -56,12 +57,16 @@ describe('formDomain', () => {
         getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test_attribute'}]}),
     };
 
-    const mockLibraryPermDomain: Mockify<ILibraryPermissionDomain> = {
-        getLibraryPermission: global.__mockPromise(true),
-    };
-
     const mockRecordDomain: Mockify<IRecordDomain> = {
         getRecordFieldValue: global.__mockPromise(mockStandardValue),
+    };
+
+    const mockAdminPermDomain = {
+        getAdminPermission: global.__mockPromise(true),
+    } satisfies Mockify<IAdminPermissionDomain>;
+
+    const mockAdminPermForbiddenDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(false),
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
@@ -90,7 +95,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             });
 
@@ -109,7 +114,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
             });
 
@@ -127,7 +132,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             });
 
@@ -146,7 +151,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
             });
 
@@ -164,7 +169,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             });
 
@@ -186,7 +191,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as any,
                 'core.utils': mockUtils as IUtils,
@@ -211,7 +216,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as any,
                 'core.utils': mockUtils as IUtils,
@@ -243,7 +248,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils,
@@ -269,7 +274,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtilsInvalidID as IUtils,
@@ -297,7 +302,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomainNoMatch as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils,
@@ -325,7 +330,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils,
@@ -352,7 +357,7 @@ describe('formDomain', () => {
                 ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils,
@@ -374,7 +379,7 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 ...depsBase,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
             });
 
@@ -392,7 +397,7 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 ...depsBase,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
             });
 
@@ -414,7 +419,7 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 ...depsBase,
-                'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
             });
 
