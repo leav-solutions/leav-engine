@@ -512,6 +512,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 break;
             case PermissionTypes.TREE:
                 perms = Object.values(TreePermissionsActions);
+                break;
             case PermissionTypes.TREE_LIBRARY:
             case PermissionTypes.TREE_NODE:
                 perms = Object.values(TreeNodePermissionsActions);

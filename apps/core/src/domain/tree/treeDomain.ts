@@ -440,11 +440,13 @@ export default function ({
         },
         async deleteTree(id, ctx) {
             // Check permissions
-            const action = AdminPermissionsActions.DELETE_TREE;
-            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, ctx});
+            const canSaveTree = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.DELETE_TREE,
+                ctx,
+            });
 
             if (!canSaveTree) {
-                throw new PermissionError(action);
+                throw new PermissionError(AdminPermissionsActions.DELETE_TREE);
             }
 
             // Check is existing tree
@@ -498,6 +500,7 @@ export default function ({
         },
         async getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
             const initializedParams = {...params};
+
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
             }
@@ -536,7 +539,23 @@ export default function ({
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
-            // check allow as children setting
+            const canAddChild = parent
+                ? await treeNodePermissionDomain.getTreeNodePermission({
+                      treeId,
+                      action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                      nodeId: parent,
+                      ctx,
+                  })
+                : await treePermissionDomain.getTreePermission({
+                      treeId,
+                      action: TreePermissionsActions.EDIT_CHILDREN,
+                      ctx,
+                  });
+
+            if (!canAddChild) {
+                throw new PermissionError(TreePermissionsActions.EDIT_CHILDREN);
+            }
+
             const parentRecord = parent ? await treeRepo.getRecordByNodeId({treeId, nodeId: parent, ctx}) : null;
             const parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
 
@@ -594,11 +613,12 @@ export default function ({
             const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
 
             const errors: any = {};
-            let treeExists;
-            let nodeExists;
-            let treeProps;
-            let parentElement;
-            let nodeElement;
+            let treeExists: boolean;
+            let nodeExists: boolean;
+            let treeProps: ITree;
+            let parentElement: {id: string; library: string};
+            let nodeElement: {id: string; library: string};
+
             const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
             if (!skipChecks) {
                 treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
@@ -624,7 +644,6 @@ export default function ({
                     : null;
                 parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
 
-                // Check permissions on source
                 let canEditSourceChildren: boolean;
                 if (parentBefore) {
                     canEditSourceChildren = await treeNodePermissionDomain.getTreeNodePermission({

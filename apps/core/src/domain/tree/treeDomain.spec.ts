@@ -470,6 +470,8 @@ describe('treeDomain', () => {
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
+                'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
             });
 
             await domain.addElement({
@@ -499,6 +501,8 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
+                'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
             });
 
             await expect(
@@ -563,6 +567,8 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperFilesTree,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
+                'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
             });
 
             await expect(
@@ -637,6 +643,8 @@ describe('treeDomain', () => {
                 'core.utils': mockUtils as IUtils,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithLibsSettings,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
+                'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
             });
 
             await expect(
