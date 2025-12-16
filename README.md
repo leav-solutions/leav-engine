@@ -432,6 +432,16 @@ docker compose -f docker-compose.yml -f light.yml up -d
 
 - Then you can access the core at http://core.leav.localhost
 
+## Mail
+
+### Local
+
+Locally, we use [mailpit](https://mailpit.axllent.org/) as the mail server. All emails sent by LEAV are received in this mailbox, regardless of their destination address. It is also used in the core's e2e-api tests.
+
+- To receive email notifications, in `docker/docker-compose.yml`, set `NOTIFICATION_EMAIL_ENABLE: "true"`
+- Start the docker-compose stack with `docker compose --profile 'mail' up -d`
+- Access the mailbox at: http://mailpit.leav.localhost/
+
 ## OIDC
 
 LEAV is able to delegate authentification to an oidc service. This mode cannot be used in the same time as
