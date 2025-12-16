@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
 import {getConfig} from '../../../../config';
-import {makeGraphQlCall, getGraphQLUrl} from '../e2eUtils';
+import {makeGraphQlCall, getGraphQLUrl, e2eAdminUser} from '../e2eUtils';
 import {ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME} from '../../../../_types/auth';
 
 describe('Auth', () => {
@@ -103,5 +103,69 @@ describe('Auth', () => {
         expect(rotatedMap[ACCESS_TOKEN_COOKIE_NAME]).toBeTruthy();
         expect(rotatedMap[REFRESH_TOKEN_COOKIE_NAME]).toBeTruthy();
         expect(rotatedMap[REFRESH_TOKEN_COOKIE_NAME]).not.toEqual(initialRefresh);
+    });
+
+    test('Throws error when both API key and cookies are provided', async () => {
+        // This test verifies that when both an API key and cookies are present,
+        // an AuthenticationError is thrown to prevent ambiguous authentication
+
+        const graphQlUrl = await getGraphQLUrl();
+
+        // Step 1: Create an API key for user "2" (non-admin user)
+        const resSaveApiKey = await makeGraphQlCall(`mutation {
+            saveApiKey(apiKey: {
+                label: "test key for edge case",
+                expiresAt: null,
+                userId: "2"
+            }) {
+                id
+                key
+            }
+        }`);
+
+        expect(resSaveApiKey.status).toBe(200);
+        expect(resSaveApiKey.data.data.saveApiKey.key).toBeTruthy();
+
+        const apiKey = resSaveApiKey.data.data.saveApiKey.key;
+        const apiKeyId = resSaveApiKey.data.data.saveApiKey.id;
+
+        // Step 2: Get an access token (cookie) for admin user (user "1")
+        const adminToken = await e2eAdminUser().getAuthToken();
+
+        // Step 3: Make a GraphQL request with BOTH the API key and the admin cookie
+        // The API key is for user "2", the cookie is for user "1"
+        const query = `{
+            me {
+                id
+            }
+        }`;
+
+        const urlWithKey = `${graphQlUrl}?key=${apiKey}`;
+
+        const res = await axios.post(
+            urlWithKey,
+            {query},
+            {
+                headers: {
+                    // Include the admin user cookie
+                    Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${adminToken}`,
+                },
+                validateStatus: () => true, // Don't throw on non-2xx status
+            },
+        );
+
+        // Step 4: Verify that the request was rejected with an authentication error
+        expect(res.status).toBe(401);
+        expect(res.data.errors).toBeTruthy();
+        expect(res.data.errors[0].message).toContain(
+            'Cannot use both API key and cookie-based authentication simultaneously',
+        );
+
+        // Clean up: delete the API key
+        await makeGraphQlCall(`mutation {
+            deleteApiKey(id: "${apiKeyId}") {
+                id
+            }
+        }`);
     });
 });

@@ -16,7 +16,7 @@ export default function ({'core.app.auth': authApp}: IValidateRequestTokenDeps):
     return (req, res) =>
         authApp.validateRequestToken(
             {
-                ...(req.query[API_KEY_PARAM_NAME] && {
+                ...(req.query?.[API_KEY_PARAM_NAME] && {
                     apiKey: String(req.query[API_KEY_PARAM_NAME]),
                 }),
                 headers: req.headers,

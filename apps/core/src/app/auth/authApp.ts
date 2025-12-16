@@ -612,6 +612,14 @@ export default function ({
                 const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
                 const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
 
+                // edge case: throw an error if a user provide an apiKey with a cookie
+                if ((accessToken || refreshToken) && apiKey) {
+                    throw new AuthenticationError(
+                        'Cannot use both API key and cookie-based authentication simultaneously. ' +
+                            'Please use either an API key or session cookies, not both.',
+                    );
+                }
+
                 const getUserGroups = async (uid: string): Promise<string[]> => {
                     const userGroups = (await valueDomain.getValues({
                         library: USERS_LIBRARY,

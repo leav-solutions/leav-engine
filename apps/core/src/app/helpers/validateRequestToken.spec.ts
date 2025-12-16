@@ -92,9 +92,6 @@ describe('validateRequestToken', () => {
                 cookies: {
                     accessToken: invalidAccessToken,
                 },
-                query: {
-                    [API_KEY_PARAM_NAME]: '123456',
-                },
             };
 
             const responseMock: Mockify<Response> = {
@@ -120,9 +117,6 @@ describe('validateRequestToken', () => {
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
                     accessToken: validAccessTokenWithoutUserId,
-                },
-                query: {
-                    [API_KEY_PARAM_NAME]: '123456',
                 },
             };
 
@@ -152,9 +146,6 @@ describe('validateRequestToken', () => {
                 cookies: {
                     refreshToken: invalidRefreshToken,
                 },
-                query: {
-                    [API_KEY_PARAM_NAME]: '123456',
-                },
             };
 
             const responseMock: Mockify<Response> = {
@@ -180,9 +171,6 @@ describe('validateRequestToken', () => {
             const requestMock: Mockify<IRequestWithContext> = {
                 cookies: {
                     accessToken: validRefreshTokenWithoutUserId,
-                },
-                query: {
-                    [API_KEY_PARAM_NAME]: '123456',
                 },
             };
 
@@ -213,9 +201,7 @@ describe('validateRequestToken', () => {
                 cookies: {
                     refreshToken: validRefreshToken,
                 },
-                query: {
-                    [API_KEY_PARAM_NAME]: '123456',
-                },
+
                 headers: {
                     host: 'host',
                     'user-agent': 'test',
@@ -281,9 +267,6 @@ describe('validateRequestToken', () => {
             cookies: {
                 accessToken: 'expired_access_token',
                 refreshToken: validRefreshToken,
-            },
-            query: {
-                [API_KEY_PARAM_NAME]: '123456',
             },
             headers: {
                 host: 'host',
@@ -357,9 +340,6 @@ describe('validateRequestToken', () => {
         const requestMock: Mockify<IRequestWithContext> = {
             cookies: {
                 refreshToken: validRefreshToken,
-            },
-            query: {
-                [API_KEY_PARAM_NAME]: '123456',
             },
             headers: {
                 host: 'host',
