@@ -9484,6 +9484,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/virtualized-lists@npm:^0.72.4":
+  version: 0.72.8
+  resolution: "@react-native/virtualized-lists@npm:0.72.8"
+  dependencies:
+    invariant: "npm:^2.2.4"
+    nullthrows: "npm:^1.1.1"
+  peerDependencies:
+    react-native: "*"
+  checksum: 9de9a35a086d2438af7d01a301c6c7ad2790fd6365194255b7bc5b3bad6e07ea2d377cd3f8252440c633f229cc9b87b2a4dec7c26f4faa27727767494491772b
+  languageName: node
+  linkType: hard
+
 "@redis/bloom@npm:5.10.0":
   version: 5.10.0
   resolution: "@redis/bloom@npm:5.10.0"
@@ -11823,6 +11835,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-native@npm:*":
+  version: 0.72.8
+  resolution: "@types/react-native@npm:0.72.8"
+  dependencies:
+    "@react-native/virtualized-lists": "npm:^0.72.4"
+    "@types/react": "npm:*"
+  checksum: 1029e17b4c2de0a56cc5c67a73459e6ee6e8ffd5f779e6a835889ae9141e4453252832ee3b7c5a7d2fad4f7b79dc7d7f3796ed2cd58855157e1e5ac52e501332
+  languageName: node
+  linkType: hard
+
 "@types/react-redux@npm:^7.1.20":
   version: 7.1.24
   resolution: "@types/react-redux@npm:7.1.24"
@@ -12003,14 +12025,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/styled-components@npm:4.1.6":
-  version: 4.1.6
-  resolution: "@types/styled-components@npm:4.1.6"
+"@types/styled-components@npm:4.4.3":
+  version: 4.4.3
+  resolution: "@types/styled-components@npm:4.4.3"
   dependencies:
-    "@types/node": "npm:*"
+    "@types/hoist-non-react-statics": "npm:*"
     "@types/react": "npm:*"
+    "@types/react-native": "npm:*"
     csstype: "npm:^2.2.0"
-  checksum: 5ffa1a8f8429058cf96f870030a2ee40d6cbfa5d21c0b32c201fb75c20d1cf0f66b5301139a9e2281be34ff703f3b6a6ae740ff00b5f76ae489d6165d214cb61
+  checksum: b7266232c4b0ac0e3058ec7f36f7c6a5c0d1c819943d651d7a3b1369c8e709ee53bee0c306c1502579cf0cc72d8c592bc6d4d54b42ea219170867b871b6614cd
   languageName: node
   linkType: hard
 
@@ -12811,7 +12834,7 @@ __metadata:
     "@types/react-sortable-tree": "npm:0.3.11"
     "@types/react-test-renderer": "npm:16.9.0"
     "@types/redux-mock-store": "npm:1.0.3"
-    "@types/styled-components": "npm:4.1.6"
+    "@types/styled-components": "npm:4.4.3"
     "@types/testing-library__jest-dom": "npm:5.9.5"
     "@types/uuid": "npm:8.0.0"
     "@vitejs/plugin-react": "npm:5.1.1"
