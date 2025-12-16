@@ -12,7 +12,7 @@
         "test": "jest",
         "test:ci": "jest --maxWorkers=2",
         "test:commit": "jest --maxWorkers=50% --onlyChanged",
-        "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin/src/_gqlTypes",
+        "graphql-generate": "graphql-codegen --config ./codegen.ts",
         "create_comp": "scripts/createComponent.js",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p .",
@@ -56,6 +56,12 @@
         "yup": "0.32.11"
     },
     "devDependencies": {
+        "@graphql-codegen/cli": "2.12.0",
+        "@graphql-codegen/introspection": "2.2.1",
+        "@graphql-codegen/typescript": "2.7.3",
+        "@graphql-codegen/typescript-operations": "2.5.3",
+        "@graphql-codegen/typescript-react-apollo": "3.3.3",
+        "@graphql-codegen/typescript-react-query": "4.0.1",
         "@semantic-ui-react/craco-less": "2.0.2",
         "@testing-library/jest-dom": "5.11.9",
         "@testing-library/react": "11.2.5",
