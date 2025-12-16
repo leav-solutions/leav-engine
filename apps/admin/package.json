@@ -72,7 +72,7 @@
         "@types/react": "16.14.32",
         "@types/react-dom": "16.9.16",
         "@types/react-router": "5.1.8",
-        "@types/react-router-dom": "5.1.5",
+        "@types/react-router-dom": "5.3.3",
         "@types/react-router-dom-v5": "npm:@types/react-router-dom@5.1.5",
         "@types/react-rte": "0.16.1",
         "@types/react-sortable-tree": "0.3.11",
