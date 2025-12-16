@@ -11844,7 +11844,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-router-dom-v5@npm:@types/react-router-dom@5.1.5, @types/react-router-dom@npm:5.1.5":
+"@types/react-router-dom-v5@npm:@types/react-router-dom@5.1.5":
   version: 5.1.5
   resolution: "@types/react-router-dom@npm:5.1.5"
   dependencies:
@@ -11852,6 +11852,17 @@ __metadata:
     "@types/react": "npm:*"
     "@types/react-router": "npm:*"
   checksum: 995316331c0fb270c4ad8f20e5c76cfeb219ab8a35cd3d6d392ec7da8bf82092e5234dc6d70a2f8bfc9cd37c1b4c4aee3398f2950b52e04c2cb37c8e61facb8b
+  languageName: node
+  linkType: hard
+
+"@types/react-router-dom@npm:5.3.3":
+  version: 5.3.3
+  resolution: "@types/react-router-dom@npm:5.3.3"
+  dependencies:
+    "@types/history": "npm:^4.7.11"
+    "@types/react": "npm:*"
+    "@types/react-router": "npm:*"
+  checksum: 28c4ea48909803c414bf5a08502acbb8ba414669b4b43bb51297c05fe5addc4df0b8fd00e0a9d1e3535ec4073ef38aaafac2c4a2b95b787167d113bc059beff3
   languageName: node
   linkType: hard
 
@@ -12794,7 +12805,7 @@ __metadata:
     "@types/react": "npm:16.14.32"
     "@types/react-dom": "npm:16.9.16"
     "@types/react-router": "npm:5.1.8"
-    "@types/react-router-dom": "npm:5.1.5"
+    "@types/react-router-dom": "npm:5.3.3"
     "@types/react-router-dom-v5": "npm:@types/react-router-dom@5.1.5"
     "@types/react-rte": "npm:0.16.1"
     "@types/react-sortable-tree": "npm:0.3.11"
