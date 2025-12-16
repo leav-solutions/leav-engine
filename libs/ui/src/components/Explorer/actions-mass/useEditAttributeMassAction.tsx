@@ -18,7 +18,7 @@ import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassAc
 import {useListEditableAttributeHook} from './edit-attribute/useListEditableAttributeHook';
 import {useCountValuesOccurrencesHook} from './edit-attribute/useCountValuesOccurrencesHook';
 import {KitAlert, KitNotification} from 'aristid-ds';
-import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
+import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {Loading} from '_ui/components/Loading';
 
 export const useEditAttributeMassAction = ({
@@ -112,7 +112,8 @@ export const useEditAttributeMassAction = ({
                 description: t('explorer.massAction.editAttribute_submit_notification_description', {
                     counter: bulkCounter,
                 }),
-                duration: INFO_NOTIFICATION_DURATION_SECONDS,
+                duration: INFO_NOTIFICATION_DURATION,
+                closable: true,
             });
         } catch (error) {
             KitAlert.error({

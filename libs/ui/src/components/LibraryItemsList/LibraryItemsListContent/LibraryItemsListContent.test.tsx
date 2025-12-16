@@ -123,9 +123,10 @@ describe('<LibraryItemsListContent/>', () => {
 
             expect(KitNotification.success).toHaveBeenCalledTimes(1);
             expect(KitNotification.success).toHaveBeenCalledWith({
+                closable: true,
                 message: 'items_list.created_in_success.message',
                 description: '',
-                duration: 5,
+                duration: 5_000,
             });
         });
     });

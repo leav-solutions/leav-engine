@@ -1,0 +1,14 @@
+subscription subscribeToUserTasks($filters: TaskFiltersInput) {
+    task(filters: $filters) {
+        id
+        status
+        label
+        created_at
+        startedAt
+        completedAt
+        progress {
+            description
+            percent
+        }
+    }
+}

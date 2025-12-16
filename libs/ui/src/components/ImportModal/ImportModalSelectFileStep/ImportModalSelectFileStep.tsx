@@ -18,7 +18,7 @@ import {
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
 import {type ISheet} from '../_types';
-import {ERROR_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
+import {ERROR_NOTIFICATION_DURATION} from '_ui/constants';
 
 interface IImportModalSelectFileStepsProps {
     onGetAttributes: (library: string) => Promise<AttributesByLibAttributeFragment[]>;
@@ -192,7 +192,8 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     KitNotification.error({
                         message: t('error.error_occurred'),
                         description: errorMessage,
-                        duration: ERROR_NOTIFICATION_DURATION_SECONDS,
+                        duration: ERROR_NOTIFICATION_DURATION,
+                        closable: true,
                     });
                 }
             };
@@ -209,7 +210,8 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                 KitNotification.error({
                     message: t('error.error_occurred'),
                     description: reader.error?.message ?? '',
-                    duration: ERROR_NOTIFICATION_DURATION_SECONDS,
+                    duration: ERROR_NOTIFICATION_DURATION,
+                    closable: true,
                 });
             };
 

@@ -1,0 +1,16 @@
+query getUserTasks($filters: TaskFiltersInput) {
+    tasks(filters: $filters) {
+        list {
+            id
+            status
+            label
+            created_at
+            startedAt
+            completedAt
+            progress {
+                description
+                percent
+            }
+        }
+    }
+}

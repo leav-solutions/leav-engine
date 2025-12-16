@@ -14,7 +14,7 @@ import {
 import useLang from '../../hooks/useLang';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
-import {INFO_NOTIFICATION_DURATION_SECONDS, SUCCESS_NOTIFICATION_DURATION_SECONDS} from '_ui/constants';
+import {INFO_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
 
 interface ITriggerPreviewsGenerationModalProps {
     libraryId: string;
@@ -79,15 +79,17 @@ function TriggerPreviewsGenerationModal({
 
             if (isSuccess) {
                 KitNotification.success({
+                    closable: true,
                     description: null,
                     message: t('files.previews_generation_success'),
-                    duration: SUCCESS_NOTIFICATION_DURATION_SECONDS,
+                    duration: SUCCESS_NOTIFICATION_DURATION,
                 });
             } else {
                 KitNotification.info({
+                    closable: true,
                     description: null,
                     message: t('files.previews_generation_nothing_to_do'),
-                    duration: INFO_NOTIFICATION_DURATION_SECONDS,
+                    duration: INFO_NOTIFICATION_DURATION,
                 });
             }
 
