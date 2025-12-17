@@ -285,8 +285,9 @@ export default function ({
 
                                 // Format and translate errors before sending them to client
                                 if (errors) {
+                                    const referer = requestContext.request.http?.headers.get('referer');
                                     logger.error(
-                                        `Graphql request errors [${contextValue.queryId}] on operation ${
+                                        `Graphql request errors queryId=${contextValue.queryId}, referer=${referer} operation=${
                                             requestContext.operationName
                                         }: \n  - ${errors.map(e => e.stack).join('\n  - ')}`,
                                         {operationVariables: requestContext.request.variables},
