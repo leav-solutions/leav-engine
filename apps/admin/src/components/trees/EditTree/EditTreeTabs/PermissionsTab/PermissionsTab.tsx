@@ -1,14 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import uniqBy from 'lodash/uniqBy';
-import React from 'react';
-import {saveTreeQuery} from '../../../../../queries/trees/saveTreeMutation';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {type TreeNodePermissionsConfInput, type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
-import {type SAVE_TREE, type SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
 import PermissionsContent from './PermissionsContent';
+import {useSaveTreeMutation} from '_gqlTypes';
 
 interface IPermissionsTabProps {
     tree: GET_TREE_BY_ID_trees_list;
@@ -17,7 +14,7 @@ interface IPermissionsTabProps {
 
 function PermissionsTab({tree, readonly}: IPermissionsTabProps): JSX.Element {
     // TODO: handle errors
-    const [saveTree] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery);
+    const [saveTree] = useSaveTreeMutation();
 
     /**
      * Save tree's permissions conf

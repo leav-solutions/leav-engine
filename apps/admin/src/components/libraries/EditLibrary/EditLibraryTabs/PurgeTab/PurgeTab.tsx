@@ -1,18 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {purgeRecordsMutation} from 'queries/records/purgeRecords';
 import {RecordFilterCondition} from 'queries/records/recordsListQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Confirm, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {type PURGE_RECORDS, type PURGE_RECORDSVariables} from '_gqlTypes/PURGE_RECORDS';
-import {useRecordsListQuery} from '_gqlTypes';
+import {usePurgeRecordsMutation, useRecordsListQuery} from '_gqlTypes';
 
 const Summary = styled.div`
     margin: 1rem 0;
@@ -47,10 +44,9 @@ function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
         },
     });
 
-    const [purgeRecords, {loading: purgeLoading, error: purgeError}] = useMutation<
-        PURGE_RECORDS,
-        PURGE_RECORDSVariables
-    >(purgeRecordsMutation, {variables: {libraryId: library.id}});
+    const [purgeRecords, {loading: purgeLoading, error: purgeError}] = usePurgeRecordsMutation({
+        variables: {libraryId: library.id},
+    });
 
     const [showConfirm, setShowConfirm] = React.useState(false);
 

@@ -1,22 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
-import {savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
 import {
     type PermissionsActions,
     type PermissionsTreeTargetInput,
     type PermissionTypes,
 } from '../../../_gqlTypes/globalTypes';
-import {
-    type SAVE_PERMISSION,
-    type SAVE_PERMISSIONVariables,
-    type SAVE_PERMISSION_savePermission_actions,
-} from '../../../_gqlTypes/SAVE_PERMISSION';
+import {type SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
 import Loading from '../../shared/Loading';
 import EditPermissionsView from './EditPermissionsView';
-import {useGetPermissionsActionsQuery, useGetPermissionsQuery} from '_gqlTypes';
+import {useGetPermissionsActionsQuery, useGetPermissionsQuery, useSavePermissionMutation} from '_gqlTypes';
 import {type GET_PERMISSIONS_perm, type GET_PERMISSIONS_inheritPerm} from '_gqlTypes/GET_PERMISSIONS';
 import {type GET_PERMISSIONS_ACTIONS_permissionsActionsByType} from '_gqlTypes/GET_PERMISSIONS_ACTIONS';
 
@@ -57,7 +51,7 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         skip: !dataActions,
     });
 
-    const [savePerms] = useMutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables>(savePermissionsQuery);
+    const [savePerms] = useSavePermissionMutation();
 
     if (loadingActions || loading) {
         return <Loading />;
@@ -95,3 +89,6 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
 };
 
 export default EditPermissions;
+function useSavePermissionsMutation<T, U>(savePermissionsQuery: any): [any] {
+    throw new Error('Function not implemented.');
+}

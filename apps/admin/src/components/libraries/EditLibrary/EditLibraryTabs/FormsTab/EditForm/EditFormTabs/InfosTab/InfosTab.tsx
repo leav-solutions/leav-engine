@@ -1,18 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import {useHistory, useLocation} from 'react-router-dom-v5';
-import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {clearCacheForQuery} from '../../../../../../../../utils';
 import {type FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
-import {type SAVE_FORM, type SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
+import {useSaveFormMutation} from '_gqlTypes';
+import {type GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 
 function InfosTab(): JSX.Element {
     const {form, library, setForm} = useEditFormContext();
-    const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
+    const [saveForm] = useSaveFormMutation({
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined,
         onCompleted: res => {
@@ -38,7 +37,7 @@ function InfosTab(): JSX.Element {
             },
         });
 
-        setForm(res.data.saveForm);
+        setForm(res.data.saveForm as GET_FORM_forms_list);
     };
     return <InfosForm onSubmit={_handleSubmit} />;
 }

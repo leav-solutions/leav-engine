@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
-import React, {useCallback, useEffect, useState} from 'react';
+import {useQuery} from '@apollo/client';
+import {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import SortableTree, {
     addNodeUnderParent,
@@ -16,7 +16,6 @@ import SortableTree, {
 } from 'react-sortable-tree';
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
-import {saveAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/saveAttributesEmbeddedFieldsQuery';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat} from '../../../../../_gqlTypes/globalTypes';
 import {
@@ -28,6 +27,7 @@ import {
 import EditButtons from './EditButtons';
 import EmbeddedFieldsWrapper from './EmbeddedFieldsWrapper/EmbeddedFieldsWrapper';
 import ExpandButtons from './ExpandButtons';
+import {useSaveAttributeEmbeddedFieldsMutation} from '_gqlTypes';
 
 interface IEmbeddedFieldsTabProps {
     attribute: GET_ATTRIBUTES_attributes_list;
@@ -69,7 +69,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         refetch: rQuery,
     } = useQuery<IQuery, IQueryVariables>(getAttributesEmbeddedFieldsQuery(level), {variables: {attId: attribute.id}});
 
-    const [saveAttribute] = useMutation(saveAttributesEmbeddedFieldsQuery);
+    const [saveAttribute] = useSaveAttributeEmbeddedFieldsMutation();
 
     const save = useCallback(
         async (newValues: IFormValue[], treeData?: ITreeItem[]) => {

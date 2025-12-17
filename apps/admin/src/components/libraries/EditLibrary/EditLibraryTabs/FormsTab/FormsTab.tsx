@@ -1,12 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import {useState} from 'react';
-import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
 import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
 import {addWildcardToFilters, clearCacheForQuery} from '../../../../../utils';
-import {type DELETE_FORM, type DELETE_FORMVariables} from '../../../../../_gqlTypes/DELETE_FORM';
 import {
     type GET_FORMS_LIST_forms_list,
     type GET_FORMS_LIST,
@@ -15,7 +12,7 @@ import {
 import {type IFormFilterOptions} from '../../../../../_types/forms';
 import EditFormModal from './EditFormModal';
 import FormsList from './FormsList';
-import {useGetFormsListQuery} from '_gqlTypes';
+import {useDeleteFormMutation, useGetFormsListQuery} from '_gqlTypes';
 
 interface IFormsTabProps {
     libraryId: string;
@@ -28,7 +25,7 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
         variables: {...addWildcardToFilters(filters), library: libraryId},
     });
 
-    const [deleteForm] = useMutation<DELETE_FORM, DELETE_FORMVariables>(deleteFormQuery);
+    const [deleteForm] = useDeleteFormMutation();
 
     const [editedForm, setEditedForm] = useState<string | null>(null);
     const [openEditionModal, setOpenEditionModal] = useState<boolean>(false);

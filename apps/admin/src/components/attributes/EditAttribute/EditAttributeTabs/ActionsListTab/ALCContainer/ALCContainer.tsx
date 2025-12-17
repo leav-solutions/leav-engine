@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import {cloneDeep} from 'lodash';
 import {useEffect, useState} from 'react';
-import {saveAttributeActionsListMutation} from '../../../../../../queries/attributes/saveAttributeActionsListMutation';
 import {type GET_ACTIONS_LIST_QUERY_attributes_list_actions_list} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';
@@ -23,7 +21,11 @@ import {
 } from '../interfaces/interfaces';
 import {ExternalContainer, ListsContainer, ReserveContainer} from '../stylesComps';
 import {ActionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';
-import {type GetActionsListQueryQuery, useGetActionsListQueryQuery} from '_gqlTypes';
+import {
+    type GetActionsListQueryQuery,
+    useGetActionsListQueryQuery,
+    useSaveAttributeActionListMutation,
+} from '_gqlTypes';
 
 //////////////////// INTERFACES
 
@@ -64,8 +66,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         variables: {attId: attribute ? attribute.id : undefined},
     });
 
-    const [saveAttributeActionsList, {loading: loadingSave}] = useMutation(
-        saveAttributeActionsListMutation,
+    const [saveAttributeActionsList, {loading: loadingSave}] = useSaveAttributeActionListMutation(
         {onError: e => console.error(e.message)}, // TODO: handle error properly
     );
 

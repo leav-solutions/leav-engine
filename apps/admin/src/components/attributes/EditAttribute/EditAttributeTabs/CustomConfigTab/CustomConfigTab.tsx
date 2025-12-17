@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
+import {useSaveAttributeMutation} from '_gqlTypes';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type SAVE_ATTRIBUTEVariables, type SAVE_ATTRIBUTE} from '_gqlTypes/SAVE_ATTRIBUTE';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
-import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -59,7 +57,7 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
-    const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery);
+    const [saveAttribute, {error, loading}] = useSaveAttributeMutation();
 
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {

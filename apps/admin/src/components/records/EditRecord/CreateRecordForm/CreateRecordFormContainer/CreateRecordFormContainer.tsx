@@ -1,21 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery, NetworkStatus} from '@apollo/client';
+import {useQuery, NetworkStatus} from '@apollo/client';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import useLang from '../../../../../hooks/useLang';
-import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
-import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
 import {isValueNull, versionObjToGraphql} from '../../../../../utils';
-import {type CREATE_RECORD, type CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
 import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, type ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
-import {type SAVE_VALUE_BATCH, type SAVE_VALUE_BATCHVariables} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
     type IGenericValue,
     type IGetRecordData,
@@ -27,6 +23,7 @@ import {
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import CreateRecordForm from '../CreateRecordForm';
+import {useCreateRecordMutation, useSaveValueBatchMutation} from '_gqlTypes';
 
 interface ICreateRecordFormContainerProps {
     library: GET_LIB_BY_ID_libraries_list;
@@ -102,11 +99,9 @@ function CreateRecordFormContainer({
         fetchPolicy: 'no-cache',
     });
 
-    const [saveValueBatch, {data: dataSave}] = useMutation<SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables>(
-        saveValueBatchQuery,
-    );
+    const [saveValueBatch, {data: dataSave}] = useSaveValueBatchMutation();
 
-    const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordQuery);
+    const [createRecord] = useCreateRecordMutation();
 
     const _extractRecordIdentity = useCallback(
         (dataQueryRes: IGetRecordData): RecordIdentity_whoAmI =>

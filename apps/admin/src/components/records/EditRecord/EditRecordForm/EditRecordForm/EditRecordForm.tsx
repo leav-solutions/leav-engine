@@ -1,23 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery, NetworkStatus} from '@apollo/client';
+import {useQuery, NetworkStatus} from '@apollo/client';
 import React, {useCallback, useEffect} from 'react';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
-import {deleteValueQuery} from '../../../../../queries/values/deleteValueMutation';
-import {saveValueQuery} from '../../../../../queries/values/saveValueMutation';
 import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils';
 import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
-import {type DELETE_VALUE, type DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
 import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
-import {type SAVE_VALUE, type SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
 import {type SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
     type IGetRecordData,
@@ -30,6 +26,7 @@ import {
 import Loading from '../../../../shared/Loading';
 import LinksField from '../../../FormFields/LinksField';
 import StandardValuesWrapper from './StandardValuesWrapper';
+import {useDeleteValueMutation, useSaveValueMutation} from '_gqlTypes';
 
 interface IEditRecordFormProps {
     attributes: GET_LIB_BY_ID_libraries_list_attributes[];
@@ -71,11 +68,11 @@ const EditRecordForm = ({
         skip: !recordId,
     });
 
-    const [deleteValueMutation] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueQuery, {
+    const [deleteValueMutation] = useDeleteValueMutation({
         refetchQueries: [{query, variables: getRecordDataVariables}],
     });
 
-    const [saveValueMutation] = useMutation<SAVE_VALUE, SAVE_VALUEVariables>(saveValueQuery, {
+    const [saveValueMutation] = useSaveValueMutation({
         refetchQueries: [{query, variables: getRecordDataVariables}],
     });
 

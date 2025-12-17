@@ -1,17 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import {useHistory} from 'react-router-dom-v5';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {type AttributeType} from '../../../../../_gqlTypes/globalTypes';
-import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
+import {type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {type IFormError} from '../../../../../_types/errors';
 import {type OnAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
 import {type AttributeInfosFormValues} from './_types';
-import {useGetAttributesLazyQuery} from '_gqlTypes';
+import {useGetAttributesLazyQuery, useSaveAttributeMutation} from '_gqlTypes';
 
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -23,7 +21,7 @@ interface IInfosTabProps {
 function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true}: IInfosTabProps): JSX.Element {
     const history = useHistory();
     const isNewAttribute = !attribute;
-    const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
+    const [saveAttribute, {error}] = useSaveAttributeMutation({
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined,
         onCompleted: res => {

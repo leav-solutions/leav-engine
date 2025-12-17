@@ -1,19 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import EditAttributeModal from 'components/attributes/EditAttributeModal';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';
-import {type SAVE_LIBRARY_ATTRIBUTES, type SAVE_LIBRARY_ATTRIBUTESVariables} from '_gqlTypes/SAVE_LIBRARY_ATTRIBUTES';
 import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
-import {saveLibAttributesMutation} from '../../../../../queries/libraries/saveLibAttributesMutation';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import AttributesList from '../../../../attributes/AttributesList';
 import AttributesSelectionModal from '../../../../attributes/AttributesSelectionModal';
 import UnlinkLibAttribute from '../../../UnlinkLibAttribute';
+import {useSaveLibraryAttributesMutation} from '_gqlTypes';
 
 interface IAttributesTabProps {
     library: GET_LIB_BY_ID_libraries_list | null;
@@ -27,9 +25,7 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
     });
 
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
-    const [saveLibAttr] = useMutation<SAVE_LIBRARY_ATTRIBUTES, SAVE_LIBRARY_ATTRIBUTESVariables>(
-        saveLibAttributesMutation,
-    );
+    const [saveLibAttr] = useSaveLibraryAttributesMutation();
 
     const _handleRowClick = (attribute: GET_ATTRIBUTES_attributes_list) => {
         setAttributeModalDisplay({visible: true, attribute: attribute.id});
