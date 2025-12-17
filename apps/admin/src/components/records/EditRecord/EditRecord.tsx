@@ -1,15 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
-import {type GET_LIB_BY_ID, type GET_LIB_BY_IDVariables} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list, type GET_LIB_BY_ID_libraries_list_attributes} from '_gqlTypes/GET_LIB_BY_ID';
 import {type TreeElementInput} from '../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {type RecordEdition} from '../../../_types/records';
 import Loading from '../../shared/Loading';
 import CreateRecordFormContainer from './CreateRecordForm/CreateRecordFormContainer';
 import RecordEditionForm from './EditRecordForm';
+import {useGetLibByIdQuery} from '_gqlTypes';
 
 export interface IEditRecordProps {
     library: string;
@@ -29,7 +28,7 @@ function EditRecord({
     onPostSave,
     inModal = false,
 }: IEditRecordProps): JSX.Element {
-    const {data, loading, error} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
+    const {data, loading, error} = useGetLibByIdQuery({
         variables: {id: [library]},
     });
 
@@ -51,13 +50,17 @@ function EditRecord({
     return (
         <>
             {recordId ? (
-                <RecordEditionForm initialRecordId={recordId} library={lib} onIdentityUpdate={onIdentityUpdate} />
+                <RecordEditionForm
+                    initialRecordId={recordId}
+                    library={lib as GET_LIB_BY_ID_libraries_list}
+                    onIdentityUpdate={onIdentityUpdate}
+                />
             ) : (
                 <CreateRecordFormContainer
                     onPostSave={onPostSave}
-                    attributes={attributes}
+                    attributes={attributes as GET_LIB_BY_ID_libraries_list_attributes[]}
                     setSubmitFunc={setSubmitFunc}
-                    library={lib}
+                    library={lib as GET_LIB_BY_ID_libraries_list}
                     inModal={inModal}
                 />
             )}

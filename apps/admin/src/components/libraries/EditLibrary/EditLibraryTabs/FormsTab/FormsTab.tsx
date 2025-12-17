@@ -1,16 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
-import React, {useState} from 'react';
+import {useMutation} from '@apollo/client';
+import {useState} from 'react';
 import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
 import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
 import {addWildcardToFilters, clearCacheForQuery} from '../../../../../utils';
 import {type DELETE_FORM, type DELETE_FORMVariables} from '../../../../../_gqlTypes/DELETE_FORM';
-import {type GET_FORMS_LIST, type GET_FORMS_LISTVariables} from '../../../../../_gqlTypes/GET_FORMS_LIST';
+import {
+    type GET_FORMS_LIST_forms_list,
+    type GET_FORMS_LIST,
+    type GET_FORMS_LISTVariables,
+} from '../../../../../_gqlTypes/GET_FORMS_LIST';
 import {type IFormFilterOptions} from '../../../../../_types/forms';
 import EditFormModal from './EditFormModal';
 import FormsList from './FormsList';
+import {useGetFormsListQuery} from '_gqlTypes';
 
 interface IFormsTabProps {
     libraryId: string;
@@ -19,7 +24,7 @@ interface IFormsTabProps {
 
 function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
     const [filters, setFilters] = useState<IFormFilterOptions>({});
-    const {loading, error, data} = useQuery<GET_FORMS_LIST, GET_FORMS_LISTVariables>(getFormsQuery, {
+    const {loading, error, data} = useGetFormsListQuery({
         variables: {...addWildcardToFilters(filters), library: libraryId},
     });
 
@@ -109,7 +114,7 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
             <FormsList
                 loading={loading}
                 libraryId={libraryId}
-                forms={data?.forms?.list || []}
+                forms={(data?.forms?.list as GET_FORMS_LIST_forms_list[]) || []}
                 filters={filters}
                 onFiltersChange={_handleFiltersChange}
                 onCreate={_handleCreate}

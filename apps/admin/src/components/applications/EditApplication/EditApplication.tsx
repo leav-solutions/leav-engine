@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import EditApplicationContext from 'context/EditApplicationContext';
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {useTranslation} from 'react-i18next';
 import {type match} from 'react-router-dom-v5';
 import styled from 'styled-components';
-import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import EditApplicationTabs from './EditApplicationTabs';
+import {useGetApplicationByIdQuery} from '_gqlTypes';
+import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 
 export interface IEditApplicationMatchParams {
     id: string;
@@ -30,13 +29,10 @@ function EditApplication({match: routerMatch}: IEditApplicationProps): JSX.Eleme
     const appId = routerMatch.params?.id ?? null;
     const isNewApp = !appId;
 
-    const {loading, error, data} = useQuery<GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables>(
-        getApplicationByIdQuery,
-        {
-            variables: {id: appId},
-            skip: isNewApp,
-        },
-    );
+    const {loading, error, data} = useGetApplicationByIdQuery({
+        variables: {id: appId},
+        skip: isNewApp,
+    });
 
     if (loading) {
         return <Loading />;
@@ -56,7 +52,12 @@ function EditApplication({match: routerMatch}: IEditApplicationProps): JSX.Eleme
 
     return (
         <Wrapper>
-            <EditApplicationContext.Provider value={{application: appData ?? null, readonly: isReadOnly}}>
+            <EditApplicationContext.Provider
+                value={{
+                    application: (appData as GET_APPLICATION_BY_ID_applications_list) ?? null,
+                    readonly: isReadOnly,
+                }}
+            >
                 <EditApplicationTabs />
             </EditApplicationContext.Provider>
         </Wrapper>

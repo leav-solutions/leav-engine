@@ -1,21 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
+import {useMutation} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import FormFieldWrapper from 'components/shared/FormFieldWrapper';
 import difference from 'lodash/difference';
-import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWithAttributesQuery';
 import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
 import React, {type SyntheticEvent, useMemo} from 'react';
 import {type DropdownProps, type FormDropdownProps} from 'semantic-ui-react';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {
-    type GET_LIBRARIES_WITH_ATTRIBUTES,
     type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list,
 } from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
 import {type SAVE_LIBRARY_ATTRIBUTES, type SAVE_LIBRARY_ATTRIBUTESVariables} from '_gqlTypes/SAVE_LIBRARY_ATTRIBUTES';
 import AttributeLibrariesField from './AttributeLibrariesField';
+import {useGetLibrariesWithAttributesQuery} from '_gqlTypes';
 
 export type AttributeLibrariesOnChange = (
     e: SyntheticEvent<HTMLElement>,
@@ -27,7 +26,7 @@ interface IAttributeLibrariesProps extends Omit<FormDropdownProps, 'onChange' | 
 }
 
 function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibrariesProps): JSX.Element {
-    const {loading, error, data} = useQuery<GET_LIBRARIES_WITH_ATTRIBUTES>(getLibrariesWithAttributesQuery);
+    const {loading, error, data} = useGetLibrariesWithAttributesQuery();
     const [saveLibrary, {loading: loadingSave, error: saveError}] = useMutation<
         SAVE_LIBRARY_ATTRIBUTES,
         SAVE_LIBRARY_ATTRIBUTESVariables
@@ -80,7 +79,7 @@ function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibr
     return (
         <FormFieldWrapper error={saveError?.message}>
             <AttributeLibrariesField
-                libraries={libraries}
+                libraries={libraries as GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list[]}
                 {...fieldProps}
                 onChange={_handleChange}
                 loading={loading || loadingSave}

@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -9,11 +8,10 @@ import RecordPreview from 'components/shared/RecordPreview';
 import SimplisticButton from 'components/shared/SimplisticButton';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
 import {Icon, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
+import {useGetApplicationsQuery} from '_gqlTypes';
 
 const AppSidebar = styled(Sidebar)`
     background: #ffffff;
@@ -60,7 +58,7 @@ const AppItem = styled(List.Item)`
 
 function ApplicationsSwitcher(): JSX.Element {
     const {lang} = useLang();
-    const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
+    const {loading, error, data} = useGetApplicationsQuery();
     const applicationData = useCurrentApplicationContext();
     const [isSidebarVisible, setSidebarVisible] = React.useState(false);
 

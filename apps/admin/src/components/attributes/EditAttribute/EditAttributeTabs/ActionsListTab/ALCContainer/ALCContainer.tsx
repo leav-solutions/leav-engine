@@ -1,16 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
+import {useMutation} from '@apollo/client';
 import {cloneDeep} from 'lodash';
-import React, {useEffect, useState} from 'react';
-import {getActionListQuery} from '../../../../../../queries/attributes/getActionListQuery';
+import {useEffect, useState} from 'react';
 import {saveAttributeActionsListMutation} from '../../../../../../queries/attributes/saveAttributeActionsListMutation';
-import {
-    type GET_ACTIONS_LIST_QUERY,
-    type GET_ACTIONS_LIST_QUERY_attributes_list_input_types,
-    type GET_ACTIONS_LIST_QUERY_attributes_list_output_types,
-} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
+import {type GET_ACTIONS_LIST_QUERY_attributes_list_actions_list} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';
 import ALCReserve from '../ALCReserve';
@@ -28,6 +23,7 @@ import {
 } from '../interfaces/interfaces';
 import {ExternalContainer, ListsContainer, ReserveContainer} from '../stylesComps';
 import {ActionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';
+import {type GetActionsListQueryQuery, useGetActionsListQueryQuery} from '_gqlTypes';
 
 //////////////////// INTERFACES
 
@@ -37,8 +33,8 @@ interface IALCContainerProps {
 }
 
 interface IAttributeTypes {
-    inTypes: GET_ACTIONS_LIST_QUERY_attributes_list_input_types;
-    outTypes: GET_ACTIONS_LIST_QUERY_attributes_list_output_types;
+    inTypes: GetActionsListQueryQuery['attributes']['list'][0]['input_types'];
+    outTypes: GetActionsListQueryQuery['attributes']['list'][0]['output_types'];
 }
 
 //////////////////// COMPONENT
@@ -64,7 +60,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     });
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [colorTypeDictionnary, setColorTypeDictionnary] = useState<IColorDic>({});
-    const {loading, data} = useQuery<GET_ACTIONS_LIST_QUERY>(getActionListQuery, {
+    const {loading, data} = useGetActionsListQueryQuery({
         variables: {attId: attribute ? attribute.id : undefined},
     });
 
@@ -90,8 +86,12 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
             setAttributeTypes({inTypes, outTypes});
         }
 
-        setCurrentList(getCurrentList(currentConfig, availableActions));
-        setcurrentActionListOrder(getCurrentListOrder(currentConfig));
+        setCurrentList(
+            getCurrentList(currentConfig as GET_ACTIONS_LIST_QUERY_attributes_list_actions_list, availableActions),
+        );
+        setcurrentActionListOrder(
+            getCurrentListOrder(currentConfig as GET_ACTIONS_LIST_QUERY_attributes_list_actions_list),
+        );
         setColorTypeDictionnary(getColorDictionnary(availableActions));
     }, [data, availableActions]);
 

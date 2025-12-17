@@ -1,21 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import {useMemo} from 'react';
 import {type match} from 'react-router-dom-v5';
 import styled from 'styled-components';
-import {
-    type GET_ATTRIBUTE_BY_ID,
-    type GET_ATTRIBUTE_BY_IDVariables,
-    type GET_ATTRIBUTE_BY_ID_attributes_list,
-} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {type AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
 import {type AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';
+import {useGetAttributeByIdQuery} from '_gqlTypes';
 
 export interface IEditAttributeMatchParams {
     id: string;
@@ -45,7 +40,7 @@ function EditAttribute({
 }: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
-    const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
+    const {loading, error, data} = useGetAttributeByIdQuery({
         variables: {id: attrId},
         skip: !attrId,
     });
@@ -78,7 +73,11 @@ function EditAttribute({
         return <ErrorDisplay message="Unknown attribute" />;
     }
 
-    return <Wrapper className="grow">{_renderEditAttributeTabs(data.attributes.list[0])}</Wrapper>;
+    return (
+        <Wrapper className="grow">
+            {_renderEditAttributeTabs(data.attributes.list[0] as GET_ATTRIBUTE_BY_ID_attributes_list)}
+        </Wrapper>
+    );
 }
 
 export default EditAttribute;

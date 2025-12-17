@@ -1,16 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {type GET_LIBRARIES, type GET_LIBRARIESVariables} from '_gqlTypes/GET_LIBRARIES';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import ErrorDisplay from '../ErrorDisplay';
 import Loading from '../Loading';
 import RecordSelector from '../RecordSelector';
+import {useGetLibrariesQuery} from '_gqlTypes';
 
 interface IFileSelectorProps {
     onChange: (selectedFile: RecordIdentity_whoAmI) => void;
@@ -22,7 +19,7 @@ interface IFileSelectorProps {
 function FileSelector({label, value, onChange, disabled}: IFileSelectorProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
+    const {loading, error, data} = useGetLibrariesQuery({
         variables: {
             behavior: [LibraryBehavior.files],
         },

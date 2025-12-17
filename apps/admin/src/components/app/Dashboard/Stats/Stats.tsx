@@ -1,17 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useMenuItems from 'hooks/useMenuItems';
 import {type IMenuItem} from 'hooks/useMenuItems/useMenuItems';
-import {getStatsQuery} from 'queries/stats/getStatsQuery';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom-v5';
 import {Statistic} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_STATS} from '_gqlTypes/GET_STATS';
+import {useGetStatsQuery} from '_gqlTypes';
 
 const StatsGroup = styled(Statistic.Group)`
     && {
@@ -52,7 +50,7 @@ const StatLabel = styled(Statistic.Label)`
 `;
 
 function Stats(): JSX.Element {
-    const {loading, error, data} = useQuery<GET_STATS>(getStatsQuery);
+    const {loading, error, data} = useGetStatsQuery();
     const {t} = useTranslation();
     const menuItems = useMenuItems({size: 'small'});
     const history = useHistory();

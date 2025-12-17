@@ -9,9 +9,7 @@ import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETT
 import {type GlobalSettingsInput} from '_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
-import {useQuery} from '@apollo/client';
-import {getApplicationsQuery} from '../../../../../queries/applications/getApplicationsQuery';
-import {type GET_APPLICATIONS} from '../../../../../_gqlTypes/GET_APPLICATIONS';
+import {useGetApplicationsQuery} from '_gqlTypes';
 
 interface ICustomizationFormProps {
     settings: GET_GLOBAL_SETTINGS_globalSettings;
@@ -20,7 +18,7 @@ interface ICustomizationFormProps {
 
 function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.Element {
     const {t} = useTranslation();
-    const {data, loading} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
+    const {data, loading} = useGetApplicationsQuery();
     const [name, setName] = useState(settings.name);
 
     const applicationList = loading

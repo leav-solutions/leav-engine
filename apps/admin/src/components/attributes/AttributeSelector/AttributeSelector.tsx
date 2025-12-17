@@ -1,17 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import React from 'react';
 import {type FormDropdownProps} from 'semantic-ui-react';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {
-    type GET_ATTRIBUTES,
+    type GET_ATTRIBUTES_attributes_list,
     type GET_ATTRIBUTESVariables,
     type GET_ATTRIBUTES_attributes_list_LinkAttribute,
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
 import AttributeSelectorField from './AttributeSelectorField';
+import {useGetAttributesQuery} from '_gqlTypes';
 
 interface IAttributeSelectorProps extends FormDropdownProps {
     filters?: GET_ATTRIBUTESVariables;
@@ -27,7 +25,7 @@ function AttributeSelector({
         loading,
         error: queryError,
         data,
-    } = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    } = useGetAttributesQuery({
         variables: filters,
     });
 
@@ -42,7 +40,13 @@ function AttributeSelector({
         attributes = attributes.filter(a => !(a as GET_ATTRIBUTES_attributes_list_LinkAttribute).reverse_link);
     }
 
-    return <AttributeSelectorField {...fieldProps} loading={loading} attributes={attributes} />;
+    return (
+        <AttributeSelectorField
+            {...fieldProps}
+            loading={loading}
+            attributes={attributes as GET_ATTRIBUTES_attributes_list[]}
+        />
+    );
 }
 
 export default AttributeSelector;

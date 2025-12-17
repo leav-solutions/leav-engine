@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ApolloError, useQuery} from '@apollo/client';
+import {type ApolloError} from '@apollo/client';
 import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -10,13 +10,13 @@ import {Link} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {addWildcardToFilters} from '../../../utils';
-import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
 import ErrorDisplay from '../../shared/ErrorDisplay';
+import {useGetAttributesQuery} from '_gqlTypes';
+import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 
 const Title = styled(Header)`
     display: flex;
@@ -42,7 +42,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
     const userData = useUserData();
     const [deleteError, setDeleteError] = useState<ApolloError | null>(null);
 
-    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    const {loading, error, data} = useGetAttributesQuery({
         variables: {...addWildcardToFilters(filters)},
     });
 
@@ -86,7 +86,9 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
             {!error ? (
                 <AttributesList
                     loading={loading || !data}
-                    attributes={data && data.attributes ? data.attributes.list : []}
+                    attributes={
+                        data && data.attributes ? (data.attributes.list as GET_ATTRIBUTES_attributes_list[]) : []
+                    }
                     onRowClick={_onRowClick}
                     onFiltersUpdate={_onFiltersUpdate}
                     filters={filters}

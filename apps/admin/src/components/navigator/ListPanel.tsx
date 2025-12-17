@@ -1,12 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import {
-    getRecordsListQuery,
-    type IGetRecordsListQuery,
-    type IGetRecordsListQueryVariables,
-} from 'queries/records/recordsListQuery';
 import {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
@@ -15,6 +9,7 @@ import RecordCard from '../shared/RecordCard';
 import {type IListProps} from './MainPanel';
 import styles from './MainPanel.module.css';
 import {ActionTypes} from './NavigatorReducer';
+import {useRecordsListQuery} from '_gqlTypes';
 
 export default function ListPanel({state, dispatch}: IListProps) {
     return !state.execSearch ? (
@@ -176,7 +171,7 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
                   limit,
               };
 
-    const {loading, error, data} = useQuery<IGetRecordsListQuery, IGetRecordsListQueryVariables>(getRecordsListQuery, {
+    const {loading, error, data} = useRecordsListQuery({
         fetchPolicy: 'network-only',
         variables: {
             library: selectedRootQuery,

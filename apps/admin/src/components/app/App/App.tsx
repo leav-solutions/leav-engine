@@ -1,33 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import ApplicationContext from 'context/CurrentApplicationContext';
 import {type ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
 import useAppLang from 'hooks/useAppLang/useAppLang';
-import {getApplicationByEndpointQuery} from 'queries/applications/getApplicationByEndpointQuery';
-import {getLangs} from 'queries/core/getLangs';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
-import {getMe} from 'queries/users/me';
 import {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
-import {
-    type GET_APPLICATION_BY_ENDPOINT,
-    type GET_APPLICATION_BY_ENDPOINTVariables,
-} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
-import {type IS_ALLOWED, type IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
-import {type ME} from '_gqlTypes/ME';
 import {ErrorDisplayTypes} from '_types/errors';
 import {APP_ENDPOINT} from '../../../constants';
-import {isAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import {AvailableLanguage, PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import LangContext from '../../shared/LangContext';
@@ -38,30 +24,41 @@ import Home from '../Home';
 import MessagesDisplay from '../MessagesDisplay';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {
+    useGetApplicationByEndpointQuery,
+    useGetGlobalSettingsQuery,
+    useGetLangsQuery,
+    useIsAllowedQuery,
+    useMeQuery,
+} from '_gqlTypes';
+import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type IS_ALLOWED_isAllowed} from '_gqlTypes/IS_ALLOWED';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 
 const App = (): JSX.Element => {
     const {t, i18n} = useTranslation();
     const {lang: appLang, loading: appLangLoading, error: appLangErr} = useAppLang();
-    const {data: meData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
+    const {data: meData, loading: meLoading, error: meError} = useMeQuery();
 
     const {
         loading: isAllowedLoading,
         error: isAllowedError,
         data: isAllowedData,
-    } = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
+    } = useIsAllowedQuery({
         variables: {
             type: PermissionTypes.admin,
             actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/)),
         },
     });
 
-    const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
+    const {data: availableLangs, loading: langsLoading, error: langsError} = useGetLangsQuery();
 
     const {
         data: applicationData,
         loading: applicationLoading,
         error: applicationError,
-    } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
+    } = useGetApplicationByEndpointQuery({
         variables: {endpoint: APP_ENDPOINT},
     });
 
@@ -69,7 +66,7 @@ const App = (): JSX.Element => {
         data: globalSettingsData,
         loading: globalSettingsLoading,
         error: globalSettingsError,
-    } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
+    } = useGetGlobalSettingsQuery();
     const [lang, setLang] = useState<AvailableLanguage[]>(getSysTranslationQueryLanguage(i18n));
 
     const currentApp = applicationData?.applications?.list?.[0];
@@ -141,13 +138,13 @@ const App = (): JSX.Element => {
 
     const userData: IUserContext = {
         id: meData.me.whoAmI.id,
-        whoAmI: meData.me.whoAmI,
-        permissions: permsArrayToObject(isAllowedData.isAllowed),
+        whoAmI: meData.me.whoAmI as RecordIdentity_whoAmI,
+        permissions: permsArrayToObject(isAllowedData.isAllowed as IS_ALLOWED_isAllowed[]),
     };
 
     const applicationContextData: ICurrentApplicationContext = {
-        currentApp,
-        globalSettings: globalSettingsData?.globalSettings,
+        currentApp: currentApp as GET_APPLICATION_BY_ID_applications_list,
+        globalSettings: globalSettingsData?.globalSettings as GET_GLOBAL_SETTINGS_globalSettings,
     };
 
     return (

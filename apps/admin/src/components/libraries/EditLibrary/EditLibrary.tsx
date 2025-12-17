@@ -1,21 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import useUserData from 'hooks/useUserData';
 import {useTranslation} from 'react-i18next';
 import {type match} from 'react-router-dom-v5';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 import {ErrorDisplayTypes} from '_types/errors';
-import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
-import {
-    type GET_LIB_BY_ID,
-    type GET_LIB_BY_IDVariables,
-    type GET_LIB_BY_ID_libraries_list,
-} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
+import {useGetLibByIdQuery} from '_gqlTypes';
 
 export interface IEditLibraryMatchParams {
     id: string;
@@ -31,7 +26,7 @@ const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
     const userData = useUserData();
     const {t} = useTranslation();
 
-    const {loading, error, data} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
+    const {loading, error, data} = useGetLibByIdQuery({
         variables: {id: [libraryId]},
         skip: isNewLib,
     });
@@ -59,7 +54,7 @@ const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
         return <ErrorDisplay message={t('libraries.unknown_library')} />;
     }
 
-    return _getEditLibraryTabs(isNewLib ? null : data.libraries.list[0]);
+    return _getEditLibraryTabs(isNewLib ? null : (data.libraries.list[0] as GET_LIB_BY_ID_libraries_list));
 };
 
 export default EditLibrary;

@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
-import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {useMutation} from '@apollo/client';
+import {useGetGlobalSettingsQuery} from '_gqlTypes';
 import {type SAVE_GLOBAL_SETTINGS, type SAVE_GLOBAL_SETTINGSVariables} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
 import Loading from 'components/shared/Loading';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {saveGlobalSettingsQuery} from 'queries/globalSettings/saveGlobalSettingsMutation';
 import styled from 'styled-components';
 
@@ -61,7 +60,7 @@ function GeneralCustomConfigTab(): JSX.Element {
         data,
         loading: getLoading,
         error: getError,
-    } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery, {
+    } = useGetGlobalSettingsQuery({
         fetchPolicy: 'no-cache',
     });
     const [saveGlobalSettings, {loading: saveLoading, error: saveError}] = useMutation<
