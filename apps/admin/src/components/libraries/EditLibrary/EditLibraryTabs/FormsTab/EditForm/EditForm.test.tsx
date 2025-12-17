@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
 import {getFormQuery} from '../../../../../../queries/forms/getFormQuery';
@@ -10,6 +9,7 @@ import {mockFormFull} from '../../../../../../__mocks__/forms';
 import MockedProviderWithFragments from '../../../../../../__mocks__/MockedProviderWithFragments';
 import EditForm from './EditForm';
 import {formDataWithTypename} from './EditFormTabs/ContentTab/formBuilderReducer/_fixtures/fixtures';
+import {GetFormDocument} from '_gqlTypes';
 
 jest.mock(
     './EditFormTabs',
@@ -26,7 +26,7 @@ describe('EditForm', () => {
         const mocks = [
             {
                 request: {
-                    query: getFormQuery,
+                    query: GetFormDocument,
                     variables: {library: 'test_lib', id: 'test_form'},
                 },
                 result: {
@@ -66,7 +66,7 @@ describe('EditForm', () => {
         const mocks = [
             {
                 request: {
-                    query: getFormQuery,
+                    query: GetFormDocument,
                     variables: {library: 'test_lib', id: 'test_form_full'},
                 },
                 error: new Error('boom!'),
@@ -99,7 +99,7 @@ describe('EditForm', () => {
         const mocks = [
             {
                 request: {
-                    query: getFormQuery,
+                    query: GetFormDocument,
                     variables: {library: 'test_lib', id: 'test_form_full'},
                 },
                 result: () => {

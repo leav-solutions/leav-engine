@@ -3,14 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import EditApplicationContext from 'context/EditApplicationContext';
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import {getApplicationModulesQuery} from 'queries/applications/getApplicationsModulesQuery';
-import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
-import React from 'react';
 import {ApplicationType} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
+import {GetApplicationByIdDocument, GetApplicationModulesDocument, SaveApplicationDocument} from '_gqlTypes';
 
 jest.mock(
     'components/shared/FileSelector',
@@ -27,7 +24,7 @@ describe('InfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationModulesQuery,
+                    query: GetApplicationModulesDocument,
                     variables: {},
                 },
                 result: {
@@ -38,7 +35,7 @@ describe('InfosTab', () => {
             },
             {
                 request: {
-                    query: saveApplicationMutation,
+                    query: SaveApplicationDocument,
                     variables: {
                         // If this test fails, check the mock variables here
                         application: {
@@ -94,7 +91,7 @@ describe('InfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationModulesQuery,
+                    query: GetApplicationModulesDocument,
                     variables: {},
                 },
                 result: {
@@ -123,7 +120,7 @@ describe('InfosTab', () => {
         let saveCalled = false;
         const checkIdUnicityMock = {
             request: {
-                query: getApplicationByIdQuery,
+                query: GetApplicationByIdDocument,
                 variables: {
                     id: 'myapp',
                 },
@@ -145,7 +142,7 @@ describe('InfosTab', () => {
             checkIdUnicityMock,
             {
                 request: {
-                    query: getApplicationModulesQuery,
+                    query: GetApplicationModulesDocument,
                     variables: {},
                 },
                 result: {
@@ -156,7 +153,7 @@ describe('InfosTab', () => {
             },
             {
                 request: {
-                    query: saveApplicationMutation,
+                    query: SaveApplicationDocument,
                     variables: {
                         // If this test fails, check the mock variables here
                         application: {

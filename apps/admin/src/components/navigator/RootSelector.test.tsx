@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import {mount, type ReactWrapper} from 'enzyme';
-import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {act} from 'react-dom/test-utils';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {wait} from '../../utils/testUtils';
 import RootSelector from './RootSelector';
+import {GetLibrariesDocument} from '_gqlTypes';
 
 const lang = ['fr', 'en'];
 const dataMock = [
     {
         request: {
-            query: getLibsQuery,
+            query: GetLibrariesDocument,
             variables: {},
         },
         result: {
@@ -74,7 +74,7 @@ describe('<RootSelector/>', () => {
             const errorMocks = [
                 {
                     request: {
-                        query: getLibsQuery,
+                        query: GetLibrariesDocument,
                     },
                     error: new Error(errorText),
                 },

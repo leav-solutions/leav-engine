@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {deleteVersionProfileMutation} from 'queries/versionProfiles/deleteVersionProfileMutation';
-import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import VersionProfiles from './VersionProfiles';
+import {DeleteVersionProfileDocument, GetVersionProfilesDocument} from '_gqlTypes';
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom-v5', () => ({
@@ -20,7 +19,7 @@ describe('VersionProfiles', () => {
     const mocks = [
         {
             request: {
-                query: getVersionProfilesQuery,
+                query: GetVersionProfilesDocument,
                 variables: {filters: {}},
             },
             result: {
@@ -36,7 +35,7 @@ describe('VersionProfiles', () => {
         },
         {
             request: {
-                query: getVersionProfilesQuery,
+                query: GetVersionProfilesDocument,
                 variables: {filters: {id: '%B%'}},
             },
             result: {
@@ -73,7 +72,7 @@ describe('VersionProfiles', () => {
             ...mocks,
             {
                 request: {
-                    query: deleteVersionProfileMutation,
+                    query: DeleteVersionProfileDocument,
                     variables: {id: 'vpA'},
                 },
                 result: () => {

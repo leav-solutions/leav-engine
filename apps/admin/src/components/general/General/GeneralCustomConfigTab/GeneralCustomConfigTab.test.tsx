@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen, waitFor} from '_tests/testUtils';
 import GeneralCustomConfigTab from './GeneralCustomConfigTab';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
+import {GetGlobalSettingsDocument} from '_gqlTypes';
 
 jest.mock('jsoneditor-react', () => ({
     JsonEditor() {
@@ -16,7 +16,7 @@ describe('GeneralCustomConfigTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getGlobalSettingsQuery,
+                    query: GetGlobalSettingsDocument,
                 },
                 result: {
                     loading: false,

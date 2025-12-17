@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
 import {getAttributeValuesListQuery} from '../../../../../queries/attributes/getAttributeValuesListQuery';
 import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import ValuesListTab from './ValuesListTab';
+import {GetAttributesValuesListDocument} from '_gqlTypes';
 
 jest.mock(
     './ValuesListForm',
@@ -23,7 +23,7 @@ describe('ValuesListTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributeValuesListQuery,
+                    query: GetAttributesValuesListDocument,
                     variables: {attrId: 'test_attr'},
                 },
                 result: {
@@ -75,7 +75,7 @@ describe('ValuesListTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributeValuesListQuery,
+                    query: GetAttributesValuesListDocument,
                     variables: {attrId: 'test_attr'},
                 },
                 error: new Error('boom!'),

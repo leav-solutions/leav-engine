@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {render, screen} from '_tests/testUtils';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributeSelector from './AttributeSelector';
+import {GetAttributesDocument} from '_gqlTypes';
 
 jest.mock(
     './AttributeSelectorField',
@@ -21,7 +20,7 @@ describe('AttributeSelector', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: GetAttributesDocument,
                     variables: {
                         type: [AttributeType.tree],
                     },
@@ -66,7 +65,7 @@ describe('AttributeSelector', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: GetAttributesDocument,
                     variables: {
                         type: [AttributeType.tree],
                     },

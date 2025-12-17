@@ -4,13 +4,13 @@
 import {mount} from 'enzyme';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
-import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {type SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {mockFormFull} from '../../../../../../../../__mocks__/forms';
 import MockedProviderWithFragments from '../../../../../../../../__mocks__/MockedProviderWithFragments';
 import {EditFormContext} from '../../hooks/useEditFormContext';
 import {formDataWithTypename} from '../ContentTab/formBuilderReducer/_fixtures/fixtures';
 import InfosTab from './InfosTab';
+import {SaveFormDocument} from '_gqlTypes';
 
 jest.mock(
     './InfosForm',
@@ -48,7 +48,7 @@ describe('InfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: saveFormQuery,
+                    query: SaveFormDocument,
                     variables,
                 },
                 result: () => {

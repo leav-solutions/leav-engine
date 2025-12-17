@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getStatsQuery} from 'queries/stats/getStatsQuery';
 import {MemoryRouter} from 'react-router-dom-v5';
 import {render, screen} from '_tests/testUtils';
 import Dashboard from './Dashboard';
+import {GetStatsDocument} from '_gqlTypes';
 
 describe('Dashboard', () => {
     test('Render test', async () => {
         const mocks = [
             {
                 request: {
-                    query: getStatsQuery,
+                    query: GetStatsDocument,
                     variables: {},
                 },
                 result: {

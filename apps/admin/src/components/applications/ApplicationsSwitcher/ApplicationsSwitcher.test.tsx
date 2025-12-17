@@ -2,18 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockApplication} from '__mocks__/common/applications';
 import ApplicationsSwitcher from './ApplicationsSwitcher';
+import {GetApplicationsDocument} from '_gqlTypes';
 
 describe('ApplicationSwitcher', () => {
     test('Display list of available apps. Click on app to open it', async () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationsQuery,
+                    query: GetApplicationsDocument,
                     variables: {},
                 },
                 result: {

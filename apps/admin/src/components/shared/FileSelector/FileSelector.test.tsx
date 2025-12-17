@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import FileSelector from './FileSelector';
+import {GetLibrariesDocument} from '_gqlTypes';
 
 jest.mock(
     'components/shared/RecordSelector',
@@ -20,7 +20,7 @@ describe('FileSelector', () => {
     const mocks = [
         {
             request: {
-                query: getLibsQuery,
+                query: GetLibrariesDocument,
                 variables: {
                     behavior: [LibraryBehavior.files],
                 },

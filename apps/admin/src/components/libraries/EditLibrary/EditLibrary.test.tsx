@@ -4,9 +4,8 @@
 import {mockLibrary} from '__mocks__/libraries';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
-import {getLibByIdQuery} from 'queries/libraries/getLibraryById';
-import React from 'react';
 import EditLibrary from './EditLibrary';
+import {GetLibByIdDocument} from '_gqlTypes';
 
 jest.mock(
     './EditLibraryTabs',
@@ -21,7 +20,7 @@ describe('EditLibrary', () => {
         const mocks = [
             {
                 request: {
-                    query: getLibByIdQuery,
+                    query: GetLibByIdDocument,
                     variables: {
                         id: ['test'],
                     },
@@ -67,7 +66,7 @@ describe('EditLibrary', () => {
         const mocks = [
             {
                 request: {
-                    query: getLibByIdQuery,
+                    query: GetLibByIdDocument,
                     variables: {
                         id: ['test'],
                     },

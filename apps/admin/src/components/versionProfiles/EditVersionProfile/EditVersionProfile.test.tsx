@@ -2,11 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
-import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
-import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProfileByIdQuery';
-import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
-import {saveVersionProfileMutation} from 'queries/versionProfiles/saveVersionProfileMutation';
 import {type match} from 'react-router-dom-v5';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {type Mockify} from '_types/Mockify';
@@ -14,8 +9,14 @@ import {mockAttrAdv} from '__mocks__/attributes';
 import {mockRecord} from '__mocks__/common/records';
 import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import * as useUserData from '../../../hooks/useUserData';
-import CustomConfig from '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab';
 import EditVersionProfile, {type IEditVersionProfileMatchParams} from './EditVersionProfile';
+import {
+    GetAttributesDocument,
+    GetVersionProfileByIdDocument,
+    GetVersionProfilesDocument,
+    SaveAttributeDocument,
+    SaveVersionProfileDocument,
+} from '_gqlTypes';
 
 jest.mock(
     'components/attributes/AttributesSelectionModal',
@@ -46,7 +47,7 @@ describe('EditVersionProfile', () => {
     const mocks = [
         {
             request: {
-                query: getVersionProfileByIdQuery,
+                query: GetVersionProfileByIdDocument,
                 variables: {
                     id: mockVersionProfile.id,
                 },
@@ -109,7 +110,7 @@ describe('EditVersionProfile', () => {
             ...mocks,
             {
                 request: {
-                    query: saveVersionProfileMutation,
+                    query: SaveVersionProfileDocument,
                     variables: {
                         versionProfile: {
                             id: 'my_profile',
@@ -159,7 +160,7 @@ describe('EditVersionProfile', () => {
             ...mocks,
             {
                 request: {
-                    query: getVersionProfilesQuery,
+                    query: GetVersionProfilesDocument,
                     variables: {filters: {id: 'a'}},
                 },
                 result: {
@@ -186,7 +187,7 @@ describe('EditVersionProfile', () => {
         const mocksWithLinkedAttributes = [
             {
                 request: {
-                    query: getVersionProfileByIdQuery,
+                    query: GetVersionProfileByIdDocument,
                     variables: {id: mockVersionProfile.id},
                 },
                 result: {
@@ -229,7 +230,7 @@ describe('EditVersionProfile', () => {
                 ...mocksWithLinkedAttributes,
                 {
                     request: {
-                        query: getAttributesQuery,
+                        query: GetAttributesDocument,
                         variables: {type: ['advanced', 'advanced_link', 'tree']},
                     },
                     result: {data: {attributes: {list: [{mockAttrAdv}]}}},
@@ -249,7 +250,7 @@ describe('EditVersionProfile', () => {
                 ...mocksWithLinkedAttributes,
                 {
                     request: {
-                        query: saveAttributeQuery,
+                        query: SaveAttributeDocument,
                         variables: {attrData: {id: 'attribute_1', versions_conf: {versionable: true, profile: null}}},
                     },
                     result: () => {

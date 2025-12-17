@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_tests/testUtils';
-import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../../../../../../../_gqlTypes/globalTypes';
 import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
+import {GetTreeByIdDocument} from '_gqlTypes';
 
 jest.mock(
     './BreadcrumbNavigatorView',
@@ -34,7 +34,7 @@ describe('BreadcrumbNavigator', () => {
         const mocks = [
             {
                 request: {
-                    query: getTreeByIdQuery,
+                    query: GetTreeByIdDocument,
                     variables: {
                         id: ['categories'],
                     },

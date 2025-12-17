@@ -5,11 +5,10 @@ import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
-import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
-import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 import {getMockCacheWithFragments} from '../../../../../__mocks__/MockedProviderWithFragments/getMockCacheWithFragments';
 import InfosTab from './InfosTab';
+import {GetAttributesDocument, SaveAttributeDocument} from '_gqlTypes';
 
 jest.mock('../../../../../hooks/useLang');
 
@@ -66,7 +65,7 @@ describe('InfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: saveAttributeQuery,
+                    query: SaveAttributeDocument,
                     variables,
                 },
                 result: () => {
@@ -87,7 +86,7 @@ describe('InfosTab', () => {
         const mockCache = getMockCacheWithFragments();
 
         mockCache.writeQuery({
-            query: getAttributesQuery,
+            query: GetAttributesDocument,
             variables: {id: 'advanced_attribute'},
             data: {
                 attributes: {
@@ -126,7 +125,7 @@ describe('InfosTab', () => {
         const mocksError = [
             {
                 request: {
-                    query: saveAttributeQuery,
+                    query: SaveAttributeDocument,
                     variables,
                 },
                 result: {
@@ -146,7 +145,7 @@ describe('InfosTab', () => {
         const mockCache = getMockCacheWithFragments();
 
         mockCache.writeQuery({
-            query: getAttributesQuery,
+            query: GetAttributesDocument,
             variables: {id: 'advanced_attribute'},
             data: {
                 attributes: {

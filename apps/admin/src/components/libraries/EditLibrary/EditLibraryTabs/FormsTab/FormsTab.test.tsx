@@ -3,13 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
 import {mount} from 'enzyme';
-import React from 'react';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
-import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
-import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
 import {mockFormLight} from '../../../../../__mocks__/forms';
 import FormsTab from './FormsTab';
+import {DeleteFormDocument, GetFormsListDocument} from '_gqlTypes';
 
 jest.mock(
     './FormsList',
@@ -31,7 +29,7 @@ describe('FormsTab', () => {
     const mocks: MockedResponse[] = [
         {
             request: {
-                query: getFormsQuery,
+                query: GetFormsListDocument,
                 variables: {
                     library: 'my_lib',
                 },
@@ -56,7 +54,7 @@ describe('FormsTab', () => {
         const errorMock = [
             {
                 request: {
-                    query: getFormsQuery,
+                    query: GetFormsListDocument,
                     variables: {
                         library: 'my_lib',
                     },
@@ -76,7 +74,7 @@ describe('FormsTab', () => {
         const mocksWithCount: MockedResponse[] = [
             {
                 request: {
-                    query: getFormsQuery,
+                    query: GetFormsListDocument,
                     variables: {
                         library: 'my_lib',
                     },
@@ -93,7 +91,7 @@ describe('FormsTab', () => {
             },
             {
                 request: {
-                    query: getFormsQuery,
+                    query: GetFormsListDocument,
                     variables: {
                         library: 'my_lib',
                         id: '%foo%',
@@ -193,7 +191,7 @@ describe('FormsTab', () => {
             ...mocks,
             {
                 request: {
-                    query: deleteFormQuery,
+                    query: DeleteFormDocument,
                     variables: {
                         library: 'my_lib',
                         formId: 'my_form',
