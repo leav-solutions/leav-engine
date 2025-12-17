@@ -12806,6 +12806,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:2.5.3"
     "@graphql-codegen/typescript-react-apollo": "npm:3.3.3"
     "@graphql-codegen/typescript-react-query": "npm:4.0.1"
+    "@leav/utils": "workspace:libs/utils"
     "@reduxjs/toolkit": "npm:1.7.1"
     "@semantic-ui-react/craco-less": "npm:2.0.2"
     "@testing-library/jest-dom": "npm:5.11.9"
