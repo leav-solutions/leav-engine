@@ -16,12 +16,14 @@ import {
     type ExplorerLinkDataQuery,
     type LinkPropertyLinkValueFragment,
     type SortOrder,
+    useExplorerLibraryDataLazyQuery,
     useExplorerLibraryDataQuery,
     useExplorerLinkAttributeQuery,
     useExplorerLinkDataQuery,
 } from '_ui/_gqlTypes';
 import {type UIFilter} from '_ui/components/Filters/_types';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
+import {AttributeConditionFilter} from '_ui/types';
 
 export const dateValuesSeparator = '\n';
 
@@ -194,6 +196,8 @@ export const useExplorerData = ({
         },
     });
 
+    const [fetchLibraryRecord] = useExplorerLibraryDataLazyQuery();
+
     const isMultivalue = !!attributeData?.attributes?.list?.[0]?.multiple_values;
     const canEditLinkAttributeValues = !!attributeData?.attributes?.list?.[0]?.permissions?.edit_value;
 
@@ -214,14 +218,25 @@ export const useExplorerData = ({
 
     // TOTO: change to useMemo, and use updatedData to update memoizedData with new Data. Good luck !
     useEffect(() => {
-        if (updatedData) {
+        if (updatedData && memoizedData) {
             if (isLibrary) {
-                libraryRefetch();
-            } else {
-                linkRefetch();
+                //fetching updated record will update cache data, and all will be updated automatically
+                fetchLibraryRecord({
+                    variables: {
+                        libraryId,
+                        attributeIds,
+                        filters: [
+                            {
+                                field: 'id',
+                                condition: AttributeConditionFilter.EQUAL,
+                                value: updatedData.recordUpdate.record.id,
+                            },
+                        ],
+                    },
+                });
             }
         }
-    }, [updatedData]);
+    }, [updatedData, memoizedData]);
 
     return {
         data: memoizedData,
