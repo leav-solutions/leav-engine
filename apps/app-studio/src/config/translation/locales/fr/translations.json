@@ -40,6 +40,12 @@
         "notifications": "Notifications",
         "progress": "Progression",
         "tasks": {
+            "delete": "Supprimer",
+            "delete_all": "Tout supprimer",
+            "delete_task_one": "Supprimer cette tâche ?",
+            "delete_task_other": "Supprimer ces tâches ?",
+            "delete_task_description_one": "Vous êtes sur le point de supprimer cette tâche.",
+            "delete_task_description_other": "Vous êtes sur le point de supprimer ces tâches.",
             "no_tasks": "Aucune tâche pour l'instant",
             "started_at": "Démarré le",
             "completed_at": "Terminée le",

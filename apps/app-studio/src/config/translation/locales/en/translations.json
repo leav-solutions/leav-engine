@@ -40,6 +40,12 @@
         "notifications": "Notifications",
         "progress": "Progress",
         "tasks": {
+            "delete": "Delete",
+            "delete_all": "Delete all",
+            "delete_task_one": "Delete this task?",
+            "delete_task_other": "Delete these tasks?",
+            "delete_task_description_one": "You are about to delete this task.",
+            "delete_task_description_other": "You are about to delete these tasks.",
             "no_tasks": "No tasks yet",
             "started_at": "Started at",
             "completed_at": "Completed at",

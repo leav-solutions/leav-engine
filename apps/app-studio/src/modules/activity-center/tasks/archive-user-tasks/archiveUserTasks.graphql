@@ -1,0 +1,3 @@
+mutation archiveUserTasks($tasks: [DeleteTaskInput!]!) {
+    deleteTasks(tasks: $tasks)
+}
