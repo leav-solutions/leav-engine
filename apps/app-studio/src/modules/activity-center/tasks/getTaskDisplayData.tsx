@@ -4,11 +4,13 @@
 import {type TFunction} from 'i18next';
 import {type GetUserTasksQuery, TaskStatus} from '../../../__generated__';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faClock, faSpinner, faBan} from '@fortawesome/free-solid-svg-icons';
-import {KitProgress, KitSpace, KitTag, KitTypography} from 'aristid-ds';
+import {faClock, faSpinner, faBan, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {KitButton, KitProgress, KitSpace, KitTag, KitTooltip, KitTypography} from 'aristid-ds';
 import {activityCenterTag} from '../activityCenter.module.css';
 import {type IKitNotification} from 'aristid-ds/dist/Kit/Feedback/Notification/types';
 import {type ReactNode} from 'react';
+import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
+import {type Task} from './types';
 
 interface ITaskDisplayData {
     notificationType: IKitNotification['type'];
@@ -16,6 +18,7 @@ interface ITaskDisplayData {
     taskStatusTag: ReactNode;
     taskProgress: ReactNode;
     taskDurationInfo: ReactNode;
+    taskArchiveButton?: ReactNode;
 }
 
 const formatDate = (timestamp: number, lang: string[]): string =>
@@ -73,14 +76,32 @@ const buildDurationInfo = (
     );
 };
 
+const buildArchiveUserTaskButton = (
+    task: Task,
+    onArchiveUserTasks: (tasks: Task[]) => void,
+    t: TFunction,
+): ReactNode => (
+    <KitTooltip title={t('activity_center.tasks.delete')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+        <KitButton
+            type="tertiary"
+            size="s"
+            icon={<FontAwesomeIcon icon={faTimes} />}
+            aria-label={t('activity_center.tasks.delete')}
+            onClick={() => onArchiveUserTasks([task])}
+        />
+    </KitTooltip>
+);
+
 export const getTaskDisplayData = ({
     task,
     t,
     lang,
+    onArchiveUserTasks,
 }: {
     task: GetUserTasksQuery['tasks']['list'][number];
     t: TFunction;
     lang: string[];
+    onArchiveUserTasks: (tasks: Task[]) => void;
 }): ITaskDisplayData => {
     const percent = task.progress?.percent ?? 0;
     const hasProgress = percent > 0;
@@ -160,6 +181,7 @@ export const getTaskDisplayData = ({
                           />
                       ),
                       taskDurationInfo: buildDurationInfo(task.startedAt, task.completedAt, t, lang),
+                      taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
                   }
                 : {
                       notificationType: 'neutral',
@@ -179,6 +201,7 @@ export const getTaskDisplayData = ({
                           />
                       ),
                       taskDurationInfo: null,
+                      taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
                   };
         case TaskStatus.DONE:
             return {
@@ -198,6 +221,7 @@ export const getTaskDisplayData = ({
                     />
                 ),
                 taskDurationInfo: buildDurationInfo(task.startedAt, task.completedAt, t, lang),
+                taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
             };
         case TaskStatus.FAILED:
             return {
@@ -217,6 +241,7 @@ export const getTaskDisplayData = ({
                     />
                 ),
                 taskDurationInfo: buildDurationInfo(task.startedAt, task.completedAt, t, lang),
+                taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
             };
     }
 };

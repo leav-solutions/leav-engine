@@ -2,13 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {
-    type GetUserTasksQuery,
-    useGetUserTasksQuery,
-    useSubscribeToUserTasksSubscription,
-} from '../../../../__generated__';
-
-type Task = GetUserTasksQuery['tasks']['list'][number];
+import {useGetUserTasksQuery, useSubscribeToUserTasksSubscription} from '../../../../__generated__';
+import {type Task} from '../types';
 
 export const useGetUserTasks = (userId: string) => {
     const [userTasks, setUserTasks] = useState<Map<string, Task>>(new Map());
@@ -44,9 +39,17 @@ export const useGetUserTasks = (userId: string) => {
         },
     });
 
+    const removeTasks = (taskIds: string[]) => {
+        setUserTasks(prev => {
+            const newMap = new Map(prev);
+            taskIds.forEach(id => newMap.delete(id));
+            return newMap;
+        });
+    };
+
     const sortedByCreationDateUserTasks = Array.from(userTasks.values()).sort(
         (a, b) => Number(b.created_at) - Number(a.created_at),
     );
 
-    return {userTasks: sortedByCreationDateUserTasks, loading, error};
+    return {userTasks: sortedByCreationDateUserTasks, loading, error, removeTasks};
 };

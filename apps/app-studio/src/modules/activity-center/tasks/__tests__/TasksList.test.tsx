@@ -4,18 +4,31 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {TaskStatus, type GetUserTasksQuery} from '../../../../__generated__';
 import {TasksList} from '../TasksList';
+import userEvent from '@testing-library/user-event';
 
 type Task = GetUserTasksQuery['tasks']['list'][number];
 
 const mockUseGetUserTasks = jest.fn();
+const mockUseArchiveUserTasks = jest.fn();
 
-jest.mock('../user-tasks/useGetUserTasks', () => ({
+jest.mock('../get-user-tasks/useGetUserTasks', () => ({
     useGetUserTasks: (...args: unknown[]) => mockUseGetUserTasks(...args),
+}));
+
+jest.mock('../archive-user-tasks/useArchiveUserTasks', () => ({
+    useArchiveUserTasks: () => ({archiveUserTasks: mockUseArchiveUserTasks}),
 }));
 
 jest.mock('_ui/hooks', () => ({
     useUser: () => ({userData: {userId: 'test-user-id'}}),
     useLang: () => ({lang: ['fr']}),
+}));
+
+jest.mock('aristid-ds', () => ({
+    ...jest.requireActual('aristid-ds'),
+    KitModal: {
+        confirm: jest.fn(({onOk}) => onOk?.()),
+    },
 }));
 
 describe('TasksList', () => {
@@ -33,19 +46,27 @@ describe('TasksList', () => {
         ...overrides,
     });
 
+    const mockRemoveTasks = jest.fn();
+
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseGetUserTasks.mockReturnValue({
             userTasks: [],
             loading: false,
             error: undefined,
+            removeTasks: mockRemoveTasks,
         });
     });
 
     describe('Rendering based on task status', () => {
         it('should render a task with CREATED status', () => {
             const task = createMockTask({status: TaskStatus.CREATED, progress: {description: null, percent: 0}});
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -56,11 +77,17 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with PENDING status', () => {
             const task = createMockTask({status: TaskStatus.PENDING, progress: {description: null, percent: 0}});
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -71,6 +98,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with RUNNING status', () => {
@@ -80,7 +108,12 @@ describe('TasksList', () => {
                 startedAt,
                 progress: {description: null, percent: 50},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -91,6 +124,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with PENDING_CANCEL status without progress', () => {
@@ -98,7 +132,12 @@ describe('TasksList', () => {
                 status: TaskStatus.PENDING_CANCEL,
                 progress: {description: null, percent: 0},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -109,6 +148,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with PENDING_CANCEL status with progress', () => {
@@ -118,7 +158,12 @@ describe('TasksList', () => {
                 completedAt: 1700000400,
                 progress: {description: null, percent: 40},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -129,6 +174,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with CANCELED status without progress', () => {
@@ -136,7 +182,12 @@ describe('TasksList', () => {
                 status: TaskStatus.CANCELED,
                 progress: {description: null, percent: 0},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -147,6 +198,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
         });
 
         it('should render a task with CANCELED status with progress', () => {
@@ -156,7 +208,12 @@ describe('TasksList', () => {
                 completedAt: 1700000400,
                 progress: {description: null, percent: 75},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -167,6 +224,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
         });
 
         it('should render a task with DONE status', () => {
@@ -176,7 +234,12 @@ describe('TasksList', () => {
                 completedAt: 1700000400,
                 progress: {description: null, percent: 100},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -187,6 +250,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
         });
 
         it('should render a task with FAILED status', () => {
@@ -196,7 +260,12 @@ describe('TasksList', () => {
                 completedAt: 1700000400,
                 progress: {description: null, percent: 30},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -207,6 +276,76 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
+        });
+    });
+
+    describe('Archive button', () => {
+        it('should call archiveUserTasks when archive button is clicked and confirmed', async () => {
+            const task = createMockTask({
+                status: TaskStatus.DONE,
+                startedAt: 1700000100,
+                completedAt: 1700000400,
+                progress: {description: null, percent: 100},
+            });
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
+
+            render(<TasksList />);
+
+            const archiveButton = screen.getByRole('button', {name: 'activity_center.tasks.delete'});
+            expect(archiveButton).toBeInTheDocument();
+
+            await userEvent.click(archiveButton);
+
+            expect(mockUseArchiveUserTasks).toHaveBeenCalledWith([task]);
+        });
+
+        it('should not display archive all button when there is only one task', () => {
+            const task = createMockTask({
+                status: TaskStatus.DONE,
+                startedAt: 1700000100,
+                completedAt: 1700000400,
+                progress: {description: null, percent: 100},
+            });
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
+            render(<TasksList />);
+
+            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete_all'})).not.toBeInTheDocument();
+        });
+
+        it('should call archiveUserTasks when archive all button is clicked and confirmed', async () => {
+            const task = createMockTask({
+                status: TaskStatus.DONE,
+                startedAt: 1700000100,
+                completedAt: 1700000400,
+                progress: {description: null, percent: 100},
+            });
+            const tasks = [task, task, task];
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: tasks,
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
+
+            render(<TasksList />);
+
+            const archiveAllButton = screen.getByRole('button', {name: 'activity_center.tasks.delete_all'});
+            expect(archiveAllButton).toBeInTheDocument();
+
+            await userEvent.click(archiveAllButton);
+
+            expect(mockUseArchiveUserTasks).toHaveBeenCalledWith(tasks);
         });
     });
 
@@ -218,7 +357,12 @@ describe('TasksList', () => {
                 completedAt: 1700000130,
                 progress: {description: null, percent: 100},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -236,7 +380,12 @@ describe('TasksList', () => {
                 completedAt: 1700000700,
                 progress: {description: null, percent: 100},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -252,7 +401,12 @@ describe('TasksList', () => {
                 completedAt: 1700004100,
                 progress: {description: null, percent: 100},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [task], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             render(<TasksList />);
 
@@ -272,7 +426,12 @@ describe('TasksList', () => {
                 status: TaskStatus.PENDING,
                 progress: {description: null, percent: 0},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [initialTask], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [initialTask],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             const {rerender} = render(<TasksList />);
             expect(screen.getByText('Tâche initiale')).toBeInTheDocument();
@@ -289,7 +448,12 @@ describe('TasksList', () => {
                 startedAt: 1700000100,
                 progress: {description: null, percent: 25},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [updatedTask], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [updatedTask],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             rerender(<TasksList />);
 
@@ -310,7 +474,12 @@ describe('TasksList', () => {
                 completedAt: 1700000400,
                 progress: {description: null, percent: 100},
             });
-            mockUseGetUserTasks.mockReturnValue({userTasks: [existingTask], loading: false, error: undefined});
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [existingTask],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
 
             const {rerender} = render(<TasksList />);
             expect(screen.getByText('Tâche existante')).toBeInTheDocument();
@@ -330,6 +499,7 @@ describe('TasksList', () => {
                 userTasks: [newTask, existingTask],
                 loading: false,
                 error: undefined,
+                removeTasks: mockRemoveTasks,
             });
 
             rerender(<TasksList />);

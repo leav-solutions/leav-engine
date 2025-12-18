@@ -2556,6 +2556,13 @@ export type PanelAttributeCountQueryVariables = Exact<{
 
 export type PanelAttributeCountQuery = { records: { totalCount?: number | null } };
 
+export type ArchiveUserTasksMutationVariables = Exact<{
+  tasks: Array<DeleteTaskInput> | DeleteTaskInput;
+}>;
+
+
+export type ArchiveUserTasksMutation = { deleteTasks: boolean };
+
 export type GetUserTasksQueryVariables = Exact<{
   filters?: InputMaybe<TaskFiltersInput>;
 }>;
@@ -2875,6 +2882,37 @@ export type PanelAttributeCountQueryHookResult = ReturnType<typeof usePanelAttri
 export type PanelAttributeCountLazyQueryHookResult = ReturnType<typeof usePanelAttributeCountLazyQuery>;
 export type PanelAttributeCountSuspenseQueryHookResult = ReturnType<typeof usePanelAttributeCountSuspenseQuery>;
 export type PanelAttributeCountQueryResult = Apollo.QueryResult<PanelAttributeCountQuery, PanelAttributeCountQueryVariables>;
+export const ArchiveUserTasksDocument = gql`
+    mutation archiveUserTasks($tasks: [DeleteTaskInput!]!) {
+  deleteTasks(tasks: $tasks)
+}
+    `;
+export type ArchiveUserTasksMutationFn = Apollo.MutationFunction<ArchiveUserTasksMutation, ArchiveUserTasksMutationVariables>;
+
+/**
+ * __useArchiveUserTasksMutation__
+ *
+ * To run a mutation, you first call `useArchiveUserTasksMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveUserTasksMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveUserTasksMutation, { data, loading, error }] = useArchiveUserTasksMutation({
+ *   variables: {
+ *      tasks: // value for 'tasks'
+ *   },
+ * });
+ */
+export function useArchiveUserTasksMutation(baseOptions?: Apollo.MutationHookOptions<ArchiveUserTasksMutation, ArchiveUserTasksMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ArchiveUserTasksMutation, ArchiveUserTasksMutationVariables>(ArchiveUserTasksDocument, options);
+      }
+export type ArchiveUserTasksMutationHookResult = ReturnType<typeof useArchiveUserTasksMutation>;
+export type ArchiveUserTasksMutationResult = Apollo.MutationResult<ArchiveUserTasksMutation>;
+export type ArchiveUserTasksMutationOptions = Apollo.BaseMutationOptions<ArchiveUserTasksMutation, ArchiveUserTasksMutationVariables>;
 export const GetUserTasksDocument = gql`
     query getUserTasks($filters: TaskFiltersInput) {
   tasks(filters: $filters) {
