@@ -255,7 +255,45 @@ describe('permissionRepo', () => {
                 ctx,
             });
 
-            expect(fetchedPermission).toBeNull();
+            expect(fetchedPermission).toEqual(
+                expect.objectContaining({
+                    type: PermissionTypes.RECORD,
+                    applyTo: recordId,
+                    usersGroup: null,
+                    actions: {
+                        [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    },
+                    permissionTreeTarget: permissionTreeTarget1,
+                    dependenciesTreeTargets: [dependTreeTarget1, dependTreeTarget2],
+                }),
+            );
+        });
+
+        it('savePermission should ignore dependent tree target in order', async () => {
+            const savedPermission = await permissionRepo.savePermission({
+                permData: {
+                    type: PermissionTypes.RECORD,
+                    applyTo: 'another_record_id',
+                    usersGroup: null,
+                    actions: {[RecordPermissionsActions.ACCESS_RECORD]: true},
+                    permissionTreeTarget: permissionTreeTarget1,
+                    dependenciesTreeTargets: [dependTreeTarget2, dependTreeTarget1],
+                },
+                ctx,
+            });
+
+            expect(savedPermission).toEqual(
+                expect.objectContaining({
+                    type: PermissionTypes.RECORD,
+                    applyTo: 'another_record_id',
+                    usersGroup: null,
+                    actions: {
+                        [RecordPermissionsActions.ACCESS_RECORD]: true,
+                    },
+                    permissionTreeTarget: permissionTreeTarget1,
+                    dependenciesTreeTargets: [dependTreeTarget1, dependTreeTarget2],
+                }),
+            );
         });
     });
 });

@@ -423,6 +423,35 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     expect(result.data.data.permissions[0].allowed).toBe(false);
                 });
 
+                it('should have setup permission to use dependent values whatever dependencies order', async () => {
+                    const result = await makeGraphQlCall(
+                        `{
+                    permissions(
+                        type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                        applyTo: "${testAttrName}",
+                        usersGroup: null,
+                        actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                        },
+                        dependenciesTreeTargets: [
+                            { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                            { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                        ]
+                    ) {
+                        name
+                        allowed
+                    }
+                }`,
+                    );
+
+                    expect(result.data.data.permissions.length).toBe(1);
+                    expect(result.data.data.permissions[0].name).toBe(
+                        AttributeDependentValuesPermissionsActions.SET_VALUE,
+                    );
+                    expect(result.data.data.permissions[0].allowed).toBe(false);
+                });
+
                 describe('record have anotherNodeA/node1 value', () => {
                     beforeEach(async () => {
                         const resCreateRecord = await makeGraphQlCall(`mutation {

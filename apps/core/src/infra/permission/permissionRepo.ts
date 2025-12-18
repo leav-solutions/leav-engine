@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql} from 'arangojs';
+import {aql, literal} from 'arangojs/aql';
 import {type IDbDocument} from 'infra/db/_types';
 import {type IQueryInfos} from '_types/queryInfos';
 import {
@@ -63,15 +63,31 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
 }: IDeps = {}): IPermissionRepo {
+    // Sort dependency tree targets to ensure consistent order for comparison in queries, dependent values should not be different by order
+    const sortDependenciesTreeTargets = (
+        depsTargets?: IPermissionsDependenciesTreeTarget[],
+    ): IPermissionsDependenciesTreeTarget[] | undefined =>
+        depsTargets?.slice().sort((a, b) => {
+            if (a.attributeId < b.attributeId) {
+                return -1;
+            }
+            if (a.attributeId > b.attributeId) {
+                return 1;
+            }
+            return 0;
+        }) || undefined;
+
     return {
         async savePermission({permData, ctx}): Promise<IPermission> {
             const userGroupToSave = permData.usersGroup ?? null;
+            const sortedDependenciesTreeTargets = sortDependenciesTreeTargets(permData.dependenciesTreeTargets);
 
             // Upsert in permissions collection
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
             const dbPermData = {
                 ...permData,
                 usersGroup: userGroupToSave,
+                dependenciesTreeTargets: sortedDependenciesTreeTargets,
             };
 
             const searchObj = {
@@ -79,7 +95,7 @@ export default function ({
                 applyTo: dbPermData.applyTo,
                 usersGroup: dbPermData.usersGroup,
                 permissionTreeTarget: dbPermData.permissionTreeTarget,
-                dependenciesTreeTargets: dbPermData.dependenciesTreeTargets,
+                dependenciesTreeTargets: sortedDependenciesTreeTargets,
             };
 
             const res = await dbService.execute({
@@ -109,6 +125,7 @@ export default function ({
             ctx,
         }): Promise<IPermission | null> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
+            const sortedDependenciesTreeTargets = sortDependenciesTreeTargets(dependenciesTreeTargets);
 
             const userGroupToFilter = usersGroupNodeId ?? null;
 
@@ -118,7 +135,11 @@ export default function ({
                     AND p.applyTo == ${applyTo}
                     AND p.usersGroup == ${userGroupToFilter}
                     AND p.permissionTreeTarget == ${permissionTreeTarget}
-                    AND p.dependenciesTreeTargets == ${dependenciesTreeTargets}
+                    ${
+                        sortedDependenciesTreeTargets != null
+                            ? aql`AND p.dependenciesTreeTargets == ${sortedDependenciesTreeTargets}`
+                            : undefined
+                    }
                 RETURN p
             `;
 
