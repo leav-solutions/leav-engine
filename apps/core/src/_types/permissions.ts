@@ -144,7 +144,7 @@ export interface ITreePermissionsDependentValuesConf {
     /**
      * IDs of attributes used for permissions
      */
-    dependentValuesTreeAttributes: string[];
+    dependenciesTreeAttributes: string[];
 }
 
 export interface IPermissionsTreeTarget {
@@ -159,7 +159,7 @@ export interface IPermissionsTreeTarget {
     nodeId: string | null;
 }
 
-export interface IPermissionsDependentTreeTarget extends IPermissionsTreeTarget {
+export interface IPermissionsDependenciesTreeTarget extends IPermissionsTreeTarget {
     attributeId: string;
 }
 
@@ -195,5 +195,5 @@ export interface IPermission {
      * For dependent values tree attribute permissions, the list of attributes on which this permission depends
      * Only for PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES
      */
-    dependentTreeTargets?: IPermissionsDependentTreeTarget[];
+    dependenciesTreeTargets?: IPermissionsDependenciesTreeTarget[];
 }

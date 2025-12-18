@@ -6,7 +6,7 @@ import {type ISimplePermissionHelper} from './simplePermission';
 import {type IDefaultPermissionHelper} from './defaultPermission';
 import {type TreePath} from '../../../_types/tree';
 import {
-    type IPermissionsDependentTreeTarget,
+    type IPermissionsDependenciesTreeTarget,
     type PermissionsActions,
     type PermissionTypes,
 } from '../../../_types/permissions';
@@ -31,7 +31,7 @@ interface IGetPermissionByUserGroupsParams {
     userGroupsPaths: TreePath[]; // from the most general to the most specific (no root required)
     applyTo?: string;
     treeTarget?: {tree: string; path: TreePath}; // from the most general to the most specific (add root if needed)
-    dependentTreeTargets?: IPermissionsDependentTreeTarget[];
+    dependenciesTreeTargets?: IPermissionsDependenciesTreeTarget[];
     getDefaultGlobalPermission?: GetDefaultGlobalPermission;
     ctx: IQueryInfos;
 }
@@ -56,7 +56,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             userGroupsPaths,
             applyTo = null,
             treeTarget = null,
-            dependentTreeTargets = null,
+            dependenciesTreeTargets = null,
             getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission,
             ctx,
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
@@ -98,7 +98,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                                     nodeId: targetPath[0].id,
                                 },
                             }),
-                            dependentTreeTargets,
+                            dependenciesTreeTargets,
                             ctx,
                         });
 
@@ -126,8 +126,8 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
 
             if (config.permissions.enableCache) {
                 // generate a cache key based on params
-                const dependentTreeTargetForKey = dependentTreeTargets?.length
-                    ? `${dependentTreeTargets.map(dtt => `${dtt.tree}:${dtt.nodeId}`).join('+')}:`
+                const dependentTreeTargetForKey = dependenciesTreeTargets?.length
+                    ? `${dependenciesTreeTargets.map(dtt => `${dtt.tree}:${dtt.nodeId}`).join('+')}:`
                     : '';
                 const key = reversedTreeTargetPath?.length
                     ? `${treeTarget.tree}:${reversedTreeTargetPath.map(({id}) => id).join('_')}`

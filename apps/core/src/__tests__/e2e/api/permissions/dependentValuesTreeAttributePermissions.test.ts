@@ -58,7 +58,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 linkedTree: testTreeName,
                 multipleValues: false,
                 permissions_conf_dependent_values: {
-                    dependentValuesTreeAttributes: [testAttrName],
+                    dependenciesTreeAttributes: [testAttrName],
                 },
             });
         });
@@ -66,7 +66,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
         it('should save and retrieve the attribute', async () => {
             const attribute = await getAttribute(testAttrName);
 
-            expect(attribute.permissions_conf_dependent_values.dependentValuesTreeAttributes).toEqual([
+            expect(attribute.permissions_conf_dependent_values.dependenciesTreeAttributes).toEqual([
                 expect.objectContaining({id: testAttrName}),
             ]);
         });
@@ -83,7 +83,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                             permissionTreeTarget: {
                                 tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                             },
-                            dependentTreeTargets: [
+                            dependenciesTreeTargets: [
                                 { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                             ],
                             actions: [
@@ -115,7 +115,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         permissionTreeTarget: {
                             tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                         },
-                        dependentTreeTargets: [
+                        dependenciesTreeTargets: [
                             { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                         ]
                     ) {
@@ -140,7 +140,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         permissionTreeTarget: {
                             tree: "${testTreeName}", nodeId: "${treeNode3Id}"
                         },
-                        dependentTreeTargets: [
+                        dependenciesTreeTargets: [
                             { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                         ]
                     ) {
@@ -229,7 +229,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     linkedTree: testTreeName,
                     multipleValues: false,
                     permissions_conf_dependent_values: {
-                        dependentValuesTreeAttributes: [anotherAttrName],
+                        dependenciesTreeAttributes: [anotherAttrName],
                     },
                 });
             });
@@ -237,7 +237,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
             it('should save and retrieve the attribute', async () => {
                 const attribute = await getAttribute(testAttrName);
 
-                expect(attribute.permissions_conf_dependent_values.dependentValuesTreeAttributes).toEqual([
+                expect(attribute.permissions_conf_dependent_values.dependenciesTreeAttributes).toEqual([
                     expect.objectContaining({id: anotherAttrName}),
                 ]);
             });
@@ -254,7 +254,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                                     permissionTreeTarget: {
                                         tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                                     },
-                                    dependentTreeTargets: [
+                                    dependenciesTreeTargets: [
                                         { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
                                     ],
                                     actions: [
@@ -346,7 +346,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     linkedTree: testTreeName,
                     multipleValues: false,
                     permissions_conf_dependent_values: {
-                        dependentValuesTreeAttributes: [anotherAttrName, testAttrName],
+                        dependenciesTreeAttributes: [anotherAttrName, testAttrName],
                     },
                 });
             });
@@ -354,7 +354,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
             it('should save and retrieve the attribute', async () => {
                 const attribute = await getAttribute(testAttrName);
 
-                expect(attribute.permissions_conf_dependent_values.dependentValuesTreeAttributes).toEqual([
+                expect(attribute.permissions_conf_dependent_values.dependenciesTreeAttributes).toEqual([
                     expect.objectContaining({id: anotherAttrName}),
                     expect.objectContaining({id: testAttrName}),
                 ]);
@@ -372,7 +372,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                             permissionTreeTarget: {
                                 tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                             },
-                            dependentTreeTargets: [
+                            dependenciesTreeTargets: [
                                 { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
                                 { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                             ],
@@ -405,7 +405,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         permissionTreeTarget: {
                             tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                         },
-                        dependentTreeTargets: [
+                        dependenciesTreeTargets: [
                             { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
                             { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                         ]
@@ -474,7 +474,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                             permissionTreeTarget: {
                                 tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                             },
-                            dependentTreeTargets: [
+                            dependenciesTreeTargets: [
                                 { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
                                 { tree: "${testTreeName}", nodeId: null, attributeId: "${testAttrName}" }
                             ],
@@ -538,7 +538,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                             permissionTreeTarget: {
                                 tree: "${testTreeName}", nodeId: null
                             },
-                            dependentTreeTargets: [
+                            dependenciesTreeTargets: [
                                 { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
                                 { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                             ],
@@ -603,7 +603,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                                             permissionTreeTarget: {
                                                 tree: "${testTreeName}", nodeId: "${treeNode2Id}"
                                             },
-                                            dependentTreeTargets: [
+                                            dependenciesTreeTargets: [
                                                 { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
                                                 { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
                                             ],
@@ -656,7 +656,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     linkedTree: testTreeName,
                     multipleValues: false,
                     permissions_conf_dependent_values: {
-                        dependentValuesTreeAttributes: ['unknown_attribute_id'],
+                        dependenciesTreeAttributes: ['unknown_attribute_id'],
                     },
                 }),
             ).rejects.toThrow(/Invalid attributes: unknown_attribute_id/);
@@ -670,7 +670,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     type: AttributeTypes.SIMPLE_LINK,
                     linkedTree: testTreeName,
                     permissions_conf_dependent_values: {
-                        dependentValuesTreeAttributes: [testAttrName],
+                        dependenciesTreeAttributes: [testAttrName],
                     },
                 }),
             ).rejects.toThrow(
@@ -692,7 +692,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     type: AttributeTypes.TREE,
                     linkedTree: testTreeName,
                     permissions_conf_dependent_values: {
-                        dependentValuesTreeAttributes: ['test_dependent_values_tree_attribute_simple'],
+                        dependenciesTreeAttributes: ['test_dependent_values_tree_attribute_simple'],
                     },
                 }),
             ).rejects.toThrow(/Invalid attributes: test_dependent_values_tree_attribute_simple/);
@@ -714,7 +714,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     type: AttributeTypes.TREE,
                     linkedTree: testTreeName,
                     permissions_conf_dependent_values: {
-                        dependentValuesTreeAttributes: ['test_dependent_values_tree_attribute_tree_multivalue'],
+                        dependenciesTreeAttributes: ['test_dependent_values_tree_attribute_tree_multivalue'],
                     },
                 }),
             ).rejects.toThrow(/Invalid attributes: test_dependent_values_tree_attribute_tree_multivalue/);
@@ -728,7 +728,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     id, 
                     ... on TreeAttribute {
                         permissions_conf_dependent_values {
-                            dependentValuesTreeAttributes {
+                            dependenciesTreeAttributes {
                                 id
                             }
                         }

@@ -55,7 +55,7 @@ export interface IPermissionDomain {
         actions,
         usersGroupNodeId,
         permissionTreeTarget,
-        dependentTreeTargets,
+        dependenciesTreeTargets,
         ctx,
     }: IGetPermissionsByActionsParams): Promise<PermByActionsRes>;
 
@@ -224,7 +224,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
             actions,
             usersGroupNodeId: usersGroupId,
             permissionTreeTarget,
-            dependentTreeTargets,
+            dependenciesTreeTargets,
             ctx,
         } = params;
 
@@ -242,7 +242,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
             applyTo,
             usersGroupNodeId: usersGroupId,
             permissionTreeTarget,
-            dependentTreeTargets,
+            dependenciesTreeTargets,
             ctx,
         });
 

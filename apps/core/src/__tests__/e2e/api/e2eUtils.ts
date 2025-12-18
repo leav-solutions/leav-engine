@@ -289,7 +289,7 @@ export async function gqlSaveAttribute(params: {
                 permissions_conf_dependent_values: ${
                     permissions_conf_dependent_values
                         ? `{
-                            dependentValuesTreeAttributes: [${permissions_conf_dependent_values.dependentValuesTreeAttributes
+                            dependenciesTreeAttributes: [${permissions_conf_dependent_values.dependenciesTreeAttributes
                                 .map(attrId => `"${attrId}"`)
                                 .join(', ')}]
                         }`

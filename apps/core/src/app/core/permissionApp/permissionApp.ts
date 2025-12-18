@@ -124,11 +124,11 @@ export default function ({
                     }
 
                     type TreePermissionsDependentValuesConf {
-                        dependentValuesTreeAttributes: [Attribute!]!,
+                        dependenciesTreeAttributes: [Attribute!]!,
                     }
 
                     input TreePermissionsDependentValuesConfInput {
-                        dependentValuesTreeAttributes: [ID!]!,
+                        dependenciesTreeAttributes: [ID!]!,
                     }
 
                     # If id and library are not specified, permission will apply to tree root
@@ -144,14 +144,14 @@ export default function ({
                     }
 
                     # Only for dependent values tree attribute permissions (PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES)
-                    type PermissionsDependTreeTarget {
+                    type PermissionsDependenciesTreeTarget {
                         attributeId: ID!,
                         tree: ID!,
                         nodeId: ID,
                     }
 
                     # Only for dependent values tree attribute permissions (PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES)
-                    input PermissionsDependTreeTargetInput {
+                    input PermissionsDependenciesTreeTargetInput {
                         attributeId: ID!,
                         tree: ID!,
                         nodeId: ID
@@ -165,7 +165,7 @@ export default function ({
                         usersGroup: ID,
                         actions: [PermissionAction!]!,
                         permissionTreeTarget: PermissionsTreeTarget,
-                        dependentTreeTargets: [PermissionsDependTreeTarget!]
+                        dependenciesTreeTargets: [PermissionsDependenciesTreeTarget!]
                     }
 
                     # If users group is not specified, permission will be saved at root level.
@@ -177,7 +177,7 @@ export default function ({
                         usersGroup: ID,
                         actions: [PermissionActionInput!]!,
                         permissionTreeTarget: PermissionsTreeTargetInput,
-                        dependentTreeTargets: [PermissionsDependTreeTargetInput!]
+                        dependenciesTreeTargets: [PermissionsDependenciesTreeTargetInput!]
                     }
 
                     # Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
@@ -206,7 +206,7 @@ export default function ({
                             actions: [PermissionsActions!]!,
                             usersGroup: ID,
                             permissionTreeTarget: PermissionsTreeTargetInput,
-                            dependentTreeTargets: [PermissionsDependTreeTargetInput!]
+                            dependenciesTreeTargets: [PermissionsDependenciesTreeTargetInput!]
                         ): [PermissionAction!],
 
                         # Return inherited permissions only for given user group
@@ -244,7 +244,7 @@ export default function ({
                         },
                         async permissions(
                             _,
-                            {type, applyTo, actions, usersGroup, permissionTreeTarget, dependentTreeTargets},
+                            {type, applyTo, actions, usersGroup, permissionTreeTarget, dependenciesTreeTargets},
                             ctx,
                         ) {
                             const perms = await permissionDomain.getPermissionsByActions({
@@ -253,7 +253,7 @@ export default function ({
                                 actions,
                                 usersGroupNodeId: usersGroup,
                                 permissionTreeTarget,
-                                dependentTreeTargets,
+                                dependenciesTreeTargets,
                                 ctx,
                             });
 
@@ -333,10 +333,10 @@ export default function ({
                         },
                     },
                     TreePermissionsDependentValuesConf: {
-                        dependentValuesTreeAttributes(parent: ITreePermissionsDependentValuesConf, _, ctx) {
-                            return parent.dependentValuesTreeAttributes
+                        dependenciesTreeAttributes(parent: ITreePermissionsDependentValuesConf, _, ctx) {
+                            return parent.dependenciesTreeAttributes
                                 ? Promise.all(
-                                      parent.dependentValuesTreeAttributes.map(attrId =>
+                                      parent.dependenciesTreeAttributes.map(attrId =>
                                           attributeDomain.getAttributeProperties({id: attrId, ctx}),
                                       ),
                                   )

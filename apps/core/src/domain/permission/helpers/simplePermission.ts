@@ -22,7 +22,7 @@ export default function ({
             action,
             usersGroupNodeId,
             permissionTreeTarget = null,
-            dependentTreeTargets = null,
+            dependenciesTreeTargets = null,
             ctx,
         }) {
             const perms = await permsByActionsHelper.getPermissionsByActions({
@@ -31,7 +31,7 @@ export default function ({
                 actions: [action],
                 usersGroupNodeId,
                 permissionTreeTarget,
-                dependentTreeTargets,
+                dependenciesTreeTargets,
                 ctx,
             });
 

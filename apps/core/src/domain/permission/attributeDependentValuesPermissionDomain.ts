@@ -7,7 +7,7 @@ import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRep
 import {type IValueRepo} from 'infra/value/valueRepo';
 import {
     type AttributeDependentValuesPermissionsActions,
-    type IPermissionsDependentTreeTarget,
+    type IPermissionsDependenciesTreeTarget,
     PermissionTypes,
 } from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -69,13 +69,13 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
 
             // If no dependent values configuration, allow to set any value by default
             if (
-                attrProps.permissions_conf_dependent_values?.dependentValuesTreeAttributes == null ||
-                attrProps.permissions_conf_dependent_values?.dependentValuesTreeAttributes.length === 0
+                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes == null ||
+                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes.length === 0
             ) {
                 return true;
             }
 
-            const dependentTreeTargets: IPermissionsDependentTreeTarget[] = await _getDependentTreeTargets(
+            const dependenciesTreeTargets: IPermissionsDependenciesTreeTarget[] = await _getDependenciesTreeTargets(
                 attrProps,
                 ctx,
                 recordLibrary,
@@ -111,7 +111,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 userGroupsPaths,
                 applyTo: attributeId,
                 treeTarget,
-                dependentTreeTargets,
+                dependenciesTreeTargets,
                 getDefaultGlobalPermission: _getDefaultPermission,
                 ctx,
             });
@@ -135,15 +135,15 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
         };
     }
 
-    async function _getDependentTreeTargets(
+    async function _getDependenciesTreeTargets(
         attrProps: IAttribute,
         ctx: IQueryInfos,
         recordLibrary: string,
         recordId: string,
-    ): Promise<IPermissionsDependentTreeTarget[]> {
+    ): Promise<IPermissionsDependenciesTreeTarget[]> {
         return Promise.all(
-            attrProps.permissions_conf_dependent_values.dependentValuesTreeAttributes.map(
-                async (permDependentTreeAttrId): Promise<IPermissionsDependentTreeTarget> => {
+            attrProps.permissions_conf_dependent_values.dependenciesTreeAttributes.map(
+                async (permDependentTreeAttrId): Promise<IPermissionsDependenciesTreeTarget> => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties({
                         id: permDependentTreeAttrId,
                         ctx,

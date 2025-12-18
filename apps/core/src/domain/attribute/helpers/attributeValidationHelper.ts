@@ -174,7 +174,7 @@ const _validateDependentValuesPermissionsConf = async (
     ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const permissionsConfigFieldsErrors: ErrorFieldDetail<IAttribute> = {};
-    if (attrData.permissions_conf_dependent_values?.dependentValuesTreeAttributes?.length) {
+    if (attrData.permissions_conf_dependent_values?.dependenciesTreeAttributes?.length) {
         if (attrData.type !== AttributeTypes.TREE || attrData.multiple_values) {
             throw new ValidationError({
                 permissions_conf_dependent_values: {
@@ -184,17 +184,17 @@ const _validateDependentValuesPermissionsConf = async (
             });
         }
 
-        const dependentValuesTreeAttributes = await deps.attributeRepo.getAttributes({
+        const dependenciesTreeAttributes = await deps.attributeRepo.getAttributes({
             params: {
                 filters: {
-                    id: attrData.permissions_conf_dependent_values?.dependentValuesTreeAttributes,
+                    id: attrData.permissions_conf_dependent_values?.dependenciesTreeAttributes,
                 },
                 strictFilters: true,
             },
             ctx,
         });
 
-        for (const dependentValuesTreeAttribute of dependentValuesTreeAttributes.list) {
+        for (const dependentValuesTreeAttribute of dependenciesTreeAttributes.list) {
             if (
                 dependentValuesTreeAttribute.type !== AttributeTypes.TREE ||
                 dependentValuesTreeAttribute.multiple_values
@@ -207,8 +207,8 @@ const _validateDependentValuesPermissionsConf = async (
         }
 
         const invalidAttributes = difference(
-            attrData.permissions_conf_dependent_values?.dependentValuesTreeAttributes,
-            dependentValuesTreeAttributes.list.map(a => a.id),
+            attrData.permissions_conf_dependent_values?.dependenciesTreeAttributes,
+            dependenciesTreeAttributes.list.map(a => a.id),
         );
 
         if (invalidAttributes.length) {

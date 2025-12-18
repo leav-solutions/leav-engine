@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IQueryInfos} from '_types/queryInfos';
 import {
-    type IPermissionsDependentTreeTarget,
+    type IPermissionsDependenciesTreeTarget,
     type IPermissionsTreeTarget,
     PermissionTypes,
     RecordPermissionsActions,
@@ -19,12 +19,12 @@ describe('permissionRepo', () => {
     };
     const recordId = 'test_record_id';
     const permissionTreeTarget1: IPermissionsTreeTarget = {nodeId: null, tree: 'test_tree'};
-    const dependTreeTarget1: IPermissionsDependentTreeTarget = {
+    const dependTreeTarget1: IPermissionsDependenciesTreeTarget = {
         tree: 'dependent_tree_1',
         nodeId: 'dependent_node_1',
         attributeId: 'dependent_attribute_1',
     };
-    const dependTreeTarget2: IPermissionsDependentTreeTarget = {
+    const dependTreeTarget2: IPermissionsDependenciesTreeTarget = {
         tree: 'dependent_tree_1',
         nodeId: 'dependent_node_2',
         attributeId: 'dependent_attribute_2',
@@ -89,7 +89,7 @@ describe('permissionRepo', () => {
                     usersGroup: null,
                     actions: {[RecordPermissionsActions.ACCESS_RECORD]: true},
                     permissionTreeTarget: permissionTreeTarget1,
-                    dependentTreeTargets: [dependTreeTarget1],
+                    dependenciesTreeTargets: [dependTreeTarget1],
                 },
                 ctx,
             });
@@ -104,7 +104,7 @@ describe('permissionRepo', () => {
                         [RecordPermissionsActions.ACCESS_RECORD]: true,
                     },
                     permissionTreeTarget: permissionTreeTarget1,
-                    dependentTreeTargets: [dependTreeTarget1],
+                    dependenciesTreeTargets: [dependTreeTarget1],
                 }),
             );
 
@@ -115,7 +115,7 @@ describe('permissionRepo', () => {
                     usersGroup: null,
                     actions: {[RecordPermissionsActions.ACCESS_RECORD]: true},
                     permissionTreeTarget: permissionTreeTarget1,
-                    dependentTreeTargets: [dependTreeTarget1, dependTreeTarget2],
+                    dependenciesTreeTargets: [dependTreeTarget1, dependTreeTarget2],
                 },
                 ctx,
             });
@@ -140,7 +140,7 @@ describe('permissionRepo', () => {
                 }),
             );
             expect(fetchedPermission?.permissionTreeTarget).toBeUndefined();
-            expect(fetchedPermission?.dependentTreeTargets).toBeUndefined();
+            expect(fetchedPermission?.dependenciesTreeTargets).toBeUndefined();
         });
 
         it('getPermissions simple with permission tree target', async () => {
@@ -163,7 +163,7 @@ describe('permissionRepo', () => {
                     permissionTreeTarget: permissionTreeTarget1,
                 }),
             );
-            expect(fetchedPermission?.dependentTreeTargets).toBeUndefined();
+            expect(fetchedPermission?.dependenciesTreeTargets).toBeUndefined();
         });
 
         it('getPermissions should not find not exact matching for permission tree target', async () => {
@@ -184,7 +184,7 @@ describe('permissionRepo', () => {
                 applyTo: recordId,
                 usersGroupNodeId: null,
                 permissionTreeTarget: permissionTreeTarget1,
-                dependentTreeTargets: [dependTreeTarget1],
+                dependenciesTreeTargets: [dependTreeTarget1],
                 ctx,
             });
 
@@ -197,7 +197,7 @@ describe('permissionRepo', () => {
                         [RecordPermissionsActions.ACCESS_RECORD]: true,
                     },
                     permissionTreeTarget: permissionTreeTarget1,
-                    dependentTreeTargets: [dependTreeTarget1],
+                    dependenciesTreeTargets: [dependTreeTarget1],
                 }),
             );
         });
@@ -208,7 +208,7 @@ describe('permissionRepo', () => {
                 applyTo: recordId,
                 usersGroupNodeId: null,
                 permissionTreeTarget: permissionTreeTarget1,
-                dependentTreeTargets: [dependTreeTarget1, dependTreeTarget2],
+                dependenciesTreeTargets: [dependTreeTarget1, dependTreeTarget2],
                 ctx,
             });
 
@@ -221,7 +221,7 @@ describe('permissionRepo', () => {
                         [RecordPermissionsActions.ACCESS_RECORD]: true,
                     },
                     permissionTreeTarget: permissionTreeTarget1,
-                    dependentTreeTargets: [dependTreeTarget1, dependTreeTarget2],
+                    dependenciesTreeTargets: [dependTreeTarget1, dependTreeTarget2],
                 }),
             );
         });
@@ -232,7 +232,7 @@ describe('permissionRepo', () => {
                 applyTo: recordId,
                 usersGroupNodeId: null,
                 permissionTreeTarget: permissionTreeTarget1,
-                dependentTreeTargets: [
+                dependenciesTreeTargets: [
                     dependTreeTarget1,
                     {
                         ...dependTreeTarget2,
@@ -251,7 +251,7 @@ describe('permissionRepo', () => {
                 applyTo: recordId,
                 usersGroupNodeId: null,
                 permissionTreeTarget: permissionTreeTarget1,
-                dependentTreeTargets: [dependTreeTarget2, dependTreeTarget1],
+                dependenciesTreeTargets: [dependTreeTarget2, dependTreeTarget1],
                 ctx,
             });
 
