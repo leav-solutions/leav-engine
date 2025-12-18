@@ -93,12 +93,22 @@ export default function ({
     };
 
     const _writeTokensSetByUserId = (userId: string, tokens: TokenSet): Promise<void> => {
-        config.auth.debugLog && logger.silly(`OIDC _writeTokensSetByUserId key=${_buildTokensCacheKey(userId)}`);
+        const expiresIn =
+            typeof tokens.refresh_expires_in === 'number'
+                ? tokens.refresh_expires_in * 1_000
+                : refreshTokenExpirationInMs;
+        config.auth.debugLog &&
+            logger.silly(`OIDC _writeTokensSetByUserId key=${_buildTokensCacheKey(userId)}, expires_in=${expiresIn}`);
         return sessionRepo.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
-            expiresIn: refreshTokenExpirationInMs,
+            expiresIn,
         });
+    };
+
+    const _deleteTokensSetByUserId = (userId: string): Promise<void> => {
+        config.auth.debugLog && logger.silly(`OIDC _deleteTokensSetByUserId key=${_buildTokensCacheKey(userId)}`);
+        return sessionRepo.deleteData([_buildTokensCacheKey(userId)]);
     };
 
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
@@ -121,7 +131,9 @@ export default function ({
         getTokensFromCodes: async ({authorizationCode, queryId}) => {
             const [codeVerifier, redirectUri] = await _getCodeVerifierRedirectUriByQueryId(queryId);
             // No need to await delete fn, it's just for clean up
-            _deleteCodeVerifierRedirectUriByQueryId(queryId);
+            _deleteCodeVerifierRedirectUriByQueryId(queryId).catch(err => {
+                logger.error(`Error deleting OIDC code verifier cache for queryId=${queryId}: ${err.message}`);
+            });
 
             return oidcClient.grant({
                 grant_type: 'authorization_code',
@@ -152,25 +164,35 @@ export default function ({
                 payload.id_token_hint = await _getTokenSetByUserId(userId);
             }
 
+            // // No need to await delete fn, it's just for clean up
+            _deleteTokensSetByUserId(userId).catch(err => {
+                logger.error(`Error deleting OIDC tokens for userId=${userId}: ${err.message}`);
+            });
             return oidcClient.endSessionUrl(payload);
         },
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
-            const tokenSet = await _getTokenSetByUserId(userId);
+            try {
+                const tokenSet = await _getTokenSetByUserId(userId);
 
-            if (tokenSet.expired()) {
-                // FIXME: Many successive calls to this function can happen in parallel, we need to refactor to improve this behavior
-                const newTokenSet = await oidcClient.refresh(tokenSet);
-                // We do not delete the old token set, as it might be needed for a short period of time
-                // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
-                await _writeTokensSetByUserId(userId, newTokenSet);
+                if (tokenSet.expired()) {
+                    // FIXME: Many successive calls to this function can happen in parallel, we need to refactor to improve this behavior
+                    const newTokenSet = await oidcClient.refresh(tokenSet);
+                    // We do not delete the old token set, as it might be needed for a short period of time
+                    // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
+                    await _writeTokensSetByUserId(userId, newTokenSet);
+                }
+            } catch (err) {
+                throw new AuthenticationError('OIDC session expired');
             }
         },
         saveOriginalUrl: ({originalUrl, queryId}) => _writeOriginalUrlByQueryId(queryId, originalUrl),
         getOriginalUrl: async queryId => {
             const originalUrl = await _getOriginalUrlByQueryId(queryId);
             // No need to await delete fn, it's just for clean up
-            _deleteOriginalUrlByQueryId(queryId);
+            _deleteOriginalUrlByQueryId(queryId).catch(err => {
+                logger.error(`Error deleting originalUrl cache for queryId=${queryId}: ${err.message}`);
+            });
             return originalUrl;
         },
     };

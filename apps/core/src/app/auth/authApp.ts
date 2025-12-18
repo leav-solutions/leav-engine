@@ -205,11 +205,7 @@ export default function ({
         }
 
         if (config.auth.oidc.enable) {
-            try {
-                await oidcClientService.checkTokensValidity({userId: refreshPayload.userId});
-            } catch {
-                throw new AuthenticationError('OIDC session expired');
-            }
+            await oidcClientService.checkTokensValidity({userId: refreshPayload.userId});
         }
 
         const userSessionId = (await sessionRepo.getData([`${SESSION_CACHE_HEADER}:${refreshToken}`]))[0];
@@ -573,11 +569,7 @@ export default function ({
                     }
 
                     if (config.auth.oidc.enable) {
-                        try {
-                            await oidcClientService.checkTokensValidity({userId: payload.userId});
-                        } catch (err) {
-                            throw new AuthenticationError('oidc session expired');
-                        }
+                        await oidcClientService.checkTokensValidity({userId: payload.userId});
                     }
 
                     if (!payload.userId || !payload.ip || !payload.agent) {
