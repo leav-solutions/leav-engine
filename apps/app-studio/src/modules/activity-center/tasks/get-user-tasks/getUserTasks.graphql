@@ -11,6 +11,9 @@ query getUserTasks($filters: TaskFiltersInput) {
                 description
                 percent
             }
+            link {
+                url
+            }
         }
     }
 }

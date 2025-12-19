@@ -10,5 +10,8 @@ subscription subscribeToUserTasks($filters: TaskFiltersInput) {
             description
             percent
         }
+        link {
+            url
+        }
     }
 }

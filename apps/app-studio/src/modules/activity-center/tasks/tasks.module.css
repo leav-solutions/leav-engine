@@ -1,0 +1,4 @@
+.taskFooter {
+    display: flex;
+    justify-content: end;
+}

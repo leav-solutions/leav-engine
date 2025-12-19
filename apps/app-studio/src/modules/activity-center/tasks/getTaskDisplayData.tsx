@@ -4,7 +4,7 @@
 import {type TFunction} from 'i18next';
 import {type GetUserTasksQuery, TaskStatus} from '../../../__generated__';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faClock, faSpinner, faBan, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faClock, faSpinner, faBan, faTimes, faDownload} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitProgress, KitSpace, KitTag, KitTooltip, KitTypography} from 'aristid-ds';
 import {activityCenterTag} from '../activityCenter.module.css';
 import {type IKitNotification} from 'aristid-ds/dist/Kit/Feedback/Notification/types';
@@ -19,6 +19,7 @@ interface ITaskDisplayData {
     taskProgress: ReactNode;
     taskDurationInfo: ReactNode;
     taskArchiveButton?: ReactNode;
+    taskDownloadButton?: ReactNode;
 }
 
 const formatDate = (timestamp: number, lang: string[]): string =>
@@ -91,6 +92,18 @@ const buildArchiveUserTaskButton = (
         />
     </KitTooltip>
 );
+
+const buildDownloadTaskButton = (task: Task, t: TFunction): ReactNode =>
+    task.link?.url ? (
+        <KitButton
+            type="secondary"
+            size="m"
+            icon={<FontAwesomeIcon icon={faDownload} />}
+            onClick={() => window.open(task.link?.url, '_blank')}
+        >
+            {t('global.download')}
+        </KitButton>
+    ) : undefined;
 
 export const getTaskDisplayData = ({
     task,
@@ -182,6 +195,7 @@ export const getTaskDisplayData = ({
                       ),
                       taskDurationInfo: buildDurationInfo(task.startedAt, task.completedAt, t, lang),
                       taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
+                      taskDownloadButton: buildDownloadTaskButton(task, t),
                   }
                 : {
                       notificationType: 'neutral',
@@ -202,6 +216,7 @@ export const getTaskDisplayData = ({
                       ),
                       taskDurationInfo: null,
                       taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
+                      taskDownloadButton: buildDownloadTaskButton(task, t),
                   };
         case TaskStatus.DONE:
             return {
@@ -222,6 +237,7 @@ export const getTaskDisplayData = ({
                 ),
                 taskDurationInfo: buildDurationInfo(task.startedAt, task.completedAt, t, lang),
                 taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
+                taskDownloadButton: buildDownloadTaskButton(task, t),
             };
         case TaskStatus.FAILED:
             return {
@@ -242,6 +258,7 @@ export const getTaskDisplayData = ({
                 ),
                 taskDurationInfo: buildDurationInfo(task.startedAt, task.completedAt, t, lang),
                 taskArchiveButton: buildArchiveUserTaskButton(task, onArchiveUserTasks, t),
+                taskDownloadButton: buildDownloadTaskButton(task, t),
             };
     }
 };

@@ -10,6 +10,7 @@ import {
     activityCenterTabContent,
     activityCenterTabFooter,
 } from '../activityCenter.module.css';
+import {taskFooter} from './tasks.module.css';
 import {useLang, useUser} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 import {getTaskDisplayData} from './getTaskDisplayData';
@@ -97,6 +98,7 @@ export const TasksList = () => {
                         notificationIcon,
                         taskStatusTag,
                         taskProgress,
+                        taskDownloadButton,
                         taskDurationInfo,
                         taskArchiveButton,
                     } = getTaskDisplayData({task, t, lang, onArchiveUserTasks});
@@ -115,6 +117,11 @@ export const TasksList = () => {
                             message={localizedTranslation(task.label, lang)}
                             messageExtra={taskDurationInfo}
                             descriptionExtra={taskProgress}
+                            footer={
+                                <KitSpace className={taskFooter} direction="horizontal">
+                                    {taskDownloadButton}
+                                </KitSpace>
+                            }
                         />
                     );
                 })}
