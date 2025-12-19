@@ -96,14 +96,14 @@ export default function ({config}: IDeps): IDefaultPermissionHelper {
                 return true;
             }
 
-            if (isInAdminGroup(userGroups)) {
+            if (isInAdminGroup(userGroups) && type !== PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES) {
                 return getPermission(adminPermissionsMap, type, action);
             }
 
             return getPermission(everybodyPermissionsMap, type, action);
         },
         getAdminDefaultPermissionOrNull({type, action, userGroups}: IGetDefaultPermissionParams): boolean | null {
-            if (isInAdminGroup(userGroups)) {
+            if (isInAdminGroup(userGroups) && type !== PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES) {
                 return getPermission(adminPermissionsMap, type, action);
             }
 

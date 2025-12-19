@@ -6,9 +6,9 @@ import {type ISimplePermissionHelper} from './simplePermission';
 import {type IDefaultPermissionHelper} from './defaultPermission';
 import {type TreePath} from '../../../_types/tree';
 import {
+    PermissionTypes,
     type IPermissionsDependenciesTreeTarget,
     type PermissionsActions,
-    type PermissionTypes,
 } from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import getPermissionCacheKey from './getPermissionCacheKey';
@@ -69,7 +69,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             const reversedGroupsPath = userGroupsPaths.length
                 ? userGroupsPaths.map(path => {
                       const groupPathFromLeavToRoot = [...path].reverse();
-                      if (path[0]?.id === adminsGroupId) {
+                      if (path[0]?.id === adminsGroupId && type !== PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES) {
                           // root is admins group, do not add everybody group for admins group path
                           return groupPathFromLeavToRoot;
                       }
