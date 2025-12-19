@@ -22,6 +22,11 @@
             "description": "Group all patch updates into one PR",
             "matchUpdateTypes": ["patch"],
             "groupName": "all patch updates"
+        },
+        {
+            "description": "Ignore aristid-ds dependencies",
+            "matchPackagePatterns": ["^@aristid-ds/", "^aristid-ds"],
+            "enabled": false
         }
     ]
 }
