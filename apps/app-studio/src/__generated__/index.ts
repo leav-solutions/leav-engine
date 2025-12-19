@@ -1826,6 +1826,19 @@ export type RelatedEntity = {
   url: Scalars['String'];
 };
 
+export type RenewCampaignsResult = {
+  campaign_id?: Maybe<Scalars['ID']>;
+  original_campaign_id: Scalars['ID'];
+  record?: Maybe<Record>;
+  valuesErrors?: Maybe<Array<ValueBatchError>>;
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SheetInput = {
   keyIndex?: InputMaybe<Scalars['Int']>;
   keyToIndex?: InputMaybe<Scalars['Int']>;
@@ -2568,14 +2581,14 @@ export type GetUserTasksQueryVariables = Exact<{
 }>;
 
 
-export type GetUserTasksQuery = { tasks: { list: Array<{ id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null }> } };
+export type GetUserTasksQuery = { tasks: { list: Array<{ id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null }> } };
 
 export type SubscribeToUserTasksSubscriptionVariables = Exact<{
   filters?: InputMaybe<TaskFiltersInput>;
 }>;
 
 
-export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null } };
+export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null } };
 
 export type GetRecordInformationQueryVariables = Exact<{
   library: Scalars['ID'];
@@ -2927,6 +2940,9 @@ export const GetUserTasksDocument = gql`
         description
         percent
       }
+      link {
+        url
+      }
     }
   }
 }
@@ -2976,6 +2992,9 @@ export const SubscribeToUserTasksDocument = gql`
     progress {
       description
       percent
+    }
+    link {
+      url
     }
   }
 }

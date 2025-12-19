@@ -8,7 +8,8 @@
         "home": "Accueil",
         "information": "Informations",
         "are_you_sure": "Êtes-vous sûr ?",
-        "sign_out": "Déconnexion"
+        "sign_out": "Déconnexion",
+        "download": "Télécharger"
     },
     "information_and_history": {
         "system_information": "Informations système",

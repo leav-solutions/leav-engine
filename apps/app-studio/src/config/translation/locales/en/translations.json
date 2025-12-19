@@ -8,7 +8,8 @@
         "home": "Home",
         "information": "Information",
         "are_you_sure": "Are you sure?",
-        "sign_out": "Logout"
+        "sign_out": "Logout",
+        "download": "Download"
     },
     "information_and_history": {
         "system_information": "System information",

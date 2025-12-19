@@ -349,6 +349,43 @@ describe('TasksList', () => {
         });
     });
 
+    describe('Download button', () => {
+        it('should not display download button when task has no link', () => {
+            const task = createMockTask({
+                status: TaskStatus.DONE,
+            });
+
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
+
+            render(<TasksList />);
+
+            expect(screen.queryByRole('button', {name: 'global.download'})).not.toBeInTheDocument();
+        });
+
+        it('should display download button when task has a link', () => {
+            const task = createMockTask({
+                status: TaskStatus.DONE,
+                link: {url: 'https://example.com'},
+            });
+
+            mockUseGetUserTasks.mockReturnValue({
+                userTasks: [task],
+                loading: false,
+                error: undefined,
+                removeTasks: mockRemoveTasks,
+            });
+
+            render(<TasksList />);
+
+            expect(screen.getByRole('button', {name: 'global.download'})).toBeInTheDocument();
+        });
+    });
+
     describe('Duration display', () => {
         it('should display duration less than minute when task completes quickly', () => {
             const task = createMockTask({
