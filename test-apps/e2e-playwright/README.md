@@ -35,4 +35,10 @@ yarn start-debug
 
 ## Gitlab-ci
 
-in progress
+For now, run job manually in MR, based on develop docker image. Later run them daily and maybe in MR with branch/commit docker image.
+
+To try gitlab-ci job locally with [gitlab-ci-local](https://github.com/firecow/gitlab-ci-local):
+
+```
+gitlab-ci-local e2e-playwright
+```

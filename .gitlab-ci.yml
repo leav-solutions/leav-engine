@@ -659,6 +659,7 @@ e2e-sync-scan:
     DB_NAME: leav_core
     AUTH_KEY: "123456789"
     AUTH_COOKIE_SECURE: "false"
+    TEST_API_KEY: "e2e-playwright-test-api-key"
     AMQP_HOST: "rabbitmq"
     AMQP_PORT: "5672"
     AMQP_USERNAME: "guest"
@@ -693,19 +694,26 @@ e2e-playwright-prepare:
 
 e2e-playwright:
   stage: test
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   needs:
     - job: e2e-playwright-prepare
       artifacts: false
   variables:
     FF_NETWORK_PER_BUILD: 1 # important for core to connect to services https://docs.gitlab.com/ci/services/#connecting-services
+    BASE_URL: "http://leav_core:4001"
   services:
     - *e2e_service_arangodb
     - *e2e_service_rabbitmq
     - *e2e_service_redis
     - *e2e_service_leav_core
+  before_script:
+    - yarn workspaces focus e2e-playwright
   script:
-    - apk add curl
-    - curl http://leav_core:4001/app/login
+    - yarn workspace e2e-playwright run start
+  artifacts:
+    paths:
+        - test-apps/e2e-playwright/playwright-report
+    when: always
   rules: *e2e_playwright_rules
 ## E2E tests
 ##########
