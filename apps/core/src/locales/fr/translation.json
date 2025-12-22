@@ -7,6 +7,7 @@
         "ATTRIBUTE_USED_BY_LIBRARY": "Cet attribut est utilisé par les bibliothèques suivantes : {{libraries}}",
         "ATTRIBUTE_USED_IN_METADATA": "Cet attribut est utilisé dans les métadonnées des attributs suivants: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Impossible de sauvegarder des métadonnées sur un attribut simple",
+        "CANNOT_SAVE_PERMISSIONS_DEPENDENT_VALUES": "Impossible de sauvegarder les valeurs dépendantes des permissions : le type d'attribut est {{type}}, il doit être de type arbre",
         "DUPLICATE_DIRECTORY_NAMES": "Noms de dossier identiques",
         "DUPLICATE_FILENAMES": "Noms de fichier identiques",
         "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Cet élément est déjà présent parmis ses ancêtres",

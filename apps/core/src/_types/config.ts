@@ -14,6 +14,7 @@ import {
     type RecordPermissionsActions,
     type TreeNodePermissionsActions,
     type TreePermissionsActions,
+    type AttributeDependentValuesPermissionsActions,
 } from './permissions';
 
 export interface IConfig {
@@ -184,6 +185,7 @@ interface IPermissionsByTypesAndActions {
     [PermissionTypes.ADMIN]?: IPermissionsByActions<AdminPermissionsActions>;
     [PermissionTypes.APPLICATION]?: IPermissionsByActions<ApplicationPermissionsActions>;
     [PermissionTypes.ATTRIBUTE]?: IPermissionsByActions<AttributePermissionsActions>;
+    [PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES]?: IPermissionsByActions<AttributeDependentValuesPermissionsActions>;
     [PermissionTypes.LIBRARY]?: IPermissionsByActions<LibraryPermissionsActions>;
     [PermissionTypes.RECORD]?: IPermissionsByActions<RecordPermissionsActions>;
     [PermissionTypes.RECORD_ATTRIBUTE]?: IPermissionsByActions<RecordAttributePermissionsActions>;
@@ -197,6 +199,7 @@ export interface IPermissions {
     adminGroup: IPermissionsByTypesAndActions;
     enableCache: boolean;
     enableAccessRecordByDefaultBackendFilter: boolean;
+    enableAttributeDependentValuesPermissions: boolean;
 }
 
 export interface IAmqp {

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    type IPermissionsDependenciesTreeTarget,
     type AdminPermissionsActions,
     type ApplicationPermissionsActions,
     type AttributePermissionsActions,
@@ -35,6 +36,7 @@ export interface IGetSimplePermissionsParams {
     action: PermissionsActions;
     usersGroupNodeId: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
+    dependenciesTreeTargets?: IPermissionsDependenciesTreeTarget[];
     ctx: IQueryInfos;
 }
 
@@ -44,6 +46,7 @@ export interface IGetPermissionsByActionsParams {
     actions: PermissionsActions[];
     usersGroupNodeId: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
+    dependenciesTreeTargets?: IPermissionsDependenciesTreeTarget[];
     ctx: IQueryInfos;
 }
 

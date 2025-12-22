@@ -18,6 +18,7 @@ import {
     type IEmbeddedAttribute,
 } from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
+import {type ITreePermissionsDependentValuesConf} from '_types/permissions';
 
 // Share some global variables from global setup to tests
 export interface IGlobalThis {
@@ -208,6 +209,7 @@ export async function gqlSaveAttribute(params: {
     unique?: boolean;
     actionsList?: ActionsListConfig;
     required?: boolean;
+    permissions_conf_dependent_values?: ITreePermissionsDependentValuesConf;
 }) {
     const {
         id,
@@ -225,6 +227,7 @@ export async function gqlSaveAttribute(params: {
         reverseLink,
         actionsList,
         required,
+        permissions_conf_dependent_values,
     } = params;
 
     const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => `
@@ -283,6 +286,15 @@ export async function gqlSaveAttribute(params: {
                 actions_list: ${actionsList ? _convertActionsList(actionsList) : 'null'}
                 required: ${required ? 'true' : 'false'}
                 unique: ${unique ? 'true' : 'false'}
+                permissions_conf_dependent_values: ${
+                    permissions_conf_dependent_values
+                        ? `{
+                            dependenciesTreeAttributes: [${permissions_conf_dependent_values.dependenciesTreeAttributes
+                                .map(attrId => `"${attrId}"`)
+                                .join(', ')}]
+                        }`
+                        : 'null'
+                }
             }
         ) { id }
     }`;

@@ -7,6 +7,7 @@ import {type IConfig} from '_types/config';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
+    AttributeDependentValuesPermissionsActions,
     AttributePermissionsActions,
     LibraryPermissionsActions,
     PermissionTypes,
@@ -42,6 +43,7 @@ const permissionsByTypeAndActions = {
     [PermissionTypes.ADMIN]: Object.values(AdminPermissionsActions),
     [PermissionTypes.LIBRARY]: Object.values(LibraryPermissionsActions),
     [PermissionTypes.ATTRIBUTE]: Object.values(AttributePermissionsActions),
+    [PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES]: Object.values(AttributeDependentValuesPermissionsActions),
     [PermissionTypes.TREE]: Object.values(TreePermissionsActions),
     [PermissionTypes.TREE_NODE]: Object.values(TreeNodePermissionsActions),
     [PermissionTypes.TREE_LIBRARY]: Object.values(TreeNodePermissionsActions),
@@ -94,14 +96,14 @@ export default function ({config}: IDeps): IDefaultPermissionHelper {
                 return true;
             }
 
-            if (isInAdminGroup(userGroups)) {
+            if (isInAdminGroup(userGroups) && type !== PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES) {
                 return getPermission(adminPermissionsMap, type, action);
             }
 
             return getPermission(everybodyPermissionsMap, type, action);
         },
         getAdminDefaultPermissionOrNull({type, action, userGroups}: IGetDefaultPermissionParams): boolean | null {
-            if (isInAdminGroup(userGroups)) {
+            if (isInAdminGroup(userGroups) && type !== PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES) {
                 return getPermission(adminPermissionsMap, type, action);
             }
 

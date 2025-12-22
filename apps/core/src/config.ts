@@ -10,6 +10,7 @@ import {logger} from '@leav/logger';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
+    AttributeDependentValuesPermissionsActions,
     AttributePermissionsActions,
     LibraryPermissionsActions,
     PermissionTypes,
@@ -39,6 +40,9 @@ export const validateConfig = (conf: IConfig) => {
         [PermissionTypes.ADMIN]: permissionsByActionsSchema(AdminPermissionsActions),
         [PermissionTypes.LIBRARY]: permissionsByActionsSchema(LibraryPermissionsActions),
         [PermissionTypes.ATTRIBUTE]: permissionsByActionsSchema(AttributePermissionsActions),
+        [PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES]: permissionsByActionsSchema(
+            AttributeDependentValuesPermissionsActions,
+        ),
         [PermissionTypes.TREE]: permissionsByActionsSchema(TreePermissionsActions),
         [PermissionTypes.TREE_NODE]: permissionsByActionsSchema(TreeNodePermissionsActions),
         [PermissionTypes.TREE_LIBRARY]: permissionsByActionsSchema(TreeNodePermissionsActions),
@@ -154,6 +158,7 @@ export const validateConfig = (conf: IConfig) => {
             adminGroup: permissionsByTypeAndActions.required(),
             enableCache: Joi.boolean().required(),
             enableAccessRecordByDefaultBackendFilter: Joi.boolean().required(),
+            enableAttributeDependentValuesPermissions: Joi.boolean().required(),
         }),
         amqp: Joi.object().keys({
             connOpt: Joi.object().keys({

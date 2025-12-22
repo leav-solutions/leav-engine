@@ -4,6 +4,7 @@
 export {default as admin} from './adminPermissionDomain';
 export {default as application} from './applicationPermissionDomain';
 export {default as attribute} from './attributePermissionDomain';
+export {default as attributeDependentValues} from './attributeDependentValuesPermissionDomain';
 export {default as library} from './libraryPermissionDomain';
 export {default} from './permissionDomain';
 export {default as recordAttribute} from './recordAttributePermissionDomain';

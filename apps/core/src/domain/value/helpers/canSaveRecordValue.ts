@@ -1,14 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
-import {type IAttribute} from '_types/attribute';
+import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {type IConfig} from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IValue} from '_types/value';
 import {type ErrorFieldDetail, Errors} from '../../../_types/errors';
-import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../../_types/permissions';
+import {
+    AttributeDependentValuesPermissionsActions,
+    RecordAttributePermissionsActions,
+    RecordPermissionsActions,
+} from '../../../_types/permissions';
 import doesValueExist from './doesValueExist';
 
 interface ICanSaveRecordValueRes {
@@ -27,6 +32,7 @@ interface ICanSaveRecordValueParams {
     deps: {
         recordPermissionDomain: IRecordPermissionDomain;
         recordAttributePermissionDomain: IRecordAttributePermissionDomain;
+        attributeDependentValuesPermissionDomain: IAttributeDependentValuesPermissionDomain;
         config: IConfig;
     };
 }
@@ -98,6 +104,21 @@ export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecord
 
     if (!isAllowed) {
         return {canSave: false, reason: permToCheck};
+    }
+
+    if (attributeProps.type === AttributeTypes.TREE) {
+        const canSetValue = await deps.attributeDependentValuesPermissionDomain.getAttributeDependentValuesPermission({
+            action: AttributeDependentValuesPermissionsActions.SET_VALUE,
+            attributeId: attributeProps.id,
+            recordLibrary: library,
+            recordId,
+            valueNodeId: value.payload,
+            ctx,
+        });
+
+        if (!canSetValue) {
+            return {canSave: false, reason: permToCheck};
+        }
     }
 
     // Check metadata permissions

@@ -210,7 +210,8 @@ export default function (deps: IDeps): ICoreAttributeApp {
                     type TreeAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_tree: Tree,
-                        values_list: TreeValuesListConf
+                        values_list: TreeValuesListConf,
+                        permissions_conf_dependent_values: TreePermissionsDependentValuesConf
                     }
 
                     input AttributeInput {
@@ -226,6 +227,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         embedded_fields: [EmbeddedAttributeInput],
                         actions_list: ActionsListConfigurationInput,
                         permissions_conf: Treepermissions_confInput,
+                        permissions_conf_dependent_values: TreePermissionsDependentValuesConfInput,
                         multiple_values: Boolean,
                         versions_conf: ValuesVersionsConfInput,
                         metadata_fields: [String!],

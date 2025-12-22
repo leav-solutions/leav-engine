@@ -31,6 +31,7 @@ import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';
+import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain, {type IValueDomainDeps} from './valueDomain';
@@ -40,6 +41,7 @@ const depsBase: ToAny<IValueDomainDeps> = {
     config: {},
     'core.domain.actionsList': jest.fn(),
     'core.domain.attribute': jest.fn(),
+    'core.domain.permission.attributeDependentValues': jest.fn(),
     'core.domain.permission.recordAttribute': jest.fn(),
     'core.domain.permission.record': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
@@ -86,6 +88,10 @@ describe('ValueDomain', () => {
 
     const mockRecordAttrPermDomain: Mockify<IRecordAttributePermissionDomain> = {
         getRecordAttributePermission: global.__mockPromise(true),
+    };
+
+    const mockAttributeDependentValuesPermDomain: Mockify<IAttributeDependentValuesPermissionDomain> = {
+        getAttributeDependentValuesPermission: global.__mockPromise(true),
     };
 
     const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
@@ -794,6 +800,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.permission.attributeDependentValues':
+                    mockAttributeDependentValuesPermDomain as IAttributeDependentValuesPermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.utils': mockUtilsStandardAttribute as IUtils,

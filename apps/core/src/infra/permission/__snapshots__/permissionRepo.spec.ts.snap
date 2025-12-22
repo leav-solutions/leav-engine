@@ -7,6 +7,7 @@ exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
                     AND p.applyTo == @value2
                     AND p.usersGroup == @value3
                     AND p.permissionTreeTarget == @value4
+                    
                 RETURN p
             "
 `;
@@ -39,6 +40,7 @@ exports[`PermissionRepo SavePermission Should save permission 2`] = `
   "@value2": "core_permissions",
   "value0": {
     "applyTo": "test_lib",
+    "dependenciesTreeTargets": undefined,
     "permissionTreeTarget": {
       "nodeId": "123445",
       "tree": "test_tree",
@@ -53,6 +55,7 @@ exports[`PermissionRepo SavePermission Should save permission 2`] = `
       "edit_record": false,
     },
     "applyTo": "test_lib",
+    "dependenciesTreeTargets": undefined,
     "permissionTreeTarget": {
       "nodeId": "123445",
       "tree": "test_tree",

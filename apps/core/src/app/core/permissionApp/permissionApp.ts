@@ -9,6 +9,7 @@ import {
     type ILabeledPermissionsAction,
     type IPermission,
     type ITreePermissionsConf,
+    type ITreePermissionsDependentValuesConf,
     PermissionsRelations,
     PermissionTypes,
 } from '../../../_types/permissions';
@@ -122,6 +123,14 @@ export default function ({
                         relation: PermissionsRelation!
                     }
 
+                    type TreePermissionsDependentValuesConf {
+                        dependenciesTreeAttributes: [Attribute!]!,
+                    }
+
+                    input TreePermissionsDependentValuesConfInput {
+                        dependenciesTreeAttributes: [ID!]!,
+                    }
+
                     # If id and library are not specified, permission will apply to tree root
                     type PermissionsTreeTarget {
                         tree: ID!,
@@ -134,6 +143,20 @@ export default function ({
                         nodeId: ID
                     }
 
+                    # Only for dependent values tree attribute permissions (PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES)
+                    type PermissionsDependenciesTreeTarget {
+                        attributeId: ID!,
+                        tree: ID!,
+                        nodeId: ID,
+                    }
+
+                    # Only for dependent values tree attribute permissions (PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES)
+                    input PermissionsDependenciesTreeTargetInput {
+                        attributeId: ID!,
+                        tree: ID!,
+                        nodeId: ID
+                    }
+
                     # A "null" users groups means this permission applies at root level. A "null" on tree target's
                     # id for tree-based permission means it applies to root level on this tree.
                     type Permission {
@@ -141,7 +164,8 @@ export default function ({
                         applyTo: ID,
                         usersGroup: ID,
                         actions: [PermissionAction!]!,
-                        permissionTreeTarget: PermissionsTreeTarget
+                        permissionTreeTarget: PermissionsTreeTarget,
+                        dependenciesTreeTargets: [PermissionsDependenciesTreeTarget!]
                     }
 
                     # If users group is not specified, permission will be saved at root level.
@@ -152,7 +176,8 @@ export default function ({
                         applyTo: ID,
                         usersGroup: ID,
                         actions: [PermissionActionInput!]!,
-                        permissionTreeTarget: PermissionsTreeTargetInput
+                        permissionTreeTarget: PermissionsTreeTargetInput,
+                        dependenciesTreeTargets: [PermissionsDependenciesTreeTargetInput!]
                     }
 
                     # Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
@@ -180,7 +205,8 @@ export default function ({
                             applyTo: ID,
                             actions: [PermissionsActions!]!,
                             usersGroup: ID,
-                            permissionTreeTarget: PermissionsTreeTargetInput
+                            permissionTreeTarget: PermissionsTreeTargetInput,
+                            dependenciesTreeTargets: [PermissionsDependenciesTreeTargetInput!]
                         ): [PermissionAction!],
 
                         # Return inherited permissions only for given user group
@@ -216,13 +242,18 @@ export default function ({
                                 }),
                             );
                         },
-                        async permissions(_, {type, applyTo, actions, usersGroup, permissionTreeTarget}, ctx) {
+                        async permissions(
+                            _,
+                            {type, applyTo, actions, usersGroup, permissionTreeTarget, dependenciesTreeTargets},
+                            ctx,
+                        ) {
                             const perms = await permissionDomain.getPermissionsByActions({
                                 type,
                                 applyTo,
                                 actions,
                                 usersGroupNodeId: usersGroup,
                                 permissionTreeTarget,
+                                dependenciesTreeTargets,
                                 ctx,
                             });
 
@@ -295,6 +326,17 @@ export default function ({
                             return parent.permissionTreeAttributes
                                 ? Promise.all(
                                       parent.permissionTreeAttributes.map(attrId =>
+                                          attributeDomain.getAttributeProperties({id: attrId, ctx}),
+                                      ),
+                                  )
+                                : [];
+                        },
+                    },
+                    TreePermissionsDependentValuesConf: {
+                        dependenciesTreeAttributes(parent: ITreePermissionsDependentValuesConf, _, ctx) {
+                            return parent.dependenciesTreeAttributes
+                                ? Promise.all(
+                                      parent.dependenciesTreeAttributes.map(attrId =>
                                           attributeDomain.getAttributeProperties({id: attrId, ctx}),
                                       ),
                                   )

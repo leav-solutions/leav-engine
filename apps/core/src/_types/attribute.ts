@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ActionsListEvents, type ActionsListIOTypes, type ActionsListConfig} from './actionsList';
-import {type ITreePermissionsConf} from './permissions';
+import {type ITreePermissionsDependentValuesConf, type ITreePermissionsConf} from './permissions';
 import {type IQueryInfos} from './queryInfos';
 import {type IRecord} from './record';
 import {type IGetCoreEntitiesParams, type IKeyValue} from './shared';
@@ -34,6 +34,11 @@ export interface IAttribute extends ICoreEntity {
     settings?: IKeyValue<any>;
     multi_link_display_option?: MultiDisplayOption;
     multi_tree_display_option?: MultiDisplayOption;
+
+    /**
+     * only for tree attribute
+     */
+    permissions_conf_dependent_values?: ITreePermissionsDependentValuesConf;
 }
 
 export enum ValueVersionMode {

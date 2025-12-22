@@ -5,7 +5,11 @@ import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {type ISimplePermissionHelper} from './simplePermission';
 import {type IDefaultPermissionHelper} from './defaultPermission';
 import {type TreePath} from '../../../_types/tree';
-import {type PermissionsActions, type PermissionTypes} from '../../../_types/permissions';
+import {
+    PermissionTypes,
+    type IPermissionsDependenciesTreeTarget,
+    type PermissionsActions,
+} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import getPermissionCacheKey from './getPermissionCacheKey';
 import {type ICachesService} from '../../../infra/cache/cacheService';
@@ -27,6 +31,7 @@ interface IGetPermissionByUserGroupsParams {
     userGroupsPaths: TreePath[]; // from the most general to the most specific (no root required)
     applyTo?: string;
     treeTarget?: {tree: string; path: TreePath}; // from the most general to the most specific (add root if needed)
+    dependenciesTreeTargets?: IPermissionsDependenciesTreeTarget[];
     getDefaultGlobalPermission?: GetDefaultGlobalPermission;
     ctx: IQueryInfos;
 }
@@ -51,6 +56,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             userGroupsPaths,
             applyTo = null,
             treeTarget = null,
+            dependenciesTreeTargets = null,
             getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission,
             ctx,
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
@@ -63,7 +69,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             const reversedGroupsPath = userGroupsPaths.length
                 ? userGroupsPaths.map(path => {
                       const groupPathFromLeavToRoot = [...path].reverse();
-                      if (path[0]?.id === adminsGroupId) {
+                      if (path[0]?.id === adminsGroupId && type !== PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES) {
                           // root is admins group, do not add everybody group for admins group path
                           return groupPathFromLeavToRoot;
                       }
@@ -92,6 +98,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                                     nodeId: targetPath[0].id,
                                 },
                             }),
+                            dependenciesTreeTargets,
                             ctx,
                         });
 
@@ -119,15 +126,19 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
 
             if (config.permissions.enableCache) {
                 // generate a cache key based on params
+                const dependentTreeTargetForKey = dependenciesTreeTargets?.length
+                    ? `${dependenciesTreeTargets.map(dtt => `${dtt.tree}:${dtt.nodeId}`).join('+')}:`
+                    : '';
                 const key = reversedTreeTargetPath?.length
                     ? `${treeTarget.tree}:${reversedTreeTargetPath.map(({id}) => id).join('_')}`
                     : 'default';
+
                 const cacheKey = getPermissionCacheKey(
                     reversedGroupsPath.map(path => path[0].id),
                     type,
                     applyTo,
                     action,
-                    key,
+                    dependentTreeTargetForKey + key,
                 );
 
                 return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});

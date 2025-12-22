@@ -163,6 +163,65 @@ const _validateMetadataFields = async (
 };
 
 /**
+ * Check if permissions_conf_dependent_values has valid dependent values tree attributes
+ *
+ * @param attrData
+ * @param deps
+ */
+const _validateDependentValuesPermissionsConf = async (
+    attrData: IAttribute,
+    deps: {attributeRepo: IAttributeRepo},
+    ctx: IQueryInfos,
+): Promise<ErrorFieldDetail<IAttribute>> => {
+    const permissionsConfigFieldsErrors: ErrorFieldDetail<IAttribute> = {};
+    if (attrData.permissions_conf_dependent_values?.dependenciesTreeAttributes?.length) {
+        if (attrData.type !== AttributeTypes.TREE || attrData.multiple_values) {
+            throw new ValidationError({
+                permissions_conf_dependent_values: {
+                    msg: Errors.CANNOT_SAVE_PERMISSIONS_DEPENDENT_VALUES,
+                    vars: {type: attrData.type},
+                },
+            });
+        }
+
+        const dependenciesTreeAttributes = await deps.attributeRepo.getAttributes({
+            params: {
+                filters: {
+                    id: attrData.permissions_conf_dependent_values?.dependenciesTreeAttributes,
+                },
+                strictFilters: true,
+            },
+            ctx,
+        });
+
+        for (const dependentValuesTreeAttribute of dependenciesTreeAttributes.list) {
+            if (
+                dependentValuesTreeAttribute.type !== AttributeTypes.TREE ||
+                dependentValuesTreeAttribute.multiple_values
+            ) {
+                permissionsConfigFieldsErrors.permissions_conf_dependent_values = {
+                    msg: Errors.INVALID_ATTRIBUTES,
+                    vars: {attributes: dependentValuesTreeAttribute.id},
+                };
+            }
+        }
+
+        const invalidAttributes = difference(
+            attrData.permissions_conf_dependent_values?.dependenciesTreeAttributes,
+            dependenciesTreeAttributes.list.map(a => a.id),
+        );
+
+        if (invalidAttributes.length) {
+            permissionsConfigFieldsErrors.permissions_conf_dependent_values = {
+                msg: Errors.INVALID_ATTRIBUTES,
+                vars: {attributes: invalidAttributes.join(', ')},
+            };
+        }
+    }
+    return permissionsConfigFieldsErrors;
+};
+
+/**
  * Check if attribute has are required fields based on its type and format
  *
  * @param attrData
@@ -271,6 +330,7 @@ export const validateAttributeData = async (
         _validateInputType(attrData, deps),
         _validateRequiredActions(attrData, deps),
         _validateVersionProfile(attrData, deps, ctx),
+        _validateDependentValuesPermissionsConf(attrData, deps, ctx),
     ];
 
     const validationRes = await Promise.all(validationFuncs);
