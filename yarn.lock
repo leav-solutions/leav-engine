@@ -18102,6 +18102,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"e2e-playwright@workspace:test-apps/e2e-playwright":
+  version: 0.0.0-use.local
+  resolution: "e2e-playwright@workspace:test-apps/e2e-playwright"
+  languageName: unknown
+  linkType: soft
+
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"

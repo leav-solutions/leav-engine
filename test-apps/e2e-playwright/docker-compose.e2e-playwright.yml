@@ -1,0 +1,56 @@
+services:
+  arangodb:
+    image: arangodb:3.12
+    environment:
+      - ARANGO_NO_AUTH=1
+    ports:
+      - "8529:8529"
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  redis:
+    image: redis:7.4-alpine3.21
+    ports:
+      - "6379:6379"
+  leav_core:
+    image: registry.aristid.com/dev/leav/leav/core:develop
+    pull_policy: always
+    command:
+      [
+        "sh",
+        "-x",
+        "-c",
+        "echo 'En attente des services...' && until nc -zvw 30 arangodb 8529 && nc -zvw 30 rabbitmq 5672 && nc -zvw 30 redis 6379; do sleep 1; done && yarn run db:migrate && yarn run start",
+      ]
+    environment:
+      NODE_ENV: development
+      ARANGO_URL: http://root:@arangodb:8529
+      DB_NAME: leav_core
+      AUTH_KEY: "123456789"
+      AUTH_COOKIE_SECURE: "false"
+      AMQP_HOST: rabbitmq
+      AMQP_PORT: "5672"
+      AMQP_USERNAME: guest
+      AMQP_PWD: guest
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      LOG_LEVEL: silly
+      SERVER_PUBLIC_URL: http://localhost:4001
+      SERVER_SUPPORT_EMAIL: support@example.com
+      SERVER_ADMIN_LOGIN: admin
+      SERVER_ADMIN_PASSWORD: admin
+      SERVER_ADMIN_EMAIL: admin@example.com
+      FILES_ROOT_PATHS: /files
+    depends_on:
+      - arangodb
+      - rabbitmq
+      - redis
+    ports:
+      - "4001:4001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:44444"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

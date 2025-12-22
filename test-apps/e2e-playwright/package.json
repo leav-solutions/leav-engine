@@ -1,0 +1,10 @@
+{
+    "name": "e2e-playwright",
+    "version": "1.6.0",
+    "scripts": {
+        "local-stack-up": "docker compose -f docker-compose.e2e-playwright.yml up -d",
+        "local-stack-down": "docker compose -f docker-compose.e2e-playwright.yml down",
+        "local-stack-core-logs": "docker compose -f docker-compose.e2e-playwright.yml logs -f leav_core",
+        "build-docker-core": "docker build --pull --push -f ./e2e-core.Dockerfile -t registry.aristid.com/dev/leav/leav/core:develop-e2e-playwright ."
+    }
+}
