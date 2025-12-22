@@ -12497,12 +12497,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.7.2":
-  version: 24.7.2
-  resolution: "@types/node@npm:24.7.2"
+"@types/node@npm:24.10.4":
+  version: 24.10.4
+  resolution: "@types/node@npm:24.10.4"
   dependencies:
-    undici-types: "npm:~7.14.0"
-  checksum: 62073022f7fc11363683e6ce82332193129c3053e7f973127a83b0daa5d755ecf5806d310f5a7c78375e6c3d309aa15b4ae87c4c1797a9eec091425d36098b60
+    undici-types: "npm:~7.16.0"
+  checksum: a0b318b99a97103d151589a10e20d7d3ce93188a0e6466040eb2ce5fae33ca6785306737b4006560fe3152073cbb2b14747b854fa303296275c22afc8a37da2a
   languageName: node
   linkType: hard
 
@@ -13589,7 +13589,7 @@ __metadata:
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
     "@types/lodash": "npm:4.17.21"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     "@types/node-fetch": "npm:2.1.4"
     "@types/react": "npm:16.14.68"
     "@types/react-dom": "npm:16.9.25"
@@ -14152,7 +14152,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@types/styled-components": "npm:5.1.36"
@@ -14702,7 +14702,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:24.9.1"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
@@ -16828,7 +16828,7 @@ __metadata:
     "@types/jsonwebtoken": "npm:9.0.7"
     "@types/lodash": "npm:4.17.21"
     "@types/ms": "npm:0.7.31"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     "@types/nodemailer": "npm:6.4.21"
     "@types/ws": "npm:8.5.3"
     add-filename-increment: "npm:1.0.0"
@@ -17309,7 +17309,7 @@ __metadata:
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:27.5.2"
     "@types/lodash": "npm:4.17.21"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     "@types/object-path": "npm:0.11.4"
     "@types/react": "npm:18.2.14"
     "@types/react-beautiful-dnd": "npm:13.1.8"
@@ -25869,7 +25869,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.1"
@@ -28181,7 +28181,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.1"
@@ -28370,7 +28370,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:29.0.2"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     amqplib: "npm:0.10.9"
     fast-xml-parser: "npm:5.2.5"
     jest: "npm:29.0.3"
@@ -32734,7 +32734,7 @@ __metadata:
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:29.0.2"
     "@types/joi": "npm:14.3.4"
-    "@types/node": "npm:24.7.2"
+    "@types/node": "npm:24.10.4"
     amqplib: "npm:0.10.9"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
@@ -33650,10 +33650,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~7.14.0":
-  version: 7.14.0
-  resolution: "undici-types@npm:7.14.0"
-  checksum: 0f8709b21437697af35801e33bddbe9992e0cf1771959c41850b1946f63822b825e03ce99f44bf19e4f5c3ccc5166e0be59f541565c36ce86163dc2c5870bc62
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: db43439f69c2d94cc29f75cbfe9de86df87061d6b0c577ebe9bb3255f49b22c50162a7d7eb413b0458b6510b8ca299ac7cff38c3a29fbd31af9f504bcf7fbc0d
   languageName: node
   linkType: hard
 
