@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import React, {useEffect, useState} from 'react';
-import {getFormQuery} from '../../../../../../queries/forms/getFormQuery';
-import {type GET_FORM, type GET_FORMVariables, type GET_FORM_forms_list} from '../../../../../../_gqlTypes/GET_FORM';
+import {useEffect, useState} from 'react';
+import {type GET_FORM_forms_list} from '../../../../../../_gqlTypes/GET_FORM';
 import Loading from '../../../../../shared/Loading';
 import EditFormTabs from './EditFormTabs';
 import {EditFormContext} from './hooks/useEditFormContext';
+import {useGetFormQuery} from '_gqlTypes';
 
 interface IEditFormProps {
     formId: string | null;
@@ -18,7 +17,7 @@ interface IEditFormProps {
 function EditForm({formId, libraryId, readonly}: IEditFormProps): JSX.Element {
     const [form, setForm] = useState<GET_FORM_forms_list>(null);
 
-    const {loading, error, data} = useQuery<GET_FORM, GET_FORMVariables>(getFormQuery, {
+    const {loading, error, data} = useGetFormQuery({
         variables: {
             library: libraryId,
             id: formId || '',
@@ -32,7 +31,7 @@ function EditForm({formId, libraryId, readonly}: IEditFormProps): JSX.Element {
             return;
         }
 
-        setForm(data?.forms?.list?.[0]);
+        setForm(data?.forms?.list?.[0] as GET_FORM_forms_list);
     }, [data]);
 
     if (loading) {

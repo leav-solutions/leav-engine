@@ -3,17 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache} from '@apollo/client';
 import {mount} from 'enzyme';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
 import {render, screen} from '_tests/testUtils';
-import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
-import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {AttributeType, PermissionsRelation, type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockAttrAdv, mockAttrSimple} from '../../../../../__mocks__/attributes';
 import {attributesPossibleTypes} from '../../../../../__mocks__/fragmentMatchers/attributesFragmentMatchers';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import PermissionsTab from './PermissionsTab';
+import {GetAttributesDocument, SaveAttributeDocument} from '_gqlTypes';
 
 jest.mock(
     './PermissionsContent',
@@ -33,7 +31,7 @@ describe('PermissionsTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: GetAttributesDocument,
                     variables: {type: [AttributeType.tree]},
                 },
                 result: {
@@ -74,7 +72,7 @@ describe('PermissionsTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: GetAttributesDocument,
                     variables: {type: [AttributeType.tree]},
                 },
                 result: {
@@ -95,7 +93,7 @@ describe('PermissionsTab', () => {
             },
             {
                 request: {
-                    query: saveAttributeQuery,
+                    query: SaveAttributeDocument,
                     variables: {
                         attrData: {id: attribute.id, permissions_conf: permConfToSave},
                     },
@@ -117,7 +115,7 @@ describe('PermissionsTab', () => {
 
         const mockCache = new InMemoryCache({possibleTypes: attributesPossibleTypes});
         mockCache.writeQuery({
-            query: getAttributesQuery,
+            query: GetAttributesDocument,
             variables: {id: 'simple_attribute'},
             data: {
                 attributes: {

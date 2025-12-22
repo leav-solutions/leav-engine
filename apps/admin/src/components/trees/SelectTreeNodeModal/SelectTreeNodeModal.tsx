@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {type NodeData} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
 import {type ITreeNodeData} from '_types/trees';
-import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
-import {type GET_TREE_BY_ID, type GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import Loading from '../../shared/Loading';
 import TreeExplorer from '../TreeExplorer';
+import {useGetTreeByIdQuery} from '_gqlTypes';
+import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
 
 interface ISelectTreeNodeModalProps {
     tree: string;
@@ -22,7 +21,7 @@ interface ISelectTreeNodeModalProps {
 const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeModalProps): JSX.Element => {
     const {t} = useTranslation();
     const [currentSelection, setCurrentSelection] = useState<ITreeNodeData[] | null>(null);
-    const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
+    const {loading, error, data} = useGetTreeByIdQuery({
         variables: {
             id: [tree],
         },
@@ -54,7 +53,7 @@ const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeMod
             <Modal.Header>{t('trees.select_tree_node')}</Modal.Header>
             <Modal.Content style={{height: '80vh'}}>
                 <TreeExplorer
-                    tree={treeSettings}
+                    tree={treeSettings as GET_TREE_BY_ID_trees_list}
                     onClickNode={_handleNodeSelection}
                     readOnly
                     selection={currentSelection}

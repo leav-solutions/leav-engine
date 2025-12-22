@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import React from 'react';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
@@ -11,6 +10,7 @@ import {AttributeFormat, AttributeType} from '../../../../../_gqlTypes/globalTyp
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import MetadataTab from './MetadataTab';
+import {GetAttributesDocument, SaveAttributeDocument} from '_gqlTypes';
 
 jest.mock(
     './MetadataList',
@@ -39,7 +39,7 @@ describe('MetadataTab', () => {
         const mocks = [
             {
                 request: {
-                    query: saveAttributeQuery,
+                    query: SaveAttributeDocument,
                     variables: {
                         attrData: {id: attribute.id, metadata_fields: ['field1', 'field2']},
                     },
@@ -77,7 +77,7 @@ describe('MetadataTab', () => {
             },
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: GetAttributesDocument,
                     variables: {id: attribute.id},
                 },
                 result: {

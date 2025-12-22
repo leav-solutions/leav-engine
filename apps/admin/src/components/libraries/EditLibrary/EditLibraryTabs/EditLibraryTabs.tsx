@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import LibraryIcon from 'components/shared/LibraryIcon';
 import {type Location} from 'history';
 import React, {useState} from 'react';
@@ -10,15 +9,14 @@ import {AiOutlineFileSearch} from 'react-icons/ai';
 import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Button, Grid, Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {indexRecordsMutation} from '../../../../queries/records/indexRecordsMutation';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {type INDEX_RECORDS, type INDEX_RECORDSVariables} from '../../../../_gqlTypes/INDEX_RECORDS';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
 import PurgeTab from './PurgeTab';
 import CustomConfigTab from './CustomConfigTab';
+import {useIndexRecordsMutation} from '_gqlTypes';
 
 const Title = styled(Header)`
     display: flex;
@@ -39,9 +37,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const location = useLocation();
     const isCreationMode = library === null;
 
-    const [indexRecords, {loading: indexLoading}] = useMutation<INDEX_RECORDS, INDEX_RECORDSVariables>(
-        indexRecordsMutation,
-    );
+    const [indexRecords, {loading: indexLoading}] = useIndexRecordsMutation();
 
     const label = isCreationMode ? t('libraries.new') : library!.label?.fr || library!.label?.en || library!.id;
 

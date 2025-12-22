@@ -4,13 +4,12 @@
 import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import {act} from 'react-dom/test-utils';
-import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
-import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
 import {type IValue, type RecordData} from '../../../../../_types/records';
 import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import CreateRecordFormContainer from './CreateRecordFormContainer';
+import {CreateRecordDocument, SaveValueBatchDocument} from '_gqlTypes';
 
 jest.mock(
     '../CreateRecordForm',
@@ -40,7 +39,7 @@ describe('CreateRecordFormContainer', () => {
         const mocks = [
             {
                 request: {
-                    query: createRecordQuery,
+                    query: CreateRecordDocument,
                     variables: {library: 'products'},
                 },
                 result: {
@@ -64,7 +63,7 @@ describe('CreateRecordFormContainer', () => {
             },
             {
                 request: {
-                    query: saveValueBatchQuery,
+                    query: SaveValueBatchDocument,
                     variables: {
                         library: 'products',
                         recordId: '1234567',

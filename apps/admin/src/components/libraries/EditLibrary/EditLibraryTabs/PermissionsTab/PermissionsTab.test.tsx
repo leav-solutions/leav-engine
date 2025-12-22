@@ -2,15 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import React from 'react';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
-import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation, type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import PermissionsTab from './PermissionsTab';
+import {SaveLibraryDocument} from '_gqlTypes';
 
 jest.mock(
     './PermissionsContent',
@@ -44,7 +43,7 @@ describe('PermissionsTab', () => {
         const mocks = [
             {
                 request: {
-                    query: saveLibQuery,
+                    query: SaveLibraryDocument,
                     variables: {
                         libData: {id: library.id, permissions_conf: permConfToSave},
                     },

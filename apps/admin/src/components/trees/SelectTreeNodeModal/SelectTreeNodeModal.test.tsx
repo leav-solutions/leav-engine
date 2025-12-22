@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {render, screen} from '_tests/testUtils';
-import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import SelectTreeNodeModal from './SelectTreeNodeModal';
+import {GetTreeByIdDocument} from '_gqlTypes';
 
 jest.mock(
     '../../trees/TreeExplorer',
@@ -22,7 +22,7 @@ describe('SelectTreeNodeModal', () => {
     const mocks = [
         {
             request: {
-                query: getTreeByIdQuery,
+                query: GetTreeByIdDocument,
                 variables: {id: ['test_tree']},
             },
             result: {

@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {deleteApplicationQuery} from 'queries/applications/deleteApplicationMutation';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {act, render, screen} from '_tests/testUtils';
 import {mockApplication} from '__mocks__/common/applications';
 import Applications from './Applications';
+import {DeleteApplicationDocument, GetApplicationsDocument} from '_gqlTypes';
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom-v5', () => ({
@@ -21,7 +20,7 @@ describe('Applications', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationsQuery,
+                    query: GetApplicationsDocument,
                     variables: {filters: {}},
                 },
                 result: {
@@ -37,7 +36,7 @@ describe('Applications', () => {
             },
             {
                 request: {
-                    query: getApplicationsQuery,
+                    query: GetApplicationsDocument,
                     variables: {filters: {id: '%B%'}},
                 },
                 result: {
@@ -71,7 +70,7 @@ describe('Applications', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationsQuery,
+                    query: GetApplicationsDocument,
                     variables: {filters: {}},
                 },
                 result: {
@@ -87,7 +86,7 @@ describe('Applications', () => {
             },
             {
                 request: {
-                    query: deleteApplicationQuery,
+                    query: DeleteApplicationDocument,
                     variables: {appId: 'appA'},
                 },
                 result: () => {

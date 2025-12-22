@@ -1,18 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import PluginsExplorer from 'components/general/PluginsExplorer';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {getCoreVersionQuery} from 'queries/version/getVersionQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-import {type GET_VERSION} from '_gqlTypes/GET_VERSION';
+import {useGetVersionQuery} from '_gqlTypes';
 
 function GeneralInfosTab(): JSX.Element {
-    const {loading, error, data} = useQuery<GET_VERSION>(getCoreVersionQuery);
+    const {loading, error, data} = useGetVersionQuery();
     const {t} = useTranslation();
 
     // If version starts with a number, add a v in front of it

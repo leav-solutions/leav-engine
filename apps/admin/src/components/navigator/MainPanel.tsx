@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import {getLibraryByIdWithAttributes} from 'queries/libraries/getLibraryByIdWithAttributes';
 import {useEffect} from 'react';
 import {Dimmer, Transition} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
@@ -11,6 +9,7 @@ import ListPanel from './ListPanel';
 import styles from './MainPanel.module.css';
 import {ActionTypes, type IReducerAction, type IReducerState} from './NavigatorReducer';
 import TopPanel from './TopPanel';
+import {type AvailableLanguage, useQueryLibraryConfigQuery} from '_gqlTypes';
 
 export interface IListProps {
     state: IReducerState;
@@ -44,10 +43,10 @@ export default function MainPanel({state, dispatch}: IListProps) {
 }
 
 function GetLibraryInfos({state, dispatch}: IListProps) {
-    const {loading, error, data} = useQuery(getLibraryByIdWithAttributes, {
+    const {loading, error, data} = useQueryLibraryConfigQuery({
         variables: {
             id: state.selectedRoot,
-            lang: state.lang,
+            lang: state.lang as AvailableLanguage[],
         },
     });
 

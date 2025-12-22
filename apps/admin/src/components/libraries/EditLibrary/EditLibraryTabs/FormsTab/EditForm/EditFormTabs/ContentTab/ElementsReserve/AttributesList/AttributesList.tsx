@@ -1,21 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import React from 'react';
-import {getAttributesQuery} from '../../../../../../../../../../queries/attributes/getAttributesQuery';
-import {
-    type GET_ATTRIBUTES,
-    type GET_ATTRIBUTESVariables,
-} from '../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import ReserveAttribute from './ReserveAttribute';
+import {useGetAttributesQuery} from '_gqlTypes';
 
 function AttributesList(): JSX.Element {
     // Get library attributes
     const {state} = useFormBuilderReducer();
-    const {error, loading, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    const {error, loading, data} = useGetAttributesQuery({
         variables: {libraries: [state.library]},
     });
 
@@ -30,7 +25,7 @@ function AttributesList(): JSX.Element {
     return (
         <>
             {(data?.attributes?.list ?? []).map(a => (
-                <ReserveAttribute key={a.id} attribute={a} />
+                <ReserveAttribute key={a.id} attribute={a as GET_ATTRIBUTES_attributes_list} />
             ))}
         </>
     );

@@ -1,28 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
-import React from 'react';
-import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermissionsActionsQuery';
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
-import {savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
-import {type GET_PERMISSIONS, type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
-import {
-    type GET_PERMISSIONS_ACTIONS,
-    type GET_PERMISSIONS_ACTIONSVariables,
-} from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
 import {
     type PermissionsActions,
     type PermissionsTreeTargetInput,
     type PermissionTypes,
 } from '../../../_gqlTypes/globalTypes';
-import {
-    type SAVE_PERMISSION,
-    type SAVE_PERMISSIONVariables,
-    type SAVE_PERMISSION_savePermission_actions,
-} from '../../../_gqlTypes/SAVE_PERMISSION';
+import {type SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
 import Loading from '../../shared/Loading';
 import EditPermissionsView from './EditPermissionsView';
+import {useGetPermissionsActionsQuery, useGetPermissionsQuery, useSavePermissionMutation} from '_gqlTypes';
+import {type GET_PERMISSIONS_perm, type GET_PERMISSIONS_inheritPerm} from '_gqlTypes/GET_PERMISSIONS';
+import {type GET_PERMISSIONS_ACTIONS_permissionsActionsByType} from '_gqlTypes/GET_PERMISSIONS_ACTIONS';
 
 interface IEditPermissionParams {
     type: PermissionTypes;
@@ -42,26 +32,26 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         loading: loadingActions,
         error: errorActions,
         data: dataActions,
-    } = useQuery<GET_PERMISSIONS_ACTIONS, GET_PERMISSIONS_ACTIONSVariables>(getPermissionsActionsQuery, {
+    } = useGetPermissionsActionsQuery({
         variables: {type: permParams.type, applyOn: permParams.applyTo},
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true,
     });
 
     const actionsToEdit = (dataActions?.permissionsActionsByType ?? []).filter(
-        p => !permParams.actions || permParams.actions?.includes(p.name),
+        p => !permParams.actions || permParams.actions?.includes(p.name as PermissionsActions),
     );
 
     const getPermsVariables = {...permParams, actions: actionsToEdit.map(a => a.name)};
 
-    const {loading, error, data} = useQuery<GET_PERMISSIONS, GET_PERMISSIONSVariables>(getPermissionsQuery, {
+    const {loading, error, data} = useGetPermissionsQuery({
         variables: getPermsVariables,
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true,
         skip: !dataActions,
     });
 
-    const [savePerms] = useMutation<SAVE_PERMISSION, SAVE_PERMISSIONVariables>(savePermissionsQuery);
+    const [savePerms] = useSavePermissionMutation();
 
     if (loadingActions || loading) {
         return <Loading />;
@@ -90,12 +80,15 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
     return (
         <EditPermissionsView
             onChange={_onSave}
-            actions={actionsToEdit}
-            permissions={data.perm}
-            inheritedPermissions={data.inheritPerm}
+            actions={actionsToEdit as GET_PERMISSIONS_ACTIONS_permissionsActionsByType[]}
+            permissions={data.perm as GET_PERMISSIONS_perm[]}
+            inheritedPermissions={data.inheritPerm as GET_PERMISSIONS_inheritPerm[]}
             readOnly={readOnly}
         />
     );
 };
 
 export default EditPermissions;
+function useSavePermissionsMutation<T, U>(savePermissionsQuery: any): [any] {
+    throw new Error('Function not implemented.');
+}

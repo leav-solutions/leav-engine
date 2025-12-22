@@ -8,6 +8,7 @@ import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApiKey} from '__mocks__/common/apiKeys';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
+import {DeleteApiKeyDocument, GetApiKeysDocument} from '_gqlTypes';
 
 jest.mock('../../../../hooks/useLang');
 
@@ -23,7 +24,7 @@ describe('ApiKeys', () => {
     const mocks = [
         {
             request: {
-                query: getApiKeysQuery,
+                query: GetApiKeysDocument,
                 variables: {filters: {}},
             },
             result: {
@@ -41,7 +42,7 @@ describe('ApiKeys', () => {
         },
         {
             request: {
-                query: getApiKeysQuery,
+                query: GetApiKeysDocument,
                 variables: {filters: {label: '%C%'}},
             },
             result: {
@@ -84,7 +85,7 @@ describe('ApiKeys', () => {
             ...mocks,
             {
                 request: {
-                    query: deleteApiKeyMutation,
+                    query: DeleteApiKeyDocument,
                     variables: {id: 'key1'},
                 },
                 result: () => {

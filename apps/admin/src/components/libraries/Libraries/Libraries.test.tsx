@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
 import {type History} from 'history';
-import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
 import {type Mockify} from '../../../_types//Mockify';
 import Libraries from './Libraries';
+import {GetLibrariesDocument} from '_gqlTypes';
 
 jest.mock(
     '../LibrariesList',
@@ -24,7 +24,7 @@ describe('Libraries', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: getLibsQuery,
+                    query: GetLibrariesDocument,
                 },
                 result: {
                     data: {

@@ -1,29 +1,24 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useApolloClient, useMutation, useQuery} from '@apollo/client';
+import {useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useLang from 'hooks/useLang';
 import useUserData from 'hooks/useUserData';
 import omit from 'lodash/omit';
-import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProfileByIdQuery';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
-import {saveVersionProfileMutation} from 'queries/versionProfiles/saveVersionProfileMutation';
 import {useTranslation} from 'react-i18next';
 import {type match, useHistory} from 'react-router-v5';
 import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
-import {
-    type GET_VERSION_PROFILE_BY_ID,
-    type GET_VERSION_PROFILE_BY_IDVariables,
-} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 import {PermissionsActions, type VersionProfileInput} from '_gqlTypes/globalTypes';
-import {type SAVE_VERSION_PROFILE, type SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
 import {type IFormError} from '_types/errors';
 import InfoForm from './InfoForm';
+import {useGetVersionProfileByIdQuery, useSaveVersionProfileMutation} from '_gqlTypes';
+import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 
 export interface IEditVersionProfileMatchParams {
     id?: string;
@@ -47,18 +42,12 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
     const profileId = routerMatch.params?.id ?? null;
     const isNewProfile = !profileId;
 
-    const {loading, error, data} = useQuery<GET_VERSION_PROFILE_BY_ID, GET_VERSION_PROFILE_BY_IDVariables>(
-        getVersionProfileByIdQuery,
-        {
-            variables: {id: profileId},
-            skip: isNewProfile,
-        },
-    );
+    const {loading, error, data} = useGetVersionProfileByIdQuery({
+        variables: {id: profileId},
+        skip: isNewProfile,
+    });
 
-    const [saveVersionProfile, {loading: saveLoading, error: saveError}] = useMutation<
-        SAVE_VERSION_PROFILE,
-        SAVE_VERSION_PROFILEVariables
-    >(saveVersionProfileMutation, {
+    const [saveVersionProfile, {loading: saveLoading, error: saveError}] = useSaveVersionProfileMutation({
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onCompleted: res => {
             if (isNewProfile) {
@@ -136,7 +125,7 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
                 <Divider />
             </Header>
             <InfoForm
-                profile={profile}
+                profile={profile as GET_VERSION_PROFILE_BY_ID_versionProfiles_list}
                 readonly={isReadOnly}
                 loading={saveLoading}
                 errors={formErrors as unknown as IFormError}

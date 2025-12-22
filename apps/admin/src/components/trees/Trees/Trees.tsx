@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
@@ -13,11 +12,11 @@ import {Link} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
-import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
-import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {type GET_TREESVariables, type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
+import {useGetTreesQuery} from '_gqlTypes';
 
 const Title = styled(Header)`
     display: flex;
@@ -34,7 +33,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
     const applicationData = useCurrentApplicationContext();
 
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
-    const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
+    const {loading, error, data} = useGetTreesQuery({
         variables: {...addWildcardToFilters(filters)},
     });
     const userData = useUserData();
@@ -80,7 +79,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
             {error && <ErrorDisplay message={error.message} />}
             {!loading && !error && (
                 <TreesList
-                    trees={trees}
+                    trees={trees as GET_TREES_trees_list[]}
                     onRowClick={_handleRowClick}
                     onFiltersUpdate={_onFiltersUpdate}
                     filters={filters}

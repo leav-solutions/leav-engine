@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
-import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockTree} from '../../../__mocks__/trees';
 import TreeExplorer from './TreeExplorer';
+import {TreeNodeChildrenDocument} from '_gqlTypes';
 
 jest.mock('../../../hooks/useLang');
 
@@ -22,7 +21,7 @@ describe('EditTreeExplorer', () => {
         const mocks = [
             {
                 request: {
-                    query: getTreeNodeChildrenQuery,
+                    query: TreeNodeChildrenDocument,
                     variables: {
                         treeId: 'test_tree',
                         node: null,

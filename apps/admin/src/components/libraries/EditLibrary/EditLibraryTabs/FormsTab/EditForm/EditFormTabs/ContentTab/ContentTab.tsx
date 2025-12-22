@@ -1,15 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import useMessages from 'hooks/useMessages';
 import {useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
-import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {type FormElementInput, type FormElementsByDepsInput} from '../../../../../../../../_gqlTypes/globalTypes';
-import {type SAVE_FORM, type SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {useEditFormModalButtonsContext} from '../../../EditFormModal/useEditFormModalButtonsContext';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
@@ -20,6 +17,7 @@ import computateInitialState from './formBuilderReducer/computeInitialState';
 import {defaultDepAttribute, defaultDepValue} from './formBuilderReducer/formBuilderReducer';
 import {FormBuilderReducerContext} from './formBuilderReducer/hook/useFormBuilderReducer';
 import FormLayout from './FormLayout';
+import {useSaveFormMutation} from '_gqlTypes';
 
 function ContentTab(): JSX.Element {
     const {t} = useTranslation();
@@ -29,7 +27,7 @@ function ContentTab(): JSX.Element {
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const {setButton, removeButton} = useEditFormModalButtonsContext();
 
-    const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
+    const [saveForm] = useSaveFormMutation({
         onCompleted: () => setIsSaving(false),
         onError: () => setIsSaving(false),
     });

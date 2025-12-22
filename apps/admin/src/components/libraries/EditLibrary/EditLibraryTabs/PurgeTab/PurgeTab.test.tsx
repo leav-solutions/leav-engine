@@ -2,16 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {purgeRecordsMutation} from 'queries/records/purgeRecords';
-import {getRecordsListQuery} from 'queries/records/recordsListQuery';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
 import PurgeTab from './PurgeTab';
+import {PurgeRecordsDocument, RecordsListDocument} from '_gqlTypes';
 
 describe('PurgeTab', () => {
     const mockGetRecordsList = {
         request: {
-            query: getRecordsListQuery,
+            query: RecordsListDocument,
             variables: {
                 library: mockLibrary.id,
                 pagination: {limit: 1, offset: 0},
@@ -59,7 +58,7 @@ describe('PurgeTab', () => {
             mockGetRecordsList,
             {
                 request: {
-                    query: purgeRecordsMutation,
+                    query: PurgeRecordsDocument,
                     variables: {
                         libraryId: mockLibrary.id,
                     },

@@ -3,13 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
-import {getViewsQuery} from 'queries/views/getViewsQuery';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
-import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import InfosTab from './InfosTab';
+import {GetLibrariesDocument, GetViewsDocument, SaveLibraryDocument} from '_gqlTypes';
 
 jest.mock('../../../../../hooks/useLang');
 
@@ -30,7 +28,7 @@ describe('InfosTab', () => {
     const commonMocks = [
         {
             request: {
-                query: getViewsQuery,
+                query: GetViewsDocument,
                 variables: {
                     library: mockLibrary.id,
                 },
@@ -43,7 +41,7 @@ describe('InfosTab', () => {
         },
         {
             request: {
-                query: getLibsQuery,
+                query: GetLibrariesDocument,
                 variables: {
                     behavior: [LibraryBehavior.files],
                 },
@@ -65,7 +63,7 @@ describe('InfosTab', () => {
             ...commonMocks,
             {
                 request: {
-                    query: saveLibQuery,
+                    query: SaveLibraryDocument,
                     variables,
                 },
                 result: () => {
@@ -110,7 +108,7 @@ describe('InfosTab', () => {
             ...commonMocks,
             {
                 request: {
-                    query: saveLibQuery,
+                    query: SaveLibraryDocument,
                     variables,
                 },
                 result: {

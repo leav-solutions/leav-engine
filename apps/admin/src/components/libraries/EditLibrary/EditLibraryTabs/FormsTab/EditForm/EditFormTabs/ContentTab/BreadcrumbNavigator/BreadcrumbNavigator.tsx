@@ -1,15 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import React from 'react';
 import {type GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {type GET_TREE_BY_ID, type GET_TREE_BY_IDVariables} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import Loading from '../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 import BreadcrumbNavigatorView from './BreadcrumbNavigatorView';
+import {useGetTreeByIdQuery} from '_gqlTypes';
+import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
 
 function BreadcrumbNavigator(): JSX.Element {
     const {state, dispatch} = useFormBuilderReducer();
@@ -21,7 +19,7 @@ function BreadcrumbNavigator(): JSX.Element {
     const linkedTree = selectedDepAttribute.linked_tree?.id;
 
     // Get tree attribute props
-    const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
+    const {loading, error, data} = useGetTreeByIdQuery({
         variables: {id: [linkedTree]},
         skip: !linkedTree,
     });
@@ -40,7 +38,7 @@ function BreadcrumbNavigator(): JSX.Element {
 
     const treeData = data.trees.list[0];
 
-    return <BreadcrumbNavigatorView treeData={treeData} />;
+    return <BreadcrumbNavigatorView treeData={treeData as GET_TREE_BY_ID_trees_list} />;
 }
 
 export default BreadcrumbNavigator;

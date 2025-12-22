@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
+import {useSaveTreeMutation} from '_gqlTypes';
 import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
-import {type SAVE_TREEVariables, type SAVE_TREE} from '_gqlTypes/SAVE_TREE';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
-import {saveTreeQuery} from 'queries/trees/saveTreeMutation';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -59,7 +57,7 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({tree}: ICustomConfigTabProps): JSX.Element {
-    const [saveTree, {error, loading}] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery);
+    const [saveTree, {error, loading}] = useSaveTreeMutation();
 
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {

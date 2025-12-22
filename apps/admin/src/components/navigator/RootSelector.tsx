@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-import {type GET_LIBRARIES, type GET_LIBRARIESVariables} from '_gqlTypes/GET_LIBRARIES';
 import Loading from '../shared/Loading';
+import {useGetLibrariesQuery} from '_gqlTypes';
 
 export interface IRootSelectorContainerProps {
     restrictToRoots: string[];
@@ -19,7 +17,7 @@ interface IRootSelectorElemProps {
 }
 
 function RootSelectorContainer({restrictToRoots, onSelect, lang}: IRootSelectorContainerProps) {
-    const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery);
+    const {loading, error, data} = useGetLibrariesQuery();
     const {t} = useTranslation();
     if (loading) {
         return <Loading />;

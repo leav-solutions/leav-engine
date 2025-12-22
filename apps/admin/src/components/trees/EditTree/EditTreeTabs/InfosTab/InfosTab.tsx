@@ -1,16 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery, useMutation} from '@apollo/client';
 import {useHistory} from 'react-router-dom-v5';
-import {getTreesQuery} from '../../../../../queries/trees/getTreesQuery';
-import {saveTreeQuery} from '../../../../../queries/trees/saveTreeMutation';
 import {clearCacheForQuery} from '../../../../../utils';
-import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
+import {type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {type TreeInput} from '../../../../../_gqlTypes/globalTypes';
-import {type SAVE_TREE, type SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
 import TreeInfosForm from './InfosForm';
+import {useGetTreesLazyQuery, useSaveTreeMutation} from '_gqlTypes';
 
 interface ITreeInfosTabProps {
     tree: GET_TREES_trees_list | null;
@@ -20,7 +17,7 @@ interface ITreeInfosTabProps {
 function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
     const history = useHistory();
     const isNewTree = !tree;
-    const [saveTree] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
+    const [saveTree] = useSaveTreeMutation({
         update: async cache => {
             if (!tree) {
                 clearCacheForQuery(cache, 'trees');
@@ -28,7 +25,7 @@ function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
         },
     });
 
-    const [getTreeById, {data: dataTreeById}] = useLazyQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
+    const [getTreeById, {data: dataTreeById}] = useGetTreesLazyQuery({
         fetchPolicy: 'no-cache',
     });
 

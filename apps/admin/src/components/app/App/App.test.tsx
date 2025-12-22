@@ -2,17 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
-import {isAllowedQuery} from 'queries/permissions/isAllowedQuery';
-import {getMe} from 'queries/users/me';
-import React from 'react';
 import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import App from '.';
-import {getLangs} from 'queries/core/getLangs';
-import {getApplicationByEndpointQuery} from 'queries/applications/getApplicationByEndpointQuery';
 import {enableFetchMocks} from 'jest-fetch-mock';
+import {
+    GetApplicationByEndpointDocument,
+    GetGlobalSettingsDocument,
+    GetLangsDocument,
+    IsAllowedDocument,
+    MeDocument,
+} from '_gqlTypes';
 
 enableFetchMocks();
 
@@ -40,7 +41,7 @@ test('Renders app', async () => {
     const mocks: MockedResponse[] = [
         {
             request: {
-                query: getMe,
+                query: MeDocument,
                 variables: {},
             },
             result: {
@@ -69,7 +70,7 @@ test('Renders app', async () => {
         },
         {
             request: {
-                query: getLangs,
+                query: GetLangsDocument,
                 variables: {},
             },
             result: {
@@ -80,7 +81,7 @@ test('Renders app', async () => {
         },
         {
             request: {
-                query: isAllowedQuery,
+                query: IsAllowedDocument,
                 variables: {
                     type: PermissionTypes.admin,
                     actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/)),
@@ -96,7 +97,7 @@ test('Renders app', async () => {
         },
         {
             request: {
-                query: getApplicationByEndpointQuery,
+                query: GetApplicationByEndpointDocument,
                 variables: {
                     endpoint: 'admin',
                 },
@@ -112,7 +113,7 @@ test('Renders app', async () => {
         },
         {
             request: {
-                query: getGlobalSettingsQuery,
+                query: GetGlobalSettingsDocument,
                 variables: {},
             },
             result: {

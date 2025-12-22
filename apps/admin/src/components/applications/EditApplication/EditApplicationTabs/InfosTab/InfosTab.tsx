@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useApolloClient, useMutation} from '@apollo/client';
+import {useApolloClient} from '@apollo/client';
 import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
 import {useHistory} from 'react-router-v5';
 import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {type SAVE_APPLICATION, type SAVE_APPLICATIONVariables} from '_gqlTypes/SAVE_APPLICATION';
 import {type IFormError} from '_types/errors';
 import InfosForm from './InfosForm';
 import {type ApplicationInfosFormValues} from './_types';
+import {useSaveApplicationMutation} from '_gqlTypes';
 
 function InfosTab(): JSX.Element {
     const apolloClient = useApolloClient();
@@ -18,25 +17,22 @@ function InfosTab(): JSX.Element {
     const history = useHistory();
     const isNewApp = !application;
 
-    const [saveApplication, {error, loading}] = useMutation<SAVE_APPLICATION, SAVE_APPLICATIONVariables>(
-        saveApplicationMutation,
-        {
-            // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-            onError: () => undefined,
-            onCompleted: res => {
-                if (isNewApp) {
-                    // Redirect to new app editing
-                    history.push(`/applications/edit/${res.saveApplication.id}`);
-                }
-            },
-            update: cache => {
-                // We created a new application, invalidate all applications list cache
-                if (isNewApp) {
-                    cache.evict({fieldName: 'applications'});
-                }
-            },
+    const [saveApplication, {error, loading}] = useSaveApplicationMutation({
+        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
+        onError: () => undefined,
+        onCompleted: res => {
+            if (isNewApp) {
+                // Redirect to new app editing
+                history.push(`/applications/edit/${res.saveApplication.id}`);
+            }
         },
-    );
+        update: cache => {
+            // We created a new application, invalidate all applications list cache
+            if (isNewApp) {
+                cache.evict({fieldName: 'applications'});
+            }
+        },
+    });
 
     const _handleSubmit = async (submitData: ApplicationInfosFormValues) => {
         // We specify each field individually to make sure

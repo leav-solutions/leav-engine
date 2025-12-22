@@ -3,8 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import {saveTreeQuery} from 'queries/trees/saveTreeMutation';
-import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
@@ -12,6 +10,7 @@ import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttrTree} from '__mocks__/attributes';
 import {mockTree} from '__mocks__/trees';
 import TreeStructure from './TreeStructure';
+import {SaveTreeDocument} from '_gqlTypes';
 
 describe('TreeStructure', () => {
     const _renderTreeStructure = (tree: GET_TREES_trees_list, readOnly = false, mocks?: MockedResponse[]) => {
@@ -83,7 +82,7 @@ describe('TreeStructure', () => {
         const mocks = [
             {
                 request: {
-                    query: saveTreeQuery,
+                    query: SaveTreeDocument,
                     variables: {
                         treeData: {
                             id: 'test_tree',
@@ -200,7 +199,7 @@ describe('TreeStructure', () => {
         const mocks = [
             {
                 request: {
-                    query: saveTreeQuery,
+                    query: SaveTreeDocument,
                     variables: {
                         treeData: {
                             id: 'test_tree',

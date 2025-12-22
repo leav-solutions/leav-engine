@@ -1,18 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import React, {useRef, useState} from 'react';
 import {useDrag, useDrop, type XYCoord} from 'react-dnd';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../../../../../../hooks/useLang';
-import {getAttributesQuery} from '../../../../../../../../../../../queries/attributes/getAttributesQuery';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {
-    type GET_ATTRIBUTES,
-    type GET_ATTRIBUTESVariables,
-} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../../shared/Loading';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {
@@ -25,6 +19,7 @@ import {
     type IFormElement,
     type IFormElementPos,
 } from '../../../_types';
+import {useGetAttributesQuery} from '_gqlTypes';
 
 interface IFieldWrapperProps extends IFormBuilderStateAndDispatch {
     element: IFormElement;
@@ -77,7 +72,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
     const {readonly} = useEditFormContext();
 
     // Load attribute data
-    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    const {loading, error, data} = useGetAttributesQuery({
         variables: {id: String(element?.settings?.attribute) || null},
         skip: !element?.settings?.attribute,
     });

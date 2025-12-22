@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ApolloCache, type StoreObject} from '@apollo/client';
+import {gql, type ApolloCache, type StoreObject} from '@apollo/client';
 import {type FormikErrors, type FormikTouched} from 'formik';
-import gql from 'graphql-tag';
 import {type i18n} from 'i18next';
 import get from 'lodash/get';
 import {type TreeNode} from 'react-sortable-tree';

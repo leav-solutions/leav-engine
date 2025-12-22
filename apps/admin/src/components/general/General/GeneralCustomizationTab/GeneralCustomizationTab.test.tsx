@@ -2,12 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
-import {saveGlobalSettingsQuery} from 'queries/globalSettings/saveGlobalSettingsMutation';
-import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import GeneralCustomizationTab from './GeneralCustomizationTab';
-import {getApplicationsQuery} from '../../../../queries/applications/getApplicationsQuery';
+import {GetGlobalSettingsDocument, GetApplicationsDocument, SaveGlobalSettingsDocument} from '_gqlTypes';
 
 jest.mock(
     'components/shared/FileSelector',
@@ -23,7 +20,7 @@ describe('GeneralCustomizationTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getGlobalSettingsQuery,
+                    query: GetGlobalSettingsDocument,
                     variables: {},
                 },
                 result: {
@@ -38,7 +35,7 @@ describe('GeneralCustomizationTab', () => {
             },
             {
                 request: {
-                    query: getApplicationsQuery,
+                    query: GetApplicationsDocument,
                     variables: {},
                 },
                 result: {
@@ -61,7 +58,7 @@ describe('GeneralCustomizationTab', () => {
             },
             {
                 request: {
-                    query: saveGlobalSettingsQuery,
+                    query: SaveGlobalSettingsDocument,
                     variables: {
                         settings: {
                             name: 'My App Modified',

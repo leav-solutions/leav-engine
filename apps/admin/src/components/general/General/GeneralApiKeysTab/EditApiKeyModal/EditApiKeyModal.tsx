@@ -1,9 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import useMessages from 'hooks/useMessages';
-import {saveApiKeyMutation} from 'queries/apiKeys/saveApiKeyMutation';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {MessagesTypes} from 'reduxStore/messages/messages';
@@ -11,8 +9,8 @@ import {Button, Icon, Message, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
 import {type ApiKeyInput} from '_gqlTypes/globalTypes';
-import {type SAVE_API_KEY, type SAVE_API_KEYVariables} from '_gqlTypes/SAVE_API_KEY';
 import EditApiKeyForm from './EditApiKeyForm';
+import {useSaveApiKeyMutation} from '_gqlTypes';
 
 interface IEditApiKeyModalProps {
     apiKey: GET_API_KEYS_apiKeys_list;
@@ -37,7 +35,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
     const _handleClose = () => onClose();
     const {t} = useTranslation();
     const {addMessage} = useMessages();
-    const [saveApiKey, {loading}] = useMutation<SAVE_API_KEY, SAVE_API_KEYVariables>(saveApiKeyMutation);
+    const [saveApiKey, {loading}] = useSaveApiKeyMutation();
     const [currentApiKey, setCurrentApiKey] = React.useState<GET_API_KEYS_apiKeys_list>(apiKey);
     const isNewKey = !currentApiKey?.id;
 
@@ -54,7 +52,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
             },
         });
 
-        setCurrentApiKey(saveRes.data.saveApiKey);
+        setCurrentApiKey(saveRes.data.saveApiKey as GET_API_KEYS_apiKeys_list);
     };
 
     const _handleCopyKey = () => {

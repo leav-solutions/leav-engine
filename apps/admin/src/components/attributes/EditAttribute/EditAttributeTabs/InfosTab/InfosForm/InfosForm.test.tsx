@@ -2,14 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWithAttributesQuery';
-import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
 import {act} from 'react-dom/test-utils';
 import {fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 import InfosForm from './InfosForm';
+import {GetLibrariesWithAttributesDocument, SaveLibraryAttributesDocument} from '_gqlTypes';
 
 jest.mock('../../../../../../utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),
@@ -39,7 +38,7 @@ describe('InfosForm', () => {
 
     const mockLibrariesWithAttributes = {
         request: {
-            query: getLibrariesWithAttributesQuery,
+            query: GetLibrariesWithAttributesDocument,
             variables: {},
         },
         result: {
@@ -211,7 +210,7 @@ describe('InfosForm', () => {
             mockLibrariesWithAttributes,
             {
                 request: {
-                    query: saveLibAttributesMutation,
+                    query: SaveLibraryAttributesDocument,
                     variables: {
                         libId: 'categories',
                         attributes: ['id', attribute.id],

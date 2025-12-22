@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {type match} from 'react-router-dom-v5';
 import {render, screen} from '_tests/testUtils';
 import {type Mockify} from '_types/Mockify';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import EditApplication, {type IEditApplicationMatchParams} from './EditApplication';
+import {GetApplicationByIdDocument} from '_gqlTypes';
 
 jest.mock(
     './EditApplicationTabs/InfosTab',
@@ -47,7 +47,7 @@ describe('EditApplication', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationByIdQuery,
+                    query: GetApplicationByIdDocument,
                     variables: {
                         id: mockApplicationDetails.id,
                     },
@@ -97,7 +97,7 @@ describe('EditApplication', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationByIdQuery,
+                    query: GetApplicationByIdDocument,
                     variables: {
                         id: mockApplicationDetails.id,
                     },

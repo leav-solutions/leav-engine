@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getCoreVersionQuery} from 'queries/version/getVersionQuery';
-import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import GeneralInfosTab from './GeneralInfosTab';
+import {GetVersionDocument} from '_gqlTypes';
 
 jest.mock(
     'components/general/PluginsExplorer',
@@ -19,7 +18,7 @@ describe('GeneralInfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getCoreVersionQuery,
+                    query: GetVersionDocument,
                     variables: {},
                 },
                 result: {

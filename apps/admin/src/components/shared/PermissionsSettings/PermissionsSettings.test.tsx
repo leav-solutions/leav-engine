@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
-import React from 'react';
 import {type GET_LIB_BY_ID_libraries_list_permissions_conf} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, PermissionsRelation} from '_gqlTypes/globalTypes';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockAttrTree} from '__mocks__/attributes';
 import PermissionsSettings from './PermissionsSettings';
+import {GetAttributesDocument} from '_gqlTypes';
 
 export {};
 
@@ -61,7 +60,7 @@ describe('PermissionsSettings', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: GetAttributesDocument,
                     variables: {
                         libraries: null,
                         type: [AttributeType.tree],

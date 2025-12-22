@@ -1,14 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {savePermissionsQuery} from 'queries/permissions/savePermissionMutation';
-import React from 'react';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
-import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermissionsActionsQuery';
-import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import EditPermissions from './EditPermissions';
+import {GetPermissionsActionsDocument, GetPermissionsDocument, SavePermissionDocument} from '_gqlTypes';
 
 jest.mock('../../../hooks/useLang');
 describe('EditPermissions', () => {
@@ -23,7 +20,7 @@ describe('EditPermissions', () => {
             {
                 // Get actions by type
                 request: {
-                    query: getPermissionsActionsQuery,
+                    query: GetPermissionsActionsDocument,
                     variables: {type: permParams.type},
                 },
                 result: {
@@ -64,7 +61,7 @@ describe('EditPermissions', () => {
             {
                 // Get defined permissions
                 request: {
-                    query: getPermissionsQuery,
+                    query: GetPermissionsDocument,
                     variables: permParams,
                 },
                 result: {
@@ -99,7 +96,7 @@ describe('EditPermissions', () => {
             {
                 // Save permissions
                 request: {
-                    query: savePermissionsQuery,
+                    query: SavePermissionDocument,
                     variables: {
                         permData: {
                             type: 'admin',
@@ -117,7 +114,7 @@ describe('EditPermissions', () => {
             {
                 // Refetch permissions after save
                 request: {
-                    query: getPermissionsQuery,
+                    query: GetPermissionsDocument,
                     variables: permParams,
                 },
                 result: {
@@ -178,7 +175,7 @@ describe('EditPermissions', () => {
         const mocks = [
             {
                 request: {
-                    query: getPermissionsActionsQuery,
+                    query: GetPermissionsActionsDocument,
                     variables: {type: permParams.type},
                 },
                 error: new Error('Boom!'),

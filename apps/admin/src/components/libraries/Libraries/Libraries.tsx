@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {type History} from 'history';
 import {useState} from 'react';
@@ -11,11 +10,11 @@ import {Link} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
-import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters, isLibraryInApp} from '../../../utils/utils';
-import {type GET_LIBRARIES, type GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
+import {useGetLibrariesQuery} from '_gqlTypes';
+import {type GET_LIBRARIES_libraries_list} from '_gqlTypes/GET_LIBRARIES';
 
 const Title = styled(Header)`
     display: flex;
@@ -33,7 +32,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
     const applicationData = useCurrentApplicationContext();
 
     const [filters, setFilters] = useState<any>({});
-    const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
+    const {loading, error, data} = useGetLibrariesQuery({
         variables: {...addWildcardToFilters(filters)},
     });
 
@@ -76,7 +75,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
             ) : (
                 <LibrariesList
                     loading={loading || !data}
-                    libraries={libraries}
+                    libraries={libraries as GET_LIBRARIES_libraries_list[]}
                     onRowClick={onRowClick}
                     onFiltersUpdate={_onFiltersUpdate}
                     filters={filters}

@@ -1,20 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import React from 'react';
 import {type FormDropdownProps} from 'semantic-ui-react';
-import {getViewsQuery} from '../../../queries/views/getViewsQuery';
-import {type GET_VIEWS, type GET_VIEWSVariables} from '../../../_gqlTypes/GET_VIEWS';
 import Loading from '../../shared/Loading';
 import ViewSelectorField from './ViewSelectorField';
+import {useGetViewsQuery} from '_gqlTypes';
 
 interface IViewSelectorProps extends FormDropdownProps {
     library: string;
 }
 
 function ViewSelector({library, ...fieldProps}: IViewSelectorProps): JSX.Element {
-    const {loading, error, data} = useQuery<GET_VIEWS, GET_VIEWSVariables>(getViewsQuery, {
+    const {loading, error, data} = useGetViewsQuery({
         variables: {
             library,
         },

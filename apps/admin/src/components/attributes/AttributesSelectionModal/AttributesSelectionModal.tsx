@@ -1,18 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {
-    type GET_ATTRIBUTES,
-    type GET_ATTRIBUTESVariables,
-    type GET_ATTRIBUTES_attributes_list,
-} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTESVariables, type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../shared/Loading';
 import AttributesSelectionList from './AttributesSelectionList';
+import {useGetAttributesQuery} from '_gqlTypes';
 
 interface IAttributesSelectionProps {
     onSubmit: (selectedAttributes: string[]) => void;
@@ -32,7 +27,7 @@ const AttributesSelectionModal = ({
     const {t} = useTranslation();
     const [pendingSelection, setPendingSelection] = useState<string[]>([]);
     const [isSubmitPending, setIsSubmitPending] = useState(false);
-    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    const {loading, error, data} = useGetAttributesQuery({
         variables: filter,
     });
 
@@ -82,7 +77,11 @@ const AttributesSelectionModal = ({
                 <Modal.Header>{t('attributes.select_attributes')}</Modal.Header>
                 <Modal.Content scrolling>
                     <AttributesSelectionList
-                        attributes={data.attributes.list.filter(a => selection.indexOf(a.id) === -1)}
+                        attributes={
+                            data.attributes.list.filter(
+                                a => selection.indexOf(a.id) === -1,
+                            ) as GET_ATTRIBUTES_attributes_list[]
+                        }
                         selection={pendingSelection}
                         toggleSelection={_toggleSelection}
                     />

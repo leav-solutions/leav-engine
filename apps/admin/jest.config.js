@@ -28,6 +28,7 @@ module.exports = {
         ...commonModuleNameMapper,
         '^assets/(.*)$': '<rootDir>/src/assets/$1',
         '^graphQL/(.*)$': '<rootDir>/src/graphQL/$1',
+        '^_gqlTypes(.*)$': '<rootDir>/src/_gqlTypes',
         '^reduxStore/(.*)$': '<rootDir>/src/reduxStore/$1',
         '^utils/(.*)$': '<rootDir>/src/utils/$1',
         '^utils$': '<rootDir>/src/utils',
