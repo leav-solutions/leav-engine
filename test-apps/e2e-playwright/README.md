@@ -8,6 +8,15 @@ No leav task-manager, logs-collector, indexation-manager. Add them later (with "
 
 We temporary need to have a specific image e2e-core.Dockerfile, but may change later. Automatically done in docker-compose.
 
+> [!tip]
+> You can use either the **amd64** or the **arm64** version of Leav docker image by specifying `DOCKER_LEAV_TAG` in .env (`develop` or `develop-arm64`).
+
+Init .env for arm64 host (like Apple silicon CPU)
+
+```shell
+sed 's/^DOCKER_LEAV_TAG=.*$/DOCKER_LEAV_TAG=develop-arm64/' .env.template > .env
+```
+
 ```
 yarn local-stack-up
 yarn local-stack-down

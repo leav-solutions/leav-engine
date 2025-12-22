@@ -15,7 +15,7 @@ services:
     ports:
       - "6379:6379"
   leav_core:
-    image: registry.aristid.com/dev/leav/leav/core:develop
+    image: registry.aristid.com/dev/leav/leav/core:${DOCKER_LEAV_TAG:-develop}
     pull_policy: always
     command:
       [
