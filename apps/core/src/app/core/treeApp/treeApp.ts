@@ -16,6 +16,7 @@ import {type IKeyValue} from '_types/shared';
 import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {TriggerNames} from '../../../_types/eventsManager';
 import {
+    AttributeDependentValuesPermissionsActions,
     PermissionTypes,
     RecordPermissionsActions,
     TreeNodePermissionsActions,
@@ -45,6 +46,7 @@ import {
     type ITreesQueryArgs,
 } from './_types';
 import {type IRecordPermissionDomain} from '../../../domain/permission/recordPermissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 
 export type ITreeAttributeApp = IGraphqlAppModule;
 
@@ -58,6 +60,7 @@ interface IDeps {
     'core.app.core.subscriptionsHelper': ICoreSubscriptionsHelpersApp;
     'core.domain.library': ILibraryDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
+    'core.domain.permission.attributeDependentValues': IAttributeDependentValuesPermissionDomain;
 }
 
 export default function ({
@@ -70,6 +73,7 @@ export default function ({
     'core.app.core.subscriptionsHelper': subscriptionsHelper,
     'core.domain.library': libraryDomain,
     'core.domain.permission.record': recordPermissionDomain,
+    'core.domain.permission.attributeDependentValues': attributeDependentValuesPermissionDomain,
 }: IDeps): ITreeAttributeApp {
     /**
      * Retrieve parent tree attribute by recursively getting up on GraphQL query path.
@@ -314,6 +318,12 @@ export default function ({
                         attributeId: ID!,
                     }
 
+                    input DependentValuesPermissionFilterInput {
+                        libraryId: ID!,
+                        recordId: ID!
+                        attributeId: ID!,
+                    }
+
                     extend type Query {
                         trees(
                             filters: TreesFiltersInput,
@@ -333,7 +343,8 @@ export default function ({
                             node: ID,
                             pagination: Pagination,
                             childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput,
-                            accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput
+                            accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput,
+                            dependentValuesPermissionFilter: DependentValuesPermissionFilterInput
                         ): TreeNodeLightList!
 
                         # Retrieve full tree content form tree root, as an object.
@@ -418,6 +429,7 @@ export default function ({
                                 pagination,
                                 childrenAsRecordValuePermissionFilter,
                                 accessRecordByDefaultPermission,
+                                dependentValuesPermissionFilter,
                             }: {
                                 treeId: string;
                                 node?: string;
@@ -429,6 +441,11 @@ export default function ({
                                 };
                                 accessRecordByDefaultPermission?: {
                                     libraryId: string;
+                                    attributeId: string;
+                                };
+                                dependentValuesPermissionFilter?: {
+                                    libraryId: string;
+                                    recordId: string;
                                     attributeId: string;
                                 };
                             },
@@ -469,6 +486,23 @@ export default function ({
                                 children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
                                 // FIXME : should be the total totalCount regarding permissions https://aristid.atlassian.net/browse/LEAVC-323
                                 // children.totalCount = children.list.length;
+                            }
+
+                            if (dependentValuesPermissionFilter) {
+                                const permissionsFilter = await Promise.all(
+                                    children.list.map(treeNode =>
+                                        attributeDependentValuesPermissionDomain.getAttributeDependentValuesPermission({
+                                            action: AttributeDependentValuesPermissionsActions.SET_VALUE,
+                                            attributeId: dependentValuesPermissionFilter.attributeId,
+                                            recordLibrary: dependentValuesPermissionFilter.libraryId,
+                                            recordId: dependentValuesPermissionFilter.recordId,
+                                            valueNodeId: treeNode.id,
+                                            ctx,
+                                        }),
+                                    ),
+                                );
+
+                                children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
                             }
 
                             return {

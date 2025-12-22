@@ -4,6 +4,7 @@
 import {type ComponentProps, type Dispatch, type SetStateAction, useEffect, useState} from 'react';
 import {AntForm} from 'aristid-ds';
 import {
+    type DependentValuesPermissionFilterInput,
     type ChildrenAsRecordValuePermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
@@ -31,6 +32,7 @@ interface IUseManageTreeNodeSelectionProps {
     isReadOnly: boolean;
     isFieldInError: boolean;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
+    dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
 }
 
 export const useManageTreeNodeSelection = ({
@@ -45,6 +47,7 @@ export const useManageTreeNodeSelection = ({
     isReadOnly,
     isFieldInError,
     childrenAsRecordValuePermissionFilter,
+    dependentValuesPermissionFilter,
 }: IUseManageTreeNodeSelectionProps) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
@@ -202,6 +205,7 @@ export const useManageTreeNodeSelection = ({
                 onConfirm={_addTreeNodes}
                 onClose={_closeModal}
                 childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
+                dependentValuesPermissionFilter={dependentValuesPermissionFilter}
             />
         ),
         RemoveAllTreeNodes:
