@@ -30,6 +30,7 @@ services:
       DB_NAME: leav_core
       AUTH_KEY: "123456789"
       AUTH_COOKIE_SECURE: "false"
+      TEST_API_KEY: "e2e-playwright-test-api-key"
       AMQP_HOST: rabbitmq
       AMQP_PORT: "5672"
       AMQP_USERNAME: guest

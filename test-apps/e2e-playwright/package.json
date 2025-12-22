@@ -8,12 +8,14 @@
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p .",
         "local-stack-up": "docker compose -f docker-compose.e2e-playwright.yml up -d",
-        "local-stack-down": "docker compose -f docker-compose.e2e-playwright.yml down",
+        "local-stack-down": "docker compose -f docker-compose.e2e-playwright.yml down -v",
+        "local-stack-reset": "yarn run local-stack-down && yarn run local-stack-up",
         "local-stack-core-logs": "docker compose -f docker-compose.e2e-playwright.yml logs -f leav_core",
         "build-docker-core": "docker build --pull --push -f ./e2e-core.Dockerfile -t registry.aristid.com/dev/leav/leav/core:develop-e2e-playwright ."
     },
     "dependencies": {
-        "@playwright/test": "1.57.0"
+        "@playwright/test": "1.57.0",
+        "axios": "1.13.2"
     },
     "devDependencies": {
         "typescript": "5.5.3"

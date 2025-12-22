@@ -20,6 +20,8 @@ http://localhost:4001 (admin/admin)
 ```
 yarn playwright install
 yarn start
+yarn start-ui
+yarn start-debug
 ```
 
 ## Gitlab-ci
