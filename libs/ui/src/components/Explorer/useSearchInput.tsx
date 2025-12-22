@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitInput} from 'aristid-ds';
+import {KitSearchInput} from 'aristid-ds';
 import {type ComponentProps, type Dispatch, type DOMAttributes, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +13,11 @@ import {
 } from './manage-view-settings/store-view-settings/viewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
 import {type SetNewPage} from './_types';
+import styled from 'styled-components';
 
+const SearchInputStyled = styled(KitSearchInput)`
+    width: 214px;
+`;
 /**
  * Hook used to handle a full search text in a library
  *
@@ -34,7 +38,7 @@ export const useSearchInput = ({
     const {t} = useSharedTranslation();
     const [search, setSearch] = useState<string>(view.fulltextSearch);
 
-    const _handleChange: ComponentProps<typeof KitInput>['onChange'] = e => {
+    const _handleChange: ComponentProps<typeof KitSearchInput>['onChange'] = e => {
         if (!e.target.value) {
             setSearch('');
             dispatch({type: ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH});
@@ -55,7 +59,7 @@ export const useSearchInput = ({
         searchInput:
             view.entrypoint.type === 'library' ? (
                 <form onSubmit={_handleSubmit}>
-                    <KitInput
+                    <SearchInputStyled
                         prefix={<FontAwesomeIcon icon={faMagnifyingGlass} />}
                         title={String(t('global.search'))}
                         placeholder={String(t('global.search'))}
@@ -63,6 +67,7 @@ export const useSearchInput = ({
                         disabled={view.massSelection === MASS_SELECTION_ALL}
                         onChange={_handleChange}
                         size="middle"
+                        expandable
                     />
                 </form>
             ) : null,
