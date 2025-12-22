@@ -17,7 +17,10 @@ http://localhost:4001 (admin/admin)
 
 # Run test
 
-TODO
+```
+yarn playwright install
+yarn start
+```
 
 ## Gitlab-ci
 
