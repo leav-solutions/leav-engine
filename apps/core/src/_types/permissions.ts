@@ -47,12 +47,13 @@ export enum AttributePermissionsActions {
 export enum TreePermissionsActions {
     ACCESS_TREE = 'access_tree',
     EDIT_CHILDREN = 'edit_children',
+    DETACH = 'detach',
 }
 
 export enum TreeNodePermissionsActions {
     ACCESS_TREE = 'access_tree',
-    DETACH = 'detach',
     EDIT_CHILDREN = 'edit_children',
+    DETACH = 'detach',
 }
 
 export enum ApplicationPermissionsActions {
