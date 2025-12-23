@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type Client as GraphqlWsClient} from 'graphql-ws';
-import {type ITask} from '../../../../_types/tasksManager';
 import {
     e2eGuestUser,
     e2eNonAdminUser,
@@ -10,13 +8,11 @@ import {
     gqlSaveLibrary,
     gqlSaveValue,
     makeGraphQlCall,
-    makeWebSocketGraphQlCall,
-    waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
-import {type IPubSubNotificationData} from '_types/eventsManager';
 import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import {waitForTaskCompletion} from '../taskUtils';
 
 // Helper function to create a record as a specific user
 async function createRecordAsUser(library: string, user: ReturnType<typeof e2eGuestUser>): Promise<string> {
@@ -35,28 +31,6 @@ async function createRecordAsUser(library: string, user: ReturnType<typeof e2eGu
 
 describe('Export Nested Attributes', () => {
     const eventLibName = 'export_nested_events_lib';
-
-    let graphqlClient: GraphqlWsClient;
-
-    const waitExportWSNotificationDone = () =>
-        waitGraphqlWebSocketMessage<Pick<IPubSubNotificationData, 'notification'>>(
-            graphqlClient,
-            subscriptionGraphqlQuery,
-            {},
-            data => data?.notification?.level?.includes('success'),
-            {timeoutMs: 20000},
-        );
-
-    async function getTask(taskId: string): Promise<ITask> {
-        const resTaskQuery = await makeGraphQlCall(
-            `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`,
-        );
-
-        expect(resTaskQuery.data.errors).toBeUndefined();
-        expect(resTaskQuery.status).toBe(200);
-        expect(resTaskQuery.data.data.tasks.list.length).toBe(1);
-        return resTaskQuery.data.data.tasks.list[0];
-    }
 
     beforeAll(async () => {
         // Create Event Library - created_by is automatically added to all libraries
@@ -114,12 +88,6 @@ describe('Export Nested Attributes', () => {
         // The nonAdmin user's created_by will point to whoever created the nonAdmin (system admin from globalSetup)
         const eventId2 = await createRecordAsUser(eventLibName, e2eNonAdminUser());
         await gqlSaveValue('event_name', eventLibName, eventId2, 'Team Meeting');
-
-        graphqlClient = await makeWebSocketGraphQlCall();
-    });
-
-    afterAll(async () => {
-        graphqlClient.dispose();
     });
 
     describe('default behavior (link attribute without dot notation)', () => {
@@ -128,8 +96,7 @@ describe('Export Nested Attributes', () => {
                 await makeGraphQlCall(`query { export(library: "${eventLibName}", profile: "default") }`)
             ).data.data.export;
 
-            await waitExportWSNotificationDone();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -159,8 +126,7 @@ describe('Export Nested Attributes', () => {
                 await makeGraphQlCall(`query { export(library: "${eventLibName}", profile: "with_user_info") }`)
             ).data.data.export;
 
-            await waitExportWSNotificationDone();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -199,8 +165,7 @@ describe('Export Nested Attributes', () => {
                 )
             ).data.data.export;
 
-            await waitExportWSNotificationDone();
-            const task = await getTask(exportTaskId);
+            const task = await waitForTaskCompletion(exportTaskId);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -232,22 +197,3 @@ describe('Export Nested Attributes', () => {
         });
     });
 });
-
-const subscriptionGraphqlQuery = `
-    subscription {
-        notification {
-            level
-            message
-            title
-            date
-            attachments {
-                label
-                url
-            }
-            relatedEntities {
-                label
-                url
-            }
-        }
-    }
-`;
