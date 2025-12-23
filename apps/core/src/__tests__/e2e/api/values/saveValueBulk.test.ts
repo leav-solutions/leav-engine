@@ -14,8 +14,9 @@ import {
 } from '../e2eUtils';
 import {AttributeCondition} from '../../../../_types/record';
 import {type Client as GraphqlWsClient} from 'graphql-ws';
-import {type IPubSubNotificationData, type IPubSubTaskData} from '_types/eventsManager';
+import {type IPubSubNotificationData} from '_types/eventsManager';
 import {TaskStatus} from '../../../../_types/tasksManager';
+import {waitForTaskCompletion} from '../taskUtils';
 
 describe('saveValueBulk', () => {
     let graphqlClient: GraphqlWsClient;
@@ -188,6 +189,11 @@ describe('saveValueBulk', () => {
     });
 
     describe('notifications', () => {
+        beforeEach(async () => {
+            // wait previous notification to be processed in websocket
+            await Promise.resolve(cb => setTimeout(cb, 500));
+        });
+
         it('should notify success', async () => {
             const gqlMutation = `mutation {
                 saveValueBulk(
@@ -206,7 +212,7 @@ describe('saveValueBulk', () => {
                 .saveValueBulk;
 
             const {notification} = await waitSaveValueBulkWSNotification();
-            const {task} = await waitTaskCompleted(saveValueBulkTaskId);
+            const task = await waitForTaskCompletion(saveValueBulkTaskId);
 
             expect(task.status).toBe(TaskStatus.DONE);
             expect(notification.title).toContain('Bulk');
@@ -232,7 +238,7 @@ describe('saveValueBulk', () => {
                 .saveValueBulk;
 
             const {notification} = await waitSaveValueBulkWSNotification();
-            const {task} = await waitTaskCompleted(saveValueBulkTaskId);
+            const task = await waitForTaskCompletion(saveValueBulkTaskId);
 
             expect(task.status).toBe(TaskStatus.DONE);
 
@@ -258,7 +264,7 @@ describe('saveValueBulk', () => {
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
                 .saveValueBulk;
             const {notification} = await waitSaveValueBulkWSNotification();
-            const {task} = await waitTaskCompleted(saveValueBulkTaskId);
+            const task = await waitForTaskCompletion(saveValueBulkTaskId);
 
             expect(task.status).toBe(TaskStatus.FAILED);
             expect(notification.title).toContain('Bulk');
@@ -285,7 +291,7 @@ describe('saveValueBulk', () => {
             }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
-            const {task} = await waitTaskCompleted(saveValueBulkTaskId);
+            const task = await waitForTaskCompletion(saveValueBulkTaskId);
 
             expect(task.status).toBe(TaskStatus.DONE);
 
@@ -331,7 +337,7 @@ describe('saveValueBulk', () => {
         }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
-            const {task} = await waitTaskCompleted(saveValueBulkTaskId);
+            const task = await waitForTaskCompletion(saveValueBulkTaskId);
 
             expect(task.status).toBe(TaskStatus.DONE);
 
@@ -371,7 +377,7 @@ describe('saveValueBulk', () => {
         }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
-            const {task} = await waitTaskCompleted(saveValueBulkTaskId);
+            const task = await waitForTaskCompletion(saveValueBulkTaskId);
 
             expect(task.status).toBe(TaskStatus.DONE);
 
@@ -403,23 +409,6 @@ describe('saveValueBulk', () => {
             subscriptionGraphqlQuery,
             {},
             data => data?.notification?.title?.includes('Bulk'),
-            {timeoutMs: 20000},
-        );
-
-    const waitTaskCompleted = async (taskId: string) =>
-        waitGraphqlWebSocketMessage<Pick<IPubSubTaskData, 'task'>>(
-            graphqlClient,
-            `
-                subscription {
-                    task (filters: { id: "${taskId}" }) {
-                        id
-                        label
-                        status
-                    }
-                }
-            `,
-            {},
-            data => [TaskStatus.DONE, TaskStatus.FAILED].includes(data?.task?.status),
             {timeoutMs: 20000},
         );
 
