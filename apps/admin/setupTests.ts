@@ -7,7 +7,13 @@ import {configure} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {webcrypto} from 'node:crypto';
 
 dayjs.extend(duration);
 
 configure({adapter: new Adapter()});
+
+Object.defineProperty(globalThis, 'crypto', {
+    value: webcrypto,
+    writable: true,
+});

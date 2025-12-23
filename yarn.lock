@@ -9310,7 +9310,6 @@ __metadata:
     "@types/react-beautiful-dnd": "npm:13.1.8"
     "@types/react-dom": "npm:18.2.6"
     "@types/react-table": "npm:7.7.20"
-    "@types/uuid": "npm:^9"
     "@uidotdev/usehooks": "npm:2.4.1"
     antd: "npm:5.22.2"
     aristid-ds: "npm:14.0.0-c13d6a5"
@@ -9339,7 +9338,6 @@ __metadata:
     ts-jest: "npm:29.4.6"
     tsc-alias: "npm:1.8.16"
     typescript: "npm:5.5.3"
-    uuid: "npm:9.0.1"
     vite: "npm:7.2.6"
     xlsx: "npm:0.18.5"
     zod: "npm:3.25.76"
@@ -12873,20 +12871,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:8.0.0":
-  version: 8.0.0
-  resolution: "@types/uuid@npm:8.0.0"
-  checksum: 56e9e63a661fca5c4beade4e65375fa8d6cca02587a4ba4650442bde7f01f557aeb6c17aecb5f51df1ce24221122f9e727679d218f1ad582c13fe34cf7cd55b2
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^9":
-  version: 9.0.8
-  resolution: "@types/uuid@npm:9.0.8"
-  checksum: b8c60b7ba8250356b5088302583d1704a4e1a13558d143c549c408bf8920535602ffc12394ede77f8a8083511b023704bc66d1345792714002bfa261b17c5275
-  languageName: node
-  linkType: hard
-
 "@types/ws@npm:8.5.3, @types/ws@npm:^8.0.0":
   version: 8.5.3
   resolution: "@types/ws@npm:8.5.3"
@@ -13602,7 +13586,6 @@ __metadata:
     "@types/redux-mock-store": "npm:1.0.3"
     "@types/styled-components": "npm:4.4.3"
     "@types/testing-library__jest-dom": "npm:5.9.5"
-    "@types/uuid": "npm:8.0.0"
     "@vitejs/plugin-react": "npm:5.1.1"
     babel-jest: "npm:30.1.2"
     commander: "npm:2.19.0"
@@ -13613,7 +13596,6 @@ __metadata:
     fomantic-ui-less: "npm:2.8.8"
     formik: "npm:1.5.8"
     graphql: "npm:16.12.0"
-    graphql-tag: "npm:2.10.1"
     graphql-ws: "npm:5.10.2"
     hex-rgba: "npm:1.0.2"
     i18next: "npm:22.5.1"
@@ -13649,7 +13631,6 @@ __metadata:
     ts-jest: "npm:29.4.2"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    uuid: "npm:7.0.3"
     vite: "npm:7.2.2"
     vite-jest: "npm:0.1.4"
     yup: "npm:0.32.11"
@@ -20777,15 +20758,6 @@ __metadata:
   peerDependencies:
     graphql: ^15.7.2 || ^16.0.0
   checksum: fcf47bd8cef90f3d38f07b49b4b0e70514c22d56e3604a6cde03a250d3129a6c5b3e8420953a6fe5dab68e48d092a4d13fa39bcc61610bdd6c4a0804b9ee2f82
-  languageName: node
-  linkType: hard
-
-"graphql-tag@npm:2.10.1":
-  version: 2.10.1
-  resolution: "graphql-tag@npm:2.10.1"
-  peerDependencies:
-    graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0
-  checksum: e79e51e8211b34917e5344f041993dbab05317ec7651484f4527becc0b47576299aa69986f9907979048a1b400c791c35358c8b75ccd3ee615ae0a15f8ea5cce
   languageName: node
   linkType: hard
 
@@ -34142,24 +34114,6 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: 5d6949693d58cb2e636a84f3ee1c6e7b2f9c16cb1d42d0ecb386d8c025c69e327205aa1c69e2868cc06a01e5e20681fbba55a4e0ed0cce913d60334024eae798
-  languageName: node
-  linkType: hard
-
-"uuid@npm:7.0.3":
-  version: 7.0.3
-  resolution: "uuid@npm:7.0.3"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: b2a4d30ecd6581015175487426558aafd7f7b4013a2e30802c128cc28cad9abe46ecd36c02f7fbcde7908fd4672334818d56a441c0871963d6bd89d911bef2ea
-  languageName: node
-  linkType: hard
-
-"uuid@npm:9.0.1":
-  version: 9.0.1
-  resolution: "uuid@npm:9.0.1"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 9d0b6adb72b736e36f2b1b53da0d559125ba3e39d913b6072f6f033e0c87835b414f0836b45bcfaf2bdf698f92297fea1c3cc19b0b258bc182c9c43cc0fab9f2
   languageName: node
   linkType: hard
 
