@@ -193,6 +193,7 @@
         "admin_delete_api_key": "Delete API key",
         "access_attribute": "Access attribute",
         "edit_value": "Edit value",
+        "set_value": "Set that value",
         "access_tree": "Access",
         "detach": "Detach",
         "edit_children": "Edit children",

@@ -162,6 +162,7 @@ export interface IGetInheritedPermissionsParams {
     action: PermissionsActions;
     userGroupId: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
+    dependenciesTreeTargets?: IPermissionsDependenciesTreeTarget[];
     ctx: IQueryInfos;
 }
 

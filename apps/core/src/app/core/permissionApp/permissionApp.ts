@@ -215,7 +215,8 @@ export default function ({
                             applyTo: ID,
                             actions: [PermissionsActions!]!,
                             userGroupNodeId: ID,
-                            permissionTreeTarget: PermissionsTreeTargetInput
+                            permissionTreeTarget: PermissionsTreeTargetInput,
+                            dependenciesTreeTargets: [PermissionsDependenciesTreeTargetInput!]
                         ): [HeritedPermissionAction!]
 
                         permissionsActionsByType(type: PermissionTypes!, applyOn: String): [LabeledPermissionsActions!]!
@@ -270,6 +271,7 @@ export default function ({
                                 actions,
                                 userGroupNodeId,
                                 permissionTreeTarget,
+                                dependenciesTreeTargets,
                             }: IInheritedPermissionsQueryParams,
                             ctx,
                         ) {
@@ -281,6 +283,7 @@ export default function ({
                                         action,
                                         userGroupId: userGroupNodeId,
                                         permissionTreeTarget,
+                                        dependenciesTreeTargets,
                                         ctx,
                                     });
 
