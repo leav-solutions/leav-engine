@@ -187,7 +187,19 @@
         "select_attributes": "Select attributes",
         "version_profile": "Version profile",
         "custom-config": "Custom config",
-        "example": "Example: "
+        "example": "Example: ",
+        "dependencies": {
+            "title": "Dependencies",
+            "no_dependencies_configured": "No dependencies configured for this attribute. Select a dependency attribute in the selector on the right.",
+            "target_header_prefix": "Value:",
+            "dependency_header_prefix": "Dependency:",
+            "settings": {
+                "title": "Dependency attributes",
+                "dependent_attributes": "Dependency attributes",
+                "add_dependency_attribute": "Add dependency attribute",
+                "no_attributes_to_add": "No attribute available"
+            }
+        }
     },
     "trees": {
         "title": "Trees",

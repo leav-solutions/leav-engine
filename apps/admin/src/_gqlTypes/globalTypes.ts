@@ -98,6 +98,7 @@ export enum PermissionTypes {
     admin = 'admin',
     application = 'application',
     attribute = 'attribute',
+    attribute_dependent_values = 'attribute_dependent_values',
     library = 'library',
     record = 'record',
     record_attribute = 'record_attribute',
@@ -151,7 +152,8 @@ export enum PermissionsActions {
     detach = 'detach',
     edit_children = 'edit_children',
     edit_record = 'edit_record',
-    edit_value = 'edit_value'
+    edit_value = 'edit_value',
+    set_value = 'set_value',
 }
 
 export enum PermissionsRelation {
@@ -415,6 +417,12 @@ export interface PermissionTarget {
 export interface PermissionsTreeTargetInput {
     tree: string;
     nodeId?: string | null;
+}
+
+export interface PermissionsDependenciesTreeTargetInput {
+    tree: string;
+    nodeId?: string | null;
+    attributeId: string;
 }
 
 export interface PreviewVersionInput {

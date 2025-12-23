@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {
+    type PermissionsDependenciesTreeTargetInput,
     type PermissionsActions,
     type PermissionsTreeTargetInput,
     type PermissionTypes,
@@ -19,6 +20,7 @@ interface IEditPermissionParams {
     applyTo?: string | null;
     usersGroup?: string | null;
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
+    dependenciesTreeTargets?: PermissionsDependenciesTreeTargetInput[] | null;
     actions?: PermissionsActions[];
 }
 

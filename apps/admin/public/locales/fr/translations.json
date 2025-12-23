@@ -187,7 +187,19 @@
         "select_attributes": "Sélectionner des attributs",
         "version_profile": "Profil de version",
         "custom-config": "Custom config",
-        "example": "Exemple : "
+        "example": "Exemple : ",
+        "dependencies": {
+            "title": "Dépendances",
+            "no_dependencies_configured": "Aucune dépendance configurée pour cet attribut. Sélectionnez un attribut de dépendance dans le sélecteur à droite.",
+            "target_header_prefix": "Valeur :",
+            "dependency_header_prefix": "Dépendance :",
+            "settings": {
+                "title": "Attributs de dépendances",
+                "dependent_attributes": "Attributs de dépendances",
+                "add_dependency_attribute": "Ajouter un attribut de dépendances",
+                "no_attributes_to_add": "Aucun attribut disponible"
+            }
+        }
     },
     "trees": {
         "title": "Arbres",
@@ -381,7 +393,7 @@
     },
     "tasks": {
         "title": "Tâches",
-         "task-statuses": {
+        "task-statuses": {
             "CREATED": "Créée",
             "CANCELED": "Annulée",
             "DONE": "Terminée",

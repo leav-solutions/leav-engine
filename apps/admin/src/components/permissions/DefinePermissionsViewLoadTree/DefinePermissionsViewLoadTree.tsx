@@ -14,12 +14,14 @@ import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
 
 interface IDefinePermissionsViewLoadTreeProps {
     treeId: string;
+    headerPrefix?: string;
     onClick: (nodeData: ITreeNodeData) => void;
     selectedNode: ITreeNodeData | null;
 }
 
 const DefinePermissionsViewLoadTree = ({
     treeId,
+    headerPrefix,
     onClick,
     selectedNode,
 }: IDefinePermissionsViewLoadTreeProps): JSX.Element => {
@@ -42,7 +44,7 @@ const DefinePermissionsViewLoadTree = ({
 
     return (
         <>
-            <Header as="h4">{treeLabel}</Header>
+            <Header as="h4">{headerPrefix ? `${headerPrefix} ${treeLabel}` : treeLabel}</Header>
             <TreeExplorer
                 compact
                 key={treeData.id}
