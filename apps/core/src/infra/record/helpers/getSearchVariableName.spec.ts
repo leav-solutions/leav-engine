@@ -9,6 +9,17 @@ import getSearchVariableName from './getSearchVariableName';
 describe('getSearchVariableName', () => {
     const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
         isAttributeFilter: jest.fn().mockImplementation(filter => !!filter.attributes),
+        isCountFilter: jest
+            .fn()
+            .mockImplementation(filter =>
+                [
+                    AttributeCondition.VALUES_COUNT_EQUAL,
+                    AttributeCondition.VALUES_COUNT_GREATER_THAN,
+                    AttributeCondition.VALUES_COUNT_LOWER_THAN,
+                    AttributeCondition.IS_EMPTY,
+                    AttributeCondition.IS_NOT_EMPTY,
+                ].includes(filter.condition as AttributeCondition),
+            ),
         isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId),
     };
 
@@ -56,6 +67,52 @@ describe('getSearchVariableName', () => {
         const variableName = func(filter);
 
         expect(variableName).toBe('advLinkAttribute_advancedAttribute_Value');
+    });
+
+    test('Return variable for count filter', async () => {
+        const filter = {
+            attributes: [
+                {
+                    ...mockAttrSimple,
+                    reverse_link: null,
+                },
+            ],
+            condition: AttributeCondition.IS_EMPTY,
+            value: null,
+        };
+
+        const func = getSearchVariableName({
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+        });
+
+        const variableName = func(filter);
+
+        expect(variableName).toBe('simpleAttribute_Count');
+    });
+
+    test('Return variable for count filter with multiple attributes', async () => {
+        const filter = {
+            attributes: [
+                {
+                    ...mockAttrAdvLink,
+                    reverse_link: null,
+                },
+                {
+                    ...mockAttrAdv,
+                    reverse_link: null,
+                },
+            ],
+            condition: AttributeCondition.VALUES_COUNT_GREATER_THAN,
+            value: '10',
+        };
+
+        const func = getSearchVariableName({
+            'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+        });
+
+        const variableName = func(filter);
+
+        expect(variableName).toBe('advLinkAttribute_advancedAttribute_Count');
     });
 
     test('Return variable for classifying filter', async () => {
