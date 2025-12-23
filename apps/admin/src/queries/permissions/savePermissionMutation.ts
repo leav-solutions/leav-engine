@@ -17,6 +17,11 @@ export const savePermissionsQuery = gql`
                 nodeId
                 tree
             }
+            dependenciesTreeTargets {
+                attributeId
+                nodeId
+                tree
+            }
         }
     }
 `;

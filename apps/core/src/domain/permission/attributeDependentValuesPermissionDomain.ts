@@ -8,6 +8,7 @@ import {type IValueRepo} from 'infra/value/valueRepo';
 import {
     type AttributeDependentValuesPermissionsActions,
     type IPermissionsDependenciesTreeTarget,
+    type IPermissionsTreeTarget,
     PermissionTypes,
 } from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -28,7 +29,14 @@ export interface IAttributeDependentValuesPermissionDomain {
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
-    // TODO getInheritedAttributeDependentValuesPermission
+    getInheritedAttributeDependentValuesPermission(params: {
+        action: AttributeDependentValuesPermissionsActions;
+        attributeId: string;
+        userGroupId: string;
+        permissionTreeTarget: IPermissionsTreeTarget;
+        dependenciesTreeTargets: IPermissionsDependenciesTreeTarget[];
+        ctx: IQueryInfos;
+    }): Promise<boolean>;
 }
 
 export interface IRecordAttributePermissionDomainDeps {
@@ -113,6 +121,90 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 treeTarget,
                 dependenciesTreeTargets,
                 getDefaultGlobalPermission: _getDefaultPermission,
+                ctx,
+            });
+        },
+        async getInheritedAttributeDependentValuesPermission(params: {
+            action: AttributeDependentValuesPermissionsActions;
+            attributeId: string;
+            userGroupId: string;
+            permissionTreeTarget: IPermissionsTreeTarget;
+            dependenciesTreeTargets: IPermissionsDependenciesTreeTarget[];
+            ctx: IQueryInfos;
+        }): Promise<boolean> {
+            // Temporary allow disable that permission check in case of bug will still in dev/recette
+            if (!config.permissions.enableAttributeDependentValuesPermissions) {
+                return true;
+            }
+
+            const {action, attributeId, userGroupId, permissionTreeTarget, dependenciesTreeTargets, ctx} = params;
+            if (!dependenciesTreeTargets || dependenciesTreeTargets.length === 0) {
+                throw new Error(
+                    'Attribute dependent values permission inheritance requires at least one dependent tree target',
+                );
+            }
+
+            const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+
+            // If no dependent values configuration, allow to set any value by default
+            if (
+                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes == null ||
+                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes.length === 0
+            ) {
+                return true;
+            }
+
+            // Get perm for user group's parent
+            const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
+                treeId: 'users_groups',
+                nodeId: userGroupId,
+                ctx,
+            });
+
+            // get tree target path
+            const treeTargetPath = await elementAncestorsHelper.getCachedElementAncestors({
+                treeId: permissionTreeTarget.tree,
+                nodeId: permissionTreeTarget.nodeId,
+                ctx,
+            });
+
+            const inheritedGroupTargetPermission = await permByUserGroupsHelper.getPermissionByUserGroups({
+                type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
+                action,
+                userGroupsPaths: [groupAncestors.slice(0, -1)],
+                applyTo: attributeId,
+                treeTarget: {tree: permissionTreeTarget.tree, path: [{id: permissionTreeTarget.nodeId}]},
+                dependenciesTreeTargets,
+                getDefaultGlobalPermission: () => null,
+                ctx,
+            });
+
+            if (inheritedGroupTargetPermission !== null) {
+                return inheritedGroupTargetPermission;
+            }
+
+            const inheritedTargetPathPermission = await permByUserGroupsHelper.getPermissionByUserGroups({
+                type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
+                action,
+                userGroupsPaths: [groupAncestors],
+                applyTo: attributeId,
+                treeTarget: {
+                    tree: permissionTreeTarget.tree,
+                    path: [{id: null}, ...treeTargetPath.slice(0, -1)],
+                },
+                dependenciesTreeTargets,
+                getDefaultGlobalPermission: () => null,
+                ctx,
+            });
+
+            if (inheritedTargetPathPermission !== null) {
+                return inheritedTargetPathPermission;
+            }
+
+            return defaultPermHelper.getDefaultPermission({
+                type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
+                action,
+                userGroups: [groupAncestors],
                 ctx,
             });
         },

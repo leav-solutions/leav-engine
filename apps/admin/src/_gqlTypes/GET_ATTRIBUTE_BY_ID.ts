@@ -195,6 +195,10 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_c
     relation: PermissionsRelation;
 }
 
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values {
+    dependenciesTreeAttributes: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute[];
+}
+
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf_profile_trees {
     id: string;
     label: SystemTranslation | null;
@@ -236,6 +240,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     multi_tree_display_option: MultiDisplayOption | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf | null;
+    permissions_conf_dependent_values?: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf | null;
     libraries: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_libraries[] | null;
     linked_tree: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_linked_tree | null;

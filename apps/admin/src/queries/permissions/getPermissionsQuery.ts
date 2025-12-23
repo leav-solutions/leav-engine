@@ -10,6 +10,7 @@ export const getPermissionsQuery = gql`
         $actions: [PermissionsActions!]!
         $usersGroup: ID
         $permissionTreeTarget: PermissionsTreeTargetInput
+        $dependenciesTreeTargets: [PermissionsDependenciesTreeTargetInput!]
     ) {
         perm: permissions(
             type: $type
@@ -17,6 +18,7 @@ export const getPermissionsQuery = gql`
             actions: $actions
             usersGroup: $usersGroup
             permissionTreeTarget: $permissionTreeTarget
+            dependenciesTreeTargets: $dependenciesTreeTargets
         ) {
             name
             allowed
@@ -27,6 +29,7 @@ export const getPermissionsQuery = gql`
             actions: $actions
             userGroupNodeId: $usersGroup
             permissionTreeTarget: $permissionTreeTarget
+            dependenciesTreeTargets: $dependenciesTreeTargets
         ) {
             name
             allowed

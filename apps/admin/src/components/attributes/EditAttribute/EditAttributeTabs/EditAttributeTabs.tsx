@@ -6,7 +6,10 @@ import {useTranslation} from 'react-i18next';
 import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
+    type GET_ATTRIBUTE_BY_ID_attributes_list,
+} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
@@ -18,6 +21,8 @@ import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
 import CustomConfigTab from './CustomConfigTab';
+import DependenciesTab from './DependenciesTab';
+import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -42,6 +47,7 @@ function EditAttributeTabs({
     const availableLanguages = useLang().lang;
     const history = useHistory();
     const location = useLocation();
+    const applicationData = useCurrentApplicationContext();
     const headerLabel =
         !!attribute && attribute.label ? localizedLabel(attribute.label, availableLanguages) : t('attributes.new');
 
@@ -67,6 +73,12 @@ function EditAttributeTabs({
             attribute.type,
         );
 
+        // Remove feature toggle with https://aristid.atlassian.net/browse/LEAVC-552
+        const isDependenciesAllowed =
+            applicationData.currentApp.settings?.enableAttributeDependentValuesPermissions &&
+            attribute.type === AttributeType.tree &&
+            !attribute.multiple_values;
+
         const isFormatExtended = attribute.format === 'extended';
 
         panes.push(
@@ -88,16 +100,29 @@ function EditAttributeTabs({
                     </Tab.Pane>
                 ),
             },
-            {
-                key: 'actions_list',
-                menuItem: t('attributes.action_list'),
+        );
+
+        if (isDependenciesAllowed) {
+            panes.push({
+                key: 'dependencies',
+                menuItem: t('attributes.dependencies.title'),
                 render: () => (
-                    <Tab.Pane key="actions_list" className="grow flex-col height100">
-                        <ActionsListTab attribute={attribute} />
+                    <Tab.Pane key="dependencies" className="" style={{display: 'grid'}}>
+                        <DependenciesTab attribute={attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute} />
                     </Tab.Pane>
                 ),
-            },
-        );
+            });
+        }
+
+        panes.push({
+            key: 'actions_list',
+            menuItem: t('attributes.action_list'),
+            render: () => (
+                <Tab.Pane key="actions_list" className="grow flex-col height100">
+                    <ActionsListTab attribute={attribute} />
+                </Tab.Pane>
+            ),
+        });
 
         if (isMetadataAllowed) {
             panes.push({

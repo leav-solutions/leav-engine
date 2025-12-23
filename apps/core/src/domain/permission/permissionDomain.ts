@@ -68,6 +68,7 @@ export interface IPermissionDomain {
         action,
         userGroupId,
         permissionTreeTarget,
+        dependenciesTreeTargets,
         ctx,
     }: IGetInheritedPermissionsParams): Promise<boolean>;
 
@@ -268,6 +269,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         action,
         userGroupId,
         permissionTreeTarget,
+        dependenciesTreeTargets,
         ctx,
     }: IGetInheritedPermissionsParams): Promise<boolean> => {
         const canAccessPermissions = await adminPermissionDomain.getAdminPermission({
@@ -318,6 +320,16 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     action,
                     attributeId: applyTo,
                     userGroupId,
+                    ctx,
+                });
+                break;
+            case PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES:
+                perm = await attributeDependentValuesPermissionDomain.getInheritedAttributeDependentValuesPermission({
+                    action: action as AttributeDependentValuesPermissionsActions,
+                    attributeId: applyTo,
+                    userGroupId,
+                    permissionTreeTarget,
+                    dependenciesTreeTargets,
                     ctx,
                 });
                 break;
@@ -373,6 +385,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 });
                 break;
             }
+            default:
+                throw new Error(`Getting inherited permissions not implemented for type ${type}`);
         }
 
         return perm;
@@ -517,6 +531,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     ctx,
                 });
                 break;
+            default:
+                throw new Error(`isAllowed not implemented for type ${type}`);
         }
 
         return perm;
@@ -567,6 +583,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
             case PermissionTypes.APPLICATION:
                 perms = Object.values(ApplicationPermissionsActions);
                 break;
+            default:
+                throw new Error(`Getting actions by type not implemented for type ${type}`);
         }
 
         // Retrieve plugin permissions, applying filter if applyOn is specified

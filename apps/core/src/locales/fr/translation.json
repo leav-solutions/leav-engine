@@ -193,6 +193,7 @@
         "admin_delete_api_key": "Supprimer une clé d'API",
         "access_attribute": "Voir l'attribut",
         "edit_value": "Modifier une valeur",
+        "set_value": "Définir cette valeur",
         "access_tree": "Accéder",
         "detach": "Détacher",
         "edit_children": "Modifier les enfants",

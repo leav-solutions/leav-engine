@@ -199,6 +199,7 @@ export interface IPermissions {
     adminGroup: IPermissionsByTypesAndActions;
     enableCache: boolean;
     enableAccessRecordByDefaultBackendFilter: boolean;
+    // Remove feature toggle with https://aristid.atlassian.net/browse/LEAVC-552
     enableAttributeDependentValuesPermissions: boolean;
 }
 

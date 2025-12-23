@@ -6,6 +6,7 @@ import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {type ITreeValue} from '_types/value';
 import {
+    e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
@@ -360,6 +361,27 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 ]);
             });
 
+            it('Inherit permission should return true by default', async () => {
+                const permInheritGroup = await makeGraphQlCall(`{
+                    p: inheritedPermissions(
+                        type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                        applyTo: "${testAttrName}",
+                        actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                        },
+                        dependenciesTreeTargets: [
+                            { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                            { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                        ],
+                        userGroupNodeId: "${e2eNonAdminGroupId()}"
+                    ) { name allowed }
+                }
+                `);
+
+                expect(permInheritGroup.data.data.p[0].allowed).toBe(true);
+            });
+
             describe('can not move from anotherNodeA/node1 to node2', () => {
                 const setupPermission = (allowed: boolean | null) =>
                     makeGraphQlCall(
@@ -618,6 +640,48 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
                         const values = await getRecordAttributeTestValues();
                         expect(values[0].payload.id).toBe(treeNode1Id);
+                    });
+
+                    it('Inherit permission from tree target', async () => {
+                        const permInheritTreeTarget = await makeGraphQlCall(`{
+                            p: inheritedPermissions(
+                                type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                                applyTo: "${testAttrName}",
+                                actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                                permissionTreeTarget: {
+                                    tree: "${testTreeName}", nodeId: "${treeNode2Id}"
+                                },
+                                dependenciesTreeTargets: [
+                                    { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                    { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                                ],
+                                userGroupNodeId: null
+                            ) { name allowed }
+                        }
+                        `);
+
+                        expect(permInheritTreeTarget.data.data.p[0].allowed).toBe(false);
+                    });
+
+                    it('Inherit permission from user group', async () => {
+                        const permInheritGroup = await makeGraphQlCall(`{
+                            p: inheritedPermissions(
+                                type: ${PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES},
+                                applyTo: "${testAttrName}",
+                                actions: [${AttributeDependentValuesPermissionsActions.SET_VALUE}],
+                                permissionTreeTarget: {
+                                    tree: "${testTreeName}", nodeId: null
+                                },
+                                dependenciesTreeTargets: [
+                                    { tree: "${anotherTreeName}", nodeId: "${anotherTreeNodeAId}", attributeId: "${anotherAttrName}" }
+                                    { tree: "${testTreeName}", nodeId: "${treeNode1Id}", attributeId: "${testAttrName}" }
+                                ],
+                                userGroupNodeId: "${e2eNonAdminGroupId()}"
+                            ) { name allowed }
+                        }
+                        `);
+
+                        expect(permInheritGroup.data.data.p[0].allowed).toBe(false);
                     });
 
                     describe('can move from anotherNodeA/node1 to node2 by overriding inherited permission', () => {

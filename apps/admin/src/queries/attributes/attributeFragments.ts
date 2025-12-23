@@ -68,6 +68,17 @@ export const attributeDetailsFragment = gql`
             linked_tree {
                 id
             }
+            permissions_conf_dependent_values {
+                dependenciesTreeAttributes {
+                    id
+                    label
+                    ... on TreeAttribute {
+                        linked_tree {
+                            id
+                        }
+                    }
+                }
+            }
         }
     }
 `;
