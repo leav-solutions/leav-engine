@@ -77,7 +77,7 @@
         "bcryptjs": "2.4.3",
         "body-parser": "1.20.4",
         "cacache": "15.3.0",
-        "commander": "2.20.3",
+        "commander": "14.0.2",
         "compression": "1.7.4",
         "cookie-parser": "1.4.7",
         "cors": "2.8.5",
