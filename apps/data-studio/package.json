@@ -73,7 +73,6 @@
         "@types/styled-components": "5.1.36",
         "@vitejs/plugin-react": "5.1.1",
         "babel-jest": "29.7.0",
-        "commander": "5.1.0",
         "jest": "29.4.1",
         "jest-environment-jsdom": "29.4.1",
         "jest-fetch-mock": "3.0.3",
