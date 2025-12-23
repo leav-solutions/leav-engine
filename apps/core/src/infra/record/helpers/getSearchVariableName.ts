@@ -14,10 +14,13 @@ export type GetSearchVariableName = (filter: IRecordFilterOption) => string | un
 export default function ({
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps): GetSearchVariableName {
-    const {isAttributeFilter, isClassifyingFilter} = filterTypesHelper;
+    const {isCountFilter, isAttributeFilter, isClassifyingFilter} = filterTypesHelper;
 
     return filter => {
-        if (isAttributeFilter(filter)) {
+        if (isCountFilter(filter)) {
+            const attributesNames = filter.attributes.map(attribute => camelCase(attribute.id));
+            return `${attributesNames.join('_')}_Count`;
+        } else if (isAttributeFilter(filter)) {
             const attributesNames = filter.attributes.map(attribute => camelCase(attribute.id));
 
             return `${attributesNames.join('_')}_Value`;
