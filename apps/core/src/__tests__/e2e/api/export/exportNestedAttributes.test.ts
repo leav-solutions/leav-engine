@@ -12,7 +12,8 @@ import {
 import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {waitForTaskCompletion} from '../taskUtils';
+import {waitForTaskCompletedWithStatus} from '../taskUtils';
+import {TaskStatus} from '../../../../_types/tasksManager';
 
 // Helper function to create a record as a specific user
 async function createRecordAsUser(library: string, user: ReturnType<typeof e2eGuestUser>): Promise<string> {
@@ -96,7 +97,7 @@ describe('Export Nested Attributes', () => {
                 await makeGraphQlCall(`query { export(library: "${eventLibName}", profile: "default") }`)
             ).data.data.export;
 
-            const task = await waitForTaskCompletion(exportTaskId);
+            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -126,7 +127,7 @@ describe('Export Nested Attributes', () => {
                 await makeGraphQlCall(`query { export(library: "${eventLibName}", profile: "with_user_info") }`)
             ).data.data.export;
 
-            const task = await waitForTaskCompletion(exportTaskId);
+            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);
@@ -165,7 +166,7 @@ describe('Export Nested Attributes', () => {
                 )
             ).data.data.export;
 
-            const task = await waitForTaskCompletion(exportTaskId);
+            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
 
             const filepath = task.link.url;
             const buffer = await getFileDataBuffer(filepath);

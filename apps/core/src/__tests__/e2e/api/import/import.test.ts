@@ -15,7 +15,7 @@ import {
 } from '../e2eUtils';
 import {ImportMode, ImportType} from '../../../../_types/import';
 import {TaskStatus} from '../../../../_types/tasksManager';
-import {waitForTaskCompletion} from '../taskUtils';
+import {waitForTaskCompletedWithStatus} from '../taskUtils';
 
 const uuidRegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -131,9 +131,7 @@ describe('Import', () => {
 
             expect(importResult.data.importData).toMatch(uuidRegExp);
 
-            const task = await waitForTaskCompletion(importResult.data.importData);
-
-            expect(task.status).toEqual(TaskStatus.DONE);
+            await waitForTaskCompletedWithStatus(importResult.data.importData, TaskStatus.DONE);
 
             const res = await makeGraphQlCall(`{
                     records(
@@ -172,9 +170,7 @@ describe('Import', () => {
 
                 expect(importResult.data.importExcel).toMatch(uuidRegExp);
 
-                const task = await waitForTaskCompletion(importResult.data.importExcel);
-
-                expect(task.status).toEqual(TaskStatus.DONE);
+                await waitForTaskCompletedWithStatus(importResult.data.importExcel, TaskStatus.DONE);
 
                 const res = await makeGraphQlCall(`{
                 records(
@@ -240,9 +236,7 @@ describe('Import', () => {
 
                 expect(importResult.data.importExcel).toMatch(uuidRegExp);
 
-                const task = await waitForTaskCompletion(importResult.data.importExcel);
-
-                expect(task.status).toEqual(TaskStatus.DONE);
+                await waitForTaskCompletedWithStatus(importResult.data.importExcel, TaskStatus.DONE);
 
                 const res = await makeGraphQlCall(`{
                 records(
@@ -309,9 +303,7 @@ describe('Import', () => {
                 const importResult = await importFileGraphQlCall(query, importFilePath, sheets);
                 expect(importResult.data.importExcel).toMatch(uuidRegExp);
 
-                const task = await waitForTaskCompletion(importResult.data.importExcel);
-
-                expect(task.status).toEqual(TaskStatus.DONE);
+                await waitForTaskCompletedWithStatus(importResult.data.importExcel, TaskStatus.DONE);
 
                 const res = await makeGraphQlCall(`{
                     records(
@@ -356,17 +348,13 @@ describe('Import', () => {
                 const importResult1 = await importFileGraphQlCall(query, importFilePath, sheets1);
                 expect(importResult1.data.importExcel).toMatch(uuidRegExp);
 
-                const task1 = await waitForTaskCompletion(importResult1.data.importExcel);
-
-                expect(task1.status).toEqual(TaskStatus.DONE);
+                await waitForTaskCompletedWithStatus(importResult1.data.importExcel, TaskStatus.DONE);
 
                 const sheets2 = [{...sheets1[0], library: linkLibName, mapping: [null, linkLabelAttributeId]}];
                 const importResult2 = await importFileGraphQlCall(query, importFilePath, sheets2);
                 expect(importResult2.data.importExcel).toMatch(uuidRegExp);
 
-                const task2 = await waitForTaskCompletion(importResult2.data.importExcel);
-
-                expect(task2.status).toEqual(TaskStatus.DONE);
+                await waitForTaskCompletedWithStatus(importResult2.data.importExcel, TaskStatus.DONE);
 
                 const sheetsLink = [
                     {
@@ -382,9 +370,7 @@ describe('Import', () => {
                 const importResultLink = await importFileGraphQlCall(query, importFilePath, sheetsLink);
                 expect(importResultLink.data.importExcel).toMatch(uuidRegExp);
 
-                const taskLink = await waitForTaskCompletion(importResultLink.data.importExcel);
-
-                expect(taskLink.status).toEqual(TaskStatus.DONE);
+                await waitForTaskCompletedWithStatus(importResultLink.data.importExcel, TaskStatus.DONE);
 
                 // Check records in main library
                 const res = await makeGraphQlCall(`{

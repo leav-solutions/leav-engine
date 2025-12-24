@@ -6,7 +6,22 @@ import {makeGraphQlCall} from './e2eUtils';
 
 export async function getTask(taskId: string): Promise<ITask> {
     const resTaskQuery = await makeGraphQlCall(
-        `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`,
+        `query { 
+            tasks(filters: {id: "${taskId}"}) { 
+                list {
+                    id
+                    status
+                    link {
+                        name
+                        url
+                    }
+                    progress {
+                        description
+                        percent
+                    }
+                }
+            } 
+        }`,
     );
 
     expect(resTaskQuery.data.errors).toBeUndefined();
@@ -25,4 +40,19 @@ export async function waitForTaskCompletion(id: string, timeout = 5000, interval
         await new Promise(resolve => setTimeout(resolve, interval));
     }
     throw new Error(`Task ${id} did not complete within ${timeout}ms`);
+}
+
+export async function waitForTaskCompletedWithStatus(
+    taskId: string,
+    expectedStatus: TaskStatus.DONE | TaskStatus.FAILED,
+): Promise<ITask> {
+    const task = await waitForTaskCompletion(taskId);
+    try {
+        expect(task.status).toBe(expectedStatus);
+    } catch (err) {
+        throw new Error(
+            `Task ${taskId} expected to be ${expectedStatus}, but found status ${task.status}. Progress percent ${task.progress.percent} description ${task.progress.description.en}`,
+        );
+    }
+    return task;
 }
