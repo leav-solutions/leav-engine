@@ -36,6 +36,7 @@
         "**/*.yml",
         "apps/core/exports/*",
         "docker/**/*",
+        "test-apps/e2e-playwright/*.Dockerfile",
         "cache",
         "files",
         "previews",

@@ -11,9 +11,9 @@ export const configSchema = z
         auth: z
             .object({
                 login: z.string(),
-                password: z.string()
+                password: z.string(),
             })
-            .required()
+            .required(),
     })
     .required();
 

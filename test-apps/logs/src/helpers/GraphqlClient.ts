@@ -16,7 +16,7 @@ export class GraphqlClient {
         try {
             const response = await axios.post(`${this.baseUrl}/auth/authenticate`, {
                 login,
-                password
+                password,
             });
 
             if (response.headers['set-cookie']) {
@@ -44,15 +44,15 @@ export class GraphqlClient {
                 {query},
                 {
                     headers: {
-                        Cookie: this.authCookie
-                    }
-                }
+                        Cookie: this.authCookie,
+                    },
+                },
             );
 
             return response;
         } catch (error) {
             throw new Error(
-                `An error occured : ${error}. ${JSON.stringify(error?.response?.data)}. Query was: ${query}`
+                `An error occured : ${error}. ${JSON.stringify(error?.response?.data)}. Query was: ${query}`,
             );
         }
     }

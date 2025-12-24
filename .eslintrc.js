@@ -189,6 +189,7 @@ module.exports = {
                 'apps/data-studio/**',
                 'apps/login/**',
                 'apps/portal/**',
+                'test-apps/**',
             ],
             rules: {
                 'no-console': ['error', {allow: ['warn', 'error', 'info']}],

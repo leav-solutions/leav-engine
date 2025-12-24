@@ -68,4 +68,7 @@ ENV APP_ROOT_PATH=/app/apps/core
 # error This project's package.json defines "packageManager": "yarn@4.0.2". However the current global version of Yarn is 1.22.22.
 ENV SKIP_YARN_COREPACK_CHECK=1
 
+# Useful for e2e playwright tests to run that service in gitlab-ci
+EXPOSE 4001
+
 CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start"]

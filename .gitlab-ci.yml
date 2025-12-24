@@ -47,6 +47,7 @@ variables:
   DISABLE_CHECK_JOBS: "false"
   DISABLE_TEST_JOBS: "false"
   DISABLE_E2E_JOBS: "false"
+  DISABLE_E2E_PLAYWRIGHT_JOBS: "false"
   DISABLE_BUILD_DOCKER_JOBS: "false"
   DISABLE_PUBLISH_NPM_JOBS: "false"
   # If use npmjs.org public registry
@@ -647,6 +648,73 @@ e2e-sync-scan:
         - libs/message-broker/**/*
         - libs/utils/**/*
 
+.e2e_service_leav_core: &e2e_service_leav_core
+  name: registry.aristid.com/dev/leav/leav/core:develop-e2e-playwright
+  alias: leav_core
+  pull_policy: always
+  command: ["sh", "-x", "-c", "echo 'En attente des services...' && until nc -zvw 30 arangodb 8529 && nc -zvw 30 rabbitmq 5672 && nc -zvw 30 redis 6379; do sleep 1; done && yarn run db:migrate && yarn run start"]
+  variables:
+    NODE_ENV: development
+    ARANGO_URL: "http://root:@arangodb:8529"
+    DB_NAME: leav_core
+    AUTH_KEY: "123456789"
+    AUTH_COOKIE_SECURE: "false"
+    TEST_API_KEY: "e2e-playwright-test-api-key"
+    AMQP_HOST: "rabbitmq"
+    AMQP_PORT: "5672"
+    AMQP_USERNAME: "guest"
+    AMQP_PWD: "guest"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+    LOG_LEVEL: "silly"
+    SERVER_PUBLIC_URL: http://leav_core:4001
+    SERVER_SUPPORT_EMAIL: support@example.com
+    SERVER_ADMIN_LOGIN: admin
+    SERVER_ADMIN_PASSWORD: admin
+    SERVER_ADMIN_EMAIL: admin@example.com
+    FILES_ROOT_PATHS: "/files"
+
+.e2e_playwright_rules: &e2e_playwright_rules
+    - if: $DISABLE_E2E_PLAYWRIGHT_JOBS == "true"
+      when: never
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      allow_failure: true # To make job optional in MR pipelines
+      when: manual
+
+e2e-playwright-prepare:
+  stage: test
+  tags: 
+    - docker-build
+  script:
+    - cd test-apps/e2e-playwright
+    - docker build --pull --push -f ./e2e-core.Dockerfile -t registry.aristid.com/dev/leav/leav/core:develop-e2e-playwright .
+  rules: *e2e_playwright_rules
+
+e2e-playwright:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
+  needs:
+    - job: e2e-playwright-prepare
+      artifacts: false
+  variables:
+    FF_NETWORK_PER_BUILD: 1 # important for core to connect to services https://docs.gitlab.com/ci/services/#connecting-services
+    BASE_URL: "http://leav_core:4001"
+  services:
+    - *e2e_service_arangodb
+    - *e2e_service_rabbitmq
+    - *e2e_service_redis
+    - *e2e_service_leav_core
+  before_script:
+    - yarn workspaces focus e2e-playwright
+  script:
+    - yarn workspace e2e-playwright run start
+  artifacts:
+    paths:
+        - test-apps/e2e-playwright/playwright-report
+    when: always
+  rules: *e2e_playwright_rules
 ## E2E tests
 ##########
 
