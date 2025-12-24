@@ -7,7 +7,7 @@ import {
     type GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView,
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {AttributeFormat, AttributeType, LibraryBehavior, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, LibraryBehavior, ViewSizes, ViewTypes} from '_gqlTypes';
 import {mockLabel} from '__mocks__/common/label';
 
 export const mockGetLibraryDetailExtendedDefaultView: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView = {

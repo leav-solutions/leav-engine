@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type SubscriptionHookOptions, useSubscription} from '@apollo/client';
 import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';
-import {type TreeEventFiltersInput} from '_gqlTypes/globalTypes';
+import {type TreeEventFiltersInput} from '_gqlTypes';
 import {type TREE_EVENTS, type TREE_EVENTSVariables} from '_gqlTypes/TREE_EVENTS';
 
 export const useTreeEventsSubscription = (params: {

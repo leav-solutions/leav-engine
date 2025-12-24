@@ -5,7 +5,7 @@ import {FileOutlined, FolderOutlined, PictureOutlined, TableOutlined} from '@ant
 import {EntityPreview} from '@leav/ui';
 import styled from 'styled-components';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes';
 import {PreviewSize} from '_types/types';
 
 const Wrapper = styled.div`

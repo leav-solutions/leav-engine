@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {type GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {type AttributeFormat, type AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {type AttributeFormat, type AttributeType, RecordFilterCondition} from '_gqlTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     type ILibraryDetailExtendedAttributeParentLinkedLibrary,

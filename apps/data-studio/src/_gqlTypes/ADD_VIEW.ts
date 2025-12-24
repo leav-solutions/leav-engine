@@ -14,7 +14,7 @@ import {
     ViewInput,
     ViewSizes,
     ViewTypes
-} from './globalTypes';
+} from './index';
 
 // ====================================================
 // GraphQL mutation operation: ADD_VIEW

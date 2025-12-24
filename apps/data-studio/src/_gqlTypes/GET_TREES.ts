@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreesFiltersInput, LibraryBehavior, TreeBehavior} from './globalTypes';
+import {TreesFiltersInput, LibraryBehavior, TreeBehavior} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_TREES

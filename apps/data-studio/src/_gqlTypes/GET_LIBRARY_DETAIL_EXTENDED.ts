@@ -15,7 +15,7 @@ import {
     SortOrder,
     ViewSizes,
     ViewTypes
-} from './globalTypes';
+} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARY_DETAIL_EXTENDED

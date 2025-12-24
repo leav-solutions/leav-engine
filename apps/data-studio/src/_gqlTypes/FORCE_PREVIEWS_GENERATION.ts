@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {RecordFilterInput} from './globalTypes';
+import {RecordFilterInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: FORCE_PREVIEWS_GENERATION

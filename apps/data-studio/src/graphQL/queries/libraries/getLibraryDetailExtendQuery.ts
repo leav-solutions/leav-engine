@@ -8,7 +8,7 @@ import {
     type LibraryBehavior,
     type ViewSizes,
     type ViewTypes,
-} from '_gqlTypes/globalTypes';
+} from '_gqlTypes';
 import {
     type AttributeConditionType,
     type ISystemTranslation,

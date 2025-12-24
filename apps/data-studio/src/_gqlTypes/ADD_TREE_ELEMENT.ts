@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeElementInput} from './globalTypes';
+import {TreeElementInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: ADD_TREE_ELEMENT

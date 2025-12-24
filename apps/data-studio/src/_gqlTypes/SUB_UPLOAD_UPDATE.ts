@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {UploadFiltersInput} from './globalTypes';
+import {UploadFiltersInput} from './index';
 
 // ====================================================
 // GraphQL subscription operation: SUB_UPLOAD_UPDATE

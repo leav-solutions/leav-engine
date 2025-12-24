@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeFormat, AttributeType, LibraryBehavior, ValueBatchInput, ValueVersionInput} from './globalTypes';
+import {AttributeFormat, AttributeType, LibraryBehavior, ValueBatchInput, ValueVersionInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE_BATCH

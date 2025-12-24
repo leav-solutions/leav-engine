@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, CalendarOutlined, MenuOutlined} from '@ant-design/icons';
 import React from 'react';
-import {ViewTypes} from '_gqlTypes/globalTypes';
+import {ViewTypes} from '_gqlTypes';
 
 interface IIconViewTypeProps {
     style?: React.CSSProperties;

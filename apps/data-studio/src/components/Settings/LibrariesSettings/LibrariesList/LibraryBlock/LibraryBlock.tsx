@@ -18,7 +18,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {useAppSelector} from 'reduxStore/store';
-import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
+import {TaskStatus, TaskType} from '_gqlTypes';
 import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 
 const Wrapper = styled.div`

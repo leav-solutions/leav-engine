@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeEventFiltersInput, TreeEventTypes, LibraryBehavior} from './globalTypes';
+import {TreeEventFiltersInput, TreeEventTypes, LibraryBehavior} from './index';
 
 // ====================================================
 // GraphQL subscription operation: TREE_EVENTS
