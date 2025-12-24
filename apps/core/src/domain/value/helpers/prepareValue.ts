@@ -35,6 +35,7 @@ export default async (params: IPrepareValueParams): Promise<ISaveValue[]> => {
               attribute: attributeProps,
               recordId,
               library,
+              actionEvent: ActionsListEvents.SAVE_VALUE,
           })) as ISaveValue[])
         : [value];
 
@@ -54,6 +55,7 @@ export default async (params: IPrepareValueParams): Promise<ISaveValue[]> => {
                                 attribute: metaFieldProps,
                                 recordId,
                                 library,
+                                actionEvent: ActionsListEvents.SAVE_VALUE,
                             },
                         );
                         preparedValue.metadata[metaFieldName] = processedMetaValue[0].payload;

@@ -307,6 +307,7 @@ const valueDomain = function ({
                           attribute: attrProps,
                           recordId: record?.id,
                           library,
+                          actionEvent: listName,
                       })
                     : valuesToProcess;
             return processedValues;
@@ -637,6 +638,7 @@ const valueDomain = function ({
                   attribute: attributeProps,
                   recordId,
                   library,
+                  actionEvent: ActionsListEvents.DELETE_VALUE,
               })
             : [existingValue];
 

@@ -51,7 +51,7 @@ export default function ({
                 library,
                 recordId,
                 attribute: {...attribute, reverse_link: reverseLink},
-                value: {payload: 'This value has been replaced by the fakeplugin'},
+                value: {payload: `This value has been replaced by the fakeplugin on ${ctx.actionEvent}`},
                 ctx,
             });
 

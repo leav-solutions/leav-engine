@@ -14,6 +14,7 @@ import {type i18n} from 'i18next';
 import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
+import {ActionsListEvents} from '../../../_types/actionsList';
 
 export interface IFormatLogValueHelper {
     formatAsString(
@@ -57,7 +58,11 @@ export default function ({
                     raw_payload: rawData.payload,
                 },
             ],
-            ctx,
+            {
+                ...ctx,
+                attribute,
+                actionEvent: ActionsListEvents.GET_VALUE,
+            },
         );
         return valueAfterAction[0].payload as R;
     };

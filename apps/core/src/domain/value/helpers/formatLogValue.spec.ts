@@ -13,9 +13,10 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type Log} from '_types/log';
 import {EventAction} from '@leav/utils';
 import {type IDBPayloadData} from '_types/events';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {type IListWithCursor} from '_types/list';
 import {AttributeCondition, type IRecord, type IRecordIdentity} from '../../../_types/record';
+import {ActionsListEvents} from '../../../_types/actionsList';
 
 const actionListMock: jest.Mocked<Partial<IActionsListDomain>> = {
     runActionsList: jest.fn(),
@@ -192,7 +193,7 @@ describe('formatLogValue', () => {
                     payload: attributeValue,
                 };
 
-                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                const attributeProps: IAttribute = {
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.DATE,
@@ -204,7 +205,8 @@ describe('formatLogValue', () => {
                             },
                         ],
                     },
-                });
+                };
+                attributeDomainMock.getAttributeProperties.mockResolvedValue(attributeProps);
 
                 actionListMock.runActionsList.mockResolvedValue([
                     {
@@ -227,7 +229,11 @@ describe('formatLogValue', () => {
                             raw_payload: attributeValue,
                         },
                     ],
-                    ctx,
+                    {
+                        ...ctx,
+                        attribute: attributeProps,
+                        actionEvent: ActionsListEvents.GET_VALUE,
+                    },
                 );
             });
 
@@ -260,8 +266,7 @@ describe('formatLogValue', () => {
                 const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
                     payload: attributeValue,
                 };
-
-                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                const attributeProps: IAttribute = {
                     id: 'standard_attribute',
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.DATE_RANGE,
@@ -273,7 +278,8 @@ describe('formatLogValue', () => {
                             },
                         ],
                     },
-                });
+                };
+                attributeDomainMock.getAttributeProperties.mockResolvedValue(attributeProps);
 
                 actionListMock.runActionsList.mockResolvedValue([
                     {
@@ -299,7 +305,11 @@ describe('formatLogValue', () => {
                             raw_payload: attributeValue,
                         },
                     ],
-                    ctx,
+                    {
+                        ...ctx,
+                        attribute: attributeProps,
+                        actionEvent: ActionsListEvents.GET_VALUE,
+                    },
                 );
                 expect(mockTranslator.t).toHaveBeenCalledWith(
                     'labels.date_range',

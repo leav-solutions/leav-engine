@@ -7,6 +7,7 @@ import {type IUtils} from 'utils/utils';
 import {type IAttribute} from '_types/attribute';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IValue} from '_types/value';
+import {ActionsListEvents} from '../../../_types/actionsList';
 
 /**
  * Parameters for post-delete value processing.
@@ -41,6 +42,7 @@ const postDeleteValue = async (params: IPostDeleteValueParams): Promise<void> =>
             attribute,
             recordId,
             library: libraryId,
+            actionEvent: ActionsListEvents.POST_DELETE_VALUE,
         });
     }
 };
