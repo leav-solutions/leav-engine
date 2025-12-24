@@ -8,11 +8,10 @@ import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';
 import {addWildcardToFilters} from 'utils';
 import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {type ApiKeysFiltersInput, PermissionsActions} from '_gqlTypes/globalTypes';
+import {type ApiKeysFiltersInput, PermissionsActions, useGetApiKeysQuery} from '_gqlTypes';
 import ApiKeysList from './ApiKeysList';
 import DeleteApiKeyButton from './DeleteApiKeyButton';
 import EditApiKeyModal from './EditApiKeyModal';
-import {useGetApiKeysQuery} from '_gqlTypes';
 
 interface IApiKeyEditingState {
     apiKey: GET_API_KEYS_apiKeys_list;

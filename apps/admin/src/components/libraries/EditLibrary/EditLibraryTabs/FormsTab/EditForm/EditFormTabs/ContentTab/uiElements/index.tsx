@@ -5,7 +5,7 @@ import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeType} from '_gqlTypes';
 import {type ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
 import {type ISettingsFieldSelectProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsSelect';
 import {

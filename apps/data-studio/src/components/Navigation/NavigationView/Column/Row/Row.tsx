@@ -29,7 +29,7 @@ import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled, {type CSSObject} from 'styled-components';
 import {getFilesLibraryId, localizedTranslation} from 'utils';
-import {TreeBehavior} from '_gqlTypes/globalTypes';
+import {TreeBehavior} from '_gqlTypes';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     type IRecordIdentityWhoAmI,

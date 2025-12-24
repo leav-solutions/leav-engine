@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType} from './globalTypes';
+import {ApplicationType} from './index';
 
 // ====================================================
 // GraphQL fragment: ApplicationDetails

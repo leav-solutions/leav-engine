@@ -14,7 +14,7 @@ import {
     PermissionsRelation,
     ValueVersionMode,
     MultiDisplayOption
-} from './globalTypes';
+} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_LIB_BY_ID

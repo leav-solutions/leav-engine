@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '_tests/testUtils';
 import TreesSelector from '.';
-import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
-import {GetTreesDocument} from '_gqlTypes';
+import {TreeBehavior, GetTreesDocument} from '_gqlTypes';
 
 jest.mock('../../../hooks/useLang');
 

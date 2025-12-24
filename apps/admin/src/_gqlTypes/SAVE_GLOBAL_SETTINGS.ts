@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {GlobalSettingsInput} from './globalTypes';
+import {GlobalSettingsInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_GLOBAL_SETTINGS

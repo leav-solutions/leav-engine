@@ -4,12 +4,11 @@
 import React from 'react';
 import {fakeRootId, type ITreeNodeData} from '_types/trees';
 import {getTreeNodeKey} from '../../../../../../utils/utils';
-import {PermissionTypes} from '../../../../../../_gqlTypes/globalTypes';
+import {PermissionTypes, type AttributeDetailsTreeAttributeFragment} from '_gqlTypes';
 import ColumnsDisplay from '../../../../../shared/ColumnsDisplay';
 import {type ITreePermissionsDependentValuesConf} from 'components/attributes/EditAttribute/EditAttributeTabs/DependenciesTab/DependenciesSettings/DependenciesSettings';
 import DefinePermissionsViewLoadTree from 'components/permissions/DefinePermissionsViewLoadTree';
 import EditPermissions from 'components/permissions/EditPermissions';
-import {type AttributeDetailsTreeAttributeFragment} from '_gqlTypes';
 import {useTranslation} from 'react-i18next';
 
 interface IDependenciesTreePermissionsViewProps {

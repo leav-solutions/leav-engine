@@ -12,7 +12,7 @@ import {
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
-import {AttributeType} from '../../../../_gqlTypes/globalTypes';
+import {AttributeType} from '_gqlTypes';
 import {type OnAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';

@@ -4,7 +4,7 @@
 import {useDrag} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {FormElementTypes} from '_gqlTypes';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';

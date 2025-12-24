@@ -6,7 +6,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Header, Icon, Tab, type TabProps} from 'semantic-ui-react';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
+import {PermissionsActions} from '_gqlTypes';
 import GeneralAdminPermissionsTab from './GeneralAdminPermissionsTab';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
 import GeneralCustomizationTab from './GeneralCustomizationTab';

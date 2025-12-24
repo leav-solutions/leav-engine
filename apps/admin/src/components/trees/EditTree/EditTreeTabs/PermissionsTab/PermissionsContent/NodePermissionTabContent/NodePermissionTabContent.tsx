@@ -14,7 +14,7 @@ import {
     type GET_TREE_BY_ID_trees_list_libraries,
     type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute,
 } from '../../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {PermissionTypes, type Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
+import {PermissionTypes, type TreepermissionsConfInput} from '_gqlTypes';
 import DefinePermByUserGroupView from '../../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../../permissions/DefineTreePermissionsView';
 
@@ -27,7 +27,7 @@ const PermissionsSettingsBtn = styled(PermissionsSettings)`
 interface INodePermissionTabContentProps {
     tree: GET_TREE_BY_ID_trees_list;
     treeLibraries: GET_TREE_BY_ID_trees_list_libraries;
-    onSubmitSettings: (library: string, conf: Treepermissions_confInput) => void;
+    onSubmitSettings: (library: string, conf: TreepermissionsConfInput) => void;
     readonly: boolean;
 }
 
@@ -39,7 +39,7 @@ function NodePermissionTabContent({
 }: INodePermissionTabContentProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
-    const _handleChangeSettings = (conf: Treepermissions_confInput) => onSubmitSettings(treeLibraries.library.id, conf);
+    const _handleChangeSettings = (conf: TreepermissionsConfInput) => onSubmitSettings(treeLibraries.library.id, conf);
 
     const treePermsConf =
         tree.permissions_conf?.filter(p => p.libraryId === treeLibraries.library.id)?.[0]?.permissionsConf ?? null;

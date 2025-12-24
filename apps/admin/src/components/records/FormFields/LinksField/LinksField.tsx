@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';
 import {isLinkAttribute, isLinkValue, isTreeAttribute, isTreeValue, localizedLabel} from '../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType} from '../../../../_gqlTypes/globalTypes';
+import {AttributeType} from '_gqlTypes';
 import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import {type FormLinksAllowedValues, type ILinkValue, type ITreeLinkValue} from '../../../../_types/records';
 import SelectTreeNodeModal from '../../../trees/SelectTreeNodeModal';

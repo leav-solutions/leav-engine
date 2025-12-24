@@ -9,9 +9,8 @@ import {useTranslation} from 'react-i18next';
 import {Icon} from 'semantic-ui-react';
 import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeType, useGetAttributesLazyQuery} from '_gqlTypes';
 import PermissionsAttributeSelectorList from './PermissionsAttributeSelectorList';
-import {useGetAttributesLazyQuery} from '_gqlTypes';
 
 interface IPermissionsAttributeSelectorProps {
     library?: GET_LIB_BY_ID_libraries_list;

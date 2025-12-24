@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FormInput, FormElementTypes} from './globalTypes';
+import {FormInput, FormElementTypes} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_FORM

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act} from 'react-dom/test-utils';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes';
 import {render} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
 import {type IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';

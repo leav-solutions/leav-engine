@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {type GET_LIB_BY_ID_libraries_list_permissions_conf} from '_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, PermissionsRelation} from '_gqlTypes/globalTypes';
+import {AttributeType, PermissionsRelation, GetAttributesDocument} from '_gqlTypes';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockAttrTree} from '__mocks__/attributes';
 import PermissionsSettings from './PermissionsSettings';
-import {GetAttributesDocument} from '_gqlTypes';
 
 export {};
 

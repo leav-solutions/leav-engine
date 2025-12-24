@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import DefinePermByUserGroupView from 'components/permissions/DefinePermByUserGroupView';
 import React from 'react';
-import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
+import {PermissionsActions, PermissionTypes} from '_gqlTypes';
 import {type IGroupedPermissionsActions} from '_types/permissions';
 
 function GeneralAdminPermissionsTab(): JSX.Element {

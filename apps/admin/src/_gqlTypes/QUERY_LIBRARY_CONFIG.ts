@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat} from './globalTypes';
+import {AvailableLanguage, AttributeType, AttributeFormat} from './index';
 
 // ====================================================
 // GraphQL query operation: QUERY_LIBRARY_CONFIG

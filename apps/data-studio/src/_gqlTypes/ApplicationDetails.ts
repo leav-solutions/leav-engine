@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType, LibraryBehavior} from './globalTypes';
+import {ApplicationType, LibraryBehavior} from './index';
 
 // ====================================================
 // GraphQL fragment: ApplicationDetails

@@ -9,7 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {Form, type FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
-import {ApplicationType} from '_gqlTypes/globalTypes';
+import {ApplicationType} from '_gqlTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';

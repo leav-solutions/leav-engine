@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {type TreeLibraryInput} from '../../../../../../../_gqlTypes/globalTypes';
+import {type TreeLibraryInput} from '_gqlTypes';
 import TreeLibraries from './TreeLibraries';
 
 describe('TreeLibraries', () => {

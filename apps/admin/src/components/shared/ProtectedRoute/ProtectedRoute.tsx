@@ -4,7 +4,7 @@
 import {type ReactNode} from 'react';
 import {Route, type RouteComponentProps, type RouteProps} from 'react-router-dom-v5';
 import useUserData from '../../../hooks/useUserData';
-import {type PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {type PermissionsActions} from '_gqlTypes';
 import ForbiddenRoute from '../ForbiddenRoute';
 
 interface IProtectedRouteProps extends RouteProps {

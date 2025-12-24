@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {DeleteTaskInput} from './globalTypes';
+import {DeleteTaskInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: DELETE_TASKS

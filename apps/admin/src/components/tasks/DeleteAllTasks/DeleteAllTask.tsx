@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import useUserData from '../../../hooks/useUserData';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions} from '_gqlTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import {Button} from 'semantic-ui-react';
 

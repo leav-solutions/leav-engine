@@ -1,16 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery, useSubscription} from '@apollo/client';
+import {useSubscription} from '@apollo/client';
 import {ErrorDisplay, Loading} from '@leav/ui';
 import {Tabs, type TabsProps} from 'antd';
-import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
 import {getApplicationsEventsSubscription} from 'graphQL/subscribes/applications/getApplicationsEventsSubscription';
 import {useTranslation} from 'react-i18next';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {type APPLICATION_EVENTS, type APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
-import {type IS_ALLOWED, type IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
+import {PermissionsActions, useIsAllowedQuery} from '_gqlTypes';
 import {PermissionTypes} from '../../../../../libs/ui/src/_gqlTypes';
 import ApplicationSettings from './ApplicationSettings';
 import LibrariesSettings from './LibrariesSettings';
@@ -27,7 +25,7 @@ function Settings(): JSX.Element {
         loading: permissionsLoading,
         error: permissionsError,
         data: permissionsData,
-    } = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
+    } = useIsAllowedQuery({
         variables: {
             type: PermissionTypes.admin,
             actions: [PermissionsActions.admin_access_libraries, PermissionsActions.admin_access_trees],

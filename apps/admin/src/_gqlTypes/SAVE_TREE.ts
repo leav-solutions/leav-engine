@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeInput, TreeBehavior, AttributeType, PermissionsRelation} from './globalTypes';
+import {TreeInput, TreeBehavior, AttributeType, PermissionsRelation} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_TREE

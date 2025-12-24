@@ -5,7 +5,7 @@ import {
     type GET_FORM_forms_list,
     type GET_FORM_forms_list_elements_elements,
 } from '../../../../../../../../../../_gqlTypes/GET_FORM';
-import {FormElementTypes} from '../../../../../../../../../../_gqlTypes/globalTypes';
+import {FormElementTypes} from '_gqlTypes';
 import {FieldTypes, type IFormElement, UIElementTypes} from '../../_types';
 import {formElements, layoutElements} from '../../uiElements/__mocks__';
 import {type IFormBuilderState, defaultContainerId, defaultDepAttribute, defaultDepValue} from '../formBuilderReducer';

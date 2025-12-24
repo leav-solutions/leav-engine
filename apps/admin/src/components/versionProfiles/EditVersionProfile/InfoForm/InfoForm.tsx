@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import {formatIDString, getFieldError} from 'utils';
 import * as yup from 'yup';
 import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {type VersionProfileInput} from '_gqlTypes/globalTypes';
+import {type VersionProfileInput} from '_gqlTypes';
 import {type IFormError} from '_types/errors';
 import LinkedAttributes from './LinkedAttributes';
 

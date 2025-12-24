@@ -6,7 +6,7 @@ import {type IEditApplicationContextData} from 'context/EditApplicationContext/E
 import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {type GET_APPLICATION_MODULES_applicationsModules} from '_gqlTypes/GET_APPLICATION_MODULES';
-import {ApplicationType} from '_gqlTypes/globalTypes';
+import {ApplicationType} from '_gqlTypes';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {
     id: 'myapp',

@@ -15,7 +15,7 @@ import {
     PermissionsRelation,
     ValueVersionMode,
     MultiDisplayOption
-} from './globalTypes';
+} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_LIBRARY

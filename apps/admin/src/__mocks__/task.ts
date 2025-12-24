@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {TaskStatus} from '_gqlTypes/globalTypes';
+import {TaskStatus} from '_gqlTypes';
 import {mockModifier} from './user';
 
 export const mockTask: GET_TASKS_tasks_list = {

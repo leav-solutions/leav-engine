@@ -12,7 +12,7 @@ import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_permissions_conf,
 } from '_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, PermissionsRelation, type Treepermissions_confInput} from '_gqlTypes/globalTypes';
+import {AttributeType, PermissionsRelation, type TreepermissionsConfInput} from '_gqlTypes';
 import SimplisticButton from '../SimplisticButton';
 import PermissionsAttributeSelector from './PermissionsAttributeSelector';
 
@@ -40,7 +40,7 @@ const defaultRelation = PermissionsRelation.and;
 interface IPermissionsSettingsProps extends React.HTMLAttributes<HTMLDivElement> {
     library?: GET_LIB_BY_ID_libraries_list;
     permissionsSettings: GET_LIB_BY_ID_libraries_list_permissions_conf;
-    onChangeSettings: (settings: Treepermissions_confInput) => void;
+    onChangeSettings: (settings: TreepermissionsConfInput) => void;
     readonly: boolean;
 }
 

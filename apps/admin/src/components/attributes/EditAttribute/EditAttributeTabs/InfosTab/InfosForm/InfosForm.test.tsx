@@ -5,10 +5,9 @@ import userEvent from '@testing-library/user-event';
 import {act} from 'react-dom/test-utils';
 import {fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
-import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeType, GetLibrariesWithAttributesDocument, SaveLibraryAttributesDocument} from '_gqlTypes';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 import InfosForm from './InfosForm';
-import {GetLibrariesWithAttributesDocument, SaveLibraryAttributesDocument} from '_gqlTypes';
 
 jest.mock('../../../../../../utils', () => ({
     formatIDString: jest.fn().mockImplementation(s => s),

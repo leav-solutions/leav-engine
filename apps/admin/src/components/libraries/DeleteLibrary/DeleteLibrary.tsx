@@ -6,10 +6,9 @@ import {useTranslation} from 'react-i18next';
 import useUserData from '../../../hooks/useUserData';
 import {deleteFromCache} from '../../../utils/utils';
 import {type GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, useDeleteLibraryMutation} from '_gqlTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
-import {useDeleteLibraryMutation} from '_gqlTypes';
 
 interface IDeleteLibraryProps {
     library: GET_LIBRARIES_libraries_list;

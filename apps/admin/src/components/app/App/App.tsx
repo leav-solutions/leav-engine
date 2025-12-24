@@ -15,7 +15,6 @@ import * as yup from 'yup';
 import {ErrorDisplayTypes} from '_types/errors';
 import {APP_ENDPOINT} from '../../../constants';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
-import {AvailableLanguage, PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import LangContext from '../../shared/LangContext';
 import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
@@ -25,6 +24,9 @@ import MessagesDisplay from '../MessagesDisplay';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import {
+    AvailableLanguage,
+    PermissionsActions,
+    PermissionTypes,
     useGetApplicationByEndpointQuery,
     useGetGlobalSettingsQuery,
     useGetLangsQuery,

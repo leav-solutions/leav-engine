@@ -7,11 +7,13 @@ import {
     type PermissionsActions,
     type PermissionsTreeTargetInput,
     type PermissionTypes,
-} from '../../../_gqlTypes/globalTypes';
+    useGetPermissionsActionsQuery,
+    useGetPermissionsQuery,
+    useSavePermissionMutation,
+} from '_gqlTypes';
 import {type SAVE_PERMISSION_savePermission_actions} from '../../../_gqlTypes/SAVE_PERMISSION';
 import Loading from '../../shared/Loading';
 import EditPermissionsView from './EditPermissionsView';
-import {useGetPermissionsActionsQuery, useGetPermissionsQuery, useSavePermissionMutation} from '_gqlTypes';
 import {type GET_PERMISSIONS_perm, type GET_PERMISSIONS_inheritPerm} from '_gqlTypes/GET_PERMISSIONS';
 import {type GET_PERMISSIONS_ACTIONS_permissionsActionsByType} from '_gqlTypes/GET_PERMISSIONS_ACTIONS';
 

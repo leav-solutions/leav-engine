@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockLibrary} from '__mocks__/libraries';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
+import {PermissionsActions, GetLibByIdDocument} from '_gqlTypes';
 import {render, screen} from '_tests/testUtils';
 import EditLibrary from './EditLibrary';
-import {GetLibByIdDocument} from '_gqlTypes';
 
 jest.mock(
     './EditLibraryTabs',

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage} from './globalTypes';
+import {AvailableLanguage} from './index';
 
 // ====================================================
 // GraphQL query operation: ROOT_SELECTOR_QUERY

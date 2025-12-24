@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes';
 import {mockActiveTree} from '__mocks__/common/activeTree';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTreeRecord} from '__mocks__/common/treeElements';

@@ -3,9 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import uniqBy from 'lodash/uniqBy';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {type TreeNodePermissionsConfInput, type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
+import {type TreeNodePermissionsConfInput, type TreepermissionsConfInput, useSaveTreeMutation} from '_gqlTypes';
 import PermissionsContent from './PermissionsContent';
-import {useSaveTreeMutation} from '_gqlTypes';
 
 interface IPermissionsTabProps {
     tree: GET_TREE_BY_ID_trees_list;
@@ -21,7 +20,7 @@ function PermissionsTab({tree, readonly}: IPermissionsTabProps): JSX.Element {
      * We're receiving conf for one library and we have to save the whole tree permissions conf (all libraries included)
      * Thus, we have to merge given conf with existing tree conf
      **/
-    const _handleSubmitSettings = (libraryId: string, permissionsConf: Treepermissions_confInput) => {
+    const _handleSubmitSettings = (libraryId: string, permissionsConf: TreepermissionsConfInput) => {
         // Putting new conf at the beginning of this array is mandatory to be able to update existing conf
         const allPermsConf: TreeNodePermissionsConfInput[] = [
             {

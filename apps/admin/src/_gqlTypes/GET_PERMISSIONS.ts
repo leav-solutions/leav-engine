@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {PermissionTypes, PermissionsActions, PermissionsTreeTargetInput} from './globalTypes';
+import {PermissionTypes, PermissionsActions, PermissionsTreeTargetInput} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_PERMISSIONS

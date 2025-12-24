@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {VersionProfileInput} from './globalTypes';
+import {VersionProfileInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VERSION_PROFILE

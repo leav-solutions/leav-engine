@@ -4,10 +4,9 @@
 import {MockedProvider} from '@apollo/client/testing';
 import {mount, type ReactWrapper} from 'enzyme';
 import {act} from 'react-dom/test-utils';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, GetLibrariesDocument} from '_gqlTypes';
 import {wait} from '../../utils/testUtils';
 import RootSelector from './RootSelector';
-import {GetLibrariesDocument} from '_gqlTypes';
 
 const lang = ['fr', 'en'];
 const dataMock = [

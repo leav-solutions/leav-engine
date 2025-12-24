@@ -4,7 +4,7 @@
 import {type TFunction} from 'i18next';
 import React from 'react';
 import {Form, type InputOnChangeData} from 'semantic-ui-react';
-import {AvailableLanguage} from '../../../../../../../_gqlTypes/globalTypes';
+import {AvailableLanguage} from '_gqlTypes';
 import {type ILabel} from '../../../../../../../_types/embeddedFields';
 import {type IFormValues} from '../EmbeddedFieldsForm';
 

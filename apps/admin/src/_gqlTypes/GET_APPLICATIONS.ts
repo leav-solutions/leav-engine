@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationsFiltersInput, SortApplications, ApplicationType} from './globalTypes';
+import {ApplicationsFiltersInput, SortApplications, ApplicationType} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS

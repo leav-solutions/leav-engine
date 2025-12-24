@@ -18,12 +18,7 @@ import {
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
-import {
-    AttributeFormat,
-    AttributeType,
-    ValueVersionMode,
-    MultiDisplayOption,
-} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, ValueVersionMode, MultiDisplayOption} from '_gqlTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';

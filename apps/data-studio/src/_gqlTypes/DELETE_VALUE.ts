@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueInput, LibraryBehavior, AttributeFormat, AttributeType} from './globalTypes';
+import {ValueInput, LibraryBehavior, AttributeFormat, AttributeType} from './index';
 
 // ====================================================
 // GraphQL mutation operation: DELETE_VALUE

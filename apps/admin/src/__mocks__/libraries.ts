@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type WithTypename} from '@leav/utils';
 import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {LibraryBehavior} from '../_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes';
 import {mockAttrSimple, mockAttrSimpleLink} from './attributes';
 import {mockRecord} from './common/records';
 

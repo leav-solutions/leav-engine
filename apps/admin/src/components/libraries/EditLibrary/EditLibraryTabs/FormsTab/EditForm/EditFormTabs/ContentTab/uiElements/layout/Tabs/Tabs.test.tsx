@@ -4,7 +4,7 @@
 import {shallow} from 'enzyme';
 import React from 'react';
 import {layoutElements} from '../..';
-import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {FormElementTypes} from '_gqlTypes';
 import {defaultContainerId} from '../../../formBuilderReducer/formBuilderReducer';
 import {UIElementTypes} from '../../../_types';
 import Tabs, {type ITabSettings} from './Tabs';

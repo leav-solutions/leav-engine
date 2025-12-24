@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes';
 import {mockLibraryPermissions} from './library';
 
 export const mockActiveLibrary: IActiveLibrary = {

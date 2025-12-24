@@ -12,7 +12,7 @@ import {addInfo} from 'reduxStore/infos';
 import {resetSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
-import {type TreeElementInput} from '_gqlTypes/globalTypes';
+import {type TreeElementInput} from '_gqlTypes';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {type IInfo, InfoChannel, InfoType, type ISharedSelected} from '_types/types';
 import {type IMessages, type OnMessagesFunc} from '../../_types';

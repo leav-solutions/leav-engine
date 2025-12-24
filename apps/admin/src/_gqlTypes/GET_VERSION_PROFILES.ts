@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {VersionProfilesFiltersInput, SortVersionProfilesInput} from './globalTypes';
+import {VersionProfilesFiltersInput, SortVersionProfilesInput} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_VERSION_PROFILES

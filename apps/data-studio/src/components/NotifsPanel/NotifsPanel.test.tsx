@@ -6,7 +6,7 @@ import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
 import {deleteTasksMutation} from 'graphQL/mutations/tasks/deleteTasks';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
+import {TaskStatus} from '_gqlTypes';
 import {act, render, screen} from '_tests/testUtils';
 import NotifsPanel from './NotifsPanel';
 

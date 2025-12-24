@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeBehavior, PermissionsRelation, AttributeType} from './globalTypes';
+import {TreeBehavior, PermissionsRelation, AttributeType} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_TREE_BY_ID

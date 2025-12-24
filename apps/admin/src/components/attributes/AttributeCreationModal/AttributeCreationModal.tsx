@@ -4,7 +4,7 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Modal} from 'semantic-ui-react';
-import {type AttributeType} from '../../../_gqlTypes/globalTypes';
+import {type AttributeType} from '_gqlTypes';
 import EditAttribute from '../EditAttribute';
 import {type OnAttributePostSaveFunc} from '../EditAttribute/EditAttribute';
 

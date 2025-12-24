@@ -6,11 +6,16 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ActionIOTypes} from './globalTypes';
-
 // ====================================================
 // GraphQL query operation: GET_AVAILABLE_ACTIONS
 // ====================================================
+
+export enum ActionIOTypes {
+    boolean = 'boolean',
+    number = 'number',
+    object = 'object',
+    string = 'string'
+}
 
 export interface GET_AVAILABLE_ACTIONS_availableActions_params {
     name: string;

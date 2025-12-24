@@ -11,9 +11,8 @@ import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters, isLibraryInApp} from '../../../utils/utils';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, useGetLibrariesQuery} from '_gqlTypes';
 import LibrariesList from '../LibrariesList';
-import {useGetLibrariesQuery} from '_gqlTypes';
 import {type GET_LIBRARIES_libraries_list} from '_gqlTypes/GET_LIBRARIES';
 
 const Title = styled(Header)`

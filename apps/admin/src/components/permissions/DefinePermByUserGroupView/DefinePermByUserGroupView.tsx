@@ -5,7 +5,7 @@ import React, {useState} from 'react';
 import {type IGroupedPermissionsActions} from '_types/permissions';
 import {fakeRootId, type ITreeNodeData} from '_types/trees';
 import {getTreeNodeKey} from '../../../utils/utils';
-import {type PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {type PermissionTypes} from '_gqlTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';

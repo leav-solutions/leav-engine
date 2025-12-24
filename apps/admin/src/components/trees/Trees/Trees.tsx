@@ -14,9 +14,8 @@ import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
 import {type GET_TREESVariables, type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, useGetTreesQuery} from '_gqlTypes';
 import TreesList from '../TreesList';
-import {useGetTreesQuery} from '_gqlTypes';
 
 const Title = styled(Header)`
     display: flex;

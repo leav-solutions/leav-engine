@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeInput, AttributeFormat} from './globalTypes';
+import {AttributeInput, AttributeFormat} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE_EMBEDDED_FIELDS

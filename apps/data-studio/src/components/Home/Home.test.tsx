@@ -6,7 +6,7 @@ import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQ
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {MemoryRouter} from 'react-router-dom';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary} from '__mocks__/common/library';

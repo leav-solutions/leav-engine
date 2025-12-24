@@ -3,9 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
-import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {
+    PermissionsActions,
+    PermissionTypes,
+    GetPermissionsActionsDocument,
+    GetPermissionsDocument,
+    SavePermissionDocument,
+} from '_gqlTypes';
 import EditPermissions from './EditPermissions';
-import {GetPermissionsActionsDocument, GetPermissionsDocument, SavePermissionDocument} from '_gqlTypes';
 
 jest.mock('../../../hooks/useLang');
 describe('EditPermissions', () => {

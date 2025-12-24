@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior, Pagination} from './globalTypes';
+import {LibraryBehavior, Pagination} from './index';
 
 // ====================================================
 // GraphQL query operation: TREE_NODE_CHILDREN

@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import * as useLang from 'hooks/useLang';
 import {BrowserRouter} from 'react-router-dom-v5';
-import {AvailableLanguage} from '_gqlTypes/globalTypes';
+import {AvailableLanguage} from '_gqlTypes';
 import {act, render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';
 

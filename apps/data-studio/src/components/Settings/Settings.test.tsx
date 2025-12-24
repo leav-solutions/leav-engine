@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
+import {PermissionsActions, PermissionTypes} from '_gqlTypes';
 import {render, screen} from '_tests/testUtils';
 import Settings from './Settings';
 

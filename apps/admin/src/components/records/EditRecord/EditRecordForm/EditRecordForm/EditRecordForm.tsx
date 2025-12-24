@@ -12,7 +12,6 @@ import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {type ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {type SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
@@ -26,7 +25,7 @@ import {
 import Loading from '../../../../shared/Loading';
 import LinksField from '../../../FormFields/LinksField';
 import StandardValuesWrapper from './StandardValuesWrapper';
-import {useDeleteValueMutation, useSaveValueMutation} from '_gqlTypes';
+import {useDeleteValueMutation, useSaveValueMutation, type ValueInput} from '_gqlTypes';
 
 interface IEditRecordFormProps {
     attributes: GET_LIB_BY_ID_libraries_list_attributes[];
@@ -145,12 +144,12 @@ const EditRecordForm = ({
                     (isLinkValue(value) && value.linkValue === null) ||
                     (isTreeValue(value) && value.treeValue === null)
                 ) {
-                    return _deleteValue(attribute)({id_value: value.id_value, value: null});
+                    return _deleteValue(attribute)({id_value: value.id_value, payload: null});
                 }
 
                 const savedValue = {
                     id_value: value.id_value,
-                    value: isTreeValue(value) ? value.treeValue?.id : (value as ILinkValue)!.linkValue?.id,
+                    payload: isTreeValue(value) ? value.treeValue?.id : (value as ILinkValue)!.linkValue?.id,
                 };
 
                 return _submitValue(attribute)(savedValue);

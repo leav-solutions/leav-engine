@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useHistory, useLocation} from 'react-router-dom-v5';
 import {clearCacheForQuery} from '../../../../../../../../utils';
-import {type FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
+import {type FormInput, useSaveFormMutation} from '_gqlTypes';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
-import {useSaveFormMutation} from '_gqlTypes';
 import {type GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 
 function InfosTab(): JSX.Element {
