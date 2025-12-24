@@ -16,7 +16,7 @@ import {AttributeCondition} from '../../../../_types/record';
 import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {type IPubSubNotificationData} from '_types/eventsManager';
 import {TaskStatus} from '../../../../_types/tasksManager';
-import {waitForTaskCompletion} from '../taskUtils';
+import {waitForTaskCompletedWithStatus} from '../taskUtils';
 
 describe('saveValueBulk', () => {
     let graphqlClient: GraphqlWsClient;
@@ -212,9 +212,8 @@ describe('saveValueBulk', () => {
                 .saveValueBulk;
 
             const {notification} = await waitSaveValueBulkWSNotification();
-            const task = await waitForTaskCompletion(saveValueBulkTaskId);
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
-            expect(task.status).toBe(TaskStatus.DONE);
             expect(notification.title).toContain('Bulk');
             expect(notification.level).toContain('success');
             expect(notification.message).toContain('1/1');
@@ -238,9 +237,7 @@ describe('saveValueBulk', () => {
                 .saveValueBulk;
 
             const {notification} = await waitSaveValueBulkWSNotification();
-            const task = await waitForTaskCompletion(saveValueBulkTaskId);
-
-            expect(task.status).toBe(TaskStatus.DONE);
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
             expect(notification.title).toContain('Bulk');
             expect(notification.level).toContain('success');
@@ -264,9 +261,8 @@ describe('saveValueBulk', () => {
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
                 .saveValueBulk;
             const {notification} = await waitSaveValueBulkWSNotification();
-            const task = await waitForTaskCompletion(saveValueBulkTaskId);
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.FAILED);
 
-            expect(task.status).toBe(TaskStatus.FAILED);
             expect(notification.title).toContain('Bulk');
             expect(notification.level).toContain('error');
             expect(notification.message).toContain('failed');
@@ -291,9 +287,7 @@ describe('saveValueBulk', () => {
             }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
-            const task = await waitForTaskCompletion(saveValueBulkTaskId);
-
-            expect(task.status).toBe(TaskStatus.DONE);
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
             const record = await makeGraphQlCall(`query {
                 records(
@@ -337,9 +331,7 @@ describe('saveValueBulk', () => {
         }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
-            const task = await waitForTaskCompletion(saveValueBulkTaskId);
-
-            expect(task.status).toBe(TaskStatus.DONE);
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
             const record = await makeGraphQlCall(`query {
                 records(
@@ -377,9 +369,7 @@ describe('saveValueBulk', () => {
         }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
-            const task = await waitForTaskCompletion(saveValueBulkTaskId);
-
-            expect(task.status).toBe(TaskStatus.DONE);
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
             const record = await makeGraphQlCall(`query {
                 records(
