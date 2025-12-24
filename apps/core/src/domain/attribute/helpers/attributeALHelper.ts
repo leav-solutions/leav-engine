@@ -5,36 +5,45 @@ import {type IUtils} from 'utils/utils';
 import {ActionsListEvents, ActionsListIOTypes, type ActionsListConfig} from '../../../_types/actionsList';
 import {AttributeFormats, type IAttribute, type IOAllowedTypes} from '../../../_types/attribute';
 
-export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
-    let inputTypes;
+const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
+    let inputTypes: IOAllowedTypes;
+
     switch (attribute.format) {
         case AttributeFormats.NUMERIC:
         case AttributeFormats.DATE:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             };
             break;
         case AttributeFormats.BOOLEAN:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
             };
             break;
         case AttributeFormats.DATE_RANGE:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.OBJECT],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             };
             break;
         default:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             };
             break;
     }
@@ -42,36 +51,48 @@ export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
     return inputTypes;
 };
 
+export default getAllowedInputTypes;
+
 export const getAllowedOutputTypes = (attribute: IAttribute): IOAllowedTypes => {
     let outputTypes;
+
     switch (attribute.format) {
         case AttributeFormats.NUMERIC:
         case AttributeFormats.DATE:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             };
             break;
         case AttributeFormats.BOOLEAN:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
             };
             break;
         case AttributeFormats.EXTENDED:
         case AttributeFormats.DATE_RANGE:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.OBJECT],
             };
             break;
         default:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             };
             break;
     }
+
     outputTypes[ActionsListEvents.GET_VALUE] = Object.values(ActionsListIOTypes);
 
     return outputTypes;
@@ -90,8 +111,10 @@ export const getActionsListToSave = (
             // the is_system flag to true on system actions
             const existingAL = existingAttrData.actions_list || {
                 [ActionsListEvents.SAVE_VALUE]: [],
+                [ActionsListEvents.POST_SAVE_VALUE]: [],
                 [ActionsListEvents.GET_VALUE]: [],
                 [ActionsListEvents.DELETE_VALUE]: [],
+                [ActionsListEvents.POST_DELETE_VALUE]: [],
             };
 
             alToSave = Object.values(ActionsListEvents).reduce((allALs, evName) => {

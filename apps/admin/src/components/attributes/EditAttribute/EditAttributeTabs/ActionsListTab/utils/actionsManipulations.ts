@@ -10,15 +10,23 @@ import {getColorsRangeFrom} from './getColorRange';
 
 export enum ActionListNames {
     SAVE_VALUE = 'saveValue',
+    POST_SAVE_VALUE = 'postSaveValue',
     GET_VALUE = 'getValue',
     DELETE_VALUE = 'deleteValue',
+    POST_DELETE_VALUE = 'postDeleteValue',
 }
 
 export const getCurrentList = (
     sourceConfigs: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list,
     availableActions: IReserveAction[] | null,
 ) => {
-    const currentList: any = {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}};
+    const currentList: any = {
+        saveValue: {higherId: 0},
+        postSaveValue: {higherId: 0},
+        getValue: {higherId: 0},
+        deleteValue: {higherId: 0},
+        postDeleteValue: {higherId: 0},
+    };
 
     if (sourceConfigs && Object.keys(sourceConfigs).length > 0) {
         Object.values(ActionListNames).forEach(actionListName => {
@@ -70,7 +78,7 @@ export const getActionFromConfig = (configAct: IActionConfig, availableActions: 
 };
 
 export const getCurrentListOrder = (currentConfig: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list) => {
-    const currentListOrder = {saveValue: [], getValue: [], deleteValue: []};
+    const currentListOrder = {saveValue: [], postSaveValue: [], getValue: [], deleteValue: [], postDeleteValue: []};
     Object.values(ActionListNames).forEach(actionListName => {
         const returnArr: number[] = [];
         if (currentConfig[actionListName] && currentConfig[actionListName].length) {

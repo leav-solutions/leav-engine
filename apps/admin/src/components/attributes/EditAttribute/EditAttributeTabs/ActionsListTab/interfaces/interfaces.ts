@@ -53,8 +53,10 @@ export interface IParamInput {
 
 export interface ICurrActionListOrder {
     saveValue: number[];
+    postSaveValue: number[];
     getValue: number[];
     deleteValue: number[];
+    postDeleteValue: number[];
 }
 
 export interface IDragObject {
@@ -79,6 +81,8 @@ export interface ICurrentActionList {
 
 export interface IAllActionLists {
     saveValue: ICurrentActionList;
+    postSaveValue: ICurrentActionList;
     getValue: ICurrentActionList;
     deleteValue: ICurrentActionList;
+    postDeleteValue: ICurrentActionList;
 }

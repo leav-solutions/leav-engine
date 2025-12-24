@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneDeep} from 'lodash';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {type GET_ACTIONS_LIST_QUERY_attributes_list_actions_list} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';
@@ -46,19 +46,23 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     const [currentActionListName, setCurrentActionListName] = useState('saveValue');
 
     const [attributeTypes, setAttributeTypes] = useState<IAttributeTypes>({
-        inTypes: {saveValue: [], getValue: [], deleteValue: []},
-        outTypes: {saveValue: [], getValue: [], deleteValue: []},
+        inTypes: {saveValue: [], postSaveValue: [], getValue: [], deleteValue: [], postDeleteValue: []},
+        outTypes: {saveValue: [], postSaveValue: [], getValue: [], deleteValue: [], postDeleteValue: []},
     });
 
     const [currentActionList, setCurrentList] = useState<IAllActionLists>({
         saveValue: {higherId: 0},
+        postSaveValue: {higherId: 0},
         getValue: {higherId: 0},
         deleteValue: {higherId: 0},
+        postDeleteValue: {higherId: 0},
     });
     const [currentActionListOrder, setcurrentActionListOrder] = useState<ICurrActionListOrder>({
         saveValue: [],
+        postSaveValue: [],
         getValue: [],
         deleteValue: [],
+        postDeleteValue: [],
     });
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [colorTypeDictionnary, setColorTypeDictionnary] = useState<IColorDic>({});
@@ -76,8 +80,10 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
                 ? data.attributes.list[0].actions_list
                 : {
                       [ActionListNames.SAVE_VALUE]: [],
+                      [ActionListNames.POST_SAVE_VALUE]: [],
                       [ActionListNames.GET_VALUE]: [],
                       [ActionListNames.DELETE_VALUE]: [],
+                      [ActionListNames.POST_DELETE_VALUE]: [],
                   };
         const attr = data && data.attributes && data.attributes.list[0];
 
@@ -212,7 +218,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     };
 
     const onSave = () => {
-        const exportableConfig = {saveValue: [], getValue: [], deleteValue: []};
+        const exportableConfig = {saveValue: [], postSaveValue: [], getValue: [], deleteValue: [], postDeleteValue: []};
 
         const actionListsNames = Object.keys(currentActionList);
 
@@ -225,7 +231,13 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
             exportableConfig[actionListName] = actions;
         });
 
-        if (exportableConfig.saveValue || exportableConfig.getValue || exportableConfig.deleteValue) {
+        if (
+            exportableConfig.saveValue ||
+            exportableConfig.postSaveValue ||
+            exportableConfig.getValue ||
+            exportableConfig.deleteValue ||
+            exportableConfig.postDeleteValue
+        ) {
             saveAttributeActionsList({
                 variables: {
                     att: {
@@ -233,8 +245,10 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
                         type: attribute.type,
                         actions_list: {
                             saveValue: exportableConfig.saveValue ? exportableConfig.saveValue : null,
+                            postSaveValue: exportableConfig.postSaveValue ? exportableConfig.postSaveValue : null,
                             getValue: exportableConfig.getValue ? exportableConfig.getValue : null,
                             deleteValue: exportableConfig.deleteValue ? exportableConfig.deleteValue : null,
+                            postDeleteValue: exportableConfig.postDeleteValue ? exportableConfig.postDeleteValue : null,
                         },
                     },
                 },

@@ -54,14 +54,18 @@ export default function ({'core.domain.actionsList': actionsListDomain, translat
 
                     type ActionsListConfiguration {
                         ${ActionsListEvents.SAVE_VALUE}: [ActionConfiguration!]
+                        ${ActionsListEvents.POST_SAVE_VALUE}: [ActionConfiguration!]
                         ${ActionsListEvents.GET_VALUE}: [ActionConfiguration!]
                         ${ActionsListEvents.DELETE_VALUE}: [ActionConfiguration!]
+                        ${ActionsListEvents.POST_DELETE_VALUE}: [ActionConfiguration!]
                     }
 
                     input ActionsListConfigurationInput {
                         ${ActionsListEvents.SAVE_VALUE}: [ActionConfigurationInput!]
+                        ${ActionsListEvents.POST_SAVE_VALUE}: [ActionConfigurationInput!]
                         ${ActionsListEvents.GET_VALUE}: [ActionConfigurationInput!]
                         ${ActionsListEvents.DELETE_VALUE}: [ActionConfigurationInput!]
+                        ${ActionsListEvents.POST_DELETE_VALUE}: [ActionConfigurationInput!]
                     }
 
                     input ActionConfigurationInput {
@@ -89,28 +93,26 @@ export default function ({'core.domain.actionsList': actionsListDomain, translat
                         async availableActions(parent, args, ctx) {
                             const availableActions = actionsListDomain.getAvailableActions();
 
-                            const translatedActionList = availableActions.map(action => {
+                            return availableActions.map(action => {
                                 action.description = translator.t(('actions.descriptions.' + action.id) as string, {
                                     lng: ctx.lang,
                                     interpolation: {escapeValue: false},
                                 });
+
                                 action.name = translator.t(('actions.names.' + action.id) as string, {
                                     lng: ctx.lang,
                                     interpolation: {escapeValue: false},
                                 });
+
                                 return action;
                             });
-
-                            return translatedActionList;
                         },
                     },
                     Mutation: {},
                 },
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
         extensionPoints: {
             registerActions: (actions: IActionsListFunction[]) => {
