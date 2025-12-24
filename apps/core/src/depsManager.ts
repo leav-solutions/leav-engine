@@ -7,6 +7,7 @@ import {
     type AwilixContainer,
     createContainer,
     InjectionMode,
+    // eslint-disable-next-line import/named
     listModules,
     type ModuleDescriptor,
 } from 'awilix';

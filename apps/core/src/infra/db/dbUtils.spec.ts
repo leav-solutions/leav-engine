@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
 import {type DocumentCollection} from 'arangojs/collection';
-import {asFunction, type AwilixContainer} from 'awilix';
+import * as awilix from 'awilix';
 import {resolve} from 'dns';
 import * as fs from 'fs';
 import {type ICachesService} from 'infra/cache/cacheService';
@@ -362,7 +362,9 @@ describe('dbUtils', () => {
             const mockDepsManager = {
                 build: depDefault => depDefault(),
             };
-            (asFunction as jest.FunctionLike) = m => m;
+            Object.defineProperty(awilix, 'asFunction', {
+                value: m => m,
+            });
 
             const mockLogger: Mockify<ILogger> = {
                 info: jest.fn(),
@@ -375,7 +377,7 @@ describe('dbUtils', () => {
                 config: mockConf as IConfig,
             });
 
-            await testDbUtils.migrate(mockDepsManager as AwilixContainer);
+            await testDbUtils.migrate(mockDepsManager as awilix.AwilixContainer);
 
             expect(mockRun1).toBeCalled();
             expect(mockRun2).toBeCalled();
