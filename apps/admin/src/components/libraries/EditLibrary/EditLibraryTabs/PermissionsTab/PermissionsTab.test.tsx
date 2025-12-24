@@ -5,11 +5,10 @@ import {mount} from 'enzyme';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {PermissionsRelation, type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import PermissionsTab from './PermissionsTab';
-import {SaveLibraryDocument} from '_gqlTypes';
+import {PermissionsRelation, SaveLibraryDocument, type TreepermissionsConfInput} from '_gqlTypes';
 
 jest.mock(
     './PermissionsContent',
@@ -35,7 +34,7 @@ describe('PermissionsTab', () => {
 
     test('Save data on submit', async () => {
         let saveQueryCalled = false;
-        const permConfToSave: Treepermissions_confInput = {
+        const permConfToSave: TreepermissionsConfInput = {
             permissionTreeAttributes: ['tree1', 'tree2'],
             relation: PermissionsRelation.and,
         };

@@ -4,7 +4,7 @@
 import {MockedProvider} from '@apollo/client/testing';
 import {render} from 'enzyme';
 import React from 'react';
-import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {PermissionTypes} from '_gqlTypes';
 import DefineTreePermissionsView from './DefineTreePermissionsView';
 
 jest.mock('../../../hooks/useLang');

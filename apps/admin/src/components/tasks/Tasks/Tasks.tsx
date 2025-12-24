@@ -9,17 +9,17 @@ import {Button, Header, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import useUserData from '../../../hooks/useUserData';
-import {TaskStatus} from '../../../_gqlTypes/globalTypes';
-import CancelTask from '../CancelTask';
-import DeleteAllTasks from '../DeleteAllTasks';
-import DeleteTask from '../DeleteTask';
-import TasksList from '../TasksList';
 import {
+    TaskStatus,
     useCancelTaskMutation,
     useDeleteTasksMutation,
     useGetTasksQuery,
     useSubTasksUpdateSubscription,
 } from '_gqlTypes';
+import CancelTask from '../CancelTask';
+import DeleteAllTasks from '../DeleteAllTasks';
+import DeleteTask from '../DeleteTask';
+import TasksList from '../TasksList';
 
 const Title = styled(Header)`
     display: flex;

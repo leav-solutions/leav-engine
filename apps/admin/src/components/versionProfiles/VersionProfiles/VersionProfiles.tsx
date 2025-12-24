@@ -10,10 +10,9 @@ import {Link, useHistory} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {addWildcardToFilters} from 'utils';
-import {PermissionsActions, type VersionProfilesFiltersInput} from '_gqlTypes/globalTypes';
+import {PermissionsActions, type VersionProfilesFiltersInput, useGetVersionProfilesQuery} from '_gqlTypes';
 import VersionProfilesList from './VersionProfilesList';
 import DeleteProfileButton from './VersionProfilesList/DeleteProfileButton';
-import {useGetVersionProfilesQuery} from '_gqlTypes';
 
 const Title = styled(Header)`
     display: flex;

@@ -6,11 +6,18 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeFormat, IOTypes} from './globalTypes';
+import {AttributeFormat} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_ACTIONS_LIST_QUERY
 // ====================================================
+
+export enum IOTypes {
+    boolean = 'boolean',
+    number = 'number',
+    object = 'object',
+    string = 'string'
+}
 
 export interface GET_ACTIONS_LIST_QUERY_attributes_list_input_types {
     saveValue: IOTypes[];

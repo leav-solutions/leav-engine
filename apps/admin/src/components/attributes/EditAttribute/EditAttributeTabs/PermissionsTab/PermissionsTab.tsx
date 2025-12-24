@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import PermissionsContent from './PermissionsContent';
-import {useSaveAttributeMutation} from '_gqlTypes';
+import {type TreepermissionsConfInput, useSaveAttributeMutation} from '_gqlTypes';
 
 interface IPermissionsTabProps {
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -14,7 +13,7 @@ interface IPermissionsTabProps {
 function PermissionsTab({attribute, readonly}: IPermissionsTabProps): JSX.Element {
     const [saveAttribute] = useSaveAttributeMutation();
 
-    const _handleSubmitSettings = (conf: Treepermissions_confInput) => {
+    const _handleSubmitSettings = (conf: TreepermissionsConfInput) => {
         saveAttribute({
             variables: {
                 attrData: {

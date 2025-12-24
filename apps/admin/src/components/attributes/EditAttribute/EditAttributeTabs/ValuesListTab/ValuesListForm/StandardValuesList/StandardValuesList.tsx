@@ -6,7 +6,7 @@ import React, {type ChangeEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Input, List} from 'semantic-ui-react';
 import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
-import {AttributeFormat} from '_gqlTypes/globalTypes';
+import {AttributeFormat} from '_gqlTypes';
 import {
     type IDateRangeValue,
     type StandardValuesListType,

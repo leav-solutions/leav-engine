@@ -10,7 +10,7 @@ import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeFormat} from '../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat} from '_gqlTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 

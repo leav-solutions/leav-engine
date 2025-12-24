@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
-import {AvailableLanguage} from '../../../_gqlTypes/globalTypes';
+import {AvailableLanguage} from '_gqlTypes';
 import LibrariesSelector from './LibrariesSelector';
 
 jest.mock('../../../hooks/useLang');

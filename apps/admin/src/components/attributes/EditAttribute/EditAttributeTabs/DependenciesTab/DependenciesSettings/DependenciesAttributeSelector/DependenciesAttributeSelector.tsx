@@ -15,7 +15,7 @@ import {
     type GET_ATTRIBUTES_attributes_list,
 } from '_gqlTypes/GET_ATTRIBUTES';
 import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeType} from '_gqlTypes';
 import DependenciesAttributeSelectorList from './DependenciesAttributeSelectorList';
 
 interface IDependenciesAttributeSelectorProps {

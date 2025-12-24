@@ -3,13 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useHistory} from 'react-router-dom-v5';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type AttributeType} from '../../../../../_gqlTypes/globalTypes';
+import {type AttributeType, useGetAttributesLazyQuery, useSaveAttributeMutation} from '_gqlTypes';
 import {type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {type IFormError} from '../../../../../_types/errors';
 import {type OnAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
 import {type AttributeInfosFormValues} from './_types';
-import {useGetAttributesLazyQuery, useSaveAttributeMutation} from '_gqlTypes';
 
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;

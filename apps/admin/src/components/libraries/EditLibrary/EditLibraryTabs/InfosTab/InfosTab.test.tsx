@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, GetLibrariesDocument, GetViewsDocument, SaveLibraryDocument} from '_gqlTypes';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import InfosTab from './InfosTab';
-import {GetLibrariesDocument, GetViewsDocument, SaveLibraryDocument} from '_gqlTypes';
 
 jest.mock('../../../../../hooks/useLang');
 

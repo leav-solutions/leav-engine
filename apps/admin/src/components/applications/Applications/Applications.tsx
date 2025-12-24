@@ -8,10 +8,9 @@ import {Link, useHistory} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters} from '../../../utils/utils';
-import {type ApplicationsFiltersInput, PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {type ApplicationsFiltersInput, PermissionsActions, useGetApplicationsQuery} from '_gqlTypes';
 import ApplicationsList from './ApplicationsList';
 import DeleteApplication from './ApplicationsList/DeleteApplication';
-import {useGetApplicationsQuery} from '_gqlTypes';
 import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 
 const Applications = (): JSX.Element => {

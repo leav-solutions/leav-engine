@@ -10,7 +10,6 @@ import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_attributes,
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, type ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
 import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {
     type IGenericValue,
@@ -23,7 +22,7 @@ import {
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import CreateRecordForm from '../CreateRecordForm';
-import {useCreateRecordMutation, useSaveValueBatchMutation} from '_gqlTypes';
+import {AttributeType, useCreateRecordMutation, useSaveValueBatchMutation, type ValueBatchInput} from '_gqlTypes';
 
 interface ICreateRecordFormContainerProps {
     library: GET_LIB_BY_ID_libraries_list;
@@ -132,7 +131,7 @@ function CreateRecordFormContainer({
                             allValues.push({
                                 attribute: attrName,
                                 id_value: val ? val.id_value : null,
-                                value: valToSave,
+                                payload: valToSave,
                             });
                         }
                     }

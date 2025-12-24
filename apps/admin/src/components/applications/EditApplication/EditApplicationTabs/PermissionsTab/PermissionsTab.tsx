@@ -5,7 +5,7 @@ import DefinePermByUserGroupView from 'components/permissions/DefinePermByUserGr
 import {useEditApplicationContext} from 'context/EditApplicationContext';
 import React from 'react';
 import styled from 'styled-components';
-import {PermissionTypes} from '_gqlTypes/globalTypes';
+import {PermissionTypes} from '_gqlTypes';
 
 const Wrapper = styled.div`
     display: grid;

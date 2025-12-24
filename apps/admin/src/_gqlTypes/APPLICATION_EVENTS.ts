@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationEventFiltersInput, ApplicationEventTypes, ApplicationType} from './globalTypes';
+import {ApplicationEventFiltersInput, ApplicationEventTypes, ApplicationType} from './index';
 
 // ====================================================
 // GraphQL subscription operation: APPLICATION_EVENTS

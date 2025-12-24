@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type DragObjectWithType} from 'react-dnd';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type FormElementTypes} from '../../../../../../../../_gqlTypes/globalTypes';
+import {type FormElementTypes} from '_gqlTypes';
 import {type IKeyValue} from '../../../../../../../../_types/shared';
 
 export const PLACEHOLDER_ID = '__placeholder__';

@@ -3,11 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import EditApplicationContext from 'context/EditApplicationContext';
-import {ApplicationType} from '_gqlTypes/globalTypes';
+import {
+    ApplicationType,
+    GetApplicationByIdDocument,
+    GetApplicationModulesDocument,
+    SaveApplicationDocument,
+} from '_gqlTypes';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
-import {GetApplicationByIdDocument, GetApplicationModulesDocument, SaveApplicationDocument} from '_gqlTypes';
 
 jest.mock(
     'components/shared/FileSelector',

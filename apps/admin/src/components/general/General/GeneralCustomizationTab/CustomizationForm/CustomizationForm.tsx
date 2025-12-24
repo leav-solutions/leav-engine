@@ -6,10 +6,9 @@ import React, {type ComponentProps, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {type GlobalSettingsInput} from '_gqlTypes/globalTypes';
+import {type GlobalSettingsInput, useGetApplicationsQuery} from '_gqlTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
-import {useGetApplicationsQuery} from '_gqlTypes';
 
 interface ICustomizationFormProps {
     settings: GET_GLOBAL_SETTINGS_globalSettings;

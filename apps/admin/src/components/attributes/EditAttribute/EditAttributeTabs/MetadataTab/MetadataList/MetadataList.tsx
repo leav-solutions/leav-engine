@@ -9,7 +9,7 @@ import {Button, Icon, Table} from 'semantic-ui-react';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
-import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeType} from '_gqlTypes';
 import ConfirmedButton from '../../../../../shared/ConfirmedButton';
 import DeleteButton from '../../../../../shared/DeleteButton';
 import AttributeCreationModal from '../../../../AttributeCreationModal';

@@ -11,11 +11,10 @@ import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters} from '../../../utils';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, useGetAttributesQuery} from '_gqlTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
 import ErrorDisplay from '../../shared/ErrorDisplay';
-import {useGetAttributesQuery} from '_gqlTypes';
 import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 
 const Title = styled(Header)`

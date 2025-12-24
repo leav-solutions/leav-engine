@@ -4,7 +4,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, type InputOnChangeData} from 'semantic-ui-react';
-import {AttributeFormat} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat} from '_gqlTypes';
 import {type IEmbeddedFields, type ILabel} from '../../../../../../_types/embeddedFields';
 import {type IFormValue} from '../EmbeddedFieldsTab';
 import LabelFields from './LabelFields';

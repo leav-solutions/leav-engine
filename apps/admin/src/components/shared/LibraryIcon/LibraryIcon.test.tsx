@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes';
 import {render, screen} from '_tests/testUtils';
 import LibraryIcon from './LibraryIcon';
 

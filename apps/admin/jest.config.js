@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const commonModuleNameMapper = require('../../jestModuleNameMapper');
+
 module.exports = {
     testEnvironment: 'jest-environment-jsdom',
     moduleFileExtensions: ['ts', 'tsx', 'js'],
@@ -28,7 +29,6 @@ module.exports = {
         ...commonModuleNameMapper,
         '^assets/(.*)$': '<rootDir>/src/assets/$1',
         '^graphQL/(.*)$': '<rootDir>/src/graphQL/$1',
-        '^_gqlTypes(.*)$': '<rootDir>/src/_gqlTypes',
         '^reduxStore/(.*)$': '<rootDir>/src/reduxStore/$1',
         '^utils/(.*)$': '<rootDir>/src/utils/$1',
         '^utils$': '<rootDir>/src/utils',

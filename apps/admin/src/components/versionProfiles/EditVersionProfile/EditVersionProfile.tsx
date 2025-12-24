@@ -14,10 +14,14 @@ import {type match, useHistory} from 'react-router-v5';
 import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
-import {PermissionsActions, type VersionProfileInput} from '_gqlTypes/globalTypes';
+import {
+    PermissionsActions,
+    type VersionProfileInput,
+    useGetVersionProfileByIdQuery,
+    useSaveVersionProfileMutation,
+} from '_gqlTypes';
 import {type IFormError} from '_types/errors';
 import InfoForm from './InfoForm';
-import {useGetVersionProfileByIdQuery, useSaveVersionProfileMutation} from '_gqlTypes';
 import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 
 export interface IEditVersionProfileMatchParams {

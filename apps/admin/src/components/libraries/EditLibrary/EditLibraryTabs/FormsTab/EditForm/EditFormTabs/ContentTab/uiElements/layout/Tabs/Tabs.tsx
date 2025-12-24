@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import {layoutElements} from '../..';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {FormElementTypes} from '_gqlTypes';
 import {type IKeyValue} from '../../../../../../../../../../../_types/shared';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';

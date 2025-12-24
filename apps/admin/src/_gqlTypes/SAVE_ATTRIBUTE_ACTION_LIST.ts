@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeInput} from './globalTypes';
+import {AttributeInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE_ACTION_LIST

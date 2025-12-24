@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueVersionInput, ValueBatchInput} from './globalTypes';
+import {ValueVersionInput, ValueBatchInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE_BATCH

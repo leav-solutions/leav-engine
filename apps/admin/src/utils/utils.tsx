@@ -13,7 +13,7 @@ import {
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeType, type AvailableLanguage} from '../_gqlTypes/globalTypes';
+import {AttributeType, type AvailableLanguage} from '_gqlTypes';
 import {type IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {type IErrorByField} from '../_types/errors';
 import {type IGenericValue, type ILinkValue, type ITreeLinkValue, type IValue} from '../_types/records';

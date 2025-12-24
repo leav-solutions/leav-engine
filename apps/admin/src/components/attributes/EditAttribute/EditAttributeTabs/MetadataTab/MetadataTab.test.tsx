@@ -6,11 +6,10 @@ import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {AttributeFormat, AttributeType} from '../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, GetAttributesDocument, SaveAttributeDocument} from '_gqlTypes';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import MetadataTab from './MetadataTab';
-import {GetAttributesDocument, SaveAttributeDocument} from '_gqlTypes';
 
 jest.mock(
     './MetadataList',

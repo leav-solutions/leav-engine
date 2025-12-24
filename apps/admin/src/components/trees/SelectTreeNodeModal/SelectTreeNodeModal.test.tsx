@@ -3,9 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {render, screen} from '_tests/testUtils';
-import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
+import {TreeBehavior, GetTreeByIdDocument} from '_gqlTypes';
 import SelectTreeNodeModal from './SelectTreeNodeModal';
-import {GetTreeByIdDocument} from '_gqlTypes';
 
 jest.mock(
     '../../trees/TreeExplorer',

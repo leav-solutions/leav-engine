@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApiKeysFiltersInput, SortApiKeysInput} from './globalTypes';
+import {ApiKeysFiltersInput, SortApiKeysInput} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_API_KEYS

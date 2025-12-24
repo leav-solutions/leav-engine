@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
-import {type ValuesListConfInput} from '../../../../../_gqlTypes/globalTypes';
+import {type ValuesListConfInput, useGetAttributesValuesListQuery, useSaveAttributeMutation} from '_gqlTypes';
 import Loading from '../../../../shared/Loading';
 import ValuesListForm from './ValuesListForm';
-import {useGetAttributesValuesListQuery, useSaveAttributeMutation} from '_gqlTypes';
 
 interface IValuesListTabProps {
     attributeId: string;

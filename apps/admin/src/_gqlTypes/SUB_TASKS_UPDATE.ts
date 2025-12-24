@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, TaskStatus} from './index';
 
 // ====================================================
 // GraphQL subscription operation: SUB_TASKS_UPDATE

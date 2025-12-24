@@ -5,12 +5,11 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import useUserData from 'hooks/useUserData';
 import {useTranslation} from 'react-i18next';
 import {type match} from 'react-router-dom-v5';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
+import {PermissionsActions, useGetLibByIdQuery} from '_gqlTypes';
 import {ErrorDisplayTypes} from '_types/errors';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
-import {useGetLibByIdQuery} from '_gqlTypes';
 
 export interface IEditLibraryMatchParams {
     id: string;

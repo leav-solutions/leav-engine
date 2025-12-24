@@ -6,11 +6,10 @@ import {useMemo} from 'react';
 import {type match} from 'react-router-dom-v5';
 import styled from 'styled-components';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type AttributeType} from '../../../_gqlTypes/globalTypes';
+import {type AttributeType, useGetAttributeByIdQuery} from '_gqlTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
 import {type AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';
-import {useGetAttributeByIdQuery} from '_gqlTypes';
 
 export interface IEditAttributeMatchParams {
     id: string;

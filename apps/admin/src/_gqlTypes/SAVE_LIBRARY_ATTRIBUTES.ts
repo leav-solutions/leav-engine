@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiDisplayOption} from './globalTypes';
+import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiDisplayOption} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_LIBRARY_ATTRIBUTES

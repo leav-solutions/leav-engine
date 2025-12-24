@@ -68,7 +68,7 @@ describe('CreateRecordFormContainer', () => {
                         library: 'products',
                         recordId: '1234567',
                         version: null,
-                        values: [{attribute: 'simple_attribute', id_value: null, value: 'MyVal'}],
+                        values: [{attribute: 'simple_attribute', id_value: null, payload: 'MyVal'}],
                     },
                 },
                 result: {
@@ -99,7 +99,7 @@ describe('CreateRecordFormContainer', () => {
                                         color: null,
                                         preview: null,
                                     },
-                                    simple_attribute: {id_value: null, value: 'MyVal'},
+                                    simple_attribute: {id_value: null, payload: 'MyVal'},
                                     __typename: 'Record',
                                 },
                             ],

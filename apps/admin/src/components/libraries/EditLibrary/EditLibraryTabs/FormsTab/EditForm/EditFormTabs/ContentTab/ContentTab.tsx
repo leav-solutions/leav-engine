@@ -6,7 +6,7 @@ import {useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
-import {type FormElementInput, type FormElementsByDepsInput} from '../../../../../../../../_gqlTypes/globalTypes';
+import {type FormElementInput, type FormElementsByDepsInput, useSaveFormMutation} from '_gqlTypes';
 import {useEditFormModalButtonsContext} from '../../../EditFormModal/useEditFormModalButtonsContext';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
@@ -17,7 +17,6 @@ import computateInitialState from './formBuilderReducer/computeInitialState';
 import {defaultDepAttribute, defaultDepValue} from './formBuilderReducer/formBuilderReducer';
 import {FormBuilderReducerContext} from './formBuilderReducer/hook/useFormBuilderReducer';
 import FormLayout from './FormLayout';
-import {useSaveFormMutation} from '_gqlTypes';
 
 function ContentTab(): JSX.Element {
     const {t} = useTranslation();

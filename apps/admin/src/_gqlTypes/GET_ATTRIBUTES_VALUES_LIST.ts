@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat} from './globalTypes';
+import {AttributeType, AttributeFormat} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_ATTRIBUTES_VALUES_LIST

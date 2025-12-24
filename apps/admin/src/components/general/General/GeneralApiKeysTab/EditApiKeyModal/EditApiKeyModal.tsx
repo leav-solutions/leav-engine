@@ -8,9 +8,8 @@ import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Icon, Message, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {type ApiKeyInput} from '_gqlTypes/globalTypes';
+import {type ApiKeyInput, useSaveApiKeyMutation} from '_gqlTypes';
 import EditApiKeyForm from './EditApiKeyForm';
-import {useSaveApiKeyMutation} from '_gqlTypes';
 
 interface IEditApiKeyModalProps {
     apiKey: GET_API_KEYS_apiKeys_list;

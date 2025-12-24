@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApiKeyInput} from './globalTypes';
+import {ApiKeyInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_API_KEY

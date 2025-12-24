@@ -8,10 +8,9 @@ import useUserData from '../../../hooks/useUserData';
 import {getTreesQueryName} from '../../../queries/trees/getTreesQuery';
 import {deleteFromCache, localizedLabel} from '../../../utils/utils';
 import {type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, useDeleteTreeMutation} from '_gqlTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
-import {useDeleteTreeMutation} from '_gqlTypes';
 
 interface IDeleteTreeProps {
     tree?: GET_TREES_trees_list;

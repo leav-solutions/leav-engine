@@ -12,7 +12,7 @@ import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError, isLinkAttribute, localizedLabel, isTreeAttribute} from '../../../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeType, LibraryBehavior} from '_gqlTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import ViewSelector from '../../../../../views/ViewSelector';

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {PermissionInput, PermissionTypes, PermissionsActions} from './globalTypes';
+import {PermissionInput, PermissionTypes, PermissionsActions} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_PERMISSION

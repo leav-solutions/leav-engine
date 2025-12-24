@@ -18,8 +18,7 @@ import {
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list,
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes,
 } from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {AttributeType} from '_gqlTypes/globalTypes';
-import {useSaveAttributeMutation} from '_gqlTypes';
+import {AttributeType, useSaveAttributeMutation} from '_gqlTypes';
 
 const Wrapper = styled.div`
     &&& {

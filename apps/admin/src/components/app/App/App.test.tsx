@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import App from '.';
@@ -13,6 +12,8 @@ import {
     GetLangsDocument,
     IsAllowedDocument,
     MeDocument,
+    PermissionsActions,
+    PermissionTypes,
 } from '_gqlTypes';
 
 enableFetchMocks();

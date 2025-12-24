@@ -10,8 +10,7 @@ import {useTranslation} from 'react-i18next';
 import {deleteFromCache} from 'utils';
 import {type DELETE_VERSION_PROFILE_deleteVersionProfile} from '_gqlTypes/DELETE_VERSION_PROFILE';
 import {type GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
-import {useDeleteVersionProfileMutation} from '_gqlTypes';
+import {PermissionsActions, useDeleteVersionProfileMutation} from '_gqlTypes';
 
 interface IDeleteProfileProps {
     profile?: GET_VERSION_PROFILES_versionProfiles_list;

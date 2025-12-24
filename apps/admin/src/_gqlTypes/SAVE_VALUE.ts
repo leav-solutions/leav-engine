@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueInput} from './globalTypes';
+import {ValueInput} from './index';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE

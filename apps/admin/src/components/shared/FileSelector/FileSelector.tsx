@@ -2,12 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useTranslation} from 'react-i18next';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, useGetLibrariesQuery} from '_gqlTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import ErrorDisplay from '../ErrorDisplay';
 import Loading from '../Loading';
 import RecordSelector from '../RecordSelector';
-import {useGetLibrariesQuery} from '_gqlTypes';
 
 interface IFileSelectorProps {
     onChange: (selectedFile: RecordIdentity_whoAmI) => void;

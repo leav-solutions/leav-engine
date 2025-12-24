@@ -13,12 +13,7 @@ import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute,
 } from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {
-    PermissionsActions,
-    PermissionsRelation,
-    PermissionTypes,
-    type Treepermissions_confInput,
-} from '../../../../../../_gqlTypes/globalTypes';
+import {PermissionsActions, PermissionsRelation, PermissionTypes, type TreepermissionsConfInput} from '_gqlTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
@@ -30,7 +25,7 @@ const PermissionsSettingsBtn = styled(PermissionsSettings)`
 
 interface IPermissionsContentProps {
     library: GET_LIB_BY_ID_libraries_list;
-    onSubmitSettings: (conf: Treepermissions_confInput) => void;
+    onSubmitSettings: (conf: TreepermissionsConfInput) => void;
     readonly: boolean;
 }
 
@@ -89,7 +84,7 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
         ),
     });
 
-    const _handleChangeSettings = (settings: Treepermissions_confInput) => {
+    const _handleChangeSettings = (settings: TreepermissionsConfInput) => {
         onSubmitSettings(settings);
     };
 

@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import {getFieldError} from 'utils';
 import * as yup from 'yup';
 import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {type ApiKeyInput} from '_gqlTypes/globalTypes';
+import {type ApiKeyInput} from '_gqlTypes';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {type IFormError} from '_types/errors';
 import ExpirationSelector from './ExpirationSelector';

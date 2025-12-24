@@ -6,7 +6,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type AvailableLanguage} from '_gqlTypes/globalTypes';
+import {type AvailableLanguage} from '_gqlTypes';
 
 const Wrapper = styled.div`
     display: flex;

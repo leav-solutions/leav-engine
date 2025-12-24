@@ -10,17 +10,13 @@ import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {
-    PermissionsRelation,
-    PermissionTypes,
-    type Treepermissions_confInput,
-} from '../../../../../../_gqlTypes/globalTypes';
+import {PermissionsRelation, PermissionTypes, type TreepermissionsConfInput} from '_gqlTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
 interface IPermissionsContentProps {
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list;
-    onSubmitSettings: (conf: Treepermissions_confInput) => void;
+    onSubmitSettings: (conf: TreepermissionsConfInput) => void;
     readonly: boolean;
 }
 
@@ -35,7 +31,7 @@ function PermissionsContent({attribute, onSubmitSettings, readonly}: IPermission
     const {lang} = useLang();
     const defaultPermsConf = {permissionTreeAttributes: [], relation: PermissionsRelation.and};
 
-    const _handleChangeSettings = (settings: Treepermissions_confInput) => {
+    const _handleChangeSettings = (settings: TreepermissionsConfInput) => {
         onSubmitSettings(settings);
     };
 

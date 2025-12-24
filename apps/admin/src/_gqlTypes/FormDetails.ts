@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FormElementTypes} from './globalTypes';
+import {FormElementTypes} from './index';
 
 // ====================================================
 // GraphQL fragment: FormDetails
