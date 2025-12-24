@@ -3,7 +3,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const fs = require('fs');
-const prog = require('commander');
+const {parseArgs} = require('node:util');
+
+// Parse arguments: node script.js <parent> <name>
+const args = parseArgs({
+    args: process.argv.slice(2),
+    allowPositionals: true,
+});
+const positionals = args.positionals;
+if (positionals.length < 2) {
+    console.error('Usage: <parent folder> <compName>');
+    process.exit(1);
+}
+const parent = positionals[0];
+const compName = positionals[1];
 
 const _getComponentContent = name =>
     `import React from 'react';
@@ -36,45 +49,39 @@ describe('${name}', () => {
     });
 });`;
 
-prog.version('0.1.0')
-    .usage('<parent folder> <compName>')
-    .action((parent, name) => {
-        const destDir = __dirname + '/../src/components/' + parent + '/';
+const destDir = __dirname + '/../src/components/' + parent + '/';
+const compFolder = destDir + compName;
 
-        const compFolder = destDir + name;
+// Create new parent folder if not existing
+if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir);
+}
 
-        // Create new parent folder if not existing
-        if (!fs.existsSync(destDir)) {
-            fs.mkdirSync(destDir);
-        }
+// Create new folder if not existing
+if (!fs.existsSync(compFolder)) {
+    fs.mkdirSync(compFolder);
+}
 
-        // Create new folder if not existing
-        if (!fs.existsSync(compFolder)) {
-            fs.mkdirSync(compFolder);
-        }
+// Create index file
+const indexFile = compFolder + '/index.ts';
+if (!fs.existsSync(indexFile)) {
+    const fileContent = `import ${compName} from './${compName}';\nexport default ${compName};`;
 
-        // Create index file
-        const indexFile = compFolder + '/index.ts';
-        if (!fs.existsSync(indexFile)) {
-            const fileContent = `import ${name} from './${name}';\nexport default ${name};`;
+    fs.writeFileSync(indexFile, fileContent);
+}
 
-            fs.writeFileSync(indexFile, fileContent);
-        }
+// Create component file
+const compFile = compFolder + `/${compName}.tsx`;
+if (!fs.existsSync(compFile)) {
+    const fileContent = _getComponentContent(compName);
 
-        // Create component file
-        const compFile = compFolder + `/${name}.tsx`;
-        if (!fs.existsSync(compFile)) {
-            const fileContent = prog.type === 'class' ? _getClassCompContent(name) : _getComponentContent(name);
+    fs.writeFileSync(compFile, fileContent);
+}
 
-            fs.writeFileSync(compFile, fileContent);
-        }
+// Create component test file
+const testFile = compFolder + `/${compName}.test.tsx`;
+if (!fs.existsSync(testFile)) {
+    const fileContent = _getTestContent(compName);
 
-        // Create component test file
-        const testFile = compFolder + `/${name}.test.tsx`;
-        if (!fs.existsSync(testFile)) {
-            const fileContent = _getTestContent(name);
-
-            fs.writeFileSync(testFile, fileContent);
-        }
-    })
-    .parse(process.argv);
+    fs.writeFileSync(testFile, fileContent);
+}

@@ -3,13 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {type ICoreImportApp} from 'app/core/importApp';
-import program from 'commander';
+import {Command} from 'commander';
 
 interface IDeps {
     'core.app.core.import': ICoreImportApp;
 }
 
 export default function ({'core.app.core.import': importApp}: IDeps) {
+    const program = new Command();
+
     const defineImportConfigCommand = () => {
         program
             .command('importConfig <file>')
@@ -50,6 +52,7 @@ export default function ({'core.app.core.import': importApp}: IDeps) {
 
             if (!process.argv.slice(2).length) {
                 program.outputHelp();
+                process.exit(0);
             }
         },
     };
