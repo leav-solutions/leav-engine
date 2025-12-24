@@ -33,12 +33,20 @@ function ALCListSelector({
         changeSelectorTo('saveValue');
     };
 
+    const changeSelectorToPostSaveValue = () => {
+        changeSelectorTo('postSaveValue');
+    };
+
     const changeSelectorToGetValue = () => {
         changeSelectorTo('getValue');
     };
 
     const changeSelectorToDeleteValue = () => {
         changeSelectorTo('deleteValue');
+    };
+
+    const changeSelectorToPostDeleteValue = () => {
+        changeSelectorTo('postDeleteValue');
     };
 
     return (
@@ -48,6 +56,12 @@ function ALCListSelector({
                 style={listsWithConnectionsFailures.includes('saveValue') ? disconnectedStyle : {}}
                 active={currentActionListName === 'saveValue'}
                 onClick={changeSelectorToSaveValue}
+            />
+            <Menu.Item
+                name="postSaveValue"
+                style={listsWithConnectionsFailures.includes('postSaveValue') ? disconnectedStyle : {}}
+                active={currentActionListName === 'postSaveValue'}
+                onClick={changeSelectorToPostSaveValue}
             />
             <Menu.Item
                 name="getValue"
@@ -60,6 +74,12 @@ function ALCListSelector({
                 style={listsWithConnectionsFailures.includes('deleteValue') ? disconnectedStyle : {}}
                 active={currentActionListName === 'deleteValue'}
                 onClick={changeSelectorToDeleteValue}
+            />
+            <Menu.Item
+                name="postDeleteValue"
+                style={listsWithConnectionsFailures.includes('postDeleteValue') ? disconnectedStyle : {}}
+                active={currentActionListName === 'postDeleteValue'}
+                onClick={changeSelectorToPostDeleteValue}
             />
         </Menu>
     );

@@ -621,7 +621,9 @@ describe('attributeDomain', () => {
                             },
                         ],
                         [ActionsListEvents.GET_VALUE]: [{id: 'toNumber', is_system: true, name: 'To Number'}],
+                        [ActionsListEvents.POST_SAVE_VALUE]: [],
                         [ActionsListEvents.DELETE_VALUE]: [],
+                        [ActionsListEvents.POST_DELETE_VALUE]: [],
                     },
                 },
                 ctx,
@@ -638,7 +640,9 @@ describe('attributeDomain', () => {
                     },
                 ],
                 [ActionsListEvents.GET_VALUE]: [{id: 'toNumber', is_system: true, name: 'To Number'}],
+                [ActionsListEvents.POST_SAVE_VALUE]: [],
                 [ActionsListEvents.DELETE_VALUE]: [],
+                [ActionsListEvents.POST_DELETE_VALUE]: [],
             });
         });
 
@@ -1079,21 +1083,27 @@ describe('attributeDomain', () => {
             ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             });
             expect(
                 attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.DATE}, ctx}),
             ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             });
             expect(
                 attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.ENCRYPTED}, ctx}),
             ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             });
 
             expect(
@@ -1101,7 +1111,9 @@ describe('attributeDomain', () => {
             ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             });
 
             expect(
@@ -1109,7 +1121,9 @@ describe('attributeDomain', () => {
             ).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
             });
 
             expect(
@@ -1118,7 +1132,9 @@ describe('attributeDomain', () => {
                 {
                     [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
                     [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                     [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                    [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
                 }, // json
             );
         });
@@ -1137,7 +1153,9 @@ describe('attributeDomain', () => {
                     ActionsListIOTypes.OBJECT,
                     ActionsListIOTypes.BOOLEAN,
                 ],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             });
             expect(
                 attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.DATE}, ctx}),
@@ -1150,6 +1168,8 @@ describe('attributeDomain', () => {
                     ActionsListIOTypes.BOOLEAN,
                 ],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             });
             expect(
                 attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.ENCRYPTED}, ctx}),
@@ -1161,7 +1181,9 @@ describe('attributeDomain', () => {
                     ActionsListIOTypes.OBJECT,
                     ActionsListIOTypes.BOOLEAN,
                 ],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.STRING],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.STRING],
             });
 
             expect(
@@ -1174,7 +1196,9 @@ describe('attributeDomain', () => {
                     ActionsListIOTypes.OBJECT,
                     ActionsListIOTypes.BOOLEAN,
                 ],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.NUMBER],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.NUMBER],
             });
 
             expect(
@@ -1187,7 +1211,9 @@ describe('attributeDomain', () => {
                     ActionsListIOTypes.OBJECT,
                     ActionsListIOTypes.BOOLEAN,
                 ],
+                [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.BOOLEAN],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
+                [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN],
             });
 
             expect(
@@ -1201,7 +1227,9 @@ describe('attributeDomain', () => {
                         ActionsListIOTypes.OBJECT,
                         ActionsListIOTypes.BOOLEAN,
                     ],
+                    [ActionsListEvents.POST_SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
                     [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT],
+                    [ActionsListEvents.POST_DELETE_VALUE]: [ActionsListIOTypes.OBJECT],
                 }, // json
             );
         });

@@ -19,6 +19,7 @@ import {
 } from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 import {type ITreePermissionsDependentValuesConf} from '_types/permissions';
+import {AttributeCondition} from '../../../_types/record';
 
 // Share some global variables from global setup to tests
 export interface IGlobalThis {
@@ -367,6 +368,40 @@ export async function gqlAddElemToTree(
     );
 
     return res.data.data.treeAddElement.id;
+}
+
+export async function gqlGetValue(libraryId: string, recordId: string, attributeId: string): Promise<any> {
+    const result = await makeGraphQlCall(`{
+         records(
+             library: "${libraryId}",
+             filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+         ) {
+             list {
+                 properties(attributeIds: ["${attributeId}"]) {
+                    values {
+                        id_value
+                        ... on Value {
+                            valuePayload: payload
+                        }
+                        ... on LinkValue {
+                            linkPayload: payload {
+                                whoAmI {
+                                    label
+                                }
+                            }
+                        }
+                        ... on TreeValue {
+                            treePayload: payload {
+                                id
+                            }
+                        }
+                    }
+                 }
+             }
+         }
+     }`);
+
+    return result.data.data.records.list[0]?.properties[0]?.values;
 }
 
 export async function gqlSaveValue(attributeId: string, libraryId: string, recordId: string, value: string | number) {

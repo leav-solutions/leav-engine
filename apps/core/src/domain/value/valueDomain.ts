@@ -45,6 +45,8 @@ import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain
 import canSaveRecordValue from './helpers/canSaveRecordValue';
 import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
+import postSaveValue from './helpers/postSaveValue';
+import postDeleteValue from './helpers/postDeleteValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {type IDeleteValueParams, type IRunActionListParams} from './_types';
@@ -639,6 +641,19 @@ const valueDomain = function ({
                     ctx,
                 });
 
+                try {
+                    await postDeleteValue({
+                        attribute: attributeProps,
+                        value: deletedValue,
+                        libraryId: library,
+                        recordId,
+                        deps: {actionsListDomain, attributeDomain, utils},
+                        ctx,
+                    });
+                } catch (error) {
+                    logger.error(`Error executing post-delete actions: ${error.message}`, {error});
+                }
+
                 // Make sure attribute is returned here
                 deletedValue.attribute = attribute;
 
@@ -713,9 +728,20 @@ const valueDomain = function ({
                 },
                 ctx,
             );
-        }
 
-        const processedValues = await _runActionsListAndFormatValue(library, attribute, savedValue, ctx, record);
+            try {
+                await postSaveValue({
+                    attribute,
+                    value,
+                    libraryId: library,
+                    recordId: record.id,
+                    deps: {actionsListDomain, attributeDomain, utils},
+                    ctx,
+                });
+            } catch (error) {
+                logger.error(`Error executing post-save actions: ${error.message}`, {error});
+            }
+        }
 
         if (!areValuesIdentical) {
             await eventsManager.sendDatabaseEvent<EventAction.VALUE_SAVE>(
@@ -740,6 +766,8 @@ const valueDomain = function ({
                 await _maybeDeleteJoinRecord(attribute, [valueBefore], ctx);
             }
         }
+
+        const processedValues = await _runActionsListAndFormatValue(library, attribute, savedValue, ctx, record);
 
         return {values: processedValues, areValuesIdentical};
     };
@@ -857,7 +885,7 @@ const valueDomain = function ({
             );
         }
 
-        // Prepare value
+        // Prepare value using pre-save actions
         const preparedValues = await prepareValue({
             ...valueChecksParams,
             deps: {

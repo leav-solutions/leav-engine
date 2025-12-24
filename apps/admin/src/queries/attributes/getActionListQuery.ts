@@ -11,16 +11,29 @@ export const getActionListQuery = gql`
                 format
                 input_types {
                     saveValue
+                    postSaveValue
                     getValue
                     deleteValue
+                    postDeleteValue
                 }
                 output_types {
                     saveValue
+                    postSaveValue
                     getValue
                     deleteValue
+                    postDeleteValue
                 }
                 actions_list {
                     saveValue {
+                        id
+                        is_system
+                        params {
+                            name
+                            value
+                        }
+                        error_message
+                    }
+                    postSaveValue {
                         id
                         is_system
                         params {
@@ -38,6 +51,14 @@ export const getActionListQuery = gql`
                         }
                     }
                     deleteValue {
+                        id
+                        is_system
+                        params {
+                            name
+                            value
+                        }
+                    }
+                    postDeleteValue {
                         id
                         is_system
                         params {

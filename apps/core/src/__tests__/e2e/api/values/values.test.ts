@@ -3,7 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeCondition} from '../../../../_types/record';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {gqlAddElemToTree, gqlCreateRecord, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlGetValue,
+    gqlSaveAttribute,
+    gqlSaveTree,
+    makeGraphQlCall,
+} from '../e2eUtils';
 import {type ILinkValue} from '_types/value';
 
 describe('Values', () => {
@@ -23,11 +30,15 @@ describe('Values', () => {
     const attrTreeName = 'values_attribute_test_tree';
     const attrDateRangeName = 'test_attr_date_range';
     const attrUniqueWithLowercaseName = 'values_attribute_test_unique_lowercase';
+    const attrWithPostSaveName = 'values_attribute_test_post_save';
+    const attrWithPostDeleteName = 'values_attribute_test_post_delete';
 
     let recordId: string;
     let recordIdBatch: string;
     let recordIdLinked: string;
     let recordUniqueId: string;
+    let recordIdPostSaveActions: string;
+    let recordIdPostDeleteActions: string;
     let advValueId: string;
     let treeElemId: string;
     let nodeTreeElem: string;
@@ -182,6 +193,28 @@ describe('Values', () => {
             },
         });
 
+        await gqlSaveAttribute({
+            id: attrWithPostSaveName,
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.TEXT,
+            label: 'Test attr with post save',
+            actionsList: {
+                saveValue: [{id: 'validateFormat', name: 'validateFormat'}],
+                postSaveValue: [{id: 'fakeReplaceValue', name: 'fakeReplaceValue'}],
+            },
+        });
+
+        await gqlSaveAttribute({
+            id: attrWithPostDeleteName,
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.TEXT,
+            label: 'Test attr with post save',
+            actionsList: {
+                saveValue: [{id: 'validateFormat', name: 'validateFormat'}],
+                postDeleteValue: [{id: 'fakeReplaceValue', name: 'fakeReplaceValue'}],
+            },
+        });
+
         // Create library to use in tree
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {id: "${treeLibName}", label: {en: "Test tree lib"}}) { id }
@@ -223,7 +256,9 @@ describe('Values', () => {
                         "${attrSimpleExtendedName}",
                         "${attrTreeName}",
                         "${attrDateRangeName}",
-                        "${attrUniqueWithLowercaseName}"
+                        "${attrUniqueWithLowercaseName}",
+                        "${attrWithPostSaveName}",
+                        "${attrWithPostDeleteName}"
                     ]
                 }) { id }
             }`);
@@ -235,6 +270,8 @@ describe('Values', () => {
             c3: createRecord(library: "${testLibName}") { record {id} },
             c4: createRecord(library: "${treeLibName}") { record {id} },
             c5: createRecord(library: "${testLibName}") { record {id} },
+            c6: createRecord(library: "${testLibName}") { record {id} },
+            c7: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
         recordId = resRecord.data.data.c1.record.id;
@@ -242,6 +279,8 @@ describe('Values', () => {
         recordIdLinked = resRecord.data.data.c3.record.id;
         treeElemId = resRecord.data.data.c4.record.id;
         recordUniqueId = resRecord.data.data.c5.record.id;
+        recordIdPostSaveActions = resRecord.data.data.c6.record.id;
+        recordIdPostDeleteActions = resRecord.data.data.c7.record.id;
 
         // Add element to tree
         nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});
@@ -1055,6 +1094,102 @@ describe('Values', () => {
                 }
               }`),
             ).rejects.toThrow(/error.INVALID_DATE_RANGE/);
+        });
+    });
+
+    describe('Post save value actions', () => {
+        test('Post save value actions run on save value', async () => {
+            const saveValueRes = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordIdPostSaveActions}",
+                    attribute: "${attrWithPostSaveName}",
+                    value: {payload: "test value"}
+                ) {
+                    id_value
+                    ... on Value {
+                        payload
+                    }
+                }
+            }`);
+
+            expect(saveValueRes.status).toBe(200);
+            expect(saveValueRes.data.errors).toBeUndefined();
+
+            const values = await gqlGetValue(testLibName, recordIdPostSaveActions, attrWithPostSaveName);
+
+            expect(values).toEqual([
+                {
+                    id_value: null,
+                    valuePayload: 'This value has been replaced by the fakeplugin',
+                },
+            ]);
+        });
+
+        test('Post save value actions run on save value batch', async () => {
+            const saveValueBatchRes = await makeGraphQlCall(`mutation {
+                saveValueBatch(
+                    library: "${testLibName}",
+                    recordId: "${recordIdPostSaveActions}",
+                    values: [
+                        {attribute: "${attrWithPostSaveName}", value: "batch test 1"},
+                        {attribute: "${attrWithPostSaveName}", value: "batch test 2"}
+                    ]
+                ) {
+                    values {
+                        ... on Value {
+                            payload
+                        }
+                    }
+                }
+            }`);
+
+            expect(saveValueBatchRes.status).toBe(200);
+            expect(saveValueBatchRes.data.errors).toBeUndefined();
+
+            const values = await gqlGetValue(testLibName, recordIdPostSaveActions, attrWithPostSaveName);
+
+            expect(values).toEqual([
+                {
+                    id_value: null,
+                    valuePayload: 'This value has been replaced by the fakeplugin',
+                },
+            ]);
+        });
+    });
+
+    describe('Post delete value actions', () => {
+        test('Post delete value actions run on delete value', async () => {
+            const saveValueRes = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrWithPostDeleteName}",
+                    value: {payload: "test"}) { id_value }
+            }`);
+
+            expect(saveValueRes.status).toBe(200);
+            expect(saveValueRes.data.errors).toBeUndefined();
+
+            const deleteValueRes = await makeGraphQlCall(`mutation {
+                 deleteValue(
+                        library: "${testLibName}",
+                        recordId: "${recordId}",
+                        attribute: "${attrWithPostDeleteName}") { id_value }
+
+            }`);
+
+            expect(deleteValueRes.status).toBe(200);
+            expect(deleteValueRes.data.errors).toBeUndefined();
+
+            const values = await gqlGetValue(testLibName, recordId, attrWithPostDeleteName);
+
+            expect(values).toEqual([
+                {
+                    id_value: null,
+                    valuePayload: 'This value has been replaced by the fakeplugin',
+                },
+            ]);
         });
     });
 });

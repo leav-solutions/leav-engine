@@ -24,8 +24,20 @@ interface IALCListProps {
     getNewId: () => number;
     currentIndex: number;
     setCurrentIndex: (index: number) => void;
-    inType: {saveValue: Array<string | null>; getValue: Array<string | null>; deleteValue: Array<string | null>};
-    outType: {saveValue: Array<string | null>; getValue: Array<string | null>; deleteValue: Array<string | null>};
+    inType: {
+        saveValue: Array<string | null>;
+        postSaveValue: Array<string | null>;
+        getValue: Array<string | null>;
+        deleteValue: Array<string | null>;
+        postDeleteValue: Array<string | null>;
+    };
+    outType: {
+        saveValue: Array<string | null>;
+        postSaveValue: Array<string | null>;
+        getValue: Array<string | null>;
+        deleteValue: Array<string | null>;
+        postDeleteValue: Array<string | null>;
+    };
     colorTypeDictionnary: IColorDic;
     onSelectorChange: (event: any) => void;
     currentActionListName: string;

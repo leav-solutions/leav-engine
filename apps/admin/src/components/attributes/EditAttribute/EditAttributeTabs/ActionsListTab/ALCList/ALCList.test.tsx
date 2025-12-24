@@ -31,10 +31,16 @@ const oneActionMock = {
             params: [],
         },
     },
+    postSaveValue: {
+        higherId: 0,
+    },
     getValue: {
         higherId: 0,
     },
     deleteValue: {
+        higherId: 0,
+    },
+    postDeleteValue: {
         higherId: 0,
     },
 };
@@ -81,10 +87,16 @@ const twoActionsMock = {
             ],
         },
     },
+    postSaveValue: {
+        higherId: 0,
+    },
     getValue: {
         higherId: 0,
     },
     deleteValue: {
+        higherId: 0,
+    },
+    postDeleteValue: {
         higherId: 0,
     },
 };
@@ -131,10 +143,16 @@ const twoIncompatibleActionsMock = {
             ],
         },
     },
+    postSaveValue: {
+        higherId: 0,
+    },
     getValue: {
         higherId: 0,
     },
     deleteValue: {
+        higherId: 0,
+    },
+    postDeleteValue: {
         higherId: 0,
     },
 };
@@ -153,7 +171,7 @@ jest.mock(
 
 describe('ALCList', () => {
     test('One action get instanciated in list', async () => {
-        const container = await mount(
+        const container = mount(
             <DndProvider backend={TestBackend}>
                 <ALCList
                     actions={oneActionMock}
@@ -164,8 +182,20 @@ describe('ALCList', () => {
                     getNewId={numPlaceholder}
                     currentIndex={0}
                     setCurrentIndex={placeholder}
-                    inType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
-                    outType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
+                    inType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
+                    outType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
                     colorTypeDictionnary={{int: [255, 255, 255]}}
                     changeParam={placeholder}
                     cardOrder={{saveValue: [0]}}
@@ -175,13 +205,14 @@ describe('ALCList', () => {
                 />
             </DndProvider>,
         );
+
         const cards = container.find('ALCCard');
         expect(cards).toHaveLength(1);
         container.unmount();
     });
 
     test('Two actions get instanciated in list', async () => {
-        const container = await mount(
+        const container = mount(
             <DndProvider backend={TestBackend}>
                 <ALCList
                     actions={twoActionsMock}
@@ -192,8 +223,20 @@ describe('ALCList', () => {
                     getNewId={numPlaceholder}
                     currentIndex={0}
                     setCurrentIndex={placeholder}
-                    inType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
-                    outType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
+                    inType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
+                    outType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
                     colorTypeDictionnary={{int: [255, 255, 255]}}
                     changeParam={placeholder}
                     cardOrder={{saveValue: [0, 1]}}
@@ -214,7 +257,7 @@ describe('ALCList', () => {
             mockSave.push(1);
             return true;
         };
-        const container = await mount(
+        const container = mount(
             <DndProvider backend={TestBackend}>
                 <ALCList
                     actions={twoActionsMock}
@@ -225,8 +268,20 @@ describe('ALCList', () => {
                     getNewId={numPlaceholder}
                     currentIndex={-1}
                     setCurrentIndex={placeholder}
-                    inType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
-                    outType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
+                    inType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
+                    outType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
                     colorTypeDictionnary={{number: [0, 255, 255], string: [255, 0, 255], object: [255, 255, 0]}}
                     changeParam={placeholder}
                     cardOrder={{saveValue: [0, 1]}}
@@ -248,7 +303,7 @@ describe('ALCList', () => {
             mockSave.push(1);
             return true;
         };
-        const container = await mount(
+        const container = mount(
             <DndProvider backend={TestBackend}>
                 <ALCList
                     actions={twoIncompatibleActionsMock}
@@ -259,8 +314,20 @@ describe('ALCList', () => {
                     getNewId={numPlaceholder}
                     currentIndex={0}
                     setCurrentIndex={placeholder}
-                    inType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
-                    outType={{saveValue: ['number'], getValue: ['number'], deleteValue: ['number']}}
+                    inType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
+                    outType={{
+                        saveValue: ['number'],
+                        postSaveValue: ['number'],
+                        getValue: ['number'],
+                        deleteValue: ['number'],
+                        postDeleteValue: ['number'],
+                    }}
                     colorTypeDictionnary={{number: [255, 255, 255]}}
                     changeParam={placeholder}
                     cardOrder={{saveValue: [0, 1], getValue: [], deleteValue: []}}

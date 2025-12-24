@@ -9,7 +9,9 @@ import {type Errors} from './errors';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
+    POST_SAVE_VALUE = 'postSaveValue',
     DELETE_VALUE = 'deleteValue',
+    POST_DELETE_VALUE = 'postDeleteValue',
     GET_VALUE = 'getValue',
 }
 

@@ -52,6 +52,8 @@ export enum ActionIoTypes {
 export type ActionsListConfigurationInput = {
   deleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
   getValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postDeleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postSaveValue?: InputMaybe<Array<ActionConfigurationInput>>;
   saveValue?: InputMaybe<Array<ActionConfigurationInput>>;
 };
 
@@ -206,6 +208,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -319,6 +333,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String'];
   recordId: Scalars['String'];
@@ -417,6 +442,9 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -1073,7 +1101,7 @@ export type GetActionsListQueryQueryVariables = Exact<{
 }>;
 
 
-export type GetActionsListQueryQuery = { attributes?: { list: Array<{ id: string, format?: AttributeFormat | null, input_types: { saveValue: Array<IoTypes>, getValue: Array<IoTypes>, deleteValue: Array<IoTypes> }, output_types: { saveValue: Array<IoTypes>, getValue: Array<IoTypes>, deleteValue: Array<IoTypes> }, actions_list?: { saveValue?: Array<{ id: string, is_system: boolean, error_message?: any | null, params?: Array<{ name: string, value: string }> | null }> | null, getValue?: Array<{ id: string, is_system: boolean, params?: Array<{ name: string, value: string }> | null }> | null, deleteValue?: Array<{ id: string, is_system: boolean, params?: Array<{ name: string, value: string }> | null }> | null } | null }> } | null };
+export type GetActionsListQueryQuery = { attributes?: { list: Array<{ id: string, format?: AttributeFormat | null, input_types: { saveValue: Array<IoTypes>, postSaveValue: Array<IoTypes>, getValue: Array<IoTypes>, deleteValue: Array<IoTypes>, postDeleteValue: Array<IoTypes> }, output_types: { saveValue: Array<IoTypes>, postSaveValue: Array<IoTypes>, getValue: Array<IoTypes>, deleteValue: Array<IoTypes>, postDeleteValue: Array<IoTypes> }, actions_list?: { saveValue?: Array<{ id: string, is_system: boolean, error_message?: any | null, params?: Array<{ name: string, value: string }> | null }> | null, postSaveValue?: Array<{ id: string, is_system: boolean, error_message?: any | null, params?: Array<{ name: string, value: string }> | null }> | null, getValue?: Array<{ id: string, is_system: boolean, params?: Array<{ name: string, value: string }> | null }> | null, deleteValue?: Array<{ id: string, is_system: boolean, params?: Array<{ name: string, value: string }> | null }> | null, postDeleteValue?: Array<{ id: string, is_system: boolean, params?: Array<{ name: string, value: string }> | null }> | null } | null }> } | null };
 
 export type GetAttributeByIdQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -1113,7 +1141,7 @@ export type SaveAttributeActionListMutationVariables = Exact<{
 }>;
 
 
-export type SaveAttributeActionListMutation = { saveAttribute: { id: string, actions_list?: { saveValue?: Array<{ id: string, error_message?: any | null, params?: Array<{ name: string, value: string }> | null }> | null, getValue?: Array<{ id: string, params?: Array<{ name: string, value: string }> | null }> | null, deleteValue?: Array<{ id: string, params?: Array<{ name: string, value: string }> | null }> | null } | null } };
+export type SaveAttributeActionListMutation = { saveAttribute: { id: string, actions_list?: { saveValue?: Array<{ id: string, error_message?: any | null, params?: Array<{ name: string, value: string }> | null }> | null, postSaveValue?: Array<{ id: string, error_message?: any | null, params?: Array<{ name: string, value: string }> | null }> | null, getValue?: Array<{ id: string, params?: Array<{ name: string, value: string }> | null }> | null, deleteValue?: Array<{ id: string, params?: Array<{ name: string, value: string }> | null }> | null, postDeleteValue?: Array<{ id: string, params?: Array<{ name: string, value: string }> | null }> | null } | null } };
 
 export type SaveAttributeMutationVariables = Exact<{
   attrData: AttributeInput;
@@ -2268,16 +2296,29 @@ export const GetActionsListQueryDocument = gql`
       format
       input_types {
         saveValue
+        postSaveValue
         getValue
         deleteValue
+        postDeleteValue
       }
       output_types {
         saveValue
+        postSaveValue
         getValue
         deleteValue
+        postDeleteValue
       }
       actions_list {
         saveValue {
+          id
+          is_system
+          params {
+            name
+            value
+          }
+          error_message
+        }
+        postSaveValue {
           id
           is_system
           params {
@@ -2295,6 +2336,14 @@ export const GetActionsListQueryDocument = gql`
           }
         }
         deleteValue {
+          id
+          is_system
+          params {
+            name
+            value
+          }
+        }
+        postDeleteValue {
           id
           is_system
           params {
@@ -2549,6 +2598,14 @@ export const SaveAttributeActionListDocument = gql`
         }
         error_message
       }
+      postSaveValue {
+        id
+        params {
+          name
+          value
+        }
+        error_message
+      }
       getValue {
         id
         params {
@@ -2557,6 +2614,13 @@ export const SaveAttributeActionListDocument = gql`
         }
       }
       deleteValue {
+        id
+        params {
+          name
+          value
+        }
+      }
+      postDeleteValue {
         id
         params {
           name

@@ -36,7 +36,9 @@ export const commonAttributeData = {
                 is_system: true,
             },
         ],
+        [ActionsListEvents.POST_SAVE_VALUE]: [],
         [ActionsListEvents.DELETE_VALUE]: [],
+        [ActionsListEvents.POST_DELETE_VALUE]: [],
     },
 };
 

@@ -66,7 +66,9 @@ export const mockAvailActions: IActionsListFunction[] = [
 /*** Actions list conf ***/
 const mockConfBase: ActionsListConfig = {
     saveValue: [],
+    postSaveValue: [],
     deleteValue: [],
+    postDeleteValue: [],
     getValue: [],
 };
 

@@ -16,6 +16,14 @@ export const saveAttributeActionsListMutation = gql`
                     }
                     error_message
                 }
+                postSaveValue {
+                    id
+                    params {
+                        name
+                        value
+                    }
+                    error_message
+                }
                 getValue {
                     id
                     params {
@@ -24,6 +32,13 @@ export const saveAttributeActionsListMutation = gql`
                     }
                 }
                 deleteValue {
+                    id
+                    params {
+                        name
+                        value
+                    }
+                }
+                postDeleteValue {
                     id
                     params {
                         name
