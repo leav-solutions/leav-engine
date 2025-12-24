@@ -7,7 +7,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
-import {disableFragmentWarnings} from 'graphql-tag';
+import {disableFragmentWarnings} from '@apollo/client';
 import React from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
