@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {v4 as uuid} from 'uuid';
 import {AttributeFormat, type RecordFilterCondition} from '_ui/_gqlTypes';
 import {
     type UIFilter,
@@ -131,7 +130,7 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
         } else {
             filterToAdd = {
                 ...payload,
-                id: uuid(),
+                id: window.crypto.randomUUID(),
                 field: Array.isArray(payload.field) ? payload.field : [payload.field],
                 condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
                     ? null
@@ -143,7 +142,7 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
         filterToAdd = {
             ...payload,
             field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
-            id: uuid(),
+            id: window.crypto.randomUUID(),
             condition,
             value: null,
             valuesList: hasValueList ? payload.attribute.valuesList : undefined,

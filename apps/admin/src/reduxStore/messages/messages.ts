@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {type SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
-import {v4 as uuidv4} from 'uuid';
 
 export enum MessagesTypes {
     SUCCESS = 'SUCCESS',
@@ -34,7 +33,7 @@ export const messagesSlice = createSlice({
         addMessage: (state, action: PayloadAction<Omit<IMessage, 'id'>>) => {
             state.messages.push({
                 ...action.payload,
-                id: uuidv4(),
+                id: window.crypto.randomUUID(),
             });
         },
         removeMessage: (state, action: PayloadAction<string>) => {

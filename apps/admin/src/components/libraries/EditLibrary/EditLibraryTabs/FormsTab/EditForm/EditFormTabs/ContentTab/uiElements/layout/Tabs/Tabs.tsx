@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Menu, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {v4 as uuid} from 'uuid';
 import {layoutElements} from '../..';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
@@ -41,7 +40,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
 
     const _getNewTab = (index?: number): ITabSettings => ({
         label: {fr: t('forms.new_tab_label', {index})},
-        id: uuid(),
+        id: window.crypto.randomUUID(),
     });
 
     if (!elementData || !dispatch || !state) {

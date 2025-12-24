@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {useDrag} from 'react-dnd';
 import styled from 'styled-components';
-import {v4 as uuidv4} from 'uuid';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
@@ -67,7 +65,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
         }
 
         return {
-            id: uuidv4(),
+            id: window.crypto.randomUUID(),
             order: 0,
             type: FormElementTypes.field,
             containerId: defaultContainerId,

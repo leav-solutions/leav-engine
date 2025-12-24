@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useCallback, useContext, useEffect, useRef} from 'react';
-import {v4 as uuid} from 'uuid';
 import {LangContext} from '_ui/contexts';
 import {
     type AddMessageToPanelMessageHandler,
@@ -22,7 +21,7 @@ export {IUseIFrameMessengerOptions};
  */
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const registry = useRef<Record<string, Window>>({});
-    const selfId = useRef(options?.id ?? uuid());
+    const selfId = useRef(options?.id ?? window.crypto.randomUUID());
 
     const {setLang} = useContext(LangContext);
 
