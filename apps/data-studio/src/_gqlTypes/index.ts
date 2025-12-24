@@ -41,6 +41,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AccessRecordByDefaultPermissionInput = {
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+};
+
 export type ActionConfigurationInput = {
   error_message?: InputMaybe<Scalars['SystemTranslationOptional']>;
   id: Scalars['ID'];
@@ -62,6 +67,8 @@ export enum ActionIoTypes {
 export type ActionsListConfigurationInput = {
   deleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
   getValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postDeleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postSaveValue?: InputMaybe<Array<ActionConfigurationInput>>;
   saveValue?: InputMaybe<Array<ActionConfigurationInput>>;
 };
 
@@ -165,6 +172,7 @@ export type AttributeInput = {
   multi_tree_display_option?: InputMaybe<MultiDisplayOption>;
   multiple_values?: InputMaybe<Scalars['Boolean']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
+  permissions_conf_dependent_values?: InputMaybe<TreePermissionsDependentValuesConfInput>;
   readonly?: InputMaybe<Scalars['Boolean']>;
   required?: InputMaybe<Scalars['Boolean']>;
   reverse_link?: InputMaybe<Scalars['String']>;
@@ -215,25 +223,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  category?: InputMaybe<Scalars['String']>;
-  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  label: Scalars['String'];
-  mixed: Scalars['Boolean'];
-  opTrade?: InputMaybe<Scalars['String']>;
-  startDate: Scalars['String'];
-  thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  type?: InputMaybe<Scalars['String']>;
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  startDate: Scalars['String'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -248,6 +237,23 @@ export type CreateRecordDataInput = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean'];
   id: Scalars['ID'];
+};
+
+export type DiscussionCommentInput = {
+  mentions?: InputMaybe<DiscussionMentionsInput>;
+  message: Scalars['String'];
+  targetRecord: DiscussionTargetRecordInput;
+  threadId?: InputMaybe<Scalars['String']>;
+};
+
+export type DiscussionMentionsInput = {
+  url: Scalars['String'];
+  users?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type DiscussionTargetRecordInput = {
+  id: Scalars['String'];
+  libraryId: Scalars['String'];
 };
 
 export type EmbeddedAttributeInput = {
@@ -328,17 +334,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -519,6 +514,11 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']>;
 };
 
+export type MapValueInput = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -526,7 +526,9 @@ export enum MultiDisplayOption {
 }
 
 export enum NotificationLevel {
+  error = 'error',
   info = 'info',
+  success = 'success',
   warning = 'warning'
 }
 
@@ -543,6 +545,7 @@ export type PermissionActionInput = {
 export type PermissionInput = {
   actions: Array<PermissionActionInput>;
   applyTo?: InputMaybe<Scalars['ID']>;
+  dependenciesTreeTargets?: InputMaybe<Array<PermissionsDependenciesTreeTargetInput>>;
   permissionTreeTarget?: InputMaybe<PermissionsTreeTargetInput>;
   type: PermissionTypes;
   usersGroup?: InputMaybe<Scalars['ID']>;
@@ -559,6 +562,7 @@ export enum PermissionTypes {
   admin = 'admin',
   application = 'application',
   attribute = 'attribute',
+  attribute_dependent_values = 'attribute_dependent_values',
   library = 'library',
   record = 'record',
   record_attribute = 'record_attribute',
@@ -614,8 +618,15 @@ export enum PermissionsActions {
   detach = 'detach',
   edit_children = 'edit_children',
   edit_record = 'edit_record',
-  edit_value = 'edit_value'
+  edit_value = 'edit_value',
+  set_value = 'set_value'
 }
+
+export type PermissionsDependenciesTreeTargetInput = {
+  attributeId: Scalars['ID'];
+  nodeId?: InputMaybe<Scalars['ID']>;
+  tree: Scalars['ID'];
+};
 
 export enum PermissionsRelation {
   and = 'and',
@@ -794,7 +805,8 @@ export enum TaskType {
   EXPORT = 'EXPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
-  INDEXATION = 'INDEXATION'
+  INDEXATION = 'INDEXATION',
+  SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export enum TreeBehavior {
@@ -843,6 +855,10 @@ export type TreeLibrarySettingsInput = {
 export type TreeNodePermissionsConfInput = {
   libraryId: Scalars['ID'];
   permissionsConf: TreepermissionsConfInput;
+};
+
+export type TreePermissionsDependentValuesConfInput = {
+  dependenciesTreeAttributes: Array<Scalars['ID']>;
 };
 
 export type TreepermissionsConfInput = {

@@ -8,62 +8,64 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  Any: any;
-  DateTime: any;
-  FullTreeContent: any;
-  JSON: any;
-  JSONObject: any;
-  Preview: any;
-  SystemTranslation: any;
-  SystemTranslationOptional: any;
-  TaskPriority: any;
-  Upload: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Any: { input: any; output: any; }
+  DateTime: { input: any; output: any; }
+  FullTreeContent: { input: any; output: any; }
+  JSON: { input: any; output: any; }
+  JSONObject: { input: any; output: any; }
+  Preview: { input: any; output: any; }
+  SystemTranslation: { input: any; output: any; }
+  SystemTranslationOptional: { input: any; output: any; }
+  TaskPriority: { input: any; output: any; }
+  Upload: { input: any; output: any; }
 };
 
 export type AccessRecordByDefaultPermissionInput = {
-  attributeId: Scalars['ID'];
-  libraryId: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
 };
 
 export type Action = {
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
   input_types: Array<ActionIoTypes>;
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   output_types: Array<ActionIoTypes>;
   params?: Maybe<Array<ActionParam>>;
 };
 
 export type ActionConfiguration = {
-  error_message?: Maybe<Scalars['SystemTranslationOptional']>;
-  id: Scalars['ID'];
-  is_system: Scalars['Boolean'];
-  name: Scalars['String'];
+  error_message?: Maybe<Scalars['SystemTranslationOptional']['output']>;
+  id: Scalars['ID']['output'];
+  is_system: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
   params?: Maybe<Array<ActionConfigurationParam>>;
 };
 
 export type ActionConfigurationInput = {
-  error_message?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  id: Scalars['ID'];
+  error_message?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  id: Scalars['ID']['input'];
   params?: InputMaybe<Array<ActionConfigurationParamInput>>;
 };
 
 export type ActionConfigurationParam = {
-  name: Scalars['String'];
-  value: Scalars['String'];
+  name: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type ActionConfigurationParamInput = {
-  name: Scalars['String'];
-  value: Scalars['String'];
+  name: Scalars['String']['input'];
+  value: Scalars['String']['input'];
 };
 
 export enum ActionIoTypes {
@@ -76,58 +78,64 @@ export enum ActionIoTypes {
 export type ActionListIoTypes = {
   deleteValue: Array<IoTypes>;
   getValue: Array<IoTypes>;
+  postDeleteValue: Array<IoTypes>;
+  postSaveValue: Array<IoTypes>;
   saveValue: Array<IoTypes>;
 };
 
 export type ActionParam = {
-  description?: Maybe<Scalars['String']>;
-  helper_value?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  required?: Maybe<Scalars['Boolean']>;
-  type: Scalars['String'];
+  description?: Maybe<Scalars['String']['output']>;
+  helper_value?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  required?: Maybe<Scalars['Boolean']['output']>;
+  type: Scalars['String']['output'];
 };
 
 export type ActionsListConfiguration = {
   deleteValue?: Maybe<Array<ActionConfiguration>>;
   getValue?: Maybe<Array<ActionConfiguration>>;
+  postDeleteValue?: Maybe<Array<ActionConfiguration>>;
+  postSaveValue?: Maybe<Array<ActionConfiguration>>;
   saveValue?: Maybe<Array<ActionConfiguration>>;
 };
 
 export type ActionsListConfigurationInput = {
   deleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
   getValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postDeleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postSaveValue?: InputMaybe<Array<ActionConfigurationInput>>;
   saveValue?: InputMaybe<Array<ActionConfigurationInput>>;
 };
 
 export type ApiKey = {
-  createdAt: Scalars['Int'];
+  createdAt: Scalars['Int']['output'];
   createdBy: Record;
-  expiresAt?: Maybe<Scalars['Int']>;
-  id: Scalars['String'];
-  key?: Maybe<Scalars['String']>;
-  label?: Maybe<Scalars['String']>;
-  modifiedAt: Scalars['Int'];
+  expiresAt?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['String']['output'];
+  key?: Maybe<Scalars['String']['output']>;
+  label?: Maybe<Scalars['String']['output']>;
+  modifiedAt: Scalars['Int']['output'];
   modifiedBy: Record;
   user: Record;
 };
 
 export type ApiKeyInput = {
-  expiresAt?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['String']>;
-  label: Scalars['String'];
-  userId: Scalars['String'];
+  expiresAt?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type ApiKeyList = {
   list: Array<ApiKey>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type ApiKeysFiltersInput = {
-  createdBy?: InputMaybe<Scalars['Int']>;
-  label?: InputMaybe<Scalars['String']>;
-  modifiedBy?: InputMaybe<Scalars['Int']>;
-  user_id?: InputMaybe<Scalars['String']>;
+  createdBy?: InputMaybe<Scalars['Int']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  modifiedBy?: InputMaybe<Scalars['Int']['input']>;
+  user_id?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum ApiKeysSortableFields {
@@ -140,18 +148,18 @@ export enum ApiKeysSortableFields {
 }
 
 export type Application = {
-  color?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['SystemTranslation']>;
-  endpoint?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['SystemTranslation']['output']>;
+  endpoint?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Record>;
-  id: Scalars['ID'];
-  label: Scalars['SystemTranslation'];
-  module?: Maybe<Scalars['String']>;
+  id: Scalars['ID']['output'];
+  label: Scalars['SystemTranslation']['output'];
+  module?: Maybe<Scalars['String']['output']>;
   permissions: ApplicationPermissions;
-  settings?: Maybe<Scalars['JSONObject']>;
-  system: Scalars['Boolean'];
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system: Scalars['Boolean']['output'];
   type: ApplicationType;
-  url?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -165,9 +173,9 @@ export type ApplicationEvent = {
 };
 
 export type ApplicationEventFiltersInput = {
-  applicationId?: InputMaybe<Scalars['ID']>;
+  applicationId?: InputMaybe<Scalars['ID']['input']>;
   events?: InputMaybe<Array<ApplicationEventTypes>>;
-  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum ApplicationEventTypes {
@@ -176,31 +184,31 @@ export enum ApplicationEventTypes {
 }
 
 export type ApplicationIconInput = {
-  libraryId: Scalars['String'];
-  recordId: Scalars['String'];
+  libraryId: Scalars['String']['input'];
+  recordId: Scalars['String']['input'];
 };
 
 export type ApplicationInput = {
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  endpoint?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  endpoint?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<ApplicationIconInput>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  module?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  module?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type?: InputMaybe<ApplicationType>;
 };
 
 export type ApplicationModule = {
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  version?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  version?: Maybe<Scalars['String']['output']>;
 };
 
 export type ApplicationPermissions = {
-  access_application: Scalars['Boolean'];
-  admin_application: Scalars['Boolean'];
+  access_application: Scalars['Boolean']['output'];
+  admin_application: Scalars['Boolean']['output'];
 };
 
 export enum ApplicationSortableFields {
@@ -217,44 +225,44 @@ export enum ApplicationType {
 }
 
 export type ApplicationsFiltersInput = {
-  endpoint?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['String']>;
-  module?: InputMaybe<Scalars['String']>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  endpoint?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  module?: InputMaybe<Scalars['String']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Array<InputMaybe<ApplicationType>>>;
 };
 
 export type ApplicationsList = {
   list: Array<Application>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Attachment = {
-  label: Scalars['String'];
-  url: Scalars['String'];
+  label: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type Attribute = {
   actions_list?: Maybe<ActionsListConfiguration>;
-  compute: Scalars['Boolean'];
-  description?: Maybe<Scalars['SystemTranslationOptional']>;
+  compute: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   format?: Maybe<AttributeFormat>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   input_types: ActionListIoTypes;
-  label?: Maybe<Scalars['SystemTranslation']>;
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   libraries?: Maybe<Array<Library>>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
   multi_link_display_option?: Maybe<MultiDisplayOption>;
   multi_tree_display_option?: Maybe<MultiDisplayOption>;
-  multiple_values: Scalars['Boolean'];
+  multiple_values: Scalars['Boolean']['output'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
   permissions_conf?: Maybe<TreepermissionsConf>;
-  readonly: Scalars['Boolean'];
-  required: Scalars['Boolean'];
-  settings?: Maybe<Scalars['JSONObject']>;
-  system: Scalars['Boolean'];
+  readonly: Scalars['Boolean']['output'];
+  required: Scalars['Boolean']['output'];
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system: Scalars['Boolean']['output'];
   type: AttributeType;
   versions_conf?: Maybe<ValuesVersionsConf>;
 };
@@ -288,37 +296,38 @@ export enum AttributeFormat {
 
 export type AttributeInput = {
   actions_list?: InputMaybe<ActionsListConfigurationInput>;
-  character_limit?: InputMaybe<Scalars['Int']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  character_limit?: InputMaybe<Scalars['Int']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  linked_library?: InputMaybe<Scalars['String']>;
-  linked_tree?: InputMaybe<Scalars['String']>;
-  metadata_fields?: InputMaybe<Array<Scalars['String']>>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  linked_library?: InputMaybe<Scalars['String']['input']>;
+  linked_tree?: InputMaybe<Scalars['String']['input']>;
+  metadata_fields?: InputMaybe<Array<Scalars['String']['input']>>;
   multi_link_display_option?: InputMaybe<MultiDisplayOption>;
   multi_tree_display_option?: InputMaybe<MultiDisplayOption>;
-  multiple_values?: InputMaybe<Scalars['Boolean']>;
+  multiple_values?: InputMaybe<Scalars['Boolean']['input']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
-  readonly?: InputMaybe<Scalars['Boolean']>;
-  required?: InputMaybe<Scalars['Boolean']>;
-  reverse_link?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  permissions_conf_dependent_values?: InputMaybe<TreePermissionsDependentValuesConfInput>;
+  readonly?: InputMaybe<Scalars['Boolean']['input']>;
+  required?: InputMaybe<Scalars['Boolean']['input']>;
+  reverse_link?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type?: InputMaybe<AttributeType>;
-  unique?: InputMaybe<Scalars['Boolean']>;
+  unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
   versions_conf?: InputMaybe<ValuesVersionsConfInput>;
 };
 
 export type AttributePermissions = {
-  access_attribute: Scalars['Boolean'];
-  edit_value: Scalars['Boolean'];
+  access_attribute: Scalars['Boolean']['output'];
+  edit_value: Scalars['Boolean']['output'];
 };
 
 export type AttributePermissionsRecord = {
-  id?: InputMaybe<Scalars['String']>;
-  library: Scalars['String'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  library: Scalars['String']['input'];
 };
 
 export enum AttributeType {
@@ -331,20 +340,20 @@ export enum AttributeType {
 
 export type AttributesFiltersInput = {
   format?: InputMaybe<Array<AttributeFormat>>;
-  id?: InputMaybe<Scalars['ID']>;
-  ids?: InputMaybe<Array<Scalars['ID']>>;
-  label?: InputMaybe<Scalars['String']>;
-  libraries?: InputMaybe<Array<Scalars['String']>>;
-  librariesExcluded?: InputMaybe<Array<Scalars['String']>>;
-  multiple_values?: InputMaybe<Scalars['Boolean']>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  libraries?: InputMaybe<Array<Scalars['String']['input']>>;
+  librariesExcluded?: InputMaybe<Array<Scalars['String']['input']>>;
+  multiple_values?: InputMaybe<Scalars['Boolean']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Array<AttributeType>>;
-  versionable?: InputMaybe<Scalars['Boolean']>;
+  versionable?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type AttributesList = {
   list: Array<Attribute>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export enum AttributesSortableFields {
@@ -363,8 +372,8 @@ export enum AvailableLanguage {
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
-  attributeId: Scalars['ID'];
-  libraryId: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
 };
 
 export type CreateRecordDataInput = {
@@ -378,59 +387,59 @@ export type CreateRecordResult = {
 };
 
 export type DateRangeValue = {
-  from?: Maybe<Scalars['String']>;
-  to?: Maybe<Scalars['String']>;
+  from?: Maybe<Scalars['String']['output']>;
+  to?: Maybe<Scalars['String']['output']>;
 };
 
 export type DeleteTaskInput = {
-  archive: Scalars['Boolean'];
-  id: Scalars['ID'];
+  archive: Scalars['Boolean']['input'];
+  id: Scalars['ID']['input'];
 };
 
 export type DiscussionComment = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
 };
 
 export type DiscussionCommentInput = {
   mentions?: InputMaybe<DiscussionMentionsInput>;
-  message: Scalars['String'];
+  message: Scalars['String']['input'];
   targetRecord: DiscussionTargetRecordInput;
-  threadId?: InputMaybe<Scalars['String']>;
+  threadId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DiscussionMentionsInput = {
-  url: Scalars['String'];
-  users?: InputMaybe<Array<Scalars['String']>>;
+  url: Scalars['String']['input'];
+  users?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type DiscussionTargetRecordInput = {
-  id: Scalars['String'];
-  libraryId: Scalars['String'];
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type EmbeddedAttribute = {
-  description?: Maybe<Scalars['SystemTranslationOptional']>;
+  description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   embedded_fields?: Maybe<Array<Maybe<EmbeddedAttribute>>>;
   format?: Maybe<AttributeFormat>;
-  id: Scalars['ID'];
-  label?: Maybe<Scalars['SystemTranslation']>;
-  validation_regex?: Maybe<Scalars['String']>;
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
+  validation_regex?: Maybe<Scalars['String']['output']>;
 };
 
 export type EmbeddedAttributeInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  validation_regex?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  validation_regex?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type FileInput = {
-  data: Scalars['Upload'];
-  replace?: InputMaybe<Scalars['Boolean']>;
-  size?: InputMaybe<Scalars['Int']>;
-  uid: Scalars['String'];
+  data: Scalars['Upload']['input'];
+  replace?: InputMaybe<Scalars['Boolean']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  uid: Scalars['String']['input'];
 };
 
 export enum FileType {
@@ -444,11 +453,11 @@ export enum FileType {
 export type Form = {
   dependencyAttributes?: Maybe<Array<Attribute>>;
   elements: Array<FormElementsByDeps>;
-  id: Scalars['ID'];
-  label?: Maybe<Scalars['SystemTranslation']>;
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   library: Library;
   sidePanel?: Maybe<FormSidePanel>;
-  system: Scalars['Boolean'];
+  system: Scalars['Boolean']['output'];
 };
 
 
@@ -457,34 +466,34 @@ export type FormLabelArgs = {
 };
 
 export type FormDependencyValue = {
-  attribute: Scalars['ID'];
-  value: Scalars['ID'];
+  attribute: Scalars['ID']['output'];
+  value: Scalars['ID']['output'];
 };
 
 export type FormDependencyValueInput = {
-  attribute: Scalars['ID'];
-  value: Scalars['ID'];
+  attribute: Scalars['ID']['input'];
+  value: Scalars['ID']['input'];
 };
 
 export type FormElement = {
   attribute?: Maybe<Attribute>;
-  containerId: Scalars['ID'];
-  id: Scalars['ID'];
+  containerId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
   /** In case the form element is a join library link */
   joinLibraryContext?: Maybe<FormElementJoinLibraryContext>;
-  order: Scalars['Int'];
+  order: Scalars['Int']['output'];
   settings: Array<FormElementSettings>;
   type: FormElementTypes;
-  uiElementType: Scalars['String'];
+  uiElementType: Scalars['String']['output'];
 };
 
 export type FormElementInput = {
-  containerId: Scalars['ID'];
-  id: Scalars['ID'];
-  order: Scalars['Int'];
+  containerId: Scalars['ID']['input'];
+  id: Scalars['ID']['input'];
+  order: Scalars['Int']['input'];
   settings: Array<FormElementSettingsInput>;
   type: FormElementTypes;
-  uiElementType: Scalars['String'];
+  uiElementType: Scalars['String']['input'];
 };
 
 export type FormElementJoinLibraryContext = {
@@ -493,13 +502,13 @@ export type FormElementJoinLibraryContext = {
 };
 
 export type FormElementSettings = {
-  key: Scalars['String'];
-  value: Scalars['Any'];
+  key: Scalars['String']['output'];
+  value: Scalars['Any']['output'];
 };
 
 export type FormElementSettingsInput = {
-  key: Scalars['String'];
-  value: Scalars['Any'];
+  key: Scalars['String']['input'];
+  value: Scalars['Any']['input'];
 };
 
 export enum FormElementTypes {
@@ -509,15 +518,15 @@ export enum FormElementTypes {
 
 export type FormElementWithValues = {
   attribute?: Maybe<Attribute>;
-  containerId: Scalars['ID'];
-  id: Scalars['ID'];
+  containerId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
   /** In case the form element is a join library link */
   joinLibraryContext?: Maybe<FormElementJoinLibraryContext>;
-  order: Scalars['Int'];
+  order: Scalars['Int']['output'];
   settings: Array<FormElementSettings>;
   type: FormElementTypes;
-  uiElementType: Scalars['String'];
-  valueError?: Maybe<Scalars['String']>;
+  uiElementType: Scalars['String']['output'];
+  valueError?: Maybe<Scalars['String']['output']>;
   values?: Maybe<Array<GenericValue>>;
 };
 
@@ -532,34 +541,34 @@ export type FormElementsByDepsInput = {
 };
 
 export type FormFiltersInput = {
-  id?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['String']>;
-  library: Scalars['ID'];
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  library: Scalars['ID']['input'];
+  system?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type FormInput = {
-  dependencyAttributes?: InputMaybe<Array<Scalars['ID']>>;
+  dependencyAttributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   elements?: InputMaybe<Array<FormElementsByDepsInput>>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  library: Scalars['ID'];
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library: Scalars['ID']['input'];
   sidePanel?: InputMaybe<FormSidePanelInput>;
 };
 
 export type FormSidePanel = {
-  enable: Scalars['Boolean'];
-  isOpenByDefault?: Maybe<Scalars['Boolean']>;
+  enable: Scalars['Boolean']['output'];
+  isOpenByDefault?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type FormSidePanelInput = {
-  enable: Scalars['Boolean'];
-  isOpenByDefault: Scalars['Boolean'];
+  enable: Scalars['Boolean']['input'];
+  isOpenByDefault: Scalars['Boolean']['input'];
 };
 
 export type FormsList = {
   list: Array<Form>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export enum FormsSortableFields {
@@ -570,44 +579,44 @@ export enum FormsSortableFields {
 
 export type GenericValue = {
   attribute: Attribute;
-  created_at?: Maybe<Scalars['Int']>;
+  created_at?: Maybe<Scalars['Int']['output']>;
   created_by?: Maybe<Record>;
-  id_value?: Maybe<Scalars['ID']>;
-  isCalculated?: Maybe<Scalars['Boolean']>;
-  isInherited?: Maybe<Scalars['Boolean']>;
+  id_value?: Maybe<Scalars['ID']['output']>;
+  isCalculated?: Maybe<Scalars['Boolean']['output']>;
+  isInherited?: Maybe<Scalars['Boolean']['output']>;
   metadata?: Maybe<Array<Maybe<ValueMetadata>>>;
-  modified_at?: Maybe<Scalars['Int']>;
+  modified_at?: Maybe<Scalars['Int']['output']>;
   modified_by?: Maybe<Record>;
   version?: Maybe<Array<Maybe<ValueVersion>>>;
 };
 
 export type GenericValueOccurrences = {
-  count: Scalars['Int'];
+  count: Scalars['Int']['output'];
 };
 
 export type GlobalSettings = {
-  defaultApp: Scalars['String'];
+  defaultApp: Scalars['String']['output'];
   favicon?: Maybe<Record>;
   icon?: Maybe<Record>;
-  name: Scalars['String'];
-  settings?: Maybe<Scalars['JSONObject']>;
+  name: Scalars['String']['output'];
+  settings?: Maybe<Scalars['JSONObject']['output']>;
 };
 
 export type GlobalSettingsFileInput = {
-  library: Scalars['String'];
-  recordId: Scalars['String'];
+  library: Scalars['String']['input'];
+  recordId: Scalars['String']['input'];
 };
 
 export type GlobalSettingsInput = {
-  defaultApp?: InputMaybe<Scalars['String']>;
+  defaultApp?: InputMaybe<Scalars['String']['input']>;
   favicon?: InputMaybe<GlobalSettingsFileInput>;
   icon?: InputMaybe<GlobalSettingsFileInput>;
-  name?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
 };
 
 export type HeritedPermissionAction = {
-  allowed: Scalars['Boolean'];
+  allowed: Scalars['Boolean']['output'];
   name: PermissionsActions;
 };
 
@@ -631,20 +640,20 @@ export enum ImportType {
 }
 
 export type LabeledPermissionsActions = {
-  label?: Maybe<Scalars['SystemTranslation']>;
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   name: PermissionsActions;
 };
 
 export type LibrariesFiltersInput = {
   behavior?: InputMaybe<Array<LibraryBehavior>>;
-  id?: InputMaybe<Array<Scalars['ID']>>;
-  label?: InputMaybe<Array<Scalars['String']>>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Array<Scalars['ID']['input']>>;
+  label?: InputMaybe<Array<Scalars['String']['input']>>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type LibrariesList = {
   list: Array<Library>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export enum LibrariesSortableFields {
@@ -659,16 +668,16 @@ export type Library = {
   defaultView?: Maybe<View>;
   fullTextAttributes?: Maybe<Array<Attribute>>;
   icon?: Maybe<Record>;
-  id: Scalars['ID'];
-  label?: Maybe<Scalars['SystemTranslation']>;
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   linkedTrees?: Maybe<Array<Tree>>;
   mandatoryAttribute?: Maybe<Attribute>;
   permissions?: Maybe<LibraryPermissions>;
   permissions_conf?: Maybe<TreepermissionsConf>;
   previewsSettings?: Maybe<Array<LibraryPreviewsSettings>>;
   recordIdentityConf?: Maybe<RecordIdentityConf>;
-  settings?: Maybe<Scalars['JSONObject']>;
-  system?: Maybe<Scalars['Boolean']>;
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system?: Maybe<Scalars['Boolean']['output']>;
 };
 
 
@@ -684,77 +693,77 @@ export enum LibraryBehavior {
 }
 
 export type LibraryGraphqlNames = {
-  filter: Scalars['String'];
-  list: Scalars['String'];
-  query: Scalars['String'];
-  searchableFields: Scalars['String'];
-  type: Scalars['String'];
+  filter: Scalars['String']['output'];
+  list: Scalars['String']['output'];
+  query: Scalars['String']['output'];
+  searchableFields: Scalars['String']['output'];
+  type: Scalars['String']['output'];
 };
 
 export type LibraryIconInput = {
-  libraryId: Scalars['String'];
-  recordId: Scalars['String'];
+  libraryId: Scalars['String']['input'];
+  recordId: Scalars['String']['input'];
 };
 
 export type LibraryInput = {
-  attributes?: InputMaybe<Array<Scalars['ID']>>;
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   behavior?: InputMaybe<LibraryBehavior>;
-  defaultView?: InputMaybe<Scalars['ID']>;
-  fullTextAttributes?: InputMaybe<Array<Scalars['ID']>>;
+  defaultView?: InputMaybe<Scalars['ID']['input']>;
+  fullTextAttributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   icon?: InputMaybe<LibraryIconInput>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  mandatoryAttribute?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  mandatoryAttribute?: InputMaybe<Scalars['ID']['input']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   previewsSettings?: InputMaybe<Array<LibraryPreviewsSettingsInput>>;
   recordIdentityConf?: InputMaybe<RecordIdentityConfInput>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
 };
 
 export type LibraryPermissions = {
-  access_library: Scalars['Boolean'];
-  access_record: Scalars['Boolean'];
-  admin_library: Scalars['Boolean'];
-  create_record: Scalars['Boolean'];
-  delete_record: Scalars['Boolean'];
-  edit_record: Scalars['Boolean'];
+  access_library: Scalars['Boolean']['output'];
+  access_record: Scalars['Boolean']['output'];
+  admin_library: Scalars['Boolean']['output'];
+  create_record: Scalars['Boolean']['output'];
+  delete_record: Scalars['Boolean']['output'];
+  edit_record: Scalars['Boolean']['output'];
 };
 
 export type LibraryPreviewsSettings = {
-  description?: Maybe<Scalars['SystemTranslation']>;
-  label: Scalars['SystemTranslation'];
-  system: Scalars['Boolean'];
+  description?: Maybe<Scalars['SystemTranslation']['output']>;
+  label: Scalars['SystemTranslation']['output'];
+  system: Scalars['Boolean']['output'];
   versions: PreviewVersion;
 };
 
 export type LibraryPreviewsSettingsInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  label: Scalars['SystemTranslation'];
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  label: Scalars['SystemTranslation']['input'];
   versions: PreviewVersionInput;
 };
 
 export type LinkAttribute = Attribute & {
   actions_list?: Maybe<ActionsListConfiguration>;
-  compute: Scalars['Boolean'];
-  description?: Maybe<Scalars['SystemTranslationOptional']>;
+  compute: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   format?: Maybe<AttributeFormat>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   input_types: ActionListIoTypes;
-  label?: Maybe<Scalars['SystemTranslation']>;
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   libraries?: Maybe<Array<Library>>;
   linked_library?: Maybe<Library>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
   multi_link_display_option?: Maybe<MultiDisplayOption>;
   multi_tree_display_option?: Maybe<MultiDisplayOption>;
-  multiple_values: Scalars['Boolean'];
+  multiple_values: Scalars['Boolean']['output'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
   permissions_conf?: Maybe<TreepermissionsConf>;
-  readonly: Scalars['Boolean'];
-  required: Scalars['Boolean'];
-  reverse_link?: Maybe<Scalars['String']>;
-  settings?: Maybe<Scalars['JSONObject']>;
-  system: Scalars['Boolean'];
+  readonly: Scalars['Boolean']['output'];
+  required: Scalars['Boolean']['output'];
+  reverse_link?: Maybe<Scalars['String']['output']>;
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system: Scalars['Boolean']['output'];
   type: AttributeType;
   values_list?: Maybe<LinkValuesListConf>;
   versions_conf?: Maybe<ValuesVersionsConf>;
@@ -777,13 +786,13 @@ export type LinkAttributePermissionsArgs = {
 
 export type LinkValue = GenericValue & {
   attribute: Attribute;
-  created_at?: Maybe<Scalars['Int']>;
+  created_at?: Maybe<Scalars['Int']['output']>;
   created_by?: Maybe<Record>;
-  id_value?: Maybe<Scalars['ID']>;
-  isCalculated?: Maybe<Scalars['Boolean']>;
-  isInherited?: Maybe<Scalars['Boolean']>;
+  id_value?: Maybe<Scalars['ID']['output']>;
+  isCalculated?: Maybe<Scalars['Boolean']['output']>;
+  isInherited?: Maybe<Scalars['Boolean']['output']>;
   metadata?: Maybe<Array<Maybe<ValueMetadata>>>;
-  modified_at?: Maybe<Scalars['Int']>;
+  modified_at?: Maybe<Scalars['Int']['output']>;
   modified_by?: Maybe<Record>;
   payload?: Maybe<Record>;
   /** @deprecated Use payload instead */
@@ -792,9 +801,9 @@ export type LinkValue = GenericValue & {
 };
 
 export type LinkValuesListConf = {
-  allowFreeEntry?: Maybe<Scalars['Boolean']>;
-  allowListUpdate?: Maybe<Scalars['Boolean']>;
-  enable: Scalars['Boolean'];
+  allowFreeEntry?: Maybe<Scalars['Boolean']['output']>;
+  allowListUpdate?: Maybe<Scalars['Boolean']['output']>;
+  enable: Scalars['Boolean']['output'];
   values?: Maybe<Array<Record>>;
 };
 
@@ -802,12 +811,12 @@ export type Log = {
   action?: Maybe<LogAction>;
   after?: Maybe<LogData>;
   before?: Maybe<LogData>;
-  instanceId: Scalars['String'];
-  metadata?: Maybe<Scalars['Any']>;
-  queryId: Scalars['String'];
-  time: Scalars['Int'];
+  instanceId: Scalars['String']['output'];
+  metadata?: Maybe<Scalars['Any']['output']>;
+  queryId: Scalars['String']['output'];
+  time: Scalars['Int']['output'];
   topic?: Maybe<LogTopic>;
-  trigger?: Maybe<Scalars['String']>;
+  trigger?: Maybe<Scalars['String']['output']>;
   user: Record;
 };
 
@@ -844,23 +853,23 @@ export enum LogAction {
 }
 
 export type LogData = {
-  asString?: Maybe<Scalars['String']>;
-  raw?: Maybe<Scalars['Any']>;
+  asString?: Maybe<Scalars['String']['output']>;
+  raw?: Maybe<Scalars['Any']['output']>;
 };
 
 export type LogFilterInput = {
   actions?: InputMaybe<Array<LogAction>>;
-  instanceId?: InputMaybe<Scalars['String']>;
-  queryId?: InputMaybe<Scalars['String']>;
+  instanceId?: InputMaybe<Scalars['String']['input']>;
+  queryId?: InputMaybe<Scalars['String']['input']>;
   time?: InputMaybe<LogFilterTimeInput>;
   topic?: InputMaybe<LogTopicFilterInput>;
-  trigger?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  trigger?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LogFilterTimeInput = {
-  from?: InputMaybe<Scalars['Int']>;
-  to?: InputMaybe<Scalars['Int']>;
+  from?: InputMaybe<Scalars['Int']['input']>;
+  to?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type LogSortInput = {
@@ -878,10 +887,10 @@ export enum LogSortableField {
 }
 
 export type LogTopic = {
-  apiKey?: Maybe<Scalars['String']>;
+  apiKey?: Maybe<Scalars['String']['output']>;
   application?: Maybe<Application>;
   attribute?: Maybe<Attribute>;
-  filename?: Maybe<Scalars['String']>;
+  filename?: Maybe<Scalars['String']['output']>;
   library?: Maybe<Library>;
   permission?: Maybe<PermissionTopic>;
   profile?: Maybe<VersionProfile>;
@@ -890,34 +899,34 @@ export type LogTopic = {
 };
 
 export type LogTopicFilterInput = {
-  apiKey?: InputMaybe<Scalars['String']>;
-  attribute?: InputMaybe<Scalars['String']>;
-  filename?: InputMaybe<Scalars['String']>;
-  library?: InputMaybe<Scalars['String']>;
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
   permission?: InputMaybe<LogTopicPermissionFilterInput>;
-  profile?: InputMaybe<Scalars['String']>;
+  profile?: InputMaybe<Scalars['String']['input']>;
   record?: InputMaybe<LogTopicRecordFilterInput>;
-  tree?: InputMaybe<Scalars['String']>;
+  tree?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LogTopicPermissionFilterInput = {
-  applyTo?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<Scalars['String']>;
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LogTopicRecordFilterInput = {
-  id?: InputMaybe<Scalars['String']>;
-  libraryId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Logs = {
   logs: Array<Log>;
-  total: Scalars['Int'];
+  total: Scalars['Int']['output'];
 };
 
 export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']>;
-  before?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export enum MultiDisplayOption {
@@ -929,7 +938,7 @@ export enum MultiDisplayOption {
 export type Mutation = {
   activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
-  cancelTask: Scalars['Boolean'];
+  cancelTask: Scalars['Boolean']['output'];
   createDirectory: Record;
   createEmptyRecord: CreateRecordResult;
   createRecord: CreateRecordResult;
@@ -940,16 +949,16 @@ export type Mutation = {
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
   deleteRecord: Record;
-  deleteTasks: Scalars['Boolean'];
+  deleteTasks: Scalars['Boolean']['output'];
   deleteTree: Tree;
   deleteValue: Array<GenericValue>;
   deleteVersionProfile: VersionProfile;
   deleteView: View;
-  forcePreviewsGeneration: Scalars['Boolean'];
-  importConfig: Scalars['ID'];
-  importData: Scalars['ID'];
-  importExcel: Scalars['ID'];
-  indexRecords: Scalars['Boolean'];
+  forcePreviewsGeneration: Scalars['Boolean']['output'];
+  importConfig: Scalars['ID']['output'];
+  importData: Scalars['ID']['output'];
+  importExcel: Scalars['ID']['output'];
+  indexRecords: Scalars['Boolean']['output'];
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   purgeRecord: Record;
@@ -966,11 +975,11 @@ export type Mutation = {
   /**  Save multiple values for a single record  */
   saveValueBatch: SaveValueBatchResult;
   /**  Save values in bulk for all records matching the filters  */
-  saveValueBulk: Scalars['ID'];
+  saveValueBulk: Scalars['ID']['output'];
   saveVersionProfile: VersionProfile;
   saveView: View;
   treeAddElement: TreeNode;
-  treeDeleteElement: Scalars['ID'];
+  treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateView: View;
   upload: Array<UploadData>;
@@ -978,78 +987,78 @@ export type Mutation = {
 
 
 export type MutationActivateNewRecordArgs = {
-  formId?: InputMaybe<Scalars['String']>;
-  library: Scalars['ID'];
-  recordId: Scalars['ID'];
+  formId?: InputMaybe<Scalars['String']['input']>;
+  library: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
 };
 
 
 export type MutationActivateRecordsArgs = {
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  libraryId: Scalars['String'];
-  recordsIds?: InputMaybe<Array<Scalars['String']>>;
+  libraryId: Scalars['String']['input'];
+  recordsIds?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
 export type MutationCancelTaskArgs = {
-  taskId: Scalars['ID'];
+  taskId: Scalars['ID']['input'];
 };
 
 
 export type MutationCreateDirectoryArgs = {
-  library: Scalars['String'];
-  name: Scalars['String'];
-  nodeId: Scalars['String'];
+  library: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  nodeId: Scalars['String']['input'];
 };
 
 
 export type MutationCreateEmptyRecordArgs = {
-  library: Scalars['ID'];
+  library: Scalars['ID']['input'];
 };
 
 
 export type MutationCreateRecordArgs = {
   data?: InputMaybe<CreateRecordDataInput>;
-  library: Scalars['ID'];
+  library: Scalars['ID']['input'];
 };
 
 
 export type MutationDeactivateRecordsArgs = {
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  libraryId: Scalars['String'];
-  recordsIds?: InputMaybe<Array<Scalars['String']>>;
+  libraryId: Scalars['String']['input'];
+  recordsIds?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
 export type MutationDeleteApiKeyArgs = {
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
 };
 
 
 export type MutationDeleteApplicationArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type MutationDeleteAttributeArgs = {
-  id?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
 export type MutationDeleteFormArgs = {
-  id: Scalars['ID'];
-  library: Scalars['ID'];
+  id: Scalars['ID']['input'];
+  library: Scalars['ID']['input'];
 };
 
 
 export type MutationDeleteLibraryArgs = {
-  id?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
 export type MutationDeleteRecordArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-  library?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -1059,59 +1068,59 @@ export type MutationDeleteTasksArgs = {
 
 
 export type MutationDeleteTreeArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type MutationDeleteValueArgs = {
-  attribute: Scalars['ID'];
-  library: Scalars['ID'];
-  recordId: Scalars['ID'];
+  attribute: Scalars['ID']['input'];
+  library: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
   value?: InputMaybe<ValueInput>;
 };
 
 
 export type MutationDeleteVersionProfileArgs = {
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
 };
 
 
 export type MutationDeleteViewArgs = {
-  viewId: Scalars['String'];
+  viewId: Scalars['String']['input'];
 };
 
 
 export type MutationForcePreviewsGenerationArgs = {
-  failedOnly?: InputMaybe<Scalars['Boolean']>;
+  failedOnly?: InputMaybe<Scalars['Boolean']['input']>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
-  libraryId: Scalars['ID'];
-  previewVersionSizeNames?: InputMaybe<Array<Scalars['String']>>;
-  recordIds?: InputMaybe<Array<Scalars['ID']>>;
+  libraryId: Scalars['ID']['input'];
+  previewVersionSizeNames?: InputMaybe<Array<Scalars['String']['input']>>;
+  recordIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 
 export type MutationImportConfigArgs = {
-  clear?: InputMaybe<Scalars['Boolean']>;
-  file: Scalars['Upload'];
+  clear?: InputMaybe<Scalars['Boolean']['input']>;
+  file: Scalars['Upload']['input'];
 };
 
 
 export type MutationImportDataArgs = {
-  file: Scalars['Upload'];
-  startAt?: InputMaybe<Scalars['Int']>;
+  file: Scalars['Upload']['input'];
+  startAt?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type MutationImportExcelArgs = {
-  file: Scalars['Upload'];
+  file: Scalars['Upload']['input'];
   sheets?: InputMaybe<Array<InputMaybe<SheetInput>>>;
-  startAt?: InputMaybe<Scalars['Int']>;
+  startAt?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type MutationIndexRecordsArgs = {
-  libraryId: Scalars['String'];
-  records?: InputMaybe<Array<Scalars['String']>>;
+  libraryId: Scalars['String']['input'];
+  records?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -1121,13 +1130,13 @@ export type MutationPostDiscussionCommentArgs = {
 
 
 export type MutationPurgeInactiveRecordsArgs = {
-  libraryId: Scalars['String'];
+  libraryId: Scalars['String']['input'];
 };
 
 
 export type MutationPurgeRecordArgs = {
-  libraryId: Scalars['ID'];
-  recordId: Scalars['ID'];
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
 };
 
 
@@ -1172,32 +1181,32 @@ export type MutationSaveTreeArgs = {
 
 
 export type MutationSaveUserDataArgs = {
-  global: Scalars['Boolean'];
-  key: Scalars['String'];
-  value?: InputMaybe<Scalars['Any']>;
+  global: Scalars['Boolean']['input'];
+  key: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['Any']['input']>;
 };
 
 
 export type MutationSaveValueArgs = {
-  attribute?: InputMaybe<Scalars['ID']>;
-  library?: InputMaybe<Scalars['ID']>;
-  recordId?: InputMaybe<Scalars['ID']>;
+  attribute?: InputMaybe<Scalars['ID']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
+  recordId?: InputMaybe<Scalars['ID']['input']>;
   value?: InputMaybe<ValueInput>;
 };
 
 
 export type MutationSaveValueBatchArgs = {
-  deleteEmpty?: InputMaybe<Scalars['Boolean']>;
-  library?: InputMaybe<Scalars['ID']>;
-  recordId?: InputMaybe<Scalars['ID']>;
+  deleteEmpty?: InputMaybe<Scalars['Boolean']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
+  recordId?: InputMaybe<Scalars['ID']['input']>;
   values?: InputMaybe<Array<InputMaybe<ValueBatchInput>>>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
 
 export type MutationSaveValueBulkArgs = {
-  attributeId: Scalars['ID'];
-  libraryId: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
   mapValues: Array<MapValueInput>;
   recordsFilters: Array<InputMaybe<RecordFilterInput>>;
 };
@@ -1215,24 +1224,24 @@ export type MutationSaveViewArgs = {
 
 export type MutationTreeAddElementArgs = {
   element: TreeElementInput;
-  order?: InputMaybe<Scalars['Int']>;
-  parent?: InputMaybe<Scalars['ID']>;
-  treeId: Scalars['ID'];
+  order?: InputMaybe<Scalars['Int']['input']>;
+  parent?: InputMaybe<Scalars['ID']['input']>;
+  treeId: Scalars['ID']['input'];
 };
 
 
 export type MutationTreeDeleteElementArgs = {
-  deleteChildren?: InputMaybe<Scalars['Boolean']>;
-  nodeId: Scalars['ID'];
-  treeId: Scalars['ID'];
+  deleteChildren?: InputMaybe<Scalars['Boolean']['input']>;
+  nodeId: Scalars['ID']['input'];
+  treeId: Scalars['ID']['input'];
 };
 
 
 export type MutationTreeMoveElementArgs = {
-  nodeId: Scalars['ID'];
-  order?: InputMaybe<Scalars['Int']>;
-  parentTo?: InputMaybe<Scalars['ID']>;
-  treeId: Scalars['ID'];
+  nodeId: Scalars['ID']['input'];
+  order?: InputMaybe<Scalars['Int']['input']>;
+  parentTo?: InputMaybe<Scalars['ID']['input']>;
+  treeId: Scalars['ID']['input'];
 };
 
 
@@ -1243,17 +1252,17 @@ export type MutationUpdateViewArgs = {
 
 export type MutationUploadArgs = {
   files: Array<FileInput>;
-  library: Scalars['String'];
-  nodeId: Scalars['String'];
+  library: Scalars['String']['input'];
+  nodeId: Scalars['String']['input'];
 };
 
 export type Notification = {
   attachments?: Maybe<Array<Attachment>>;
-  date: Scalars['Int'];
+  date: Scalars['Int']['output'];
   level: NotificationLevel;
-  message: Scalars['String'];
+  message: Scalars['String']['output'];
   relatedEntities?: Maybe<Array<RelatedEntity>>;
-  title: Scalars['String'];
+  title: Scalars['String']['output'];
 };
 
 export enum NotificationLevel {
@@ -1264,52 +1273,55 @@ export enum NotificationLevel {
 }
 
 export type Pagination = {
-  limit: Scalars['Int'];
-  offset: Scalars['Int'];
+  limit: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
 };
 
 export type Permission = {
   actions: Array<PermissionAction>;
-  applyTo?: Maybe<Scalars['ID']>;
+  applyTo?: Maybe<Scalars['ID']['output']>;
+  dependenciesTreeTargets?: Maybe<Array<PermissionsDependenciesTreeTarget>>;
   permissionTreeTarget?: Maybe<PermissionsTreeTarget>;
   type: PermissionTypes;
-  usersGroup?: Maybe<Scalars['ID']>;
+  usersGroup?: Maybe<Scalars['ID']['output']>;
 };
 
 export type PermissionAction = {
-  allowed?: Maybe<Scalars['Boolean']>;
+  allowed?: Maybe<Scalars['Boolean']['output']>;
   name: PermissionsActions;
 };
 
 export type PermissionActionInput = {
-  allowed?: InputMaybe<Scalars['Boolean']>;
+  allowed?: InputMaybe<Scalars['Boolean']['input']>;
   name: PermissionsActions;
 };
 
 export type PermissionInput = {
   actions: Array<PermissionActionInput>;
-  applyTo?: InputMaybe<Scalars['ID']>;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
+  dependenciesTreeTargets?: InputMaybe<Array<PermissionsDependenciesTreeTargetInput>>;
   permissionTreeTarget?: InputMaybe<PermissionsTreeTargetInput>;
   type: PermissionTypes;
-  usersGroup?: InputMaybe<Scalars['ID']>;
+  usersGroup?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type PermissionTarget = {
-  attributeId?: InputMaybe<Scalars['ID']>;
-  libraryId?: InputMaybe<Scalars['ID']>;
-  nodeId?: InputMaybe<Scalars['ID']>;
-  recordId?: InputMaybe<Scalars['ID']>;
+  attributeId?: InputMaybe<Scalars['ID']['input']>;
+  libraryId?: InputMaybe<Scalars['ID']['input']>;
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+  recordId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type PermissionTopic = {
-  applyTo?: Maybe<Scalars['Any']>;
-  type: Scalars['String'];
+  applyTo?: Maybe<Scalars['Any']['output']>;
+  type: Scalars['String']['output'];
 };
 
 export enum PermissionTypes {
   admin = 'admin',
   application = 'application',
   attribute = 'attribute',
+  attribute_dependent_values = 'attribute_dependent_values',
   library = 'library',
   record = 'record',
   record_attribute = 'record_attribute',
@@ -1365,8 +1377,21 @@ export enum PermissionsActions {
   detach = 'detach',
   edit_children = 'edit_children',
   edit_record = 'edit_record',
-  edit_value = 'edit_value'
+  edit_value = 'edit_value',
+  set_value = 'set_value'
 }
+
+export type PermissionsDependenciesTreeTarget = {
+  attributeId: Scalars['ID']['output'];
+  nodeId?: Maybe<Scalars['ID']['output']>;
+  tree: Scalars['ID']['output'];
+};
+
+export type PermissionsDependenciesTreeTargetInput = {
+  attributeId: Scalars['ID']['input'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+  tree: Scalars['ID']['input'];
+};
 
 export enum PermissionsRelation {
   and = 'and',
@@ -1374,47 +1399,47 @@ export enum PermissionsRelation {
 }
 
 export type PermissionsTreeTarget = {
-  nodeId?: Maybe<Scalars['ID']>;
-  tree: Scalars['ID'];
+  nodeId?: Maybe<Scalars['ID']['output']>;
+  tree: Scalars['ID']['output'];
 };
 
 export type PermissionsTreeTargetInput = {
-  nodeId?: InputMaybe<Scalars['ID']>;
-  tree: Scalars['ID'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+  tree: Scalars['ID']['input'];
 };
 
 export type Plugin = {
-  author?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  version?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  version?: Maybe<Scalars['String']['output']>;
 };
 
 export type PreviewVersion = {
-  background: Scalars['String'];
-  density: Scalars['Int'];
+  background: Scalars['String']['output'];
+  density: Scalars['Int']['output'];
   sizes: Array<PreviewVersionSize>;
 };
 
 export type PreviewVersionInput = {
-  background: Scalars['String'];
-  density: Scalars['Int'];
+  background: Scalars['String']['input'];
+  density: Scalars['Int']['input'];
   sizes: Array<PreviewVersionSizeInput>;
 };
 
 export type PreviewVersionSize = {
-  name: Scalars['String'];
-  size: Scalars['Int'];
+  name: Scalars['String']['output'];
+  size: Scalars['Int']['output'];
 };
 
 export type PreviewVersionSizeInput = {
-  name: Scalars['String'];
-  size: Scalars['Int'];
+  name: Scalars['String']['input'];
+  size: Scalars['Int']['input'];
 };
 
 export type Progress = {
-  description?: Maybe<Scalars['SystemTranslation']>;
-  percent?: Maybe<Scalars['Int']>;
+  description?: Maybe<Scalars['SystemTranslation']['output']>;
+  percent?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Query = {
@@ -1424,15 +1449,15 @@ export type Query = {
   attributes?: Maybe<AttributesList>;
   availableActions?: Maybe<Array<Action>>;
   countValuesOccurrences?: Maybe<ValuesOccurrences>;
-  doesFileExistAsChild?: Maybe<Scalars['Boolean']>;
-  export: Scalars['String'];
+  doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
+  export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
-  fullTreeContent?: Maybe<Scalars['FullTreeContent']>;
+  fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
   inheritedPermissions?: Maybe<Array<HeritedPermissionAction>>;
   isAllowed?: Maybe<Array<PermissionAction>>;
-  langs: Array<Maybe<Scalars['String']>>;
+  langs: Array<Maybe<Scalars['String']['output']>>;
   libraries?: Maybe<LibrariesList>;
   logs?: Maybe<Logs>;
   me?: Maybe<Record>;
@@ -1446,7 +1471,7 @@ export type Query = {
   treeNodeChildren: TreeNodeLightList;
   trees?: Maybe<TreesList>;
   userData: UserData;
-  version: Scalars['String'];
+  version: Scalars['String']['output'];
   versionProfiles: VersionProfileList;
   view: View;
   views: ViewsList;
@@ -1475,24 +1500,24 @@ export type QueryAttributesArgs = {
 
 
 export type QueryCountValuesOccurrencesArgs = {
-  attribute: Scalars['ID'];
-  library: Scalars['ID'];
+  attribute: Scalars['ID']['input'];
+  library: Scalars['ID']['input'];
   recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
 
 export type QueryDoesFileExistAsChildArgs = {
-  filename: Scalars['String'];
-  parentNode?: InputMaybe<Scalars['ID']>;
-  treeId: Scalars['ID'];
+  filename: Scalars['String']['input'];
+  parentNode?: InputMaybe<Scalars['ID']['input']>;
+  treeId: Scalars['ID']['input'];
 };
 
 
 export type QueryExportArgs = {
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
-  library: Scalars['ID'];
-  profile?: InputMaybe<Scalars['String']>;
+  library: Scalars['ID']['input'];
+  profile?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1504,28 +1529,29 @@ export type QueryFormsArgs = {
 
 
 export type QueryFullTreeContentArgs = {
-  treeId: Scalars['ID'];
+  treeId: Scalars['ID']['input'];
 };
 
 
 export type QueryGetRecordByNodeIdArgs = {
-  nodeId: Scalars['ID'];
-  treeId: Scalars['ID'];
+  nodeId: Scalars['ID']['input'];
+  treeId: Scalars['ID']['input'];
 };
 
 
 export type QueryInheritedPermissionsArgs = {
   actions: Array<PermissionsActions>;
-  applyTo?: InputMaybe<Scalars['ID']>;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
+  dependenciesTreeTargets?: InputMaybe<Array<PermissionsDependenciesTreeTargetInput>>;
   permissionTreeTarget?: InputMaybe<PermissionsTreeTargetInput>;
   type: PermissionTypes;
-  userGroupNodeId?: InputMaybe<Scalars['ID']>;
+  userGroupNodeId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
 export type QueryIsAllowedArgs = {
   actions: Array<PermissionsActions>;
-  applyTo?: InputMaybe<Scalars['ID']>;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
   target?: InputMaybe<PermissionTarget>;
   type: PermissionTypes;
 };
@@ -1535,7 +1561,7 @@ export type QueryLibrariesArgs = {
   filters?: InputMaybe<LibrariesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortLibraries>;
-  strictFilters?: InputMaybe<Scalars['Boolean']>;
+  strictFilters?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -1548,35 +1574,36 @@ export type QueryLogsArgs = {
 
 export type QueryPermissionsArgs = {
   actions: Array<PermissionsActions>;
-  applyTo?: InputMaybe<Scalars['ID']>;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
+  dependenciesTreeTargets?: InputMaybe<Array<PermissionsDependenciesTreeTargetInput>>;
   permissionTreeTarget?: InputMaybe<PermissionsTreeTargetInput>;
   type: PermissionTypes;
-  usersGroup?: InputMaybe<Scalars['ID']>;
+  usersGroup?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
 export type QueryPermissionsActionsByTypeArgs = {
-  applyOn?: InputMaybe<Scalars['String']>;
+  applyOn?: InputMaybe<Scalars['String']['input']>;
   type: PermissionTypes;
 };
 
 
 export type QueryRecordFormArgs = {
-  formId: Scalars['String'];
-  libraryId: Scalars['String'];
-  recordId?: InputMaybe<Scalars['String']>;
+  formId: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
+  recordId?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Array<ValueVersionInput>>;
 };
 
 
 export type QueryRecordsArgs = {
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
-  ignoreAccessRecordByDefaultPermission?: InputMaybe<Scalars['Boolean']>;
-  library: Scalars['ID'];
+  ignoreAccessRecordByDefaultPermission?: InputMaybe<Scalars['Boolean']['input']>;
+  library: Scalars['ID']['input'];
   multipleSort?: InputMaybe<Array<RecordSortInput>>;
   pagination?: InputMaybe<RecordsPagination>;
-  retrieveInactive?: InputMaybe<Scalars['Boolean']>;
-  searchQuery?: InputMaybe<Scalars['String']>;
+  retrieveInactive?: InputMaybe<Scalars['Boolean']['input']>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
@@ -1589,17 +1616,17 @@ export type QueryTasksArgs = {
 
 
 export type QueryTreeContentArgs = {
-  startAt?: InputMaybe<Scalars['ID']>;
-  treeId: Scalars['ID'];
+  startAt?: InputMaybe<Scalars['ID']['input']>;
+  treeId: Scalars['ID']['input'];
 };
 
 
 export type QueryTreeNodeChildrenArgs = {
   accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
   childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
-  node?: InputMaybe<Scalars['ID']>;
+  node?: InputMaybe<Scalars['ID']['input']>;
   pagination?: InputMaybe<Pagination>;
-  treeId: Scalars['ID'];
+  treeId: Scalars['ID']['input'];
 };
 
 
@@ -1611,8 +1638,8 @@ export type QueryTreesArgs = {
 
 
 export type QueryUserDataArgs = {
-  global?: InputMaybe<Scalars['Boolean']>;
-  keys: Array<Scalars['String']>;
+  global?: InputMaybe<Scalars['Boolean']['input']>;
+  keys: Array<Scalars['String']['input']>;
 };
 
 
@@ -1624,21 +1651,21 @@ export type QueryVersionProfilesArgs = {
 
 
 export type QueryViewArgs = {
-  viewId: Scalars['String'];
+  viewId: Scalars['String']['input'];
 };
 
 
 export type QueryViewsArgs = {
-  library: Scalars['String'];
+  library: Scalars['String']['input'];
 };
 
 export type Record = {
-  active: Scalars['Boolean'];
-  created_at: Scalars['Int'];
+  active: Scalars['Boolean']['output'];
+  created_at: Scalars['Int']['output'];
   created_by: Record;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   library: Library;
-  modified_at: Scalars['Int'];
+  modified_at: Scalars['Int']['output'];
   modified_by: Record;
   permissions: RecordPermissions;
   properties: Array<RecordProperty>;
@@ -1648,20 +1675,20 @@ export type Record = {
 
 
 export type RecordPropertiesArgs = {
-  attributeIds: Array<Scalars['ID']>;
+  attributeIds: Array<Scalars['ID']['input']>;
 };
 
 
 export type RecordPropertyArgs = {
-  attribute: Scalars['ID'];
+  attribute: Scalars['ID']['input'];
 };
 
 export type RecordFilter = {
   condition?: Maybe<RecordFilterCondition>;
-  field?: Maybe<Scalars['String']>;
+  field?: Maybe<Scalars['String']['output']>;
   operator?: Maybe<RecordFilterOperator>;
   tree?: Maybe<Tree>;
-  value?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']['output']>;
 };
 
 export enum RecordFilterCondition {
@@ -1696,10 +1723,10 @@ export enum RecordFilterCondition {
 
 export type RecordFilterInput = {
   condition?: InputMaybe<RecordFilterCondition>;
-  field?: InputMaybe<Scalars['String']>;
+  field?: InputMaybe<Scalars['String']['input']>;
   operator?: InputMaybe<RecordFilterOperator>;
-  treeId?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
+  treeId?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum RecordFilterOperator {
@@ -1712,12 +1739,12 @@ export enum RecordFilterOperator {
 export type RecordForm = {
   dependencyAttributes?: Maybe<Array<Attribute>>;
   elements: Array<FormElementWithValues>;
-  id: Scalars['ID'];
-  label?: Maybe<Scalars['SystemTranslation']>;
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   library: Library;
-  recordId?: Maybe<Scalars['ID']>;
+  recordId?: Maybe<Scalars['ID']['output']>;
   sidePanel?: Maybe<FormSidePanel>;
-  system: Scalars['Boolean'];
+  system: Scalars['Boolean']['output'];
 };
 
 
@@ -1726,41 +1753,41 @@ export type RecordFormLabelArgs = {
 };
 
 export type RecordIdentity = {
-  color?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  label?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['String']['output']>;
   library: Library;
-  preview?: Maybe<Scalars['Preview']>;
-  subLabel?: Maybe<Scalars['String']>;
+  preview?: Maybe<Scalars['Preview']['output']>;
+  subLabel?: Maybe<Scalars['String']['output']>;
 };
 
 export type RecordIdentityConf = {
-  color?: Maybe<Scalars['ID']>;
-  label?: Maybe<Scalars['ID']>;
-  preview?: Maybe<Scalars['ID']>;
-  subLabel?: Maybe<Scalars['ID']>;
-  treeColorPreview?: Maybe<Scalars['ID']>;
+  color?: Maybe<Scalars['ID']['output']>;
+  label?: Maybe<Scalars['ID']['output']>;
+  preview?: Maybe<Scalars['ID']['output']>;
+  subLabel?: Maybe<Scalars['ID']['output']>;
+  treeColorPreview?: Maybe<Scalars['ID']['output']>;
 };
 
 export type RecordIdentityConfInput = {
-  color?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['ID']>;
-  preview?: InputMaybe<Scalars['ID']>;
-  subLabel?: InputMaybe<Scalars['ID']>;
-  treeColorPreview?: InputMaybe<Scalars['ID']>;
+  color?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['ID']['input']>;
+  preview?: InputMaybe<Scalars['ID']['input']>;
+  subLabel?: InputMaybe<Scalars['ID']['input']>;
+  treeColorPreview?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type RecordInput = {
-  id: Scalars['ID'];
-  library: Scalars['String'];
+  id: Scalars['ID']['input'];
+  library: Scalars['String']['input'];
 };
 
 export type RecordPermissions = {
-  access_record: Scalars['Boolean'];
-  access_record_by_default: Scalars['Boolean'];
-  create_record: Scalars['Boolean'];
-  delete_record: Scalars['Boolean'];
-  edit_record: Scalars['Boolean'];
+  access_record: Scalars['Boolean']['output'];
+  access_record_by_default: Scalars['Boolean']['output'];
+  create_record: Scalars['Boolean']['output'];
+  delete_record: Scalars['Boolean']['output'];
+  edit_record: Scalars['Boolean']['output'];
 };
 
 export enum RecordPermissionsActions {
@@ -1772,19 +1799,19 @@ export enum RecordPermissionsActions {
 }
 
 export type RecordProperty = {
-  attributeId: Scalars['ID'];
+  attributeId: Scalars['ID']['output'];
   attributeProperties: Attribute;
   recordAttributePermissions: AttributePermissions;
   values: Array<GenericValue>;
 };
 
 export type RecordSort = {
-  field: Scalars['String'];
+  field: Scalars['String']['output'];
   order: SortOrder;
 };
 
 export type RecordSortInput = {
-  field: Scalars['String'];
+  field: Scalars['String']['input'];
   order: SortOrder;
 };
 
@@ -1794,59 +1821,46 @@ export type RecordUpdateEvent = {
 };
 
 export type RecordUpdateFilterInput = {
-  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
-  libraries?: InputMaybe<Array<Scalars['ID']>>;
-  records?: InputMaybe<Array<Scalars['ID']>>;
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  libraries?: InputMaybe<Array<Scalars['ID']['input']>>;
+  records?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type RecordUpdatedValues = {
-  attribute: Scalars['String'];
+  attribute: Scalars['String']['output'];
   value: GenericValue;
 };
 
 export type RecordsList = {
   cursor?: Maybe<RecordsListCursor>;
   list: Array<Record>;
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type RecordsListCursor = {
-  next?: Maybe<Scalars['String']>;
-  prev?: Maybe<Scalars['String']>;
+  next?: Maybe<Scalars['String']['output']>;
+  prev?: Maybe<Scalars['String']['output']>;
 };
 
 export type RecordsPagination = {
-  cursor?: InputMaybe<Scalars['String']>;
-  limit: Scalars['Int'];
-  offset?: InputMaybe<Scalars['Int']>;
+  cursor?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type RelatedEntity = {
-  label: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type RenewCampaignsResult = {
-  campaign_id?: Maybe<Scalars['ID']>;
-  original_campaign_id: Scalars['ID'];
-  record?: Maybe<Record>;
-  valuesErrors?: Maybe<Array<ValueBatchError>>;
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
+  label: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type SheetInput = {
-  keyIndex?: InputMaybe<Scalars['Int']>;
-  keyToIndex?: InputMaybe<Scalars['Int']>;
-  library: Scalars['String'];
-  linkAttribute?: InputMaybe<Scalars['String']>;
-  mapping?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  keyIndex?: InputMaybe<Scalars['Int']['input']>;
+  keyToIndex?: InputMaybe<Scalars['Int']['input']>;
+  library: Scalars['String']['input'];
+  linkAttribute?: InputMaybe<Scalars['String']['input']>;
+  mapping?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   mode: ImportMode;
-  treeLinkLibrary?: InputMaybe<Scalars['String']>;
+  treeLinkLibrary?: InputMaybe<Scalars['String']['input']>;
   type: ImportType;
 };
 
@@ -1892,28 +1906,28 @@ export type SortVersionProfilesInput = {
 
 export type StandardAttribute = Attribute & {
   actions_list?: Maybe<ActionsListConfiguration>;
-  character_limit?: Maybe<Scalars['Int']>;
-  compute: Scalars['Boolean'];
-  description?: Maybe<Scalars['SystemTranslationOptional']>;
+  character_limit?: Maybe<Scalars['Int']['output']>;
+  compute: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   embedded_fields?: Maybe<Array<Maybe<EmbeddedAttribute>>>;
   format?: Maybe<AttributeFormat>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   input_types: ActionListIoTypes;
-  label?: Maybe<Scalars['SystemTranslation']>;
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   libraries?: Maybe<Array<Library>>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
   multi_link_display_option?: Maybe<MultiDisplayOption>;
   multi_tree_display_option?: Maybe<MultiDisplayOption>;
-  multiple_values: Scalars['Boolean'];
+  multiple_values: Scalars['Boolean']['output'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
   permissions_conf?: Maybe<TreepermissionsConf>;
-  readonly: Scalars['Boolean'];
-  required: Scalars['Boolean'];
-  settings?: Maybe<Scalars['JSONObject']>;
-  system: Scalars['Boolean'];
+  readonly: Scalars['Boolean']['output'];
+  required: Scalars['Boolean']['output'];
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system: Scalars['Boolean']['output'];
   type: AttributeType;
-  unique?: Maybe<Scalars['Boolean']>;
+  unique?: Maybe<Scalars['Boolean']['output']>;
   values_list?: Maybe<StandardValuesListConf>;
   versions_conf?: Maybe<ValuesVersionsConf>;
 };
@@ -1934,30 +1948,30 @@ export type StandardAttributePermissionsArgs = {
 };
 
 export type StandardDateRangeValuesListConf = {
-  allowFreeEntry?: Maybe<Scalars['Boolean']>;
-  allowListUpdate?: Maybe<Scalars['Boolean']>;
-  enable: Scalars['Boolean'];
+  allowFreeEntry?: Maybe<Scalars['Boolean']['output']>;
+  allowListUpdate?: Maybe<Scalars['Boolean']['output']>;
+  enable: Scalars['Boolean']['output'];
   values?: Maybe<Array<DateRangeValue>>;
 };
 
 export type StandardStringValuesListConf = {
-  allowFreeEntry?: Maybe<Scalars['Boolean']>;
-  allowListUpdate?: Maybe<Scalars['Boolean']>;
-  enable: Scalars['Boolean'];
-  values?: Maybe<Array<Scalars['String']>>;
+  allowFreeEntry?: Maybe<Scalars['Boolean']['output']>;
+  allowListUpdate?: Maybe<Scalars['Boolean']['output']>;
+  enable: Scalars['Boolean']['output'];
+  values?: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type StandardValuesListConf = StandardDateRangeValuesListConf | StandardStringValuesListConf;
 
 export type StreamProgress = {
-  delta?: Maybe<Scalars['Int']>;
-  eta?: Maybe<Scalars['Int']>;
-  length?: Maybe<Scalars['Int']>;
-  percentage?: Maybe<Scalars['Int']>;
-  remaining?: Maybe<Scalars['Int']>;
-  runtime?: Maybe<Scalars['Int']>;
-  speed?: Maybe<Scalars['Int']>;
-  transferred?: Maybe<Scalars['Int']>;
+  delta?: Maybe<Scalars['Int']['output']>;
+  eta?: Maybe<Scalars['Int']['output']>;
+  length?: Maybe<Scalars['Int']['output']>;
+  percentage?: Maybe<Scalars['Int']['output']>;
+  remaining?: Maybe<Scalars['Int']['output']>;
+  runtime?: Maybe<Scalars['Int']['output']>;
+  speed?: Maybe<Scalars['Int']['output']>;
+  transferred?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Subscription = {
@@ -1995,38 +2009,38 @@ export type SubscriptionUploadArgs = {
 };
 
 export type Task = {
-  archive: Scalars['Boolean'];
+  archive: Scalars['Boolean']['output'];
   canceledBy?: Maybe<Record>;
-  completedAt?: Maybe<Scalars['Int']>;
-  created_at: Scalars['Int'];
+  completedAt?: Maybe<Scalars['Int']['output']>;
+  created_at: Scalars['Int']['output'];
   created_by: Record;
-  id: Scalars['ID'];
-  label: Scalars['SystemTranslation'];
+  id: Scalars['ID']['output'];
+  label: Scalars['SystemTranslation']['output'];
   link?: Maybe<TaskLink>;
-  modified_at: Scalars['Int'];
-  priority: Scalars['TaskPriority'];
+  modified_at: Scalars['Int']['output'];
+  priority: Scalars['TaskPriority']['output'];
   progress?: Maybe<Progress>;
   role?: Maybe<TaskRole>;
-  startAt: Scalars['Int'];
-  startedAt?: Maybe<Scalars['Int']>;
+  startAt: Scalars['Int']['output'];
+  startedAt?: Maybe<Scalars['Int']['output']>;
   status: TaskStatus;
 };
 
 export type TaskFiltersInput = {
-  archive?: InputMaybe<Scalars['Boolean']>;
-  created_by?: InputMaybe<Scalars['ID']>;
-  id?: InputMaybe<Scalars['ID']>;
+  archive?: InputMaybe<Scalars['Boolean']['input']>;
+  created_by?: InputMaybe<Scalars['ID']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
   status?: InputMaybe<TaskStatus>;
   type?: InputMaybe<TaskType>;
 };
 
 export type TaskLink = {
-  name: Scalars['String'];
-  url: Scalars['String'];
+  name: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type TaskRole = {
-  detail?: Maybe<Scalars['String']>;
+  detail?: Maybe<Scalars['String']['output']>;
   type: TaskType;
 };
 
@@ -2050,19 +2064,19 @@ export enum TaskType {
 
 export type TasksList = {
   list: Array<Task>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Tree = {
   behavior: TreeBehavior;
   defaultElement?: Maybe<TreeNode>;
-  id: Scalars['ID'];
-  label?: Maybe<Scalars['SystemTranslation']>;
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   libraries: Array<TreeLibrary>;
   permissions: TreePermissions;
   permissions_conf?: Maybe<Array<TreeNodePermissionsConf>>;
-  settings?: Maybe<Scalars['JSONObject']>;
-  system: Scalars['Boolean'];
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system: Scalars['Boolean']['output'];
 };
 
 
@@ -2072,25 +2086,26 @@ export type TreeLabelArgs = {
 
 export type TreeAttribute = Attribute & {
   actions_list?: Maybe<ActionsListConfiguration>;
-  compute: Scalars['Boolean'];
-  description?: Maybe<Scalars['SystemTranslationOptional']>;
+  compute: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   format?: Maybe<AttributeFormat>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   input_types: ActionListIoTypes;
-  label?: Maybe<Scalars['SystemTranslation']>;
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
   libraries?: Maybe<Array<Library>>;
   linked_tree?: Maybe<Tree>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
   multi_link_display_option?: Maybe<MultiDisplayOption>;
   multi_tree_display_option?: Maybe<MultiDisplayOption>;
-  multiple_values: Scalars['Boolean'];
+  multiple_values: Scalars['Boolean']['output'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
   permissions_conf?: Maybe<TreepermissionsConf>;
-  readonly: Scalars['Boolean'];
-  required: Scalars['Boolean'];
-  settings?: Maybe<Scalars['JSONObject']>;
-  system: Scalars['Boolean'];
+  permissions_conf_dependent_values?: Maybe<TreePermissionsDependentValuesConf>;
+  readonly: Scalars['Boolean']['output'];
+  required: Scalars['Boolean']['output'];
+  settings?: Maybe<Scalars['JSONObject']['output']>;
+  system: Scalars['Boolean']['output'];
   type: AttributeType;
   values_list?: Maybe<TreeValuesListConf>;
   versions_conf?: Maybe<ValuesVersionsConf>;
@@ -2117,28 +2132,28 @@ export enum TreeBehavior {
 }
 
 export type TreeElement = {
-  id?: Maybe<Scalars['ID']>;
-  library?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  library?: Maybe<Scalars['String']['output']>;
 };
 
 export type TreeElementInput = {
-  id: Scalars['ID'];
-  library: Scalars['String'];
+  id: Scalars['ID']['input'];
+  library: Scalars['String']['input'];
 };
 
 export type TreeEvent = {
   element: TreeNode;
   parentNode?: Maybe<TreeNode>;
   parentNodeBefore?: Maybe<TreeNode>;
-  treeId: Scalars['ID'];
+  treeId: Scalars['ID']['output'];
   type: TreeEventTypes;
 };
 
 export type TreeEventFiltersInput = {
   events?: InputMaybe<Array<TreeEventTypes>>;
-  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
-  nodes?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  treeId: Scalars['ID'];
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  nodes?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+  treeId: Scalars['ID']['input'];
 };
 
 export enum TreeEventTypes {
@@ -2149,11 +2164,11 @@ export enum TreeEventTypes {
 
 export type TreeInput = {
   behavior?: InputMaybe<TreeBehavior>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   libraries?: InputMaybe<Array<TreeLibraryInput>>;
   permissions_conf?: InputMaybe<Array<TreeNodePermissionsConfInput>>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
 };
 
 export type TreeLibrary = {
@@ -2162,89 +2177,98 @@ export type TreeLibrary = {
 };
 
 export type TreeLibraryInput = {
-  library: Scalars['ID'];
+  library: Scalars['ID']['input'];
   settings: TreeLibrarySettingsInput;
 };
 
 export type TreeLibrarySettings = {
-  allowMultiplePositions: Scalars['Boolean'];
-  allowedAtRoot: Scalars['Boolean'];
-  allowedChildren: Array<Scalars['String']>;
+  allowMultiplePositions: Scalars['Boolean']['output'];
+  allowedAtRoot: Scalars['Boolean']['output'];
+  allowedChildren: Array<Scalars['String']['output']>;
 };
 
 export type TreeLibrarySettingsInput = {
-  allowMultiplePositions: Scalars['Boolean'];
-  allowedAtRoot: Scalars['Boolean'];
-  allowedChildren: Array<Scalars['String']>;
+  allowMultiplePositions: Scalars['Boolean']['input'];
+  allowedAtRoot: Scalars['Boolean']['input'];
+  allowedChildren: Array<Scalars['String']['input']>;
 };
 
 export type TreeNode = {
   ancestors?: Maybe<Array<TreeNode>>;
   children?: Maybe<Array<TreeNode>>;
-  childrenCount?: Maybe<Scalars['Int']>;
-  id: Scalars['ID'];
+  childrenCount?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
   linkedRecords?: Maybe<Array<Record>>;
-  order?: Maybe<Scalars['Int']>;
+  order?: Maybe<Scalars['Int']['output']>;
   permissions: TreeNodePermissions;
   record: Record;
 };
 
 
 export type TreeNodeLinkedRecordsArgs = {
-  attribute?: InputMaybe<Scalars['ID']>;
+  attribute?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type TreeNodeLight = {
-  accessRecordByDefaultPermission?: Maybe<Scalars['Boolean']>;
+  accessRecordByDefaultPermission?: Maybe<Scalars['Boolean']['output']>;
   ancestors?: Maybe<Array<TreeNode>>;
-  childrenCount?: Maybe<Scalars['Int']>;
-  id: Scalars['ID'];
+  childrenCount?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
   linkedRecords?: Maybe<Array<Record>>;
-  order?: Maybe<Scalars['Int']>;
+  order?: Maybe<Scalars['Int']['output']>;
   permissions: TreeNodePermissions;
   record: Record;
 };
 
 
 export type TreeNodeLightLinkedRecordsArgs = {
-  attribute?: InputMaybe<Scalars['ID']>;
+  attribute?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type TreeNodeLightList = {
   list: Array<TreeNodeLight>;
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type TreeNodePermissions = {
-  access_tree: Scalars['Boolean'];
-  detach: Scalars['Boolean'];
-  edit_children: Scalars['Boolean'];
+  access_tree: Scalars['Boolean']['output'];
+  detach: Scalars['Boolean']['output'];
+  edit_children: Scalars['Boolean']['output'];
 };
 
 export type TreeNodePermissionsConf = {
-  libraryId: Scalars['ID'];
+  libraryId: Scalars['ID']['output'];
   permissionsConf: TreepermissionsConf;
 };
 
 export type TreeNodePermissionsConfInput = {
-  libraryId: Scalars['ID'];
+  libraryId: Scalars['ID']['input'];
   permissionsConf: TreepermissionsConfInput;
 };
 
 export type TreePermissions = {
-  access_tree: Scalars['Boolean'];
-  edit_children: Scalars['Boolean'];
+  access_tree: Scalars['Boolean']['output'];
+  detach: Scalars['Boolean']['output'];
+  edit_children: Scalars['Boolean']['output'];
+};
+
+export type TreePermissionsDependentValuesConf = {
+  dependenciesTreeAttributes: Array<Attribute>;
+};
+
+export type TreePermissionsDependentValuesConfInput = {
+  dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 
 export type TreeValue = GenericValue & {
   attribute: Attribute;
-  created_at?: Maybe<Scalars['Int']>;
+  created_at?: Maybe<Scalars['Int']['output']>;
   created_by?: Maybe<Record>;
-  id_value?: Maybe<Scalars['ID']>;
-  isCalculated?: Maybe<Scalars['Boolean']>;
-  isInherited?: Maybe<Scalars['Boolean']>;
+  id_value?: Maybe<Scalars['ID']['output']>;
+  isCalculated?: Maybe<Scalars['Boolean']['output']>;
+  isInherited?: Maybe<Scalars['Boolean']['output']>;
   metadata?: Maybe<Array<Maybe<ValueMetadata>>>;
-  modified_at?: Maybe<Scalars['Int']>;
+  modified_at?: Maybe<Scalars['Int']['output']>;
   modified_by?: Maybe<Record>;
   payload?: Maybe<TreeNode>;
   /** @deprecated Use payload instead */
@@ -2253,14 +2277,14 @@ export type TreeValue = GenericValue & {
 };
 
 export type TreeValueOccurrences = GenericValueOccurrences & {
-  count: Scalars['Int'];
+  count: Scalars['Int']['output'];
   value: TreeNode;
 };
 
 export type TreeValuesListConf = {
-  allowFreeEntry?: Maybe<Scalars['Boolean']>;
-  allowListUpdate?: Maybe<Scalars['Boolean']>;
-  enable: Scalars['Boolean'];
+  allowFreeEntry?: Maybe<Scalars['Boolean']['output']>;
+  allowListUpdate?: Maybe<Scalars['Boolean']['output']>;
+  enable: Scalars['Boolean']['output'];
   values?: Maybe<Array<TreeNode>>;
 };
 
@@ -2270,21 +2294,21 @@ export type TreepermissionsConf = {
 };
 
 export type TreepermissionsConfInput = {
-  permissionTreeAttributes: Array<Scalars['ID']>;
+  permissionTreeAttributes: Array<Scalars['ID']['input']>;
   relation: PermissionsRelation;
 };
 
 export type TreesFiltersInput = {
   behavior?: InputMaybe<TreeBehavior>;
-  id?: InputMaybe<Array<Scalars['ID']>>;
-  label?: InputMaybe<Array<Scalars['String']>>;
-  library?: InputMaybe<Scalars['String']>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Array<Scalars['ID']['input']>>;
+  label?: InputMaybe<Array<Scalars['String']['input']>>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type TreesList = {
   list: Array<Tree>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export enum TreesSortableFields {
@@ -2295,18 +2319,18 @@ export enum TreesSortableFields {
 
 export type UploadData = {
   record: Record;
-  uid: Scalars['String'];
+  uid: Scalars['String']['output'];
 };
 
 export type UploadFiltersInput = {
-  uid?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['ID']>;
+  uid?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type UploadProgress = {
   progress: StreamProgress;
-  uid: Scalars['String'];
-  userId: Scalars['String'];
+  uid: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
 };
 
 export enum UserCoreDataKeys {
@@ -2314,72 +2338,72 @@ export enum UserCoreDataKeys {
 }
 
 export type UserData = {
-  data?: Maybe<Scalars['Any']>;
-  global: Scalars['Boolean'];
+  data?: Maybe<Scalars['Any']['output']>;
+  global: Scalars['Boolean']['output'];
 };
 
 export type Value = GenericValue & {
   attribute: Attribute;
-  created_at?: Maybe<Scalars['Int']>;
+  created_at?: Maybe<Scalars['Int']['output']>;
   created_by?: Maybe<Record>;
-  id_value?: Maybe<Scalars['ID']>;
-  isCalculated?: Maybe<Scalars['Boolean']>;
-  isInherited?: Maybe<Scalars['Boolean']>;
+  id_value?: Maybe<Scalars['ID']['output']>;
+  isCalculated?: Maybe<Scalars['Boolean']['output']>;
+  isInherited?: Maybe<Scalars['Boolean']['output']>;
   metadata?: Maybe<Array<Maybe<ValueMetadata>>>;
-  modified_at?: Maybe<Scalars['Int']>;
+  modified_at?: Maybe<Scalars['Int']['output']>;
   modified_by?: Maybe<Record>;
   /**  it can be "\__empty_value__" whatever the format  */
-  payload?: Maybe<Scalars['Any']>;
+  payload?: Maybe<Scalars['Any']['output']>;
   /**  it can be "\__empty_value__" whatever the format  */
-  raw_payload?: Maybe<Scalars['Any']>;
+  raw_payload?: Maybe<Scalars['Any']['output']>;
   /** @deprecated Use raw_payload instead */
-  raw_value?: Maybe<Scalars['Any']>;
+  raw_value?: Maybe<Scalars['Any']['output']>;
   /** @deprecated Use payload instead */
-  value?: Maybe<Scalars['Any']>;
+  value?: Maybe<Scalars['Any']['output']>;
   version?: Maybe<Array<Maybe<ValueVersion>>>;
 };
 
 export type ValueBatchError = {
-  attribute: Scalars['String'];
-  input?: Maybe<Scalars['String']>;
-  message: Scalars['String'];
-  type: Scalars['String'];
+  attribute: Scalars['String']['output'];
+  input?: Maybe<Scalars['String']['output']>;
+  message: Scalars['String']['output'];
+  type: Scalars['String']['output'];
 };
 
 export type ValueBatchInput = {
-  attribute?: InputMaybe<Scalars['ID']>;
-  id_value?: InputMaybe<Scalars['ID']>;
+  attribute?: InputMaybe<Scalars['ID']['input']>;
+  id_value?: InputMaybe<Scalars['ID']['input']>;
   metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
   /**  Use "\__empty_value__" to set an empty value  */
-  payload?: InputMaybe<Scalars['String']>;
+  payload?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ValueInput = {
-  id_value?: InputMaybe<Scalars['ID']>;
+  id_value?: InputMaybe<Scalars['ID']['input']>;
   metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
   /**  Use "\__empty_value__" to set an empty value  */
-  payload?: InputMaybe<Scalars['String']>;
+  payload?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
 export type ValueMetadata = {
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   value?: Maybe<Value>;
 };
 
 export type ValueMetadataInput = {
-  name: Scalars['String'];
-  value?: InputMaybe<Scalars['String']>;
+  name: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ValueVersion = {
-  treeId: Scalars['String'];
+  treeId: Scalars['String']['output'];
   treeNode?: Maybe<TreeNode>;
 };
 
 export type ValueVersionInput = {
-  treeId: Scalars['String'];
-  treeNodeId: Scalars['String'];
+  treeId: Scalars['String']['input'];
+  treeNodeId: Scalars['String']['input'];
 };
 
 export enum ValueVersionMode {
@@ -2388,53 +2412,53 @@ export enum ValueVersionMode {
 }
 
 export type ValuesListConfInput = {
-  allowFreeEntry?: InputMaybe<Scalars['Boolean']>;
-  allowListUpdate?: InputMaybe<Scalars['Boolean']>;
-  enable: Scalars['Boolean'];
-  values?: InputMaybe<Array<Scalars['String']>>;
+  allowFreeEntry?: InputMaybe<Scalars['Boolean']['input']>;
+  allowListUpdate?: InputMaybe<Scalars['Boolean']['input']>;
+  enable: Scalars['Boolean']['input'];
+  values?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type ValuesOccurrences = {
-  noValueCount: Scalars['Int'];
+  noValueCount: Scalars['Int']['output'];
   occurrences: Array<GenericValueOccurrences>;
 };
 
 export type ValuesVersionsConf = {
   mode?: Maybe<ValueVersionMode>;
   profile?: Maybe<VersionProfile>;
-  versionable: Scalars['Boolean'];
+  versionable: Scalars['Boolean']['output'];
 };
 
 export type ValuesVersionsConfInput = {
   mode?: InputMaybe<ValueVersionMode>;
-  profile?: InputMaybe<Scalars['String']>;
-  versionable: Scalars['Boolean'];
+  profile?: InputMaybe<Scalars['String']['input']>;
+  versionable: Scalars['Boolean']['input'];
 };
 
 export type VersionProfile = {
-  description?: Maybe<Scalars['SystemTranslation']>;
-  id: Scalars['String'];
-  label: Scalars['SystemTranslation'];
+  description?: Maybe<Scalars['SystemTranslation']['output']>;
+  id: Scalars['String']['output'];
+  label: Scalars['SystemTranslation']['output'];
   linkedAttributes: Array<Attribute>;
   trees: Array<Tree>;
 };
 
 export type VersionProfileInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  id: Scalars['String'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  trees?: InputMaybe<Array<Scalars['String']>>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  trees?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type VersionProfileList = {
   list: Array<VersionProfile>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type VersionProfilesFiltersInput = {
-  id?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['String']>;
-  trees?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  trees?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum VersionProfilesSortableFields {
@@ -2443,17 +2467,17 @@ export enum VersionProfilesSortableFields {
 
 export type View = {
   attributes?: Maybe<Array<Attribute>>;
-  color?: Maybe<Scalars['String']>;
-  created_at: Scalars['Int'];
+  color?: Maybe<Scalars['String']['output']>;
+  created_at: Scalars['Int']['output'];
   created_by: Record;
-  description?: Maybe<Scalars['SystemTranslationOptional']>;
+  description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   display: ViewDisplay;
   filters?: Maybe<Array<RecordFilter>>;
-  id: Scalars['String'];
-  label: Scalars['SystemTranslation'];
-  library: Scalars['String'];
-  modified_at: Scalars['Int'];
-  shared: Scalars['Boolean'];
+  id: Scalars['String']['output'];
+  label: Scalars['SystemTranslation']['output'];
+  library: Scalars['String']['output'];
+  modified_at: Scalars['Int']['output'];
+  shared: Scalars['Boolean']['output'];
   sort?: Maybe<Array<RecordSort>>;
   valuesVersions?: Maybe<Array<ViewValuesVersion>>;
 };
@@ -2469,29 +2493,29 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
-  attributes?: InputMaybe<Array<Scalars['String']>>;
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display: ViewDisplayInput;
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  id?: InputMaybe<Scalars['String']>;
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  library: Scalars['String'];
-  shared: Scalars['Boolean'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library: Scalars['String']['input'];
+  shared: Scalars['Boolean']['input'];
   sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewValuesVersionInput>>;
 };
 
 export type ViewInputPartial = {
-  attributes?: InputMaybe<Array<Scalars['String']>>;
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewDisplayInput>;
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  id: Scalars['String'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  library?: InputMaybe<Scalars['String']>;
-  shared?: InputMaybe<Scalars['Boolean']>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
   sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewValuesVersionInput>>;
 };
@@ -2509,18 +2533,18 @@ export enum ViewTypes {
 }
 
 export type ViewValuesVersion = {
-  treeId: Scalars['String'];
+  treeId: Scalars['String']['output'];
   treeNode: TreeNode;
 };
 
 export type ViewValuesVersionInput = {
-  treeId: Scalars['String'];
-  treeNode: Scalars['String'];
+  treeId: Scalars['String']['input'];
+  treeNode: Scalars['String']['input'];
 };
 
 export type ViewsList = {
   list: Array<View>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type SaveValueBatchResult = {
@@ -2529,7 +2553,7 @@ export type SaveValueBatchResult = {
 };
 
 export type GetApplicationDataByEndpointQueryVariables = Exact<{
-  endpoint: Scalars['String'];
+  endpoint: Scalars['String']['input'];
 }>;
 
 
@@ -2546,23 +2570,23 @@ export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null };
 
 export type GetLibraryNameQueryVariables = Exact<{
-  libraryId: Scalars['ID'];
+  libraryId: Scalars['ID']['input'];
 }>;
 
 
 export type GetLibraryNameQuery = { libraries?: { list: Array<{ label?: any | null }> } | null };
 
 export type GetRecordIdCardQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  libraryId: Scalars['ID'];
-  ignoreAccessRecordByDefaultPermission: Scalars['Boolean'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  libraryId: Scalars['ID']['input'];
+  ignoreAccessRecordByDefaultPermission: Scalars['Boolean']['input'];
 }>;
 
 
 export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
 
 export type PanelAttributeCountQueryVariables = Exact<{
-  library: Scalars['ID'];
+  library: Scalars['ID']['input'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
 }>;
 
@@ -2591,7 +2615,7 @@ export type SubscribeToUserTasksSubscriptionVariables = Exact<{
 export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null } };
 
 export type GetRecordInformationQueryVariables = Exact<{
-  library: Scalars['ID'];
+  library: Scalars['ID']['input'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
 }>;
 
@@ -2606,7 +2630,7 @@ export type PostDiscussionCommentMutationVariables = Exact<{
 export type PostDiscussionCommentMutation = { postDiscussionComment: { id: string } };
 
 export type GetUsersQueryVariables = Exact<{
-  query: Scalars['String'];
+  query: Scalars['String']['input'];
   pagination?: InputMaybe<RecordsPagination>;
 }>;
 
@@ -2619,8 +2643,8 @@ export type GetThreadStatusOptionsQueryVariables = Exact<{ [key: string]: never;
 export type GetThreadStatusOptionsQuery = { treeNodeChildren: { list: Array<{ id: string, record: { label: Array<{ payload?: any | null }> } }> } };
 
 export type GetThreadQueryVariables = Exact<{
-  libraryId: Scalars['ID'];
-  recordId?: InputMaybe<Scalars['String']>;
+  libraryId: Scalars['ID']['input'];
+  recordId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 

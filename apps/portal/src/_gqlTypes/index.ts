@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -55,6 +52,8 @@ export enum ActionIoTypes {
 export type ActionsListConfigurationInput = {
   deleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
   getValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postDeleteValue?: InputMaybe<Array<ActionConfigurationInput>>;
+  postSaveValue?: InputMaybe<Array<ActionConfigurationInput>>;
   saveValue?: InputMaybe<Array<ActionConfigurationInput>>;
 };
 
@@ -513,7 +512,7 @@ export type PermissionActionInput = {
 export type PermissionInput = {
   actions: Array<PermissionActionInput>;
   applyTo?: InputMaybe<Scalars['ID']>;
-  dependentTreeTargets?: InputMaybe<Array<PermissionsDependTreeTargetInput>>;
+  dependenciesTreeTargets?: InputMaybe<Array<PermissionsDependenciesTreeTargetInput>>;
   permissionTreeTarget?: InputMaybe<PermissionsTreeTargetInput>;
   type: PermissionTypes;
   usersGroup?: InputMaybe<Scalars['ID']>;
@@ -590,7 +589,7 @@ export enum PermissionsActions {
   set_value = 'set_value'
 }
 
-export type PermissionsDependTreeTargetInput = {
+export type PermissionsDependenciesTreeTargetInput = {
   attributeId: Scalars['ID'];
   nodeId?: InputMaybe<Scalars['ID']>;
   tree: Scalars['ID'];
@@ -826,7 +825,7 @@ export type TreeNodePermissionsConfInput = {
 };
 
 export type TreePermissionsDependentValuesConfInput = {
-  dependentValuesTreeAttributes: Array<Scalars['ID']>;
+  dependenciesTreeAttributes: Array<Scalars['ID']>;
 };
 
 export type TreepermissionsConfInput = {
