@@ -123,4 +123,16 @@ describe('infra/cache/ramService integration', () => {
         ]);
         expect(res).toEqual([null, null, 'L3', null, 'S2', null]);
     });
+
+    it('deleteData should not fail when no keys match patterns', async () => {
+        await Promise.all([
+            ramService.storeData({key: 'item:1', data: 'I1'}),
+            ramService.storeData({key: 'item:2', data: 'I2'}),
+        ]);
+
+        await ramService.deleteData(['nonexistent:*', 'anothermissing?']);
+
+        const res = await ramService.getData(['item:1', 'item:2']);
+        expect(res).toEqual(['I1', 'I2']);
+    });
 });

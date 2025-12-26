@@ -4,6 +4,7 @@
 import {type ICacheService, type IStoreDataParams} from './cacheService';
 import {chunk} from 'lodash';
 import {type RedisClientType} from './redis';
+import {type RedisArgument} from 'redis';
 
 export default function (redisClient: RedisClientType): ICacheService {
     const WILDCARD_REGEX = /[\*\?\[\]]/;
@@ -16,7 +17,7 @@ export default function (redisClient: RedisClientType): ICacheService {
             await redisClient.SET(key, data, {PX: expiresIn});
         },
         async getData(keys: string[]): Promise<string[]> {
-            return redisClient.MGET(keys);
+            return redisClient.MGET(keys) as Promise<string[]>;
         },
         async deleteData(keys: string[]): Promise<void> {
             if (!keys?.length) {
@@ -40,18 +41,16 @@ export default function (redisClient: RedisClientType): ICacheService {
             if (patternKeys.length) {
                 await Promise.all(
                     patternKeys.map(async pattern => {
-                        let cursor = 0;
-                        do {
-                            const res = await redisClient.SCAN(cursor, {MATCH: pattern, COUNT: scanBatchSize});
-                            cursor = res.cursor;
-                            if (res.keys?.length) {
-                                // Prefer UNLINK when available; chunk to avoid very large payloads
-                                const patternDeletionPromises = chunk(res.keys, deleteBatchSize).map(batch =>
-                                    redisClient.DEL(batch),
-                                );
-                                await Promise.all(patternDeletionPromises);
+                        for await (const delKeys of redisClient.scanIterator({
+                            MATCH: pattern,
+                            TYPE: 'string',
+                            COUNT: scanBatchSize,
+                        })) {
+                            if (delKeys.length === 0) {
+                                continue;
                             }
-                        } while (cursor !== 0);
+                            await redisClient.DEL(delKeys as RedisArgument[]);
+                        }
                     }),
                 );
             }
