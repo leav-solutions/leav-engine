@@ -16,6 +16,26 @@ export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExpo
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    type ExportProfileColumn {
+                        columnLabel: String!,
+                        attribute: String!
+                    }
+
+                    type ExportProfileError {
+                        message: String!
+                    }
+
+                    type ExportProfile {
+                        label: String!,
+                        columns: [ExportProfileColumn!]!
+                        error: ExportProfileError
+                    }
+
+                    type ExportProfiles {
+                        defaultProfile: String!,
+                        profiles: [ExportProfile!]!
+                    }
+
                     extend type Query {
                         export(library: ID!, filters: [RecordFilterInput], profile: String): String!
                     }

@@ -1608,6 +1608,13 @@ export type ExplorerLibraryDetailsQueryVariables = Exact<{
 
 export type ExplorerLibraryDetailsQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null }> } | null };
 
+export type LibraryExportProfilesQueryVariables = Exact<{
+  libraryId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+}>;
+
+
+export type LibraryExportProfilesQuery = { libraries?: { list: Array<{ id: string, exportProfiles?: { defaultProfile: string, profiles: Array<{ label: string, columns: Array<{ columnLabel: string, attribute: string }>, error?: { message: string } | null }> } | null }> } | null };
+
 export type ExplorerSelectionIdsQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
@@ -5139,6 +5146,56 @@ export function useExplorerLibraryDetailsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type ExplorerLibraryDetailsQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsQuery>;
 export type ExplorerLibraryDetailsLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsLazyQuery>;
 export type ExplorerLibraryDetailsQueryResult = Apollo.QueryResult<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>;
+export const LibraryExportProfilesDocument = gql`
+    query libraryExportProfiles($libraryId: [ID!]) {
+  libraries(filters: {id: $libraryId}) {
+    list {
+      id
+      exportProfiles {
+        defaultProfile
+        profiles {
+          label
+          columns {
+            columnLabel
+            attribute
+          }
+          error {
+            message
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useLibraryExportProfilesQuery__
+ *
+ * To run a query within a React component, call `useLibraryExportProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLibraryExportProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLibraryExportProfilesQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useLibraryExportProfilesQuery(baseOptions?: Apollo.QueryHookOptions<LibraryExportProfilesQuery, LibraryExportProfilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LibraryExportProfilesQuery, LibraryExportProfilesQueryVariables>(LibraryExportProfilesDocument, options);
+      }
+export function useLibraryExportProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LibraryExportProfilesQuery, LibraryExportProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LibraryExportProfilesQuery, LibraryExportProfilesQueryVariables>(LibraryExportProfilesDocument, options);
+        }
+export type LibraryExportProfilesQueryHookResult = ReturnType<typeof useLibraryExportProfilesQuery>;
+export type LibraryExportProfilesLazyQueryHookResult = ReturnType<typeof useLibraryExportProfilesLazyQuery>;
+export type LibraryExportProfilesQueryResult = Apollo.QueryResult<LibraryExportProfilesQuery, LibraryExportProfilesQueryVariables>;
 export const ExplorerSelectionIdsDocument = gql`
     query ExplorerSelectionIds($libraryId: ID!, $filters: [RecordFilterInput]) {
   records(library: $libraryId, filters: $filters) {

@@ -776,6 +776,17 @@
                 "deselect_all": "Deselect all items"
             }
         },
+        "export_profile_modal": {
+            "title": "Export",
+            "profile_label": "Choose an export profile",
+            "preview_label": "Preview of exported attributes",
+            "search_placeholder": "Search...",
+            "no_profiles": "No export profiles configured for this library",
+            "contact_admin": "Please contact an administrator to configure export profiles.",
+            "empty_columns": "(empty column)",
+            "export_button": "Export",
+            "error_title": "Export profile error"
+        },
         "add-existing-item": "Add existing item",
         "activate_item_one": "Activate this item?",
         "activate_item_other": "Activate these items?",
