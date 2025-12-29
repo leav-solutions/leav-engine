@@ -48,7 +48,7 @@
         "cz-conventional-changelog": "3.3.0",
         "eslint-formatter-gitlab": "5.1.0",
         "eslint-plugin-import": "2.32.0",
-        "eslint-plugin-jsdoc": "39.2.1",
+        "eslint-plugin-jsdoc": "39.9.1",
         "eslint-plugin-jsx-a11y": "6.5.1",
         "eslint-plugin-no-only-tests": "3.3.0",
         "eslint-plugin-react-hooks": "4.4.0",
