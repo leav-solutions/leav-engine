@@ -9321,7 +9321,7 @@ __metadata:
     i18next-resources-to-backend: "npm:1.1.4"
     jest: "npm:29.0.3"
     jest-environment-jsdom: "npm:29.3.1"
-    jest-styled-components: "npm:7.1.1"
+    jest-styled-components: "npm:7.2.0"
     lodash.isequal: "npm:4.5.0"
     object-path: "npm:0.11.8"
     react: "npm:18.2.0"
@@ -17217,7 +17217,7 @@ __metadata:
     jest: "npm:29.4.1"
     jest-environment-jsdom: "npm:29.4.1"
     jest-fetch-mock: "npm:3.0.3"
-    jest-styled-components: "npm:7.1.1"
+    jest-styled-components: "npm:7.2.0"
     lodash: "npm:4.17.21"
     object-path: "npm:0.11.8"
     react: "npm:18.2.0"
@@ -24106,17 +24106,6 @@ __metadata:
     pretty-format: "npm:^29.7.0"
     semver: "npm:^7.5.3"
   checksum: cb19a3948256de5f922d52f251821f99657339969bf86843bd26cf3332eae94883e8260e3d2fba46129a27c3971c1aa522490e460e16c7fad516e82d10bbf9f8
-  languageName: node
-  linkType: hard
-
-"jest-styled-components@npm:7.1.1":
-  version: 7.1.1
-  resolution: "jest-styled-components@npm:7.1.1"
-  dependencies:
-    "@adobe/css-tools": "npm:^4.0.1"
-  peerDependencies:
-    styled-components: ">= 5"
-  checksum: e32786dfa810d4b5f4720b07bf96ed935cdfbf652deb0b3384b8aa9fb613ae2da4f89891806ec2b00f0d0ca655cb49d71ccd7028e971269967fd777964ed9419
   languageName: node
   linkType: hard
 
