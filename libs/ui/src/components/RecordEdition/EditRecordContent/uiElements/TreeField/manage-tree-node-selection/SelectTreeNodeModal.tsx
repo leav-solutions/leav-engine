@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useState} from 'react';
-import {FaCheck} from 'react-icons/fa';
-import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitModal} from 'aristid-ds';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
@@ -91,19 +90,13 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
             close={onClose}
             footer={
                 <>
-                    <KitButton
-                        icon={
-                            // We can't used react-icons here because it's doesn't have the faXmark icon
-                            <FontAwesomeIcon icon={faXmark} />
-                        }
-                        onClick={onClose}
-                    >
+                    <KitButton icon={<FontAwesomeIcon icon={faXmark} />} onClick={onClose}>
                         {t('global.close')}
                     </KitButton>
                     {attribute.multiple_values && (
                         <KitButton
                             type="primary"
-                            icon={<FaCheck />}
+                            icon={<FontAwesomeIcon icon={faCheck} />}
                             disabled={selectedNodes.length === 0}
                             onClick={_handleOnConfirm}
                         >

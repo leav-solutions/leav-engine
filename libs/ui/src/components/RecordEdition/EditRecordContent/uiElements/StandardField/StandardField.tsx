@@ -12,7 +12,8 @@ import StandardFieldValue from './StandardFieldValue';
 import {Form, type FormInstance, type FormListOperation} from 'antd';
 import {KitButton, KitInputWrapper, KitTooltip} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
-import {FaPlus, FaTrash} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {DeleteAllValuesButton} from '../shared/DeleteAllValuesButton';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {useGetPresentationValues} from './useGetPresentationValues';
@@ -392,7 +393,7 @@ const StandardField: FunctionComponent<
                                                     <KitDeleteValueButton
                                                         type="tertiary"
                                                         title={t('record_edition.delete_value')}
-                                                        icon={<FaTrash />}
+                                                        icon={<FontAwesomeIcon icon={faTrash} />}
                                                         disabled={isReadOnly}
                                                         onClick={() =>
                                                             _handleDeleteValue(
@@ -417,7 +418,7 @@ const StandardField: FunctionComponent<
                                             <KitAddValueButton
                                                 type="secondary"
                                                 size="m"
-                                                icon={<FaPlus />}
+                                                icon={<FontAwesomeIcon icon={faPlus} />}
                                                 onClick={() => add(defaultValueToAddInAntdForm)}
                                                 disabled={isReadOnly || shouldDisabledAddValueButton}
                                             >

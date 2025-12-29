@@ -9,7 +9,6 @@ import {
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useEffect, useMemo, useState} from 'react';
-import {FaEdit} from 'react-icons/fa';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsState} from '../manage-view-settings';
@@ -20,6 +19,8 @@ import {useCountValuesOccurrencesHook} from './edit-attribute/useCountValuesOccu
 import {KitAlert, KitNotification} from 'aristid-ds';
 import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {Loading} from '_ui/components/Loading';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit} from '@fortawesome/free-solid-svg-icons';
 
 export const useEditAttributeMassAction = ({
     isEnabled,
@@ -61,7 +62,7 @@ export const useEditAttributeMassAction = ({
     const _editAttributeMassAction: IMassActions = useMemo(
         () => ({
             label: t('explorer.massAction.editAttribute'),
-            icon: <FaEdit />,
+            icon: <FontAwesomeIcon icon={faEdit} />,
             deselectAll: false,
             callback: _massSelectionFilter => {
                 setMassSelectionFilter(_massSelectionFilter);

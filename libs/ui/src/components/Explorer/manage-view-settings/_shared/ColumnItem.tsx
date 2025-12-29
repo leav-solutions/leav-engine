@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTypography} from 'aristid-ds';
 import {type FunctionComponent, type ReactNode} from 'react';
-import {FaEye, FaEyeSlash, FaLock} from 'react-icons/fa';
 import styled from 'styled-components';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEye, faEyeSlash, faLock} from '@fortawesome/free-solid-svg-icons';
 
 const StyledValue = styled(KitTypography.Text)`
     color: var(--general-utilities-disabled);
@@ -54,17 +55,12 @@ const StyledConfigurationItem = styled.li`
     }
 `;
 
-const StyledFaEye = styled(FaEye)`
+const DefaultIcon = styled(FontAwesomeIcon)`
     display: flex;
     color: currentColor;
 `;
 
-const StyledEyeSlash = styled(FaEyeSlash)`
-    display: flex;
-    color: var(--general-utilities-disabled);
-`;
-
-const StyledLocked = styled(FaLock)`
+const DisabledIcon = styled(FontAwesomeIcon)`
     display: flex;
     color: var(--general-utilities-disabled);
 `;
@@ -107,7 +103,13 @@ export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
 
     const visibilityButtonLabel = visible ? t('explorer.hide') : t('explorer.show');
 
-    const visibilityIcon = locked ? <StyledLocked /> : visible ? <StyledFaEye /> : <StyledEyeSlash />;
+    const visibilityIcon = locked ? (
+        <DisabledIcon icon={faLock} />
+    ) : visible ? (
+        <DefaultIcon icon={faEye} />
+    ) : (
+        <DisabledIcon icon={faEyeSlash} />
+    );
 
     return (
         <StyledConfigurationItem ref={setNodeRef} style={style}>

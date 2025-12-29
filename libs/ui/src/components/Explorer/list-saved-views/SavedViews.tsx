@@ -14,11 +14,12 @@ import {type Radio} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
 import {useEditLabelView} from '../manage-view-settings/save-view/useEditLabelView';
-import {IoCopy} from 'react-icons/io5';
 import {type IUserView} from '../_types';
 import classNames from 'classnames';
 import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
 import {INFO_NOTIFICATION_DURATION} from '_ui/constants';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCopy} from '@fortawesome/free-solid-svg-icons';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -138,7 +139,7 @@ export const SavedViews: FunctionComponent = () => {
                                                 });
                                             }}
                                         >
-                                            <IoCopy />
+                                            <FontAwesomeIcon icon={faCopy} />
                                         </StyledCopySpan>
                                     )}
                                 </KitRadio>
@@ -177,7 +178,7 @@ export const SavedViews: FunctionComponent = () => {
                                                     });
                                                 }}
                                             >
-                                                <IoCopy />
+                                                <FontAwesomeIcon icon={faCopy} />
                                             </StyledCopySpan>
                                         )}
                                     </KitRadio>

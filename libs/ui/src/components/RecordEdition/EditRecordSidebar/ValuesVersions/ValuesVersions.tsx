@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {GrUndo} from 'react-icons/gr';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faUndo} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {themeVars} from '../../../../antdTheme';
@@ -71,7 +72,7 @@ function ValuesVersions(): JSX.Element {
                             title={t('values_version.reset')}
                             shape="circle"
                             centered
-                            icon={<GrUndo />}
+                            icon={<FontAwesomeIcon icon={faUndo} />}
                             onClick={_handleClickReset}
                         />
                     )}

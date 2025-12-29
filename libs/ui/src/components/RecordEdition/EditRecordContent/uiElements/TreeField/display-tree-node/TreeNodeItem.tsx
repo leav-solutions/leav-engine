@@ -4,7 +4,8 @@
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitAvatar, KitBreadcrumb, KitIdCard, KitItemList, KitSpace} from 'aristid-ds';
-import {FaTrash} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 
 const KitItemListStyled = styled(KitItemList)`
@@ -74,7 +75,7 @@ const TreeNodeItem = ({color, label, ancestors, canDelete, onClickToDelete, isRe
                     ? [
                           {
                               key: 'delete',
-                              icon: <FaTrash />,
+                              icon: <FontAwesomeIcon icon={faTrash} />,
                               label: t('global.delete'),
                               title: t('global.delete'),
                               onClick: onClickToDelete,

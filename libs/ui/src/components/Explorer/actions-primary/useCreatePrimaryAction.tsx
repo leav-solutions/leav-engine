@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ReactElement, useState} from 'react';
-import {FaPlus} from 'react-icons/fa';
 import {KitAlert} from 'aristid-ds';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -19,6 +18,8 @@ import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 import {SUCCESS_ALERT_DURATION} from '_ui/constants';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Hook used to get the action for the `<DataView />` component.
@@ -100,7 +101,7 @@ export const useCreatePrimaryAction = ({
         callback: () => {
             setIsModalCreationVisible(true);
         },
-        icon: <FaPlus />,
+        icon: <FontAwesomeIcon icon={faPlus} />,
         disabled: !canCreateRecord,
         label: t('explorer.create-one'),
     };

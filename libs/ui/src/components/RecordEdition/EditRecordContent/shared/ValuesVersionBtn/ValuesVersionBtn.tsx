@@ -4,13 +4,14 @@
 import {Button, type ButtonProps, Dropdown, Space} from 'antd';
 import {type ItemType} from 'antd/es/menu/interface';
 import {type MenuItemType} from 'rc-menu/lib/interface';
-import {VscLayers, VscLayersActive} from 'react-icons/vsc';
 import {themeVars} from '_ui/antdTheme';
 import {BasicButton} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IValueVersion} from '_ui/types/values';
 import {getValueVersionLabel} from '_ui/_utils';
 import {VersionFieldScope} from '../../_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLayerGroup} from '@fortawesome/free-solid-svg-icons';
 
 interface IValuesVersionBtnProps extends Omit<ButtonProps, 'value'> {
     versions: {[scope in VersionFieldScope]: IValueVersion};
@@ -37,20 +38,13 @@ function ValuesVersionBtn({
     };
 
     const currentVersionLabel = getValueVersionLabel(versions[VersionFieldScope.CURRENT]);
-    const iconProps = {
-        size: '1.8em',
-        style: {
-            paddingTop: '5px',
-        },
-    };
-    const icon =
-        activeScope === VersionFieldScope.CURRENT ? <VscLayersActive {...iconProps} /> : <VscLayers {...iconProps} />;
+
     const menuItems: ItemType[] = [
         {
             key: VersionFieldScope.CURRENT,
             label: (
                 <Space style={{paddingLeft: hasInheritedVersion ? '1rem' : 0}}>
-                    {icon}
+                    <FontAwesomeIcon icon={faLayerGroup} />
                     {currentVersionLabel}
                 </Space>
             ),
@@ -62,25 +56,11 @@ function ValuesVersionBtn({
         const inheritedVersionLabel =
             getValueVersionLabel(versions[VersionFieldScope.INHERITED]) + ` (${t('values_version.inherited_value')})`;
 
-        const inheritedIconProps = {
-            size: '1.8em',
-            style: {
-                paddingTop: '5px',
-                color: themeVars.inheritedValuesVersionColor,
-            },
-        };
-
-        const inheritedIcon =
-            activeScope === VersionFieldScope.INHERITED ? (
-                <VscLayersActive {...inheritedIconProps} />
-            ) : (
-                <VscLayers {...inheritedIconProps} />
-            );
         menuItems.unshift({
             key: VersionFieldScope.INHERITED,
             label: (
                 <Space>
-                    {inheritedIcon}
+                    <FontAwesomeIcon icon={faLayerGroup} />
                     {inheritedVersionLabel}
                 </Space>
             ),
@@ -88,7 +68,7 @@ function ValuesVersionBtn({
         });
     }
 
-    const buttonIcon = <VscLayers size="1.35em" style={{paddingTop: '3px'}} />;
+    const buttonIcon = <FontAwesomeIcon icon={faLayerGroup} />;
     const button = basic ? (
         <BasicButton aria-label="values-version" shape="circle" {...buttonProps} icon={buttonIcon} centered />
     ) : (

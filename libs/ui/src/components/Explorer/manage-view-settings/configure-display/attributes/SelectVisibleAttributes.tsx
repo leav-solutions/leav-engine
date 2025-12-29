@@ -15,11 +15,12 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
-import {FaGripLines} from 'react-icons/fa';
 import {ColumnItem} from '../../_shared/ColumnItem';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {useAttributeDetailsData} from '../../_shared/useAttributeDetailsData';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faGripLines} from '@fortawesome/free-solid-svg-icons';
 
 const StyledListTitle = styled.div`
     margin-top: calc(var(--general-spacing-s) * 1px);
@@ -95,7 +96,7 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
                                     title={attributeDetailsById[columnId].label}
                                     visible
                                     onVisibilityClick={_toggleColumnVisibility(columnId)}
-                                    dragHandler={<FaGripLines />}
+                                    dragHandler={<FontAwesomeIcon icon={faGripLines} />}
                                 />
                             ))}
                     </SortableContext>

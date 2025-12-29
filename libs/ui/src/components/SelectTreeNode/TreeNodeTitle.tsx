@@ -4,7 +4,8 @@
 import {useState, type FunctionComponent} from 'react';
 import {type ITreeMapElement} from './_types';
 import {KitButton, KitTag, KitTypography} from 'aristid-ds';
-import {FaCheck} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import {type ITreeNodeWithRecord} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import styled from 'styled-components';
@@ -74,7 +75,8 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
                     </KitButton>
                 )}
                 {!checkable && isSelected && (
-                    <FaCheck
+                    <FontAwesomeIcon
+                        icon={faCheck}
                         color={
                             isDisabled ? 'var(--general-utilities-text-disabled)' : 'var(--general-utilities-text-blue)'
                         }

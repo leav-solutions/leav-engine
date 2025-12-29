@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Dispatch, useMemo} from 'react';
-import {FaTrash, FaTrashRestore} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {
     type ActivateRecordsMutation,
@@ -17,6 +16,8 @@ import {type FeatureHook, type Entrypoint, type IEntrypointLink, type IItemActio
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type FetchResult} from '@apollo/client';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash, faTrashRestore} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -146,8 +147,9 @@ export const useEditStatusItemAction = ({
                         ? t('explorer.deactivate-item')
                         : t('explorer.activate-item')
                     : t('explorer.delete-item'),
-            icon: (item: IItemData) =>
-                entrypoint.type === 'library' ? item.active ? <FaTrash /> : <FaTrashRestore /> : <FaTrash />,
+            icon: (item: IItemData) => (
+                <FontAwesomeIcon icon={entrypoint.type === 'library' && !item.active ? faTrashRestore : faTrash} />
+            ),
             isDanger: true,
             disabled: (item: IItemData) =>
                 entrypoint.type === 'link' ? !canDeleteLinkValues : item.active ? !item.canDelete : !item.canActivate,

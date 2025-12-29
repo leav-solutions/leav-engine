@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTypography} from 'aristid-ds';
 import {type FunctionComponent, type ReactNode} from 'react';
-import {FaChevronRight} from 'react-icons/fa';
 import styled from 'styled-components';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
 
 const StyledValue = styled(KitTypography.Text)`
     color: var(--general-utilities-disabled);
@@ -71,7 +72,7 @@ export const SettingItem: FunctionComponent<ISettingItemProps> = ({icon, title, 
             <StyledValue size="fontSize5" ellipsis className="value">
                 {value}
             </StyledValue>
-            <FaChevronRight />
+            <FontAwesomeIcon icon={faChevronRight} />
         </button>
     </StyledConfigurationItem>
 );

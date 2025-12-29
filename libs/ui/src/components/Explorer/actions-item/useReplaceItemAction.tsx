@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMemo, useState} from 'react';
-import {FaExchangeAlt} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IItemAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faExchangeAlt} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -37,7 +38,7 @@ export const useReplaceItemAction = ({
     const _replaceItemAction: IItemAction = useMemo(
         () => ({
             label: t('explorer.replace-item')!,
-            icon: <FaExchangeAlt />,
+            icon: <FontAwesomeIcon icon={faExchangeAlt} />,
             disabled: !canReplaceLinkValues,
             callback: item => {
                 setLinkIdSelected(item.id_value);

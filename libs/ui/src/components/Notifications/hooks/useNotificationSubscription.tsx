@@ -6,7 +6,8 @@ import {SUBSCRIPTION_NOTIFICATION_DURATION} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitSpace, KitNotification, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
-import {FaDownload} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faDownload} from '@fortawesome/free-solid-svg-icons';
 
 export const useNotificationsSubscription = () => {
     const {t} = useSharedTranslation();
@@ -36,7 +37,7 @@ export const useNotificationsSubscription = () => {
                                 key={attachment.url}
                                 type="secondary"
                                 onClick={() => window.open(attachment.url, '_blank')}
-                                icon={<FaDownload />}
+                                icon={<FontAwesomeIcon icon={faDownload} />}
                             >
                                 {t('global.download')}
                             </KitButton>

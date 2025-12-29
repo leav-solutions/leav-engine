@@ -9,7 +9,6 @@ import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {type CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {GrSearchAdvanced} from 'react-icons/gr';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import {localizedTranslation} from 'utils';
@@ -19,6 +18,8 @@ import {type TreeElementInput} from '_gqlTypes';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {InfoChannel, InfoType} from '_types/types';
 import {type IMessages} from '../../_types';
+import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 interface IAddBySearchButtonProps {
     availableLibraries: GET_TREE_LIBRARIES_trees_list_libraries[];
@@ -99,7 +100,7 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
         }
     };
 
-    const buttonIcon = <GrSearchAdvanced size="1.2em" />;
+    const buttonIcon = <FontAwesomeIcon icon={faMagnifyingGlass} />;
     const buttonStyle: CSSProperties = {
         paddingTop: '5px',
     };

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
 import {KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -21,6 +20,8 @@ import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {SortListItem} from './SortListItem';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSearch, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 
 const StyledListContainer = styled.div`
     display: flex;
@@ -34,11 +35,11 @@ const StyledList = styled.ul`
     color: var(--general-utilities-text-primary);
 `;
 
-const StyledEyeSlash = styled(FaEyeSlash)`
+const StyledEyeSlash = styled(FontAwesomeIcon)`
     color: var(--general-utilities-neutral-dark);
 `;
 
-const StyledFaEye = styled(FaEye)`
+const StyledFaEye = styled(FontAwesomeIcon)`
     color: var(--general-utilities-neutral-deepDark);
 `;
 
@@ -144,7 +145,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                                         },
                                     }}
                                     visibilityButtonProps={{
-                                        icon: <StyledFaEye />,
+                                        icon: <StyledFaEye icon={faEye} />,
                                         title: String(t('explorer.hide')),
                                         onClick: _toggleColumnVisibility(field),
                                     }}
@@ -159,7 +160,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                 placeholder={String(t('global.search'))}
                 onChange={onSearchChanged}
                 allowClear
-                prefix={<FaSearch />}
+                prefix={<FontAwesomeIcon icon={faSearch} />}
             />
             <StyledList aria-label={t('explorer.sort-list.inactive')}>
                 {inactiveFilters.map(field => (
@@ -170,7 +171,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                             label: attributeDetailsById[field].label,
                         }}
                         visibilityButtonProps={{
-                            icon: <StyledEyeSlash />,
+                            icon: <StyledEyeSlash icon={faEyeSlash} />,
                             title: String(t('explorer.show')),
                             onClick: _toggleColumnVisibility(field),
                         }}

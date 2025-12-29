@@ -5,7 +5,8 @@ import {type FunctionComponent, useEffect, useState} from 'react';
 import styled, {css} from 'styled-components';
 import {type ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
-import {FaList} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faList} from '@fortawesome/free-solid-svg-icons';
 import {useLang} from '_ui/hooks';
 import {type IFormElementProps} from '../../_types';
 import {
@@ -157,7 +158,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
                     />
                     {!isReadOnly && (
                         <StyledFieldFooterKitButton
-                            icon={<FaList />}
+                            icon={<FontAwesomeIcon icon={faList} />}
                             onClick={openModal}
                             size="m"
                             $hasNoValue={!backendValues?.length}

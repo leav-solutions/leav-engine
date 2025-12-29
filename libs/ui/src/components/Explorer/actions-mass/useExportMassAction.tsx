@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Dispatch, type ReactElement, useCallback, useMemo, useState} from 'react';
-import {FaFileExport} from 'react-icons/fa';
 import {KitAlert, KitNotification} from 'aristid-ds';
 import {useExportLazyQuery, type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -11,6 +10,8 @@ import {type IViewSettingsAction, type IViewSettingsState} from '../manage-view-
 import {MASS_SELECTION_ALL} from '../_constants';
 import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {ExportProfileSelectionModal} from './export/ExportProfileSelectionModal';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faFileExport} from '@fortawesome/free-solid-svg-icons';
 
 interface IUseExportMassActionReturn {
     exportMassAction: IMassActions | null;
@@ -115,7 +116,7 @@ export const useExportMassAction = ({
     const _exportMassAction: IMassActions = useMemo(
         () => ({
             label: t('explorer.massAction.export'),
-            icon: <FaFileExport />,
+            icon: <FontAwesomeIcon icon={faFileExport} />,
             deselectAll: false,
             callback: filter => {
                 setMassSelectionFilter(filter);

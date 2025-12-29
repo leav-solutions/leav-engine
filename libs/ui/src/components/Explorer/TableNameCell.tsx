@@ -3,12 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IdCard} from './IdCard';
 import {type IItemAction, type IItemData} from './_types';
-import {cloneElement, type ReactElement, useRef} from 'react';
+import {cloneElement, useRef} from 'react';
 import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
 import styled from 'styled-components';
-import {FaEllipsisH} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
+import {faEllipsisH} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const StyledTableNameCellContainer = styled.div`
     position: relative;
@@ -125,7 +126,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                             <KitButton
                                 size="m"
                                 aria-label={t('explorer.more-actions') ?? undefined}
-                                icon={<FaEllipsisH />}
+                                icon={<FontAwesomeIcon icon={faEllipsisH} />}
                                 onClick={event => event.stopPropagation()}
                             />
                         </KitTooltip>
