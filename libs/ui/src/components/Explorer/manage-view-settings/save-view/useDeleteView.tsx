@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitModal, KitTypography} from 'aristid-ds';
-import {FaTimes, FaTrash} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {type ComponentProps, useState} from 'react';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
@@ -13,6 +12,8 @@ import {useLang} from '_ui/hooks';
 import {type IUserView, type IDataViewOnAction} from '../../_types';
 import styled from 'styled-components';
 import {type Button} from 'antd';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const StyledButton = styled.button`
     all: unset;
@@ -50,7 +51,7 @@ export const useDeleteView = () => {
                 setDataViewOnAction({id: viewItem.id, label: viewItem.label});
             }}
         >
-            <FaTrash />
+            <FontAwesomeIcon icon={faTrash} />
         </StyledButton>
     );
 
@@ -66,11 +67,16 @@ export const useDeleteView = () => {
                         <KitButton
                             type="secondary"
                             onClick={() => setDataViewOnAction({id: null, label: null})}
-                            icon={<FaTimes />}
+                            icon={<FontAwesomeIcon icon={faTimes} />}
                         >
                             {t('global.close')}
                         </KitButton>
-                        <KitButton type="primary" danger onClick={_onDeleteConfirm} icon={<FaTrash />}>
+                        <KitButton
+                            type="primary"
+                            danger
+                            onClick={_onDeleteConfirm}
+                            icon={<FontAwesomeIcon icon={faTrash} />}
+                        >
                             {t('global.delete')}
                         </KitButton>
                     </>

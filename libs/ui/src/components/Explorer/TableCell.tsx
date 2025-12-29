@@ -13,7 +13,6 @@ import {
     MultiDisplayOption,
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitBadge, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitTag, type IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
@@ -21,6 +20,8 @@ import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';
 import {AggregationColor} from 'antd/es/color-picker/color';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faArrowRight, faCalendar, faListAlt} from '@fortawesome/free-solid-svg-icons';
 
 const isStandardValue = (
     v: PropertyValueFragment,
@@ -66,11 +67,7 @@ const StyledColorChip = styled.div<{$colorTextContent: string}>`
     background-color: ${props => props.$colorTextContent};
 `;
 
-const StyledFaListAlt = styled(FaListAlt)`
-    flex-shrink: 0;
-`;
-
-const StyledFaCalendar = styled(FaCalendar)`
+const RightIcon = styled(FontAwesomeIcon)`
     flex-shrink: 0;
 `;
 
@@ -89,8 +86,8 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
 
         return (
             <KitSpace size="xxs">
-                <StyledFaCalendar />
-                {value.from} <FaArrowRight /> {value.to}
+                <RightIcon icon={faCalendar} />
+                {value.from} <FontAwesomeIcon icon={faArrowRight} /> {value.to}
             </KitSpace>
         );
     }, []);
@@ -251,7 +248,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     const textContent = tmp.textContent;
                     content = (
                         <>
-                            <StyledFaListAlt />
+                            <RightIcon icon={faListAlt} />
                             <KitTypography.AdvancedText key={attributeProperties.id} ellipsis={{tooltip: textContent}}>
                                 {textContent}
                             </KitTypography.AdvancedText>

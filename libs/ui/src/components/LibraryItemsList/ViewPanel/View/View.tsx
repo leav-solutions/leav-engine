@@ -7,7 +7,6 @@ import {Button, Tooltip, Typography} from 'antd';
 import omit from 'lodash/omit';
 import {useState} from 'react';
 import {type DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
-import {RiUserReceivedLine} from 'react-icons/ri';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
@@ -23,6 +22,8 @@ import {type ViewInput, ViewSizes, ViewTypes} from '_ui/_gqlTypes';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import {defaultView} from '../../constants';
 import useUpdateViewsOrderMutation from '../../hooks/useUpdateViewsOrderMutation';
+import {faUserTag} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 interface IWrapperProps {
     selected: boolean;
@@ -218,7 +219,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                     </Description>
                 )}
             </Infos>
-            {!view.owner && !isActionsShown && <RiUserReceivedLine size="1.3em" />}
+            {!view.owner && !isActionsShown && <FontAwesomeIcon icon={faUserTag} />}
             {isActionsShown && (
                 <>
                     <Tooltip title={t('global.edit')}>

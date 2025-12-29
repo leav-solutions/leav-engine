@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Dispatch, useMemo} from 'react';
-import {FaTrash} from 'react-icons/fa';
 import {KitAlert, KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -11,6 +10,8 @@ import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTyp
 import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type useExplorerData} from '../_queries/useExplorerData';
 import {SUCCESS_ALERT_DURATION} from '_ui/constants';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Hook used to get the action for mass actions only available on selection.
@@ -49,7 +50,7 @@ export const useDeactivateMassAction = ({
     const _deactivateMassAction: IMassActions = useMemo(
         () => ({
             label: t('explorer.massAction.deactivate'),
-            icon: <FaTrash />,
+            icon: <FontAwesomeIcon icon={faTrash} />,
             deselectAll: true,
             callback: massSelectionFilter => {
                 KitModal.confirm({

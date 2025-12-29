@@ -6,12 +6,13 @@ import {type FeatureHook, type IEntrypointLink, type IMassActions} from '../_typ
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {type Dispatch, type Key, useMemo} from 'react';
 import {useExplorerData} from '../_queries/useExplorerData';
-import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitModal} from 'aristid-ds';
 import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type IValueToSubmit} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReducer';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
 
 export const useDeleteLinkValues = ({
     isEnabled,
@@ -51,7 +52,7 @@ export const useDeleteLinkValues = ({
     const _unlinkMassAction: IMassActions = useMemo(
         () => ({
             label: t('explorer.massAction.deactivate'),
-            icon: <FaTrash />,
+            icon: <FontAwesomeIcon icon={faTrash} />,
             deselectAll: true,
             callback: massSelectionFilter => {
                 KitModal.confirm({

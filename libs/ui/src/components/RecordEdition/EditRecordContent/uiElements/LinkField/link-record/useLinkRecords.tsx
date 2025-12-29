@@ -11,10 +11,11 @@ import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFr
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm, KitSpace, KitTooltip} from 'aristid-ds';
 import {useExplorerLinkRecords} from './useExplorerLinkRecords';
-import {FaEye, FaPlus} from 'react-icons/fa';
 import {ActionButton} from './ActionButton';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEye, faPlus} from '@fortawesome/free-solid-svg-icons';
 
 interface ILinkRecords {
     libraryId: string;
@@ -151,7 +152,7 @@ export const useLinkRecords = ({
                         itemActions={[
                             {
                                 label: t('explorer.edit-item'),
-                                icon: <FaEye />,
+                                icon: <FontAwesomeIcon icon={faEye} />,
                                 useItemActionOnRowClick: true,
                                 callback: item => {
                                     openEditRecordModal({
@@ -180,7 +181,7 @@ export const useLinkRecords = ({
                                 type="secondary"
                                 size="m"
                                 $hasNoValue={hasNoValue}
-                                icon={<FaPlus />}
+                                icon={<FontAwesomeIcon icon={faPlus} />}
                                 disabled={
                                     isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
                                 }

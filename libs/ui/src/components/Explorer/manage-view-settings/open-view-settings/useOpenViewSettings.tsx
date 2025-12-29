@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton, KitTag} from 'aristid-ds';
-import {FaBars, FaSlidersH} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
@@ -14,6 +13,8 @@ import {type IViewSettingsState} from '../store-view-settings/viewSettingsReduce
 import styled from 'styled-components';
 import {type FeatureHook} from '../../_types';
 import {MASS_SELECTION_ALL} from '../../_constants';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faBars, faSlidersH} from '@fortawesome/free-solid-svg-icons';
 
 const ModifiedStyledKitTag = styled(KitTag)`
     margin: 0;
@@ -75,7 +76,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
             <KitButton
                 type="secondary"
                 size="m"
-                icon={<FaSlidersH />}
+                icon={<FontAwesomeIcon icon={faSlidersH} />}
                 onClick={() => _openSettingsPanel()}
                 disabled={isMassSelectionAll}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
@@ -85,7 +86,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
             <KitButton
                 type="secondary"
                 size="m"
-                icon={<FaBars />}
+                icon={<FontAwesomeIcon icon={faBars} />}
                 onClick={() => _openSettingsPanel('viewList.my-views')}
                 disabled={isMassSelectionAll}
                 title={String(t('explorer.viewList.manage-views')) /* TODO: avoid transform null to 'null' */}

@@ -5,7 +5,8 @@ import {type FunctionComponent, useState} from 'react';
 import {type IRecordIdentityWhoAmI} from '_ui/types';
 import styled from 'styled-components';
 import {KitButton, KitTooltip} from 'aristid-ds';
-import {FaExpand} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faExpand} from '@fortawesome/free-solid-svg-icons';
 import PropertiesList from '../../PropertiesList';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
@@ -70,7 +71,7 @@ export const RecordInformations: FunctionComponent<IInformationsProps> = ({recor
                         <ExpandImageButton
                             aria-label={t('record_summary.open_preview_modal')}
                             type="tertiary"
-                            icon={<FaExpand />}
+                            icon={<FontAwesomeIcon icon={faExpand} />}
                             onClick={() => setFilePreviewModalOpen(true)}
                         />
                     </KitTooltip>

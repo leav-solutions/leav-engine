@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FaEdit} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {useState} from 'react';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
@@ -10,6 +9,8 @@ import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMut
 import {LabelViewFormModal} from './LabelViewFormModal';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit} from '@fortawesome/free-solid-svg-icons';
 
 const StyledButton = styled.button`
     all: unset;
@@ -51,7 +52,7 @@ export const useEditLabelView = () => {
             title={t('explorer.viewList.edit-view')}
             onClick={() => setDataViewOnAction({id: viewItem.id, label: viewItem.label})}
         >
-            <FaEdit />
+            <FontAwesomeIcon icon={faEdit} />
         </StyledButton>
     );
 

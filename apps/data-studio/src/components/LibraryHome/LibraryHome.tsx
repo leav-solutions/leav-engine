@@ -15,7 +15,6 @@ import {
 } from '@leav/ui';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {FaEye} from 'react-icons/all';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
 import {setInfoBase} from 'reduxStore/infos';
@@ -25,6 +24,8 @@ import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInAp
 import {type IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
 import {useApplicationContext} from 'context/ApplicationContext';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEye} from '@fortawesome/free-solid-svg-icons';
 
 interface ILibraryHomeProps {
     library?: string;
@@ -164,7 +165,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         itemActions={[
                             {
                                 label: t('explorer.edit-item'),
-                                icon: <FaEye />,
+                                icon: <FontAwesomeIcon icon={faEye} />,
                                 useItemActionOnRowClick: true,
                                 callback: item => {
                                     openEditRecordModal({
@@ -220,7 +221,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         itemActions={[
                             {
                                 label: t('explorer.edit-item'),
-                                icon: <FaEye />,
+                                icon: <FontAwesomeIcon icon={faEye} />,
                                 useItemActionOnRowClick: true,
                                 callback: item => {
                                     openEditRecordModal({

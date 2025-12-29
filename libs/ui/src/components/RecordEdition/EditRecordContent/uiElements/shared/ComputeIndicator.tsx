@@ -4,7 +4,8 @@
 import {type FunctionComponent} from 'react';
 import {type CalculatedFlags, type InheritedFlags} from './calculatedInheritedFlags';
 import {KitTooltip} from 'aristid-ds';
-import {FaLayerGroup, FaSquareRootAlt} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLayerGroup, faSquareRootAlt} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
@@ -33,7 +34,7 @@ export const ComputeIndicator: FunctionComponent<IComputeIndicatorProps> = ({cal
                     title={t('record_edition.calculated_value')}
                     mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
                 >
-                    <FaSquareRootAlt />
+                    <FontAwesomeIcon icon={faSquareRootAlt} />
                 </KitTooltip>
             )}
             {shouldDisplayOverridedIcon && (
@@ -41,7 +42,7 @@ export const ComputeIndicator: FunctionComponent<IComputeIndicatorProps> = ({cal
                     title={t('record_edition.overrided_value')}
                     mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
                 >
-                    <FaLayerGroup />
+                    <FontAwesomeIcon icon={faLayerGroup} />
                 </KitTooltip>
             )}
         </ComputeIndicatorWrapper>

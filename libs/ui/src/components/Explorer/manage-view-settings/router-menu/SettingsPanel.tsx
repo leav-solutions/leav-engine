@@ -4,7 +4,6 @@
 import styled from 'styled-components';
 import {type FunctionComponent} from 'react';
 import {KitInput, KitTypography} from 'aristid-ds';
-import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
 import {SortItems} from '../sort-items/SortItems';
@@ -16,6 +15,8 @@ import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
 import {SavedViews} from '../../list-saved-views/SavedViews';
 import {ViewActionsButtons} from '../save-view/ViewActionsButtons';
 import {useFiltersContext} from '_ui/components/Filters';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faFilter, faList, faSortAlphaDown} from '@fortawesome/free-solid-svg-icons';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -54,14 +55,14 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                         <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
                         <ConfigurationStyledMenu>
                             <SettingItem
-                                icon={<FaList />}
+                                icon={<FontAwesomeIcon icon={faList} />}
                                 title={t('explorer.configure-display')}
                                 onClick={() => openSettingsPanel('configure-display')}
                             />
                             {view.entrypoint.type === 'library' && (
                                 <>
                                     <SettingItem
-                                        icon={<FaFilter />}
+                                        icon={<FontAwesomeIcon icon={faFilter} />}
                                         title={t('explorer.filters')}
                                         value={String(
                                             t('explorer.active-items-number', {count: filtersData.filters.length}),
@@ -69,7 +70,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                                         onClick={() => openSettingsPanel('filter-items')}
                                     />
                                     <SettingItem
-                                        icon={<FaSortAlphaDown />}
+                                        icon={<FontAwesomeIcon icon={faSortAlphaDown} />}
                                         title={t('explorer.sort-items')}
                                         onClick={() => openSettingsPanel('sort-items')}
                                     />

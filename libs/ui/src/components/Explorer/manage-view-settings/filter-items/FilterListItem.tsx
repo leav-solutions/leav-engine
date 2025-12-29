@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {FaGripLines} from 'react-icons/fa';
 import {KitButton} from 'aristid-ds';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faGripLines} from '@fortawesome/free-solid-svg-icons';
 
 const StyledFilterListItem = styled.li`
     display: flex;
@@ -51,7 +52,7 @@ export const FilterListItem: FunctionComponent<IActiveFilterListItemProps> = ({
             <div>
                 {isDraggable && (
                     <StyledDragHandle {...attributes} {...listeners} $isDragging={isDragging}>
-                        <FaGripLines />
+                        <FontAwesomeIcon icon={faGripLines} />
                     </StyledDragHandle>
                 )}
                 {children}

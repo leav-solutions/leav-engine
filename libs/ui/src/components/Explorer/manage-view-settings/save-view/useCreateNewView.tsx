@@ -4,7 +4,6 @@
 import {useState} from 'react';
 import {LabelViewFormModal} from './LabelViewFormModal';
 import {KitButton} from 'aristid-ds';
-import {FaSdCard} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
@@ -16,6 +15,8 @@ import {useTransformFilters} from '_ui/components/Filters/useTransformFilters';
 import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
 import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
 import {type UIFilter} from '_ui/components/Filters/_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSdCard} from '@fortawesome/free-solid-svg-icons';
 
 export const useCreateNewView = () => {
     const {t} = useSharedTranslation();
@@ -68,7 +69,7 @@ export const useCreateNewView = () => {
         createNewViewButton: (
             <>
                 <LabelViewFormModal isOpen={isModalOpen} onSubmit={_createView} onClose={_toggleModal} />
-                <KitButton type="action" icon={<FaSdCard />} onClick={_toggleModal}>
+                <KitButton type="action" icon={<FontAwesomeIcon icon={faSdCard} />} onClick={_toggleModal}>
                     {t('explorer.viewList.save-view-as')}
                 </KitButton>
             </>

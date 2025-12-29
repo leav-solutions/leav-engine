@@ -4,11 +4,8 @@
 import {type ComponentProps, type FunctionComponent, useRef} from 'react';
 import styled from 'styled-components';
 import {closeKitSnackBar, KitButton, KitSpace, AntModal} from 'aristid-ds';
-
-// TODO: harmonize icon sources
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {FaExchangeAlt, FaEye, FaPlus} from 'react-icons/fa';
+import {faExchangeAlt, faEye, faPlus, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type ExplorerSelectionIdsQuery,
@@ -154,7 +151,11 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                                               ? t('explorer.massAction.replace-link')
                                               : t('explorer.massAction.add-link'),
                                           deselectAll: true,
-                                          icon: replacementMode ? <FaExchangeAlt /> : <FaPlus />,
+                                          icon: replacementMode ? (
+                                              <FontAwesomeIcon icon={faExchangeAlt} />
+                                          ) : (
+                                              <FontAwesomeIcon icon={faPlus} />
+                                          ),
                                           callback: async massSelectionFilter => {
                                               await getRecordIdsFromFilters({
                                                   variables: {
@@ -195,7 +196,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         itemActions={[
                             {
                                 label: t('explorer.edit-item'),
-                                icon: <FaEye />,
+                                icon: <FontAwesomeIcon icon={faEye} />,
                                 useItemActionOnRowClick: true,
                                 callback: item => {
                                     openEditRecordModal({

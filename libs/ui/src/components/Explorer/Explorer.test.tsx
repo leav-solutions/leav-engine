@@ -11,7 +11,8 @@ import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
 import {type Mockify} from '@leav/utils';
-import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faStar, faCheck, faCog, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
@@ -610,12 +611,12 @@ describe('Explorer', () => {
     const customPrimaryActions: IPrimaryAction[] = [
         {
             label: 'Additional action 1',
-            icon: <FaBeer />,
+            icon: <FontAwesomeIcon icon={faStar} />,
             callback: jest.fn(),
         },
         {
             label: 'Additional action 2',
-            icon: <FaAccessibleIcon />,
+            icon: <FontAwesomeIcon icon={faCheck} />,
             callback: jest.fn(),
         },
     ];
@@ -1426,7 +1427,7 @@ describe('Explorer', () => {
     describe('Item actions', () => {
         test('Should display the list of records with custom actions', async () => {
             const customAction = {
-                icon: <Fa500Px />,
+                icon: <FontAwesomeIcon icon={faCog} />,
                 label: 'Custom action',
                 callback: jest.fn(),
             } satisfies IItemAction;
@@ -1447,22 +1448,22 @@ describe('Explorer', () => {
             const customActions = [
                 {
                     label: 'Test 1',
-                    icon: <FaBeer />,
+                    icon: <FontAwesomeIcon icon={faStar} />,
                     callback: jest.fn(),
                 },
                 {
                     label: 'Test 2',
-                    icon: <FaAccessibleIcon />,
+                    icon: <FontAwesomeIcon icon={faCheck} />,
                     callback: jest.fn(),
                 },
                 {
                     label: 'Test 3',
-                    icon: <FaXbox />,
+                    icon: <FontAwesomeIcon icon={faEdit} />,
                     callback: jest.fn(),
                 },
                 {
                     label: 'Test 4',
-                    icon: <FaJs />,
+                    icon: <FontAwesomeIcon icon={faTrash} />,
                     callback: jest.fn(),
                 },
             ] satisfies IItemAction[];
@@ -1502,7 +1503,7 @@ describe('Explorer', () => {
 
         test('Should call the action on row click if item action is flagged as useItemActionOnRowClick', async () => {
             const customAction = {
-                icon: <Fa500Px />,
+                icon: <FontAwesomeIcon icon={faCog} />,
                 label: 'Custom action',
                 useItemActionOnRowClick: true,
                 callback: jest.fn(),
@@ -1523,23 +1524,23 @@ describe('Explorer', () => {
             const customActions = [
                 {
                     label: 'Test 1',
-                    icon: <FaBeer />,
+                    icon: <FontAwesomeIcon icon={faStar} />,
                     callback: jest.fn(),
                     useItemActionOnRowClick: true,
                 },
                 {
                     label: 'Test 2',
-                    icon: <FaAccessibleIcon />,
+                    icon: <FontAwesomeIcon icon={faCheck} />,
                     callback: jest.fn(),
                 },
                 {
                     label: 'Test 3',
-                    icon: <FaXbox />,
+                    icon: <FontAwesomeIcon icon={faEdit} />,
                     callback: jest.fn(),
                 },
                 {
                     label: 'Test 4',
-                    icon: <FaJs />,
+                    icon: <FontAwesomeIcon icon={faTrash} />,
                     callback: jest.fn(),
                 },
             ] satisfies IItemAction[];
@@ -2255,7 +2256,7 @@ describe('Explorer', () => {
                         itemActions={[
                             {
                                 label: 'Test 1',
-                                icon: <FaBeer />,
+                                icon: <FontAwesomeIcon icon={faStar} />,
                                 callback: actionCallback,
                             },
                         ]}
@@ -2303,7 +2304,7 @@ describe('Explorer', () => {
             const testMassAction = {
                 label: 'test mass action',
                 deselectAll: true,
-                icon: <FaBeer />,
+                icon: <FontAwesomeIcon icon={faStar} />,
                 callback: jest.fn(),
             };
             // WHEN the component is rendered
@@ -2379,7 +2380,7 @@ describe('Explorer', () => {
             const testMassAction = {
                 label: 'test mass action',
                 deselectAll: true,
-                icon: <FaBeer />,
+                icon: <FontAwesomeIcon icon={faStar} />,
                 callback: jest.fn(),
             };
             // WHEN the component is rendered without pagination (20 items default page size > 2 mock records)
@@ -2463,7 +2464,7 @@ describe('Explorer', () => {
             const testMassAction = {
                 label: 'test mass action',
                 deselectAll: true,
-                icon: <FaBeer />,
+                icon: <FontAwesomeIcon icon={faStar} />,
                 callback: jest.fn(),
             };
             // WHEN the component is rendered with some filter and sort and pagination (1 item on 2 pages)
@@ -2587,7 +2588,7 @@ describe('Explorer', () => {
             const testMassAction = {
                 label: 'test mass action',
                 deselectAll: true,
-                icon: <FaBeer />,
+                icon: <FontAwesomeIcon icon={faStar} />,
                 callback: jest.fn(),
             };
             // WHEN the component renders with 2 pages of one record, with filter and sort

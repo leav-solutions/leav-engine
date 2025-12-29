@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {closeKitSnackBar, KitCheckbox, KitDropDown, KitSpace, openKitSnackBar} from 'aristid-ds';
 import {type Dispatch, useCallback, useEffect, useRef} from 'react';
-import {FaChevronDown} from 'react-icons/fa';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
@@ -12,6 +11,8 @@ import {MASS_SELECTION_ALL} from '../_constants';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
 import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReducer';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faChevronDown} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)
@@ -153,7 +154,7 @@ export const useMassActions = ({
             >
                 <KitSpace size="s">
                     {t('explorer.massAction.itemsTotal', {count: totalCount})}
-                    <FaChevronDown />
+                    <FontAwesomeIcon icon={faChevronDown} />
                 </KitSpace>
             </KitCheckbox>
         </KitDropDown>

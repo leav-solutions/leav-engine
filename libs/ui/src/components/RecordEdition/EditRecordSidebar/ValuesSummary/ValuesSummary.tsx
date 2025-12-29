@@ -5,7 +5,8 @@ import {type FunctionComponent} from 'react';
 import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {KitBadge, KitTabs, KitTree} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FaLayerGroup, FaSquareRootAlt} from 'react-icons/fa';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLayerGroup, faSquareRootAlt} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import {type IRecordIdentityWhoAmI} from '_ui/types';
 import {RecordHistory} from '../../../RecordHistory/RecordHistory';
@@ -100,7 +101,8 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                     }}
                                                 >
                                                     <span>
-                                                        <FaSquareRootAlt /> {t('record_summary.calculated_value')}
+                                                        <FontAwesomeIcon icon={faSquareRootAlt} />{' '}
+                                                        {t('record_summary.calculated_value')}
                                                     </span>
                                                     <KitBadge count={stripedCalculatedValues.length} color="primary" />
                                                 </div>
@@ -129,7 +131,8 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
                                                     }}
                                                 >
                                                     <span>
-                                                        <FaLayerGroup /> {t('record_summary.global')}
+                                                        <FontAwesomeIcon icon={faLayerGroup} />{' '}
+                                                        {t('record_summary.global')}
                                                     </span>
                                                     <KitBadge count={stripedGlobalValues.length} color="primary" />
                                                 </div>

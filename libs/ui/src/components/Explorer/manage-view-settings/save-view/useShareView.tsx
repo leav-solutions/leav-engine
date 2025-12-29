@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton} from 'aristid-ds';
-import {FaShare} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {useEffect, useState} from 'react';
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
@@ -14,6 +13,8 @@ import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {useTransformFilters} from '_ui/components/Filters/useTransformFilters';
 import {useFiltersContext} from '_ui/components/Filters';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faShare} from '@fortawesome/free-solid-svg-icons';
 
 export const useShareView = () => {
     const {t} = useSharedTranslation();
@@ -69,7 +70,7 @@ export const useShareView = () => {
     return {
         shareViewButton:
             !view.viewId || (isSharedView && !isOwnerView) ? null : (
-                <KitButton type="action" icon={<FaShare />} onClick={_toggleShareView}>
+                <KitButton type="action" icon={<FontAwesomeIcon icon={faShare} />} onClick={_toggleShareView}>
                     {isSharedView ? t('explorer.viewList.unshare-view') : t('explorer.viewList.share-view')}
                 </KitButton>
             ),

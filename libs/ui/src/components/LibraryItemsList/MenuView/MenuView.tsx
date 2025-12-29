@@ -4,8 +4,6 @@
 import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {localizedTranslation, objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, type MenuProps, Space, Tooltip} from 'antd';
-import {GrUndo} from 'react-icons/gr';
-import {VscLayers} from 'react-icons/vsc';
 import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
@@ -23,6 +21,8 @@ import {defaultView} from '../constants';
 import FiltersDropdown from '../FiltersDropdown';
 import useUpdateViewsOrderMutation from '../hooks/useUpdateViewsOrderMutation';
 import IconViewType from '../IconViewType';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faUndo, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
 
 interface IMenuViewProps {
     library: ILibraryDetailExtended;
@@ -201,7 +201,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                 </Tooltip>
                 <Button
                     disabled={searchState.view.sync}
-                    icon={<GrUndo />}
+                    icon={<FontAwesomeIcon icon={faUndo} />}
                     onClick={_resetView}
                     style={{paddingTop: '6px'}}
                 />
@@ -232,7 +232,11 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     />
                 </Button.Group>
             </Badge>
-            <Button onClick={_toggleShowVersions} icon={<VscLayers />} style={{paddingTop: '5px'}} />
+            <Button
+                onClick={_toggleShowVersions}
+                icon={<FontAwesomeIcon icon={faLayerGroup} />}
+                style={{paddingTop: '5px'}}
+            />
         </Space>
     );
 }

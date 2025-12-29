@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton} from 'aristid-ds';
-import {FaSave} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
@@ -17,6 +16,8 @@ import {useTransformFilters} from '_ui/components/Filters/useTransformFilters';
 import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
 import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
 import {type UIFilter} from '_ui/components/Filters/_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSave} from '@fortawesome/free-solid-svg-icons';
 
 export const useUpdateView = () => {
     const {t} = useSharedTranslation();
@@ -82,7 +83,7 @@ export const useUpdateView = () => {
     return {
         updateViewButton:
             !view.viewId || !view.savedViews.length || !isOwnerView ? null : (
-                <KitButton type="action" icon={<FaSave />} onClick={_updateView}>
+                <KitButton type="action" icon={<FontAwesomeIcon icon={faSave} />} onClick={_updateView}>
                     {t('global.save')}
                 </KitButton>
             ),

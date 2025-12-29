@@ -2,12 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {type FeatureHook, type IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
 import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -50,7 +51,7 @@ export const useLinkPrimaryAction = ({
         callback: () => {
             setIsLinkModalVisible(true);
         },
-        icon: <FaPlus />,
+        icon: <FontAwesomeIcon icon={faPlus} />,
         disabled: disableAddItemAction,
         label: replacementMode ? t('record_edition.replace-by-existing-item') : t('explorer.add-existing-item'),
     };

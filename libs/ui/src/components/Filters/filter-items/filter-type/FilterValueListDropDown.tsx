@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FaCheck} from 'react-icons/fa';
 import {type ComponentProps, type FunctionComponent, type KeyboardEvent, useMemo, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import styled from 'styled-components';
@@ -13,6 +12,8 @@ import {
     type IUIFilterValueList,
     type UIFilter,
 } from '../../_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheck} from '@fortawesome/free-solid-svg-icons';
 
 interface IFilterValueListDropDownProps {
     filter: IUIFilterValueList;
@@ -42,7 +43,7 @@ const OptionRow = styled.div<{$selected: boolean}>`
     }
 `;
 
-const RightIcon = styled(FaCheck)<{$visible: boolean}>`
+const RightIcon = styled(FontAwesomeIcon)<{$visible: boolean}>`
     color: var(--general-utilities-main-default);
     opacity: ${props => (props.$visible ? 1 : 0)};
     transition: opacity 0.12s ease-in-out;
@@ -187,7 +188,7 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
                                     onKeyDown={e => onKeyToggle(e, opt.value)}
                                 >
                                     <Label>{opt.label}</Label>
-                                    <RightIcon $visible={selected} />
+                                    <RightIcon $visible={selected} icon={faCheck} />
                                 </OptionRow>
                             );
                         })}

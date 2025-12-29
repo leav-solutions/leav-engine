@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useRef} from 'react';
-import {FaClock, FaTrash} from 'react-icons/fa';
 import styled from 'styled-components';
 import {KitDivider, KitButton} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -10,6 +9,8 @@ import {FilterDropdownContent} from './FilterDropdownContent';
 import {useFiltersContext} from '../../useFiltersContext';
 import {FiltersActionTypes} from '../../context/filtersReducer';
 import {type IUIFilterDropDownProps, type UIFilter} from '../../_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faClock, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const FilterDropDownStyledDiv = styled.div`
     display: flex;
@@ -53,11 +54,11 @@ export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filte
             />
             <div ref={selectDropDownRef} />
             <KitDivider noMargin />
-            <KitButton type="action" icon={<FaClock />} onClick={_onResetFilter}>
+            <KitButton type="action" icon={<FontAwesomeIcon icon={faClock} />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}
             </KitButton>
             {canRemove && (
-                <KitButton type="action" icon={<FaTrash />} onClick={_onDeleteFilter}>
+                <KitButton type="action" icon={<FontAwesomeIcon icon={faTrash} />} onClick={_onDeleteFilter}>
                     {t('global.delete')}
                 </KitButton>
             )}

@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTimes, faSave} from '@fortawesome/free-solid-svg-icons';
 
 interface ISaveViewProps {
     viewData?: Record<string, string> | null;
@@ -50,10 +51,10 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
             isOpen={isOpen}
             footer={
                 <>
-                    <KitButton type="secondary" onClick={_toggleModal} icon={<FaTimes />}>
+                    <KitButton type="secondary" onClick={_toggleModal} icon={<FontAwesomeIcon icon={faTimes} />}>
                         {t('global.close')}
                     </KitButton>
-                    <KitButton type="primary" onClick={_handleSaveView} icon={<FaSave />}>
+                    <KitButton type="primary" onClick={_handleSaveView} icon={<FontAwesomeIcon icon={faSave} />}>
                         {t('global.save')}
                     </KitButton>
                 </>

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
 import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -29,6 +28,8 @@ import {FilterListItem} from './FilterListItem';
 import {CommonFilterItem} from '_ui/components/Filters/filter-items/CommonFilterItem';
 import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
 import {type IUIFilterBaseAttribute, type UIFilter} from '_ui/components/Filters/_types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEye, faEyeSlash, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const StyledListContainer = styled.div`
     display: flex;
@@ -43,11 +44,11 @@ const StyledList = styled.ul`
     color: var(--general-utilities-text-primary);
 `;
 
-const StyledEyeSlash = styled(FaEyeSlash)`
+const StyledEyeSlash = styled(FontAwesomeIcon)`
     color: var(--general-utilities-neutral-dark);
 `;
 
-const StyledFaEye = styled(FaEye)`
+const StyledFaEye = styled(FontAwesomeIcon)`
     color: var(--general-utilities-neutral-deepDark);
 `;
 
@@ -145,7 +146,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                     attributeId={activeFilter.attribute.id}
                                     isDraggable
                                     visibilityButtonProps={{
-                                        icon: <StyledFaEye />,
+                                        icon: <StyledFaEye icon={faEye} />,
                                         title: String(t('explorer.hide')),
                                         onClick: removeFilter(activeFilter.id),
                                     }}
@@ -172,7 +173,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 placeholder={String(t('global.search'))}
                 onChange={onSearchChanged}
                 allowClear
-                prefix={<FaSearch />}
+                prefix={<FontAwesomeIcon icon={faSearch} />}
             />
             <StyledList aria-label={t('explorer.filter-list.inactive')}>
                 {inactiveFilters.map(attributeId => (
@@ -180,7 +181,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                         key={attributeId}
                         attributeId={attributeId}
                         visibilityButtonProps={{
-                            icon: <StyledEyeSlash />,
+                            icon: <StyledEyeSlash icon={faEyeSlash} />,
                             title: String(t('explorer.show')),
                             onClick: addFilter(attributeId),
                         }}
