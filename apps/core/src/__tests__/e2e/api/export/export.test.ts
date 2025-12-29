@@ -24,6 +24,7 @@ import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import dayjs from 'dayjs';
 import {waitForTaskCompletion} from '../taskUtils';
+import {type IExportProfileConfig} from 'domain/export/exportProfileDomain';
 
 describe('Export', () => {
     const exportLibName = 'export_lib';
@@ -104,6 +105,23 @@ describe('Export', () => {
                        {
                             columnLabel: "modified by",
                             attribute: "modified_by"
+                        }
+                    ]
+                }
+                {
+                    label: "profileWithEmptyColumn",
+                    columns: [
+                        {
+                            columnLabel: "id",
+                            attribute: "id"
+                        }, 
+                        {
+                            columnLabel: "",
+                            attribute: "modified_by"
+                        }
+                        {
+                            columnLabel: "",
+                            attribute: ""
                         }
                     ]
                 }
@@ -345,6 +363,85 @@ describe('Export', () => {
     });
 
     describe('export profiles', () => {
+        describe('library has exportProfiles', () => {
+            let exportProfilesConfig: IExportProfileConfig | null;
+            beforeAll(async () => {
+                exportProfilesConfig = (
+                    await makeGraphQlCall(`query {
+                    libraries(filters: {id: "${exportLibName}"}) {
+                        list {
+                            id
+                            exportProfiles {
+                                defaultProfile
+                                profiles {
+                                    label
+                                    columns {
+                                        columnLabel
+                                        attribute
+                                    }
+                                    error {
+                                        message
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`)
+                ).data.data.libraries.list[0].exportProfiles;
+            });
+
+            test('should retrieve export profiles configuration', async () => {
+                expect(exportProfilesConfig).toBeDefined();
+                expect(exportProfilesConfig?.defaultProfile).toBe('default');
+                expect(exportProfilesConfig?.profiles.length).toBe(6);
+            });
+
+            test('should have correct export profile columns configuration', async () => {
+                const profile1 = exportProfilesConfig?.profiles.find(p => p.label === 'profileWithEmptyColumn');
+                expect(profile1).toBeDefined();
+                expect(profile1?.columns.length).toBe(3);
+                expect(profile1?.columns[0]).toEqual({columnLabel: 'id', attribute: 'id'});
+                expect(profile1?.columns[1]).toEqual({columnLabel: 'Modified by', attribute: 'modified_by'});
+                expect(profile1?.columns[2]).toEqual({columnLabel: '', attribute: ''});
+            });
+
+            test('should return profile with error for invalid export profile', async () => {
+                const wrongProfile = exportProfilesConfig?.profiles.find(p => p.label === 'wrongExportProfile');
+                expect(wrongProfile).toBeDefined();
+                expect(wrongProfile?.error).toBeDefined();
+                expect(wrongProfile?.error?.message).toContain(
+                    'Export profile column attribute "wrong_attribute" does not exist in library',
+                );
+            });
+        });
+
+        test('should not export and fail if library has no exportProfiles', async () => {
+            const noExportProfileLibName = 'no_export_profile_lib';
+            await gqlSaveLibrary(noExportProfileLibName, 'Lib no export profile', []);
+
+            const exportProfilesConfig = (
+                await makeGraphQlCall(`query {
+                    libraries(filters: {id: "${noExportProfileLibName}"}) {
+                        list {
+                            id
+                            exportProfiles {
+                                defaultProfile
+                                profiles {
+                                    label
+                                    columns {
+                                        columnLabel
+                                        attribute
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`)
+            ).data.data.libraries.list[0].exportProfiles;
+
+            expect(exportProfilesConfig).toBeNull();
+        });
+
         test('should export library elements based on default export profile if no specified', async () => {
             exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
 

@@ -21,6 +21,7 @@ import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
 import {type ICoreApp} from '../coreApp';
 import {type IGetLibraryParams} from './_types';
+import {type IExportProfileDomain} from 'domain/export/exportProfileDomain';
 
 export type ICoreLibraryApp = IGraphqlAppModule;
 
@@ -31,6 +32,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.view'?: IViewDomain;
     'core.domain.permission'?: IPermissionDomain;
+    'core.domain.export.exportProfile'?: IExportProfileDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
 }
@@ -42,6 +44,7 @@ export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.view': viewDomain = null,
     'core.domain.permission': permissionDomain = null,
+    'core.domain.export.exportProfile': exportProfileDomain = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.core': coreApp = null,
 }: IDeps = {}): ICoreLibraryApp {
@@ -102,6 +105,7 @@ export default function ({
                         defaultView: View,
                         permissions: LibraryPermissions,
                         previewsSettings: [LibraryPreviewsSettings!],
+                        exportProfiles: ExportProfiles,
                         settings: JSONObject
                     }
 
@@ -285,6 +289,8 @@ export default function ({
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
                         },
+                        exportProfiles: async (library: ILibrary, _, ctx: IQueryInfos) =>
+                            exportProfileDomain.getExportProfileConfig(library.id, ctx),
                     },
                 },
             };

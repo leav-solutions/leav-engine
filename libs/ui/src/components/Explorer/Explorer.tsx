@@ -256,7 +256,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
-        const {exportMassAction} = useExportMassAction({
+        const {exportMassAction, ExportModal} = useExportMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('export'),
             store: {view, dispatch: viewSettingsDispatch},
             totalCount,
@@ -412,6 +412,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                         {createModal}
                         {linkModal}
                         {editAttributeMassActionModal}
+                        {ExportModal}
                     </ViewSettingsContext.Provider>
                 </FiltersContext.Provider>
                 <KitSnackBarProvider id={massActionSnackbarId} />

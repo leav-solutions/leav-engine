@@ -776,6 +776,17 @@
                 "deselect_all": "Tout désélectionner"
             }
         },
+        "export_profile_modal": {
+            "title": "Export",
+            "profile_label": "Choisir un profil d'export",
+            "preview_label": "Aperçu des attributs exportés",
+            "search_placeholder": "Rechercher...",
+            "no_profiles": "Aucun profil d'export configuré pour cette librairie",
+            "contact_admin": "Veuillez contacter un administrateur pour configurer les profils d'export.",
+            "empty_columns": "(colonne vide)",
+            "export_button": "Exporter",
+            "error_title": "Erreur de profil d'export"
+        },
         "add-existing-item": "Ajouter un élément existant",
         "activate_item_one": "Activer cet élément ?",
         "activate_item_other": "Activer ces éléments ?",
