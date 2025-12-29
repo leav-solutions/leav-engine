@@ -16745,7 +16745,7 @@ __metadata:
     i18next: "npm:22.5.1"
     i18next-fs-backend: "npm:2.1.2"
     jest: "npm:29.7.0"
-    jest-when: "npm:3.6.0"
+    jest-when: "npm:3.7.0"
     joi: "npm:17.6.0"
     jsonparse: "npm:1.3.1"
     jsonschema: "npm:1.4.1"
@@ -24345,12 +24345,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-when@npm:3.6.0":
-  version: 3.6.0
-  resolution: "jest-when@npm:3.6.0"
+"jest-when@npm:3.7.0":
+  version: 3.7.0
+  resolution: "jest-when@npm:3.7.0"
   peerDependencies:
     jest: ">= 25"
-  checksum: 0cb92738ccfa5711a685107f4437f18aefbe3cda120c912a9d49b612eeef03a910481ab40fe753fd42c4e617ffbb3d84c6bd66a76d963dac7f1ad9e9e5059359
+  checksum: b5b88d077ed467aab220c71c885dbc5f448604f06e68f761ce9f479c99bb74e0dbf553d1cc980751d88401b034a578e1c44eec5e4095743b7586f02bb7c6313d
   languageName: node
   linkType: hard
 
