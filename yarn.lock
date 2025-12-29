@@ -12670,12 +12670,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redux-mock-store@npm:1.0.3":
-  version: 1.0.3
-  resolution: "@types/redux-mock-store@npm:1.0.3"
+"@types/redux-mock-store@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@types/redux-mock-store@npm:1.5.0"
   dependencies:
     redux: "npm:^4.0.5"
-  checksum: b8c76be560fb06c0b5fc8b8874001f0b0219a7a5d0bbbf8f06ebfc437a1300df49f079b30199a9fa99c738817145895a4f0297b8f614edadd1d9e110e917cd0a
+  checksum: 82248c276fed1303c4c85b38cdb9604b6ea1118b5c9a6968e84dd9820ea8c08dd1d8d2fcbf940ac2f6b379d88d87aaa05d2787e6841b65ccfee09cdf23b4c32b
   languageName: node
   linkType: hard
 
@@ -13536,7 +13536,7 @@ __metadata:
     "@types/react-rte": "npm:0.16.3"
     "@types/react-sortable-tree": "npm:0.3.11"
     "@types/react-test-renderer": "npm:16.9.12"
-    "@types/redux-mock-store": "npm:1.0.3"
+    "@types/redux-mock-store": "npm:1.5.0"
     "@types/styled-components": "npm:4.4.3"
     "@types/testing-library__jest-dom": "npm:5.14.9"
     "@vitejs/plugin-react": "npm:5.1.1"
@@ -17200,7 +17200,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@types/react-resizable": "npm:1.7.4"
     "@types/react-table": "npm:7.7.20"
-    "@types/redux-mock-store": "npm:1.0.3"
+    "@types/redux-mock-store": "npm:1.5.0"
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.1.1"
     antd: "npm:5.22.2"
