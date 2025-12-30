@@ -10,7 +10,7 @@ import {useFiltersContext} from '../../useFiltersContext';
 import {FiltersActionTypes} from '../../context/filtersReducer';
 import {type IUIFilterDropDownProps, type UIFilter} from '../../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faClock, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faClockRotateLeft, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const FilterDropDownStyledDiv = styled.div`
     display: flex;
@@ -54,11 +54,11 @@ export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filte
             />
             <div ref={selectDropDownRef} />
             <KitDivider noMargin />
-            <KitButton type="action" icon={<FontAwesomeIcon icon={faClock} />} onClick={_onResetFilter}>
-                {t('explorer.reset-filter')}
+            <KitButton type="action" icon={<FontAwesomeIcon icon={faClockRotateLeft} />} onClick={_onResetFilter}>
+                {t('global.reset')}
             </KitButton>
             {canRemove && (
-                <KitButton type="action" icon={<FontAwesomeIcon icon={faTrash} />} onClick={_onDeleteFilter}>
+                <KitButton type="action" icon={<FontAwesomeIcon icon={faTrash} />} onClick={_onDeleteFilter} danger>
                     {t('global.delete')}
                 </KitButton>
             )}

@@ -37,7 +37,8 @@
         "max_length": "Max length",
         "confirm": "Confirm",
         "loading": "Loading",
-        "are_you_sure": "Are you sure?"
+        "are_you_sure": "Are you sure?",
+        "reset": "Reset"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -699,7 +700,6 @@
             "inactive": "Inactive sorts"
         },
         "toolbar": "Toolbar",
-        "reset-filter": "Reset filter",
         "reset-view": "Reset view",
         "empty-data": "No items found.",
         "available-attributes": "Other available attributes",

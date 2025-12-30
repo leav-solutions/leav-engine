@@ -37,7 +37,8 @@
         "max_length": "Longueur maximale",
         "confirm": "Confirmer",
         "loading": "Chargement",
-        "are_you_sure": "Êtes-vous sûr ?"
+        "are_you_sure": "Êtes-vous sûr ?",
+        "reset": "Réinitialiser"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -697,7 +698,6 @@
             "inactive": "Tris inactifs"
         },
         "toolbar": "Barre d’outils",
-        "reset-filter": "Réinitialiser le filtre",
         "reset-view": "Réinitialiser la vue",
         "empty-data": "Aucun élément trouvé.",
         "sort-ascending": "Ascendant",
