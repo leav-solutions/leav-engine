@@ -8,7 +8,7 @@ import {ErrorTypes} from '../../_types/errors';
 import LeavError from '../../errors/LeavError';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IConfig} from '_types/config';
-import {type IAttribute} from '_types/attribute';
+import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 
 export interface IExportProfileColumn {
     columnLabel: string;
@@ -82,9 +82,54 @@ export default function ({
         return true;
     };
 
+    /**
+     * Recursively validate nested attributes (e.g., "link_attr.nested_link.final_attr")
+     * Follows link attributes to their linked libraries and validates each segment
+     */
+    const _validateNestedAttribute = async (
+        attributeSegments: string[],
+        fullAttributePath: string,
+        libraryAttributes: IAttribute[],
+        ctx: IQueryInfos,
+    ): Promise<IAttribute> => {
+        const [currentSegment, ...remainingSegments] = attributeSegments;
+
+        const attribute = libraryAttributes.find(attr => attr.id === currentSegment);
+
+        if (!attribute) {
+            throw new LeavError(
+                ErrorTypes.CUSTOM_CONFIG_ERROR,
+                `Export profile column attribute "${fullAttributePath}" does not exist in the library (attribute "${currentSegment}" not found)`,
+            );
+        }
+
+        // If there are more segments, we need to follow the link
+        if (remainingSegments.length > 0) {
+            if (![AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK].includes(attribute.type)) {
+                throw new LeavError(
+                    ErrorTypes.CUSTOM_CONFIG_ERROR,
+                    `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" is not a link attribute`,
+                );
+            }
+
+            const linkedLibraryId = attribute.linked_library;
+            if (!linkedLibraryId) {
+                throw new LeavError(
+                    ErrorTypes.CUSTOM_CONFIG_ERROR,
+                    `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" has no linked library`,
+                );
+            }
+
+            const linkedLibraryAttributes = await attributeDomain.getLibraryAttributes(linkedLibraryId, ctx);
+            return _validateNestedAttribute(remainingSegments, fullAttributePath, linkedLibraryAttributes, ctx);
+        }
+
+        return attribute;
+    };
+
     const _validateAndCompleteExportProfile =
         (libraryAttributes: IAttribute[], ctx: IQueryInfos) =>
-        (exportProfile: IExportProfile): IExportProfile => {
+        async (exportProfile: IExportProfile): Promise<IExportProfile> => {
             const isValid = profileSchema.validate(exportProfile);
             if (isValid.error) {
                 throw new LeavError(
@@ -93,33 +138,36 @@ export default function ({
                 );
             }
 
-            return {
-                ...exportProfile,
-                columns: exportProfile.columns.map(column => {
+            const validatedColumns = await Promise.all(
+                exportProfile.columns.map(async column => {
                     if (column.attribute === '') {
                         // Allow empty attribute for custom columns
                         return column;
                     }
-                    const attribute = libraryAttributes.find(attr => attr.id === column.attribute);
-                    if (!attribute) {
-                        throw new LeavError(
-                            ErrorTypes.CUSTOM_CONFIG_ERROR,
-                            `Export profile column attribute "${column.attribute}" does not exist in library`,
-                        );
-                    }
+
+                    const attributeSegments = column.attribute.split('.');
+                    await _validateNestedAttribute(attributeSegments, column.attribute, libraryAttributes, ctx);
+
                     if (column.columnLabel) {
                         return column;
                     }
+
                     // Compute column label if missing
+                    const firstAttribute = libraryAttributes.find(attr => attr.id === attributeSegments[0]);
                     return {
                         ...column,
                         columnLabel:
                             column.columnLabel ||
-                            attribute?.label[ctx?.lang] ||
-                            attribute?.label[config.lang.default] ||
+                            firstAttribute?.label[ctx?.lang] ||
+                            firstAttribute?.label[config.lang.default] ||
                             '',
                     };
                 }),
+            );
+
+            return {
+                ...exportProfile,
+                columns: validatedColumns,
             };
         };
 
@@ -157,11 +205,11 @@ export default function ({
 
             const libraryAttributes = await attributeDomain.getLibraryAttributes(libraryId, ctx);
             const validateExportProfile = _validateAndCompleteExportProfile(libraryAttributes, ctx);
-            return {
-                ...exportProfile,
-                profiles: exportProfile.profiles.map(profile => {
+
+            const validatedProfiles = await Promise.all(
+                exportProfile.profiles.map(async profile => {
                     try {
-                        return validateExportProfile(profile);
+                        return await validateExportProfile(profile);
                     } catch (e) {
                         return {
                             label: profile.label,
@@ -170,6 +218,11 @@ export default function ({
                         };
                     }
                 }),
+            );
+
+            return {
+                ...exportProfile,
+                profiles: validatedProfiles,
             };
         },
         async getColumnsFromProfileConfig(profile, library, ctx) {
@@ -184,7 +237,7 @@ export default function ({
                 profiles.find(p => p.label === exportProfilesConfig.defaultProfile) ?? profiles[0];
 
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
-            _validateAndCompleteExportProfile(libraryAttributes, ctx)(defaultOrFirstProfile);
+            await _validateAndCompleteExportProfile(libraryAttributes, ctx)(defaultOrFirstProfile);
 
             // If we have no profil selected, send back the defaultProfile
             if (!profile) {
