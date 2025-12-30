@@ -1,14 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    DatabaseOutlined,
-    LinkOutlined,
-    SettingOutlined,
-    StarFilled,
-    StarOutlined,
-    TableOutlined,
-} from '@ant-design/icons';
+import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined, TableOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
@@ -26,7 +19,7 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {getExplorerLibraryLink, getLibraryLink, getLinkExplorerLink, getTreeLink, localizedTranslation} from 'utils';
+import {getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
@@ -81,7 +74,6 @@ enum MenuType {
     TREE = 'tree',
     SETTINGS = 'settings',
     EXPLORER = 'explorer-library',
-    EXPLORER_LINK = 'explorer-link',
 }
 
 const Sidebar: FunctionComponent = () => {
@@ -179,15 +171,6 @@ const Sidebar: FunctionComponent = () => {
 
         setMenuSelected([MenuType.EXPLORER]);
         _goTo(getExplorerLibraryLink(activeLibrary.id));
-    };
-
-    const _goToLinkExplorer = () => {
-        if (!activeLibrary?.id) {
-            return;
-        }
-
-        setMenuSelected([MenuType.EXPLORER_LINK]);
-        _goTo(getLinkExplorerLink(activeLibrary.id));
     };
 
     const _goToActiveTree = () => {
@@ -351,12 +334,6 @@ const Sidebar: FunctionComponent = () => {
             icon: <SettingOutlined />,
             label: t('app_settings.title'),
             onClick: _goToSettings,
-        },
-        {
-            key: MenuType.EXPLORER_LINK,
-            icon: <LinkOutlined />,
-            label: t('app_settings.explorer_link'),
-            onClick: _goToLinkExplorer,
         },
     ];
 
