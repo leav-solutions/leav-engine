@@ -20,7 +20,7 @@ import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQ
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {type IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
 import {useApplicationContext} from 'context/ApplicationContext';
@@ -202,42 +202,6 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                                 // }
                             ]
                         }
-                    />
-                </ExplorerContainerDivStyled>
-            ) : params.has(explorerLinkQueryParamName) ? (
-                <ExplorerContainerDivStyled>
-                    <Explorer
-                        showTitle
-                        showSearch
-                        defaultViewSettings={{enableConfigureView: true}}
-                        showFilters
-                        showSorts
-                        entrypoint={{
-                            type: 'link',
-                            parentLibraryId: 'sebastien_s_librairy',
-                            parentRecordId: '600359434',
-                            linkAttributeId: 'multiple_link',
-                        }}
-                        itemActions={[
-                            {
-                                label: t('explorer.edit-item'),
-                                icon: <FontAwesomeIcon icon={faEye} />,
-                                useItemActionOnRowClick: true,
-                                callback: item => {
-                                    openEditRecordModal({
-                                        library: item.libraryId,
-                                        record: {
-                                            id: item.itemId,
-                                            label: item.whoAmI?.label,
-                                            subLabel: item.whoAmI?.subLabel,
-                                            color: item.whoAmI?.color,
-                                            library: {id: item.libraryId},
-                                        },
-                                        editionFormId: 'edition',
-                                    });
-                                },
-                            },
-                        ]}
                     />
                 </ExplorerContainerDivStyled>
             ) : (
