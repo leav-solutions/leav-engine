@@ -334,6 +334,71 @@ describe('ValueDomain', () => {
             expect(savedValue[0].created_at).toBeTruthy();
         });
 
+        test('Should not check readonly when option skipReadonly is true', async function () {
+            const savedValueData = {
+                id_value: '1337',
+                payload: 'test val',
+                attribute: 'test_attr',
+                modified_at: 123456,
+                created_at: 123456,
+            };
+
+            const mockValRepo = {
+                updateValue: global.__mockPromise(savedValueData),
+                getValueById: global.__mockPromise({
+                    id_value: '12345',
+                }),
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    ...mockAttribute,
+                    type: AttributeTypes.ADVANCED,
+                    readonly: true,
+                }),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils,
+            });
+
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {
+                    id_value: '12345',
+                    payload: 'test val',
+                },
+                skipReadonly: true,
+                ctx,
+            });
+
+            expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
+            expect(mockValRepo.updateValue.mock.calls[0][0].value.modified_at).toBeDefined();
+            expect(mockValRepo.updateValue.mock.calls[0][0].value.created_at).toBeUndefined();
+
+            expect(savedValue[0]).toMatchObject(savedValueData);
+            expect(savedValue[0].id_value).toBeTruthy();
+            expect(savedValue[0].attribute).toBeTruthy();
+            expect(savedValue[0].modified_at).toBeTruthy();
+            expect(savedValue[0].created_at).toBeTruthy();
+        });
+
         test('Should throw if unknown attribute', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(() => {
@@ -2064,11 +2129,12 @@ describe('ValueDomain', () => {
         test('Should check readonly/required param only if the attribute is linked to library', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple, required: true, readonly: true}),
-                getAttributeLibraries: global.__mockPromise([]),
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
-            const mockValRepo = {
-                getValues: global.__mockPromise([]),
+            const mockValRepo: Mockify<IValueRepo> = {
+                getValues: global.__mockPromise([{payload: 'test'}]),
+                deleteValue: global.__mockPromise({}),
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
@@ -2084,16 +2150,66 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.helpers.recordInCreationBypass': {
+                    recordInCreationBypassById: global.__mockPromise(false),
+                } as IRecordInCreationBypassHelper,
             });
 
-            const deletedValues = valDomain.deleteValue({
+            await expect(
+                valDomain.deleteValue({
+                    library: 'test_lib',
+                    recordId: '12345',
+                    attribute: 'test_attr',
+                    ctx,
+                }),
+            ).rejects.toEqual(new ValidationError({test_attr: Errors.READONLY_ATTRIBUTE}));
+
+            expect(mockValRepo.deleteValue).toHaveBeenCalledTimes(0);
+        });
+
+        test('Should not check readonly param if skipReadonly option is true', async function () {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrSimple, readonly: false}),
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
+            };
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                getValues: global.__mockPromise([{payload: 'test'}]),
+                deleteValue: global.__mockPromise({}),
+            };
+
+            const mockValidHelper: Mockify<IValidateHelper> = {
+                validateLibrary: global.__mockPromise(true),
+                validateRecord: global.__mockPromise(true),
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.helpers.recordInCreationBypass': {
+                    recordInCreationBypassById: global.__mockPromise(false),
+                } as IRecordInCreationBypassHelper,
+            });
+
+            const deletedValues = await valDomain.deleteValue({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
+                skipReadonly: true,
                 ctx,
             });
 
-            await expect(deletedValues).resolves.toEqual([]);
+            expect(deletedValues).toEqual([
+                {
+                    attribute: 'test_attr',
+                },
+            ]);
+            expect(mockValRepo.deleteValue).toHaveBeenCalledTimes(1);
         });
     });
 

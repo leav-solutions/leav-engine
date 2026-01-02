@@ -12,6 +12,7 @@ export interface IDeleteValueParams {
     recordId: string;
     attribute: string;
     value?: IValue;
+    skipReadonly?: boolean;
     ctx: IQueryInfos;
 }
 
