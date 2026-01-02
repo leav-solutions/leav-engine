@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type IUtils} from 'utils/utils';
-import {type ILogger} from '@leav/logger';
+import {logger} from '@leav/logger';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IValue, type IValueVersion} from '_types/value';
 import ValidationError from '../../../errors/ValidationError';
@@ -14,7 +14,7 @@ export const getElementValues = async (params: {
     recordId: string;
     libraryId: string;
     version?: IValueVersion;
-    deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils; 'core.utils.logger'?: ILogger};
+    deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils};
     ctx: IQueryInfos;
 }): Promise<{error?: string; values: IValue[] | null}> => {
     const {element, recordId, libraryId, version, deps, ctx} = params;
@@ -54,7 +54,9 @@ export const getElementValues = async (params: {
                 .map(fieldError => deps['core.utils'].translateError(fieldError, lang))
                 .join(', ');
         } else {
-            deps['core.utils.logger'].error(error);
+            logger.error(
+                `Error getting element values for record ${recordId} and attribute ${element.settings.attribute}: ${error.message}`,
+            );
         }
     }
 
