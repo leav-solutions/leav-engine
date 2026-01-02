@@ -14,6 +14,7 @@ import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {waitForTaskCompletedWithStatus} from '../taskUtils';
 import {TaskStatus} from '../../../../_types/tasksManager';
+import {type IExportProfileConfig} from 'domain/export/exportProfileDomain';
 
 // Helper function to create a record as a specific user
 async function createRecordAsUser(library: string, user: ReturnType<typeof e2eGuestUser>): Promise<string> {
@@ -69,6 +70,13 @@ describe('Export Nested Attributes', () => {
                             columns: [
                                 {columnLabel: "Event Name", attribute: "event_name"},
                                 {columnLabel: "Creator's Creator Email", attribute: "created_by.created_by.email"}
+                            ]
+                        },
+                        {
+                            label: "with_creator_of_creator_wrong_attribute",
+                            columns: [
+                                {columnLabel: "Event Name", attribute: "event_name"},
+                                {columnLabel: "Creator's Creator Email", attribute: "created_by.created_by.wrong_attribute"}
                             ]
                         }
                     ]
@@ -194,6 +202,75 @@ describe('Export Nested Attributes', () => {
                     expect.stringContaining('Product Launch 2025'),
                     expect.stringContaining('system@test.leav-engine.com'),
                 ]),
+            );
+        });
+    });
+
+    describe('library has exportProfiles', () => {
+        let exportProfilesConfig: IExportProfileConfig | null;
+        beforeAll(async () => {
+            exportProfilesConfig = (
+                await makeGraphQlCall(`query {
+                    libraries(filters: {id: "${eventLibName}"}) {
+                        list {
+                            id
+                            exportProfiles {
+                                defaultProfile
+                                profiles {
+                                    label
+                                    columns {
+                                        columnLabel
+                                        attribute
+                                    }
+                                    error {
+                                        message
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`)
+            ).data.data.libraries.list[0].exportProfiles;
+        });
+
+        test('should retrieve export profiles configuration', async () => {
+            expect(exportProfilesConfig).toBeDefined();
+
+            expect(exportProfilesConfig?.defaultProfile).toBe('default');
+            expect(exportProfilesConfig?.profiles.length).toBe(4);
+        });
+
+        test('should have correct export profile columns configuration', async () => {
+            const profile1 = exportProfilesConfig?.profiles.find(p => p.label === 'default');
+            expect(profile1).toBeDefined();
+            expect(profile1?.columns.length).toBe(2);
+            expect(profile1?.columns[0]).toEqual({columnLabel: 'Event Name', attribute: 'event_name'});
+            expect(profile1?.columns[1]).toEqual({columnLabel: 'Created By (default label)', attribute: 'created_by'});
+
+            const profile2 = exportProfilesConfig?.profiles.find(p => p.label === 'with_user_info');
+            expect(profile2).toBeDefined();
+            expect(profile2?.columns.length).toBe(2);
+            expect(profile2?.columns[0]).toEqual({columnLabel: 'Event Name', attribute: 'event_name'});
+            expect(profile2?.columns[1]).toEqual({columnLabel: 'Creator Email', attribute: 'created_by.email'});
+
+            const profile3 = exportProfilesConfig?.profiles.find(p => p.label === 'with_creator_of_creator');
+            expect(profile3).toBeDefined();
+            expect(profile3?.columns.length).toBe(2);
+            expect(profile3?.columns[0]).toEqual({columnLabel: 'Event Name', attribute: 'event_name'});
+            expect(profile3?.columns[1]).toEqual({
+                columnLabel: "Creator's Creator Email",
+                attribute: 'created_by.created_by.email',
+            });
+        });
+
+        test('should return profile with error for invalid export profile', async () => {
+            const wrongProfile = exportProfilesConfig?.profiles.find(
+                p => p.label === 'with_creator_of_creator_wrong_attribute',
+            );
+            expect(wrongProfile).toBeDefined();
+            expect(wrongProfile?.error).toBeDefined();
+            expect(wrongProfile?.error?.message).toContain(
+                'Export profile column attribute "created_by.created_by.wrong_attribute" does not exist in the library (attribute "wrong_attribute" not found)',
             );
         });
     });
