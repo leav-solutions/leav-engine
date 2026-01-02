@@ -146,7 +146,7 @@ describe('exportProfileDomain', () => {
             mockAttributeDomain.getLibraryAttributes.mockResolvedValue([{id: 'name', label: 'Name', type: 'text'}]);
 
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                'Export profile column attribute "email" does not exist in library',
+                'Export profile column attribute "email" does not exist in the library (attribute "email" not found)',
             );
         });
 
@@ -275,6 +275,92 @@ describe('exportProfileDomain', () => {
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
                 'Export profile is not valid: "columns" does not contain 1 required value(s)',
             );
+        });
+
+        describe('nested attributes validation', () => {
+            it('should validate nested attributes through link attributes', async () => {
+                const configWithNestedAttr: IExportProfileConfig = {
+                    defaultProfile: 'Profile 1',
+                    profiles: [
+                        {
+                            label: 'Profile 1',
+                            columns: [{columnLabel: 'Linked Color', attribute: 'category.color'}],
+                        },
+                    ],
+                };
+
+                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
+                    id: 'test_library',
+                    settings: {export: configWithNestedAttr},
+                });
+
+                // Main library has a link attribute "category"
+                mockAttributeDomain.getLibraryAttributes
+                    .mockResolvedValueOnce([
+                        {id: 'category', label: {fr: 'Catégorie'}, type: 'simple_link', linked_library: 'categories'},
+                    ])
+                    // Linked library "categories" has attribute "color"
+                    .mockResolvedValueOnce([{id: 'color', label: {fr: 'Couleur'}, type: 'simple'}]);
+
+                const result = await domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx);
+
+                expect(result).toEqual([{columnLabel: 'Linked Color', attribute: 'category.color'}]);
+                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenCalledTimes(2);
+                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenNthCalledWith(1, 'test_library', mockCtx);
+                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenNthCalledWith(2, 'categories', mockCtx);
+            });
+
+            it('should throw error if nested attribute does not exist in linked library', async () => {
+                const configWithInvalidNested: IExportProfileConfig = {
+                    defaultProfile: 'Profile 1',
+                    profiles: [
+                        {
+                            label: 'Profile 1',
+                            columns: [{columnLabel: 'Invalid', attribute: 'category.nonexistent'}],
+                        },
+                    ],
+                };
+
+                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
+                    id: 'test_library',
+                    settings: {export: configWithInvalidNested},
+                });
+
+                mockAttributeDomain.getLibraryAttributes
+                    .mockResolvedValueOnce([
+                        {id: 'category', label: {fr: 'Catégorie'}, type: 'simple_link', linked_library: 'categories'},
+                    ])
+                    .mockResolvedValueOnce([{id: 'color', label: {fr: 'Couleur'}, type: 'simple'}]);
+
+                await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                    'Export profile column attribute "category.nonexistent" does not exist in the library (attribute "nonexistent" not found)',
+                );
+            });
+
+            it('should throw error if intermediate attribute is not a link', async () => {
+                const configWithNonLink: IExportProfileConfig = {
+                    defaultProfile: 'Profile 1',
+                    profiles: [
+                        {
+                            label: 'Profile 1',
+                            columns: [{columnLabel: 'Invalid', attribute: 'name.something'}],
+                        },
+                    ],
+                };
+
+                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
+                    id: 'test_library',
+                    settings: {export: configWithNonLink},
+                });
+
+                mockAttributeDomain.getLibraryAttributes.mockResolvedValueOnce([
+                    {id: 'name', label: {fr: 'Nom'}, type: 'simple'},
+                ]);
+
+                await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                    'Export profile column attribute "name.something" is invalid: "name" is not a link attribute',
+                );
+            });
         });
     });
 });

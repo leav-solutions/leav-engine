@@ -53,7 +53,8 @@ export const useExportMassAction = ({
             setIsExporting(true);
 
             try {
-                const {data, error} = await exportQuery({
+                const {error} = await exportQuery({
+                    fetchPolicy: 'no-cache',
                     variables: {
                         library: view.libraryId,
                         filters: massSelectionFilter,
