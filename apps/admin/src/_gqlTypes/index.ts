@@ -224,6 +224,12 @@ export type DeleteTaskInput = {
   id: Scalars['ID'];
 };
 
+export type DependentValuesPermissionFilterInput = {
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+  recordId: Scalars['ID'];
+};
+
 export type DiscussionCommentInput = {
   mentions?: InputMaybe<DiscussionMentionsInput>;
   message: Scalars['String'];

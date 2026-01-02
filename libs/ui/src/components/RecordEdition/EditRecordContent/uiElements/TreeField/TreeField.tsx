@@ -11,6 +11,7 @@ import {useLang} from '_ui/hooks';
 import {type IFormElementProps} from '../../_types';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
+    type DependentValuesPermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
     RecordPermissionsActions,
 } from '_ui/_gqlTypes';
@@ -114,6 +115,12 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         action: RecordPermissionsActions.create_record,
     };
 
+    const dependentValuesPermissionFilter: DependentValuesPermissionFilterInput = {
+        libraryId: state.libraryId,
+        attributeId: state.activeAttribute?.attribute?.id,
+        recordId: state.record?.id,
+    };
+
     const {openModal, removeTreeNode, actionButtonLabel, SelectTreeNodeModal, RemoveAllTreeNodes} =
         useManageTreeNodeSelection({
             modaleTitle: label,
@@ -127,6 +134,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
             isReadOnly,
             isFieldInError,
             childrenAsRecordValuePermissionFilter,
+            dependentValuesPermissionFilter,
         });
 
     return (

@@ -42,12 +42,14 @@ export const getTreeNodeChildrenQuery = gql`
         $node: ID
         $pagination: Pagination
         $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput
+        $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput
     ) {
         treeNodeChildren(
             treeId: $treeId
             node: $node
             pagination: $pagination
             childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+            dependentValuesPermissionFilter: $dependentValuesPermissionFilter
         ) {
             totalCount
             list {

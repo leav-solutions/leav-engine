@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitModal} from 'aristid-ds';
 import {
+    type DependentValuesPermissionFilterInput,
     type ChildrenAsRecordValuePermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
@@ -42,6 +43,7 @@ interface ISelectTreeNodeModalProps {
     onConfirm: (selectedNodes: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
+    dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
     className?: string;
 }
 
@@ -53,6 +55,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     onConfirm,
     onClose,
     childrenAsRecordValuePermissionFilter,
+    dependentValuesPermissionFilter,
     className,
 }) => {
     const {t} = useSharedTranslation();
@@ -114,6 +117,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
                     ...backendValues.map(value => value.treeValue.id),
                 ]}
                 childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
+                dependentValuesPermissionFilter={dependentValuesPermissionFilter}
                 disabledNodes={backendValues.map(value => value.treeValue.id).concat(attribute.linked_tree.id)}
                 onSelect={_handleOnSelect}
             />

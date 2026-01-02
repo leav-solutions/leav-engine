@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
@@ -394,6 +391,12 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean']['input'];
   id: Scalars['ID']['input'];
+};
+
+export type DependentValuesPermissionFilterInput = {
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
 };
 
 export type DiscussionComment = {
@@ -1624,6 +1627,7 @@ export type QueryTreeContentArgs = {
 export type QueryTreeNodeChildrenArgs = {
   accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
   childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
+  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
   node?: InputMaybe<Scalars['ID']['input']>;
   pagination?: InputMaybe<Pagination>;
   treeId: Scalars['ID']['input'];

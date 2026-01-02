@@ -226,6 +226,12 @@ export type DeleteTaskInput = {
   id: Scalars['ID']['input'];
 };
 
+export type DependentValuesPermissionFilterInput = {
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
+};
+
 export type DiscussionCommentInput = {
   mentions?: InputMaybe<DiscussionMentionsInput>;
   message: Scalars['String']['input'];
@@ -1453,6 +1459,7 @@ export type TreeNodeChildrenQueryVariables = Exact<{
   node?: InputMaybe<Scalars['ID']['input']>;
   pagination?: InputMaybe<Pagination>;
   childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
+  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
 }>;
 
 
@@ -4326,12 +4333,13 @@ export type SaveTreeMutationHookResult = ReturnType<typeof useSaveTreeMutation>;
 export type SaveTreeMutationResult = Apollo.MutationResult<SaveTreeMutation>;
 export type SaveTreeMutationOptions = Apollo.BaseMutationOptions<SaveTreeMutation, SaveTreeMutationVariables>;
 export const TreeNodeChildrenDocument = gql`
-    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput) {
+    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput) {
   treeNodeChildren(
     treeId: $treeId
     node: $node
     pagination: $pagination
     childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+    dependentValuesPermissionFilter: $dependentValuesPermissionFilter
   ) {
     totalCount
     list {
@@ -4357,6 +4365,7 @@ export const TreeNodeChildrenDocument = gql`
  *      node: // value for 'node'
  *      pagination: // value for 'pagination'
  *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
+ *      dependentValuesPermissionFilter: // value for 'dependentValuesPermissionFilter'
  *   },
  * });
  */

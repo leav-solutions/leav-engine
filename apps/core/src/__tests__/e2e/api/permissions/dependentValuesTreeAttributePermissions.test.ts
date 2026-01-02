@@ -187,6 +187,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     const values = await getRecordAttributeTestValues();
                     expect(values.length).toBe(0);
                 });
+
+                it('treeNodeChildren with dependentValuesPermissionFilter should not contain node2', async () => {
+                    const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
+                    expect(treeChildren).toHaveLength(2);
+                    expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
+                });
             });
         });
     });
@@ -574,6 +580,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         const values = await getRecordAttributeTestValues();
                         expect(values[0].payload.id).toBe(treeNode3Id);
                     });
+
+                    it('treeNodeChildren with dependentValuesPermissionFilter should not contain node2', async () => {
+                        const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
+                        expect(treeChildren).toHaveLength(2);
+                        expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
+                    });
                 });
             });
 
@@ -640,6 +652,11 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
                         const values = await getRecordAttributeTestValues();
                         expect(values[0].payload.id).toBe(treeNode1Id);
+                    });
+
+                    it('treeNodeChildren with dependentValuesPermissionFilter should any node', async () => {
+                        const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
+                        expect(treeChildren).toHaveLength(0);
                     });
 
                     it('Inherit permission from tree target', async () => {
@@ -732,6 +749,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                             await saveRecordAttributeTestValue(treeNode2Id);
                             const values = await getRecordAttributeTestValues();
                             expect(values[0].payload.id).toBe(treeNode2Id);
+                        });
+
+                        it('treeNodeChildren with dependentValuesPermissionFilter should contains only node2', async () => {
+                            const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
+                            expect(treeChildren).toHaveLength(1);
+                            expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode2Id}]));
                         });
                     });
                 });
@@ -927,5 +950,29 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 }
             `);
         return resGet2.data.data.records.list[0].property;
+    };
+
+    const getTreeNodeChildrenWithDependentValuesFilter = async (): Promise<Array<{id: string}>> => {
+        const res = await makeGraphQlCall(
+            `{
+                treeNodeChildren(
+                    treeId: "${testTreeName}",
+                    dependentValuesPermissionFilter: {
+                        libraryId: "${testLibraryName}",
+                        attributeId: "${testAttrName}",
+                        recordId: "${recordId}"
+                    }
+                ) {
+                    list {
+                        id
+                    }
+                }
+            }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
+
+        return res.data.data.treeNodeChildren.list;
     };
 });

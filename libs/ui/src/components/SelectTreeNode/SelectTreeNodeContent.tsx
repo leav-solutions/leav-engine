@@ -6,7 +6,11 @@ import {KitTree} from 'aristid-ds';
 import {Spin} from 'antd';
 import {type EventDataNode} from 'antd/lib/tree';
 import {type ITreeNodeWithRecord} from '_ui/types';
-import {type ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {
+    type ChildrenAsRecordValuePermissionFilterInput,
+    type DependentValuesPermissionFilterInput,
+    useTreeNodeChildrenLazyQuery,
+} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../../index';
 import {TreeNodeTitle} from './TreeNodeTitle';
 import {_isObjectSelection, type ITreeMap, type ITreeMapElement} from './_types';
@@ -15,6 +19,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 interface ISelectTreeNodeContentProps {
     treeData: {id: string; label: string};
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
+    dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
     selectedNodes?: string[];
     disabledNodes?: string[];
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
@@ -32,6 +37,7 @@ interface ISelectTreeNodeContentProps {
 export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProps> = ({
     treeData: tree,
     childrenAsRecordValuePermissionFilter,
+    dependentValuesPermissionFilter,
     onSelect,
     onCheck,
     selectedNodes = [],
@@ -72,6 +78,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             const {
                 data: {treeNodeChildren},
             } = await loadTreeContent({
+                // If dependentValuesPermissionFilter is set, we need to bypass the cache to get up-to-date data,
+                // because tree content depends on record values that may have changed
+                fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : undefined,
                 variables: {
                     treeId: tree.id,
                     node: parentNodeKey && parentNodeKey !== tree.id ? parentNodeKey : null,
@@ -82,6 +91,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                               offset,
                           },
                     childrenAsRecordValuePermissionFilter,
+                    dependentValuesPermissionFilter,
                 },
             });
 

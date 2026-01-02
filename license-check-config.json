@@ -57,6 +57,7 @@
         "**/ADR.md",
         "**/docs/adr/*.md",
         "**/_gqlTypes/index.*",
+        "**/__generated__/index.*",
         "**/*.xlsx"
     ]
 }
