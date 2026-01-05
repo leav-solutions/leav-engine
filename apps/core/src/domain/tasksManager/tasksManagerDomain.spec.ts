@@ -12,6 +12,7 @@ import {mockCtx, mockSystemQueryContext} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
 import tasksManager, {type ITasksManagerDomainDeps} from './tasksManagerDomain';
 import {type Mockify} from '@leav/utils';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -29,12 +30,17 @@ const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
 };
 
+const mockAdminPermissionDomain = {
+    getAdminPermission: global.__mockPromise(true),
+};
+
 const depsBase: ToAny<ITasksManagerDomainDeps> = {
     config: {},
     'core.infra.amqpService': jest.fn(),
     'core.infra.task': jest.fn(),
     'core.depsManager': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
+    'core.domain.permission.admin': jest.fn(),
     'core.utils.logger': jest.fn(),
     'core.utils': jest.fn(),
     'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
@@ -108,6 +114,8 @@ describe('Tasks Manager', () => {
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+            'core.domain.permission.admin':
+                mockAdminPermissionDomain as IAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         await tm.deleteTasks([mockTask], mockCtx);
@@ -126,6 +134,7 @@ describe('Tasks Manager', () => {
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         await tm.deleteTasks([{...mockTask, archive: true}], mockCtx);
@@ -150,6 +159,7 @@ describe('Tasks Manager', () => {
             'core.infra.task': mockTaskRepo as ITaskRepo,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
             'core.utils': mockUtils as IUtils,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         await tm.cancelTask(mockTask, mockCtx);
@@ -167,6 +177,7 @@ describe('Tasks Manager', () => {
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         await tm.getTasks({params: {}, ctx: mockCtx});
@@ -191,6 +202,7 @@ describe('Tasks Manager', () => {
             ...depsBase,
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         const tasks = await tm.getTasks({params: {}, ctx: mockCtx});
@@ -229,6 +241,7 @@ describe('Tasks Manager', () => {
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
             'core.utils': mockUtils,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
@@ -329,6 +342,7 @@ describe('Tasks Manager', () => {
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
             'core.utils': mockUtils,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
@@ -392,6 +406,7 @@ describe('Tasks Manager', () => {
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         await tm.updateProgress(
@@ -430,6 +445,7 @@ describe('Tasks Manager', () => {
             config: conf as IConfig,
             'core.infra.task': mockTaskRepo as ITaskRepo,
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+            'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
         });
 
         await tm.setLink(mockTask.id, {name: 'name', url: 'url'}, mockCtx);

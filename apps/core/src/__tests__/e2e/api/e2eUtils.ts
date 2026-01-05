@@ -29,7 +29,7 @@ export interface IGlobalThis {
 }
 declare const globalThis: IGlobalThis;
 
-interface IE2EUser {
+export interface IE2EUser {
     userId: string;
     getAuthToken: () => Promise<string>;
 }
