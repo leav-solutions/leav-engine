@@ -29897,8 +29897,8 @@ __metadata:
   linkType: hard
 
 "react-i18next@npm:12":
-  version: 12.2.2
-  resolution: "react-i18next@npm:12.2.2"
+  version: 12.3.1
+  resolution: "react-i18next@npm:12.3.1"
   dependencies:
     "@babel/runtime": "npm:^7.20.6"
     html-parse-stringify: "npm:^3.0.1"
@@ -29910,7 +29910,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 83afd164e63e4abbeb8a7dda68686f0ba5bb49c0fe0e1b3f64839c2a264877af61551b3896f48803a0eaa7844f09ac02383c1ba7a2581eede65c363b4f355ba8
+  checksum: 94d7ed6e361e359f07a1c900ff22900adb2022f4dc08beda8b749788609f6d520abbe7ae73b3a8e37dfc8fc162581c293d84ef5339f3f43246843d550f88d38b
   languageName: node
   linkType: hard
 
