@@ -56,6 +56,7 @@ export const ThreadReplyBox = ({
                 onChange={setMessage}
                 disabled={isPosting}
                 style={{width: '100%', height: '100%'}}
+                showMenubar="always"
                 ref={ref}
             />
             <KitButton
