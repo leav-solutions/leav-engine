@@ -6,6 +6,7 @@ import {EventAction} from '@leav/utils';
 import type * as amqp from 'amqplib';
 import {type AwilixContainer} from 'awilix';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import Joi from 'joi';
 import {nanoid} from 'nanoid';
 import process from 'process';
@@ -16,6 +17,8 @@ import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '_types/shared';
 import {type ISystemTranslation} from '_types/systemTranslation';
+import {AdminPermissionsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
 import {type ITaskRepo} from '../../infra/task/taskRepo';
 import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
 import {type IList, SortOrder} from '../../_types/list';
@@ -80,6 +83,7 @@ export interface ITasksManagerDomainDeps {
     'core.infra.task': ITaskRepo;
     'core.depsManager': AwilixContainer;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.permission.admin': IAdminPermissionDomain;
     'core.utils.logger': ILogger;
     'core.utils': IUtils;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
@@ -93,6 +97,7 @@ export default function ({
     'core.infra.task': taskRepo,
     'core.depsManager': depsManager,
     'core.domain.eventsManager': eventsManager,
+    'core.domain.permission.admin': adminPermissionDomain,
     'core.utils.logger': logger,
     'core.utils': utils,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
@@ -325,6 +330,19 @@ export default function ({
     });
 
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
+        const hasAdminAccessPermission = await adminPermissionDomain.getAdminPermission({
+            action: AdminPermissionsActions.ACCESS_TASKS,
+            ctx,
+        });
+
+        // If no access to all tasks, filter to only tasks created by the user
+        if (!hasAdminAccessPermission) {
+            params.filters = {
+                ...params.filters,
+                created_by: ctx.userId,
+            };
+        }
+
         if (typeof params.sort === 'undefined') {
             params.sort = {field: 'id', order: SortOrder.ASC};
         }
@@ -363,6 +381,17 @@ export default function ({
 
         if (!task) {
             throw new Error('Task not found');
+        }
+
+        const hasAdminCancelPermission = await adminPermissionDomain.getAdminPermission({
+            action: AdminPermissionsActions.CANCEL_TASK,
+            ctx,
+        });
+
+        // We skip the permission check: we allow the creator to cancel their tasks
+        const isCreatedByMe = ctx.userId === task.created_by;
+        if (!hasAdminCancelPermission && !isCreatedByMe) {
+            throw new PermissionError(AdminPermissionsActions.CANCEL_TASK);
         }
 
         // if task is still pending or running, cancel it
@@ -414,6 +443,19 @@ export default function ({
             throw new Error('Task not found');
         } else if (!!task.workerId) {
             throw new Error(`Cannot delete: task ${id} is still running.`);
+        }
+
+        const hasAdminDeletePermission = await adminPermissionDomain.getAdminPermission({
+            action: AdminPermissionsActions.DELETE_TASK,
+            ctx,
+        });
+
+        // We skip the permission check: we allow the creator to delete or archive their tasks
+        const isCreatedByMe = ctx.userId === task.created_by;
+        const isAllowed = hasAdminDeletePermission || (isCreatedByMe && archive);
+
+        if (!isAllowed) {
+            throw new PermissionError(AdminPermissionsActions.DELETE_TASK);
         }
 
         return archive ? _updateTask(id, {archive}, ctx) : taskRepo.deleteTask(id, ctx);

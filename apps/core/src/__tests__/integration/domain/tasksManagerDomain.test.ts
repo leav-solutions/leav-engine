@@ -6,13 +6,14 @@ import {getCoreContainer, getCoreDep} from '../integrationTestUtils';
 import {asValue} from 'awilix';
 import {type ITask, TaskPriority, TaskStatus} from '../../../_types/tasksManager';
 import {type IQueryInfos} from '_types/queryInfos';
+import {systemUserId} from '../../../_constants/users';
 
 describe('tasksManagerDomain', () => {
     jest.setTimeout(20_000);
     jest.retryTimes(2);
 
     let taskManagerDomain: ITasksManagerDomain;
-    const ctx: IQueryInfos = {userId: '42'};
+    const ctx: IQueryInfos = {userId: systemUserId};
     const fakeWorkerFn = jest.fn();
     beforeAll(async () => {
         taskManagerDomain = getCoreDep<ITasksManagerDomain>('core.domain.tasksManager');
