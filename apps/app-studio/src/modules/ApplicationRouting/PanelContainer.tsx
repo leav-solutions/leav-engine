@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, useCallback, useEffect, useState} from 'react';
+import {type FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
-import {SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
+import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {FLAP_FULLPAGE_TARGET_ID} from '../../constants';
@@ -34,6 +34,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     const [refDivToInsertFlapPanel, setRefDivToInsertFlapPanel] = useState<HTMLDivElement | null>(null);
     const {isLastLevelRecordPanel} = useDisplayConditions();
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
+    const explorerContainerRef = useRef<HTMLDivElement>(null);
     const match = useMatch(AbsolutePaths.recordPanel);
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
@@ -106,9 +107,11 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 fullscreen={!isCreationFormPanel}
                 isOpen
             >
-                <div className={popupContent}>
-                    {children}
-                    {hasFlapPanel && <FlapContainer ref={setFlapRef} />}
+                <div className={popupContent} ref={explorerContainerRef}>
+                    <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
+                        {children}
+                        {hasFlapPanel && <FlapContainer ref={setFlapRef} />}
+                    </Explorer.EditSettingsContextProvider>
                 </div>
             </KitModal>
         );

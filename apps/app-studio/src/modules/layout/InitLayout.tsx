@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useRef} from 'react';
 import {Explorer} from '@leav/ui';
-import {FLAP_FULLPAGE_TARGET_ID} from '../../constants';
 import {RootLayout} from './RootLayout';
 
 export const InitLayout: FunctionComponent = ({children}) => {
@@ -11,9 +10,7 @@ export const InitLayout: FunctionComponent = ({children}) => {
 
     return (
         <RootLayout ref={explorerContainerRef}>
-            <Explorer.EditSettingsContextProvider
-                panelElement={() => document.getElementById(FLAP_FULLPAGE_TARGET_ID) ?? explorerContainerRef.current} // TODO: To fix when we will need to open view settings SidePanel inside a popup
-            >
+            <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
                 {children}
             </Explorer.EditSettingsContextProvider>
         </RootLayout>
