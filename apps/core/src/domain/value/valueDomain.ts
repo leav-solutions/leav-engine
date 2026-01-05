@@ -109,6 +109,7 @@ export interface IValueDomain {
         recordId: string;
         attribute: string;
         value: ISaveValue;
+        skipReadonly?: boolean;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
@@ -125,6 +126,7 @@ export interface IValueDomain {
         ctx: IQueryInfos;
         keepEmpty?: boolean;
         skipPermission?: boolean;
+        skipReadonly?: boolean;
     }): Promise<ISaveBatchValueResult>;
 
     deleteValue(params: IDeleteValueParams): Promise<IValue[]>;
@@ -515,7 +517,14 @@ const valueDomain = function ({
         }
     };
 
-    const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
+    const _executeDeleteValue = async ({
+        library,
+        recordId,
+        attribute,
+        value,
+        skipReadonly,
+        ctx,
+    }: IDeleteValueParams) => {
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.EDIT_RECORD,
@@ -592,7 +601,7 @@ const valueDomain = function ({
                 ctx,
             );
 
-            if (attributeProps.readonly) {
+            if (!skipReadonly && attributeProps.readonly) {
                 throw new ValidationError<IValue>({
                     [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}},
                 });
@@ -836,6 +845,7 @@ const valueDomain = function ({
         recordId,
         attribute,
         value,
+        skipReadonly,
         ctx,
     }): Promise<IValue[]> => {
         await validate.validateLibrary(library, ctx);
@@ -843,7 +853,7 @@ const valueDomain = function ({
         await validate.validateLibraryAttribute(library, attribute, ctx);
         const record = await validate.validateRecord(library, recordId, ctx);
 
-        if (attributeProps.readonly) {
+        if (!skipReadonly && attributeProps.readonly) {
             throw new ValidationError<IValue>({
                 attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}},
             });
@@ -1164,6 +1174,7 @@ const valueDomain = function ({
             ctx,
             keepEmpty = false,
             skipPermission = false,
+            skipReadonly = false,
         }): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
 
@@ -1186,6 +1197,7 @@ const valueDomain = function ({
                                 value,
                                 recordId,
                                 attribute: value.attribute,
+                                skipReadonly,
                                 ctx,
                             });
 
@@ -1204,7 +1216,7 @@ const valueDomain = function ({
                             keepEmpty,
                         };
 
-                        if (attributeProps.readonly) {
+                        if (!skipReadonly && attributeProps.readonly) {
                             throw new ValidationError<IValue>({
                                 attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}},
                             });
@@ -1282,6 +1294,7 @@ const valueDomain = function ({
                                           value: valueToSave,
                                           recordId,
                                           attribute: valueToSave.attribute,
+                                          skipReadonly,
                                           ctx,
                                       })
                                     : (await _executeSaveValue(library, record, attributeProps, valueToSave, ctx))
@@ -1335,10 +1348,10 @@ const valueDomain = function ({
 
             return saveRes;
         },
-        async deleteValue({library, recordId, attribute, value, ctx}) {
+        async deleteValue({library, recordId, attribute, value, skipReadonly, ctx}) {
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
-            return _executeDeleteValue({library, recordId, attribute, value, ctx});
+            return _executeDeleteValue({library, recordId, attribute, value, skipReadonly, ctx});
         },
         formatValue: _formatValue,
         async countValuesOccurrences({libraryId, attributeId, recordFilters, options, ctx}) {
