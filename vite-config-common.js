@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import svgr from 'vite-plugin-svgr';
+import fs from 'fs';
 
 const jsonHmr = () => ({
     name: 'json-hmr',
@@ -41,6 +42,15 @@ export const devIndexHtmlReplaceVarsPlugin = () => {
     };
 };
 
+const isWindowsWsl = () => {
+    try {
+        const osrelease = fs.readFileSync('/proc/sys/kernel/osrelease', 'utf8').toLowerCase();
+        return osrelease.includes('microsoft');
+    } catch {
+        return false;
+    }
+};
+
 export const commonConfig = rootPath => ({
     root: '.',
     plugins: [svgr(), react(), jsonHmr(), devIndexHtmlReplaceVarsPlugin()],
@@ -71,5 +81,11 @@ export const commonConfig = rootPath => ({
     server: {
         port: 3000,
         host: true,
+        watch: isWindowsWsl()
+            ? {
+                  usePolling: true,
+                  interval: 100,
+              }
+            : undefined,
     },
 });
