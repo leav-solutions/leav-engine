@@ -15,7 +15,7 @@ import {
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitBadge, KitSpace, KitTag, KitTypography} from 'aristid-ds';
-import {type IKitTag, type IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import {type IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';
@@ -106,7 +106,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
 
     if (attributeProperties.multiple_values) {
         if (isStandardValues(values, attributeProperties)) {
-            const tags = values.map<IKitTagConfig>(value => {
+            const tags = values.map<IKitTag>(value => {
                 switch (attributeProperties.format) {
                     case AttributeFormat.boolean:
                         return {
@@ -298,4 +298,6 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
 
         return <StyledCenteringWrapper>{content}</StyledCenteringWrapper>;
     }
+
+    return null;
 };
