@@ -26,10 +26,12 @@ export const useReplaceItemAction = ({
     onReplace,
     isMultivalue,
     canReplaceLinkValues,
+    columnsToDisplay,
 }: FeatureHook<{
     isMultivalue: boolean;
     onReplace?: (replaceValuesResult: ISubmitMultipleResult) => void;
     canReplaceLinkValues: boolean;
+    columnsToDisplay: string[];
 }>) => {
     const {t} = useSharedTranslation();
     const [isReplaceModalOpen, setIsReplaceModalOpen] = useState(false);
@@ -61,6 +63,7 @@ export const useReplaceItemAction = ({
                         onClose={() => {
                             setIsReplaceModalOpen(false);
                         }}
+                        columnsToDisplay={columnsToDisplay}
                     />
                 ) : null,
         }),

@@ -31,6 +31,7 @@ export const useLinkPrimaryAction = ({
     joinLibraryContext,
     isMultivalue,
     onLink,
+    columnsToDisplay,
 }: FeatureHook<{
     linkId?: string;
     maxItemsLeft: number | null;
@@ -38,6 +39,7 @@ export const useLinkPrimaryAction = ({
     joinLibraryContext?: JoinLibraryContextFragment;
     isMultivalue: boolean;
     onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
+    columnsToDisplay: string[];
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -68,6 +70,7 @@ export const useLinkPrimaryAction = ({
                 onClose={() => {
                     setIsLinkModalVisible(false);
                 }}
+                columnsToDisplay={columnsToDisplay}
             />
         ) : null,
     };
