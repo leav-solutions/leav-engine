@@ -182,6 +182,7 @@
         "through": "Au travers",
         "begin-with": "Commence par",
         "end-with": "Fini Par",
+        "empty-value": "Non défini",
         "is-empty": "Est Vide",
         "is-not-empty": "N'est pas vide",
         "greater-than": "Plus grand que",

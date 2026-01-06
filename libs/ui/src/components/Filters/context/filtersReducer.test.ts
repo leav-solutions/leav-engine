@@ -373,6 +373,62 @@ describe('ViewSettings Reducer', () => {
         ]);
     });
 
+    test(`Action ${FiltersActionTypes.CHANGE_FILTER_CONFIG} test`, () => {
+        const state = filtersReducer(
+            {
+                ...filtersInitialState,
+                filters: [
+                    {
+                        id: 'id',
+                        attribute: attributeDataStandard,
+                        field: 'first',
+                        condition: RecordFilterCondition.EQUAL,
+                        value: null,
+                        withEmptyValues: false,
+                    },
+                    {
+                        id: 'second-id',
+                        attribute: attributeDataLink,
+                        field: 'second',
+                        condition: RecordFilterCondition.EQUAL,
+                        value: null,
+                        withEmptyValues: false,
+                    },
+                ],
+            },
+            {
+                type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {
+                    id: 'id',
+                    attribute: attributeDataStandard,
+                    field: 'first',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: null,
+                    withEmptyValues: true,
+                },
+            },
+        );
+        expect(state.filters).toHaveLength(2);
+        expect(state.filters).toEqual([
+            {
+                id: 'id',
+                attribute: attributeDataStandard,
+                field: 'first',
+                condition: RecordFilterCondition.EQUAL,
+                value: null,
+                withEmptyValues: true,
+            },
+            {
+                id: 'second-id',
+                attribute: attributeDataLink,
+                field: 'second',
+                condition: RecordFilterCondition.EQUAL,
+                value: null,
+                withEmptyValues: false,
+            },
+        ]);
+    });
+
     describe(`Action ${FiltersActionTypes.MOVE_FILTER} test`, () => {
         const initialState: IUIFiltersState = {
             ...filtersInitialState,

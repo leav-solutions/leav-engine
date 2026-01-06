@@ -75,14 +75,7 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.IS_EMPTY,
         AttributeConditionFilter.IS_NOT_EMPTY,
     ],
-    [AttributeFormat.color]: [
-        AttributeConditionFilter.CONTAINS,
-        AttributeConditionFilter.NOT_CONTAINS,
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY,
-    ],
+    [AttributeFormat.color]: [],
     [AttributeFormat.rich_text]: [
         AttributeConditionFilter.CONTAINS,
         AttributeConditionFilter.NOT_CONTAINS,

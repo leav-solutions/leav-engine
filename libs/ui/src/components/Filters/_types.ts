@@ -62,6 +62,7 @@ interface IUIFilterBase {
     value: string | null;
     formattedValue?: string | null;
     hidden?: boolean | undefined;
+    withEmptyValues?: boolean;
 }
 
 export interface IUIFilterStandard extends Omit<IUIFilterBase, 'field'> {
@@ -166,6 +167,7 @@ export type ValidFieldFilter = Override<
         field: NonNullable<ViewDetailsFilterFragment['field']>;
         condition: NonNullable<ViewDetailsFilterFragment['condition']>;
         hidden: boolean;
+        withEmptyValues?: boolean;
     }
 >;
 

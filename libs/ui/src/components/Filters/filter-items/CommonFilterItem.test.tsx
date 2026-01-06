@@ -321,8 +321,7 @@ describe('CommonFilterItem', () => {
             };
 
             render(<CommonFilterItem filter={filter} />);
-            await userEvent.click(screen.getByRole('button', {name: /color/}));
-            expect(await screen.findByText(/select-condition/)).toBeVisible();
+            expect(screen.getByRole('button', {name: /color/})).toBeVisible();
         });
     });
 
@@ -623,18 +622,12 @@ describe('CommonFilterItem', () => {
                 condition: RecordFilterCondition.EQUAL,
             };
 
-            const {baseElement} = render(
+            render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
                 </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /text/}));
-
-            // Condition select should only have 1 options (equal)
-            const conditionSelect = screen.getByRole('combobox');
-            await userEvent.click(conditionSelect);
-            const options = getAllConditionOptions(baseElement);
-            expect(options).toHaveLength(3);
 
             // Options from values list should be visible and toggle-able
             expect(await screen.findByText('Red')).toBeVisible();
@@ -651,7 +644,7 @@ describe('CommonFilterItem', () => {
             expect(red.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'false');
         });
 
-        test('should render link value list and allow selection', async () => {
+        test('should render link value list and display empty values checkbox', async () => {
             const filter: IUIFilterValueList = {
                 id: 'test',
                 attribute: {
@@ -691,18 +684,14 @@ describe('CommonFilterItem', () => {
                 condition: 'EQUAL' as RecordFilterCondition.EQUAL,
             };
 
-            const {baseElement} = render(
+            render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
                 </MockFiltersContextProvider>,
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
-            // Condition select should only have 1 options (equal)
-            const conditionSelect = screen.getByRole('combobox');
-            await userEvent.click(conditionSelect);
-            const options = getAllConditionOptions(baseElement);
-            expect(options).toHaveLength(3);
+            expect(await screen.findByText('explorer.empty_value')).toBeVisible();
 
             // Linked values visible and selectable
             const alpha = await screen.findByText('Alpha');

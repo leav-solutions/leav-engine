@@ -197,6 +197,7 @@ export default function ({
                         value: String,
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
+                        withEmptyValues: Boolean,
                         tree: Tree
                     }
 
@@ -205,6 +206,7 @@ export default function ({
                         value: String,
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
+                        withEmptyValues: Boolean,
                         treeId: String
                     }
 

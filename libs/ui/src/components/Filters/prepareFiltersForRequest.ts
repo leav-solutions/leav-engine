@@ -130,6 +130,37 @@ const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilter
     return filtersWithOperators;
 };
 
+const _addEmptyCondition = (baseConditions: RecordFilterInput[], filter: UIFilter): RecordFilterInput[] => {
+    if (!filter.withEmptyValues) {
+        return baseConditions;
+    }
+
+    const hasValue =
+        filter.value !== null &&
+        filter.value !== undefined &&
+        (!Array.isArray(filter.value) || filter.value.length > 0);
+
+    // patch because field contains multiple informations & can be empty
+    const field = (Array.isArray(filter.field) ? filter.field[0] : filter.field) || filter.attribute.id;
+    const emptyCondition = {
+        field,
+        condition: RecordFilterCondition.IS_EMPTY,
+        value: null,
+    };
+
+    if (!hasValue) {
+        return [emptyCondition];
+    } else {
+        return [
+            {operator: RecordFilterOperator.OPEN_BRACKET},
+            ...baseConditions,
+            {operator: RecordFilterOperator.OR},
+            emptyCondition,
+            {operator: RecordFilterOperator.CLOSE_BRACKET},
+        ];
+    }
+};
+
 export const prepareFiltersForRequest = (
     filters: UIFilter[],
     filtersOperator?: FiltersOperator,
@@ -139,6 +170,10 @@ export const prepareFiltersForRequest = (
         {operator: filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND},
         filters
             .filter(filter => {
+                if (filter.withEmptyValues) {
+                    return true;
+                }
+
                 if (isUIFilterThrough(filter)) {
                     return (
                         filter.subField &&
@@ -178,15 +213,19 @@ export const prepareFiltersForRequest = (
                 //@ts-ignore typscript does not recognize filter as a UIFilter
                 if (isUIFilterValueList(filter) || isUIFilterTree(filter)) {
                     if (filter.condition && nullValueConditions.includes(filter.condition)) {
-                        return [
+                        const baseConditions = [
                             {
                                 field: Array.isArray(filter.field) ? filter.field[0] : filter.field,
                                 condition: filter.condition,
                                 value: null,
                             },
                         ];
+                        return _addEmptyCondition(baseConditions, filter as IUIFilterTree | IUIFilterValueList);
                     }
-                    return _generateConditionsFromMultipleValues(filter as IUIFilterTree | IUIFilterValueList);
+                    const baseConditions = _generateConditionsFromMultipleValues(
+                        filter as IUIFilterTree | IUIFilterValueList,
+                    );
+                    return _addEmptyCondition(baseConditions, filter as IUIFilterTree | IUIFilterValueList);
                 }
 
                 if (isUIFilterStandard(filter as UIFilter)) {
@@ -199,13 +238,14 @@ export const prepareFiltersForRequest = (
                             break;
                     }
                 }
-                return [
+                const baseConditions = [
                     {
                         field: filter.field as string,
                         condition: filter.condition,
                         value: filter.value,
                     },
                 ];
+                return _addEmptyCondition(baseConditions, filter as UIFilter);
             }),
     );
 
