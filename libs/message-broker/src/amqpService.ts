@@ -62,7 +62,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                 );
             });
         } catch (e) {
-            throw new Error(`Fail to publish message to ${exchange}.`, {cause: e});
+            throw new Error(`Fail to publish message to ${exchange} because ${e.message}`, {cause: e});
         }
     };
 
