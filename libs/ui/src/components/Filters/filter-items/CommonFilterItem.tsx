@@ -15,25 +15,31 @@ import {isUIFilterStandard, isUIFilterTree, type UIFilter} from '../_types';
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
-
-const getFilterValues = (filter: UIFilter, t: TFunction) => {
+const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
     if (filter.condition && nullValueConditions.includes(filter.condition)) {
         const conditionOption = getAttributeConditionOptions(t).find(option => option.value === filter.condition);
         return [conditionOption?.label ?? ''];
     }
 
+    const filterValues: string[] = filter.withEmptyValues ? [t('filters.empty-value')] : [];
+
     if (isUIFilterTree(filter)) {
-        return filter.formattedValue ?? [];
+        return [...filterValues, ...(filter.formattedValue ?? [])];
     }
 
     if (
         isUIFilterStandard(filter) &&
         [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
     ) {
-        return filter.formattedValue ? [filter.formattedValue] : [];
+        return filter.formattedValue ? [...filterValues, ...filter.formattedValue] : filterValues;
     }
 
-    return Array.isArray(filter.value) ? filter.value : filter.value ? [filter.value] : [];
+    if (Array.isArray(filter.value)) {
+        return [...filterValues, ...filter.value];
+    } else if (filter.value) {
+        return [...filterValues, filter.value];
+    }
+    return filterValues;
 };
 
 export interface ICommonFilterProps {

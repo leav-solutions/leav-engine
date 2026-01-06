@@ -1,15 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
-import {KitSelect} from 'aristid-ds';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeConditionFilter, type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
+import {type FunctionComponent} from 'react';
+import {type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
 import {RecordFilterCondition} from '_ui/_gqlTypes';
 import {type IFilterChildrenTreeDropDownProps} from './_types';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import styled from 'styled-components';
-import {useConditionsOptionsByType} from './useConditionOptionsByType';
+import {EmptyValueCheckbox} from '../EmptyValueCheckbox';
 
 const DivStyled = styled.div`
     max-height: 30rem;
@@ -19,13 +17,15 @@ const DivStyled = styled.div`
 export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDownProps> = ({
     filter,
     onFilterChange,
-    selectDropDownRef,
 }) => {
-    const {t} = useSharedTranslation();
-
     const selectedNodesIds = (filter.nodes ?? []).map(node => node.nodeId);
 
-    const {conditionOptionsByType: availableConditionsOptions} = useConditionsOptionsByType(filter);
+    const _handleOnCheckEmptyValue = (selected: boolean) => {
+        onFilterChange({
+            ...filter,
+            withEmptyValues: selected,
+        });
+    };
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         let newSelectedIds: string[];
@@ -39,9 +39,6 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             nodes: newSelectedIds.map(id => ({nodeId: id, libraryId: node.record.whoAmI.library.id})),
         });
     };
-
-    const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition =>
-        onFilterChange({...filter, condition});
 
     const _getRecursiveChildrenRecord = (nodes: ITreeNodeWithRecord[]): IRecordIdentity[] => {
         const records: IRecordIdentity[] = [];
@@ -81,38 +78,26 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             })),
             value: records.map(record => record.id),
             formattedValue: records.map(record => record.whoAmI.label).filter(Boolean),
-            condition: filter.condition ?? RecordFilterCondition.EQUAL,
+            condition: RecordFilterCondition.EQUAL,
             field: fields,
         });
     };
 
-    const showSearch =
-        filter.condition &&
-        ![AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY].includes(filter.condition);
-
     return (
         <DivStyled>
-            <KitSelect
-                options={availableConditionsOptions}
-                onChange={_onConditionChanged}
-                value={filter.condition}
-                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
-                aria-label={String(t('explorer.filter-link-condition'))}
+            <EmptyValueCheckbox onSelect={_handleOnCheckEmptyValue} filter={filter} />
+            <SelectTreeNode
+                treeId={filter.attribute.linkedTree?.id ?? ''}
+                selectedNodes={selectedNodesIds}
+                onSelect={_handleOnSelect}
+                onCheck={_handleOnCheck}
+                multiple
+                canSelectRoot={true}
+                checkStrictly={false}
+                checkable
+                loadRecursively={true}
+                noPagination={true}
             />
-            {showSearch && (
-                <SelectTreeNode
-                    treeId={filter.attribute.linkedTree?.id ?? ''}
-                    selectedNodes={selectedNodesIds}
-                    onSelect={_handleOnSelect}
-                    onCheck={_handleOnCheck}
-                    multiple
-                    canSelectRoot={true}
-                    checkStrictly={false}
-                    checkable
-                    loadRecursively={true}
-                    noPagination={true}
-                />
-            )}
         </DivStyled>
     );
 };

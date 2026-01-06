@@ -111,8 +111,7 @@ export type UIFiltersAction =
     | IUIFiltersActionUpdateViewListAndCurrentView;
 
 const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
-    const hasValueList = payload.attribute.valuesList;
-
+    const hasValueList = payload.attribute.valuesList?.enable;
     let condition = hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
         ? null
         : (conditionsByFormat[(payload as IUIFilterStandard).attribute.format][0] ?? null);

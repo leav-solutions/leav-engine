@@ -15,6 +15,7 @@ const viewDetailsFragment = gql`
         }
         condition
         operator
+        withEmptyValues
     }
 
     fragment ViewDetails on View {

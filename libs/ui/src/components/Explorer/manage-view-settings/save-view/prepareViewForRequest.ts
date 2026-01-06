@@ -24,6 +24,7 @@ export const prepareViewForRequest = (
                 // TODO : save filter values as string[] when tree filter and handle fields with libraries
                 value: filter.value?.[0],
                 condition: filter.condition,
+                withEmptyValues: filter.withEmptyValues,
             };
         }
         if (isUIFilterThrough(filter)) {
@@ -41,6 +42,7 @@ export const prepareViewForRequest = (
                 // TODO : save filter values as string[] when filter and handle fields with libraries
                 value: filter.value?.[0],
                 condition: filter.condition,
+                withEmptyValues: filter.withEmptyValues,
             };
         }
 
@@ -48,6 +50,7 @@ export const prepareViewForRequest = (
             field: filter.field,
             value: filter.value,
             condition: filter.condition,
+            withEmptyValues: filter.withEmptyValues,
         };
     }),
     sort: view.sort.map(({field, order}) => ({field, order})),

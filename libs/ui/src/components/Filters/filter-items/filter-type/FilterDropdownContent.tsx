@@ -30,13 +30,7 @@ export const FilterDropdownContent: FunctionComponent<{
     removeThroughCondition?: boolean;
 }> = ({filter, onFilterChange, selectDropDownRef, removeThroughCondition = false}) => {
     if (isUIFilterValueList(filter)) {
-        return (
-            <FilterValueListDropDown
-                filter={filter}
-                onFilterChange={onFilterChange}
-                selectDropDownRef={selectDropDownRef}
-            />
-        );
+        return <FilterValueListDropDown filter={filter} onFilterChange={onFilterChange} />;
     }
 
     if (isUIFilterStandard(filter)) {

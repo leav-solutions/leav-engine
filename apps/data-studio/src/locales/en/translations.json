@@ -184,6 +184,7 @@
         "through": "Through",
         "begin-with": "Begin With",
         "end-with": "End With",
+        "empty-value": "Undefined",
         "is-empty": "Is Empty",
         "is-not-empty": "Is Not Empty",
         "greater-than": "Greater than",

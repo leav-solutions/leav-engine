@@ -155,6 +155,7 @@ export const useTransformFilters = () => {
                             format: attributeData.format!,
                             valuesList: (attributeData as StandardAttributeDetailsFragment).valuesList!,
                         },
+                        withEmptyValues: filter.withEmptyValues ?? false,
                     };
                     acc.push(newFilter);
                 } else {
@@ -178,6 +179,7 @@ export const useTransformFilters = () => {
                             ...filterAttributeBase,
                             format: attributeData.format!,
                         },
+                        withEmptyValues: filter.withEmptyValues ?? false,
                     };
                     acc.push(newFilter);
                 }
@@ -215,6 +217,7 @@ export const useTransformFilters = () => {
                             linkedLibrary: attributeData.linked_library!,
                             valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!,
                         },
+                        withEmptyValues: filter.withEmptyValues ?? false,
                     };
 
                     acc.push(newFilter);
@@ -264,6 +267,7 @@ export const useTransformFilters = () => {
                         linkedTree: attributeData.linked_tree!,
                     },
                     condition: filter.condition ?? RecordFilterCondition.EQUAL,
+                    withEmptyValues: filter.withEmptyValues ?? false,
                 };
                 acc.push(newFilter);
             }

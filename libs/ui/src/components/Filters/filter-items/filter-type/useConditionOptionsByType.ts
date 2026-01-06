@@ -49,7 +49,7 @@ export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]
     [AttributeFormat.date_range]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
     [AttributeFormat.encrypted]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
     [AttributeFormat.extended]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
-    [AttributeFormat.color]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
+    [AttributeFormat.color]: [],
     [AttributeFormat.numeric]: [
         AttributeConditionFilter.EQUAL,
         AttributeConditionFilter.NOT_EQUAL,
@@ -65,18 +65,8 @@ export const linkFilterConditions: Array<RecordFilterCondition | ThroughConditio
     ...conditionsByFormat[AttributeFormat.text].filter(f => f !== AttributeConditionFilter.NOT_EQUAL),
     AttributeConditionFilter.THROUGH,
 ];
-export const treeFilterConditions: RecordFilterCondition[] = [
-    AttributeConditionFilter.EQUAL,
-    AttributeConditionFilter.IS_EMPTY,
-    AttributeConditionFilter.IS_NOT_EMPTY,
-    // disable NOT_EQUAL for now because of backend condition filter issue
-    // AttributeConditionFilter.NOT_EQUAL
-];
-export const valueListTextConditions: RecordFilterCondition[] = [
-    AttributeConditionFilter.EQUAL,
-    // disable NOT_EQUAL for now because of backend condition filter issue
-    // AttributeConditionFilter.NOT_EQUAL
-];
+export const treeFilterConditions: RecordFilterCondition[] = [AttributeConditionFilter.EQUAL];
+export const valueListTextConditions: RecordFilterCondition[] = [AttributeConditionFilter.EQUAL];
 
 interface IUIFilterConditionOption<T> {
     label: string;

@@ -2241,6 +2241,71 @@ describe('Explorer', () => {
                 }),
             );
         });
+
+        test('should handle filters with empty values flag', async () => {
+            const spy = jest
+                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .mockImplementation(
+                    ({variables}) =>
+                        (Array.isArray(variables?.filters) && variables.filters.length
+                            ? mockExplorerLibraryDataQueryResultWithFilters
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        showFilters
+                        defaultViewSettings={{
+                            enableConfigureView: true,
+                            filters: [
+                                {
+                                    id: '',
+                                    attribute: {
+                                        id: 'simple_attribute',
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type,
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas',
+                                    withEmptyValues: true,
+                                },
+                            ],
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+
+            // Verify the query was called with the correct filters including IS_EMPTY condition
+            expect(spy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
+                            {operator: gqlTypes.RecordFilterOperator.OPEN_BRACKET},
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                            {operator: gqlTypes.RecordFilterOperator.OR},
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.IS_EMPTY,
+                                value: null,
+                            },
+                            {operator: gqlTypes.RecordFilterOperator.CLOSE_BRACKET},
+                        ],
+                    }),
+                }),
+            );
+        });
     });
 
     describe('Entrypoint type link', () => {

@@ -803,6 +803,7 @@
         "delete_link_one": "Supprimer cette liaison ?",
         "delete_link_other": "Supprimer ces liaisons ?",
         "delete_link_description_one": "Vous êtes sur le point de supprimer cette liaison.",
-        "delete_link_description_other": "Vous êtes sur le point de supprimer ces liaisons."
+        "delete_link_description_other": "Vous êtes sur le point de supprimer ces liaisons.",
+        "empty_value": "Non défini"
     }
 }

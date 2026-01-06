@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type ComponentProps, type FunctionComponent, type KeyboardEvent, useMemo, useState} from 'react';
-import {KitInput, KitSelect} from 'aristid-ds';
+import {type FunctionComponent, type KeyboardEvent, useMemo, useState} from 'react';
+import {KitInput} from 'aristid-ds';
 import styled from 'styled-components';
 import {RecordFilterCondition} from '_ui/_gqlTypes';
 import {
@@ -14,11 +14,11 @@ import {
 } from '../../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
+import {EmptyValueCheckbox} from '../EmptyValueCheckbox';
 
 interface IFilterValueListDropDownProps {
     filter: IUIFilterValueList;
     onFilterChange: (filter: UIFilter) => void;
-    selectDropDownRef?: React.RefObject<HTMLDivElement>;
 }
 
 const ListDivStyled = styled.div`
@@ -57,27 +57,11 @@ const Label = styled.div`
     text-overflow: ellipsis;
 `;
 
-export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDownProps> = ({
-    filter,
-    onFilterChange,
-    selectDropDownRef,
-}) => {
+export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDownProps> = ({filter, onFilterChange}) => {
     const {t} = useSharedTranslation();
     const [searchText, setSearchText] = useState('');
 
     const getOptionLabelText = (label: any): string => (typeof label === 'string' ? label : '');
-
-    const availableConditionsOptions = [
-        {label: t('filters.equal'), value: RecordFilterCondition.EQUAL},
-        // disable NOT_EQUAL for now because of backend condition filter issue
-        // {label: t('filters.not-equal'), value: RecordFilterCondition.NOT_EQUAL}
-        {label: t('filters.is-empty'), value: RecordFilterCondition.IS_EMPTY},
-        {label: t('filters.is-not-empty'), value: RecordFilterCondition.IS_NOT_EMPTY},
-    ];
-
-    const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
-        onFilterChange({...filter, condition});
-    };
 
     // Generate an option list for the filter dropdown to select a value
     const _createOptionListFromValueList = () => {
@@ -97,6 +81,13 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
         }
 
         return [...valueListFormatted];
+    };
+
+    const _handleOnCheckEmptyValue = (selected: boolean) => {
+        onFilterChange({
+            ...filter,
+            withEmptyValues: selected,
+        });
     };
 
     const _handleToggle = (toggledValue: string) => {
@@ -120,15 +111,9 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
             return;
         }
 
-        // Keep EQUAL/NOT_EQUAL condition per item; default to EQUAL if none chosen yet
-        const condition: RecordFilterCondition =
-            filter.condition === RecordFilterCondition.NOT_EQUAL
-                ? RecordFilterCondition.NOT_EQUAL
-                : RecordFilterCondition.EQUAL;
-
         onFilterChange({
             ...filter,
-            condition,
+            condition: RecordFilterCondition.EQUAL,
             value: valuesSelected,
         });
     };
@@ -158,42 +143,33 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
 
     return (
         <>
-            <KitSelect
-                options={availableConditionsOptions}
-                onChange={_onConditionChanged}
-                allowClear={false}
-                value={filter.condition ?? RecordFilterCondition.EQUAL}
-                aria-label={String(t('explorer.filter-condition'))}
-                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
+            <KitInput
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
+                placeholder={t('global.search') + '...'}
+                allowClear
             />
+            <EmptyValueCheckbox onSelect={_handleOnCheckEmptyValue} filter={filter} />
             {filter.condition === RecordFilterCondition.EQUAL && (
-                <>
-                    <KitInput
-                        value={searchText}
-                        onChange={e => setSearchText(e.target.value)}
-                        placeholder={t('global.search') + '...'}
-                        allowClear
-                    />
-                    <ListDivStyled role="group" aria-label={String(t('explorer.filter-value'))}>
-                        {filteredOptions.map(opt => {
-                            const selected = isChecked(opt.value);
-                            return (
-                                <OptionRow
-                                    key={opt.value}
-                                    $selected={selected}
-                                    role="button"
-                                    aria-pressed={selected}
-                                    tabIndex={0}
-                                    onClick={() => _handleToggle(opt.value)}
-                                    onKeyDown={e => onKeyToggle(e, opt.value)}
-                                >
-                                    <Label>{opt.label}</Label>
-                                    <RightIcon $visible={selected} icon={faCheck} />
-                                </OptionRow>
-                            );
-                        })}
-                    </ListDivStyled>
-                </>
+                <ListDivStyled role="group" aria-label={String(t('explorer.filter-value'))}>
+                    {filteredOptions.map(opt => {
+                        const selected = isChecked(opt.value);
+                        return (
+                            <OptionRow
+                                key={opt.value}
+                                $selected={selected}
+                                role="button"
+                                aria-pressed={selected}
+                                tabIndex={0}
+                                onClick={() => _handleToggle(opt.value)}
+                                onKeyDown={e => onKeyToggle(e, opt.value)}
+                            >
+                                <Label>{opt.label}</Label>
+                                <RightIcon $visible={selected} icon={faCheck} />
+                            </OptionRow>
+                        );
+                    })}
+                </ListDivStyled>
             )}
         </>
     );
