@@ -245,7 +245,12 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                         } catch (error) {
                             // If something went wrong, we assume the element is not visible
                             isElementVisible = false;
-                            logger.error(`Form element error ${error.stack} `, {depElement});
+                            logger.error(`Form element error ${error.stack} `, {
+                                depElement,
+                                formId,
+                                libraryId,
+                                recordId,
+                            });
                         }
                         if (isElementVisible) {
                             const {error: valueError, values} = await getElementValues({
