@@ -13,7 +13,6 @@ export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}:/
 
 export const ATTRIBUTE_ID = 'id';
 
-export const FLAP_FULLPAGE_TARGET_ID = 'flap-fullpage-target';
 export const ACTIVITY_CENTER_TARGET_ID = 'activity-center-target';
 
 export const FLAP_THREAD_PANEL_ID = 'thread';

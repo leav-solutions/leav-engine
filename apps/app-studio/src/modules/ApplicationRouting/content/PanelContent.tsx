@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent} from 'react';
 import {EditRecordPage} from '@leav/ui';
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
-import {FLAP_FULLPAGE_TARGET_ID} from '../../../constants';
 import {PanelCustom} from './panel-custom/PanelCustom';
 import {PanelLibraryExplorer} from './panel-explorer/PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './panel-explorer/PanelAttributeExplorer';
@@ -17,15 +16,6 @@ interface IPanelContentProps {
 }
 
 export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, recordId, libraryId}) => {
-    const [sidebarContainer, setSidebarContainer] = useState<HTMLElement>();
-
-    useEffect(() => {
-        const element = document.getElementById(FLAP_FULLPAGE_TARGET_ID);
-        if (element) {
-            setSidebarContainer(element);
-        }
-    }, []);
-
     if (panel.type === 'creationForm') {
         return <PanelCreationForm libraryId={libraryId} formId={panel.formId} />;
     }
@@ -35,7 +25,6 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
                 key={`${recordId}-${panel.formId}`}
                 showRefreshButton={false}
                 showHeader={false}
-                sidebarContainer={sidebarContainer}
                 record={{
                     id: recordId,
                     library: {

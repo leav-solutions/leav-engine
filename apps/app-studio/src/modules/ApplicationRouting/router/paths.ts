@@ -4,6 +4,7 @@
 
 export const AbsolutePaths = {
     panel: '/:workspaceId/:panelId/*',
+    panelWithFlap: '/:workspaceId/:panelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId/*',
     recordPanel: '/:workspaceId/:panelId/:recordId/:where/:recordPanelId/*',
 };
 

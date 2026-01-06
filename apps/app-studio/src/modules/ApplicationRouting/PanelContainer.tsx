@@ -1,18 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
-import {createPortal} from 'react-dom';
+import {type FunctionComponent, useCallback, useRef} from 'react';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
 import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
-import {FLAP_FULLPAGE_TARGET_ID} from '../../constants';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {PanelHeader} from './header/PanelHeader';
 import {PanelsTabs} from './header/tabs/PanelsTabs';
-import {FlapContainer} from './FlapContainer';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {useDisplayConditions} from './utils/useDisplayConditions';
@@ -30,21 +27,15 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
-    const navigate = useNavigate();
-    const [refDivToInsertFlapPanel, setRefDivToInsertFlapPanel] = useState<HTMLDivElement | null>(null);
     const {isLastLevelRecordPanel} = useDisplayConditions();
+    const navigate = useNavigate();
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const match = useMatch(AbsolutePaths.recordPanel);
+
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
     const isFormPanel = isCreationFormPanel || currentPanel.type === 'editionForm';
-
-    useEffect(() => {
-        if (where === 'fullpage') {
-            setRefDivToInsertFlapPanel(document.getElementById(FLAP_FULLPAGE_TARGET_ID) as HTMLDivElement);
-        }
-    }, [where]);
 
     const setPanelRef = useCallback(
         (panelRef: KitSidePanelRef | null) => {
@@ -55,25 +46,16 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         [isLastLevelRecordPanel, where, match.pathname],
     );
 
-    const setFlapRef = useCallback(
-        (flapRef: KitSidePanelRef | null) => {
-            if (hasFlapPanel && flapRef) {
-                flapRef.open();
-            }
-        },
-        [hasFlapPanel, match.pathname],
-    );
-
-    if (!isLastLevelRecordPanel) {
-        return <>{children}</>;
-    }
-
     const closeContainer = () => {
         const closingPath = hasFlapPanel
             ? RelativePaths.closeCurrentPanel + '/' + RelativePaths.closeFlapPanel
             : RelativePaths.closeCurrentPanel;
         navigate(closingPath, {relative: 'path'});
     };
+
+    if (!isLastLevelRecordPanel) {
+        return <>{children}</>;
+    }
 
     if (where === 'popup') {
         // TODO: We might need to handle a isSelfContainingPanel case like in the slider case.
@@ -110,7 +92,6 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 <div className={popupContent} ref={explorerContainerRef}>
                     <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
                         {children}
-                        {hasFlapPanel && <FlapContainer ref={setFlapRef} />}
                     </Explorer.EditSettingsContextProvider>
                 </div>
             </KitModal>
@@ -146,18 +127,11 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 showSeparator
                 closeOnEsc
             >
-                {hasFlapPanel ? <FlapContainer ref={setFlapRef} /> : children}
+                {children}
             </KitSidePanel>
         );
     }
 
     // Should only happen on where === 'fullpage'
-    return (
-        <>
-            {children}
-            {hasFlapPanel &&
-                refDivToInsertFlapPanel &&
-                createPortal(<FlapContainer ref={setFlapRef} />, refDivToInsertFlapPanel)}
-        </>
-    );
+    return <>{children}</>;
 };
