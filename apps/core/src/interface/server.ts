@@ -34,6 +34,7 @@ import {type HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {type IAppModule} from '_types/shared';
 import {apolloTracerPlugin} from './plugins/apolloTracerPlugin';
+import ApplicationError from 'errors/ApplicationError';
 
 export interface IServer {
     init(): Promise<void>;
@@ -180,6 +181,10 @@ export default function ({
 
                         if (err instanceof PermissionError) {
                             return res.status(403).json({error: 'FORBIDDEN'});
+                        }
+
+                        if (err instanceof ApplicationError) {
+                            return res.status(err.statusCode).json({error: err.message});
                         }
 
                         logger.error(`Server http error [${req.ctx?.queryId ?? 'unknown_query'}] ${err.stack}`);
