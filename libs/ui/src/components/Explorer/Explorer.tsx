@@ -218,6 +218,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isMultivalue,
             onReplace: defaultCallbacks?.item?.replaceLink,
             canReplaceLinkValues: canEditLinkAttributeValues,
+            columnsToDisplay: view.attributesIds,
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -251,7 +252,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onLink: defaultCallbacks?.primary?.link,
             linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,
             isMultivalue,
-            maxItemsLeft: null, // TODO: use KitTable.row
+            maxItemsLeft: null, // TODO: use KitTable.row,
+            columnsToDisplay: view.attributesIds,
         });
 
         const allVisibleKeys = data?.records.map(({key}) => key) ?? [];

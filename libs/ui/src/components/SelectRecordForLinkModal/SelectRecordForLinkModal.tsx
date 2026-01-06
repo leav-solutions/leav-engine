@@ -68,6 +68,7 @@ interface ISelectRecordForLinkModalProps {
     isMultivalue: boolean;
     onSelectionCompleted: (data: ExplorerSelectionIdsQuery) => void;
     onClose: () => void;
+    columnsToDisplay: string[];
 }
 
 export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkModalProps> = ({
@@ -83,6 +84,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
     isMultivalue,
     onSelectionCompleted,
     onClose,
+    columnsToDisplay,
 }) => {
     const {t} = useSharedTranslation();
     const explorerContainerRef = useRef<HTMLDivElement>(null);
@@ -190,6 +192,9 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                                   }
                                 : {}
                         }
+                        defaultViewSettings={{
+                            attributesIds: columnsToDisplay,
+                        }}
                         primaryActions={[]}
                         defaultActionsForItem={[]}
                         defaultMassActions={[]}

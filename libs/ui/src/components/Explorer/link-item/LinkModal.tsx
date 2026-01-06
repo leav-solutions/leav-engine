@@ -22,6 +22,7 @@ interface ILinkModalProps {
     onClose: () => void;
     onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
     onReplace?: (replaceValuesResult: ISubmitMultipleResult) => void;
+    columnsToDisplay: string[];
 }
 
 export const LinkModal: FunctionComponent<ILinkModalProps> = ({
@@ -32,6 +33,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
     onLink,
     onReplace,
     onClose,
+    columnsToDisplay,
 }) => {
     const {t} = useSharedTranslation();
     const {view} = useViewSettingsContext();
@@ -125,6 +127,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
             allowFreeEntry={allowFreeEntry}
             isMultivalue={isMultivalue}
             onClose={onClose}
+            columnsToDisplay={columnsToDisplay}
         />
     );
 };
