@@ -41,14 +41,26 @@ describe('FilterDropDown', () => {
     });
 
     test('should not show delete button when canRemove is false', async () => {
-        render(<FilterDropDown filter={mockFilter} canRemove={false} />);
+        render(<FilterDropDown filter={mockFilter} canRemove={false} canReset={true} />);
 
         expect(screen.queryByText('global.delete')).not.toBeInTheDocument();
     });
 
     test('should show delete button when enableConfigureView is true', async () => {
-        render(<FilterDropDown filter={mockFilter} canRemove={true} />);
+        render(<FilterDropDown filter={mockFilter} canRemove={true} canReset={true} />);
 
         expect(screen.getByText('global.delete')).toBeInTheDocument();
+    });
+
+    test('should not show reset button when canReset is false', async () => {
+        render(<FilterDropDown filter={mockFilter} canRemove={true} canReset={false} />);
+
+        expect(screen.queryByText('global.reset')).not.toBeInTheDocument();
+    });
+
+    test('should show reset button when canReset is true', async () => {
+        render(<FilterDropDown filter={mockFilter} canRemove={true} canReset={true} />);
+
+        expect(screen.getByText('global.reset')).toBeInTheDocument();
     });
 });

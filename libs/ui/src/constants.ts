@@ -13,6 +13,8 @@ export enum PreviewSize {
     BIG = 'big',
 }
 
+export const ACTIVE_ATTRIBUTE_ID = 'active';
+
 export const tagColorByAttributeType: {[key in AttributeType]: [border: string, background: string]} = {
     [AttributeType.simple]: ['purple', '#ffe5ff'],
     [AttributeType.simple_link]: ['blue', '#e5e5ff'],

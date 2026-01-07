@@ -179,6 +179,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                         ? null
                         : conditionsByFormat[filter.attribute.format][0],
                     value: null,
+                    formattedValue: null,
                 };
             }
 
@@ -187,6 +188,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                     ...filter,
                     condition: ThroughConditionFilter.THROUGH,
                     value: null,
+                    formattedValue: null,
                 };
             }
 
@@ -195,6 +197,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                     ...filter,
                     condition: conditionsByFormat[AttributeFormat.text][0],
                     value: null,
+                    formattedValue: null,
                 };
             }
 
@@ -203,6 +206,7 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                     ...filter,
                     condition: null,
                     value: null,
+                    formattedValue: null,
                 };
             }
         }
