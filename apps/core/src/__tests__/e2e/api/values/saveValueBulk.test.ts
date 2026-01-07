@@ -10,13 +10,12 @@ import {
     gqlSaveTree,
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
-    waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
 import {AttributeCondition} from '../../../../_types/record';
 import {type Client as GraphqlWsClient} from 'graphql-ws';
-import {type IPubSubNotificationData} from '_types/eventsManager';
 import {TaskStatus} from '../../../../_types/tasksManager';
 import {waitForTaskCompletedWithStatus} from '../taskUtils';
+import {waitWebSocketNotification} from '../notificationUtils';
 
 describe('saveValueBulk', () => {
     let graphqlClient: GraphqlWsClient;
@@ -189,11 +188,6 @@ describe('saveValueBulk', () => {
     });
 
     describe('notifications', () => {
-        beforeEach(async () => {
-            // wait previous notification to be processed in websocket
-            await Promise.resolve(cb => setTimeout(cb, 500));
-        });
-
         it('should notify success', async () => {
             const gqlMutation = `mutation {
                 saveValueBulk(
@@ -211,7 +205,7 @@ describe('saveValueBulk', () => {
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
                 .saveValueBulk;
 
-            const {notification} = await waitSaveValueBulkWSNotification();
+            const {notification} = await waitWebSocketNotification(graphqlClient, saveValueBulkTaskId);
             await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
             expect(notification.title).toContain('Bulk');
@@ -236,7 +230,7 @@ describe('saveValueBulk', () => {
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
                 .saveValueBulk;
 
-            const {notification} = await waitSaveValueBulkWSNotification();
+            const {notification} = await waitWebSocketNotification(graphqlClient, saveValueBulkTaskId);
             await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
 
             expect(notification.title).toContain('Bulk');
@@ -260,7 +254,7 @@ describe('saveValueBulk', () => {
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation, {user: e2eNonAdminUser()})).data.data
                 .saveValueBulk;
-            const {notification} = await waitSaveValueBulkWSNotification();
+            const {notification} = await waitWebSocketNotification(graphqlClient, saveValueBulkTaskId);
             await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.FAILED);
 
             expect(notification.title).toContain('Bulk');
@@ -392,32 +386,4 @@ describe('saveValueBulk', () => {
             expect(record.data.data.records.list[0].property[0]).toBeUndefined();
         });
     });
-
-    const waitSaveValueBulkWSNotification = () =>
-        waitGraphqlWebSocketMessage<Pick<IPubSubNotificationData, 'notification'>>(
-            graphqlClient,
-            subscriptionGraphqlQuery,
-            {},
-            data => data?.notification?.title?.includes('Bulk'),
-            {timeoutMs: 20000},
-        );
-
-    const subscriptionGraphqlQuery = `
-        subscription {
-            notification {
-                level
-                message
-                title
-                date
-                attachments {
-                    label
-                    url
-                }
-                relatedEntities {
-                    label
-                    url
-                }
-            }
-        }
-    `;
 });

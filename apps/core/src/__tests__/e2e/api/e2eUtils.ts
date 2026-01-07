@@ -498,7 +498,7 @@ export async function waitGraphqlWebSocketMessage<T>(
 
 export async function waitWebSocketMessage<T>(
     webSocket: WebSocket,
-    acceptMessage: (msg: T) => boolean,
+    acceptMessage: (msg: T) => Promise<boolean>,
     {timeoutMs}: {timeoutMs},
 ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
@@ -507,13 +507,13 @@ export async function waitWebSocketMessage<T>(
             reject(new Error('Wait message timeout'));
         }, timeoutMs || 20_000);
 
-        webSocket.onmessage = (event: WebSocket.MessageEvent) => {
+        webSocket.onmessage = async (event: WebSocket.MessageEvent) => {
             try {
                 // Mailpit can send multiple JSON messages in one event separated by new lines
                 const lines = event.data.toString().split('\n').filter(Boolean);
                 for (const line of lines) {
                     const msg = JSON.parse(line);
-                    if (acceptMessage(msg)) {
+                    if (await acceptMessage(msg)) {
                         clearTimeout(timeout);
                         webSocket.close();
                         resolve(msg);

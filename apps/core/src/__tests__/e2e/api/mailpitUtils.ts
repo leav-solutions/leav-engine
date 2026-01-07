@@ -6,6 +6,10 @@ import WebSocket from 'ws';
 import {waitWebSocketMessage} from './e2eUtils';
 import {getConfig} from '../../../config';
 
+interface IMailpitMsgHeaders {
+    [key: string]: string[];
+}
+
 interface IMailpitMsgLight {
     From: {
         Name: string;
@@ -22,7 +26,11 @@ interface IMailpitMsgLight {
     }>;
 }
 
-interface IMailpitMsgFull extends IMailpitMsgLight {
+interface IMailpitMsgLightWithHeaders extends IMailpitMsgLight {
+    Headers: IMailpitMsgHeaders;
+}
+
+export interface IMailpitMsgFull extends IMailpitMsgLight {
     HTML: string;
     Text: string;
 }
@@ -45,18 +53,37 @@ const getMailpitAddress = async (): Promise<string> => {
     return `${config.mailer.host}:8025`; // port is not smtp 1025, but api which default is 8025
 };
 
-export async function waitMailpitMessage(acceptMessage: (msg: IMailpitMsgLight) => boolean): Promise<IMailpitMsgFull> {
+export async function waitMailpitMessage(
+    acceptMessage: (msg: IMailpitMsgLightWithHeaders) => boolean,
+): Promise<IMailpitMsgFull> {
     const mailpitAddress = await getMailpitAddress();
 
     // Connect to Mailpit WebSocket to listen for new messages
     const webSocket = new WebSocket(`ws://${mailpitAddress}/api/events`);
     const mailMsg = await waitWebSocketMessage<IMailpitWebSocketMsg>(
         webSocket,
-        msg => msg.Type === 'new' && acceptMessage(msg.Data),
+        async msg => {
+            if (msg.Type !== 'new') {
+                return false;
+            }
+            const headers = await getMailpitMessageHeaders(msg.Data.ID);
+            return acceptMessage({
+                ...msg.Data,
+                Headers: headers,
+            });
+        },
         {timeoutMs: 20000},
     );
 
     return getMailpitMessage(mailMsg.Data.ID);
+}
+
+export async function getMailpitMessageHeaders(messageId: string): Promise<IMailpitMsgHeaders> {
+    const mailpitAddress = await getMailpitAddress();
+    const msg = await axios.get<IMailpitMsgHeaders>(`http://${mailpitAddress}/api/v1/message/${messageId}/headers`, {
+        responseType: 'json',
+    });
+    return msg.data;
 }
 
 export async function getMailpitMessage(messageId: string): Promise<IMailpitMsgFull> {
