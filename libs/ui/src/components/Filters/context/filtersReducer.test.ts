@@ -165,6 +165,7 @@ describe('ViewSettings Reducer', () => {
                             field: 'first',
                             condition: RecordFilterCondition.EQUAL,
                             value: null,
+                            formattedValue: null,
                         },
                         {
                             id: 'second-id',
@@ -172,6 +173,7 @@ describe('ViewSettings Reducer', () => {
                             field: 'second',
                             condition: RecordFilterCondition.CONTAINS,
                             value: '42',
+                            formattedValue: null,
                         },
                         {
                             id: 'third-id',
@@ -181,6 +183,7 @@ describe('ViewSettings Reducer', () => {
                             subField: 'thirdSub',
                             subCondition: RecordFilterCondition.NOT_EQUAL,
                             value: null,
+                            formattedValue: null,
                         },
                     ],
                 },
@@ -199,6 +202,7 @@ describe('ViewSettings Reducer', () => {
                     field: 'first',
                     condition: RecordFilterCondition.EQUAL,
                     value: null,
+                    formattedValue: null,
                 },
                 {
                     id: 'second-id',
@@ -206,6 +210,7 @@ describe('ViewSettings Reducer', () => {
                     field: 'second',
                     condition: RecordFilterCondition.CONTAINS,
                     value: null,
+                    formattedValue: null,
                 },
                 {
                     id: 'third-id',
@@ -215,6 +220,7 @@ describe('ViewSettings Reducer', () => {
                     subField: 'thirdSub',
                     subCondition: RecordFilterCondition.NOT_EQUAL,
                     value: null,
+                    formattedValue: null,
                 },
             ]);
         });

@@ -158,6 +158,7 @@ const isValueList = (filter: UIFilter): filter is UIFilter & {attribute: {values
 
 export interface IUIFilterDropDownProps {
     filter: UIFilter;
+    canReset: boolean;
     canRemove: boolean;
 }
 

@@ -247,6 +247,32 @@ describe('CommonFilterItem', () => {
             await userEvent.click(screen.getByRole('button', {name: /boolean/}));
             expect(screen.getByText(/true/)).toBeVisible();
         });
+
+        test('should handle active attribute with default value and no reset action', async () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'Active',
+                    id: 'active',
+                    format: gqlTypes.AttributeFormat.boolean,
+                    type: AttributeType.simple,
+                },
+                field: 'active',
+                value: null,
+                condition: AttributeConditionFilter.EQUAL,
+            };
+
+            render(
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
+                    <CommonFilterItemContainer />
+                </MockFiltersContextProvider>,
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /Active/}));
+
+            expect(screen.getByText(/explorer.true/)).toBeVisible();
+            expect(screen.queryByRole('button', {name: /reset/i})).not.toBeInTheDocument();
+        });
     });
 
     describe('date filter', () => {

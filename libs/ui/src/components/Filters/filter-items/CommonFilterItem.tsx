@@ -6,11 +6,12 @@ import {FilterDropDown} from '../filter-items/filter-type/FilterDropDown';
 import styled from 'styled-components';
 import {KitFilter} from 'aristid-ds';
 import {AttributeFormat} from '_ui/_gqlTypes';
-import {useTranslation} from 'react-i18next';
 import {getAttributeConditionOptions} from '../filter-items/filter-type/useConditionOptionsByType';
 import {type TFunction} from 'i18next';
 import {nullValueConditions} from '../conditionsHelper';
-import {isUIFilterStandard, isUIFilterTree, type UIFilter} from '../_types';
+import {isUIFilterStandard, isUIFilterTree, type IUIFilterStandard, type UIFilter} from '../_types';
+import {ACTIVE_ATTRIBUTE_ID} from '_ui/constants';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -31,7 +32,7 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         isUIFilterStandard(filter) &&
         [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
     ) {
-        return filter.formattedValue ? [...filterValues, ...filter.formattedValue] : filterValues;
+        return filter.formattedValue ? [...filterValues, filter.formattedValue] : filterValues;
     }
 
     if (Array.isArray(filter.value)) {
@@ -49,13 +50,30 @@ export interface ICommonFilterProps {
     readonly?: boolean;
 }
 
+const isActiveAttribute = (filter: UIFilter): filter is IUIFilterStandard =>
+    filter.attribute.format === AttributeFormat.boolean &&
+    filter.attribute.id === ACTIVE_ATTRIBUTE_ID &&
+    isUIFilterStandard(filter);
+
 export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
     filter,
     isPinned = false,
     readonly = false,
     disabled,
 }) => {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
+
+    let canReset = true;
+
+    // Active attribute is a special case, we need to handle it differently
+    if (isActiveAttribute(filter)) {
+        canReset = false;
+
+        if (!filter.value) {
+            filter.value = 'true';
+            filter.formattedValue = t('explorer.true');
+        }
+    }
 
     return (
         <FilterStyled
@@ -66,7 +84,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
             values={getFilterValues(filter, t)}
             dropDownProps={{
                 placement: 'bottomLeft',
-                dropdownRender: () => <FilterDropDown filter={filter} canRemove={!isPinned} />,
+                dropdownRender: () => <FilterDropDown filter={filter} canReset={canReset} canRemove={!isPinned} />,
             }}
         />
     );

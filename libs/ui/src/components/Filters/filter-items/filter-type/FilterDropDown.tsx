@@ -18,7 +18,7 @@ const FilterDropDownStyledDiv = styled.div`
     gap: calc(var(--general-spacing-xxs) * 1px);
 `;
 
-export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filter, canRemove}) => {
+export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filter, canReset, canRemove}) => {
     const {t} = useSharedTranslation();
     const {dispatch} = useFiltersContext();
     const selectDropDownRef = useRef<HTMLDivElement>(null);
@@ -54,9 +54,11 @@ export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filte
             />
             <div ref={selectDropDownRef} />
             <KitDivider noMargin />
-            <KitButton type="action" icon={<FontAwesomeIcon icon={faClockRotateLeft} />} onClick={_onResetFilter}>
-                {t('global.reset')}
-            </KitButton>
+            {canReset && (
+                <KitButton type="action" icon={<FontAwesomeIcon icon={faClockRotateLeft} />} onClick={_onResetFilter}>
+                    {t('global.reset')}
+                </KitButton>
+            )}
             {canRemove && (
                 <KitButton type="action" icon={<FontAwesomeIcon icon={faTrash} />} onClick={_onDeleteFilter} danger>
                     {t('global.delete')}
