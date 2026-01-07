@@ -34,7 +34,7 @@ import {type HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {type IAppModule} from '_types/shared';
 import {apolloTracerPlugin} from './plugins/apolloTracerPlugin';
-import ApplicationError from 'errors/ApplicationError';
+import ApplicationError from '../errors/ApplicationError';
 
 export interface IServer {
     init(): Promise<void>;
