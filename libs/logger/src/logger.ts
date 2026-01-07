@@ -29,6 +29,8 @@ export interface ILogger {
     silly(message: string, ...meta: MetaWithoutLoggerProperties[]): void;
 }
 
+const winstonDefaultLogger = winston.createLogger();
+
 export function configureLogger(config: ILoggerConfig): void {
     const level = config.level ?? defaultLoggerConfig.level;
     const useJsonFormat = config.useJsonFormat ?? defaultLoggerConfig.useJsonFormat;
@@ -64,14 +66,17 @@ export function configureLogger(config: ILoggerConfig): void {
     }
 
     const catchErrorLog = catchErrorFormatter(onErrorLog);
+    const addLocationInfoFormat = addLocationInfo
+        ? addLocationInfoInLog(_level => winstonDefaultLogger.isLevelEnabled(_level))
+        : null;
 
     const formats = [
         catchErrorLog ? catchErrorLog() : undefined,
-        addLocationInfo ? addLocationInfoInLog() : undefined,
+        addLocationInfoFormat ? addLocationInfoFormat() : undefined,
         addTimestamp ? winston.format.timestamp() : undefined,
     ].filter(f => !!f) as winston.Logform.Format[];
 
-    winston.configure({
+    winstonDefaultLogger.configure({
         level,
         handleExceptions: true,
         transports,
@@ -84,4 +89,4 @@ export function configureLogger(config: ILoggerConfig): void {
 configureLogger(defaultLoggerConfig);
 
 // Avoid to much dependency from winston if not necessary for now
-export const logger = winston as ILogger;
+export const logger = winstonDefaultLogger as ILogger;
