@@ -185,6 +185,7 @@ export default function ({
                             date: new Date().toLocaleString(ctx.lang),
                             total: records.list.length,
                         }),
+                        taskId: task.id,
                     },
                     recipients: {
                         userIds: [ctx.userId],
@@ -213,6 +214,7 @@ export default function ({
                             interpolation: {escapeValue: false},
                             date: new Date().toLocaleString(ctx.lang),
                         }),
+                        taskId: task.id,
                     },
                     recipients: {
                         userIds: [ctx.userId],

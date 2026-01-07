@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import handlebars from 'handlebars';
 import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import {type IConfig} from '_types/config';
+import {NOTIFICATION_EMAIL_TASK_ID_HEADER} from '../../../_constants/notifications';
 
 export interface INotificationByEmailChannelDeps {
     config: IConfig;
@@ -47,8 +48,10 @@ export default function ({
     const sendNotification = async (notification: INotification, ctx: IQueryInfos): Promise<void> => {
         const userIdentity = await userDomain.getUserIdentity(notification.recipientUserId, ctx);
         const email = await userIdentity.getEmail();
+        const title = notification.content.title;
+        const taskId = notification.content.taskId;
 
-        logger.debug(`Sending email notification "${notification.content.title}" to "${email}"`);
+        logger.debug(`Sending email notification "${title}" ${taskId ? `for task "${taskId}"` : ''} to "${email}"`);
 
         const template = await getEmailTemplate(ctx.lang);
         const globalSettings = await globalSettingsDomain.getSettings(ctx);
@@ -63,8 +66,9 @@ export default function ({
         await mailerService.sendEmail(
             {
                 to: email,
-                subject: notification.content.title,
+                subject: title,
                 html: htmlWithData,
+                headers: taskId ? {[NOTIFICATION_EMAIL_TASK_ID_HEADER]: taskId} : undefined,
             },
             ctx,
         );

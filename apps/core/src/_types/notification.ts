@@ -32,6 +32,12 @@ export interface INotificationContent {
         url: string;
         label: string;
     }>;
+
+    /**
+     * Optional task ID associated with the notification
+     * For email, will be added as a custom header (X-Task-Id)
+     */
+    taskId?: string;
 }
 
 export interface ICreateNotification {

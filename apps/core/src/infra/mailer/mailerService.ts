@@ -10,7 +10,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 
 export interface IMailerService {
     mailer?: nodemailer.Transporter;
-    sendEmail?: ({to, subject, text, html, attachments}: ISendMailParams, ctx: IQueryInfos) => Promise<void>;
+    sendEmail?: ({to, subject, text, html, attachments, headers}: ISendMailParams, ctx: IQueryInfos) => Promise<void>;
 }
 
 interface IDeps {
@@ -25,6 +25,7 @@ interface ISendMailParams {
     text?: string; // The plaintext version of the message
     html?: string; // The HTML version of the message,
     attachments?: Array<{filename: string; content?: string | Buffer; path?: string}>;
+    headers?: Record<string, string>;
 }
 
 export default function ({
@@ -34,7 +35,7 @@ export default function ({
 }: IDeps): IMailerService {
     return {
         mailer,
-        async sendEmail({to, subject, text, html, attachments}, ctx): Promise<void> {
+        async sendEmail({to, subject, text, html, attachments, headers}, ctx): Promise<void> {
             const globalSettings = await globalSettingsDomain.getSettings(ctx);
             const from = `${globalSettings.name || config.mailer.from.name} <${config.mailer.from.email}>`;
 
@@ -47,6 +48,7 @@ export default function ({
                 text,
                 html,
                 attachments: attachments as Attachment[],
+                headers,
             });
         },
     };
