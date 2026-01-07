@@ -8,4 +8,5 @@ export {FiltersProvider} from './FiltersProvider';
 export {prepareFiltersForRequest} from './prepareFiltersForRequest';
 export {useFiltersReducer} from './context/useFiltersReducer';
 export {CommonFilterItem} from './filter-items/CommonFilterItem';
+export {FiltersContext} from './context/filtersContext';
 export * from './_types';
