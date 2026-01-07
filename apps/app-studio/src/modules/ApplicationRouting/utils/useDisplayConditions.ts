@@ -4,6 +4,7 @@
 import {useLocation, useMatch, useParams} from 'react-router-dom';
 import {AbsolutePaths} from '../router/paths';
 
+const SPLIT_PATH_LENGTH = 3;
 const SPLIT_FLAP_PATH_LENGTH = 4;
 
 export const useDisplayConditions = () => {
@@ -30,7 +31,22 @@ export const useDisplayConditions = () => {
         _nextLevelPanelInLocationPathnameSplitted?.length === SPLIT_FLAP_PATH_LENGTH &&
         _nextLevelPanelInLocationPathnameSplitted?.[0] === 'flap';
 
-    const _isLastRecordPanel = _hasNoNextLevelRecordPanel || _isNextLevelOnlyAFlap;
+    // :workspaceId/:panelId/(*):recordId/:where/:recordPanelId/:recordId/slider/:recordPanelId
+    const _isNextLevelOnlyASlider =
+        _nextLevelPanelInLocationPathnameSplitted?.length === SPLIT_PATH_LENGTH &&
+        _nextLevelPanelInLocationPathnameSplitted?.[1] === 'slider';
+
+    // :workspaceId/:panelId/(*):recordId/:where/:recordPanelId/:recordId/slider/:recordPanelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId
+    const _isNextLevelOnlyASliderAndFlap =
+        _nextLevelPanelInLocationPathnameSplitted?.length === SPLIT_PATH_LENGTH + SPLIT_FLAP_PATH_LENGTH &&
+        _nextLevelPanelInLocationPathnameSplitted?.[1] === 'slider' &&
+        _nextLevelPanelInLocationPathnameSplitted?.[3] === 'flap';
+
+    const _isLastRecordPanel =
+        _hasNoNextLevelRecordPanel ||
+        _isNextLevelOnlyAFlap ||
+        _isNextLevelOnlyASlider ||
+        _isNextLevelOnlyASliderAndFlap;
 
     // (*):recordId/fullpage/:recordPanelId(*)
     const _hasOtherFullpagePanelInNextLevels = nextLevelPaths.includes('fullpage');
