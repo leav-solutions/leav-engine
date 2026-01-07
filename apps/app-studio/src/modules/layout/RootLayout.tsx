@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {forwardRef, type ReactNode} from 'react';
 import {RootHeader} from './RootHeader';
-import {FlapFullpageTarget} from './FlapFullpageTarget';
 import {ActivityCenterTarget} from './ActivityCenterTarget';
 import {layout, mainContent} from './layout.module.css';
 
@@ -13,7 +12,6 @@ export const RootLayout = forwardRef<HTMLDivElement, {children: ReactNode}>(({ch
         <RootHeader />
         <section className={mainContent}>
             {children}
-            <FlapFullpageTarget />
             <ActivityCenterTarget />
         </section>
     </main>
