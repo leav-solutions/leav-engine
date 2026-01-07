@@ -21,7 +21,7 @@ import {
     packetId,
     type SimpleMessage,
     type OpenFlapPanelMessage,
-    type CloseFlapPanelMessage,
+    type GetPanelConfigMessage,
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
@@ -142,6 +142,20 @@ export const initClientHandlers: (
         case 'close-flap-panel':
             options?.handlers?.onCloseFlapPanel?.();
             break;
+        case 'get-panel-config':
+            options?.handlers?.onGetPanelConfig?.(
+                setCallbacks(
+                    message.id,
+                    message.__frameId,
+                    message.data,
+                    callCb,
+                    message.overrides,
+                ) as GetPanelConfigMessage['data'],
+                message.id,
+                dispatch,
+                callCb,
+            );
+            break;
         default:
             break;
     }
@@ -203,5 +217,10 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     closeFlapPanel: () => {
         dispatch?.({type: 'close-flap-panel'});
+    },
+    getPanelConfig: (data: GetPanelConfigMessage['data']) => {
+        const id = Date.now().toString();
+        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
+        dispatch?.({type: 'get-panel-config', data: nextData as GetPanelConfigMessage['data'], id, overrides});
     },
 });

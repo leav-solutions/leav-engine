@@ -12,6 +12,7 @@ import {useOpenFlapPanel} from './message-handlers/useOpenFlapPanel';
 import {useClosePanel} from './message-handlers/useClosePanel';
 import {useCloseFlapPanel} from './message-handlers/useCloseFlapPanel';
 import {iframe} from './panelCustom.module.css';
+import {useGetPanelConfig} from './message-handlers/useGetPanelConfig';
 
 interface IPanelCustomProps {
     source: string;
@@ -28,6 +29,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {openConfirmModal} = useOpenConfirmModal();
     const {openFlapPanel} = useOpenFlapPanel();
     const {closeFlapPanel} = useCloseFlapPanel();
+    const {getPanelConfig} = useGetPanelConfig();
 
     const {changeLangInAllFrames} = useIFrameMessenger({
         handlers: {
@@ -39,6 +41,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
             onOpenFlapPanel: openFlapPanel,
             onCloseFlapPanel: closeFlapPanel,
             onClosePanel: closePanel,
+            onGetPanelConfig: getPanelConfig,
         },
     });
 
@@ -52,7 +55,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
         <>
             <iframe
                 className={iframe}
-                name="testFrame"
+                name={title}
                 src={source + (recordId ? '?' + new URLSearchParams({recordId}).toString() : '')}
                 title={title}
                 width="100%"

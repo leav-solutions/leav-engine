@@ -59,6 +59,7 @@ export const basePanelSchema = z.object({
 export const iframePanelSchema = z.object({
     type: z.literal('custom'),
     iframeSource: z.string(),
+    viewId: z.string().optional(),
     isSelfContaining: z.boolean().optional(),
 });
 
