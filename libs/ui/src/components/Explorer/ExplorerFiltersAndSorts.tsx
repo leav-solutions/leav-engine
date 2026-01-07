@@ -9,8 +9,9 @@ import {useOpenViewSettings} from './manage-view-settings';
 import {type ComponentProps, type FunctionComponent, type ReactNode} from 'react';
 import {KitDivider, KitFilter} from 'aristid-ds';
 import styled from 'styled-components';
-import {CommonFilterItem, type ICommonFilterProps} from '_ui/components/Filters/filter-items/CommonFilterItem';
+import {CommonFilterItem} from '_ui/components/Filters/filter-items/CommonFilterItem';
 import {useFilters} from '_ui/components/Filters/useFilters';
+import {type UIFilter} from '../Filters';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -59,6 +60,7 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     if (!Object.keys(attributeDetailsById).length) {
         return <></>;
     }
+
     return (
         <>
             {selectAllButton && (
@@ -75,7 +77,8 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                         filtersProps.map(filterProps => (
                             <li key={filterProps.key}>
                                 <CommonFilterItem
-                                    {...(filterProps as ICommonFilterProps)}
+                                    filter={filterProps.filter as UIFilter}
+                                    isPinned={filterProps.isPinned}
                                     disabled={isMassSelectionAll}
                                 />
                             </li>
