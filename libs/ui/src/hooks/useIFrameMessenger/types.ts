@@ -88,7 +88,7 @@ export type PanelId = z.infer<typeof PanelIdSchema>;
 
 export type Where = z.infer<typeof WhereSchema>;
 
-type PanelIFrame = z.infer<typeof PanelIFrameSchema>;
+export type PanelIFrame = z.infer<typeof PanelIFrameSchema>;
 
 type FlapPanelId = z.infer<typeof FlapPanelIdSchema>;
 
@@ -147,6 +147,16 @@ export type CloseFlapPanelMessage = IMessageBase & {
     type: 'close-flap-panel';
 };
 
+export type GetPanelConfigMessage = IMessageBase & {
+    type: 'get-panel-config';
+    id: string;
+    data: {
+        panelId?: string;
+        onGetPanelConfig: (data: PanelIFrame) => void;
+    };
+    overrides?: string[];
+};
+
 export type MessageToParent =
     | ModalConfirmMessage
     | AlertMessage
@@ -159,7 +169,8 @@ export type MessageToParent =
     | NavigateToIframeMessage
     | MessageToPanelMessage
     | OpenFlapPanelMessage
-    | CloseFlapPanelMessage;
+    | CloseFlapPanelMessage
+    | GetPanelConfigMessage;
 
 export type MessageFromParent =
     | (IMessageBase & {
@@ -204,6 +215,12 @@ export interface IUseIFrameMessengerOptions {
         onClosePanel?: (data: ClosePanelMessage['data']) => void;
         onNavigateToIframe?: (data: NavigateToIframeMessage['data']) => void;
         onOpenFlapPanel?: (data: OpenFlapPanelMessage['data']) => void;
+        onGetPanelConfig?: (
+            data: GetPanelConfigMessage['data'],
+            id: string,
+            dispatch: MessageDispatcher,
+            callCb: CallCbFunction,
+        ) => void;
         onCloseFlapPanel?: () => void;
     };
 }

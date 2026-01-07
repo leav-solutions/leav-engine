@@ -46,15 +46,22 @@ export interface ICommonFilterProps {
     filter: UIFilter;
     isPinned?: boolean;
     disabled?: boolean;
+    readonly?: boolean;
 }
 
-export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({filter, isPinned = false, disabled}) => {
+export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
+    filter,
+    isPinned = false,
+    readonly = false,
+    disabled,
+}) => {
     const {t} = useTranslation();
 
     return (
         <FilterStyled
-            expandable
             disabled={disabled}
+            readonly={readonly}
+            expandable={!readonly}
             label={filter.attribute.label}
             values={getFilterValues(filter, t)}
             dropDownProps={{

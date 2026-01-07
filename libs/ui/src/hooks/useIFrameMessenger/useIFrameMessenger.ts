@@ -85,6 +85,17 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         addPanelMessageHandler,
     });
 
+    const getPanelIdFromEvent = (event: MessageEvent) => {
+        const iFrames = window.document.getElementsByTagName('iframe');
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < iFrames.length; i++) {
+            if (event.source === iFrames[i].contentWindow) {
+                return iFrames[i].name;
+            }
+        }
+        return null;
+    };
+
     useEffect(() => {
         const clientHandlers = initClientHandlers(callCb, {...options, id: selfId.current}, callbacksStore);
         const onMessage = (event: MessageEvent) => {
@@ -115,6 +126,14 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                         dispatch(message, target);
                     }
                     break;
+                case 'get-panel-config':
+                    clientHandlers(
+                        {
+                            ...message,
+                            data: {...message.data, panelId: getPanelIdFromEvent(event)},
+                        },
+                        dispatch,
+                    );
                 default:
                     if (message.type === 'change-language') {
                         setLang(message.language);
