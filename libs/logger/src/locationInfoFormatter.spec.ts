@@ -48,6 +48,35 @@ describe('addLocationInfo', () => {
         });
 
         logger.info('Test log 1');
+        logger.info('Test log 2', {foo: 'bar'});
+
+        expect(fakeFormatTransformSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                level: 'info',
+                message: 'Test log 1',
+                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`)),
+            }),
+            {},
+        );
+        expect(fakeFormatTransformSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                level: 'info',
+                message: 'Test log 2',
+                location: expect.stringMatching(new RegExp(`${__filename}:\\d+`)),
+            }),
+            {},
+        );
+    });
+
+    it('addLocationInfoInLog should work several times (invert)', () => {
+        const logger = winston.createLogger({
+            level: 'info',
+            format: winston.format.combine(addLocationInfoFormat(), fakeFormat),
+            transports: [new winston.transports.Console({silent: true})],
+        });
+
+        // Winston stack trace is not same if call with or without meta, so test both ways
+        logger.info('Test log 1', {foo: 'bar'});
         logger.info('Test log 2');
 
         expect(fakeFormatTransformSpy).toHaveBeenCalledWith(

@@ -5,9 +5,11 @@ interface ICallerInfo {
     path: string;
     line: string;
     col: string;
+    matchStackIndex: number;
 }
 
-const winstonCallRegExp = new RegExp('node_modules/winston/lib/winston(?:.js|/create-logger.js)');
+const winstonDetectCallOptimiseFromPath = 'node_modules/winston/lib/winston/_stream_writable.js';
+const winstonLastCallSearchPath = 'node_modules/winston/lib/winston/create-logger.js';
 
 // Matches lines like: at Object.<anonymous> (path:line:col) or at path:line:col
 const stackTraceLineRegExp = new RegExp('.* \\(?(?<path>.*):(?<line>[0-9]+):(?<col>[0-9]+)');
@@ -16,7 +18,7 @@ const initialStackTraceLimit = Error.stackTraceLimit;
 const maxCallStackTraceLimit = 50; // to avoid infinite loops
 
 export class LoggerCallStack {
-    private callerLineIndexInStack = 0;
+    private callerLineSearchFromIndexInStack = 1; // first line of stack is "Error" and message
 
     public getCallStackTrace(): string | null {
         let stackLines = this.getStackLines();
@@ -25,16 +27,17 @@ export class LoggerCallStack {
         }
 
         let previousStackLinesLength = 0;
+        let callerInfo: ICallerInfo | null = this.detectCallLineIndexInStack(stackLines);
         while (
-            !this.callStackTraceLongEnough(stackLines) &&
+            !this.callStackTraceLongEnough(callerInfo, stackLines) &&
             // stack trace not long enough yet, can still grow
             stackLines.length > previousStackLinesLength &&
             // avoid infinite loop
             Error.stackTraceLimit < maxCallStackTraceLimit
         ) {
-            this.detectCallLineIndexInStack(stackLines);
+            callerInfo = this.detectCallLineIndexInStack(stackLines);
 
-            if (!this.callStackTraceLongEnough(stackLines)) {
+            if (!this.callStackTraceLongEnough(callerInfo, stackLines)) {
                 Error.stackTraceLimit++;
 
                 previousStackLinesLength = stackLines.length;
@@ -42,22 +45,14 @@ export class LoggerCallStack {
             }
         }
 
-        return stackLines.slice(this.callerLineIndexInStack).join('\n');
+        return stackLines.slice(callerInfo ? callerInfo.matchStackIndex : 0).join('\n');
     }
 
     public getLocationInfo(): ICallerInfo | null {
         let stackLines = this.getStackLines();
+
         if (stackLines == null) {
             return null;
-        }
-
-        // First try with the last known index
-        if (this.callerLineIndexInStack > 0 && stackLines.length > this.callerLineIndexInStack) {
-            const theLine = stackLines[this.callerLineIndexInStack];
-            const matchLine = theLine.match(stackTraceLineRegExp);
-            if (matchLine?.groups) {
-                return matchLine.groups as unknown as ICallerInfo;
-            }
         }
 
         let callerInfo: ICallerInfo | null;
@@ -87,28 +82,32 @@ export class LoggerCallStack {
     }
 
     private detectCallLineIndexInStack(stackLines: string[]): ICallerInfo | null {
-        const reverseStackLines = [...stackLines].reverse();
-
         // Search the first winston call in the stack
-        // Start at index 1 because first line may the effective caller
-        for (let i = 1; i < reverseStackLines.length; i++) {
-            const matchWinstonCall = reverseStackLines[i].match(winstonCallRegExp);
-            if (matchWinstonCall) {
-                // The previous line is the caller
-                const matchLine = reverseStackLines[i - 1].match(stackTraceLineRegExp);
+        for (let i = this.callerLineSearchFromIndexInStack; i < stackLines.length; i++) {
+            if (stackLines[i].includes(winstonLastCallSearchPath)) {
+                // The next line is the caller
+                const matchLine = stackLines[i + 1]?.match(stackTraceLineRegExp);
                 if (matchLine?.groups) {
-                    this.callerLineIndexInStack = reverseStackLines.length - i;
-                    return matchLine.groups as unknown as ICallerInfo;
+                    return {
+                        ...matchLine.groups,
+                        matchStackIndex: i + 1,
+                    } as unknown as ICallerInfo;
                 }
+            }
+            if (stackLines[i].includes(winstonDetectCallOptimiseFromPath)) {
+                // Next call to this.callerLineSearchFromIndexInStack will start from there in stack
+                this.callerLineSearchFromIndexInStack++;
             }
         }
 
         return null;
     }
 
-    private callStackTraceLongEnough(stackLines: string[]): boolean {
+    private callStackTraceLongEnough(callerInfo: ICallerInfo | null, stackLines: string[]): boolean {
         return (
-            this.callerLineIndexInStack > 0 && stackLines.length - this.callerLineIndexInStack >= initialStackTraceLimit
+            !!callerInfo &&
+            callerInfo.matchStackIndex > 0 &&
+            stackLines.length - callerInfo.matchStackIndex >= initialStackTraceLimit
         );
     }
 }
