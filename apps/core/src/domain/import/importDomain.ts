@@ -1145,10 +1145,19 @@ export default function ({
                 flags: 'a', // 'a' means appending (old data will be preserved)
             });
 
-            const writeLine = (line: string) => writeStream.write(line);
+            const writeLine = (line: string): Promise<void> =>
+                new Promise((resolve, reject) => {
+                    writeStream.write(line, err => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
 
             const header = '{"elements": [';
-            writeLine(header);
+            await writeLine(header);
 
             let firstElementWritten = false;
             let elementIndex = 0;
@@ -1312,7 +1321,7 @@ export default function ({
 
                         // Adding element to JSON file.
                         // Add comma if not first element
-                        writeLine((firstElementWritten ? ',' : '') + JSON.stringify(element));
+                        await writeLine((firstElementWritten ? ',' : '') + JSON.stringify(element));
 
                         excelMapping[elementIndex++] = {sheet: indexSheet, line: indexLine + 1}; // +1 because we removed the first line
 
@@ -1322,7 +1331,7 @@ export default function ({
             }
 
             // End of file.
-            writeLine('], "trees": []}');
+            await writeLine('], "trees": []}');
             await new Promise(resolve => writeStream.end(resolve));
 
             // Delete xlsx file
