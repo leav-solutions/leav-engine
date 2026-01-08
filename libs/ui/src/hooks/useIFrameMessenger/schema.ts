@@ -53,7 +53,7 @@ export const basePanelSchema = z.object({
     icon: FontAwesomeIconSchema,
     name: z.record(LanguageSchema, z.string()).optional(),
     isStandalone: z.boolean().optional(),
-    hideInSlider: z.boolean().optional(),
+    hideInCompactMode: z.boolean().optional(),
 });
 
 export const iframePanelSchema = z.object({

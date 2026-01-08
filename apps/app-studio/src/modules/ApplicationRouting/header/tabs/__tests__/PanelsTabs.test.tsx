@@ -68,7 +68,7 @@ describe('PanelsTabs', () => {
         type: 'explorer',
         name: {fr: 'Panneau 4', en: 'Panel 4'},
         actions: [],
-        hideInSlider: true,
+        hideInCompactMode: true,
     };
 
     const mockPanel5: Panel = {
@@ -222,10 +222,18 @@ describe('PanelsTabs', () => {
             expect(screen.queryByText('Panneau 3')).not.toBeInTheDocument();
         });
 
-        it('should filter out panels with hideInSlider when where === "slider"', () => {
+        it('should filter out panels with hideInCompactMode when where === "slider"', () => {
             spyUseApplicationSettingsContext.mockReturnValue([mockApplication] as any);
 
             renderWithTheme(<PanelsTabs {...defaultProps} where="slider" />);
+
+            expect(screen.queryByText('Panneau 4')).not.toBeInTheDocument();
+        });
+
+        it('should filter out panels with hideInCompactMode when where === "popup"', () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplication] as any);
+
+            renderWithTheme(<PanelsTabs {...defaultProps} where="popup" />);
 
             expect(screen.queryByText('Panneau 4')).not.toBeInTheDocument();
         });
