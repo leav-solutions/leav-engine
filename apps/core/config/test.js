@@ -43,7 +43,7 @@ module.exports = {
         },
     },
     tasksManager: {
-        checkingInterval: 50, // reduce latency in tests
+        checkingInterval: 20, // reduce latency in tests
         queues: {
             execOrders: 'test_tasks_exec_orders',
             cancelOrders: 'test_task_cancels_orders',
