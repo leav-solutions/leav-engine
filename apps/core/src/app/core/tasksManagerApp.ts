@@ -17,6 +17,8 @@ import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition} from '../../_types/record';
 import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {AdminPermissionsActions} from '../../_types/permissions';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timeout>;
@@ -30,6 +32,7 @@ interface IDeps {
     'core.utils'?: IUtils;
     'core.domain.record'?: IRecordDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
 }
 
 export interface IGetTasksArgs {
@@ -46,6 +49,7 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null,
+    'core.domain.permission.admin': adminPermissionDomain = null,
 }: IDeps): ITasksManagerApp {
     const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
         const record = await recordDomain.find({
@@ -185,7 +189,18 @@ export default function ({
                         task: {
                             subscribe: withFilter(
                                 () => eventsManager.subscribe([TriggerNames.TASK]),
-                                (payload: IPubSubTaskData, variables) => {
+                                async (payload: IPubSubTaskData, variables, ctx: IQueryInfos) => {
+                                    // Check permissions - users without admin access can only see their own tasks
+                                    const hasAdminAccessPermission = await adminPermissionDomain.getAdminPermission({
+                                        action: AdminPermissionsActions.ACCESS_TASKS,
+                                        ctx,
+                                    });
+
+                                    // If no access to all tasks, filter to only tasks created by the user
+                                    if (!hasAdminAccessPermission && payload.task.created_by !== ctx.userId) {
+                                        return false;
+                                    }
+
                                     let toReturn = true;
 
                                     if (typeof variables.filters?.created_by !== 'undefined') {
