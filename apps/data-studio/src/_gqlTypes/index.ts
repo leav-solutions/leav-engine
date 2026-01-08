@@ -6,55 +6,57 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** Can be anything */
-  Any: any;
+  Any: { input: any; output: any; }
   /**
    * The DateTime scalar type represents time data,
    *             represented as an ISO-8601 encoded UTC date string.
    */
-  DateTime: any;
+  DateTime: { input: any; output: any; }
   /**
    * Object representing the full tree structure.
    *                             On each node we will have record data and children
    */
-  FullTreeContent: any;
+  FullTreeContent: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: any;
+  JSON: { input: any; output: any; }
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: any;
+  JSONObject: { input: any; output: any; }
   /** Object containing all previews available for a record */
-  Preview: IPreviewScalar;
+  Preview: { input: IPreviewScalar; output: IPreviewScalar; }
   /** System entities fields translation (label...) */
-  SystemTranslation: any;
+  SystemTranslation: { input: any; output: any; }
   /** System entities fields translation (label...) */
-  SystemTranslationOptional: any;
-  TaskPriority: any;
+  SystemTranslationOptional: { input: any; output: any; }
+  TaskPriority: { input: any; output: any; }
   /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
+  Upload: { input: any; output: any; }
 };
 
 export type AccessRecordByDefaultPermissionInput = {
-  attributeId: Scalars['ID'];
-  libraryId: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
 };
 
 export type ActionConfigurationInput = {
-  error_message?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  id: Scalars['ID'];
+  error_message?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  id: Scalars['ID']['input'];
   params?: InputMaybe<Array<ActionConfigurationParamInput>>;
 };
 
 export type ActionConfigurationParamInput = {
-  name: Scalars['String'];
-  value: Scalars['String'];
+  name: Scalars['String']['input'];
+  value: Scalars['String']['input'];
 };
 
 export enum ActionIoTypes {
@@ -73,17 +75,17 @@ export type ActionsListConfigurationInput = {
 };
 
 export type ApiKeyInput = {
-  expiresAt?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['String']>;
-  label: Scalars['String'];
-  userId: Scalars['String'];
+  expiresAt?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type ApiKeysFiltersInput = {
-  createdBy?: InputMaybe<Scalars['Int']>;
-  label?: InputMaybe<Scalars['String']>;
-  modifiedBy?: InputMaybe<Scalars['Int']>;
-  user_id?: InputMaybe<Scalars['String']>;
+  createdBy?: InputMaybe<Scalars['Int']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  modifiedBy?: InputMaybe<Scalars['Int']['input']>;
+  user_id?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum ApiKeysSortableFields {
@@ -96,9 +98,9 @@ export enum ApiKeysSortableFields {
 }
 
 export type ApplicationEventFiltersInput = {
-  applicationId?: InputMaybe<Scalars['ID']>;
+  applicationId?: InputMaybe<Scalars['ID']['input']>;
   events?: InputMaybe<Array<ApplicationEventTypes>>;
-  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum ApplicationEventTypes {
@@ -107,19 +109,19 @@ export enum ApplicationEventTypes {
 }
 
 export type ApplicationIconInput = {
-  libraryId: Scalars['String'];
-  recordId: Scalars['String'];
+  libraryId: Scalars['String']['input'];
+  recordId: Scalars['String']['input'];
 };
 
 export type ApplicationInput = {
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  endpoint?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  endpoint?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<ApplicationIconInput>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  module?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  module?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type?: InputMaybe<ApplicationType>;
 };
 
@@ -137,11 +139,11 @@ export enum ApplicationType {
 }
 
 export type ApplicationsFiltersInput = {
-  endpoint?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['String']>;
-  module?: InputMaybe<Scalars['String']>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  endpoint?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  module?: InputMaybe<Scalars['String']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Array<InputMaybe<ApplicationType>>>;
 };
 
@@ -159,33 +161,33 @@ export enum AttributeFormat {
 
 export type AttributeInput = {
   actions_list?: InputMaybe<ActionsListConfigurationInput>;
-  character_limit?: InputMaybe<Scalars['Int']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  character_limit?: InputMaybe<Scalars['Int']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  linked_library?: InputMaybe<Scalars['String']>;
-  linked_tree?: InputMaybe<Scalars['String']>;
-  metadata_fields?: InputMaybe<Array<Scalars['String']>>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  linked_library?: InputMaybe<Scalars['String']['input']>;
+  linked_tree?: InputMaybe<Scalars['String']['input']>;
+  metadata_fields?: InputMaybe<Array<Scalars['String']['input']>>;
   multi_link_display_option?: InputMaybe<MultiDisplayOption>;
   multi_tree_display_option?: InputMaybe<MultiDisplayOption>;
-  multiple_values?: InputMaybe<Scalars['Boolean']>;
+  multiple_values?: InputMaybe<Scalars['Boolean']['input']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   permissions_conf_dependent_values?: InputMaybe<TreePermissionsDependentValuesConfInput>;
-  readonly?: InputMaybe<Scalars['Boolean']>;
-  required?: InputMaybe<Scalars['Boolean']>;
-  reverse_link?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  readonly?: InputMaybe<Scalars['Boolean']['input']>;
+  required?: InputMaybe<Scalars['Boolean']['input']>;
+  reverse_link?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type?: InputMaybe<AttributeType>;
-  unique?: InputMaybe<Scalars['Boolean']>;
+  unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
   versions_conf?: InputMaybe<ValuesVersionsConfInput>;
 };
 
 export type AttributePermissionsRecord = {
-  id?: InputMaybe<Scalars['String']>;
-  library: Scalars['String'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  library: Scalars['String']['input'];
 };
 
 export enum AttributeType {
@@ -198,15 +200,15 @@ export enum AttributeType {
 
 export type AttributesFiltersInput = {
   format?: InputMaybe<Array<AttributeFormat>>;
-  id?: InputMaybe<Scalars['ID']>;
-  ids?: InputMaybe<Array<Scalars['ID']>>;
-  label?: InputMaybe<Scalars['String']>;
-  libraries?: InputMaybe<Array<Scalars['String']>>;
-  librariesExcluded?: InputMaybe<Array<Scalars['String']>>;
-  multiple_values?: InputMaybe<Scalars['Boolean']>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  libraries?: InputMaybe<Array<Scalars['String']['input']>>;
+  librariesExcluded?: InputMaybe<Array<Scalars['String']['input']>>;
+  multiple_values?: InputMaybe<Scalars['Boolean']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Array<AttributeType>>;
-  versionable?: InputMaybe<Scalars['Boolean']>;
+  versionable?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum AttributesSortableFields {
@@ -225,8 +227,8 @@ export enum AvailableLanguage {
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
-  attributeId: Scalars['ID'];
-  libraryId: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
 };
 
 export type CreateRecordDataInput = {
@@ -235,47 +237,47 @@ export type CreateRecordDataInput = {
 };
 
 export type DeleteTaskInput = {
-  archive: Scalars['Boolean'];
-  id: Scalars['ID'];
+  archive: Scalars['Boolean']['input'];
+  id: Scalars['ID']['input'];
 };
 
 export type DependentValuesPermissionFilterInput = {
-  attributeId: Scalars['ID'];
-  libraryId: Scalars['ID'];
-  recordId: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
 };
 
 export type DiscussionCommentInput = {
   mentions?: InputMaybe<DiscussionMentionsInput>;
-  message: Scalars['String'];
+  message: Scalars['String']['input'];
   targetRecord: DiscussionTargetRecordInput;
-  threadId?: InputMaybe<Scalars['String']>;
+  threadId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DiscussionMentionsInput = {
-  url: Scalars['String'];
-  users?: InputMaybe<Array<Scalars['String']>>;
+  url: Scalars['String']['input'];
+  users?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type DiscussionTargetRecordInput = {
-  id: Scalars['String'];
-  libraryId: Scalars['String'];
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type EmbeddedAttributeInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  validation_regex?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  validation_regex?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type FileInput = {
-  data: Scalars['Upload'];
-  replace?: InputMaybe<Scalars['Boolean']>;
-  size?: InputMaybe<Scalars['Int']>;
-  uid: Scalars['String'];
+  data: Scalars['Upload']['input'];
+  replace?: InputMaybe<Scalars['Boolean']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  uid: Scalars['String']['input'];
 };
 
 export enum FileType {
@@ -287,22 +289,22 @@ export enum FileType {
 }
 
 export type FormDependencyValueInput = {
-  attribute: Scalars['ID'];
-  value: Scalars['ID'];
+  attribute: Scalars['ID']['input'];
+  value: Scalars['ID']['input'];
 };
 
 export type FormElementInput = {
-  containerId: Scalars['ID'];
-  id: Scalars['ID'];
-  order: Scalars['Int'];
+  containerId: Scalars['ID']['input'];
+  id: Scalars['ID']['input'];
+  order: Scalars['Int']['input'];
   settings: Array<FormElementSettingsInput>;
   type: FormElementTypes;
-  uiElementType: Scalars['String'];
+  uiElementType: Scalars['String']['input'];
 };
 
 export type FormElementSettingsInput = {
-  key: Scalars['String'];
-  value: Scalars['Any'];
+  key: Scalars['String']['input'];
+  value: Scalars['Any']['input'];
 };
 
 export enum FormElementTypes {
@@ -316,24 +318,24 @@ export type FormElementsByDepsInput = {
 };
 
 export type FormFiltersInput = {
-  id?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['String']>;
-  library: Scalars['ID'];
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  library: Scalars['ID']['input'];
+  system?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type FormInput = {
-  dependencyAttributes?: InputMaybe<Array<Scalars['ID']>>;
+  dependencyAttributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   elements?: InputMaybe<Array<FormElementsByDepsInput>>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  library: Scalars['ID'];
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library: Scalars['ID']['input'];
   sidePanel?: InputMaybe<FormSidePanelInput>;
 };
 
 export type FormSidePanelInput = {
-  enable: Scalars['Boolean'];
-  isOpenByDefault: Scalars['Boolean'];
+  enable: Scalars['Boolean']['input'];
+  isOpenByDefault: Scalars['Boolean']['input'];
 };
 
 export enum FormsSortableFields {
@@ -343,16 +345,16 @@ export enum FormsSortableFields {
 }
 
 export type GlobalSettingsFileInput = {
-  library: Scalars['String'];
-  recordId: Scalars['String'];
+  library: Scalars['String']['input'];
+  recordId: Scalars['String']['input'];
 };
 
 export type GlobalSettingsInput = {
-  defaultApp?: InputMaybe<Scalars['String']>;
+  defaultApp?: InputMaybe<Scalars['String']['input']>;
   favicon?: InputMaybe<GlobalSettingsFileInput>;
   icon?: InputMaybe<GlobalSettingsFileInput>;
-  name?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
 };
 
 export enum IoTypes {
@@ -394,9 +396,9 @@ export enum InfoType {
 
 export type LibrariesFiltersInput = {
   behavior?: InputMaybe<Array<LibraryBehavior>>;
-  id?: InputMaybe<Array<Scalars['ID']>>;
-  label?: InputMaybe<Array<Scalars['String']>>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Array<Scalars['ID']['input']>>;
+  label?: InputMaybe<Array<Scalars['String']['input']>>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum LibrariesSortableFields {
@@ -413,28 +415,28 @@ export enum LibraryBehavior {
 }
 
 export type LibraryIconInput = {
-  libraryId: Scalars['String'];
-  recordId: Scalars['String'];
+  libraryId: Scalars['String']['input'];
+  recordId: Scalars['String']['input'];
 };
 
 export type LibraryInput = {
-  attributes?: InputMaybe<Array<Scalars['ID']>>;
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   behavior?: InputMaybe<LibraryBehavior>;
-  defaultView?: InputMaybe<Scalars['ID']>;
-  fullTextAttributes?: InputMaybe<Array<Scalars['ID']>>;
+  defaultView?: InputMaybe<Scalars['ID']['input']>;
+  fullTextAttributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   icon?: InputMaybe<LibraryIconInput>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  mandatoryAttribute?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  mandatoryAttribute?: InputMaybe<Scalars['ID']['input']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   previewsSettings?: InputMaybe<Array<LibraryPreviewsSettingsInput>>;
   recordIdentityConf?: InputMaybe<RecordIdentityConfInput>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
 };
 
 export type LibraryPreviewsSettingsInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  label: Scalars['SystemTranslation'];
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  label: Scalars['SystemTranslation']['input'];
   versions: PreviewVersionInput;
 };
 
@@ -472,17 +474,17 @@ export enum LogAction {
 
 export type LogFilterInput = {
   actions?: InputMaybe<Array<LogAction>>;
-  instanceId?: InputMaybe<Scalars['String']>;
-  queryId?: InputMaybe<Scalars['String']>;
+  instanceId?: InputMaybe<Scalars['String']['input']>;
+  queryId?: InputMaybe<Scalars['String']['input']>;
   time?: InputMaybe<LogFilterTimeInput>;
   topic?: InputMaybe<LogTopicFilterInput>;
-  trigger?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  trigger?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LogFilterTimeInput = {
-  from?: InputMaybe<Scalars['Int']>;
-  to?: InputMaybe<Scalars['Int']>;
+  from?: InputMaybe<Scalars['Int']['input']>;
+  to?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type LogSortInput = {
@@ -500,29 +502,29 @@ export enum LogSortableField {
 }
 
 export type LogTopicFilterInput = {
-  apiKey?: InputMaybe<Scalars['String']>;
-  attribute?: InputMaybe<Scalars['String']>;
-  filename?: InputMaybe<Scalars['String']>;
-  library?: InputMaybe<Scalars['String']>;
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
   permission?: InputMaybe<LogTopicPermissionFilterInput>;
-  profile?: InputMaybe<Scalars['String']>;
+  profile?: InputMaybe<Scalars['String']['input']>;
   record?: InputMaybe<LogTopicRecordFilterInput>;
-  tree?: InputMaybe<Scalars['String']>;
+  tree?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LogTopicPermissionFilterInput = {
-  applyTo?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<Scalars['String']>;
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LogTopicRecordFilterInput = {
-  id?: InputMaybe<Scalars['String']>;
-  libraryId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']>;
-  before?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export enum MultiDisplayOption {
@@ -539,29 +541,29 @@ export enum NotificationLevel {
 }
 
 export type Pagination = {
-  limit: Scalars['Int'];
-  offset: Scalars['Int'];
+  limit: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
 };
 
 export type PermissionActionInput = {
-  allowed?: InputMaybe<Scalars['Boolean']>;
+  allowed?: InputMaybe<Scalars['Boolean']['input']>;
   name: PermissionsActions;
 };
 
 export type PermissionInput = {
   actions: Array<PermissionActionInput>;
-  applyTo?: InputMaybe<Scalars['ID']>;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
   dependenciesTreeTargets?: InputMaybe<Array<PermissionsDependenciesTreeTargetInput>>;
   permissionTreeTarget?: InputMaybe<PermissionsTreeTargetInput>;
   type: PermissionTypes;
-  usersGroup?: InputMaybe<Scalars['ID']>;
+  usersGroup?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type PermissionTarget = {
-  attributeId?: InputMaybe<Scalars['ID']>;
-  libraryId?: InputMaybe<Scalars['ID']>;
-  nodeId?: InputMaybe<Scalars['ID']>;
-  recordId?: InputMaybe<Scalars['ID']>;
+  attributeId?: InputMaybe<Scalars['ID']['input']>;
+  libraryId?: InputMaybe<Scalars['ID']['input']>;
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+  recordId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export enum PermissionTypes {
@@ -629,9 +631,9 @@ export enum PermissionsActions {
 }
 
 export type PermissionsDependenciesTreeTargetInput = {
-  attributeId: Scalars['ID'];
-  nodeId?: InputMaybe<Scalars['ID']>;
-  tree: Scalars['ID'];
+  attributeId: Scalars['ID']['input'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+  tree: Scalars['ID']['input'];
 };
 
 export enum PermissionsRelation {
@@ -640,19 +642,19 @@ export enum PermissionsRelation {
 }
 
 export type PermissionsTreeTargetInput = {
-  nodeId?: InputMaybe<Scalars['ID']>;
-  tree: Scalars['ID'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+  tree: Scalars['ID']['input'];
 };
 
 export type PreviewVersionInput = {
-  background: Scalars['String'];
-  density: Scalars['Int'];
+  background: Scalars['String']['input'];
+  density: Scalars['Int']['input'];
   sizes: Array<PreviewVersionSizeInput>;
 };
 
 export type PreviewVersionSizeInput = {
-  name: Scalars['String'];
-  size: Scalars['Int'];
+  name: Scalars['String']['input'];
+  size: Scalars['Int']['input'];
 };
 
 export enum RecordFilterCondition {
@@ -687,10 +689,11 @@ export enum RecordFilterCondition {
 
 export type RecordFilterInput = {
   condition?: InputMaybe<RecordFilterCondition>;
-  field?: InputMaybe<Scalars['String']>;
+  field?: InputMaybe<Scalars['String']['input']>;
   operator?: InputMaybe<RecordFilterOperator>;
-  treeId?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
+  treeId?: InputMaybe<Scalars['String']['input']>;
+  value?: InputMaybe<Scalars['String']['input']>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum RecordFilterOperator {
@@ -701,16 +704,16 @@ export enum RecordFilterOperator {
 }
 
 export type RecordIdentityConfInput = {
-  color?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['ID']>;
-  preview?: InputMaybe<Scalars['ID']>;
-  subLabel?: InputMaybe<Scalars['ID']>;
-  treeColorPreview?: InputMaybe<Scalars['ID']>;
+  color?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['ID']['input']>;
+  preview?: InputMaybe<Scalars['ID']['input']>;
+  subLabel?: InputMaybe<Scalars['ID']['input']>;
+  treeColorPreview?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type RecordInput = {
-  id: Scalars['ID'];
-  library: Scalars['String'];
+  id: Scalars['ID']['input'];
+  library: Scalars['String']['input'];
 };
 
 export enum RecordPermissionsActions {
@@ -722,30 +725,30 @@ export enum RecordPermissionsActions {
 }
 
 export type RecordSortInput = {
-  field: Scalars['String'];
+  field: Scalars['String']['input'];
   order: SortOrder;
 };
 
 export type RecordUpdateFilterInput = {
-  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
-  libraries?: InputMaybe<Array<Scalars['ID']>>;
-  records?: InputMaybe<Array<Scalars['ID']>>;
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  libraries?: InputMaybe<Array<Scalars['ID']['input']>>;
+  records?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type RecordsPagination = {
-  cursor?: InputMaybe<Scalars['String']>;
-  limit: Scalars['Int'];
-  offset?: InputMaybe<Scalars['Int']>;
+  cursor?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type SheetInput = {
-  keyIndex?: InputMaybe<Scalars['Int']>;
-  keyToIndex?: InputMaybe<Scalars['Int']>;
-  library: Scalars['String'];
-  linkAttribute?: InputMaybe<Scalars['String']>;
-  mapping?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  keyIndex?: InputMaybe<Scalars['Int']['input']>;
+  keyToIndex?: InputMaybe<Scalars['Int']['input']>;
+  library: Scalars['String']['input'];
+  linkAttribute?: InputMaybe<Scalars['String']['input']>;
+  mapping?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   mode: ImportMode;
-  treeLinkLibrary?: InputMaybe<Scalars['String']>;
+  treeLinkLibrary?: InputMaybe<Scalars['String']['input']>;
   type: ImportType;
 };
 
@@ -790,9 +793,9 @@ export type SortVersionProfilesInput = {
 };
 
 export type TaskFiltersInput = {
-  archive?: InputMaybe<Scalars['Boolean']>;
-  created_by?: InputMaybe<Scalars['ID']>;
-  id?: InputMaybe<Scalars['ID']>;
+  archive?: InputMaybe<Scalars['Boolean']['input']>;
+  created_by?: InputMaybe<Scalars['ID']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
   status?: InputMaybe<TaskStatus>;
   type?: InputMaybe<TaskType>;
 };
@@ -821,15 +824,15 @@ export enum TreeBehavior {
 }
 
 export type TreeElementInput = {
-  id: Scalars['ID'];
-  library: Scalars['String'];
+  id: Scalars['ID']['input'];
+  library: Scalars['String']['input'];
 };
 
 export type TreeEventFiltersInput = {
   events?: InputMaybe<Array<TreeEventTypes>>;
-  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
-  nodes?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  treeId: Scalars['ID'];
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  nodes?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
+  treeId: Scalars['ID']['input'];
 };
 
 export enum TreeEventTypes {
@@ -840,44 +843,44 @@ export enum TreeEventTypes {
 
 export type TreeInput = {
   behavior?: InputMaybe<TreeBehavior>;
-  id: Scalars['ID'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   libraries?: InputMaybe<Array<TreeLibraryInput>>;
   permissions_conf?: InputMaybe<Array<TreeNodePermissionsConfInput>>;
-  settings?: InputMaybe<Scalars['JSONObject']>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
 };
 
 export type TreeLibraryInput = {
-  library: Scalars['ID'];
+  library: Scalars['ID']['input'];
   settings: TreeLibrarySettingsInput;
 };
 
 export type TreeLibrarySettingsInput = {
-  allowMultiplePositions: Scalars['Boolean'];
-  allowedAtRoot: Scalars['Boolean'];
-  allowedChildren: Array<Scalars['String']>;
+  allowMultiplePositions: Scalars['Boolean']['input'];
+  allowedAtRoot: Scalars['Boolean']['input'];
+  allowedChildren: Array<Scalars['String']['input']>;
 };
 
 export type TreeNodePermissionsConfInput = {
-  libraryId: Scalars['ID'];
+  libraryId: Scalars['ID']['input'];
   permissionsConf: TreepermissionsConfInput;
 };
 
 export type TreePermissionsDependentValuesConfInput = {
-  dependenciesTreeAttributes: Array<Scalars['ID']>;
+  dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 
 export type TreepermissionsConfInput = {
-  permissionTreeAttributes: Array<Scalars['ID']>;
+  permissionTreeAttributes: Array<Scalars['ID']['input']>;
   relation: PermissionsRelation;
 };
 
 export type TreesFiltersInput = {
   behavior?: InputMaybe<TreeBehavior>;
-  id?: InputMaybe<Array<Scalars['ID']>>;
-  label?: InputMaybe<Array<Scalars['String']>>;
-  library?: InputMaybe<Scalars['String']>;
-  system?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Array<Scalars['ID']['input']>>;
+  label?: InputMaybe<Array<Scalars['String']['input']>>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum TreesSortableFields {
@@ -887,8 +890,8 @@ export enum TreesSortableFields {
 }
 
 export type UploadFiltersInput = {
-  uid?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['ID']>;
+  uid?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export enum UserCoreDataKeys {
@@ -896,29 +899,29 @@ export enum UserCoreDataKeys {
 }
 
 export type ValueBatchInput = {
-  attribute?: InputMaybe<Scalars['ID']>;
-  id_value?: InputMaybe<Scalars['ID']>;
+  attribute?: InputMaybe<Scalars['ID']['input']>;
+  id_value?: InputMaybe<Scalars['ID']['input']>;
   metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
   /**  Use "\__empty_value__" to set an empty value  */
-  payload?: InputMaybe<Scalars['String']>;
+  payload?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ValueInput = {
-  id_value?: InputMaybe<Scalars['ID']>;
+  id_value?: InputMaybe<Scalars['ID']['input']>;
   metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
   /**  Use "\__empty_value__" to set an empty value  */
-  payload?: InputMaybe<Scalars['String']>;
+  payload?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
 export type ValueMetadataInput = {
-  name: Scalars['String'];
-  value?: InputMaybe<Scalars['String']>;
+  name: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ValueVersionInput = {
-  treeId: Scalars['String'];
-  treeNodeId: Scalars['String'];
+  treeId: Scalars['String']['input'];
+  treeNodeId: Scalars['String']['input'];
 };
 
 export enum ValueVersionMode {
@@ -927,29 +930,29 @@ export enum ValueVersionMode {
 }
 
 export type ValuesListConfInput = {
-  allowFreeEntry?: InputMaybe<Scalars['Boolean']>;
-  allowListUpdate?: InputMaybe<Scalars['Boolean']>;
-  enable: Scalars['Boolean'];
-  values?: InputMaybe<Array<Scalars['String']>>;
+  allowFreeEntry?: InputMaybe<Scalars['Boolean']['input']>;
+  allowListUpdate?: InputMaybe<Scalars['Boolean']['input']>;
+  enable: Scalars['Boolean']['input'];
+  values?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type ValuesVersionsConfInput = {
   mode?: InputMaybe<ValueVersionMode>;
-  profile?: InputMaybe<Scalars['String']>;
-  versionable: Scalars['Boolean'];
+  profile?: InputMaybe<Scalars['String']['input']>;
+  versionable: Scalars['Boolean']['input'];
 };
 
 export type VersionProfileInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
-  id: Scalars['String'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  trees?: InputMaybe<Array<Scalars['String']>>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  trees?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type VersionProfilesFiltersInput = {
-  id?: InputMaybe<Scalars['ID']>;
-  label?: InputMaybe<Scalars['String']>;
-  trees?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  trees?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum VersionProfilesSortableFields {
@@ -962,29 +965,29 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
-  attributes?: InputMaybe<Array<Scalars['String']>>;
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display: ViewDisplayInput;
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  id?: InputMaybe<Scalars['String']>;
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  library: Scalars['String'];
-  shared: Scalars['Boolean'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library: Scalars['String']['input'];
+  shared: Scalars['Boolean']['input'];
   sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewValuesVersionInput>>;
 };
 
 export type ViewInputPartial = {
-  attributes?: InputMaybe<Array<Scalars['String']>>;
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']>;
+  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewDisplayInput>;
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  id: Scalars['String'];
-  label?: InputMaybe<Scalars['SystemTranslation']>;
-  library?: InputMaybe<Scalars['String']>;
-  shared?: InputMaybe<Scalars['Boolean']>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
   sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewValuesVersionInput>>;
 };
@@ -1002,8 +1005,8 @@ export enum ViewTypes {
 }
 
 export type ViewValuesVersionInput = {
-  treeId: Scalars['String'];
-  treeNode: Scalars['String'];
+  treeId: Scalars['String']['input'];
+  treeNode: Scalars['String']['input'];
 };
 
 export type ApplicationDetailsFragment = { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } };
@@ -1011,7 +1014,7 @@ export type ApplicationDetailsFragment = { id: string, label: any, type: Applica
 export type RecordIdentityFragment = { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } };
 
 export type CancelTaskMutationVariables = Exact<{
-  taskId: Scalars['ID'];
+  taskId: Scalars['ID']['input'];
 }>;
 
 
@@ -1025,45 +1028,45 @@ export type DeleteTasksMutationVariables = Exact<{
 export type DeleteTasksMutation = { deleteTasks: boolean };
 
 export type AddTreeElementMutationVariables = Exact<{
-  treeId: Scalars['ID'];
+  treeId: Scalars['ID']['input'];
   element: TreeElementInput;
-  parent?: InputMaybe<Scalars['ID']>;
-  order?: InputMaybe<Scalars['Int']>;
+  parent?: InputMaybe<Scalars['ID']['input']>;
+  order?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
 export type AddTreeElementMutation = { treeAddElement: { id: string } };
 
 export type MoveTreeElementMutationVariables = Exact<{
-  treeId: Scalars['ID'];
-  nodeId: Scalars['ID'];
-  parentTo?: InputMaybe<Scalars['ID']>;
-  order?: InputMaybe<Scalars['Int']>;
+  treeId: Scalars['ID']['input'];
+  nodeId: Scalars['ID']['input'];
+  parentTo?: InputMaybe<Scalars['ID']['input']>;
+  order?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
 export type MoveTreeElementMutation = { treeMoveElement: { id: string } };
 
 export type RemoveTreeElementMutationVariables = Exact<{
-  treeId: Scalars['ID'];
-  nodeId: Scalars['ID'];
-  deleteChildren?: InputMaybe<Scalars['Boolean']>;
+  treeId: Scalars['ID']['input'];
+  nodeId: Scalars['ID']['input'];
+  deleteChildren?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
 export type RemoveTreeElementMutation = { treeDeleteElement: string };
 
 export type SaveUserDataMutationVariables = Exact<{
-  key: Scalars['String'];
-  value?: InputMaybe<Scalars['Any']>;
-  global: Scalars['Boolean'];
+  key: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['Any']['input']>;
+  global: Scalars['Boolean']['input'];
 }>;
 
 
 export type SaveUserDataMutation = { saveUserData: { global: boolean, data?: any | null } };
 
 export type GetApplicationByEndpointQueryVariables = Exact<{
-  endpoint: Scalars['String'];
+  endpoint: Scalars['String']['input'];
 }>;
 
 
@@ -1102,7 +1105,7 @@ export type GetLibrariesListQueryVariables = Exact<{
 export type GetLibrariesListQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } } | null, previewsSettings?: Array<{ description?: any | null, label: any, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null, permissions?: { access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null }> } | null };
 
 export type GetLibraryPermissionsQueryVariables = Exact<{
-  libraryId?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+  libraryId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 
@@ -1111,7 +1114,7 @@ export type GetLibraryPermissionsQuery = { libraries?: { list: Array<{ permissio
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
   actions: Array<PermissionsActions> | PermissionsActions;
-  applyTo?: InputMaybe<Scalars['ID']>;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
   target?: InputMaybe<PermissionTarget>;
 }>;
 
@@ -1126,15 +1129,19 @@ export type GetTasksQueryVariables = Exact<{
 export type GetTasksQuery = { tasks: { totalCount: number, list: Array<{ id: string, label: any, modified_at: number, created_at: number, startAt: number, status: TaskStatus, priority: any, startedAt?: number | null, completedAt?: number | null, archive: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } }, role?: { type: TaskType, detail?: string | null } | null, progress?: { percent?: number | null, description?: any | null } | null, link?: { name: string, url: string } | null, canceledBy?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } } | null }> } };
 
 export type GetTreeAttributesQueryQueryVariables = Exact<{
-  treeId?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+  treeId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 
-export type GetTreeAttributesQueryQuery = { trees?: { list: Array<{ id: string, libraries: Array<{ library: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, linked_library?: { id: string } | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null }> | null } }> }> } | null };
+export type GetTreeAttributesQueryQuery = { trees?: { list: Array<{ id: string, libraries: Array<{ library: { id: string, label?: any | null, attributes?: Array<
+            | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, linked_library?: { id: string } | null }
+            | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null }
+            | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null }
+          > | null } }> }> } | null };
 
 export type GetTreeLibrariesQueryVariables = Exact<{
-  treeId?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
-  library?: InputMaybe<Scalars['String']>;
+  treeId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -1145,11 +1152,11 @@ export type GetTreesQueryVariables = Exact<{
 }>;
 
 
-export type GetTreesQuery = { trees?: { list: Array<{ id: string, label?: any | null, behavior: TreeBehavior, libraries: Array<{ library: { id: string, label?: any | null, behavior: LibraryBehavior } }>, permissions: { access_tree: boolean, edit_children: boolean } }> } | null };
+export type GetTreesQuery = { trees?: { list: Array<{ id: string, label?: any | null, behavior: TreeBehavior, libraries: Array<{ library: { id: string, behavior: LibraryBehavior, label?: any | null } }>, permissions: { access_tree: boolean, edit_children: boolean } }> } | null };
 
 export type TreeNodeChildrenQueryVariables = Exact<{
-  treeId: Scalars['ID'];
-  node?: InputMaybe<Scalars['ID']>;
+  treeId: Scalars['ID']['input'];
+  node?: InputMaybe<Scalars['ID']['input']>;
   pagination?: InputMaybe<Pagination>;
 }>;
 
@@ -1157,8 +1164,8 @@ export type TreeNodeChildrenQueryVariables = Exact<{
 export type TreeNodeChildrenQuery = { treeNodeChildren: { totalCount?: number | null, list: Array<{ id: string, childrenCount?: number | null, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } }, active: Array<{ value?: any | null }> }, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> } };
 
 export type GetUserDataQueryVariables = Exact<{
-  keys: Array<Scalars['String']> | Scalars['String'];
-  global?: InputMaybe<Scalars['Boolean']>;
+  keys: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  global?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
@@ -1470,7 +1477,7 @@ export const GetApplicationByEndpointDocument = gql`
  *   },
  * });
  */
-export function useGetApplicationByEndpointQuery(baseOptions: Apollo.QueryHookOptions<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>) {
+export function useGetApplicationByEndpointQuery(baseOptions: Apollo.QueryHookOptions<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables> & ({ variables: GetApplicationByEndpointQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>(GetApplicationByEndpointDocument, options);
       }
@@ -1478,8 +1485,16 @@ export function useGetApplicationByEndpointLazyQuery(baseOptions?: Apollo.LazyQu
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>(GetApplicationByEndpointDocument, options);
         }
+// @ts-ignore
+export function useGetApplicationByEndpointSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>): Apollo.UseSuspenseQueryResult<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>;
+export function useGetApplicationByEndpointSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>): Apollo.UseSuspenseQueryResult<GetApplicationByEndpointQuery | undefined, GetApplicationByEndpointQueryVariables>;
+export function useGetApplicationByEndpointSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>(GetApplicationByEndpointDocument, options);
+        }
 export type GetApplicationByEndpointQueryHookResult = ReturnType<typeof useGetApplicationByEndpointQuery>;
 export type GetApplicationByEndpointLazyQueryHookResult = ReturnType<typeof useGetApplicationByEndpointLazyQuery>;
+export type GetApplicationByEndpointSuspenseQueryHookResult = ReturnType<typeof useGetApplicationByEndpointSuspenseQuery>;
 export type GetApplicationByEndpointQueryResult = Apollo.QueryResult<GetApplicationByEndpointQuery, GetApplicationByEndpointQueryVariables>;
 export const GetApplicationsDocument = gql`
     query GET_APPLICATIONS {
@@ -1522,8 +1537,16 @@ export function useGetApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetApplicationsQuery, GetApplicationsQueryVariables>(GetApplicationsDocument, options);
         }
+// @ts-ignore
+export function useGetApplicationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationsQuery, GetApplicationsQueryVariables>): Apollo.UseSuspenseQueryResult<GetApplicationsQuery, GetApplicationsQueryVariables>;
+export function useGetApplicationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetApplicationsQuery, GetApplicationsQueryVariables>): Apollo.UseSuspenseQueryResult<GetApplicationsQuery | undefined, GetApplicationsQueryVariables>;
+export function useGetApplicationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetApplicationsQuery, GetApplicationsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetApplicationsQuery, GetApplicationsQueryVariables>(GetApplicationsDocument, options);
+        }
 export type GetApplicationsQueryHookResult = ReturnType<typeof useGetApplicationsQuery>;
 export type GetApplicationsLazyQueryHookResult = ReturnType<typeof useGetApplicationsLazyQuery>;
+export type GetApplicationsSuspenseQueryHookResult = ReturnType<typeof useGetApplicationsSuspenseQuery>;
 export type GetApplicationsQueryResult = Apollo.QueryResult<GetApplicationsQuery, GetApplicationsQueryVariables>;
 export const GetActiveLibraryDocument = gql`
     query GET_ACTIVE_LIBRARY {
@@ -1567,8 +1590,16 @@ export function useGetActiveLibraryLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>(GetActiveLibraryDocument, options);
         }
+// @ts-ignore
+export function useGetActiveLibrarySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>): Apollo.UseSuspenseQueryResult<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>;
+export function useGetActiveLibrarySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>): Apollo.UseSuspenseQueryResult<GetActiveLibraryQuery | undefined, GetActiveLibraryQueryVariables>;
+export function useGetActiveLibrarySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>(GetActiveLibraryDocument, options);
+        }
 export type GetActiveLibraryQueryHookResult = ReturnType<typeof useGetActiveLibraryQuery>;
 export type GetActiveLibraryLazyQueryHookResult = ReturnType<typeof useGetActiveLibraryLazyQuery>;
+export type GetActiveLibrarySuspenseQueryHookResult = ReturnType<typeof useGetActiveLibrarySuspenseQuery>;
 export type GetActiveLibraryQueryResult = Apollo.QueryResult<GetActiveLibraryQuery, GetActiveLibraryQueryVariables>;
 export const GetActiveTreeDocument = gql`
     query GET_ACTIVE_TREE {
@@ -1611,8 +1642,16 @@ export function useGetActiveTreeLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetActiveTreeQuery, GetActiveTreeQueryVariables>(GetActiveTreeDocument, options);
         }
+// @ts-ignore
+export function useGetActiveTreeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetActiveTreeQuery, GetActiveTreeQueryVariables>): Apollo.UseSuspenseQueryResult<GetActiveTreeQuery, GetActiveTreeQueryVariables>;
+export function useGetActiveTreeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetActiveTreeQuery, GetActiveTreeQueryVariables>): Apollo.UseSuspenseQueryResult<GetActiveTreeQuery | undefined, GetActiveTreeQueryVariables>;
+export function useGetActiveTreeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetActiveTreeQuery, GetActiveTreeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetActiveTreeQuery, GetActiveTreeQueryVariables>(GetActiveTreeDocument, options);
+        }
 export type GetActiveTreeQueryHookResult = ReturnType<typeof useGetActiveTreeQuery>;
 export type GetActiveTreeLazyQueryHookResult = ReturnType<typeof useGetActiveTreeLazyQuery>;
+export type GetActiveTreeSuspenseQueryHookResult = ReturnType<typeof useGetActiveTreeSuspenseQuery>;
 export type GetActiveTreeQueryResult = Apollo.QueryResult<GetActiveTreeQuery, GetActiveTreeQueryVariables>;
 export const GetLangsDocument = gql`
     query GET_LANGS {
@@ -1643,8 +1682,16 @@ export function useGetLangsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLangsQuery, GetLangsQueryVariables>(GetLangsDocument, options);
         }
+// @ts-ignore
+export function useGetLangsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLangsQuery, GetLangsQueryVariables>): Apollo.UseSuspenseQueryResult<GetLangsQuery, GetLangsQueryVariables>;
+export function useGetLangsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLangsQuery, GetLangsQueryVariables>): Apollo.UseSuspenseQueryResult<GetLangsQuery | undefined, GetLangsQueryVariables>;
+export function useGetLangsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLangsQuery, GetLangsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLangsQuery, GetLangsQueryVariables>(GetLangsDocument, options);
+        }
 export type GetLangsQueryHookResult = ReturnType<typeof useGetLangsQuery>;
 export type GetLangsLazyQueryHookResult = ReturnType<typeof useGetLangsLazyQuery>;
+export type GetLangsSuspenseQueryHookResult = ReturnType<typeof useGetLangsSuspenseQuery>;
 export type GetLangsQueryResult = Apollo.QueryResult<GetLangsQuery, GetLangsQueryVariables>;
 export const GetGlobalSettingsDocument = gql`
     query GET_GLOBAL_SETTINGS {
@@ -1681,8 +1728,16 @@ export function useGetGlobalSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>(GetGlobalSettingsDocument, options);
         }
+// @ts-ignore
+export function useGetGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>): Apollo.UseSuspenseQueryResult<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>;
+export function useGetGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>): Apollo.UseSuspenseQueryResult<GetGlobalSettingsQuery | undefined, GetGlobalSettingsQueryVariables>;
+export function useGetGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>(GetGlobalSettingsDocument, options);
+        }
 export type GetGlobalSettingsQueryHookResult = ReturnType<typeof useGetGlobalSettingsQuery>;
 export type GetGlobalSettingsLazyQueryHookResult = ReturnType<typeof useGetGlobalSettingsLazyQuery>;
+export type GetGlobalSettingsSuspenseQueryHookResult = ReturnType<typeof useGetGlobalSettingsSuspenseQuery>;
 export type GetGlobalSettingsQueryResult = Apollo.QueryResult<GetGlobalSettingsQuery, GetGlobalSettingsQueryVariables>;
 export const GetLibrariesListDocument = gql`
     query GET_LIBRARIES_LIST($filters: LibrariesFiltersInput) {
@@ -1743,8 +1798,16 @@ export function useGetLibrariesListLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibrariesListQuery, GetLibrariesListQueryVariables>(GetLibrariesListDocument, options);
         }
+// @ts-ignore
+export function useGetLibrariesListSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibrariesListQuery, GetLibrariesListQueryVariables>): Apollo.UseSuspenseQueryResult<GetLibrariesListQuery, GetLibrariesListQueryVariables>;
+export function useGetLibrariesListSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLibrariesListQuery, GetLibrariesListQueryVariables>): Apollo.UseSuspenseQueryResult<GetLibrariesListQuery | undefined, GetLibrariesListQueryVariables>;
+export function useGetLibrariesListSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLibrariesListQuery, GetLibrariesListQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibrariesListQuery, GetLibrariesListQueryVariables>(GetLibrariesListDocument, options);
+        }
 export type GetLibrariesListQueryHookResult = ReturnType<typeof useGetLibrariesListQuery>;
 export type GetLibrariesListLazyQueryHookResult = ReturnType<typeof useGetLibrariesListLazyQuery>;
+export type GetLibrariesListSuspenseQueryHookResult = ReturnType<typeof useGetLibrariesListSuspenseQuery>;
 export type GetLibrariesListQueryResult = Apollo.QueryResult<GetLibrariesListQuery, GetLibrariesListQueryVariables>;
 export const GetLibraryPermissionsDocument = gql`
     query GET_LIBRARY_PERMISSIONS($libraryId: [ID!]) {
@@ -1786,8 +1849,16 @@ export function useGetLibraryPermissionsLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>(GetLibraryPermissionsDocument, options);
         }
+// @ts-ignore
+export function useGetLibraryPermissionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>): Apollo.UseSuspenseQueryResult<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>;
+export function useGetLibraryPermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>): Apollo.UseSuspenseQueryResult<GetLibraryPermissionsQuery | undefined, GetLibraryPermissionsQueryVariables>;
+export function useGetLibraryPermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>(GetLibraryPermissionsDocument, options);
+        }
 export type GetLibraryPermissionsQueryHookResult = ReturnType<typeof useGetLibraryPermissionsQuery>;
 export type GetLibraryPermissionsLazyQueryHookResult = ReturnType<typeof useGetLibraryPermissionsLazyQuery>;
+export type GetLibraryPermissionsSuspenseQueryHookResult = ReturnType<typeof useGetLibraryPermissionsSuspenseQuery>;
 export type GetLibraryPermissionsQueryResult = Apollo.QueryResult<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>;
 export const IsAllowedDocument = gql`
     query IS_ALLOWED($type: PermissionTypes!, $actions: [PermissionsActions!]!, $applyTo: ID, $target: PermissionTarget) {
@@ -1817,7 +1888,7 @@ export const IsAllowedDocument = gql`
  *   },
  * });
  */
-export function useIsAllowedQuery(baseOptions: Apollo.QueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>) {
+export function useIsAllowedQuery(baseOptions: Apollo.QueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables> & ({ variables: IsAllowedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
       }
@@ -1825,8 +1896,16 @@ export function useIsAllowedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
         }
+// @ts-ignore
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>): Apollo.UseSuspenseQueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>): Apollo.UseSuspenseQueryResult<IsAllowedQuery | undefined, IsAllowedQueryVariables>;
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+        }
 export type IsAllowedQueryHookResult = ReturnType<typeof useIsAllowedQuery>;
 export type IsAllowedLazyQueryHookResult = ReturnType<typeof useIsAllowedLazyQuery>;
+export type IsAllowedSuspenseQueryHookResult = ReturnType<typeof useIsAllowedSuspenseQuery>;
 export type IsAllowedQueryResult = Apollo.QueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
 export const GetTasksDocument = gql`
     query GET_TASKS($filters: TaskFiltersInput) {
@@ -1890,8 +1969,16 @@ export function useGetTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTasksQuery, GetTasksQueryVariables>(GetTasksDocument, options);
         }
+// @ts-ignore
+export function useGetTasksSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTasksQuery, GetTasksQueryVariables>): Apollo.UseSuspenseQueryResult<GetTasksQuery, GetTasksQueryVariables>;
+export function useGetTasksSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTasksQuery, GetTasksQueryVariables>): Apollo.UseSuspenseQueryResult<GetTasksQuery | undefined, GetTasksQueryVariables>;
+export function useGetTasksSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTasksQuery, GetTasksQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTasksQuery, GetTasksQueryVariables>(GetTasksDocument, options);
+        }
 export type GetTasksQueryHookResult = ReturnType<typeof useGetTasksQuery>;
 export type GetTasksLazyQueryHookResult = ReturnType<typeof useGetTasksLazyQuery>;
+export type GetTasksSuspenseQueryHookResult = ReturnType<typeof useGetTasksSuspenseQuery>;
 export type GetTasksQueryResult = Apollo.QueryResult<GetTasksQuery, GetTasksQueryVariables>;
 export const GetTreeAttributesQueryDocument = gql`
     query GET_TREE_ATTRIBUTES_QUERY($treeId: [ID!]) {
@@ -1958,8 +2045,16 @@ export function useGetTreeAttributesQueryLazyQuery(baseOptions?: Apollo.LazyQuer
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>(GetTreeAttributesQueryDocument, options);
         }
+// @ts-ignore
+export function useGetTreeAttributesQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>;
+export function useGetTreeAttributesQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeAttributesQueryQuery | undefined, GetTreeAttributesQueryQueryVariables>;
+export function useGetTreeAttributesQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>(GetTreeAttributesQueryDocument, options);
+        }
 export type GetTreeAttributesQueryQueryHookResult = ReturnType<typeof useGetTreeAttributesQueryQuery>;
 export type GetTreeAttributesQueryLazyQueryHookResult = ReturnType<typeof useGetTreeAttributesQueryLazyQuery>;
+export type GetTreeAttributesQuerySuspenseQueryHookResult = ReturnType<typeof useGetTreeAttributesQuerySuspenseQuery>;
 export type GetTreeAttributesQueryQueryResult = Apollo.QueryResult<GetTreeAttributesQueryQuery, GetTreeAttributesQueryQueryVariables>;
 export const GetTreeLibrariesDocument = gql`
     query GET_TREE_LIBRARIES($treeId: [ID!], $library: String) {
@@ -2012,8 +2107,16 @@ export function useGetTreeLibrariesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>(GetTreeLibrariesDocument, options);
         }
+// @ts-ignore
+export function useGetTreeLibrariesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>;
+export function useGetTreeLibrariesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeLibrariesQuery | undefined, GetTreeLibrariesQueryVariables>;
+export function useGetTreeLibrariesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>(GetTreeLibrariesDocument, options);
+        }
 export type GetTreeLibrariesQueryHookResult = ReturnType<typeof useGetTreeLibrariesQuery>;
 export type GetTreeLibrariesLazyQueryHookResult = ReturnType<typeof useGetTreeLibrariesLazyQuery>;
+export type GetTreeLibrariesSuspenseQueryHookResult = ReturnType<typeof useGetTreeLibrariesSuspenseQuery>;
 export type GetTreeLibrariesQueryResult = Apollo.QueryResult<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>;
 export const GetTreesDocument = gql`
     query GET_TREES($filters: TreesFiltersInput) {
@@ -2062,8 +2165,16 @@ export function useGetTreesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
         }
+// @ts-ignore
+export function useGetTreesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreesQuery, GetTreesQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreesQuery, GetTreesQueryVariables>;
+export function useGetTreesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreesQuery, GetTreesQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreesQuery | undefined, GetTreesQueryVariables>;
+export function useGetTreesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreesQuery, GetTreesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
+        }
 export type GetTreesQueryHookResult = ReturnType<typeof useGetTreesQuery>;
 export type GetTreesLazyQueryHookResult = ReturnType<typeof useGetTreesLazyQuery>;
+export type GetTreesSuspenseQueryHookResult = ReturnType<typeof useGetTreesSuspenseQuery>;
 export type GetTreesQueryResult = Apollo.QueryResult<GetTreesQuery, GetTreesQueryVariables>;
 export const TreeNodeChildrenDocument = gql`
     query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination) {
@@ -2108,7 +2219,7 @@ export const TreeNodeChildrenDocument = gql`
  *   },
  * });
  */
-export function useTreeNodeChildrenQuery(baseOptions: Apollo.QueryHookOptions<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>) {
+export function useTreeNodeChildrenQuery(baseOptions: Apollo.QueryHookOptions<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables> & ({ variables: TreeNodeChildrenQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>(TreeNodeChildrenDocument, options);
       }
@@ -2116,8 +2227,16 @@ export function useTreeNodeChildrenLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>(TreeNodeChildrenDocument, options);
         }
+// @ts-ignore
+export function useTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>): Apollo.UseSuspenseQueryResult<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>;
+export function useTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>): Apollo.UseSuspenseQueryResult<TreeNodeChildrenQuery | undefined, TreeNodeChildrenQueryVariables>;
+export function useTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>(TreeNodeChildrenDocument, options);
+        }
 export type TreeNodeChildrenQueryHookResult = ReturnType<typeof useTreeNodeChildrenQuery>;
 export type TreeNodeChildrenLazyQueryHookResult = ReturnType<typeof useTreeNodeChildrenLazyQuery>;
+export type TreeNodeChildrenSuspenseQueryHookResult = ReturnType<typeof useTreeNodeChildrenSuspenseQuery>;
 export type TreeNodeChildrenQueryResult = Apollo.QueryResult<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>;
 export const GetUserDataDocument = gql`
     query GET_USER_DATA($keys: [String!]!, $global: Boolean) {
@@ -2145,7 +2264,7 @@ export const GetUserDataDocument = gql`
  *   },
  * });
  */
-export function useGetUserDataQuery(baseOptions: Apollo.QueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
+export function useGetUserDataQuery(baseOptions: Apollo.QueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables> & ({ variables: GetUserDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
       }
@@ -2153,8 +2272,16 @@ export function useGetUserDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
         }
+// @ts-ignore
+export function useGetUserDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
+export function useGetUserDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetUserDataQuery | undefined, GetUserDataQueryVariables>;
+export function useGetUserDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
+        }
 export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
 export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
+export type GetUserDataSuspenseQueryHookResult = ReturnType<typeof useGetUserDataSuspenseQuery>;
 export type GetUserDataQueryResult = Apollo.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
 export const MeDocument = gql`
     query ME {
@@ -2187,8 +2314,16 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
         }
+// @ts-ignore
+export function useMeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>): Apollo.UseSuspenseQueryResult<MeQuery, MeQueryVariables>;
+export function useMeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>): Apollo.UseSuspenseQueryResult<MeQuery | undefined, MeQueryVariables>;
+export function useMeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const ApplicationEventsDocument = gql`
     subscription APPLICATION_EVENTS($filters: ApplicationEventFiltersInput) {
