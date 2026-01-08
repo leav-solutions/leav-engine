@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {KitCheckbox} from 'aristid-ds';
+import {KitTree} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type UIFilter} from '../_types';
 
@@ -12,10 +12,11 @@ interface IEmptyValueCheckboxProps {
     onSelect: (selected: boolean) => void;
 }
 
-const CheckboxStyled = styled(KitCheckbox)`
+const TreeStyled = styled(KitTree)`
     font-style: italic;
-    padding-left: 3px;
 `;
+
+const EMPTY_VALUE_KEY = '0';
 
 export const EmptyValueCheckbox: FunctionComponent<IEmptyValueCheckboxProps> = ({filter, onSelect}) => {
     const {t} = useSharedTranslation();
@@ -25,8 +26,12 @@ export const EmptyValueCheckbox: FunctionComponent<IEmptyValueCheckboxProps> = (
     };
 
     return (
-        <CheckboxStyled checked={filter.withEmptyValues} onChange={onChange}>
-            {t('explorer.empty_value')}
-        </CheckboxStyled>
+        <TreeStyled
+            checkable
+            treeData={[{title: t('explorer.empty_value'), key: EMPTY_VALUE_KEY, isLeaf: true}]}
+            checkedKeys={filter.withEmptyValues ? [EMPTY_VALUE_KEY] : []}
+            onSelect={onChange}
+            onCheck={onChange}
+        />
     );
 };
