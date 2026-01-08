@@ -459,7 +459,7 @@ export async function makeWebSocketGraphQlCall(options?: {user: IE2EUser}): Prom
     });
 }
 
-export async function waitGraphqlWebSocketMessage<T>(
+export function waitGraphqlWebSocketMessage<T>(
     client: GraphqlWsClient,
     query: string,
     variables: Record<string, any>,
