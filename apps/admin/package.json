@@ -55,12 +55,10 @@
         "yup": "0.32.11"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "2.12.0",
-        "@graphql-codegen/introspection": "2.2.3",
-        "@graphql-codegen/typescript": "2.7.3",
-        "@graphql-codegen/typescript-operations": "2.5.13",
-        "@graphql-codegen/typescript-react-apollo": "3.3.7",
-        "@graphql-codegen/typescript-react-query": "4.0.1",
+        "@graphql-codegen/cli": "6.1.0",
+        "@graphql-codegen/typescript": "5.0.7",
+        "@graphql-codegen/typescript-operations": "5.0.7",
+        "@graphql-codegen/typescript-react-apollo": "4.4.0",
         "@semantic-ui-react/craco-less": "2.0.2",
         "@testing-library/jest-dom": "5.11.9",
         "@testing-library/react": "11.2.7",
