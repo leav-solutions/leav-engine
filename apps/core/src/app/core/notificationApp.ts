@@ -51,6 +51,7 @@ export default function ({'core.domain.eventsManager': eventsManager = null}: ID
                         relatedEntities: [RelatedEntity!],
                         attachments: [Attachment!],
                         date: Int!
+                        taskId: ID
                     }
 
                     type Subscription {

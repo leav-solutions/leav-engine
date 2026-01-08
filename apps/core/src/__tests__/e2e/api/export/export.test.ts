@@ -15,16 +15,14 @@ import {
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
     toCleanJSON,
-    waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
-import {deleteMailpitMessagesBySearch, waitForMailpitSearchMessage, waitMailpitMessage} from '../mailpitUtils';
-import {type IPubSubNotificationData} from '_types/eventsManager';
 import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import dayjs from 'dayjs';
 import {waitForTaskCompletion} from '../taskUtils';
 import {type IExportProfileConfig} from 'domain/export/exportProfileDomain';
+import {waitEmailNotification, waitWebSocketNotification} from '../notificationUtils';
 
 describe('Export', () => {
     const exportLibName = 'export_lib';
@@ -133,15 +131,6 @@ describe('Export', () => {
     let graphqlClient: GraphqlWsClient;
     let recordId1: string;
     let recordId2: string;
-
-    const waitExportWSNotification = () =>
-        waitGraphqlWebSocketMessage<Pick<IPubSubNotificationData, 'notification'>>(
-            graphqlClient,
-            subscriptionGraphqlQuery,
-            {},
-            data => data?.notification?.title?.includes('Export'),
-            {timeoutMs: 20000},
-        );
 
     beforeAll(async () => {
         await gqlSaveAttribute({
@@ -271,18 +260,6 @@ describe('Export', () => {
     });
 
     describe('export notifications', () => {
-        beforeEach(async () => {
-            // Clean mailpit messages before each test
-            await deleteMailpitMessagesBySearch('export');
-            // wait previous notification to be processed in websocket
-            await Promise.resolve(cb => setTimeout(cb, 500));
-        });
-
-        afterEach(async () => {
-            // Ensure mailpit is receive after each test to delete messages before next test
-            await waitForMailpitSearchMessage('export');
-        });
-
         describe('should notify success', () => {
             beforeEach(async () => {
                 // use defaultProfile if no specified
@@ -292,9 +269,7 @@ describe('Export', () => {
 
             test('should notify success by email', async () => {
                 const config = await getConfig();
-                const mailMsg = await waitMailpitMessage(
-                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('Export'),
-                );
+                const mailMsg = await waitEmailNotification(exportTaskId);
 
                 expect(mailMsg).toBeDefined();
                 expect(mailMsg.Subject).toContain('successfully');
@@ -310,7 +285,7 @@ describe('Export', () => {
             });
 
             test('should notify success by webSocket', async () => {
-                const msg = await waitExportWSNotification();
+                const msg = await waitWebSocketNotification(graphqlClient, exportTaskId);
 
                 expect(msg).toBeDefined();
                 expect(msg.notification.title).toContain('successfully');
@@ -336,9 +311,7 @@ describe('Export', () => {
             test('should notify failure by email', async () => {
                 const config = await getConfig();
 
-                const mailMsg = await waitMailpitMessage(
-                    msg => msg.From.Address === config.mailer.from.email && msg.Subject.includes('Export'),
-                );
+                const mailMsg = await waitEmailNotification(exportTaskId);
 
                 expect(mailMsg).toBeDefined();
                 expect(mailMsg.Subject).toContain('failed');
@@ -350,7 +323,7 @@ describe('Export', () => {
             });
 
             test('should notify failure by webSocket', async () => {
-                const msg = await waitExportWSNotification();
+                const msg = await waitWebSocketNotification(graphqlClient, exportTaskId);
 
                 expect(msg).toBeDefined();
                 expect(msg.notification.title).toContain('failed');
@@ -560,22 +533,3 @@ describe('Export', () => {
         });
     });
 });
-
-const subscriptionGraphqlQuery = `
-        subscription {
-            notification {
-                level
-                message
-                title
-                date
-                attachments {
-                    label
-                    url
-                }
-                relatedEntities {
-                    label
-                    url
-                }
-            }
-        }
-    `;

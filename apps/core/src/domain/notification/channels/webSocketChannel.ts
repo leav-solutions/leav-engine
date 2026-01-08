@@ -20,9 +20,12 @@ export default function ({
         async sendNotifications(notifications: INotification[], ctx: IQueryInfos): Promise<void> {
             await Promise.all(
                 notifications.map(async notification => {
+                    const title = notification.content.title;
                     try {
+                        const taskId = notification.content.taskId;
+
                         logger.debug(
-                            `Sending webSocket notification "${notification.content.title}" to user ${notification.recipientUserId}`,
+                            `Sending webSocket notification "${title}" ${taskId ? `for task "${taskId}"` : ''} to user ${notification.recipientUserId}`,
                         );
                         await eventsManagerDomain.sendPubSubEvent(
                             {
@@ -39,7 +42,7 @@ export default function ({
                         );
                     } catch (error) {
                         logger.error(
-                            `Error sending webSocket notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`,
+                            `Error sending webSocket notification "${title}" to user ${notification.recipientUserId}: ${error.message}`,
                         );
                     }
                 }),
