@@ -717,7 +717,7 @@ describe('CommonFilterItem', () => {
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
-            expect(await screen.findByText('explorer.empty_value')).toBeVisible();
+            expect(await screen.findByText('filters.empty-value')).toBeVisible();
 
             // Linked values visible and selectable
             const alpha = await screen.findByText('Alpha');
