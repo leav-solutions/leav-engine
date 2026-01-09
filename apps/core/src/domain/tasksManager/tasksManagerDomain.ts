@@ -112,9 +112,11 @@ export default function ({
         throw new Error('Restart worker allowed only when worker prefetch is 1');
     }
 
-    const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timeout =>
-        // check if tasks waiting for execution and execute them
-        setInterval(async () => {
+    // Check if tasks waiting for execution and execute them
+    // Do not use setInterval because we want to await the async calls and avoid execution overlap
+    // Using recursive setTimeout fix that, ensure each check is finished before starting a new one
+    const _monitorTasksWithTimer = (ctx: IQueryInfos): NodeJS.Timeout =>
+        setTimeout(async () => {
             try {
                 const taskToExecute = (await taskRepo.getTasksToExecute(ctx))?.list[0];
                 const taskToCancel = (await taskRepo.getTasksToCancel(ctx))?.list[0];
@@ -134,6 +136,8 @@ export default function ({
                 }
             } catch (e) {
                 logger.error(`Error monitoring tasks because ${e.stack}`);
+            } finally {
+                _monitorTasksWithTimer(ctx);
             }
         }, config.tasksManager.checkingInterval);
 
@@ -442,7 +446,9 @@ export default function ({
         if (!task) {
             throw new Error('Task not found');
         } else if (!!task.workerId) {
-            throw new Error(`Cannot delete: task ${id} is still running.`);
+            throw new Error(
+                `Cannot delete: task ${id} is still attached to worker ${task.workerId}, status ${task.status}.`,
+            );
         }
 
         const hasAdminDeletePermission = await adminPermissionDomain.getAdminPermission({
@@ -586,7 +592,7 @@ export default function ({
                 config.amqp.exchange,
                 config.tasksManager.routingKeys.execOrders,
             );
-            return _monitorTasks({
+            return _monitorTasksWithTimer({
                 userId: config.defaultUserId,
                 queryId: 'TasksManagerDomain',
             });
