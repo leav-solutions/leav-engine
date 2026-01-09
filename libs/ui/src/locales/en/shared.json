@@ -309,7 +309,8 @@
         "deactivate": "Deactivate",
         "activate": "Activate",
         "add": "Add",
-        "add-condition": "Add condition"
+        "add-condition": "Add condition",
+        "empty-value": "Undefined"
     },
     "filter-item": {
         "no-operator": "If"
@@ -803,7 +804,6 @@
         "delete_link_one": "Delete this link?",
         "delete_link_other": "Delete these links?",
         "delete_link_description_one": "You are about to delete this link.",
-        "delete_link_description_other": "You are about to delete these links.",
-        "empty_value": "Undefined"
+        "delete_link_description_other": "You are about to delete these links."
     }
 }
