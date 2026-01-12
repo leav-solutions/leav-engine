@@ -55,6 +55,7 @@ interface IEditRecordProps {
     sidebarContainer?: HTMLElement;
     containerStyle?: CSSObject;
     withInfoButton: boolean;
+    removePadding?: boolean; // TODO: This prop should be remove when EditRecord will be moved to app-studio or data-studio deleted
 }
 
 const sidebarWidth = '352px';
@@ -66,9 +67,9 @@ const Container = styled.div<{$shouldUseLayoutWithSidebar: boolean; style: CSSOb
     overflow: hidden;
 `;
 
-const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
+const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean; $removePadding: boolean}>`
     grid-area: content;
-    padding: 24px;
+    padding: ${props => (props.$removePadding ? 'unset' : '24px')};
     overflow-x: hidden;
     overflow-y: scroll;
     border-right: ${props =>
@@ -89,6 +90,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     sidebarContainer,
     containerStyle,
     withInfoButton,
+    removePadding = false,
 }) => {
     const [state, dispatch] = useReducer(editRecordReducer, {
         ...initialState,
@@ -258,7 +260,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
                     <EditRecordButtons />
-                    <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}>
+                    <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} $removePadding={removePadding}>
                         {permissionsLoading ? (
                             <EditRecordSkeleton rows={5} />
                         ) : canEdit ? (

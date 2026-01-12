@@ -38,6 +38,7 @@ interface IEditRecordPageProps {
     enableSidebar?: boolean;
     sidebarContainer?: HTMLElement;
     isSubmitButtonsPortal?: boolean;
+    removePadding?: boolean;
 }
 
 const Header = styled.div`
@@ -70,6 +71,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     showSidebar,
     sidebarContainer,
     isSubmitButtonsPortal = false,
+    removePadding = false,
 }) => {
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
@@ -209,6 +211,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 enableSidebar={enableSidebar}
                 showSidebar={showSidebar}
                 sidebarContainer={sidebarContainer}
+                removePadding={removePadding}
             />
         </>
     );

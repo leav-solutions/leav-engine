@@ -12,6 +12,7 @@ import {PanelContainer} from '../PanelContainer';
 import {AbsolutePaths, UnreachablePaths} from './paths';
 import {RedirectToFirstRecordPanelAllowedInCompactMode} from '../guards/RedirectToFirstRecordPanelAllowedInCompactMode';
 import {RedirectCreationFormPanelToPopup} from '../guards/RedirectCreationFormPanelToPopup';
+import {WorkspacePanelContainer} from '../WorkspacePanelContainer';
 
 // panelWithFlap route need to be before the panel route because router will match the first route that matches the path
 const panelPaths = [AbsolutePaths.panelWithFlap, AbsolutePaths.panel];
@@ -28,7 +29,9 @@ export const firstLevelRoutes: RouteObject[] = [
                 path: panelPath,
                 element: (
                     <RedirectToPreviousPanel>
-                        <Panel />
+                        <WorkspacePanelContainer>
+                            <Panel />
+                        </WorkspacePanelContainer>
                     </RedirectToPreviousPanel>
                 ),
             })),

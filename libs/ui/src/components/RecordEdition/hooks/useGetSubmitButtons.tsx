@@ -30,6 +30,7 @@ export const useGetSubmitButtons = (
                 htmlType="submit"
                 icon={<FontAwesomeIcon icon={faCheck} />}
                 onClick={() => onClickSubmit('create')}
+                size="m"
             >
                 {t('record_edition.create')}
             </KitButton>,
@@ -45,6 +46,7 @@ export const useGetSubmitButtons = (
                 htmlType="submit"
                 icon={<FontAwesomeIcon icon={faPenToSquare} />}
                 onClick={() => onClickSubmit('createAndEdit')}
+                size="m"
             >
                 {t('record_edition.create_and_edit')}
             </KitButton>,

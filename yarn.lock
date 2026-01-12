@@ -9257,7 +9257,7 @@ __metadata:
   peerDependencies:
     "@ant-design/icons": ">=5.2"
     "@apollo/client": ">=3.8.1"
-    aristid-ds: 14.0.0-fd68c13
+    aristid-ds: 14.0.0-1689e29
     dayjs: ^1.11.13
     i18next: 22.5
     react: 18.2.0
