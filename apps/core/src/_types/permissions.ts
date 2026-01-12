@@ -145,6 +145,8 @@ export interface ITreePermissionsDependentValuesConf {
      * IDs of attributes used for permissions
      */
     dependenciesTreeAttributes: string[];
+
+    allowByDefault: boolean;
 }
 
 export interface IPermissionsTreeTarget {

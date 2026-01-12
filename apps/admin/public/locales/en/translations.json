@@ -197,7 +197,8 @@
                 "title": "Dependency attributes",
                 "dependent_attributes": "Dependency attributes",
                 "add_dependency_attribute": "Add dependency attribute",
-                "no_attributes_to_add": "No attribute available"
+                "no_attributes_to_add": "No attribute available",
+                "allow_by_default": "Allow by default"
             }
         }
     },

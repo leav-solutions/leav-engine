@@ -45,7 +45,8 @@ function DependenciesTab({attribute}: IDependenciesTabProps): JSX.Element {
                         variables: {
                             attrData: {
                                 id: attribute.id,
-                                permissions_conf_dependent_values: newSettings,
+                                permissions_conf_dependent_values:
+                                    newSettings.dependenciesTreeAttributes.length > 0 ? newSettings : null,
                             },
                         },
                     });

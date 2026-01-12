@@ -51,7 +51,7 @@ const DependenciesTreePermissionsView = ({
                 treeIndex: 0,
             })),
         );
-    }, [dependenciesSettings]);
+    }, [dependenciesSettings.dependenciesTreeAttributes]);
 
     const _selectDepsTreeNode = (treeIndex: number) => (nodeData: ITreeNodeData) => {
         const treeNode = getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedDepsTreeNode[treeIndex]) ? nodeData : null;
@@ -107,6 +107,7 @@ const DependenciesTreePermissionsView = ({
         if (selectedGroupNode) {
             cols.push(
                 <EditPermissions
+                    key={dependenciesSettings.allowByDefault ? 'allow' : 'deny'} // Force remount when changing allowByDefault
                     permParams={{
                         type: PermissionTypes.attribute_dependent_values,
                         applyTo: treeAttribute.id,

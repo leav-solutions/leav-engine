@@ -78,6 +78,7 @@ export const attributeDetailsFragment = gql`
                         }
                     }
                 }
+                allowByDefault
             }
         }
     }
