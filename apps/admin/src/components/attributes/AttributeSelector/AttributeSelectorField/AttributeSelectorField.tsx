@@ -13,7 +13,9 @@ interface IAttributeSelectorFieldProps extends DropdownProps {
 
 function AttributeSelectorField({attributes = [], ...fieldProps}: IAttributeSelectorFieldProps): JSX.Element {
     const availableLanguages = useLang().lang;
-    const options = attributes.map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}));
+    const options = attributes
+        .map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}))
+        .sort((a, b) => a.text.localeCompare(b.text));
 
     if (!!fieldProps.clearable) {
         options.unshift({key: '', value: '', text: ''});

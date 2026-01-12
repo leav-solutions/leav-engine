@@ -43,6 +43,7 @@ function SettingsAttribute({
                 libraries: [library],
             }}
             fluid
+            selection
             value={fieldValue}
         />
     );
