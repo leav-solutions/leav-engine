@@ -143,10 +143,6 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                     attributeProps: GET_ATTRIBUTE_BY_ID_attributes_list,
                 ): SettingsFieldSpecificProps<ISettingsAttributeProps> => ({
                     multiple: true,
-                    filters: {
-                        // Links and trees are forbidden due to technical issues on the front to handle them
-                        type: [AttributeType.simple, AttributeType.advanced],
-                    },
                     library: (attributeProps as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).linked_library.id,
                 }),
             },
