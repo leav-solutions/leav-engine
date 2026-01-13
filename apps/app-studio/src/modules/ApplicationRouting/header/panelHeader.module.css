@@ -3,3 +3,13 @@
     width: 100%;
     justify-content: space-between;
 }
+
+
+.panelHeader {
+    width: 100%;
+    display: flex;
+}
+
+.panelHeaderTabs {
+    margin: auto;
+}

@@ -1,4 +1,9 @@
 .flapContainer {
+    /* KitSidePanel header selector */
+    section > div:nth-child(1) {
+        gap: calc(var(--general-spacing-xxs) * 1px);
+    }
+    /* KitSidePanel content selector */
     section > div:nth-child(2) {
         padding: 0;
     }

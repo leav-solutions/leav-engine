@@ -51,15 +51,8 @@ export const Panel: FunctionComponent = () => {
             >
                 {(isFirstPanel || !currentPanel.isStandalone) && (
                     <div className={panelHeader}>
-                        <PanelHeader
-                            enabled={
-                                /**
-                                 * `fullpage`, `popup` and `slider` are managed by `<PanelContainer />`
-                                 */
-                                isFirstPanel
-                            }
-                            currentRecordId={currentRecordId}
-                        />
+                        {/* `fullpage`, `popup` and `slider` are managed by `<PanelContainer />` */}
+                        {isFirstPanel && <PanelHeader currentRecordId={currentRecordId} />}
                         <PanelsTabs
                             enabled={isFirstPanel || isPanelInSlider}
                             workspaceId={workspaceId}

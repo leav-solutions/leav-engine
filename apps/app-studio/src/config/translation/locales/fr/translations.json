@@ -1,15 +1,19 @@
 {
     "global": {
         "cancel": "Annuler",
-        "collapse": "Réduire",
         "confirm": "Confirmer",
         "discussion": "Discussions",
-        "expand": "Agrandir",
         "home": "Accueil",
         "information": "Informations",
         "are_you_sure": "Êtes-vous sûr ?",
         "sign_out": "Déconnexion",
         "download": "Télécharger"
+    },
+    "display_mode": {
+        "select_display": "Sélection d'affichage",
+        "lateral_panel": "Panneau latéral",
+        "floating_window": "Fenêtre flottante",
+        "fullpage_window": "Fenêtre pleine page"
     },
     "information_and_history": {
         "system_information": "Informations système",

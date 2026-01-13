@@ -1,4 +1,11 @@
 .popupPanel {
+    /* KitModal header title selector */
+    & > div > div:nth-child(1) > div {
+        && {
+            padding-right: calc(var(--general-spacing-xxs) * 1px);
+        }
+    }
+
     /* KitModal content selector */
     & > div > div:nth-child(2) {
         padding: 0;
@@ -27,11 +34,6 @@
     }
 }
 
-.popupHeader {
-    width: 100%;
-    display: flex;
-}
-
 .popupContent {
     flex: auto;
     display: flex;
@@ -42,10 +44,6 @@
     & > :first-child  > div:nth-child(2) > div > div:has(> form) {
         padding: calc(var(--general-spacing-xs) * 1px);
     }
-}
-
-.popupHeaderTabs {
-    margin: auto;
 }
 
 .fullpagePopup {
@@ -65,6 +63,7 @@
     /* Panel header selector */
     section > div:nth-child(1) {
         padding-bottom: calc(var(--general-spacing-m) * 1px);
+        gap: calc(var(--general-spacing-xxs) * 1px);
     }
 
     /* Panel content selector */
