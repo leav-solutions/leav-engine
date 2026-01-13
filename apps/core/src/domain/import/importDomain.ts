@@ -694,8 +694,7 @@ export default function ({
                             return labels;
                         }, {}),
                         func: {
-                            moduleName: 'domain',
-                            subModuleName: 'import',
+                            path: 'core.domain.import',
                             name: 'importConfig',
                             args: params,
                         },
@@ -830,8 +829,7 @@ export default function ({
                             return labels;
                         }, {}),
                         func: {
-                            moduleName: 'domain',
-                            subModuleName: 'import',
+                            path: 'core.domain.import',
                             name: 'importData',
                             args: params,
                         },
@@ -1344,7 +1342,7 @@ export default function ({
                     // Delete remaining import file.
                     callbacks: [
                         {
-                            moduleName: 'utils',
+                            path: 'core.utils',
                             name: 'deleteFile',
                             args: [`${config.import.directory}/${JSONFilename}`],
                             type: [

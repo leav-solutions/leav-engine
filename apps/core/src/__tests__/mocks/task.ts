@@ -9,19 +9,16 @@ import {
     TaskCallbackType,
     TaskPriority,
     TaskStatus,
-    TaskType,
 } from '../../_types/tasksManager';
 
 const mockFunc: ITaskFunc = {
-    moduleName: 'moduleName',
-    subModuleName: 'subModuleName',
+    path: 'core.moduleName.subModuleName',
     name: 'name',
     args: {arg1: 'arg1'},
 };
 
 const mockCallback: ITaskCallback = {
-    moduleName: 'moduleName',
-    subModuleName: 'subModuleName',
+    path: 'core.moduleName.subModuleName',
     name: 'name',
     args: [],
     status: TaskCallbackStatus.PENDING,

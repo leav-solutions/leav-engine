@@ -108,8 +108,7 @@ describe('tasksManagerDomain', () => {
                     en: taskName,
                 },
                 func: {
-                    moduleName: 'test',
-                    subModuleName: 'fakeWorker',
+                    path: 'core.test.fakeWorker',
                     name: 'execWorker',
                     args: {hello: 'world'},
                 },

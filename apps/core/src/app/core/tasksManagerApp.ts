@@ -19,10 +19,12 @@ import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasks
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {AdminPermissionsActions} from '../../_types/permissions';
+import {type IExtensionPoints} from '_types/extensionPoints';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timeout>;
     initWorker(): Promise<void>;
+    extensionPoints?: IExtensionPoints;
 }
 
 interface IDeps {
@@ -76,7 +78,7 @@ export default function ({
                     }
 
                     enum TaskType {
-                        ${Object.values(TaskType).join(' ')}
+                        ${tasksManagerDomain.getTaskTypes()}
                     }
 
                     type TaskLink {
@@ -234,6 +236,11 @@ export default function ({
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
+        },
+        extensionPoints: {
+            registerTaskTypes: (types: string[]) => {
+                tasksManagerDomain.registerTaskTypes(types);
+            },
         },
     };
 }

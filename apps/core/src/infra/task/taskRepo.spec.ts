@@ -17,8 +17,7 @@ const mockTask: ITask = {
     created_by: null,
     modified_at: null,
     func: {
-        moduleName: 'moduleName',
-        subModuleName: 'subModuleName',
+        path: 'core.moduleName.subModuleName',
         name: 'func',
         args: [],
     },

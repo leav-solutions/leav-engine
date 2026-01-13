@@ -12,9 +12,8 @@ exports[`TaskRepo Create task 2`] = `
     "created_by": "0",
     "func": {
       "args": [],
-      "moduleName": "moduleName",
       "name": "func",
-      "subModuleName": "subModuleName",
+      "path": "core.moduleName.subModuleName",
     },
     "id": "id",
     "label": {
@@ -72,9 +71,8 @@ exports[`TaskRepo Update task 2`] = `
     "created_by": null,
     "func": {
       "args": [],
-      "moduleName": "moduleName",
       "name": "func",
-      "subModuleName": "subModuleName",
+      "path": "core.moduleName.subModuleName",
     },
     "id": "id",
     "label": {

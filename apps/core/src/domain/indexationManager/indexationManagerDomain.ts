@@ -398,8 +398,7 @@ export default function ({
                     return labels;
                 }, {}),
                 func: {
-                    moduleName: 'domain',
-                    subModuleName: 'indexationManager',
+                    path: 'core.domain.indexationManager',
                     name: 'indexDatabase',
                     args: params,
                 },

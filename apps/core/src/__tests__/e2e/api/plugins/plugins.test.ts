@@ -2,6 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {makeGraphQlCall} from '../e2eUtils';
+import {waitForTaskCompletion} from '../taskUtils';
+import {TaskStatus} from '../../../../_types/tasksManager';
+import {FakePluginTaskType} from '../_fixtures/fakeplugin/_types/_types';
 
 describe('Plugins', () => {
     /**
@@ -85,6 +88,19 @@ describe('Plugins', () => {
                 t => t.name === 'LogAction',
             ).enumValues;
             expect(logActionEnums.find(e => e.name === 'fakeplugin_FAKE_PLUGIN_ACTION')).toBeDefined();
+        });
+    });
+
+    describe('Launch a task from a plugin', () => {
+        test('Plugins should be able to launch a task in taskManager', async () => {
+            const exportTaskId = await makeGraphQlCall(`{
+                fakePluginTask (taskName: "My test task")
+            }`);
+
+            const task = await waitForTaskCompletion(exportTaskId.data.data.fakePluginTask);
+
+            expect(task.status).toBe(TaskStatus.DONE);
+            expect(task.role.type).toBe(FakePluginTaskType.FAKE_TYPE);
         });
     });
 });

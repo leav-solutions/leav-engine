@@ -8,11 +8,14 @@ import {ActionsListIOTypes} from '../../../../../_types/actionsList';
 import {type IValueRepo} from '../../../../../infra/value/valueRepo';
 import {type IAttributeDomain} from '../../../../../domain/attribute/attributeDomain';
 import {type IAttribute} from '../../../../../_types/attribute';
+import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {FakePluginTaskType} from './_types/_types';
 
 interface IDeps {
     translator: i18n;
     'core.infra.value': IValueRepo;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.tasksManager': ITasksManagerDomain;
 }
 
 enum FakePluginActions {
@@ -24,6 +27,7 @@ export default function ({
     translator,
     'core.infra.value': valueRepo,
     'core.domain.attribute': attributeDomain,
+    'core.domain.tasksManager': tasksManagerDomain,
 }: IDeps): IPluginInitModule {
     const _fakeReplaceValueAction = {
         id: 'fakeReplaceValue',
@@ -66,12 +70,31 @@ export default function ({
                     extend type Query {
                         fakePluginQuery: String!
                         fakePluginTranslation: String!
+                        fakePluginTask(taskName: String!): String!
                     }
                 `,
                 resolvers: {
                     Query: {
                         fakePluginQuery: () => 'ok!',
                         fakePluginTranslation: () => translator.t('fakeplugin.testtranslation', {lng: 'fr'}),
+                        fakePluginTask: async (_parent, {taskName}, ctx) =>
+                            tasksManagerDomain.createTask(
+                                {
+                                    label: {
+                                        en: taskName,
+                                    },
+                                    func: {
+                                        path: 'fakeplugin.domain',
+                                        name: 'execWorker',
+                                        args: {fromTask: taskName},
+                                    },
+                                    role: {
+                                        type: FakePluginTaskType.FAKE_TYPE,
+                                    },
+                                    priority: 1,
+                                },
+                                ctx,
+                            ),
                     },
                 },
             });
@@ -81,6 +104,7 @@ export default function ({
             extensionPoints.registerEventActions(Object.values(FakePluginActions), 'fakeplugin');
 
             extensionPoints.registerActions([_fakeReplaceValueAction]);
+            extensionPoints.registerTaskTypes([FakePluginTaskType.FAKE_TYPE]);
         },
     };
 }
