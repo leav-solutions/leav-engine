@@ -348,12 +348,14 @@
             "columns": "Linked element attributes to display",
             "select_options": {
                 "VERTICAL": "Vertical",
-                "HORIZONTAL": "Horizontal"
+                "HORIZONTAL": "Horizontal",
+                "EXPLORER": "Explorer",
+                "TAG": "Tag"
             },
             "displayRecordIdentity": "Display information column",
             "useAttributeLabel": "Use attribute label",
-            "linkAttributeEditFormId": "Linked element edit form ID",
-            "tagDisplayMode": "Tag(s) display mode"
+            "editFormId": "Linked element edit form ID",
+            "displayMode": "Display mode"
         },
         "rte": {
             "bold": "Bold",

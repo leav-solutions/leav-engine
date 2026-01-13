@@ -69,6 +69,7 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
         ...(settingsField.getInputSettings
             ? settingsField.getInputSettings(attributeProps as GET_ATTRIBUTE_BY_ID_attributes_list)
             : null),
+        defaultValue: settingsField.defaultValue,
     };
 
     switch (settingsField.inputType) {
