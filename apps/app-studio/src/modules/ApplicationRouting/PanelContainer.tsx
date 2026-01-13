@@ -12,22 +12,24 @@ import {PanelHeader} from './header/PanelHeader';
 import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
-import {useDisplayConditions} from './utils/useDisplayConditions';
 import {
     selfContainingPanel,
     popupPanel,
     popupHeader,
     popupHeaderTabs,
-    sliderFormPanel,
     popupContent,
     popupCreationFormPanel,
-} from './panel.module.css';
+    fullpagePopup,
+    hiddenPopup,
+    centerPopup,
+    sliderPanel,
+} from './panelContainer.module.css';
+import {WORKSPACE_PANEL_CONTAINER_ID} from '../../constants';
 
 export const PanelContainer: FunctionComponent = ({children}) => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
-    const {isLastLevelRecordPanel} = useDisplayConditions();
     const navigate = useNavigate();
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
     const explorerContainerRef = useRef<HTMLDivElement>(null);
@@ -37,13 +39,17 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     const isCreationFormPanel = currentPanel.type === 'creationForm';
     const isFormPanel = isCreationFormPanel || currentPanel.type === 'editionForm';
 
+    const isPanelInFullpage = where === 'fullpage';
+    const isPanelInPopup = where === 'popup';
+    const isPanelInSlider = where === 'slider';
+
     const setPanelRef = useCallback(
         (panelRef: KitSidePanelRef | null) => {
-            if (panelRef && isLastLevelRecordPanel && where === 'slider') {
+            if (panelRef && isPanelInSlider) {
                 panelRef.open();
             }
         },
-        [isLastLevelRecordPanel, where, match.pathname],
+        [isPanelInSlider, match.pathname],
     );
 
     const closeContainer = () => {
@@ -53,41 +59,44 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         navigate(closingPath, {relative: 'path'});
     };
 
-    if (!isLastLevelRecordPanel) {
-        return <>{children}</>;
-    }
+    if (isPanelInPopup || isPanelInFullpage) {
+        const getFullsPagePopupContainer = () => document.querySelector(`#${WORKSPACE_PANEL_CONTAINER_ID}`);
 
-    if (where === 'popup') {
+        const _nextLevelPanelInLocationPathname = location.pathname.split(`/${recordId}/${where}/${recordPanelId}`)[1];
+        const _nextLevelWhere = _nextLevelPanelInLocationPathname?.split('/')[2];
+        const hasPanelInFullpageAfterPopup = isPanelInPopup && _nextLevelWhere === 'fullpage';
+
+        const fullpageModalProps = isPanelInFullpage
+            ? {
+                  fullscreen: true,
+                  parentSelector: getFullsPagePopupContainer,
+                  appElement: getFullsPagePopupContainer(),
+                  style: {overlay: {position: 'absolute' as const}},
+                  width: undefined, // We override the width so the modal is fullscreen
+                  height: undefined, // We override the height so the modal is fullscreen
+              }
+            : {};
+
         // TODO: We might need to handle a isSelfContainingPanel case like in the slider case.
         return (
             <KitModal
-                className={popupPanel}
+                isOpen
+                showCloseIcon={!hasPanelInFullpageAfterPopup}
+                className={cn(popupPanel, {
+                    [centerPopup]: isPanelInPopup,
+                    [fullpagePopup]: isPanelInFullpage,
+                    [hiddenPopup]: hasPanelInFullpageAfterPopup,
+                })}
                 portalClassName={cn({
                     [popupCreationFormPanel]: isCreationFormPanel,
+                    [hiddenPopup]: hasPanelInFullpageAfterPopup,
                 })}
-                width={isCreationFormPanel ? 'revert-layer' : undefined} // Use revert-layer to inherit the width from the popupCreationFormPanel (as modal use html with style attribute)
-                height={isCreationFormPanel ? 'revert-layer' : undefined} // Use revert-layer to inherit the height from the popupCreationFormPanel (as modal use html with style attribute)
-                title={
-                    <div className={popupHeader}>
-                        <PanelHeader enabled />
-                        <PanelsTabs
-                            enabled={!currentPanel.isStandalone}
-                            workspaceId={workspaceId}
-                            libraryId={libraryId}
-                            panelType={panelType}
-                            recordId={recordId}
-                            hasFlapPanel={hasFlapPanel}
-                            where={where}
-                            currentPanelId={currentPanel.id}
-                            className={popupHeaderTabs}
-                        />
-                    </div>
-                }
+                width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationFormPanel (as modal use html with style attribute)
+                height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationFormPanel (as modal use html with style attribute)
+                title={<PanelHeader />}
                 footer={isCreationFormPanel ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
-                showCloseIcon
                 close={closeContainer}
-                fullscreen={!isCreationFormPanel}
-                isOpen
+                {...fullpageModalProps}
             >
                 <div className={popupContent} ref={explorerContainerRef}>
                     <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
@@ -98,7 +107,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         );
     }
 
-    if (where === 'slider') {
+    if (isPanelInSlider) {
         const isSelfContainingPanel = currentPanel.type === 'custom' && currentPanel.isSelfContaining;
 
         return isSelfContainingPanel ? (
@@ -115,12 +124,10 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             </KitSidePanel>
         ) : (
             <KitSidePanel
-                className={cn({
-                    [sliderFormPanel]: isFormPanel,
-                })}
+                className={sliderPanel}
                 ref={setPanelRef}
                 size="l"
-                headerExtra={<PanelHeader actionPosition="right" enabled />}
+                headerExtra={<PanelHeader actionPosition="right" hidePanelTabs />}
                 onCloseAfterAnimation={closeContainer}
                 floating
                 closable
@@ -131,7 +138,4 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             </KitSidePanel>
         );
     }
-
-    // Should only happen on where === 'fullpage'
-    return <>{children}</>;
 };

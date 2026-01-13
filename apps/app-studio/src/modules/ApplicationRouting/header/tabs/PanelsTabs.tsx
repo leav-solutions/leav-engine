@@ -45,7 +45,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
         libraryId === null || panelType === null
             ? []
             : application.libraries[libraryId][panelType].filter(
-                  panel => !panel.isStandalone && !(where === 'slider' && panel.hideInSlider),
+                  panel => !panel.isStandalone && !(['slider', 'popup'].includes(where) && panel.hideInCompactMode),
               );
 
     const attributeExplorerPanels = panelsToDisplay.filter(

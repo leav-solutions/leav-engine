@@ -10,67 +10,87 @@ import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {LibraryIdCard} from './id-card/LibraryIdCard';
 import {RecordIdCard} from './id-card/RecordIdCard';
 import {KitSpace} from 'aristid-ds';
-import {panelHeaderActionPositionRight} from './panelHeader.module.css';
-import {ExpandCollapseCurrentPanelButton} from './action-button/ExpandCollapseCurrentPanelButton';
+import {panelHeader, panelHeaderTabs, panelHeaderActionPositionRight} from './panelHeader.module.css';
+import {PanelDisplayModeSelector} from './action-button/PanelDisplayModeSelector';
 import {ToggleFlapButton} from './action-button/ToggleFlapButton';
 import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
 import cn from 'classnames';
+import {PanelsTabs} from './tabs/PanelsTabs';
 
 export const PanelHeader: FunctionComponent<{
-    enabled: boolean;
     currentRecordId?: string;
     currentLibraryId?: string;
-    hideExpandCollapseButton?: boolean;
+    hidePanelDisplayModeSelector?: boolean;
+    hidePanelTabs?: boolean;
     actionPosition?: 'left' | 'right';
-}> = ({enabled, currentRecordId, currentLibraryId, hideExpandCollapseButton = false, actionPosition = 'left'}) => {
+}> = ({
+    currentRecordId,
+    currentLibraryId,
+    hidePanelDisplayModeSelector = false,
+    hidePanelTabs = false,
+    actionPosition = 'left',
+}) => {
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
+        useParams();
     const {libraryId, panelType, currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
     const isLibraryPanel = panelType === 'libraryPanels';
-    const isFullpagePanel = !where || where === 'fullpage';
-
-    if (!enabled) {
-        return null;
-    }
+    const isFirstPanel = where === undefined;
+    const hasFlapPanel = flapPanelId !== undefined;
 
     return (
-        <KitSpace
-            className={cn({
-                [panelHeaderActionPositionRight]: actionPosition === 'right',
-            })}
-            direction="horizontal"
-            align="center"
-        >
-            {isLibraryPanel ? (
-                <LibraryIdCard
+        <div className={panelHeader}>
+            <KitSpace
+                className={cn({
+                    [panelHeaderActionPositionRight]: actionPosition === 'right',
+                })}
+                direction="horizontal"
+                align="center"
+            >
+                {isLibraryPanel ? (
+                    <LibraryIdCard
+                        libraryId={libraryId}
+                        title={localizedTranslation(currentPanel.name, lang)}
+                        avatarSize="l"
+                    />
+                ) : (
+                    <RecordIdCard
+                        libraryId={currentLibraryId ?? libraryId}
+                        currentRecordId={currentRecordId ?? recordId}
+                        avatarSize="l"
+                    />
+                )}
+                {!isLibraryPanel && currentPanel.type !== 'creationForm' && (
+                    <KitSpace direction="horizontal" size="xxs">
+                        <ToggleFlapButton
+                            targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}
+                            targetRecordId={currentRecordId ?? recordId}
+                            targetLibraryId={currentLibraryId ?? libraryId}
+                        />
+                        <ToggleFlapButton
+                            targetFlapPanelId={FLAP_THREAD_PANEL_ID}
+                            targetRecordId={currentRecordId ?? recordId}
+                            targetLibraryId={currentLibraryId ?? libraryId}
+                        />
+                    </KitSpace>
+                )}
+            </KitSpace>
+            {!hidePanelTabs && (
+                <PanelsTabs
+                    enabled={!currentPanel.isStandalone}
+                    workspaceId={workspaceId}
                     libraryId={libraryId}
-                    title={localizedTranslation(currentPanel.name, lang)}
-                    avatarSize="l"
-                />
-            ) : (
-                <RecordIdCard
-                    libraryId={currentLibraryId ?? libraryId}
-                    currentRecordId={currentRecordId ?? recordId}
-                    avatarSize="l"
+                    panelType={panelType}
+                    recordId={recordId}
+                    hasFlapPanel={hasFlapPanel}
+                    where={where}
+                    currentPanelId={currentPanel.id}
+                    className={panelHeaderTabs}
                 />
             )}
-            {!isLibraryPanel && currentPanel.type !== 'creationForm' && (
-                <KitSpace direction="horizontal">
-                    <ToggleFlapButton
-                        targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}
-                        targetRecordId={currentRecordId ?? recordId}
-                        targetLibraryId={currentLibraryId ?? libraryId}
-                    />
-                    <ToggleFlapButton
-                        targetFlapPanelId={FLAP_THREAD_PANEL_ID}
-                        targetRecordId={currentRecordId ?? recordId}
-                        targetLibraryId={currentLibraryId ?? libraryId}
-                    />
-                    {!isFullpagePanel && !hideExpandCollapseButton && <ExpandCollapseCurrentPanelButton />}
-                </KitSpace>
-            )}
-        </KitSpace>
+            {!isFirstPanel && !hidePanelDisplayModeSelector && <PanelDisplayModeSelector />}
+        </div>
     );
 };

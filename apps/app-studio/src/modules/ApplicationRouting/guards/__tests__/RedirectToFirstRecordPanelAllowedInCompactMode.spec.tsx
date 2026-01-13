@@ -6,7 +6,7 @@ import * as ReactRouter from 'react-router-dom';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../types';
 import * as RetrievePanelDetails from '../../utils/retrievePanelDetails';
-import {RedirectToFirstRecordPanelAllowedInSlider} from '../RedirectToFirstRecordPanelAllowedInSlider';
+import {RedirectToFirstRecordPanelAllowedInCompactMode} from '../RedirectToFirstRecordPanelAllowedInCompactMode';
 
 jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
@@ -23,7 +23,7 @@ jest.mock('../../utils/retrievePanelDetails', () => ({
     retrievePanelDetails: jest.fn(),
 }));
 
-describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
+describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () => {
     const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
     const spyNavigate = jest.spyOn(ReactRouter, 'Navigate');
     const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
@@ -78,13 +78,13 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
                         id: currentRecordPanelId,
                         type: 'editionForm',
                         formId: 'edition',
-                        hideInSlider: true,
+                        hideInCompactMode: true,
                     },
                     {
                         id: firstAllowedPanelId,
                         type: 'editionForm',
                         formId: 'edition',
-                        hideInSlider: false,
+                        hideInCompactMode: false,
                     },
                 ],
             },
@@ -95,7 +95,7 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
         jest.clearAllMocks();
     });
 
-    it('should render children when panel is not hidden in slider', async () => {
+    it('should render children when panel is not hidden in compact mode', async () => {
         spyUseParams.mockReturnValue({
             workspaceId,
             panelId: currentPanelId,
@@ -109,16 +109,16 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
                 id: firstAllowedPanelId,
                 type: 'editionForm',
                 formId: 'edition',
-                hideInSlider: false,
+                hideInCompactMode: false,
             },
             libraryId: 'map',
             panelType: 'recordPanels',
         });
 
         const {getByText} = render(
-            <RedirectToFirstRecordPanelAllowedInSlider>
+            <RedirectToFirstRecordPanelAllowedInCompactMode>
                 <div>Test children</div>
-            </RedirectToFirstRecordPanelAllowedInSlider>,
+            </RedirectToFirstRecordPanelAllowedInCompactMode>,
         );
 
         expect(getByText('Test children')).toBeInTheDocument();
@@ -140,16 +140,16 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
                 id: currentRecordPanelId,
                 type: 'editionForm',
                 formId: 'edition',
-                hideInSlider: true,
+                hideInCompactMode: true,
             },
             libraryId: 'map',
             panelType: 'recordPanels',
         });
 
         const {getByText} = render(
-            <RedirectToFirstRecordPanelAllowedInSlider>
+            <RedirectToFirstRecordPanelAllowedInCompactMode>
                 <div>Test children</div>
-            </RedirectToFirstRecordPanelAllowedInSlider>,
+            </RedirectToFirstRecordPanelAllowedInCompactMode>,
         );
 
         expect(getByText('Test children')).toBeInTheDocument();
@@ -157,7 +157,7 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
         expect(spyGeneratePath).not.toHaveBeenCalled();
     });
 
-    it('should redirect to first allowed panel when panel is hidden in slider and where is slider', async () => {
+    it('should redirect to first allowed panel when panel is hidden in slider and where is compact mode', async () => {
         spyUseParams.mockReturnValue({
             workspaceId,
             panelId: currentPanelId,
@@ -172,13 +172,13 @@ describe('RedirectToFirstRecordPanelAllowedInSlider component guard', () => {
                 id: currentRecordPanelId,
                 type: 'editionForm',
                 formId: 'edition',
-                hideInSlider: true,
+                hideInCompactMode: true,
             },
             libraryId: 'map',
             panelType: 'recordPanels',
         });
 
-        render(<RedirectToFirstRecordPanelAllowedInSlider />);
+        render(<RedirectToFirstRecordPanelAllowedInCompactMode />);
 
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);
         expect(spyGeneratePath).toHaveBeenCalledWith('../:recordPanelId', {

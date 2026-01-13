@@ -1,15 +1,19 @@
 {
     "global": {
         "cancel": "Cancel",
-        "collapse": "Collapse",
         "confirm": "Confirm",
         "discussion": "Discussions",
-        "expand": "Expand",
         "home": "Home",
         "information": "Information",
         "are_you_sure": "Are you sure?",
         "sign_out": "Logout",
         "download": "Download"
+    },
+    "display_mode": {
+        "select_display": "Select display",
+        "lateral_panel": "Lateral panel",
+        "floating_window": "Floating window",
+        "fullpage_window": "Fullpage window"
     },
     "information_and_history": {
         "system_information": "System information",

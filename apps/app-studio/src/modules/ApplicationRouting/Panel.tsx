@@ -8,23 +8,23 @@ import {useApplicationSettingsContext} from '../../config/application-instance/a
 import {PanelContent} from './content/PanelContent';
 import {nextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
-import {useDisplayConditions} from './utils/useDisplayConditions';
 import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {PanelHeader} from './header/PanelHeader';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {AbsolutePaths} from './router/paths';
 import {FlapContainer} from './FlapContainer';
-import {content, fullpageContent, fullpagePage, page, pageHeader} from './panel.module.css';
+import {panel, panelContent, firstPanel, firstPanelContent, panelHeader} from './panel.module.css';
 
 export const Panel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
-    const {isLastFullpagePanel, isLastLevelRecordPanel, isFirstPanel} = useDisplayConditions();
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId, panelId});
     const NextLevelRoutes = useRoutes(nextLevelRoutes);
     const match = useMatch(AbsolutePaths.recordPanel);
 
+    const isFirstPanel = where === undefined;
+    const isPanelInSlider = where === 'slider';
     const currentWorkspace = application.workspaces.find(({id}) => id === workspaceId);
     const currentRecordId = isFirstPanel && currentWorkspace.type === 'record' ? currentWorkspace.recordId : recordId;
     const hasFlapPanel = flapPanelId !== undefined;
@@ -38,34 +38,23 @@ export const Panel: FunctionComponent = () => {
         [hasFlapPanel, match?.pathname],
     );
 
-    if (!isLastFullpagePanel && !isLastLevelRecordPanel) {
-        return NextLevelRoutes;
-    }
-
-    if (where === 'slider' && hasFlapPanel) {
+    if (isPanelInSlider && hasFlapPanel) {
         return <FlapContainer ref={setFlapRef} />;
     }
 
     return (
         <>
             <section
-                className={cn(page, {
-                    [fullpagePage]: isLastFullpagePanel,
+                className={cn(panel, {
+                    [firstPanel]: isFirstPanel,
                 })}
             >
-                {(isLastFullpagePanel || !currentPanel.isStandalone) && (
-                    <div className={pageHeader}>
-                        <PanelHeader
-                            enabled={
-                                /**
-                                 * `popup` and `slider` are managed by `<PanelContainer />`
-                                 */
-                                isLastFullpagePanel
-                            }
-                            currentRecordId={currentRecordId}
-                        />
+                {(isFirstPanel || !currentPanel.isStandalone) && (
+                    <div className={panelHeader}>
+                        {/* `fullpage`, `popup` and `slider` are managed by `<PanelContainer />` */}
+                        {isFirstPanel && <PanelHeader currentRecordId={currentRecordId} />}
                         <PanelsTabs
-                            enabled={where !== 'popup' && !currentPanel.isStandalone}
+                            enabled={isFirstPanel || isPanelInSlider}
                             workspaceId={workspaceId}
                             libraryId={libraryId}
                             panelType={panelType}
@@ -77,8 +66,8 @@ export const Panel: FunctionComponent = () => {
                     </div>
                 )}
                 <div
-                    className={cn(content, {
-                        [fullpageContent]: isLastFullpagePanel,
+                    className={cn(panelContent, {
+                        [firstPanelContent]: isFirstPanel,
                     })}
                 >
                     <PanelContent

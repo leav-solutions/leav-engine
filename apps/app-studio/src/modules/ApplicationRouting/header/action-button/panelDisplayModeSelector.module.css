@@ -1,0 +1,4 @@
+.panelDisplayModeSelector {
+    align-self: center;
+    margin-left: calc(var(--general-spacing-xxs) * 1px);
+}

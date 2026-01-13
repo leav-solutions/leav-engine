@@ -7,13 +7,13 @@ import {useApplicationSettingsContext} from '../../../config/application-instanc
 import {RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 
-export const RedirectToFirstRecordPanelAllowedInSlider: FunctionComponent = ({children}) => {
+export const RedirectToFirstRecordPanelAllowedInCompactMode: FunctionComponent = ({children}) => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
 
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
-    const currentPanelShouldBeHidden = currentPanel.hideInSlider && where === 'slider';
+    const currentPanelShouldBeHidden = currentPanel.hideInCompactMode && ['slider', 'popup'].includes(where);
     if (!currentPanelShouldBeHidden) {
         return <>{children}</>;
     }
@@ -21,11 +21,11 @@ export const RedirectToFirstRecordPanelAllowedInSlider: FunctionComponent = ({ch
     // TODO: handle case where workspaceId is undefined, should redirect to 404
     const workspace = application.workspaces.find(({id}) => id === workspaceId);
 
-    const firstRecordPanelAllowedInSlider = application.libraries[workspace.libraryId].recordPanels.find(
-        panel => !panel.hideInSlider,
+    const firstRecordPanelAllowedInCompactMode = application.libraries[workspace.libraryId].recordPanels.find(
+        panel => !panel.hideInCompactMode,
     );
 
-    if (!firstRecordPanelAllowedInSlider) {
+    if (!firstRecordPanelAllowedInCompactMode) {
         // TODO: handle case where no record panel is allowed in slider
         console.error('No record panel allowed in slider found');
         return <>{children}</>;
@@ -35,7 +35,7 @@ export const RedirectToFirstRecordPanelAllowedInSlider: FunctionComponent = ({ch
         <Navigate
             replace
             to={generatePath(RelativePaths.changeLastRecordPanel, {
-                recordPanelId: firstRecordPanelAllowedInSlider.id,
+                recordPanelId: firstRecordPanelAllowedInCompactMode.id,
             })}
             relative="path"
         />

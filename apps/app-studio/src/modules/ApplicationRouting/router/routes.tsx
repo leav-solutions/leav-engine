@@ -10,8 +10,9 @@ import {WorkspacesNavigationMenu} from '../workspaces/WorkspacesNavigationMenu';
 import {Panel} from '../Panel';
 import {PanelContainer} from '../PanelContainer';
 import {AbsolutePaths, UnreachablePaths} from './paths';
-import {RedirectToFirstRecordPanelAllowedInSlider} from '../guards/RedirectToFirstRecordPanelAllowedInSlider';
+import {RedirectToFirstRecordPanelAllowedInCompactMode} from '../guards/RedirectToFirstRecordPanelAllowedInCompactMode';
 import {RedirectCreationFormPanelToPopup} from '../guards/RedirectCreationFormPanelToPopup';
+import {WorkspacePanelContainer} from '../WorkspacePanelContainer';
 
 // panelWithFlap route need to be before the panel route because router will match the first route that matches the path
 const panelPaths = [AbsolutePaths.panelWithFlap, AbsolutePaths.panel];
@@ -28,7 +29,9 @@ export const firstLevelRoutes: RouteObject[] = [
                 path: panelPath,
                 element: (
                     <RedirectToPreviousPanel>
-                        <Panel />
+                        <WorkspacePanelContainer>
+                            <Panel />
+                        </WorkspacePanelContainer>
                     </RedirectToPreviousPanel>
                 ),
             })),
@@ -52,13 +55,13 @@ export const nextLevelRoutes: RouteObject[] = [
         path: recordWherePanelPath,
         element: (
             <RedirectToPreviousPanel>
-                <RedirectToFirstRecordPanelAllowedInSlider>
+                <RedirectToFirstRecordPanelAllowedInCompactMode>
                     <RedirectCreationFormPanelToPopup>
                         <PanelContainer>
                             <Panel />
                         </PanelContainer>
                     </RedirectCreationFormPanelToPopup>
-                </RedirectToFirstRecordPanelAllowedInSlider>
+                </RedirectToFirstRecordPanelAllowedInCompactMode>
             </RedirectToPreviousPanel>
         ),
     })),

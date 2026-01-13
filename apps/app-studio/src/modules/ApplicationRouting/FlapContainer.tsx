@@ -26,11 +26,11 @@ export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
             size="l"
             headerExtra={
                 <PanelHeader
-                    enabled
-                    hideExpandCollapseButton
                     actionPosition="right"
                     currentRecordId={flapRecordId}
                     currentLibraryId={flapLibraryId}
+                    hidePanelTabs
+                    hidePanelDisplayModeSelector
                 />
             }
             onCloseAfterAnimation={() => {
