@@ -10,9 +10,19 @@ export const useListEditableAttributeHook = ({libraryId}: {libraryId: string}): 
     const {attributeDetailsById} = useAttributeDetailsData(libraryId);
     const treeMonoValuedAttributes: AttributeDetailsTreeAttributeFragment[] = useMemo(
         () =>
-            Object.values(attributeDetailsById).filter(
-                attr => attr.type === AttributeType.tree && !attr.multiple_values,
-            ),
+            Object.values(attributeDetailsById).filter(attr => {
+                const dependenciesTreeAttributes =
+                    ('permissions_conf_dependent_values' in attr &&
+                        attr.permissions_conf_dependent_values?.dependenciesTreeAttributes) ||
+                    [];
+                const dependentOnItself =
+                    dependenciesTreeAttributes.length === 1 && dependenciesTreeAttributes[0].id === attr.id;
+                return (
+                    attr.type === AttributeType.tree &&
+                    !attr.multiple_values &&
+                    (dependenciesTreeAttributes.length === 0 || dependentOnItself)
+                );
+            }),
         [attributeDetailsById],
     );
 

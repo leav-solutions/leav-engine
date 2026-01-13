@@ -1287,6 +1287,7 @@ export type Notification = {
   level: NotificationLevel;
   message: Scalars['String']['output'];
   relatedEntities?: Maybe<Array<RelatedEntity>>;
+  taskId?: Maybe<Scalars['ID']['output']>;
   title: Scalars['String']['output'];
 };
 
@@ -2112,6 +2113,10 @@ export type TreeLabelArgs = {
   lang?: InputMaybe<Array<AvailableLanguage>>;
 };
 
+export type TreeAllowedDependentValues = {
+  nodeId?: Maybe<Scalars['ID']['output']>;
+};
+
 export type TreeAttribute = Attribute & {
   actions_list?: Maybe<ActionsListConfiguration>;
   compute: Scalars['Boolean']['output'];
@@ -2134,6 +2139,8 @@ export type TreeAttribute = Attribute & {
   required: Scalars['Boolean']['output'];
   settings?: Maybe<Scalars['JSONObject']['output']>;
   system: Scalars['Boolean']['output'];
+  /**  List of all tree nodes with their allowed dependent values for this attribute, include null node for root if applicable. */
+  tree_values?: Maybe<Array<TreeDependentValuesNode>>;
   type: AttributeType;
   values_list?: Maybe<TreeValuesListConf>;
   versions_conf?: Maybe<ValuesVersionsConf>;
@@ -2158,6 +2165,11 @@ export enum TreeBehavior {
   files = 'files',
   standard = 'standard'
 }
+
+export type TreeDependentValuesNode = {
+  allowedDependentValues?: Maybe<Array<TreeAllowedDependentValues>>;
+  node?: Maybe<TreeNodeLight>;
+};
 
 export type TreeElement = {
   id?: Maybe<Scalars['ID']['output']>;
@@ -2281,10 +2293,12 @@ export type TreePermissions = {
 };
 
 export type TreePermissionsDependentValuesConf = {
+  allowByDefault: Scalars['Boolean']['output'];
   dependenciesTreeAttributes: Array<Attribute>;
 };
 
 export type TreePermissionsDependentValuesConfInput = {
+  allowByDefault: Scalars['Boolean']['input'];
   dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 

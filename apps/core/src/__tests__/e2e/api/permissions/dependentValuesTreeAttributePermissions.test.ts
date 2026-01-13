@@ -50,19 +50,48 @@ describe('DependentValuesTreeAttributePermissions', () => {
         await gqlSaveLibrary(testLibraryName, 'Test node lib', [testAttrName]);
     });
 
+    it('attribute with tree_values should not contains allowedDependentValues when dependency not defined', async () => {
+        const attribute = await getAttributeWithTreeValues();
+        expect(attribute.tree_values).toHaveLength(4);
+        expect(attribute.tree_values).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    node: expect.objectContaining({id: treeNode1Id}),
+                    allowedDependentValues: null,
+                }),
+                expect.objectContaining({
+                    node: expect.objectContaining({id: treeNode2Id}),
+                    allowedDependentValues: null,
+                }),
+                expect.objectContaining({
+                    node: expect.objectContaining({id: treeNode3Id}),
+                    allowedDependentValues: null,
+                }),
+                expect.objectContaining({
+                    node: null,
+                    allowedDependentValues: null,
+                }),
+            ]),
+        );
+    });
+
     describe('dependent on itself (allowed_by_default)', () => {
-        beforeAll(async () => {
-            await gqlSaveAttribute({
+        const setupAttribute = async (required: boolean) =>
+            gqlSaveAttribute({
                 id: testAttrName,
                 label: 'Test Dependent Values Tree Attribute on itself',
                 type: AttributeTypes.TREE,
                 linkedTree: testTreeName,
                 multipleValues: false,
+                required,
                 permissions_conf_dependent_values: {
                     dependenciesTreeAttributes: [testAttrName],
                     allowByDefault: true,
                 },
             });
+
+        beforeAll(async () => {
+            await setupAttribute(false);
         });
 
         it('should save and retrieve the attribute', async () => {
@@ -155,6 +184,35 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 expect(result2.data.data.permissions[0].allowed).toBe(null);
             });
 
+            it('attribute with tree_values should not contain node2 in node1', async () => {
+                const attribute = await getAttributeWithTreeValues();
+                expect(attribute.tree_values).toHaveLength(4);
+                expect(attribute.tree_values).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode1Id}),
+                            allowedDependentValues: [{nodeId: treeNode3Id}, {nodeId: null}],
+                        }),
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode2Id}),
+                            allowedDependentValues: [{nodeId: treeNode1Id}, {nodeId: treeNode3Id}, {nodeId: null}],
+                        }),
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode3Id}),
+                            allowedDependentValues: [{nodeId: treeNode1Id}, {nodeId: treeNode2Id}, {nodeId: null}],
+                        }),
+                        expect.objectContaining({
+                            node: null,
+                            allowedDependentValues: [
+                                {nodeId: treeNode1Id},
+                                {nodeId: treeNode2Id},
+                                {nodeId: treeNode3Id},
+                            ],
+                        }),
+                    ]),
+                );
+            });
+
             describe('record have node1 value', () => {
                 beforeEach(async () => {
                     const resCreateRecord = await makeGraphQlCall(`mutation {
@@ -195,22 +253,92 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
                 });
             });
+
+            describe('attribute is required', () => {
+                beforeAll(async () => {
+                    await setupAttribute(true);
+                });
+
+                afterAll(async () => {
+                    await setupAttribute(false);
+                });
+
+                it('attribute with tree_values should not contains null node in allowedDependentValues', async () => {
+                    const attribute = await getAttributeWithTreeValues();
+                    expect(attribute.tree_values).toHaveLength(4);
+                    expect(attribute.tree_values).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode1Id}),
+                                allowedDependentValues: [{nodeId: treeNode3Id}],
+                            }),
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode2Id}),
+                                allowedDependentValues: [{nodeId: treeNode1Id}, {nodeId: treeNode3Id}],
+                            }),
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode3Id}),
+                                allowedDependentValues: [{nodeId: treeNode1Id}, {nodeId: treeNode2Id}],
+                            }),
+                            expect.objectContaining({
+                                node: null,
+                                allowedDependentValues: [
+                                    {nodeId: treeNode1Id},
+                                    {nodeId: treeNode2Id},
+                                    {nodeId: treeNode3Id},
+                                ],
+                            }),
+                        ]),
+                    );
+                });
+
+                describe('record have node1 value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                            c1: createRecord(library: "${testLibraryName}", data: {
+                                values: [{ attribute: "${testAttrName}", payload: "${treeNode1Id}"}]
+                            }) { record {id} },
+                        }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should not be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(false);
+
+                        await expect(saveRecordAttributeTestValue(treeNode2Id)).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode1Id);
+                    });
+
+                    it('should be allowed to set value node3', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(true);
+
+                        await saveRecordAttributeTestValue(treeNode3Id);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode3Id);
+                    });
+                });
+            });
         });
     });
 
     describe('dependent on itself (not allowed_by_default)', () => {
-        beforeAll(async () => {
-            await gqlSaveAttribute({
+        const setupAttribute = async (required: boolean) =>
+            gqlSaveAttribute({
                 id: testAttrName,
                 label: 'Test Dependent Values Tree Attribute on itself',
                 type: AttributeTypes.TREE,
                 linkedTree: testTreeName,
                 multipleValues: false,
+                required,
                 permissions_conf_dependent_values: {
                     dependenciesTreeAttributes: [testAttrName],
                     allowByDefault: false,
                 },
             });
+
+        beforeAll(async () => {
+            await setupAttribute(false);
         });
 
         it('should save and retrieve the attribute', async () => {
@@ -362,6 +490,31 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 expect(result2.data.data.permissions[0].allowed).toBe(null);
             });
 
+            it('attribute with tree_values should only contain node2 in node1 and node1 in null', async () => {
+                const attribute = await getAttributeWithTreeValues();
+                expect(attribute.tree_values).toHaveLength(4);
+                expect(attribute.tree_values).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode1Id}),
+                            allowedDependentValues: [{nodeId: treeNode2Id}],
+                        }),
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode2Id}),
+                            allowedDependentValues: [],
+                        }),
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode3Id}),
+                            allowedDependentValues: [],
+                        }),
+                        expect.objectContaining({
+                            node: null,
+                            allowedDependentValues: [{nodeId: treeNode1Id}],
+                        }),
+                    ]),
+                );
+            });
+
             describe('record have node1 value', () => {
                 beforeEach(async () => {
                     const resCreateRecord = await makeGraphQlCall(`mutation {
@@ -402,6 +555,69 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
                     expect(treeChildren).toHaveLength(1);
                     expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode2Id}]));
+                });
+            });
+
+            describe('attribute is required', () => {
+                beforeAll(async () => {
+                    await setupAttribute(true);
+                });
+
+                afterAll(async () => {
+                    await setupAttribute(false);
+                });
+
+                it('attribute with tree_values should not contains null node in allowedDependentValues', async () => {
+                    const attribute = await getAttributeWithTreeValues();
+                    expect(attribute.tree_values).toHaveLength(4);
+
+                    expect(attribute.tree_values).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode1Id}),
+                                allowedDependentValues: [{nodeId: treeNode2Id}],
+                            }),
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode2Id}),
+                                allowedDependentValues: [],
+                            }),
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode3Id}),
+                                allowedDependentValues: [],
+                            }),
+                            expect.objectContaining({
+                                node: null,
+                                allowedDependentValues: [{nodeId: treeNode1Id}],
+                            }),
+                        ]),
+                    );
+                });
+
+                describe('record have node1 value', () => {
+                    beforeEach(async () => {
+                        const resCreateRecord = await makeGraphQlCall(`mutation {
+                            c1: createRecord(library: "${testLibraryName}", data: {
+                                values: [{ attribute: "${testAttrName}", payload: "${treeNode1Id}"}]
+                            }) { record {id} },
+                        }`);
+                        recordId = resCreateRecord.data.data.c1.record.id;
+                    });
+
+                    it('should be allowed to set value node2', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode2Id)).toBe(true);
+
+                        await saveRecordAttributeTestValue(treeNode2Id);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode2Id);
+                    });
+
+                    it('should not be allowed to set value node3', async () => {
+                        expect(await isNonAdminAllowedToSetValueOnRecord(treeNode3Id)).toBe(false);
+
+                        await expect(saveRecordAttributeTestValue(treeNode3Id)).rejects.toThrow(/Action forbidden/);
+                        const values = await getRecordAttributeTestValues();
+                        expect(values[0].payload.id).toBe(treeNode1Id);
+                    });
                 });
             });
         });
@@ -460,6 +676,31 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 ]);
             });
 
+            it('attribute with tree_values should not contains allowedDependentValues when dependency not on itself', async () => {
+                const attribute = await getAttributeWithTreeValues();
+                expect(attribute.tree_values).toHaveLength(4);
+                expect(attribute.tree_values).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode1Id}),
+                            allowedDependentValues: null,
+                        }),
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode2Id}),
+                            allowedDependentValues: null,
+                        }),
+                        expect.objectContaining({
+                            node: expect.objectContaining({id: treeNode3Id}),
+                            allowedDependentValues: null,
+                        }),
+                        expect.objectContaining({
+                            node: null,
+                            allowedDependentValues: null,
+                        }),
+                    ]),
+                );
+            });
+
             describe('can not move from anotherNodeA to node2', () => {
                 const setupPermission = (allowed: boolean | null) =>
                     makeGraphQlCall(
@@ -491,6 +732,31 @@ describe('DependentValuesTreeAttributePermissions', () => {
 
                 afterAll(async () => {
                     await setupPermission(null);
+                });
+
+                it('attribute with tree_values should not contains allowedDependentValues when dependency not on itself', async () => {
+                    const attribute = await getAttributeWithTreeValues();
+                    expect(attribute.tree_values).toHaveLength(4);
+                    expect(attribute.tree_values).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode1Id}),
+                                allowedDependentValues: null,
+                            }),
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode2Id}),
+                                allowedDependentValues: null,
+                            }),
+                            expect.objectContaining({
+                                node: expect.objectContaining({id: treeNode3Id}),
+                                allowedDependentValues: null,
+                            }),
+                            expect.objectContaining({
+                                node: null,
+                                allowedDependentValues: null,
+                            }),
+                        ]),
+                    );
                 });
 
                 describe('record have anotherNodeA/node1 value', () => {
@@ -1190,5 +1456,42 @@ describe('DependentValuesTreeAttributePermissions', () => {
         );
 
         return res.data.data.treeNodeChildren.list;
+    };
+
+    const getAttributeWithTreeValues = async (): Promise<{
+        id: string;
+        tree_values: Array<{node: {id: string; record: {id: string}}; allowedDependentValues: {nodeId: string}}>;
+    }> => {
+        const res = await makeGraphQlCall(
+            `{
+                attributes(
+                    filters: {
+                        id: "${testAttrName}",
+                    }
+                ) {
+                    list {
+                        id
+                        ... on TreeAttribute {
+                            tree_values {
+                                node {
+                                    id
+                                    record {
+                                        id
+                                    }
+                                }
+                                allowedDependentValues {
+                                    nodeId
+                                }
+                            }
+                        }
+                    }
+                }
+            }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
+
+        return res.data.data.attributes.list[0];
     };
 });

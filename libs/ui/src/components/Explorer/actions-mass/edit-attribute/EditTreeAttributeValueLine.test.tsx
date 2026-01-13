@@ -3,20 +3,27 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EditTreeAttributeValueLine} from './EditTreeAttributeValueLine';
 import {type AttributeDetailsTreeAttributeFragment, AttributeType} from '_ui/_gqlTypes';
-import {type TreeAttributeNodeValue} from './useListTreeAttributeValuesHook';
+import {type ITreeAttributeNodeValue} from './useListTreeAttributeValuesHook';
 import {render, screen} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 
-const mockTreeNodeValues: TreeAttributeNodeValue[] = [
+const mockTreeNodeValues: ITreeAttributeNodeValue[] = [
     {
         id: 'node-1',
-        record: {whoAmI: {label: 'Node 1', color: '#ff0000'}},
+
+        label: 'Node 1',
+        color: '#ff0000',
     },
     {
         id: 'node-2',
-        record: {whoAmI: {label: 'Node 2', color: '#00ff00'}},
+        label: 'Node 2',
+        color: '#00ff00',
     },
-] as TreeAttributeNodeValue[];
+    {
+        id: null,
+        label: 'explorer.massAction.editAttribute_value_undefined',
+    },
+] as ITreeAttributeNodeValue[];
 
 const mockAttribute = {
     id: 'attr-1',
@@ -30,7 +37,6 @@ describe('EditTreeAttributeValueLine', () => {
         render(
             <EditTreeAttributeValueLine
                 treeNodeValues={mockTreeNodeValues}
-                selectedAttribute={mockAttribute}
                 valueOccurrenceNodeId="node-1"
                 valueOccurrenceCount={2}
                 setAttributeMapping={setAttributeMapping}
@@ -58,7 +64,6 @@ describe('EditTreeAttributeValueLine', () => {
         render(
             <EditTreeAttributeValueLine
                 treeNodeValues={mockTreeNodeValues}
-                selectedAttribute={mockAttribute}
                 valueOccurrenceNodeId="node-1"
                 valueOccurrenceCount={2}
                 setAttributeMapping={setAttributeMapping}
@@ -75,14 +80,10 @@ describe('EditTreeAttributeValueLine', () => {
 
     it('renders does not show undefined option when attribute is required', async () => {
         const setAttributeMapping = jest.fn();
-        const requiredAttribute = {
-            ...mockAttribute,
-            required: true,
-        };
+
         render(
             <EditTreeAttributeValueLine
-                treeNodeValues={mockTreeNodeValues}
-                selectedAttribute={requiredAttribute}
+                treeNodeValues={mockTreeNodeValues.filter(node => node.id !== null)} // remove undefined value for required attribute
                 valueOccurrenceNodeId="node-1"
                 valueOccurrenceCount={1}
                 setAttributeMapping={setAttributeMapping}
@@ -103,7 +104,6 @@ describe('EditTreeAttributeValueLine', () => {
         render(
             <EditTreeAttributeValueLine
                 treeNodeValues={mockTreeNodeValues}
-                selectedAttribute={mockAttribute}
                 valueOccurrenceNodeId={null}
                 valueOccurrenceCount={42}
                 setAttributeMapping={setAttributeMapping}
@@ -123,5 +123,42 @@ describe('EditTreeAttributeValueLine', () => {
         // Simulate select change to node-2
         await userEvent.click(screen.getByText('Node 2'));
         expect(setAttributeMapping).toHaveBeenCalledWith(null, 'node-2');
+    });
+
+    describe('when allowedDependentValues are defined', () => {
+        const treeNodeValuesWithDependencies: ITreeAttributeNodeValue[] = [
+            {
+                id: 'node-1',
+                label: 'Node 1',
+                allowedDependentValues: [{nodeId: 'node-2'}],
+            },
+            {
+                id: 'node-2',
+                label: 'Node 2',
+            },
+            {
+                id: 'node-3',
+                label: 'Node 3',
+            },
+        ];
+
+        it('only shows allowed dependent values in select options', async () => {
+            const setAttributeMapping = jest.fn();
+            render(
+                <EditTreeAttributeValueLine
+                    treeNodeValues={treeNodeValuesWithDependencies}
+                    valueOccurrenceNodeId="node-1"
+                    valueOccurrenceCount={5}
+                    setAttributeMapping={setAttributeMapping}
+                />,
+            );
+
+            const valueSelect = screen.getByRole('combobox');
+            await userEvent.click(valueSelect);
+
+            const valueOptions = screen.getAllByRole('option');
+            expect(valueOptions).toHaveLength(1);
+            expect(valueOptions.map(opt => opt.textContent)).toContain('node-2');
+        });
     });
 });

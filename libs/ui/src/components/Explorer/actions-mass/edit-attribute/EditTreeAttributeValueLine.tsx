@@ -6,7 +6,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitIdCard, KitSelect, KitTypography} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {type TreeAttributeNodeValue} from './useListTreeAttributeValuesHook';
+import {type ITreeAttributeNodeValue} from './useListTreeAttributeValuesHook';
 
 const DivContainer = styled.div`
     display: grid;
@@ -19,48 +19,45 @@ const UNDEFINED_VALUE = '__null__';
 const DEFAULT_ID_CARD_COLOR = 'rgba(200, 200, 200, 1)';
 
 export const EditTreeAttributeValueLine: FunctionComponent<{
-    treeNodeValues: TreeAttributeNodeValue[];
-    selectedAttribute: AttributeDetailsTreeAttributeFragment;
+    treeNodeValues: ITreeAttributeNodeValue[];
     valueOccurrenceNodeId: string | null;
     valueOccurrenceCount: number;
     setAttributeMapping: (before: string | null, after: string | null) => void;
-}> = ({selectedAttribute, treeNodeValues, valueOccurrenceNodeId, valueOccurrenceCount, setAttributeMapping}) => {
+}> = ({treeNodeValues, valueOccurrenceNodeId, valueOccurrenceCount, setAttributeMapping}) => {
     const {t} = useSharedTranslation();
 
-    const treeNodeValueOfOccurrence = valueOccurrenceNodeId
-        ? treeNodeValues.find(node => node.id === valueOccurrenceNodeId)
-        : null;
+    const treeNodeValueOfOccurrence = treeNodeValues.find(node => node.id === valueOccurrenceNodeId);
+    if (!treeNodeValueOfOccurrence) {
+        return null;
+    }
+
+    const allowedDependentValues = treeNodeValueOfOccurrence ? treeNodeValueOfOccurrence.allowedDependentValues : null;
 
     const selectOptions = treeNodeValues
         .filter(treeNode => treeNode.id !== valueOccurrenceNodeId)
+        .filter(
+            treeNode =>
+                allowedDependentValues == null || // if no allowedDependentValues, all values are allowed
+                !!allowedDependentValues.find(dv => dv.nodeId === treeNode.id),
+        )
         .map(treeNode => ({
-            label: treeNode.record.whoAmI.label || treeNode.record.whoAmI.id,
-            value: treeNode.id,
-        }))
-        .concat(
-            selectedAttribute.required || !treeNodeValueOfOccurrence
-                ? []
-                : [
-                      {
-                          label: t('explorer.massAction.editAttribute_value_undefined'),
-                          value: UNDEFINED_VALUE,
-                      },
-                  ],
-        );
+            label: treeNode.label,
+            value: treeNode.id || UNDEFINED_VALUE,
+        }));
+
+    if (selectOptions.length === 0 && valueOccurrenceNodeId) {
+        selectOptions.push({
+            label: t('explorer.massAction.editAttribute_value_do_not_change'),
+            value: valueOccurrenceNodeId,
+        });
+    }
 
     return (
         <DivContainer>
-            {treeNodeValueOfOccurrence ? (
-                <KitIdCard
-                    title={treeNodeValueOfOccurrence.record.whoAmI.label}
-                    color={treeNodeValueOfOccurrence.record.whoAmI.color || DEFAULT_ID_CARD_COLOR}
-                />
-            ) : (
-                <KitIdCard
-                    title={t('explorer.massAction.editAttribute_value_undefined')}
-                    color={DEFAULT_ID_CARD_COLOR}
-                />
-            )}
+            <KitIdCard
+                title={treeNodeValueOfOccurrence.label}
+                color={treeNodeValueOfOccurrence.color || DEFAULT_ID_CARD_COLOR}
+            />
             <KitTypography.Text>
                 {t('explorer.massAction.editAttribute_value_occurrences_to_edit', {
                     count: valueOccurrenceCount,

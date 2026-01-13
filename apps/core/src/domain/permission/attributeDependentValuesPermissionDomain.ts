@@ -36,6 +36,14 @@ export interface IAttributeDependentValuesPermissionDomain {
         dependenciesTreeTargets: IPermissionsDependenciesTreeTarget[];
         ctx: IQueryInfos;
     }): Promise<boolean>;
+
+    filterAllowedDependentValuesOnItself(params: {
+        action: AttributeDependentValuesPermissionsActions;
+        attributeId: string;
+        targetValue: {nodeId: string | null};
+        allValues: Array<{nodeId: string | null}>;
+        ctx: IQueryInfos;
+    }): Promise<Array<{nodeId: string | null}>>;
 }
 
 export interface IRecordAttributePermissionDomainDeps {
@@ -192,6 +200,83 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
             }
 
             return attrProps.permissions_conf_dependent_values.allowByDefault;
+        },
+        async filterAllowedDependentValuesOnItself(params: {
+            action: AttributeDependentValuesPermissionsActions;
+            attributeId: string;
+            targetValue: {nodeId: string | null};
+            allValues: Array<{nodeId: string | null}>;
+            ctx: IQueryInfos;
+        }): Promise<Array<{nodeId: string | null}>> {
+            const {action, attributeId, targetValue, allValues, ctx} = params;
+
+            // Temporary allow disable that permission check in case of bug will still in dev/recette
+            if (!config.permissions.enableAttributeDependentValuesPermissions) {
+                return allValues;
+            }
+
+            const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+
+            // If no dependent values configuration, allow to set any value by default
+            if (
+                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes == null ||
+                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes.length === 0
+            ) {
+                return allValues;
+            }
+
+            if (
+                attrProps.permissions_conf_dependent_values.dependenciesTreeAttributes.length > 1 ||
+                attrProps.permissions_conf_dependent_values.dependenciesTreeAttributes[0] !== attributeId
+            ) {
+                throw new Error(
+                    'Attribute dependent values permission on itself can only be used on tree attributes depending on itself',
+                );
+            }
+
+            const dependenciesTreeTargets: IPermissionsDependenciesTreeTarget[] = [
+                {
+                    attributeId,
+                    tree: attrProps.linked_tree,
+                    nodeId: targetValue.nodeId,
+                },
+            ];
+            const userGroupsPaths = !!ctx.groupsId
+                ? await Promise.all(
+                      ctx.groupsId.map(async groupId =>
+                          elementAncestorsHelper.getCachedElementAncestors({
+                              treeId: 'users_groups',
+                              nodeId: groupId,
+                              ctx,
+                          }),
+                      ),
+                  )
+                : [];
+
+            const _getDefaultPermission = () => attrProps.permissions_conf_dependent_values.allowByDefault;
+
+            const allowedValues = await Promise.all(
+                allValues
+                    .filter(value => value.nodeId !== targetValue.nodeId)
+                    .map(async value => {
+                        const treeTarget = await _getValuesTreeTarget(attrProps, value.nodeId, ctx);
+
+                        const isAllow = await permByUserGroupsHelper.getPermissionByUserGroups({
+                            type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
+                            action,
+                            userGroupsPaths,
+                            applyTo: attributeId,
+                            treeTarget,
+                            dependenciesTreeTargets,
+                            getDefaultGlobalPermission: _getDefaultPermission,
+                            ctx,
+                        });
+
+                        return isAllow ? value : null;
+                    }),
+            );
+
+            return allowedValues.filter(Boolean);
         },
     };
 

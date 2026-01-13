@@ -1,0 +1,27 @@
+fragment TreeAttributeForMassEdition on TreeAttribute {
+    id
+    tree_values {
+        node {
+            id
+            record {
+                id
+                whoAmI {
+                    id
+                    label
+                    color
+                }
+            }
+        }
+        allowedDependentValues {
+            nodeId
+        }
+    }
+}
+
+query AttributeWithValuesForMassEdition($attributeId: ID!) {
+    attributes(filters: {id: $attributeId}) {
+        list {
+            ...TreeAttributeForMassEdition
+        }
+    }
+}

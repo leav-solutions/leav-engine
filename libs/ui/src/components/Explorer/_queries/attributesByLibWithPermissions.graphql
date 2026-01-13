@@ -36,6 +36,11 @@ fragment AttributesByLibAttributeWithPermissions on Attribute {
                 }
             }
         }
+        permissions_conf_dependent_values {
+            dependenciesTreeAttributes {
+                id
+            }
+        }
     }
     ... on StandardAttribute {
         embedded_fields {
