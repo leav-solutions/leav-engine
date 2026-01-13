@@ -15,6 +15,9 @@ export async function getTask(taskId: string): Promise<ITask> {
                         name
                         url
                     }
+                    role {
+                        type
+                    }
                     progress {
                         description
                         percent

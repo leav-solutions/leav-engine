@@ -40,8 +40,7 @@ export interface ITaskOrder {
 }
 
 export interface ITaskFunc {
-    moduleName: string;
-    subModuleName?: string;
+    path: string;
     name: string;
     args: {[key: string]: any};
 }
@@ -78,7 +77,7 @@ export enum TaskType {
 }
 
 export interface ITaskRole {
-    type: TaskType;
+    type: TaskType | string; // string for plugins TaskTypes
     detail?: string;
 }
 

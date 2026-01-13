@@ -97,7 +97,7 @@ export async function initDI(additionalModulesToRegister?: {
     );
 
     // Register this at the very end because we don't want plugins to access the deps manager
-    coreContainer.register('core.depsManager', asValue(coreContainer));
+    coreContainer.register('core.depsManager', asValue(pluginsContainer));
 
     return {coreContainer, pluginsContainer};
 }

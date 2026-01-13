@@ -75,6 +75,8 @@ export interface ITasksManagerDomain {
     createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<string>;
     cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
     deleteTasks(tasks: ITaskDeletePayload[], ctx: IQueryInfos): Promise<void>;
+    registerTaskTypes(types: string[]): void;
+    getTaskTypes(): string;
 }
 
 export interface ITasksManagerDomainDeps {
@@ -102,6 +104,8 @@ export default function ({
     'core.utils': utils,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
+    let _pluginTypes: string[] = [];
+
     const tag = `${process.pid}_${nanoid(3)}`;
 
     // Protect multiple listeners in worker mode, to allow listen after cancel task
@@ -159,8 +163,7 @@ export default function ({
 
         try {
             const func = _getDepsManagerFunc({
-                moduleName: task.func.moduleName,
-                subModuleName: task.func.subModuleName,
+                path: task.func.path,
                 funcName: task.func.name,
             });
 
@@ -218,8 +221,7 @@ export default function ({
             ) {
                 try {
                     const callbackFunc = _getDepsManagerFunc({
-                        moduleName: callback.moduleName,
-                        subModuleName: callback.subModuleName,
+                        path: callback.path,
                         funcName: callback.name,
                     });
 
@@ -253,8 +255,7 @@ export default function ({
                             label: Joi.object().required(),
                             func: Joi.object()
                                 .keys({
-                                    moduleName: Joi.string().required(),
-                                    subModuleName: Joi.string().required(),
+                                    path: Joi.string().required(),
                                     name: Joi.string().required(),
                                     args: Joi.array().required(),
                                 })
@@ -264,15 +265,12 @@ export default function ({
                                 .valid(...Object.values(TaskPriority))
                                 .required(),
                             role: Joi.object().keys({
-                                type: Joi.string()
-                                    .valid(...Object.values(TaskType))
-                                    .required(),
+                                type: Joi.string().required(),
                                 detail: Joi.string(),
                             }),
                             callbacks: Joi.array().items(
                                 Joi.object().keys({
-                                    moduleName: Joi.string().required(),
-                                    subModuleName: Joi.string(),
+                                    path: Joi.string().required(),
                                     name: Joi.string().required(),
                                     args: Joi.array().required(),
                                     type: Joi.array()
@@ -358,23 +356,11 @@ export default function ({
         };
     };
 
-    const _getDepsManagerFunc = ({
-        moduleName,
-        subModuleName,
-        funcName,
-    }: {
-        moduleName: string | null;
-        subModuleName?: string | null;
-        funcName: string;
-    }): DepsManagerFunc => {
-        const func: DepsManagerFunc = depsManager.resolve(
-            `core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`,
-        )?.[funcName];
+    const _getDepsManagerFunc = ({path, funcName}: {path: string | null; funcName: string}): DepsManagerFunc => {
+        const func: DepsManagerFunc = depsManager.resolve(path)?.[funcName];
 
         if (!func) {
-            throw new Error(
-                `Function core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}.${funcName} not found`,
-            );
+            throw new Error(`Function ${path}.${funcName} not found`);
         }
 
         return func;
@@ -635,6 +621,13 @@ export default function ({
         },
         async setLink(taskId, link, ctx) {
             await _updateTask(taskId, {link}, ctx);
+        },
+        registerTaskTypes(types) {
+            _pluginTypes = [..._pluginTypes, ...types];
+        },
+        getTaskTypes() {
+            const types: string = Object.values(TaskType).join(' ');
+            return types.concat(' ', _pluginTypes.join(' '));
         },
     };
 }

@@ -92,8 +92,7 @@ export default function ({
                     // Delete remaining import file.
                     callbacks: [
                         {
-                            moduleName: 'app',
-                            subModuleName: 'graphql',
+                            path: 'core.app.graphql',
                             name: 'generateSchema',
                             args: [],
                             type: [
@@ -103,7 +102,7 @@ export default function ({
                             ],
                         },
                         {
-                            moduleName: 'utils',
+                            path: 'core.utils',
                             name: 'deleteFile',
                             args: [filepath],
                             type: [
@@ -211,7 +210,7 @@ export default function ({
                                     ...(!!startAt && {startAt}),
                                     callbacks: [
                                         {
-                                            moduleName: 'utils',
+                                            path: 'core.utils',
                                             name: 'deleteFile',
                                             args: [`${config.import.directory}/${fileData.filename}`],
                                             type: [

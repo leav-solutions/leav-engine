@@ -91,8 +91,7 @@ export default function ({
                         return labels;
                     }, {}),
                     func: {
-                        moduleName: 'domain',
-                        subModuleName: 'value.tasks.saveValueBulk',
+                        path: 'core.domain.value.tasks.saveValueBulk',
                         name: 'saveValueBulk',
                         args: params,
                     },

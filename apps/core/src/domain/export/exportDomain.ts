@@ -315,8 +315,7 @@ export default function ({
                             return labels;
                         }, {}),
                         func: {
-                            moduleName: 'domain',
-                            subModuleName: 'export',
+                            path: 'core.domain.export',
                             name: 'exportExcel',
                             args: params,
                         },
