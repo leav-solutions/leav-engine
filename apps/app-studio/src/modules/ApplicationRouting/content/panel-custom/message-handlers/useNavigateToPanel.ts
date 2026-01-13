@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useLocation, useNavigate} from 'react-router-dom';
 import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../../../router/paths';
@@ -20,8 +20,14 @@ export const useNavigateToPanel = (): {
     navigateToPanel: IUseIFrameMessengerOptions['handlers']['onNavigateToPanel'];
 } => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [application] = useApplicationSettingsContext();
+
+    // Check if "slider" is in the last triplet (recordId/where/recordPanelId) of the URL
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const lastTriplet = pathSegments.slice(-3);
+    const isInSlider = lastTriplet.includes('slider');
 
     return {
         navigateToPanel: ({libraryId, recordId, where, panelId, flapRecordId, flapLibraryId, flapPanelId}) => {
@@ -33,9 +39,11 @@ export const useNavigateToPanel = (): {
             const shouldOpenFlap =
                 flapRecordId !== undefined && flapLibraryId !== undefined && flapPanelId !== undefined;
 
-            const panelPath = shouldOpenFlap
-                ? RelativePaths.nextLevelPanel + '/' + RelativePaths.openFlap
+            const nextLevelPanelPath = isInSlider
+                ? '../../../' + RelativePaths.nextLevelPanel
                 : RelativePaths.nextLevelPanel;
+
+            const panelPath = shouldOpenFlap ? nextLevelPanelPath + '/' + RelativePaths.openFlap : nextLevelPanelPath;
 
             if (panelId === undefined) {
                 if (
@@ -68,6 +76,7 @@ export const useNavigateToPanel = (): {
                     flapLibraryId,
                     flapPanelId,
                 }),
+                isInSlider ? {relative: 'path'} : undefined,
             );
         },
     };

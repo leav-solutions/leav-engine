@@ -10,6 +10,7 @@ import {useNavigateToPanel} from '../useNavigateToPanel';
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: jest.fn(),
+    useLocation: jest.fn(() => ({pathname: ''})),
 }));
 
 jest.mock('../../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
@@ -18,12 +19,14 @@ jest.mock('../../../../../../config/application-instance/application-settings/Ap
 
 describe('useNavigateToPanel', () => {
     const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
+    const spyUseLocation = jest.spyOn(ReactRouter, 'useLocation');
     const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
     const navigateMock = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
         spyUseNavigate.mockReturnValue(navigateMock);
+        spyUseLocation.mockReturnValue({pathname: '/workspaceId/panelId'} as any);
     });
 
     it('should provide a method to navigate to a panel', async () => {
@@ -68,7 +71,7 @@ describe('useNavigateToPanel', () => {
             panelId: 'panelIdTest',
         });
 
-        expect(navigateMock).toHaveBeenCalledWith('1234567890/fullpage/panelIdTest');
+        expect(navigateMock).toHaveBeenCalledWith('1234567890/fullpage/panelIdTest', undefined);
     });
 
     it('should not navigate when record not defined', async () => {
@@ -203,5 +206,58 @@ describe('useNavigateToPanel', () => {
         });
 
         expect(navigateMock).not.toHaveBeenCalled();
+    });
+
+    describe('when navigating from a slider context', () => {
+        beforeEach(() => {
+            spyUseLocation.mockReturnValue({
+                pathname: '/workspaceId/panelId/123/slider/recordPanelId',
+            } as any);
+        });
+
+        it('should navigate with relative path and prefix when in slider', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([
+                {
+                    workspaces: [
+                        {
+                            id: '1',
+                            title: {
+                                fr: 'un',
+                                en: 'one',
+                            },
+                            icon: 'fa-house',
+                            type: 'library',
+                            libraryId: 'test1',
+                        },
+                    ],
+                    libraries: {
+                        test1: {
+                            libraryPanels: [],
+                            recordPanels: [
+                                {
+                                    id: 'panelIdTest',
+                                    type: 'explorer',
+                                    actions: [],
+                                },
+                            ],
+                        },
+                    },
+                } satisfies Application,
+                jest.fn(),
+            ]);
+
+            const {
+                result: {current},
+            } = renderHook(() => useNavigateToPanel());
+
+            current.navigateToPanel({
+                libraryId: 'test1',
+                recordId: '1234567890',
+                where: 'fullpage',
+                panelId: 'panelIdTest',
+            });
+
+            expect(navigateMock).toHaveBeenCalledWith('../../../1234567890/fullpage/panelIdTest', {relative: 'path'});
+        });
     });
 });
