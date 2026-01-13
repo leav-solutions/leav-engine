@@ -50,11 +50,40 @@ describe('catchErrorFormatter', () => {
         });
 
         logger.error('Test error 1');
-        logger.error('Test error 2');
+        logger.error('Test error 2', {foo: 'bar'});
 
         expect(onErrorLog).toHaveBeenCalledTimes(2);
         const [message1] = onErrorLog.mock.calls[0];
         expect(message1).toBe('Test error 1');
+        const callStack1 = onErrorLog.mock.results[0];
+        expect(callStack1.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
+
+        const [message2, meta2] = onErrorLog.mock.calls[1];
+        expect(message2).toBe('Test error 2');
+        expect(meta2.foo).toBe('bar');
+        const callStack2 = onErrorLog.mock.results[1];
+        expect(callStack2.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
+
+        expect(callStack1.value.split('\n')[0]).not.toBe(callStack2.value.split('\n')[0]);
+    });
+
+    it('should call onErrorLog when logging twice an error and getCallStackTrace should return each stack (invert)', () => {
+        const onErrorLog = jest.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
+
+        const logger = winston.createLogger({
+            level: 'error',
+            format: catchErrorFormatter(onErrorLog)?.(),
+            transports: [new winston.transports.Console({silent: true})],
+        });
+
+        // Winston stack trace is not same if call with or without meta, so test both ways
+        logger.error('Test error 1', {foo: 'bar'});
+        logger.error('Test error 2');
+
+        expect(onErrorLog).toHaveBeenCalledTimes(2);
+        const [message1, meta1] = onErrorLog.mock.calls[0];
+        expect(message1).toBe('Test error 1');
+        expect(meta1.foo).toBe('bar');
         const callStack1 = onErrorLog.mock.results[0];
         expect(callStack1.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
 
