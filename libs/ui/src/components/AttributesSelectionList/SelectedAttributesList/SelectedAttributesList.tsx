@@ -1,12 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
+import {DndContext, closestCenter} from '@dnd-kit/core';
+import {SortableContext, verticalListSortingStrategy, useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
 import styled from 'styled-components';
 import {infosCol} from '_ui/components/LibraryItemsList/constants';
 import {AttributesSelectionListActionTypes} from '../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../reducer/attributesSelectionListStateContext';
 import SelectedAttribute from './SelectedAttribute/SelectedAttribute';
+import {type ISelectedAttribute} from '_ui/types';
 
 const WrapperItemSelected = styled.div`
     overflow-y: auto;
@@ -37,59 +40,44 @@ const CustomCard = styled.div`
 
 function SelectedAttributesList(): JSX.Element {
     const {state, dispatch} = useAttributesSelectionListState();
+    const selection = state.selectedAttributes.filter(a => a.path !== infosCol);
 
-    const selection = state.selectedAttributes;
-
-    const _onDragEnd = result => {
-        if (!result.destination) {
+    const handleDragEnd = event => {
+        const {active, over} = event;
+        if (!over || active.id === over.id) {
             return;
         }
-
-        if (result.destination.index === result.source.index) {
+        const from = selection.findIndex(item => item.path === active.id);
+        const to = selection.findIndex(item => item.path === over.id);
+        if (from === -1 || to === -1) {
             return;
         }
-
-        dispatch({
-            type: AttributesSelectionListActionTypes.MOVE_SELECTED_ATTRIBUTE,
-            from: result.source.index,
-            to: result.destination.index,
-        });
+        dispatch({type: AttributesSelectionListActionTypes.MOVE_SELECTED_ATTRIBUTE, from, to});
     };
 
     return (
         <WrapperItemSelected>
-            <DragDropContext onDragEnd={_onDragEnd}>
-                <Droppable droppableId="list-attributes-selected">
-                    {provided => (
-                        <div ref={provided.innerRef} {...provided.droppableProps}>
-                            {selection.map(
-                                (selectedAttribute, index) =>
-                                    selectedAttribute.path !== infosCol && (
-                                        <Draggable
-                                            key={selectedAttribute.path}
-                                            index={index}
-                                            draggableId={selectedAttribute.path}
-                                        >
-                                            {dragProvided => (
-                                                <CustomCard
-                                                    ref={dragProvided.innerRef}
-                                                    {...dragProvided.draggableProps}
-                                                >
-                                                    <SelectedAttribute
-                                                        selectedAttribute={selectedAttribute}
-                                                        handleProps={dragProvided.dragHandleProps}
-                                                    />
-                                                </CustomCard>
-                                            )}
-                                        </Draggable>
-                                    ),
-                            )}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
+            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={selection.map(a => a.path)} strategy={verticalListSortingStrategy}>
+                    {selection.map(selectedAttribute => (
+                        <SortableItem key={selectedAttribute.path} selectedAttribute={selectedAttribute} />
+                    ))}
+                </SortableContext>
+            </DndContext>
         </WrapperItemSelected>
+    );
+}
+
+function SortableItem({selectedAttribute}: {selectedAttribute: ISelectedAttribute}) {
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
+        id: selectedAttribute.path,
+    });
+    const style = {transform: CSS.Transform.toString(transform), transition};
+
+    return (
+        <CustomCard ref={setNodeRef} style={style} {...attributes}>
+            <SelectedAttribute selectedAttribute={selectedAttribute} handleProps={listeners} />
+        </CustomCard>
     );
 }
 

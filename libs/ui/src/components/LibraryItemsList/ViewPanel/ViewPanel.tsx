@@ -6,7 +6,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {localizedTranslation} from '@leav/utils';
 import {Badge, Button, Input} from 'antd';
 import {useState} from 'react';
-import {DragDropContext, Draggable, Droppable, type DropResult, type ResponderProvided} from 'react-beautiful-dnd';
+import {DndContext, closestCenter} from '@dnd-kit/core';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {ErrorDisplay} from '_ui/components/ErrorDisplay';
@@ -106,7 +107,6 @@ const _sortViewFunction = (referenceOrder: string[]) => (viewA: IView, viewB: IV
 
 function ViewPanel(): JSX.Element {
     const {t} = useSharedTranslation();
-
     const {userData} = useUser();
     const {lang} = useLang();
     const [search, setSearch] = useState('');
@@ -181,27 +181,47 @@ function ViewPanel(): JSX.Element {
         setEditView(false);
     };
 
-    const onDragEnd = async (result: DropResult, provided: ResponderProvided) => {
-        if (!result.destination) {
+    const handleDragEnd = async event => {
+        const {active, over} = event;
+        if (!over || active.id === over.id) {
             return;
         }
 
-        const isOrderingUserViews = result.source.droppableId === 'user';
+        let viewsList = userViews;
+        let keyToUpdate = PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id;
+        let orderType = 'userViewsOrder';
+        if (sharedViews.some(v => v.id === active.id)) {
+            viewsList = sharedViews;
+            keyToUpdate = PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id;
+            orderType = 'sharedViewsOrder';
+        }
 
-        const viewsListBefore = isOrderingUserViews ? userViews : sharedViews;
-        const orderedViews = viewsListBefore.map(v => v.id);
+        const ids = viewsList.map(v => v.id);
+        const oldIndex = ids.indexOf(active.id);
+        const newIndex = ids.indexOf(over.id);
+        if (oldIndex === -1 || newIndex === -1) {
+            return;
+        }
 
-        const element = orderedViews[result.source.index];
-        orderedViews.splice(result.source.index, 1);
-        orderedViews.splice(result.destination.index, 0, element);
+        const newOrder = [...ids];
+        newOrder.splice(oldIndex, 1);
+        newOrder.splice(newIndex, 0, active.id);
 
-        const keyToUpdate = isOrderingUserViews
-            ? PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id
-            : PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id;
+        if (orderType === 'userViewsOrder') {
+            searchDispatch({
+                type: SearchActionTypes.SET_USER_VIEWS_ORDER,
+                userViewsOrder: newOrder,
+            });
+        } else {
+            searchDispatch({
+                type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
+                sharedViewsOrder: newOrder,
+            });
+        }
 
         await updateViewsOrder({
             key: keyToUpdate,
-            value: orderedViews,
+            value: newOrder,
             global: false,
         });
     };
@@ -231,67 +251,27 @@ function ViewPanel(): JSX.Element {
                 <Input.Search placeholder={t('view.search')} onSearch={_handleSearchSubmit} />
             </SearchWrapper>
 
-            <SubHeader>{t('view.shared-views')}</SubHeader>
-
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="shared">
-                    {providedDroppable => (
-                        <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                            {sharedViews.map((view, idx) => (
-                                <Draggable key={idx} draggableId={idx.toString()} index={idx}>
-                                    {provided => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                        >
-                                            <View
-                                                key={view.id}
-                                                view={view}
-                                                onEdit={() => _showModal(view)}
-                                                handleProps={provided.dragHandleProps}
-                                            />
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {providedDroppable.placeholder}
-                        </Views>
-                    )}
-                </Droppable>
-            </DragDropContext>
-
-            <SubHeader>
-                {t('view.my-views')}
-                <CustomBadge count={userViews.length} />
-            </SubHeader>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="user">
-                    {providedDroppable => (
-                        <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                            {userViews.map((view, idx) => (
-                                <Draggable key={idx} draggableId={idx.toString()} index={idx}>
-                                    {provided => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                        >
-                                            <View
-                                                key={view.id}
-                                                view={view}
-                                                onEdit={() => _showModal(view)}
-                                                handleProps={provided.dragHandleProps}
-                                            />
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {providedDroppable.placeholder}
-                        </Views>
-                    )}
-                </Droppable>
-            </DragDropContext>
+            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SubHeader>{t('view.shared-views')}</SubHeader>
+                <SortableContext items={sharedViews.map(v => v.id)} strategy={verticalListSortingStrategy}>
+                    <Views>
+                        {sharedViews.map(view => (
+                            <View key={view.id} view={view} onEdit={() => _showModal(view)} />
+                        ))}
+                    </Views>
+                </SortableContext>
+                <SubHeader>
+                    {t('view.my-views')}
+                    <CustomBadge count={userViews.length} />
+                </SubHeader>
+                <SortableContext items={userViews.map(v => v.id)} strategy={verticalListSortingStrategy}>
+                    <Views>
+                        {userViews.map(view => (
+                            <View key={view.id} view={view} onEdit={() => _showModal(view)} />
+                        ))}
+                    </Views>
+                </SortableContext>
+            </DndContext>
         </Wrapper>
     );
 }

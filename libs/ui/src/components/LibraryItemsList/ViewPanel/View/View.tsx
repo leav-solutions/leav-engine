@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CopyOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {localizedTranslation, objectToNameValueArray} from '@leav/utils';
+import {useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
 import {Button, Tooltip, Typography} from 'antd';
 import omit from 'lodash/omit';
 import {useState} from 'react';
-import {type DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
@@ -74,10 +75,9 @@ const Description = styled.div`
 interface IViewProps {
     view: IView;
     onEdit: (viewId: string) => void;
-    handleProps?: DraggableProvidedDragHandleProps;
 }
 
-function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
+function View({view, onEdit}: IViewProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang, defaultLang} = useLang();
 
@@ -88,6 +88,9 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
     const {deleteView} = useExecuteDeleteViewMutation();
     const {updateViewsOrder} = useUpdateViewsOrderMutation(searchState.library.id);
+
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: view.id});
+    const style = {transform: CSS.Transform.toString(transform), transition};
 
     const _changeView = () => {
         searchDispatch({type: SearchActionTypes.CHANGE_VIEW, view});
@@ -177,13 +180,16 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     return (
         <Wrapper
             key={view.id}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
             selected={selected}
             onClick={_changeView}
             color={view.color}
             onMouseEnter={() => setIsActionsShown(true)}
             onMouseLeave={() => setIsActionsShown(false)}
         >
-            <Handle className="view-handle" {...handleProps} />
+            <Handle className="view-handle" {...listeners} />
             <Infos>
                 <Title data-testid="view-title">
                     <IconViewType type={view.display.type} />
