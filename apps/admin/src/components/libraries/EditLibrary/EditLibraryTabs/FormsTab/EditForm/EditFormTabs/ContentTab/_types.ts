@@ -37,6 +37,11 @@ export enum TabsDirection {
     HORIZONTAL = 'HORIZONTAL',
 }
 
+export enum DisplayMode {
+    EXPLORER = 'EXPLORER',
+    TAG = 'TAG',
+}
+
 export interface IFormElement {
     id: string;
     order: number;
@@ -103,6 +108,7 @@ export interface ISettingsFieldCommonProps {
     onChange: SettingsOnChangeFunc;
     disabled: boolean;
     fieldName: string;
+    defaultValue?: string | boolean;
 }
 
 export type SettingsFieldSpecificProps<FieldPropsType> = Omit<FieldPropsType, keyof ISettingsFieldCommonProps>;

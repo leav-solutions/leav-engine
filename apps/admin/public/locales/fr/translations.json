@@ -348,12 +348,14 @@
             "columns": "Attributs de l'élément lié à afficher",
             "select_options": {
                 "VERTICAL": "Verticale",
-                "HORIZONTAL": "Horizontale"
+                "HORIZONTAL": "Horizontale",
+                "EXPLORER": "Explorateur",
+                "TAG": "Tag"
             },
             "displayRecordIdentity": "Afficher la colonne Informations",
             "useAttributeLabel": "Utiliser le libellé de l'attribut",
-            "linkAttributeEditFormId": "ID du formulaire d'édition de l'élément lié",
-            "tagDisplayMode": "Afficher sous forme de tag(s)"
+            "editFormId": "ID du formulaire d'édition de l'élément lié",
+            "displayMode": "Mode d'affichage"
         },
         "rte": {
             "bold": "Gras",

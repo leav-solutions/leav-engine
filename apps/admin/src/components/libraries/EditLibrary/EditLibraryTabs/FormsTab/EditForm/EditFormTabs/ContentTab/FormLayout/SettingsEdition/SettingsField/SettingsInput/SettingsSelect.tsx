@@ -11,7 +11,13 @@ export interface ISettingsFieldSelectProps extends ISettingsFieldCommonProps {
     options: string[];
 }
 
-function SettingsSelect({onChange, fieldName, options, disabled}: ISettingsFieldSelectProps): JSX.Element {
+function SettingsSelect({
+    onChange,
+    fieldName,
+    options,
+    disabled,
+    defaultValue,
+}: ISettingsFieldSelectProps): JSX.Element {
     const {t} = useTranslation();
     const {
         state: {elementInSettings},
@@ -30,7 +36,7 @@ function SettingsSelect({onChange, fieldName, options, disabled}: ISettingsField
             options={dropdownOptions}
             name={fieldName}
             disabled={disabled}
-            value={String(elementInSettings?.settings?.[fieldName] || TabsDirection.HORIZONTAL)}
+            value={String(elementInSettings?.settings?.[fieldName] || defaultValue || TabsDirection.HORIZONTAL)}
             onChange={_handleChange}
         />
     );
