@@ -5,7 +5,8 @@ import {DownOutlined} from '@ant-design/icons';
 import {faAngleLeft} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Button, Dropdown, Space} from 'antd';
-import {DragDropContext, Draggable, Droppable, type DropResult, type ResponderProvided} from 'react-beautiful-dnd';
+import {DndContext, closestCenter} from '@dnd-kit/core';
+import {SortableContext, verticalListSortingStrategy, arrayMove} from '@dnd-kit/sortable';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
@@ -81,27 +82,24 @@ function FiltersPanel(): JSX.Element {
         searchDispatch({type: SearchActionTypes.SET_SIDEBAR, visible: false, sidebarType: searchState.sideBar.type});
     };
 
-    const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
-        if (!result.destination) {
+    const handleDragEnd = event => {
+        const {active, over} = event;
+        if (!over || active.id === over.id) {
             return;
         }
 
-        const newFilter = searchState.filters
-            .map(filter => ({
-                ...filter,
-                index:
-                    result.source.index === filter.index
-                        ? result.destination.index
-                        : result.destination.index === filter.index
-                          ? result.source.index
-                          : filter.index,
-            }))
-            .sort((a, b) => a.index - b.index);
+        const oldIndex = searchState.filters.findIndex(f => f.key === active.id);
+        const newIndex = searchState.filters.findIndex(f => f.key === over.id);
+        if (oldIndex === -1 || newIndex === -1) {
+            return;
+        }
 
-        searchDispatch({
-            type: SearchActionTypes.SET_FILTERS,
-            filters: newFilter,
-        });
+        const filters = arrayMove(searchState.filters, oldIndex, newIndex).map((filter, idx) => ({
+            ...filter,
+            index: idx,
+        }));
+
+        searchDispatch({type: SearchActionTypes.SET_FILTERS, filters});
     };
 
     const filtersSorted = searchState.filters.sort((a, b) => a.index - b.index);
@@ -154,32 +152,15 @@ function FiltersPanel(): JSX.Element {
             </Header>
 
             <FiltersWrapper>
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="droppable">
-                        {providedDroppable => (
-                            <ListFilters {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                                {filtersSorted.map(filter => (
-                                    <Draggable
-                                        key={filter.index}
-                                        draggableId={filter.index.toString()}
-                                        index={filter.index}
-                                    >
-                                        {provided => (
-                                            <div ref={provided.innerRef} {...provided.draggableProps}>
-                                                <Filter
-                                                    key={filter.index}
-                                                    filter={filter}
-                                                    handleProps={provided.dragHandleProps}
-                                                />
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {providedDroppable.placeholder}
-                            </ListFilters>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={filtersSorted.map(v => v.key)} strategy={verticalListSortingStrategy}>
+                        <ListFilters>
+                            {filtersSorted.map(filter => (
+                                <Filter key={filter.key} filter={filter} />
+                            ))}
+                        </ListFilters>
+                    </SortableContext>
+                </DndContext>
             </FiltersWrapper>
         </Wrapper>
     );

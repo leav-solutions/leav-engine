@@ -5,7 +5,7 @@ import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Dropdown} from 'antd';
 import {useCallback, useState} from 'react';
-import {type DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
+import {CSS} from '@dnd-kit/utilities';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import DateBetweenFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
@@ -49,6 +49,7 @@ import DateFilter from './FilterInput/DateFilter';
 import NumericFilter from './FilterInput/NumericFilter';
 import TextFilter from './FilterInput/TextFilter';
 import {getDefaultFilterValueByFormat} from '_ui/components/LibraryItemsList/FiltersPanel/Filter/filterUtils';
+import {useSortable} from '@dnd-kit/sortable';
 
 interface IWrapperProps {
     $active: boolean;
@@ -162,14 +163,16 @@ export interface IFilterInputProps {
 
 interface IFilterProps {
     filter: IFilter;
-    handleProps: DraggableProvidedDragHandleProps;
 }
 
-function Filter({filter, handleProps}: IFilterProps): JSX.Element {
+function Filter({filter}: IFilterProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [showSelectTreeNodeModal, setShowSelectTreeNodeModal] = useState(false);
+
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: filter.key});
+    const style = {transform: CSS.Transform.toString(transform), transition};
 
     const handleDelete = () => {
         searchDispatch({
@@ -468,8 +471,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                     canSelectRoot
                 />
             )}
-            <Wrapper data-testid="filter" $active={filter.active}>
-                <Handle className="filter-handle" {...handleProps} />
+            <Wrapper data-testid="filter" $active={filter.active} ref={setNodeRef} style={style} {...attributes}>
+                <Handle className="filter-handle" {...listeners} />
                 <Content $hasParent={hasParent}>
                     {hasParent && (
                         <ParentLabel>

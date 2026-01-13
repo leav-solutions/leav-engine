@@ -15,7 +15,7 @@ describe('Filter', () => {
         await act(async () => {
             render(
                 <MockSearchContextProvider>
-                    <Filter filter={mockFilterAttribute} handleProps={{} as any} />
+                    <Filter filter={mockFilterAttribute} />
                 </MockSearchContextProvider>,
             );
         });
@@ -42,7 +42,7 @@ describe('Filter', () => {
         await act(async () => {
             render(
                 <MockSearchContextProvider>
-                    <Filter filter={mockFilterBoolean} handleProps={{} as any} />
+                    <Filter filter={mockFilterBoolean} />
                 </MockSearchContextProvider>,
             );
         });
@@ -63,7 +63,6 @@ describe('Filter', () => {
                             condition: AttributeConditionFilter.IS_EMPTY,
                             value: null,
                         }}
-                        handleProps={{} as any}
                     />
                 </MockSearchContextProvider>,
             );
