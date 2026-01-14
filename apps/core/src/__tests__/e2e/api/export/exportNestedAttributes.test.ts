@@ -73,6 +73,13 @@ describe('Export Nested Attributes', () => {
                             ]
                         },
                         {
+                            label: "with_creator_of_creator_label",
+                            columns: [
+                                {columnLabel: "Event Name", attribute: "event_name"},
+                                {columnLabel: "Creator's Creator Label", attribute: "created_by.created_by"}
+                            ]
+                        },
+                        {
                             label: "with_creator_of_creator_wrong_attribute",
                             columns: [
                                 {columnLabel: "Event Name", attribute: "event_name"},
@@ -206,6 +213,46 @@ describe('Export Nested Attributes', () => {
         });
     });
 
+    describe('nested link attributes without specific attribute (label)', () => {
+        test('should export label from chained link without specifying attribute', async () => {
+            const exportTaskId = (
+                await makeGraphQlCall(
+                    `query { export(library: "${eventLibName}", profile: "with_creator_of_creator_label") }`,
+                )
+            ).data.data.export;
+
+            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
+
+            const filepath = task.link.url;
+            const buffer = await getFileDataBuffer(filepath);
+            const excelData = await getExcelData(buffer);
+
+            console.log('excelData', excelData);
+            // Should navigate 2 levels deep: event.created_by.created_by
+            // And return the label of the user, not "[object Object]"
+            expect(excelData[0].length).toBeGreaterThan(0);
+            expect(excelData[0][0]).toEqual(
+                expect.arrayContaining([
+                    expect.stringContaining('Event Name'),
+                    expect.stringContaining("Creator's Creator Label"),
+                ]),
+            );
+
+            // The value should be the user ID or label, not "[object Object]"
+            expect(excelData[0][2]).toEqual(
+                expect.arrayContaining([expect.stringContaining('Team Meeting'), expect.any(String)]),
+            );
+            // Ensure it's not "[object Object]"
+            expect(excelData[0][2][1]).not.toBe('[object Object]');
+
+            expect(excelData[0][3]).toEqual(
+                expect.arrayContaining([expect.stringContaining('Product Launch 2025'), expect.any(String)]),
+            );
+            // Ensure it's not "[object Object]"
+            expect(excelData[0][3][1]).not.toBe('[object Object]');
+        });
+    });
+
     describe('library has exportProfiles', () => {
         let exportProfilesConfig: IExportProfileConfig | null;
         beforeAll(async () => {
@@ -237,7 +284,7 @@ describe('Export Nested Attributes', () => {
             expect(exportProfilesConfig).toBeDefined();
 
             expect(exportProfilesConfig?.defaultProfile).toBe('default');
-            expect(exportProfilesConfig?.profiles.length).toBe(4);
+            expect(exportProfilesConfig?.profiles.length).toBe(5);
         });
 
         test('should have correct export profile columns configuration', async () => {
