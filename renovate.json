@@ -4,6 +4,7 @@
     "baseBranches": ["develop"],
     "prHourlyLimit": 5,
     "dependencyDashboard": true,
+    "ignoreDeps": ["@types/react-sortable-tree", "@types/react-rte"],
     "lockFileMaintenance": {
         "enabled": true
     },

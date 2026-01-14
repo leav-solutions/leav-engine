@@ -6237,9 +6237,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/cli@npm:6.1.0":
-  version: 6.1.0
-  resolution: "@graphql-codegen/cli@npm:6.1.0"
+"@graphql-codegen/cli@npm:6.1.1":
+  version: 6.1.1
+  resolution: "@graphql-codegen/cli@npm:6.1.1"
   dependencies:
     "@babel/generator": "npm:^7.18.13"
     "@babel/template": "npm:^7.18.10"
@@ -6286,7 +6286,7 @@ __metadata:
     graphql-code-generator: cjs/bin.js
     graphql-codegen: cjs/bin.js
     graphql-codegen-esm: esm/bin.js
-  checksum: 90a7b8f8245b86c26446d8f94c7a17c5db94a0b3fc269085b579abe06040f5671370c44ade9d95d4108a6d3e249e48b5c692abc5ec8edaaa1b1a059639d759de
+  checksum: cdc35e211e3ff9f0b5e5b34d12824dd17f46c1cf5d98b55fe8470bef83e2acbed60da65f3700f6923ef95862f95542ec1608e79912057d4b046ba43d223c6d7f
   languageName: node
   linkType: hard
 
@@ -7129,16 +7129,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:10.0.30, @graphql-tools/schema@npm:^10.0.30":
-  version: 10.0.30
-  resolution: "@graphql-tools/schema@npm:10.0.30"
+"@graphql-tools/schema@npm:10.0.31, @graphql-tools/schema@npm:^10.0.25, @graphql-tools/schema@npm:^10.0.29":
+  version: 10.0.31
+  resolution: "@graphql-tools/schema@npm:10.0.31"
   dependencies:
-    "@graphql-tools/merge": "npm:^9.1.6"
-    "@graphql-tools/utils": "npm:^10.11.0"
+    "@graphql-tools/merge": "npm:^9.1.7"
+    "@graphql-tools/utils": "npm:^11.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: f75e0030d49cabc460e78f8831ec498370ff2957445d912a578cfbebb3cf3f315c56112c51f72b69367c709304fc46857e82ff36c85d4d336ee4207a655a433d
+  checksum: 5b775736f8b8454319e07cadc7d41bc5c9cc804a393490aaffd1bb7f59afddb02b498837e870bf98db4a1a989a721d5d8e2fd2b97409d078bac14503c2d4f9cb
   languageName: node
   linkType: hard
 
@@ -7156,16 +7156,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:^10.0.25, @graphql-tools/schema@npm:^10.0.29":
-  version: 10.0.31
-  resolution: "@graphql-tools/schema@npm:10.0.31"
+"@graphql-tools/schema@npm:^10.0.30":
+  version: 10.0.30
+  resolution: "@graphql-tools/schema@npm:10.0.30"
   dependencies:
-    "@graphql-tools/merge": "npm:^9.1.7"
-    "@graphql-tools/utils": "npm:^11.0.0"
+    "@graphql-tools/merge": "npm:^9.1.6"
+    "@graphql-tools/utils": "npm:^10.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 5b775736f8b8454319e07cadc7d41bc5c9cc804a393490aaffd1bb7f59afddb02b498837e870bf98db4a1a989a721d5d8e2fd2b97409d078bac14503c2d4f9cb
+  checksum: f75e0030d49cabc460e78f8831ec498370ff2957445d912a578cfbebb3cf3f315c56112c51f72b69367c709304fc46857e82ff36c85d4d336ee4207a655a433d
   languageName: node
   linkType: hard
 
@@ -7382,12 +7382,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/node-server@npm:1.19.7":
-  version: 1.19.7
-  resolution: "@hono/node-server@npm:1.19.7"
+"@hono/node-server@npm:1.19.8":
+  version: 1.19.8
+  resolution: "@hono/node-server@npm:1.19.8"
   peerDependencies:
     hono: ^4
-  checksum: dea40ddd8b3a5c5fe7a5cb8cd9a920328d507d9ac94fdebd693dee45199fa0dd593f4c8308b0d58efc3a5ac8262896efb51b5cb19e4b47f30a8a87b2417e410e
+  checksum: c41a7bc34494e86e67e3dd12226f4205b6c926b9b6138ee72c4fb72be19f5c7ad9f7edff32a0f4b25b331b658266c3ec401d0691753e02bfeb22340597cd4ac8
   languageName: node
   linkType: hard
 
@@ -8999,7 +8999,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/monitoring-server@workspace:libs/monitoring-server"
   dependencies:
-    "@hono/node-server": "npm:1.19.7"
+    "@hono/node-server": "npm:1.19.8"
     "@leav/logger": "workspace:libs/logger"
     "@types/jest": "npm:29.0.2"
     hono: "npm:4.10.7"
@@ -9028,7 +9028,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": "npm:7.0.1"
     "@fortawesome/react-fontawesome": "npm:3.0.2"
     "@graphql-codegen/add": "npm:5.0.3"
-    "@graphql-codegen/cli": "npm:6.1.0"
+    "@graphql-codegen/cli": "npm:6.1.1"
     "@graphql-codegen/typescript": "npm:5.0.7"
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
@@ -12036,10 +12036,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.17.21":
-  version: 4.17.21
-  resolution: "@types/lodash@npm:4.17.21"
-  checksum: 34920830a3bc82ba619cda05e606fef00c148a69b4f19f770645d2587ccdb8e42ef3ddfc174b7884c0c709fc0a1aeb48f7326da969bad12a1464a03efbbe414c
+"@types/lodash@npm:4.17.23":
+  version: 4.17.23
+  resolution: "@types/lodash@npm:4.17.23"
+  checksum: 05935534a44aadef67c2158b2fb4a042a226970088106a40ddc67e4f063783149fe5cf02279d7dd4a1e72c98d9189b9430face659645dbf77270f8c4c3e387f5
   languageName: node
   linkType: hard
 
@@ -12153,12 +12153,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.10.4":
-  version: 24.10.4
-  resolution: "@types/node@npm:24.10.4"
+"@types/node@npm:24.10.7":
+  version: 24.10.7
+  resolution: "@types/node@npm:24.10.7"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: a0b318b99a97103d151589a10e20d7d3ce93188a0e6466040eb2ce5fae33ca6785306737b4006560fe3152073cbb2b14747b854fa303296275c22afc8a37da2a
+  checksum: 4387e03f4e072eb0aa8a71e002cd0aca514b7986d9bd435244a5c8421336bcd28583b95ca2c11bc8bfdeef176d37584c9f3e786df9cb07bbc11ed4d73fd05b28
   languageName: node
   linkType: hard
 
@@ -13132,7 +13132,7 @@ __metadata:
   resolution: "admin@workspace:apps/admin"
   dependencies:
     "@apollo/client": "npm:3.8.1"
-    "@graphql-codegen/cli": "npm:6.1.0"
+    "@graphql-codegen/cli": "npm:6.1.1"
     "@graphql-codegen/typescript": "npm:5.0.7"
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
@@ -13148,8 +13148,8 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
-    "@types/lodash": "npm:4.17.21"
-    "@types/node": "npm:24.10.4"
+    "@types/lodash": "npm:4.17.23"
+    "@types/node": "npm:24.10.7"
     "@types/node-fetch": "npm:2.1.4"
     "@types/react": "npm:16.14.68"
     "@types/react-dom": "npm:16.9.25"
@@ -13165,7 +13165,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:5.1.2"
     babel-jest: "npm:30.1.2"
     cross-fetch: "npm:3.1.5"
-    dayjs: "npm:1.11.13"
+    dayjs: "npm:1.11.19"
     enzyme: "npm:3.10.0"
     enzyme-adapter-react-16: "npm:1.15.8"
     fomantic-ui-less: "npm:2.8.8"
@@ -13635,7 +13635,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:7.0.1"
     "@fortawesome/free-solid-svg-icons": "npm:7.0.1"
     "@fortawesome/react-fontawesome": "npm:3.0.2"
-    "@graphql-codegen/cli": "npm:6.1.0"
+    "@graphql-codegen/cli": "npm:6.1.1"
     "@graphql-codegen/client-preset": "npm:4.8.3"
     "@graphql-codegen/typescript": "npm:5.0.7"
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
@@ -13650,7 +13650,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@types/styled-components": "npm:5.1.36"
@@ -14172,7 +14172,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:24.9.1"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
@@ -16229,7 +16229,7 @@ __metadata:
     "@apollo/server": "npm:4.11.0"
     "@bugsnag/js": "npm:8.4.0"
     "@elastic/elasticsearch": "npm:8.10.0"
-    "@graphql-tools/schema": "npm:10.0.30"
+    "@graphql-tools/schema": "npm:10.0.31"
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/logger": "workspace:libs/logger"
@@ -16244,9 +16244,9 @@ __metadata:
     "@types/jest": "npm:29.5.14"
     "@types/jest-when": "npm:3.5.5"
     "@types/jsonwebtoken": "npm:9.0.10"
-    "@types/lodash": "npm:4.17.21"
+    "@types/lodash": "npm:4.17.23"
     "@types/ms": "npm:0.7.34"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     "@types/nodemailer": "npm:6.4.21"
     "@types/ws": "npm:8.5.3"
     add-filename-increment: "npm:1.0.0"
@@ -16263,7 +16263,7 @@ __metadata:
     cookie-parser: "npm:1.4.7"
     cors: "npm:2.8.5"
     dataloader: "npm:2.2.3"
-    dayjs: "npm:1.11.13"
+    dayjs: "npm:1.11.19"
     exceljs: "npm:4.2.0"
     exiftool-vendored: "npm:29.1.0"
     express: "npm:4.20.0"
@@ -16680,7 +16680,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:7.0.1"
     "@fortawesome/free-solid-svg-icons": "npm:7.0.1"
     "@fortawesome/react-fontawesome": "npm:3.0.2"
-    "@graphql-codegen/cli": "npm:6.1.0"
+    "@graphql-codegen/cli": "npm:6.1.1"
     "@graphql-codegen/typescript": "npm:5.0.7"
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
@@ -16694,8 +16694,8 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:27.5.2"
-    "@types/lodash": "npm:4.17.21"
-    "@types/node": "npm:24.10.4"
+    "@types/lodash": "npm:4.17.23"
+    "@types/node": "npm:24.10.7"
     "@types/object-path": "npm:0.11.4"
     "@types/react": "npm:18.2.14"
     "@types/react-beautiful-dnd": "npm:13.1.8"
@@ -16840,6 +16840,13 @@ __metadata:
   version: 1.11.13
   resolution: "dayjs@npm:1.11.13"
   checksum: 7374d63ab179b8d909a95e74790def25c8986e329ae989840bacb8b1888be116d20e1c4eee75a69ea0dfbae13172efc50ef85619d304ee7ca3c01d5878b704f5
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:1.11.19":
+  version: 1.11.19
+  resolution: "dayjs@npm:1.11.19"
+  checksum: 185b820d68492b83a3ce2b8ddc7543034edc1dfd1423183f6ae4707b29929a3cc56503a81826309279f9084680c15966b99456e74cf41f7d1f6a2f98f9c7196f
   languageName: node
   linkType: hard
 
@@ -18419,12 +18426,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-refresh@npm:0.4.24":
-  version: 0.4.24
-  resolution: "eslint-plugin-react-refresh@npm:0.4.24"
+"eslint-plugin-react-refresh@npm:0.4.26":
+  version: 0.4.26
+  resolution: "eslint-plugin-react-refresh@npm:0.4.26"
   peerDependencies:
     eslint: ">=8.40"
-  checksum: 5e7f0e9e854f1fcf56dcfca5f9e068ba0e1e3f7b47428991d5d5f9549dfc94261d6200fb7a1a1a76861cd787f17f2366dfd4f27a082d7f7815a0201a0b434dd3
+  checksum: 068da7edcd39d802dda4c03b7ea8923891145eb95f4dfd4cfce82a53a5eb55f5cbe66b33cf8e57b71f1525a684517bda4bfca1bc5c6b12c82ba03c9e8197764d
   languageName: node
   linkType: hard
 
@@ -24249,7 +24256,7 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:6.10.2"
     eslint-plugin-no-only-tests: "npm:3.3.0"
     eslint-plugin-react-hooks: "npm:4.4.0"
-    eslint-plugin-react-refresh: "npm:0.4.24"
+    eslint-plugin-react-refresh: "npm:0.4.26"
     husky: "npm:6.0.0"
     jest-watch-typeahead: "npm:2.2.2"
     license-check-and-add: "npm:3.0.5"
@@ -24875,7 +24882,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.2"
@@ -27158,7 +27165,7 @@ __metadata:
     "@ant-design/icons": "npm:5.2.6"
     "@apollo/client": "npm:3.8.1"
     "@apollo/link-error": "npm:2.0.0-beta.3"
-    "@graphql-codegen/cli": "npm:6.1.0"
+    "@graphql-codegen/cli": "npm:6.1.1"
     "@graphql-codegen/typescript": "npm:5.0.7"
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
@@ -27170,7 +27177,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.2"
@@ -27358,7 +27365,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:29.0.2"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     amqplib: "npm:0.10.9"
     fast-xml-parser: "npm:5.2.5"
     jest: "npm:29.0.3"
@@ -31384,7 +31391,7 @@ __metadata:
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:29.0.2"
     "@types/joi": "npm:14.3.4"
-    "@types/node": "npm:24.10.4"
+    "@types/node": "npm:24.10.7"
     amqplib: "npm:0.10.9"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
