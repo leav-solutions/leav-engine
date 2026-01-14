@@ -3,14 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import validateEmailAction from './validateEmailAction';
-import {type IActionsListFunctionResult} from '_types/actionsList';
+import {ActionsListEvents, type IActionsListContext, type IActionsListFunctionResult} from '../../_types/actionsList';
 
 describe('validateEmailFormatAction', () => {
     const action = validateEmailAction().action;
 
-    const ctx = {
+    const ctx: IActionsListContext = {
         attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE},
         userId: 'test_user',
+        actionEvent: ActionsListEvents.SAVE_VALUE,
     };
 
     test('validateEmail should throw', async () => {

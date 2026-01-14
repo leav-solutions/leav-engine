@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IVariableValue} from 'domain/helpers/calculationVariable';
-import {type IActionsListContext} from '_types/actionsList';
-import {IRecord} from '_types/record';
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
 
@@ -36,6 +35,7 @@ describe('inheritanceCalculationAction', () => {
                 type: AttributeTypes.SIMPLE,
             },
             userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
 
         const res = await action(
@@ -58,6 +58,7 @@ describe('inheritanceCalculationAction', () => {
                 type: AttributeTypes.SIMPLE,
             },
             userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
         const res = await action(
             null,
@@ -85,6 +86,7 @@ describe('inheritanceCalculationAction', () => {
                 type: AttributeTypes.SIMPLE_LINK,
             },
             userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
 
         const res = await action2(

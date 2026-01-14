@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MASKED_VALUE} from '../../_constants/values';
-import {type IActionsListFunctionResult} from '_types/actionsList';
+import {ActionsListEvents, type IActionsListContext, type IActionsListFunctionResult} from '../../_types/actionsList';
 import maskValueAction from './maskValueAction';
 
 describe('maskValue', () => {
     const action = maskValueAction().action;
-    const ctx = {userId: 'test'};
+    const ctx: IActionsListContext = {userId: 'test', actionEvent: ActionsListEvents.GET_VALUE};
 
     test('maskValue', async () => {
         expect(((await action([{payload: 'coucou'}], {}, ctx)) as IActionsListFunctionResult).values[0]).toEqual(

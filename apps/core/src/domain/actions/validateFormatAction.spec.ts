@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import validateFormatAction from './validateFormatAction';
 
@@ -34,9 +35,21 @@ describe('validateFormatAction', () => {
             },
         ],
     };
-    const ctxAttrExt = {attribute: attrExt, userId: 'test'};
-    const ctxAttrColor = {attribute: attrColor, userId: 'test'};
-    const ctxAttrText = {attribute: attrText, userId: 'test'};
+    const ctxAttrExt: IActionsListContext = {
+        attribute: attrExt,
+        userId: 'test',
+        actionEvent: ActionsListEvents.SAVE_VALUE,
+    };
+    const ctxAttrColor: IActionsListContext = {
+        attribute: attrColor,
+        userId: 'test',
+        actionEvent: ActionsListEvents.SAVE_VALUE,
+    };
+    const ctxAttrText: IActionsListContext = {
+        attribute: attrText,
+        userId: 'test',
+        actionEvent: ActionsListEvents.SAVE_VALUE,
+    };
 
     test('validateFormat', async () => {
         // Extended

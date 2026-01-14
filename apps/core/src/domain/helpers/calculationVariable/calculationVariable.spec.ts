@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ActionsListEvents, type IActionsListContext} from '../../../_types/actionsList';
 import calculationVariable, {type IVariableValue} from '.';
 
 const mockCalculationsVariableFunctions = {
@@ -31,10 +32,11 @@ describe('calculationVariable', () => {
         'core.domain.helpers.calculationsVariableFunctions': mockCalculationsVariableFunctions,
     });
 
-    const ctx = {
+    const ctx: IActionsListContext = {
         userId: 'test',
         recordId: '1',
         library: 'meh',
+        actionEvent: ActionsListEvents.GET_VALUE,
     };
 
     test('empty variable', async () => {

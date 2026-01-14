@@ -12,6 +12,7 @@ import {mockTranslator} from '../../__tests__/mocks/translator';
 import {type i18n} from 'i18next';
 import {type ToAny} from 'utils/utils';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 
 const depsBase: ToAny<IActionsListDomainDeps> = {
     'core.depsManager': jest.fn(),
@@ -47,12 +48,13 @@ describe('runActionsList', () => {
         payload: 'test_val',
     };
 
-    const ctx = {
+    const ctx: IActionsListContext = {
         library: 'test_lib',
         attribute: {id: 'test_attr', type: AttributeTypes.SIMPLE},
         lang: 'en',
         defaultLang: 'fr',
         userId: 'test_user',
+        actionEvent: ActionsListEvents.GET_VALUE,
     };
 
     test('Should run a list of actions', async () => {
@@ -195,11 +197,12 @@ describe('runActionsList', () => {
     });
 
     test('Should throw an exception with custom message from system while a error_message "en" has been set', async () => {
-        const textctx = {
+        const textctx: IActionsListContext = {
             ...mockCtx,
             attribute: {...mockAttrSimple, id: 'test_attr'},
             lang: 'fr',
             defaultLang: 'fr',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
         const domain = actionListDomain({...depsBase, translator: mockTranslator as i18n});
         const availActions = [

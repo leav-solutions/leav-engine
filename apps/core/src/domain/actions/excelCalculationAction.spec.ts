@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
-import {type ActionsListValueType, type IActionsListContext} from '_types/actionsList';
+import {ActionsListEvents, type ActionsListValueType, type IActionsListContext} from '../../_types/actionsList';
 import {type ICalculationVariable, type IVariableValue} from 'domain/helpers/calculationVariable';
 import excelCalculationAction from './excelCalculationAction';
 import {type IValue} from '_types/value';
@@ -14,7 +14,7 @@ const mockCalculationsVariable = {
     processVariableString: jest.fn(),
 };
 
-const ctx = {userId: 'test_user'};
+const ctx: IActionsListContext = {userId: 'test_user', actionEvent: ActionsListEvents.GET_VALUE};
 
 describe('excelCalculationAction', () => {
     const mockResultValueBase: IValue = {

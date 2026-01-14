@@ -27,7 +27,7 @@ export type ActionsListValueType = string | number | boolean | {};
 export type ActionsListConfig = {[Event in ActionsListEvents]?: IActionsListSavedAction[]};
 
 export interface IActionsListContext extends IQueryInfos {
-    actionEvent?: ActionsListEvents;
+    actionEvent: ActionsListEvents;
     attribute?: IAttribute;
     library?: string;
     recordId?: string;
@@ -90,7 +90,7 @@ export interface IActionsListSavedAction {
 }
 
 export interface IRunActionsListCtx extends IQueryInfos {
-    actionEvent?: ActionsListEvents;
+    actionEvent: ActionsListEvents;
     attribute?: IAttribute;
     recordId?: string;
     library?: string;
