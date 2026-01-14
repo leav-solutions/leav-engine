@@ -441,6 +441,8 @@
         "delete_all": "Delete all",
         "delete_all_values": "Delete all values",
         "delete_all_values_confirm": "Do you really want to delete all values?",
+        "delete_link": "Delete link",
+        "delete_link_description": "Do you really want to delete the link?",
         "value_details_tooltip": "More details",
         "attribute": {
             "id": "Identifier",

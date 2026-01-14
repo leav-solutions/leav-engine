@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type RecordFilterInput, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
-import {APICallStatus, type DeleteMultipleValuesFunc, type ISubmitMultipleResult} from '../../../_types';
+import {APICallStatus, type ISubmitMultipleResult} from '../../../../_types';
 import {type Dispatch, type SetStateAction} from 'react';
 import {type IItemData, type MassSelection} from '_ui/components/Explorer/_types';
 import {AntForm} from 'aristid-ds';
@@ -14,15 +14,9 @@ interface IUseExplorerLinkRecordsProps {
     attribute: RecordFormAttributeLinkAttributeFragment;
     backendValues: RecordFormElementsValueLinkValue[];
     setBackendValues: Dispatch<SetStateAction<RecordFormElementsValueLinkValue[]>>;
-    onDeleteMultipleValues: DeleteMultipleValuesFunc;
 }
 
-export const useExplorerLinkRecords = ({
-    attribute,
-    backendValues,
-    setBackendValues,
-    onDeleteMultipleValues,
-}: IUseExplorerLinkRecordsProps) => {
+export const useExplorerLinkRecords = ({attribute, backendValues, setBackendValues}: IUseExplorerLinkRecordsProps) => {
     const {t} = useSharedTranslation();
 
     const form = AntForm.useFormInstance();
@@ -62,18 +56,6 @@ export const useExplorerLinkRecords = ({
                 filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id),
             ),
         );
-    };
-
-    const handleDeleteAllValues = async () => {
-        const deleteRes = await onDeleteMultipleValues(
-            attribute.id,
-            backendValues.filter(backendValue => backendValue.id_value),
-            null,
-        );
-
-        if (deleteRes.status === APICallStatus.SUCCESS) {
-            removeValues();
-        }
     };
 
     const handleExplorerRemoveValue = (item: IItemData) => {
@@ -138,7 +120,6 @@ export const useExplorerLinkRecords = ({
     };
 
     return {
-        handleDeleteAllValues,
         handleExplorerRemoveValue,
         handleExplorerMassDeactivateValues,
         handleExplorerLinkValue,

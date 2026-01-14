@@ -7,11 +7,10 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {mockLinkValue} from '_ui/__mocks__/common/form';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {APICallStatus, type ISubmitMultipleResult} from '../../../_types';
+import {APICallStatus, type ISubmitMultipleResult} from '../../../../_types';
 import {type ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
 import {ErrorTypes} from '@leav/utils';
 
-const mockOnDeleteMultipleValues = jest.fn();
 const mockSetBackendValues = jest.fn();
 const mockSetFields = jest.fn();
 const mockSetFieldValue = jest.fn();
@@ -80,68 +79,13 @@ describe('useExplorerLinkRecords', () => {
                 attribute: mockFormAttribute,
                 backendValues: [],
                 setBackendValues: mockSetBackendValues,
-                onDeleteMultipleValues: mockOnDeleteMultipleValues,
             }),
         );
 
-        expect(result.current.handleDeleteAllValues).toBeDefined();
         expect(result.current.handleExplorerCreateValue).toBeDefined();
         expect(result.current.handleExplorerLinkValue).toBeDefined();
         expect(result.current.handleExplorerMassDeactivateValues).toBeDefined();
-        expect(result.current.handleExplorerMassDeactivateValues).toBeDefined();
-    });
-
-    describe('handleDeleteAllValues', () => {
-        it('should remove all values when called', async () => {
-            mockOnDeleteMultipleValues.mockResolvedValue({status: 'SUCCESS'});
-
-            const {result} = renderHook(() =>
-                useExplorerLinkRecords({
-                    attribute: mockFormAttribute,
-                    backendValues: mockBackendValues,
-                    setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
-                }),
-            );
-
-            await act(async () => {
-                await result.current.handleDeleteAllValues();
-            });
-
-            expect(mockOnDeleteMultipleValues).toHaveBeenCalledWith(mockFormAttribute.id, [mockBackendValue], null);
-            expect(mockSetFieldValue).toHaveBeenCalledWith('test_attribute', []);
-            expect(mockSetFields).toHaveBeenCalledWith([
-                {
-                    name: mockFormAttribute.id,
-                    errors: [],
-                },
-            ]);
-            expect(mockSetBackendValues).toHaveBeenCalledWith([]);
-        });
-
-        it('should set field in error if attribute is required', async () => {
-            mockOnDeleteMultipleValues.mockResolvedValue({status: 'SUCCESS'});
-
-            const {result} = renderHook(() =>
-                useExplorerLinkRecords({
-                    attribute: {...mockFormAttribute, required: true},
-                    backendValues: mockBackendValues,
-                    setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
-                }),
-            );
-
-            await act(async () => {
-                await result.current.handleDeleteAllValues();
-            });
-
-            expect(mockSetFields).toHaveBeenCalledWith([
-                {
-                    name: mockFormAttribute.id,
-                    errors: ['errors.standard_field_required'],
-                },
-            ]);
-        });
+        expect(result.current.handleExplorerRemoveValue).toBeDefined();
     });
 
     describe('handleExplorerRemoveValue', () => {
@@ -151,7 +95,6 @@ describe('useExplorerLinkRecords', () => {
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
                 }),
             );
 
@@ -183,7 +126,6 @@ describe('useExplorerLinkRecords', () => {
                     attribute: {...mockFormAttribute, required: true},
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
                 }),
             );
 
@@ -217,7 +159,6 @@ describe('useExplorerLinkRecords', () => {
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
                 }),
             );
 
@@ -238,7 +179,6 @@ describe('useExplorerLinkRecords', () => {
                     attribute: {...mockFormAttribute, required: true},
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
                 }),
             );
 
@@ -263,7 +203,6 @@ describe('useExplorerLinkRecords', () => {
                         attribute: mockFormAttribute,
                         backendValues: mockBackendValues,
                         setBackendValues: mockSetBackendValues,
-                        onDeleteMultipleValues: mockOnDeleteMultipleValues,
                     }),
                 );
 
@@ -292,7 +231,6 @@ describe('useExplorerLinkRecords', () => {
                         attribute: mockFormAttribute,
                         backendValues: mockBackendValues,
                         setBackendValues: mockSetBackendValues,
-                        onDeleteMultipleValues: mockOnDeleteMultipleValues,
                     }),
                 );
 
@@ -314,7 +252,6 @@ describe('useExplorerLinkRecords', () => {
                         attribute: mockFormAttribute,
                         backendValues: mockBackendValues,
                         setBackendValues: mockSetBackendValues,
-                        onDeleteMultipleValues: mockOnDeleteMultipleValues,
                     }),
                 );
 
@@ -342,7 +279,6 @@ describe('useExplorerLinkRecords', () => {
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
                 }),
             );
 
@@ -361,7 +297,6 @@ describe('useExplorerLinkRecords', () => {
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
-                    onDeleteMultipleValues: mockOnDeleteMultipleValues,
                 }),
             );
 

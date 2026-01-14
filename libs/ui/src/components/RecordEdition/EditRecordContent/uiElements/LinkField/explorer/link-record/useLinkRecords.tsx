@@ -4,18 +4,17 @@
 import {Explorer} from '_ui/components/Explorer';
 import {type IExplorerRef} from '_ui/components/Explorer/Explorer';
 import {type ComponentProps, type Dispatch, type SetStateAction, useEffect, useState} from 'react';
-import {ExplorerWrapper} from '../shared/ExplorerWrapper';
-import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
-import {type DeleteMultipleValuesFunc} from '../../../_types';
+import {type DeleteMultipleValuesFunc} from '../../../../_types';
 import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {AntForm, KitSpace, KitTooltip} from 'aristid-ds';
+import {AntForm, KitButton, KitSpace, KitTooltip} from 'aristid-ds';
 import {useExplorerLinkRecords} from './useExplorerLinkRecords';
-import {ActionButton} from './ActionButton';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEye, faPlus} from '@fortawesome/free-solid-svg-icons';
+import {INPUT_MAX_HEIGHT} from '../../../../formConstants';
+import styled from 'styled-components';
 
 interface ILinkRecords {
     libraryId: string;
@@ -38,6 +37,18 @@ const _shouldUpdateExplorerActions = (ref: IExplorerRef, explorerActions: IExplo
     ref?.linkAction?.disabled !== explorerActions?.linkAction?.disabled ||
     ref?.totalCount !== explorerActions?.totalCount;
 
+const ActionButton = styled(KitButton)<{$hasNoValue: boolean}>`
+    margin-top: ${props => (props.$hasNoValue ? 0 : 'calc((var(--general-spacing-xs)) * 1px)')};
+`;
+
+const ExplorerWrapper = styled.div`
+    max-height: ${INPUT_MAX_HEIGHT};
+
+    > div {
+        max-height: ${INPUT_MAX_HEIGHT};
+    }
+`;
+
 export const useLinkRecords = ({
     libraryId,
     recordId,
@@ -49,16 +60,13 @@ export const useLinkRecords = ({
     backendValues,
     setBackendValues,
     isReadOnly,
-    isFieldInError,
     hasNoValue,
-    onDeleteMultipleValues,
 }: ILinkRecords) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
 
     const {
-        handleDeleteAllValues,
         handleExplorerCreateValue,
         handleExplorerLinkValue,
         handleExplorerMassDeactivateValues,
@@ -67,7 +75,6 @@ export const useLinkRecords = ({
         attribute,
         backendValues,
         setBackendValues,
-        onDeleteMultipleValues,
     });
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
@@ -104,16 +111,6 @@ export const useLinkRecords = ({
     const {EditRecordModal, openEditRecordModal} = useEditRecordModal();
 
     return {
-        UnlinkAllRecords: !isReadOnly &&
-            backendValues.length > 1 &&
-            attribute.multiple_values &&
-            !attribute.required && (
-                <DeleteAllValuesButton
-                    handleDelete={handleDeleteAllValues}
-                    disabled={isReadOnly}
-                    danger={isFieldInError}
-                />
-            ),
         LinkRecordsExplorer: recordId && (
             <>
                 <ExplorerWrapper>
