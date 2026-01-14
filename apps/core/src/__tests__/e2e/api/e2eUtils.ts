@@ -20,6 +20,7 @@ import {
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 import {type ITreePermissionsDependentValuesConf} from '_types/permissions';
 import {AttributeCondition} from '../../../_types/record';
+import {type ISaveValue} from '_types/value';
 
 // Share some global variables from global setup to tests
 export interface IGlobalThis {
@@ -414,6 +415,43 @@ export async function gqlSaveValue(attributeId: string, libraryId: string, recor
             id_value
         }
     }`,
+    );
+}
+
+export async function gqlSaveValueBis(
+    attributeId: string,
+    libraryId: string,
+    recordId: string,
+    value: ISaveValue,
+): Promise<string | null> {
+    const result = await makeGraphQlCall(
+        `mutation {
+            saveValue(library: "${libraryId}", recordId: "${recordId}", attribute: "${attributeId}", value: {
+                id_value: ${value.id_value ? `"${value.id_value}"` : 'null'},
+                payload: ${typeof value.payload === 'string' ? `"${value.payload}"` : value.payload}
+            }) {
+                id_value
+            }
+        }`,
+    );
+
+    return result.data.data.saveValue[0].id_value;
+}
+
+export async function gqlDeleteValue(
+    attributeId: string,
+    libraryId: string,
+    recordId: string,
+    idValue: string | null,
+): Promise<void> {
+    await makeGraphQlCall(
+        `mutation {
+            deleteValue(library: "${libraryId}", recordId: "${recordId}", attribute: "${attributeId}", value: {
+                id_value: ${idValue ? `"${idValue}"` : 'null'}
+            }) {
+                id_value
+            }
+        }`,
     );
 }
 
