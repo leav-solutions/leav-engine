@@ -36,7 +36,7 @@
         "styled-components": "6.0.8"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "6.1.0",
+        "@graphql-codegen/cli": "6.1.1",
         "@graphql-codegen/typescript": "5.0.7",
         "@graphql-codegen/typescript-operations": "5.0.7",
         "@graphql-codegen/typescript-react-apollo": "4.4.0",
@@ -46,7 +46,7 @@
         "@testing-library/user-event": "13.5.0",
         "@total-typescript/ts-reset": "0.6.1",
         "@types/jest": "27.5.2",
-        "@types/node": "24.10.4",
+        "@types/node": "24.10.7",
         "@types/react": "18.2.14",
         "@types/react-dom": "18.2.6",
         "@vitejs/plugin-react": "5.1.2",
