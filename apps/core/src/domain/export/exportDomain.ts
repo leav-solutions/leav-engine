@@ -84,7 +84,6 @@ export default function ({
         attribute: IAttribute,
         values: IValue[],
         ctx: IQueryInfos,
-        isNestedAttribute: boolean = false,
     ): Promise<IValue[]> => {
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
@@ -93,14 +92,11 @@ export default function ({
             }));
         }
 
-        // Only apply getLabel() for link attributes when NOT using dot notation
-        // When using dot notation (e.g., "events.created_by"), the user explicitly
-        // wants the attribute value, not the default label
+        // Apply getLabel() for link attributes to get the linked entity's label
         if (
-            !isNestedAttribute &&
-            (attribute.type === AttributeTypes.SIMPLE_LINK ||
-                attribute.type === AttributeTypes.ADVANCED_LINK ||
-                attribute.type === AttributeTypes.TREE)
+            attribute.type === AttributeTypes.SIMPLE_LINK ||
+            attribute.type === AttributeTypes.ADVANCED_LINK ||
+            attribute.type === AttributeTypes.TREE
         ) {
             for (const [i, v] of values.entries()) {
                 const recordIdentity = await recordDomain.getRecordIdentity(
@@ -449,14 +445,10 @@ export default function ({
                             ctx,
                         });
 
-                        // Check if using dot notation (nested attributes)
-                        const isNestedAttribute = attr.length > 1;
-
                         const value = await _getFormattedValues(
                             attributeProps,
                             fieldValues.flat(Infinity) as IValue[],
                             ctx,
-                            isNestedAttribute,
                         );
 
                         // set value(s) and concat them if there are several
