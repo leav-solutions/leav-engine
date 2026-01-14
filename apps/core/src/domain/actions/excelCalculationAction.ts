@@ -12,6 +12,7 @@ import {
     type ActionsListValueType,
     type IActionsListContext,
     type IActionsListFunction,
+    ActionsListEvents,
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 import {type IConfig} from '_types/config';
@@ -143,7 +144,10 @@ export default function ({
             raw_payload: String(result),
         };
 
-        return {values: [...values, finalResult], errors: []};
+        return {
+            values: ctx.actionEvent === ActionsListEvents.GET_VALUE ? [...values, finalResult] : [finalResult],
+            errors: [],
+        };
     };
 
     const actionWithHotFormulaParser: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
@@ -189,7 +193,10 @@ export default function ({
             raw_payload: String(result),
         };
 
-        return {values: [...values, finalResult], errors: []};
+        return {
+            values: ctx.actionEvent === ActionsListEvents.GET_VALUE ? [...values, finalResult] : [finalResult],
+            errors: [],
+        };
     };
 
     return {

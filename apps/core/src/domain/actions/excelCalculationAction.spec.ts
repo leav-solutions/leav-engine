@@ -14,7 +14,8 @@ const mockCalculationsVariable = {
     processVariableString: jest.fn(),
 };
 
-const ctx: IActionsListContext = {userId: 'test_user', actionEvent: ActionsListEvents.GET_VALUE};
+const ctxForGet: IActionsListContext = {userId: 'test_user', actionEvent: ActionsListEvents.GET_VALUE};
+const ctxForSave: IActionsListContext = {userId: 'test_user', actionEvent: ActionsListEvents.SAVE_VALUE};
 
 describe('excelCalculationAction', () => {
     const mockResultValueBase: IValue = {
@@ -62,7 +63,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: '42',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42', raw_payload: '42'}]});
@@ -73,7 +74,7 @@ describe('excelCalculationAction', () => {
                         Description: 'test',
                         Formula: '42+42',
                     },
-                    ctx,
+                    ctxForGet,
                 ),
             ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84', raw_payload: '84'}]});
             expect(
@@ -83,7 +84,7 @@ describe('excelCalculationAction', () => {
                         Description: 'test',
                         Formula: 'SUM(42,43,44)',
                     },
-                    ctx,
+                    ctxForGet,
                 ),
             ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '129', raw_payload: '129'}]});
         });
@@ -96,7 +97,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: '',
                 },
-                ctx,
+                ctxForGet,
             );
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '', raw_payload: ''}]});
         });
@@ -109,7 +110,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: 'T("resultat {toto} {tata} {titi}")',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
@@ -143,7 +144,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test empty result',
                     Formula: '{toto}',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
@@ -158,7 +159,7 @@ describe('excelCalculationAction', () => {
             });
         });
 
-        test('Return origin values along calculation result', async () => {
+        test('Return origin values along calculation result, for get action type', async () => {
             const action = _excelCalculationAction.action;
             const res = await action(
                 [mockStandardValue],
@@ -166,13 +167,36 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: 'T("resultat {toto} {tata} {titi}")',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
                 errors: [],
                 values: [
                     mockStandardValue,
+                    {
+                        ...mockResultValueBase,
+                        payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
+            });
+        });
+
+        test('Return not origin values along calculation result, for other action types', async () => {
+            const action = _excelCalculationAction.action;
+            const res = await action(
+                [mockStandardValue],
+                {
+                    Description: 'test',
+                    Formula: 'T("resultat {toto} {tata} {titi}")',
+                },
+                ctxForSave,
+            );
+
+            expect(res).toEqual({
+                errors: [],
+                values: [
                     {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
@@ -190,7 +214,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: 'UNKNOWN',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
@@ -213,7 +237,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: 'SUM(42',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
@@ -247,7 +271,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: '42',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42', raw_payload: '42'}]});
@@ -258,7 +282,7 @@ describe('excelCalculationAction', () => {
                         Description: 'test',
                         Formula: '42+42',
                     },
-                    ctx,
+                    ctxForGet,
                 ),
             ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84', raw_payload: '84'}]});
         });
@@ -271,7 +295,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: '',
                 },
-                ctx,
+                ctxForGet,
             );
             expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '', raw_payload: ''}]});
         });
@@ -284,7 +308,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: '"resultat {toto} {tata} {titi}"',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
@@ -299,7 +323,7 @@ describe('excelCalculationAction', () => {
             });
         });
 
-        test('Return origin values along calculation result', async () => {
+        test('Return origin values along calculation result, for get action type', async () => {
             const action = _excelCalculationAction.action;
             const res = await action(
                 [mockStandardValue],
@@ -307,13 +331,36 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: '"resultat {toto} {tata} {titi}"',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
                 errors: [],
                 values: [
                     mockStandardValue,
+                    {
+                        ...mockResultValueBase,
+                        payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                        raw_payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    },
+                ],
+            });
+        });
+
+        test('Return origin values along calculation result, for other action types', async () => {
+            const action = _excelCalculationAction.action;
+            const res = await action(
+                [mockStandardValue],
+                {
+                    Description: 'test',
+                    Formula: '"resultat {toto} {tata} {titi}"',
+                },
+                ctxForSave,
+            );
+
+            expect(res).toEqual({
+                errors: [],
+                values: [
                     {
                         ...mockResultValueBase,
                         payload: 'resultat totoRawValue tataRawValue titiRawValue',
@@ -331,7 +378,7 @@ describe('excelCalculationAction', () => {
                     Description: 'test',
                     Formula: 'UNKNOWN',
                 },
-                ctx,
+                ctxForGet,
             );
 
             expect(res).toEqual({
