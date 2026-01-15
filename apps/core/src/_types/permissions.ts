@@ -20,6 +20,8 @@ export enum LibraryPermissionsActions {
     ACCESS_LIBRARY = 'access_library',
     ADMIN_LIBRARY = 'admin_library',
     ACCESS_RECORD = 'access_record',
+    // We need this because recordPermissionDomain.ts fallback to library permission. This is important for defaultPermission.ts
+    ACCESS_RECORD_BY_DEFAULT = 'access_record_by_default',
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
     DELETE_RECORD = 'delete_record',

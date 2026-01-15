@@ -126,6 +126,9 @@ module.exports = {
         },
         adminGroup: {
             default: true,
+            library: {
+                access_record_by_default: false, // When user can not see by default all setup, then it see everything
+            },
             record: {
                 access_record_by_default: false, // When user can not see by default all setup, then it see everything
             },
