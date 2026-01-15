@@ -834,6 +834,7 @@ export type TreeNodePermissionsConfInput = {
 };
 
 export type TreePermissionsDependentValuesConfInput = {
+  allowByDefault: Scalars['Boolean']['input'];
   dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 
@@ -990,7 +991,7 @@ export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | nul
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
-export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
       | { id: string, label?: any | null }
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1035,7 +1036,7 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1145,7 +1146,7 @@ export type GetAttributeByIdQuery = { attributes?: { totalCount: number, list: A
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1215,7 +1216,7 @@ export type SaveAttributeMutation = { saveAttribute:
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, treeValues?: Array<{ id: string, record: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1324,7 +1325,7 @@ export type GetLibByIdQuery = { libraries?: { list: Array<{ id: string, system?:
               | { id: string, label?: any | null }
               | { id: string, label?: any | null, linked_tree?: { id: string } | null }
             > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-        | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+        | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
               | { id: string, label?: any | null }
               | { id: string, label?: any | null, linked_tree?: { id: string } | null }
             > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1359,7 +1360,7 @@ export type SaveLibraryAttributesMutation = { saveLibrary: { id: string, attribu
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1383,7 +1384,7 @@ export type SaveLibraryMutation = { saveLibrary: { id: string, system?: boolean 
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1856,6 +1857,7 @@ export const AttributeDetailsFragmentDoc = gql`
           }
         }
       }
+      allowByDefault
     }
   }
 }

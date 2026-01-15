@@ -197,6 +197,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_c
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values {
     dependenciesTreeAttributes: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute[];
+    allowByDefault: boolean;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf_profile_trees {

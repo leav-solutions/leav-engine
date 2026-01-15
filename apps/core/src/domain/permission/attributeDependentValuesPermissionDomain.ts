@@ -14,7 +14,6 @@ import {
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {type IAttribute} from '_types/attribute';
 import {type TreePath} from '_types/tree';
 import {type IConfig} from '_types/config';
@@ -41,7 +40,6 @@ export interface IAttributeDependentValuesPermissionDomain {
 
 export interface IRecordAttributePermissionDomainDeps {
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.value': IValueRepo;
@@ -51,7 +49,6 @@ export interface IRecordAttributePermissionDomainDeps {
 export default function (deps: IRecordAttributePermissionDomainDeps): IAttributeDependentValuesPermissionDomain {
     const {
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.domain.attribute': attributeDomain,
         'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
         'core.infra.value': valueRepo,
@@ -104,14 +101,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
 
             const treeTarget = await _getValuesTreeTarget(attrProps, valueNodeId, ctx);
 
-            const _getDefaultPermission = () =>
-                // May be we should check attribute or record attribute permission
-                defaultPermHelper.getDefaultPermission({
-                    type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
-                    action,
-                    userGroups: userGroupsPaths,
-                    ctx,
-                });
+            const _getDefaultPermission = () => attrProps.permissions_conf_dependent_values.allowByDefault;
 
             return permByUserGroupsHelper.getPermissionByUserGroups({
                 type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
@@ -201,12 +191,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 return inheritedTargetPathPermission;
             }
 
-            return defaultPermHelper.getDefaultPermission({
-                type: PermissionTypes.ATTRIBUTE_DEPENDENT_VALUES,
-                action,
-                userGroups: [groupAncestors],
-                ctx,
-            });
+            return attrProps.permissions_conf_dependent_values.allowByDefault;
         },
     };
 

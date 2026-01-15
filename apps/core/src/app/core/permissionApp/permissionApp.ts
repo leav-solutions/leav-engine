@@ -125,10 +125,12 @@ export default function ({
 
                     type TreePermissionsDependentValuesConf {
                         dependenciesTreeAttributes: [Attribute!]!,
+                        allowByDefault: Boolean!
                     }
 
                     input TreePermissionsDependentValuesConfInput {
                         dependenciesTreeAttributes: [ID!]!,
+                        allowByDefault: Boolean!
                     }
 
                     # If id and library are not specified, permission will apply to tree root
@@ -344,6 +346,9 @@ export default function ({
                                       ),
                                   )
                                 : [];
+                        },
+                        allowByDefault(parent: ITreePermissionsDependentValuesConf) {
+                            return parent.allowByDefault ?? false;
                         },
                     },
                 },

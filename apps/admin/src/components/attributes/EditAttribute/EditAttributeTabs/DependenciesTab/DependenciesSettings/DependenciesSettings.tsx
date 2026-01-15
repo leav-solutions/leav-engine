@@ -5,7 +5,7 @@ import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
 import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Icon, Popup, Table} from 'semantic-ui-react';
+import {Checkbox, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {localizedLabel} from 'utils';
 import SimplisticButton from '../../../../../shared/SimplisticButton';
@@ -61,6 +61,7 @@ function DependenciesSettings({
     const _handleAttributeSelected = (selectedAttribute: string) => {
         onChangeSettings({
             dependenciesTreeAttributes: [...dependentAttributes.map(a => a.id), selectedAttribute],
+            allowByDefault: dependenciesSettings?.allowByDefault ?? false,
         });
     };
 
@@ -69,6 +70,7 @@ function DependenciesSettings({
             dependenciesTreeAttributes: dependentAttributes
                 .map(a => a.id)
                 .filter(attributeId => attributeId !== removedAttributeId),
+            allowByDefault: dependenciesSettings?.allowByDefault ?? false,
         });
     };
 
@@ -104,6 +106,20 @@ function DependenciesSettings({
                             </Table.Row>
                         </Table.Footer>
                     </Table>
+                    {dependentAttributes.length > 0 && (
+                        <Checkbox
+                            name="enable"
+                            toggle
+                            label={t('attributes.dependencies.settings.allow_by_default')}
+                            checked={dependenciesSettings?.allowByDefault}
+                            onChange={() => {
+                                onChangeSettings({
+                                    dependenciesTreeAttributes: dependentAttributes.map(a => a.id),
+                                    allowByDefault: !dependenciesSettings?.allowByDefault,
+                                });
+                            }}
+                        />
+                    )}
                 </div>
             </PopContent>
         </Popup>
