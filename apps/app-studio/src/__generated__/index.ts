@@ -145,6 +145,7 @@ export enum ApiKeysSortableFields {
 }
 
 export type Application = {
+  appStudioSettings?: Maybe<Scalars['JSONObject']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['SystemTranslation']['output']>;
   endpoint?: Maybe<Scalars['String']['output']>;
@@ -2584,7 +2585,7 @@ export type GetApplicationDataByEndpointQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDataByEndpointQuery = { applications?: { list: Array<{ id: string, label: any, settings?: any | null, permissions: { access_application: boolean } }> } | null };
+export type GetApplicationDataByEndpointQuery = { applications?: { list: Array<{ id: string, label: any, appStudioSettings?: any | null, permissions: { access_application: boolean } }> } | null };
 
 export type GetLanguagesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2687,7 +2688,7 @@ export const GetApplicationDataByEndpointDocument = gql`
       permissions {
         access_application
       }
-      settings
+      appStudioSettings
     }
   }
 }

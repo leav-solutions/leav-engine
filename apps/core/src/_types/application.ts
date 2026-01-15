@@ -21,6 +21,7 @@ export interface IApplication extends ICoreEntity {
     module: string;
     endpoint: string;
     settings?: IKeyValue<any>;
+    appStudioSettings?: IKeyValue<any>;
 }
 
 /**

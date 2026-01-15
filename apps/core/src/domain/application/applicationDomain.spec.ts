@@ -252,6 +252,7 @@ describe('applicationDomain', () => {
             });
         });
     });
+
     describe('deleteApplication', () => {
         test('Delete an application properties from its ID', async () => {
             const mockAppRepo: Mockify<IApplicationRepo> = {

@@ -29,36 +29,34 @@ describe('ApplicationSettingsContext component', () => {
     });
 
     it('should provide valide application configuration', async () => {
-        const valideApplication = {
-            application: {
-                workspaces: [
-                    {
-                        id: '1',
-                        icon: 'fa-layer-group',
-                        title: {
-                            fr: 'PACs',
-                            en: 'Roadmap',
-                        },
-                        type: 'library',
-                        libraryId: 'map',
+        const validAppStudioSettings = {
+            workspaces: [
+                {
+                    id: '1',
+                    icon: 'fa-layer-group',
+                    title: {
+                        fr: 'PACs',
+                        en: 'Roadmap',
                     },
-                ],
-                libraries: {
-                    map: {
-                        libraryPanels: [
-                            {
-                                id: 'maps',
-                                name: {
-                                    fr: 'Gestion des PACs',
-                                    en: 'MAPs Management',
-                                },
-                                type: 'explorer',
-                                viewId: '885451776',
-                                actions: [],
+                    type: 'library',
+                    libraryId: 'map',
+                },
+            ],
+            libraries: {
+                map: {
+                    libraryPanels: [
+                        {
+                            id: 'maps',
+                            name: {
+                                fr: 'Gestion des PACs',
+                                en: 'MAPs Management',
                             },
-                        ],
-                        recordPanels: [],
-                    },
+                            type: 'explorer',
+                            viewId: '885451776',
+                            actions: [],
+                        },
+                    ],
+                    recordPanels: [],
                 },
             },
         };
@@ -67,7 +65,7 @@ describe('ApplicationSettingsContext component', () => {
                 applications: {
                     list: [
                         {
-                            settings: valideApplication,
+                            appStudioSettings: validAppStudioSettings,
                         },
                     ],
                 },
@@ -85,6 +83,6 @@ describe('ApplicationSettingsContext component', () => {
             </InitApplicationSettingProvider>,
         );
 
-        expect(screen.getByText(valideApplication.application.workspaces[0].id)).toBeVisible();
+        expect(screen.getByText(validAppStudioSettings.workspaces[0].id)).toBeVisible();
     });
 });

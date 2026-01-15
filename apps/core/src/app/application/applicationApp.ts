@@ -22,6 +22,7 @@ import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IList} from '_types/list';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IKeyValue} from '_types/shared';
+import {type IAppStudioDomain} from '../../domain/application/appStudioDomain';
 import {type IApplicationDomain} from '../../domain/application/applicationDomain';
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
@@ -51,6 +52,7 @@ export interface IApplicationAppDeps {
     'core.app.helpers.validateRequestToken': ValidateRequestTokenFunc;
     'core.app.core.subscriptionsHelper': ICoreSubscriptionsHelpersApp;
     'core.domain.application': IApplicationDomain;
+    'core.domain.application.appStudio': IAppStudioDomain;
     'core.domain.permission': IPermissionDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -67,6 +69,7 @@ export default function ({
     'core.app.helpers.validateRequestToken': validateRequestToken,
     'core.app.core.subscriptionsHelper': subscriptionsHelper,
     'core.domain.application': applicationDomain,
+    'core.domain.application.appStudio': appStudioDomain,
     'core.domain.permission': permissionDomain,
     'core.domain.record': recordDomain,
     'core.domain.eventsManager': eventsManagerDomain,
@@ -112,7 +115,8 @@ export default function ({
                     endpoint: String,
                     url: String,
                     permissions: ApplicationPermissions!,
-                    settings: JSONObject
+                    settings: JSONObject,
+                    appStudioSettings: JSONObject
                 }
 
                 type ApplicationModule {
@@ -302,6 +306,12 @@ export default function ({
 
                             return record.list.length ? record.list[0] : null;
                         },
+                        appStudioSettings: (
+                            appData: IApplication,
+                            _,
+                            ctx: IQueryInfos,
+                        ): Promise<IApplication['appStudioSettings']> =>
+                            appStudioDomain.getAppStudioSettings({application: appData, ctx}),
                     },
                 },
             };
