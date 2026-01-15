@@ -79,6 +79,11 @@
 }
 
 .selfContainingPanel {
+    /* Panel selector */
+    section > section {
+        padding: 0;
+    }
+
     .page {
         gap: 0;
         padding: 0;
