@@ -29,8 +29,8 @@ export const InitApplicationSettingProvider: FunctionComponent = ({children}) =>
     const [parsingErrors, setParsingErrors] = useState<$ZodIssue[] | null>(null);
 
     useEffect(() => {
-        if (currentApp?.settings) {
-            const result = ApplicationSchema.safeParse(currentApp.settings.application);
+        if (currentApp?.appStudioSettings) {
+            const result = ApplicationSchema.safeParse(currentApp.appStudioSettings);
 
             if (result.success === false) {
                 setParsingErrors(result.error.issues);
@@ -38,7 +38,7 @@ export const InitApplicationSettingProvider: FunctionComponent = ({children}) =>
             }
             setApplication(result.data);
         }
-    }, [currentApp?.settings, setApplication, setParsingErrors]);
+    }, [currentApp?.appStudioSettings, setApplication, setParsingErrors]);
 
     if (loading) {
         return <Loading />;

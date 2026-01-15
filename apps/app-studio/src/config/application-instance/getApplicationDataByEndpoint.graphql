@@ -6,7 +6,7 @@ query GetApplicationDataByEndpoint($endpoint: String!) {
             permissions {
                 access_application
             }
-            settings
+            appStudioSettings
         }
     }
 }
