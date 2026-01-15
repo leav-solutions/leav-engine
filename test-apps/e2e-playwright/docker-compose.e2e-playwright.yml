@@ -25,6 +25,7 @@ services:
         "echo 'En attente des services...' && until nc -zvw 30 arangodb 8529 && nc -zvw 30 rabbitmq 5672 && nc -zvw 30 redis 6379; do sleep 1; done && yarn run db:migrate && yarn run start",
       ]
     environment:
+      CORE_MODE: e2ePlaywright
       NODE_ENV: development
       ARANGO_URL: http://root:@arangodb:8529
       DB_NAME: leav_core
