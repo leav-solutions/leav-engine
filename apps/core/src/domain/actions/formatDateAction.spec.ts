@@ -4,11 +4,16 @@
 import {type IStandardValue} from '_types/value';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import formatDateAction from './formatDateAction';
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 
 describe('formatDateAction', () => {
     const action = formatDateAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText, userId: 'test_user'};
+    const ctx: IActionsListContext = {
+        attribute: attrText,
+        userId: 'test_user',
+        actionEvent: ActionsListEvents.GET_VALUE,
+    };
 
     const testingDate = 2119477320;
     const testValue: IStandardValue = {payload: testingDate, raw_payload: testingDate};

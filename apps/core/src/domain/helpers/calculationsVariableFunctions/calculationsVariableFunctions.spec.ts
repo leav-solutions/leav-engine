@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IActionsListContext} from '_types/actionsList';
+import {ActionsListEvents, type IActionsListContext} from '../../../_types/actionsList';
 import calculationsVariableFunctions from '.';
 import {TypeGuards} from '../../../utils';
 
@@ -21,7 +21,7 @@ describe('calculationsVariableFunctions', () => {
         'core.domain.attribute': mockAttributeDomain as any,
     });
 
-    const ctx: IActionsListContext = {userId: 'test'};
+    const ctx: IActionsListContext = {userId: 'test', actionEvent: ActionsListEvents.GET_VALUE};
 
     describe('test getValue', () => {
         it('Should return value on linked attribute', async () => {

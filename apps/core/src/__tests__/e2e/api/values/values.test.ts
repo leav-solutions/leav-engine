@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeCondition} from '../../../../_types/record';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import {ActionsListEvents} from '../../../../_types/actionsList';
 import {
     gqlAddElemToTree,
     gqlCreateRecord,
@@ -1121,7 +1122,7 @@ describe('Values', () => {
             expect(values).toEqual([
                 {
                     id_value: null,
-                    valuePayload: 'This value has been replaced by the fakeplugin',
+                    valuePayload: `This value has been replaced by the fakeplugin on ${ActionsListEvents.POST_SAVE_VALUE}`,
                 },
             ]);
         });
@@ -1152,7 +1153,7 @@ describe('Values', () => {
             expect(values).toEqual([
                 {
                     id_value: null,
-                    valuePayload: 'This value has been replaced by the fakeplugin',
+                    valuePayload: `This value has been replaced by the fakeplugin on ${ActionsListEvents.POST_SAVE_VALUE}`,
                 },
             ]);
         });
@@ -1187,7 +1188,7 @@ describe('Values', () => {
             expect(values).toEqual([
                 {
                     id_value: null,
-                    valuePayload: 'This value has been replaced by the fakeplugin',
+                    valuePayload: `This value has been replaced by the fakeplugin on ${ActionsListEvents.POST_DELETE_VALUE}`,
                 },
             ]);
         });

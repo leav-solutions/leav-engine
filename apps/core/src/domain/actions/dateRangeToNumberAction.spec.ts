@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import dateRangeToNumberAction from './dateRangeToNumberAction';
@@ -8,7 +9,11 @@ import dateRangeToNumberAction from './dateRangeToNumberAction';
 describe('dateRangeToNumberAction', () => {
     const action = dateRangeToNumberAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE_RANGE, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText, userId: 'test_user'};
+    const ctx: IActionsListContext = {
+        attribute: attrText,
+        userId: 'test_user',
+        actionEvent: ActionsListEvents.GET_VALUE,
+    };
     test('dateRangeToNumberAction', async () => {
         expect(action([{...mockStandardValue, payload: {from: 12345, to: 12346}}], {}, ctx)).toEqual({
             errors: [],

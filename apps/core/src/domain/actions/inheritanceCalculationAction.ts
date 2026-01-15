@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type ICalculationVariable} from 'domain/helpers/calculationVariable';
-import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
+import {ActionsListIOTypes, type IActionsListFunction, ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 
 interface IDeps {
@@ -73,7 +73,13 @@ export default function ({
                 }));
             }
 
-            return {values: [...(values ?? []), ...inheritedValues], errors: []};
+            return {
+                values:
+                    ctx.actionEvent === ActionsListEvents.GET_VALUE
+                        ? [...(values ?? []), ...inheritedValues]
+                        : [...inheritedValues],
+                errors: [],
+            };
         },
     };
 }

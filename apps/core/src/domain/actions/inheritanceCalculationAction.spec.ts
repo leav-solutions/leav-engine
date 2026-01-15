@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IVariableValue} from 'domain/helpers/calculationVariable';
-import {type IActionsListContext} from '_types/actionsList';
-import {IRecord} from '_types/record';
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
 
@@ -36,6 +35,7 @@ describe('inheritanceCalculationAction', () => {
                 type: AttributeTypes.SIMPLE,
             },
             userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
 
         const res = await action(
@@ -58,6 +58,7 @@ describe('inheritanceCalculationAction', () => {
                 type: AttributeTypes.SIMPLE,
             },
             userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
         const res = await action(
             null,
@@ -85,6 +86,7 @@ describe('inheritanceCalculationAction', () => {
                 type: AttributeTypes.SIMPLE_LINK,
             },
             userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
         };
 
         const res = await action2(
@@ -102,5 +104,63 @@ describe('inheritanceCalculationAction', () => {
         expect(resultValue).toHaveProperty('library');
         expect(resultValue.id).toBe('Value');
         expect(resultValue.library).toBe('meh');
+    });
+
+    test('Return origin values along calculation result, for get action type', async () => {
+        const ctx: IActionsListContext = {
+            attribute: {
+                id: 'meh',
+                type: AttributeTypes.SIMPLE,
+            },
+            userId: 'test',
+            actionEvent: ActionsListEvents.GET_VALUE,
+        };
+
+        const res = await action(
+            [
+                {
+                    payload: 'OriginValue',
+                    raw_payload: 'OriginRawValue',
+                },
+            ],
+            {
+                Description: 'test',
+                Formula: '42',
+            },
+            ctx,
+        );
+
+        expect(res.values[0].payload).toBe('OriginValue');
+        expect((res.values[0] as any).raw_payload).toBe('OriginRawValue');
+        expect(res.values[1].payload).toBe('42Value');
+        expect((res.values[1] as any).raw_payload).toBe('testRawValue');
+    });
+
+    test('Return not origin values along calculation result, for other action types', async () => {
+        const ctx: IActionsListContext = {
+            attribute: {
+                id: 'meh',
+                type: AttributeTypes.SIMPLE,
+            },
+            userId: 'test',
+            actionEvent: ActionsListEvents.SAVE_VALUE,
+        };
+
+        const res = await action(
+            [
+                {
+                    payload: 'OriginValue',
+                    raw_payload: 'OriginRawValue',
+                },
+            ],
+            {
+                Description: 'test',
+                Formula: '42',
+            },
+            ctx,
+        );
+
+        expect(res.values[0].payload).toBe('42Value');
+        expect((res.values[0] as any).raw_payload).toBe('testRawValue');
     });
 });
