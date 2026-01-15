@@ -15,8 +15,6 @@ import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {
     selfContainingPanel,
     popupPanel,
-    popupHeader,
-    popupHeaderTabs,
     popupContent,
     popupCreationFormPanel,
     fullpagePopup,
