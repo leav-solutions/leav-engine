@@ -715,7 +715,7 @@ e2e-playwright:
 .default_docker_build: &default_docker_build
   image: *docker_image
   tags: 
-    - docker-build
+    - ${RUNNER}
   services:
     - *docker_in_docker_image
   stage: build
@@ -733,9 +733,10 @@ e2e-playwright:
       when: manual
   parallel:
     matrix:
-      - DOCKER_PLATFORM:
-          - linux/amd64
-          - linux/arm64
+      - DOCKER_PLATFORM: linux/amd64
+        RUNNER: docker-build
+      - DOCKER_PLATFORM: linux/arm64
+        RUNNER: docker-build-macos-arm64
   before_script:
     # Use different image tag for arm64 to avoid push conflict.
     # By default, latest push would have override first push (amd64 generally)
@@ -763,28 +764,29 @@ e2e-playwright:
         export DOCKER_IMAGE_LATEST=""
         export DOCKER_PUSH=""
       fi
-    # Necessary to build linux/arm64 images on amd64 runners, use qemu !
-    # This will create application/vnd.oci.image.index.v1+json mediaType instead of application/vnd.docker.distribution.manifest.v2+json mediaType
-    # Not a problem, but gitlab registry will display a warning and wont be able to compute image size
+    # Runner docker-build-macos-arm64 need to login to registry
     - |
-      echo "Use docker builder-emu if DOCKER_PLATFORM is linux/arm64"
-      if [ "$DOCKER_PLATFORM" == "linux/arm64" ]; then
-        export DOCKER_BUILDER="--builder builder-emu"
+      echo "Docker login for runner docker-build-macos-arm64 has needed"
+      if [ "$RUNNER" == "docker-build-macos-arm64" ]; then
+        echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
       fi
   after_script:
-    # arm64 are build in separate builder, image are not kept in this builder after push
     - |
       echo "Remove docker images from local storage to save space"
-      if [ "$DOCKER_PLATFORM" == "linux/amd64" ]; then
-        docker rmi $(docker images --filter=reference="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:*" --format "{{.Repository}}:{{.Tag}}")
-      fi
+      docker rmi $(docker images --filter=reference="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:*" --format "{{.Repository}}:{{.Tag}}")
 
 # Write version to package.json and manifest.json
 .set_version: &set_version
   - |
     if [ -z "$CI_COMMIT_TAG" ]; then
       echo "Setting version to develop ($CI_COMMIT_SHA)"
-      find \( -name "package.json" -o -name "manifest.json" \) \
+      # Ensure compatibility with macOS (BSD find) and Linux (GNU find)
+      if command -v gfind >/dev/null 2>&1; then
+        FIND_CMD="gfind"
+      else
+        FIND_CMD="find"
+      fi
+      $FIND_CMD \( -name "package.json" -o -name "manifest.json" \) \
         -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f \
         -exec sh -c 'jq ".version = \"develop ($CI_COMMIT_SHA)\"" {} > tmpfile && mv tmpfile {}' \;
     fi
@@ -813,7 +815,6 @@ build-docker-core:
   script:
     - *set_version
     - docker build
-      $DOCKER_BUILDER
       --platform $DOCKER_PLATFORM
       --file docker/DOCKERFILES/build/core.Dockerfile
       --label LEAV-Engine
@@ -831,7 +832,6 @@ build-docker-preview-generator:
   script:
     - *set_version
     - docker build
-      $DOCKER_BUILDER
       --platform $DOCKER_PLATFORM
       --file docker/DOCKERFILES/build/generic.Dockerfile
       --build-arg APP=$DOCKER_IMAGE_APP
@@ -851,7 +851,6 @@ build-docker-automate-scan:
   script:
     - *set_version
     - docker build
-      $DOCKER_BUILDER
       --platform $DOCKER_PLATFORM
       --file docker/DOCKERFILES/build/generic.Dockerfile
       --build-arg APP=$DOCKER_IMAGE_APP
@@ -871,7 +870,6 @@ build-docker-sync-scan:
   script:
     - *set_version
     - docker build
-      $DOCKER_BUILDER
       --platform $DOCKER_PLATFORM
       --file docker/DOCKERFILES/build/generic.Dockerfile
       --build-arg APP=$DOCKER_IMAGE_APP
