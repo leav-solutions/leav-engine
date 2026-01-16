@@ -13,7 +13,8 @@ import {
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState, useEffect} from 'react';
-import {type DraggableProvided} from 'react-beautiful-dnd';
+import {useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
@@ -57,21 +58,13 @@ const RemoveButton = styled(CloseOutlined)`
 
 interface ILibraryBlockProps {
     library: GET_LIBRARIES_LIST_libraries_list;
-    customMode?: boolean;
-    readOnly?: boolean;
-    canDrag?: boolean;
+    customMode: boolean;
+    readOnly: boolean;
+    canDrag: boolean;
     onRemoveLibrary: (libraryId: string) => void;
-    dragProvided?: DraggableProvided;
 }
 
-function LibraryBlock({
-    library,
-    customMode,
-    readOnly,
-    canDrag,
-    onRemoveLibrary,
-    dragProvided,
-}: ILibraryBlockProps): JSX.Element {
+function LibraryBlock({library, customMode, readOnly, canDrag, onRemoveLibrary}: ILibraryBlockProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {tasks} = useAppSelector(state => state.tasks);
@@ -81,6 +74,12 @@ function LibraryBlock({
     const _handleOpenEditLibraryModal = () => setIsEditLibraryModalVisible(true);
     const _handleCloseEditLibraryModal = () => setIsEditLibraryModalVisible(false);
     const _handleRemoveLibrary = () => onRemoveLibrary(library.id);
+
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
+        id: library.id,
+        disabled: !canDrag,
+    });
+    const style = {transform: CSS.Transform.toString(transform), transition};
 
     const libraryActions: FloatingMenuAction[] = [
         {
@@ -115,13 +114,9 @@ function LibraryBlock({
     }, [tasks, useAppSelector]);
 
     return (
-        <Wrapper
-            key={library.id}
-            ref={canDrag ? dragProvided?.innerRef : null}
-            {...(canDrag ? dragProvided?.draggableProps : {})}
-        >
+        <Wrapper key={library.id} ref={setNodeRef} style={style} {...attributes}>
             {canDrag ? (
-                <DragHandle {...dragProvided?.dragHandleProps}>
+                <DragHandle {...listeners}>
                     <HolderOutlined />
                 </DragHandle>
             ) : (

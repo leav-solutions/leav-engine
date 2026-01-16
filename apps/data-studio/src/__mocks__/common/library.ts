@@ -10,6 +10,7 @@ export const mockLibrary = {
     behavior: LibraryBehavior.standard,
     label: mockLabel('libraryLabel'),
     icon: null,
+    previewsSettings: null,
 };
 
 export const mockLibraryPermissions: GET_LIBRARY_PERMISSIONS_libraries_list_permissions = {

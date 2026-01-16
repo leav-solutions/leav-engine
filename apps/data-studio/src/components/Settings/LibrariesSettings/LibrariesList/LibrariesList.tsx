@@ -8,7 +8,8 @@ import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LI
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {type SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, type DraggableProvided, type DropResult, Droppable} from 'react-beautiful-dnd';
+import {DndContext, closestCenter} from '@dnd-kit/core';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {type LibraryLightFragment} from '../../../../../../../libs/ui/src/_gqlTypes';
@@ -50,16 +51,20 @@ function LibrariesList({
     const [isLibraryPickerOpen, setIsLibraryPickerOpen] = useState<boolean>(false);
     const [isNewLibraryModalOpen, setIsNewLibraryModalOpen] = useState(false);
 
-    const _handleDragEnd = async (result: DropResult) => {
-        if (!result.destination) {
+    const _handleDragEnd = event => {
+        if (!canDrag) {
             return;
         }
-
-        if (result.destination.index === result.source.index) {
+        const {active, over} = event;
+        if (!over || active.id === over.id) {
             return;
         }
-
-        return onMoveLibrary(result.draggableId, result.source.index, result.destination.index);
+        const from = displayedLibraries.findIndex(lib => lib.id === active.id);
+        const to = displayedLibraries.findIndex(lib => lib.id === over.id);
+        if (from === -1 || to === -1 || from === to) {
+            return;
+        }
+        onMoveLibrary(active.id, from, to);
     };
 
     const _handleRemoveLibrary = (libraryId: string) => () => {
@@ -92,18 +97,6 @@ function LibrariesList({
     });
 
     const canDrag = !isReadOnly && !search;
-
-    const _getLibraryBlock = (library: GET_LIBRARIES_LIST_libraries_list, dragProvided?: DraggableProvided) => (
-        <LibraryBlock
-            key={library.id}
-            canDrag={canDrag}
-            customMode={isCustomMode}
-            dragProvided={dragProvided}
-            readOnly={isReadOnly}
-            library={library}
-            onRemoveLibrary={_handleRemoveLibrary(library.id)}
-        />
-    );
 
     const addLibraryButton = (
         <Button icon={<PlusOutlined />} type="primary" onClick={_handleOpenLibraryPicker}>
@@ -156,24 +149,23 @@ function LibrariesList({
                             </Space>
                         )}
                     </Header>
-                    <DragDropContext onDragEnd={_handleDragEnd}>
-                        <Droppable droppableId="libraries_list">
-                            {provided => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} data-testid="libraries-list">
-                                    {displayedLibraries.map((lib, index) =>
-                                        canDrag ? (
-                                            <Draggable key={lib.id} index={index} draggableId={lib.id}>
-                                                {dragProvided => _getLibraryBlock(lib, dragProvided)}
-                                            </Draggable>
-                                        ) : (
-                                            _getLibraryBlock(lib)
-                                        ),
-                                    )}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
+                    <DndContext collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
+                        <SortableContext
+                            items={displayedLibraries.map(l => l.id)}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {displayedLibraries.map(library => (
+                                <LibraryBlock
+                                    key={library.id}
+                                    canDrag={canDrag}
+                                    customMode={isCustomMode}
+                                    readOnly={isReadOnly}
+                                    library={library}
+                                    onRemoveLibrary={_handleRemoveLibrary(library.id)}
+                                />
+                            ))}
+                        </SortableContext>
+                    </DndContext>
                 </>
             )}
             {!libraries.length && isCustomMode && (

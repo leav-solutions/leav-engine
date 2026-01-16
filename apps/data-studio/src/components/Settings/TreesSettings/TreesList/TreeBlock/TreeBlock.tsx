@@ -13,7 +13,8 @@ import {
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState} from 'react';
-import {type DraggableProvided} from 'react-beautiful-dnd';
+import {useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
@@ -54,14 +55,13 @@ const RemoveButton = styled(CloseOutlined)`
 
 interface ITreeBlockProps {
     tree: GET_TREES_trees_list;
-    customMode?: boolean;
-    readOnly?: boolean;
-    canDrag?: boolean;
+    customMode: boolean;
+    readOnly: boolean;
+    canDrag: boolean;
     onRemoveTree: (treeId: string) => void;
-    dragProvided?: DraggableProvided;
 }
 
-function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree, dragProvided}: ITreeBlockProps): JSX.Element {
+function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree}: ITreeBlockProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
     const [isEditTreeModalVisible, setIsEditTreeModalVisible] = useState(false);
@@ -69,6 +69,12 @@ function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree, dragProvi
     const _handleOpenEditTreeModal = () => setIsEditTreeModalVisible(true);
     const _handleCloseEditTreeModal = () => setIsEditTreeModalVisible(false);
     const _handleRemoveTree = () => onRemoveTree(tree.id);
+
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
+        id: tree.id,
+        disabled: !canDrag,
+    });
+    const style = {transform: CSS.Transform.toString(transform), transition};
 
     const treeActions: FloatingMenuAction[] = [
         {
@@ -86,13 +92,9 @@ function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree, dragProvi
     };
 
     return (
-        <Wrapper
-            key={tree.id}
-            ref={canDrag ? dragProvided?.innerRef : null}
-            {...(canDrag ? dragProvided?.draggableProps : {})}
-        >
+        <Wrapper key={tree.id} ref={setNodeRef} style={style} {...attributes}>
             {canDrag ? (
-                <DragHandle {...dragProvided?.dragHandleProps}>
+                <DragHandle {...listeners}>
                     <HolderOutlined />
                 </DragHandle>
             ) : (

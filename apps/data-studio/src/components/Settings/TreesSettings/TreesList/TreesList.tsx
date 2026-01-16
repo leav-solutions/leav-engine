@@ -8,7 +8,8 @@ import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {type ComponentProps, type SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, type DraggableProvided, type DropResult, Droppable} from 'react-beautiful-dnd';
+import {DndContext, closestCenter} from '@dnd-kit/core';
+import {SortableContext, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import TreeBlock from './TreeBlock';
@@ -43,16 +44,20 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
     const {updateQuery} = useApplicationTrees();
     const [isNewTreeModalOpen, setIsNewTreeModalOpen] = useState(false);
 
-    const _handleDragEnd = async (result: DropResult) => {
-        if (!result.destination) {
+    const _handleDragEnd = event => {
+        if (!canDrag) {
             return;
         }
-
-        if (result.destination.index === result.source.index) {
+        const {active, over} = event;
+        if (!over || active.id === over.id) {
             return;
         }
-
-        return onMoveTree(result.draggableId, result.source.index, result.destination.index);
+        const from = displayedTrees.findIndex(lib => lib.id === active.id);
+        const to = displayedTrees.findIndex(lib => lib.id === over.id);
+        if (from === -1 || to === -1 || from === to) {
+            return;
+        }
+        onMoveTree(active.id, from, to);
     };
 
     const _handleClickNewTree = () => setIsNewTreeModalOpen(true);
@@ -107,18 +112,6 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
 
     const canDrag = !isReadOnly && !search;
 
-    const _getTreeBlock = (tree: GET_TREES_trees_list, dragProvided?: DraggableProvided) => (
-        <TreeBlock
-            key={tree.id}
-            canDrag={canDrag}
-            customMode={isCustomMode}
-            dragProvided={dragProvided}
-            readOnly={isReadOnly}
-            tree={tree}
-            onRemoveTree={_handleRemoveTree(tree.id)}
-        />
-    );
-
     const addTreeButton = (
         <Button icon={<PlusOutlined />} type="primary" onClick={_handleOpenTreePicker}>
             {t('app_settings.trees_settings.add_tree')}
@@ -157,24 +150,23 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                             </Space>
                         )}
                     </Header>
-                    <DragDropContext onDragEnd={_handleDragEnd}>
-                        <Droppable droppableId="trees_list">
-                            {provided => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} data-testid="trees-list">
-                                    {displayedTrees.map((tree, index) =>
-                                        canDrag ? (
-                                            <Draggable key={tree.id} index={index} draggableId={tree.id}>
-                                                {dragProvided => _getTreeBlock(tree, dragProvided)}
-                                            </Draggable>
-                                        ) : (
-                                            _getTreeBlock(tree)
-                                        ),
-                                    )}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
+                    <DndContext collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
+                        <SortableContext
+                            items={displayedTrees.map(tree => tree.id)}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {displayedTrees.map(tree => (
+                                <TreeBlock
+                                    key={tree.id}
+                                    canDrag={canDrag}
+                                    customMode={isCustomMode}
+                                    readOnly={isReadOnly}
+                                    tree={tree}
+                                    onRemoveTree={_handleRemoveTree(tree.id)}
+                                />
+                            ))}
+                        </SortableContext>
+                    </DndContext>
                 </>
             )}
             {!trees.length && isCustomMode && (
