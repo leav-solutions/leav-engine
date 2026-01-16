@@ -2,11 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
+import {useLocation} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {useCreateThread} from '../useCreateThread';
 import {useGetThreadQuery, usePostDiscussionCommentMutation} from '../../../../__generated__';
 import {useThreadStatusOptions} from '../../useThreadStatusOption/useThreadStatusOptions';
 import {WIP_STATUS} from '../../threadConstants';
+import {REDIRECT_URL_QUERY_PARAM} from '../../../../modules/ApplicationRouting/content/panel-custom/message-handlers/useOpenFlapPanel';
 
 interface IUseThreadActions {
     recordId: string;
@@ -18,6 +20,7 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
     const [postDiscussionCommentMutation] = usePostDiscussionCommentMutation();
     const {t} = useTranslation();
 
+    const location = useLocation();
     const createThread = useCreateThread();
     const statusesOptions = useThreadStatusOptions();
 
@@ -41,6 +44,8 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
                 });
             }
 
+            const searchParams = new URLSearchParams(location.search);
+            const url = searchParams.get(REDIRECT_URL_QUERY_PARAM) || window.location.href;
             await postDiscussionCommentMutation({
                 variables: {
                     comment: {
@@ -52,7 +57,7 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
                         threadId,
                         mentions: {
                             users,
-                            url: window.location.href,
+                            url,
                         },
                     },
                 },

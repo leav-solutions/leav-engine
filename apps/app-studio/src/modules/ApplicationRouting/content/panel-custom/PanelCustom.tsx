@@ -13,6 +13,7 @@ import {useClosePanel} from './message-handlers/useClosePanel';
 import {useCloseFlapPanel} from './message-handlers/useCloseFlapPanel';
 import {iframe} from './panelCustom.module.css';
 import {useGetPanelConfig} from './message-handlers/useGetPanelConfig';
+import {useGetURL} from './message-handlers/useGetURL';
 
 interface IPanelCustomProps {
     source: string;
@@ -30,6 +31,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {openFlapPanel} = useOpenFlapPanel();
     const {closeFlapPanel} = useCloseFlapPanel();
     const {getPanelConfig} = useGetPanelConfig();
+    const {getURL} = useGetURL();
 
     const {changeLangInAllFrames} = useIFrameMessenger({
         handlers: {
@@ -42,6 +44,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
             onCloseFlapPanel: closeFlapPanel,
             onClosePanel: closePanel,
             onGetPanelConfig: getPanelConfig,
+            onGetUrl: getURL,
         },
     });
 

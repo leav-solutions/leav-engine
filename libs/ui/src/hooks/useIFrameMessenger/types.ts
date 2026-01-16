@@ -140,11 +140,31 @@ export type OpenFlapPanelMessage = IMessageBase & {
         flapRecordId: string;
         flapLibraryId: LibraryId;
         flapPanelId: FlapPanelId;
+        redirectUrl?: string;
     };
 };
 
 export type CloseFlapPanelMessage = IMessageBase & {
     type: 'close-flap-panel';
+};
+
+export type GetUrlMessage = IMessageBase & {
+    type: 'get-url';
+    id: string;
+    data: {
+        onGetUrl: (url: string) => void;
+        flapParams?: {
+            flapRecordId: string;
+            flapLibraryId: LibraryId;
+            flapPanelId: FlapPanelId;
+        };
+        panelParams?: {
+            recordId: string;
+            where: Where;
+            recordPanelId: PanelId;
+        };
+    };
+    overrides?: string[];
 };
 
 export type GetPanelConfigMessage = IMessageBase & {
@@ -170,6 +190,7 @@ export type MessageToParent =
     | MessageToPanelMessage
     | OpenFlapPanelMessage
     | CloseFlapPanelMessage
+    | GetUrlMessage
     | GetPanelConfigMessage;
 
 export type MessageFromParent =
@@ -215,6 +236,7 @@ export interface IUseIFrameMessengerOptions {
         onClosePanel?: (data: ClosePanelMessage['data']) => void;
         onNavigateToIframe?: (data: NavigateToIframeMessage['data']) => void;
         onOpenFlapPanel?: (data: OpenFlapPanelMessage['data']) => void;
+        onGetUrl?: (data: GetUrlMessage['data']) => void;
         onGetPanelConfig?: (
             data: GetPanelConfigMessage['data'],
             id: string,
