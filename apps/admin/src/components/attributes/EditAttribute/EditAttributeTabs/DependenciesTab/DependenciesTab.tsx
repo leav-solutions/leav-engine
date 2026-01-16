@@ -37,6 +37,7 @@ function DependenciesTab({attribute}: IDependenciesTabProps): JSX.Element {
     return (
         <div className="flex-col height100">
             <DependenciesSettingsBtn
+                attribute={attribute}
                 dependenciesSettings={
                     attribute.permissions_conf_dependent_values as ITreePermissionsDependentValuesConf
                 }
