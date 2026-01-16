@@ -15,6 +15,13 @@ import {
 import {AttributeType, PermissionsRelation, type TreepermissionsConfInput} from '_gqlTypes';
 import SimplisticButton from '../SimplisticButton';
 import PermissionsAttributeSelector from './PermissionsAttributeSelector';
+import {
+    type GET_ATTRIBUTE_BY_ID_attributes_list,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf,
+} from '../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf} from '../../../_gqlTypes/GET_TREE_BY_ID';
 
 const PopContent = styled.div`
     display: flex;
@@ -39,7 +46,13 @@ const defaultRelation = PermissionsRelation.and;
 
 interface IPermissionsSettingsProps extends React.HTMLAttributes<HTMLDivElement> {
     library?: GET_LIB_BY_ID_libraries_list;
-    permissionsSettings: GET_LIB_BY_ID_libraries_list_permissions_conf;
+    attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
+    permissionsSettings:
+        | GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf
+        | GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf
+        | GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf
+        | GET_LIB_BY_ID_libraries_list_permissions_conf
+        | GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf;
     onChangeSettings: (settings: TreepermissionsConfInput) => void;
     readonly: boolean;
 }
@@ -48,6 +61,7 @@ function PermissionsSettings({
     permissionsSettings,
     onChangeSettings,
     library,
+    attribute,
     readonly,
     ...elementProps
 }: IPermissionsSettingsProps): JSX.Element {
@@ -129,6 +143,7 @@ function PermissionsSettings({
                                     <FooterCell colSpan={2} $hasAttributes={!!permissionsAttributes.length}>
                                         <PermissionsAttributeSelector
                                             library={library}
+                                            attribute={attribute}
                                             onSelectAttribute={_handleAttributeSelected}
                                             selectedAttributes={permissionsAttributes.map(a => a.id)}
                                         />
