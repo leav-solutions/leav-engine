@@ -10,6 +10,7 @@ import {
     type ClosePanelMessage,
     type IEncodedMessage,
     type IUseIFrameMessengerOptions,
+    type GetUrlMessage,
     type Message,
     type MessageDispatcher,
     type MessageHandler,
@@ -156,6 +157,17 @@ export const initClientHandlers: (
                 callCb,
             );
             break;
+        case 'get-url':
+            options?.handlers?.onGetUrl?.(
+                setCallbacks(
+                    message.id,
+                    message.__frameId,
+                    message.data,
+                    callCb,
+                    message.overrides,
+                ) as GetUrlMessage['data'],
+            );
+            break;
         default:
             break;
     }
@@ -222,5 +234,10 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
         const id = Date.now().toString();
         const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
         dispatch?.({type: 'get-panel-config', data: nextData as GetPanelConfigMessage['data'], id, overrides});
+    },
+    getUrl: (data: GetUrlMessage['data']) => {
+        const id = Date.now().toString();
+        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
+        dispatch?.({type: 'get-url', data: nextData as GetUrlMessage['data'], id, overrides});
     },
 });

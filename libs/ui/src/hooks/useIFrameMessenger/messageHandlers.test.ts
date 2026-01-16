@@ -14,7 +14,7 @@ describe('MessageHandlers', () => {
             dispatchMock.mockClear();
         });
 
-        it('Should provide 11 methods', async () => {
+        it('Should provide these methods', async () => {
             const providedMethods = getExposedMethods({current: null}, jest.fn());
 
             expect(providedMethods).toEqual({
@@ -29,6 +29,7 @@ describe('MessageHandlers', () => {
                 openFlapPanel: expect.any(Function),
                 closeFlapPanel: expect.any(Function),
                 getPanelConfig: expect.any(Function),
+                getUrl: expect.any(Function),
             });
         });
 
