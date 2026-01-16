@@ -143,6 +143,17 @@ import {type ILogsCollectorInterface} from './interface/logsCollector';
             await logsCollector.init();
             await monitoringServerInstance.init();
             break;
+        case CoreMode.E2E_PLAYWRIGHT:
+            await initPlugins(conf.pluginsPath, pluginsContainer);
+            await server.init();
+            await server.initConsumers();
+            await indexationManager.init();
+            await tasksManager.initMaster();
+            await tasksManager.initWorker();
+            // no logsCollector.init() yet because not needed in e2e tests, need elasticsearch
+            // no filesManager.init(); yet because not needed in e2e tests
+            await monitoringServerInstance.init();
+            break;
         case CoreMode.CLI:
         default:
             await cli.run();
