@@ -507,9 +507,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 },
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
     };
 }

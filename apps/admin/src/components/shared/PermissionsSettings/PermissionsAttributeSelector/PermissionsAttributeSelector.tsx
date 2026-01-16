@@ -11,23 +11,27 @@ import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, useGetAttributesLazyQuery} from '_gqlTypes';
 import PermissionsAttributeSelectorList from './PermissionsAttributeSelectorList';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 
 interface IPermissionsAttributeSelectorProps {
     library?: GET_LIB_BY_ID_libraries_list;
+    attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     selectedAttributes: string[];
     onSelectAttribute: (attribute: string) => void;
 }
 
 function PermissionsAttributeSelector({
     library,
+    attribute,
     selectedAttributes,
     onSelectAttribute,
 }: IPermissionsAttributeSelectorProps): JSX.Element {
     const {t} = useTranslation();
     const [isListExpanded, setIsListExpanded] = useState(false);
+
     const [getAttributes, {loading, error, data, called}] = useGetAttributesLazyQuery({
         variables: {
-            libraries: library ? [library.id] : null,
+            libraries: library ? [library.id] : attribute ? attribute.libraries.map(l => l.id) : null,
             type: [AttributeType.tree],
         },
     });
@@ -44,14 +48,12 @@ function PermissionsAttributeSelector({
         setIsListExpanded(true);
     };
 
-    const _handleAttributeSelected = (attribute: GET_ATTRIBUTES_attributes_list) => {
-        onSelectAttribute(attribute.id);
+    const _handleAttributeSelected = (attr: GET_ATTRIBUTES_attributes_list) => {
+        onSelectAttribute(attr.id);
         setIsListExpanded(false);
     };
 
-    const attributesList = (data?.attributes?.list ?? []).filter(
-        attribute => !selectedAttributes.includes(attribute.id),
-    );
+    const attributesList = (data?.attributes?.list ?? []).filter(attr => !selectedAttributes.includes(attr.id));
 
     return (
         <>

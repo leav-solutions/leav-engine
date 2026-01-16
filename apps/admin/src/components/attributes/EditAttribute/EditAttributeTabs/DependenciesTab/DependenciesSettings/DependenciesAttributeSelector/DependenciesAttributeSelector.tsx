@@ -14,28 +14,28 @@ import {
     type GET_ATTRIBUTESVariables,
     type GET_ATTRIBUTES_attributes_list,
 } from '_gqlTypes/GET_ATTRIBUTES';
-import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType} from '_gqlTypes';
+import {type AttributeDetailsTreeAttributeFragment, AttributeType} from '_gqlTypes';
 import DependenciesAttributeSelectorList from './DependenciesAttributeSelectorList';
 
 interface IDependenciesAttributeSelectorProps {
-    library?: GET_LIB_BY_ID_libraries_list;
+    attribute: AttributeDetailsTreeAttributeFragment;
     selectedAttributes: string[];
     onSelectAttribute: (attribute: string) => void;
 }
 
 function DependenciesAttributeSelector({
-    library,
+    attribute,
     selectedAttributes,
     onSelectAttribute,
 }: IDependenciesAttributeSelectorProps): JSX.Element {
     const {t} = useTranslation();
     const [isListExpanded, setIsListExpanded] = useState(false);
+
     const [getAttributes, {loading, error, data, called}] = useLazyQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(
         getAttributesQuery,
         {
             variables: {
-                libraries: library ? [library.id] : null,
+                libraries: attribute.libraries.map(({id}) => id),
                 type: [AttributeType.tree],
                 multiple_values: false,
             },
@@ -54,14 +54,12 @@ function DependenciesAttributeSelector({
         setIsListExpanded(true);
     };
 
-    const _handleAttributeSelected = (attribute: GET_ATTRIBUTES_attributes_list) => {
-        onSelectAttribute(attribute.id);
+    const _handleAttributeSelected = (attr: GET_ATTRIBUTES_attributes_list) => {
+        onSelectAttribute(attr.id);
         setIsListExpanded(false);
     };
 
-    const attributesList = (data?.attributes?.list ?? []).filter(
-        attribute => !selectedAttributes.includes(attribute.id),
-    );
+    const attributesList = (data?.attributes?.list ?? []).filter(attr => !selectedAttributes.includes(attr.id));
 
     return (
         <>

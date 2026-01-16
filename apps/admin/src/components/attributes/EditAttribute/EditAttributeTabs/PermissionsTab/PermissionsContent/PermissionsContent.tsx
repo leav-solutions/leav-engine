@@ -75,6 +75,7 @@ function PermissionsContent({attribute, onSubmitSettings, readonly}: IPermission
     return (
         <div className="flex-col height100">
             <PermissionsSettingsBtn
+                attribute={attribute}
                 permissionsSettings={attribute.permissions_conf}
                 onChangeSettings={_handleChangeSettings}
                 readonly={readonly}

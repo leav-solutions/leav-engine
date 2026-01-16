@@ -11,7 +11,7 @@ import {localizedLabel} from 'utils';
 import SimplisticButton from '../../../../../shared/SimplisticButton';
 import DependenciesAttributeSelector from './DependenciesAttributeSelector';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type TreePermissionsDependentValuesConfInput} from '_gqlTypes';
+import {type AttributeDetailsTreeAttributeFragment, type TreePermissionsDependentValuesConfInput} from '_gqlTypes';
 
 const PopContent = styled.div`
     display: flex;
@@ -36,7 +36,7 @@ export type ITreePermissionsDependentValuesConf =
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values;
 
 interface IPermissionsSettingsProps extends React.HTMLAttributes<HTMLDivElement> {
-    library?: GET_LIB_BY_ID_libraries_list;
+    attribute: AttributeDetailsTreeAttributeFragment;
     dependenciesSettings: ITreePermissionsDependentValuesConf;
     onChangeSettings: (settings: TreePermissionsDependentValuesConfInput) => void;
 }
@@ -44,7 +44,7 @@ interface IPermissionsSettingsProps extends React.HTMLAttributes<HTMLDivElement>
 function DependenciesSettings({
     dependenciesSettings,
     onChangeSettings,
-    library,
+    attribute,
     ...elementProps
 }: IPermissionsSettingsProps): JSX.Element {
     const {t} = useTranslation();
@@ -98,7 +98,7 @@ function DependenciesSettings({
                             <Table.Row>
                                 <FooterCell colSpan={2} $hasAttributes={!!dependentAttributes.length}>
                                     <DependenciesAttributeSelector
-                                        library={library}
+                                        attribute={attribute}
                                         onSelectAttribute={_handleAttributeSelected}
                                         selectedAttributes={dependentAttributes.map(a => a.id)}
                                     />
