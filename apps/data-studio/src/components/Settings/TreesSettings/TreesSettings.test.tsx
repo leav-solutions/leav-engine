@@ -7,7 +7,6 @@ import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTree} from '__mocks__/common/tree';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
-import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
 import TreesSettings from './TreesSettings';
 
 describe('TreesSettings', () => {
@@ -137,11 +136,7 @@ describe('TreesSettings', () => {
             },
         ]);
 
-        const {container} = render(<TreesSettings />, {apolloMocks: mocks, currentApp});
-        mockDndSpacing(container);
-
-        await waitFor(() => screen.getByText('Tree A'));
-        const dragHandle = screen.getAllByRole('button', {name: /holder/})[1]; // Handle of "Tree B"
+        render(<TreesSettings />, {apolloMocks: mocks, currentApp});
 
         //TODO: Find a way to simulate drag and drop
     });

@@ -4,7 +4,6 @@
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
 import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
@@ -134,11 +133,7 @@ describe('LibrariesSettings', () => {
             },
         ]);
 
-        const {container} = render(<LibrariesSettings />, {apolloMocks: mocks, currentApp});
-        mockDndSpacing(container);
-
-        await waitFor(() => screen.getByText('Lib A'));
-        const dragHandle = screen.getAllByRole('button', {name: /holder/})[1]; // Handle of "Lib B"
+        render(<LibrariesSettings />, {apolloMocks: mocks, currentApp});
 
         //TODO: Find a way to simulate drag and drop
     });
