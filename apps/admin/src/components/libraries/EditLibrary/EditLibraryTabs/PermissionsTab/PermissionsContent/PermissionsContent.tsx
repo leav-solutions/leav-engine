@@ -38,6 +38,7 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
         library: [PermissionsActions.admin_library, PermissionsActions.access_library],
         entities: [
             PermissionsActions.access_record,
+            PermissionsActions.access_record_by_default,
             PermissionsActions.create_record,
             PermissionsActions.edit_record,
             PermissionsActions.delete_record,

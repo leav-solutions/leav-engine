@@ -66,7 +66,7 @@ export default function ({config}: IDeps): IDefaultPermissionHelper {
                 const key = `${type}:${action}`;
                 map[key] = typePerms[action] ?? typePerms.default ?? globalDefault;
             }
-            map[`${type}:default`] = typePerms.default;
+            map[`${type}:default`] = typePerms.default ?? globalDefault;
         }
 
         return map;
