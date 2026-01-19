@@ -37,7 +37,7 @@
         "max_length": "Longueur maximale",
         "confirm": "Confirmer",
         "loading": "Chargement",
-        "are_you_sure": "Êtes-vous sûr ?",
+        "are_you_sure": "Êtes-vous sûr(e) ?",
         "reset": "Réinitialiser"
     },
     "errors": {
@@ -441,6 +441,8 @@
         "delete_all": "Tout supprimer",
         "delete_all_values": "Supprimer toutes les valeurs",
         "delete_all_values_confirm": "Êtes-vous sûr de vouloir supprimer toutes les valeurs?",
+        "delete_link": "Supprimer la liaison",
+        "delete_link_description": "Êtes-vous sûr de vouloir supprimer la liaison?",
         "value_details_tooltip": "Plus d'informations",
         "attribute": {
             "id": "Identifiant",

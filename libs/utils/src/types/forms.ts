@@ -27,6 +27,11 @@ export enum TabsDirection {
     VERTICAL = 'vertical',
 }
 
+export enum DisplayMode {
+    EXPLORER = 'EXPLORER',
+    TAG = 'TAG',
+}
+
 export interface ICommonFieldsSettings {
     label?: Record<string, string | null>;
     attribute?: string;
@@ -70,7 +75,7 @@ export interface IFormLinkFieldSettings extends ICommonFieldsSettings {
         label: Record<string, string>;
     }>;
     displayRecordIdentity: boolean;
-    tagDisplayMode: boolean;
+    displayMode: DisplayMode;
     editFormId: string;
 }
 
