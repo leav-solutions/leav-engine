@@ -9034,10 +9034,10 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
     "@leav/utils": "workspace:libs/utils"
-    "@testing-library/jest-dom": "npm:5.16.5"
-    "@testing-library/react": "npm:14.0.0"
+    "@testing-library/jest-dom": "npm:5.17.0"
+    "@testing-library/react": "npm:14.3.1"
     "@testing-library/react-hooks": "npm:8.0.1"
-    "@testing-library/user-event": "npm:14.4.3"
+    "@testing-library/user-event": "npm:14.6.1"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/dompurify": "npm:3.0.3"
     "@types/jest": "npm:29.0.2"
@@ -10832,42 +10832,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:5.11.9":
-  version: 5.11.9
-  resolution: "@testing-library/jest-dom@npm:5.11.9"
-  dependencies:
-    "@babel/runtime": "npm:^7.9.2"
-    "@types/testing-library__jest-dom": "npm:^5.9.1"
-    aria-query: "npm:^4.2.2"
-    chalk: "npm:^3.0.0"
-    css: "npm:^3.0.0"
-    css.escape: "npm:^1.5.1"
-    lodash: "npm:^4.17.15"
-    redent: "npm:^3.0.0"
-  checksum: 04e496ce603c0cb8d9644d55777a64537cf1929d96ac4c026ef3fca0710df33761e97bfb5c968d70f783384da66e7474df564dc34051d7fcc98d0e9642128aa1
-  languageName: node
-  linkType: hard
-
-"@testing-library/jest-dom@npm:5.16.4":
-  version: 5.16.4
-  resolution: "@testing-library/jest-dom@npm:5.16.4"
-  dependencies:
-    "@babel/runtime": "npm:^7.9.2"
-    "@types/testing-library__jest-dom": "npm:^5.9.1"
-    aria-query: "npm:^5.0.0"
-    chalk: "npm:^3.0.0"
-    css: "npm:^3.0.0"
-    css.escape: "npm:^1.5.1"
-    dom-accessibility-api: "npm:^0.5.6"
-    lodash: "npm:^4.17.15"
-    redent: "npm:^3.0.0"
-  checksum: a0c53f56f2f22d5ccf877ff88de917e0441a4ded7d3d3771925426e26ed83ed88888fa39867015a0196f34aed2c7c6f9e85292d24cf2c6abba8f6aa88863512f
-  languageName: node
-  linkType: hard
-
-"@testing-library/jest-dom@npm:5.16.5":
-  version: 5.16.5
-  resolution: "@testing-library/jest-dom@npm:5.16.5"
+"@testing-library/jest-dom@npm:5.17.0":
+  version: 5.17.0
+  resolution: "@testing-library/jest-dom@npm:5.17.0"
   dependencies:
     "@adobe/css-tools": "npm:^4.0.1"
     "@babel/runtime": "npm:^7.9.2"
@@ -10878,13 +10845,13 @@ __metadata:
     dom-accessibility-api: "npm:^0.5.6"
     lodash: "npm:^4.17.15"
     redent: "npm:^3.0.0"
-  checksum: 472a14b6295a18af28b5133ecaf4d22a7bb9c50bf05e1f04a076b2e2d7c596e76cdd56a95387ad6d2a4dda0c46bc93d95cbca5b314fabe0fd13362f29118749e
+  checksum: 5a75f2094f935d2da58ea1d2b3d0c9f58dc0bca2592f2ca8125176596b4adba88b742b7553ef228e2085eadcb498ce6cece3e78402e34e6af7b6bc26bf0a0baa
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:6.8.0":
-  version: 6.8.0
-  resolution: "@testing-library/jest-dom@npm:6.8.0"
+"@testing-library/jest-dom@npm:6.9.1":
+  version: 6.9.1
+  resolution: "@testing-library/jest-dom@npm:6.9.1"
   dependencies:
     "@adobe/css-tools": "npm:^4.4.0"
     aria-query: "npm:^5.0.0"
@@ -10892,7 +10859,7 @@ __metadata:
     dom-accessibility-api: "npm:^0.6.3"
     picocolors: "npm:^1.1.1"
     redent: "npm:^3.0.0"
-  checksum: d9bebf1f32e46fdde7e12a2b1ee1f8d113b2fb56e86720f185c32ccae2b76e74c76ecaa69c3aeee98a5fded3417b47032891e7ec9be83d4e6bf888ed8356032f
+  checksum: 409b4f519e4c68f4d31e3b0317338cc19098b9029513fca61aa2af8270086ae3956a1eaedd19bbce2d2c9e2cf9ff27a616c06556be7a26e101c0d529a0062233
   languageName: node
   linkType: hard
 
@@ -10931,20 +10898,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:13.1.1":
-  version: 13.1.1
-  resolution: "@testing-library/react@npm:13.1.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-    "@testing-library/dom": "npm:^8.5.0"
-    "@types/react-dom": "npm:^18.0.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 5c23c52f9d11b72b041f988014e3bfc2d04cc8ec382abd40cd54b39d54b0a2603e663bc8921d348f3df58f9a1ba70b8958f80d46c9cb10815637ee517fad63ba
-  languageName: node
-  linkType: hard
-
 "@testing-library/react@npm:13.4.0":
   version: 13.4.0
   resolution: "@testing-library/react@npm:13.4.0"
@@ -10959,9 +10912,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:14.0.0":
-  version: 14.0.0
-  resolution: "@testing-library/react@npm:14.0.0"
+"@testing-library/react@npm:14.3.1":
+  version: 14.3.1
+  resolution: "@testing-library/react@npm:14.3.1"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^9.0.0"
@@ -10969,7 +10922,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 1f2a4f78d107e741b35671e9c7dd992d5c9f49b48ee24112ccfe636179be72f3c62a65b1405901b59eb6cde996176ebc2c99099e04d9f14575641e46688747f0
+  checksum: 83359dcdf9eaf067839f34604e1a181cbc14fc09f3a07672403700fcc6a900c4b8054ad1114fc24b4b9f89d84e2a09e1b7c9afce2306b1d4b4c9e30eb1cb12de
   languageName: node
   linkType: hard
 
@@ -10993,17 +10946,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:13.0.4":
-  version: 13.0.4
-  resolution: "@testing-library/user-event@npm:13.0.4"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 6f4eac8ebc4b74ab7f096f533d4b385719c189b32281e1f2359bd528bbeb941353f0659ad4c8e5eaadf74981661d5e6a69a9e5c1b1d507c71297fba4fed0469a
-  languageName: node
-  linkType: hard
-
 "@testing-library/user-event@npm:13.5.0":
   version: 13.5.0
   resolution: "@testing-library/user-event@npm:13.5.0"
@@ -11012,15 +10954,6 @@ __metadata:
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: e2bdf2b2375d1399a4fd45195705ab0be05f5e3e8220ecbfc26cba98985e45cb505e4e11ed4d909a7052ce90d1e83751cfe21bb1b70fa82d2a2c268370432d8b
-  languageName: node
-  linkType: hard
-
-"@testing-library/user-event@npm:14.4.3":
-  version: 14.4.3
-  resolution: "@testing-library/user-event@npm:14.4.3"
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 0c7c1ee6bacd8faf15e00624ff6815f0cdf2529493c3a0d8ec6878bbedfc7bd4c7600b7a4b7a07302737e71400dc560ee17dc5706291505da09905c8ea3f3cd7
   languageName: node
   linkType: hard
 
@@ -13104,7 +13037,7 @@ __metadata:
     "@leav/utils": "workspace:libs/utils"
     "@reduxjs/toolkit": "npm:1.7.1"
     "@semantic-ui-react/craco-less": "npm:2.0.2"
-    "@testing-library/jest-dom": "npm:5.11.9"
+    "@testing-library/jest-dom": "npm:5.17.0"
     "@testing-library/react": "npm:11.2.7"
     "@testing-library/react-hooks": "npm:8.0.1"
     "@testing-library/user-event": "npm:13.5.0"
@@ -13608,7 +13541,7 @@ __metadata:
     "@graphql-typed-document-node/core": "npm:3.2.0"
     "@leav/ui": "workspace:libs/ui"
     "@leav/utils": "workspace:libs/utils"
-    "@testing-library/jest-dom": "npm:6.8.0"
+    "@testing-library/jest-dom": "npm:6.9.1"
     "@testing-library/react": "npm:16.3.1"
     "@testing-library/user-event": "npm:14.6.1"
     "@total-typescript/ts-reset": "npm:0.6.1"
@@ -16478,17 +16411,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "css@npm:3.0.0"
-  dependencies:
-    inherits: "npm:^2.0.4"
-    source-map: "npm:^0.6.1"
-    source-map-resolve: "npm:^0.6.0"
-  checksum: 4a7ecc580c898ffe9644dbcfd44dcd0e79272cdaaf5886f6b1dc28ae829d7810d2b33332977661d79765ab0ab24b2a719147d91d72fd40881e562e5a952d7512
-  languageName: node
-  linkType: hard
-
 "cssom@npm:^0.5.0":
   version: 0.5.0
   resolution: "cssom@npm:0.5.0"
@@ -16616,7 +16538,7 @@ __metadata:
     "@reduxjs/toolkit": "npm:1.9.7"
     "@testing-library/jest-dom": "npm:4.2.4"
     "@testing-library/react": "npm:13.4.0"
-    "@testing-library/user-event": "npm:13.0.4"
+    "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
@@ -24762,8 +24684,8 @@ __metadata:
     "@ant-design/icons": "npm:5.2.6"
     "@apollo/client": "npm:3.8.1"
     "@leav/ui": "workspace:libs/ui"
-    "@testing-library/jest-dom": "npm:5.16.4"
-    "@testing-library/react": "npm:14.0.0"
+    "@testing-library/jest-dom": "npm:5.17.0"
+    "@testing-library/react": "npm:14.3.1"
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
@@ -26561,8 +26483,8 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
     "@leav/ui": "workspace:libs/ui"
     "@leav/utils": "workspace:libs/utils"
-    "@testing-library/jest-dom": "npm:5.16.4"
-    "@testing-library/react": "npm:13.1.1"
+    "@testing-library/jest-dom": "npm:5.17.0"
+    "@testing-library/react": "npm:13.4.0"
     "@testing-library/react-hooks": "npm:8.0.1"
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
@@ -29922,16 +29844,6 @@ __metadata:
     source-map-url: "npm:^0.4.0"
     urix: "npm:^0.1.0"
   checksum: 98e281cceb86b80c8bd3453110617b9df93132d6a50c7bf5847b5d74b4b5d6e1d4d261db276035b9b7e5ba7f32c2d6a0d2c13d581e37870a0219a524402efcab
-  languageName: node
-  linkType: hard
-
-"source-map-resolve@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "source-map-resolve@npm:0.6.0"
-  dependencies:
-    atob: "npm:^2.1.2"
-    decode-uri-component: "npm:^0.2.0"
-  checksum: df31fd4410e11ce328b084778ea6c8d24aec6dca22637275fd68a5bbbd86afad494945054d7f97af0c208a290d597a2ffecf7dc4f68736619a333ca909502081
   languageName: node
   linkType: hard
 
