@@ -25,8 +25,8 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/jest": "29.0.2",
-        "jest": "29.0.3",
+        "@types/jest": "29.5.14",
+        "jest": "29.7.0",
         "ts-jest": "29.4.6",
         "typescript": "5.5.3"
     },
