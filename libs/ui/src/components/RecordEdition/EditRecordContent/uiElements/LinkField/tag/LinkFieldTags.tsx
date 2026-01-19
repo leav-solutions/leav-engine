@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState, type FunctionComponent} from 'react';
 import {type LinkFieldProps} from '../_types';
-import {type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {AntForm, KitIdCard, KitSpace, KitTag} from 'aristid-ds';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {localizedTranslation} from '@leav/utils';
@@ -31,9 +31,11 @@ export const LinkFieldTags: FunctionComponent<LinkFieldProps> = ({
     const {
         settings,
         attribute,
+        joinLibraryContext,
     }: {
         settings: typeof element.settings;
         attribute?: RecordFormAttributeLinkAttributeFragment;
+        joinLibraryContext?: JoinLibraryContextFragment;
     } = element;
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueLinkValue[]>(element.values);
@@ -75,6 +77,7 @@ export const LinkFieldTags: FunctionComponent<LinkFieldProps> = ({
         onValueSubmit,
         backendValues,
         setBackendValues,
+        joinLibraryContext,
     });
 
     return (

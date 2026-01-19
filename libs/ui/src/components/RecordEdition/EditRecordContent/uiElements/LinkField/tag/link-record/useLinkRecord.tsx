@@ -3,7 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {type ExplorerSelectionIdsQuery, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {
+    type JoinLibraryContextFragment,
+    type ExplorerSelectionIdsQuery,
+    type RecordFormAttributeLinkAttributeFragment,
+} from '_ui/_gqlTypes';
 import {LINK_RECORDS_MODAL_CLASSNAME} from '_ui/components/Explorer/_constants';
 import {
     APICallStatus,
@@ -16,6 +20,7 @@ import {AntForm, KitButton, KitTooltip} from 'aristid-ds';
 import {type Dispatch, type SetStateAction, useState} from 'react';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {SelectTreeNodeModal} from '../../../TreeField/manage-tree-node-selection/SelectTreeNodeModal';
 
 interface IUseLinkRecordProps {
     attribute: RecordFormAttributeLinkAttributeFragment;
@@ -23,6 +28,7 @@ interface IUseLinkRecordProps {
     onValueSubmit: SubmitValueFunc;
     backendValues: RecordFormElementsValueLinkValue[];
     setBackendValues: Dispatch<SetStateAction<RecordFormElementsValueLinkValue[]>>;
+    joinLibraryContext?: JoinLibraryContextFragment;
 }
 
 export const useLinkRecord = ({
@@ -31,8 +37,9 @@ export const useLinkRecord = ({
     onValueSubmit,
     backendValues,
     setBackendValues,
+    joinLibraryContext,
 }: IUseLinkRecordProps) => {
-    const [isSelectRecordForLinkModalOpen, setIsSelectRecordForLinkModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const {t} = useSharedTranslation();
     const antdForm = AntForm.useFormInstance();
 
@@ -84,6 +91,16 @@ export const useLinkRecord = ({
 
     const isReplacementMode = backendValues.length > 0 && !attribute.multiple_values;
 
+    const linkedLibraryId =
+        joinLibraryContext &&
+        'linked_library' in joinLibraryContext.mandatoryAttribute &&
+        joinLibraryContext.mandatoryAttribute.linked_library?.id;
+
+    const linkedTreeId =
+        joinLibraryContext &&
+        'linked_tree' in joinLibraryContext.mandatoryAttribute &&
+        joinLibraryContext.mandatoryAttribute.linked_tree?.id;
+
     return {
         LinkRecordButton: !isReadOnly ? (
             <>
@@ -96,27 +113,51 @@ export const useLinkRecord = ({
                         size="m"
                         icon={<FontAwesomeIcon icon={faPlus} />}
                         onClick={() => {
-                            setIsSelectRecordForLinkModalOpen(true);
+                            setIsModalOpen(true);
                         }}
                     />
                 </KitTooltip>
-                <SelectRecordForLinkModal
-                    className={LINK_RECORDS_MODAL_CLASSNAME}
-                    open={isSelectRecordForLinkModalOpen}
-                    childLibraryId={attribute.linked_library?.id}
-                    onSelectionCompleted={async data => {
-                        await _handleLinkRecord(data);
-                        setIsSelectRecordForLinkModalOpen(false);
-                    }}
-                    columnsToDisplay={[]} // TODO: One day, we should be able to choose the columns to display from a given viewId
-                    replacementMode={isReplacementMode}
-                    selectionMode={!attribute.multiple_values ? 'simple' : 'multiple'}
-                    hideSelectAllAction={true}
-                    valuesList={attribute.linkValuesList?.values?.map(value => value.id)}
-                    allowFreeEntry={attribute.linkValuesList?.allowFreeEntry}
-                    isMultivalue={attribute.multiple_values}
-                    onClose={() => setIsSelectRecordForLinkModalOpen(false)}
-                />
+                {linkedTreeId ? (
+                    <SelectTreeNodeModal
+                        open={isModalOpen}
+                        attribute={{
+                            multiple_values: attribute.multiple_values,
+                            linked_tree: {
+                                id: linkedTreeId,
+                            },
+                        }}
+                        title={t(
+                            attribute.multiple_values ? 'tree-node-selection.title_many' : 'tree-node-selection.title',
+                        )}
+                        // We can select new node(s), ignoring current value(s).
+                        // Selected element might be duplicated in link attribute in backend for now.
+                        backendValues={[]}
+                        onClose={() => setIsModalOpen(false)}
+                        onConfirm={async selectedNodes => {
+                            const nodeIds = selectedNodes.map(node => node.id);
+                            await _handleLinkRecord({records: {list: nodeIds.map(id => ({id}))}});
+                        }}
+                    />
+                ) : (
+                    <SelectRecordForLinkModal
+                        className={LINK_RECORDS_MODAL_CLASSNAME}
+                        open={isModalOpen}
+                        childLibraryId={linkedLibraryId || attribute.linked_library?.id}
+                        onSelectionCompleted={async data => {
+                            await _handleLinkRecord(data);
+                            setIsModalOpen(false);
+                        }}
+                        columnsToDisplay={[]} // TODO: One day, we should be able to choose the columns to display from a given viewId
+                        replacementMode={isReplacementMode}
+                        selectionMode={!attribute.multiple_values ? 'simple' : 'multiple'}
+                        hideSelectAllAction={!attribute.multiple_values}
+                        valuesList={attribute.linkValuesList?.values?.map(value => value.id)}
+                        allowFreeEntry={attribute.linkValuesList?.allowFreeEntry}
+                        isMultivalue={attribute.multiple_values}
+                        onClose={() => setIsModalOpen(false)}
+                        joinLibraryContext={joinLibraryContext}
+                    />
+                )}
             </>
         ) : undefined,
     };

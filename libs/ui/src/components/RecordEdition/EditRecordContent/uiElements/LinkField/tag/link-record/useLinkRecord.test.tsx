@@ -50,6 +50,17 @@ jest.mock('_ui/components/SelectRecordForLinkModal', () => ({
         ) : null,
 }));
 
+jest.mock('../../../TreeField/manage-tree-node-selection/SelectTreeNodeModal', () => ({
+    SelectTreeNodeModal: ({onConfirm, open}: any) =>
+        open ? (
+            <div data-testid="select-tree-node-modal">
+                <button data-testid="select-tree-node" onClick={() => onConfirm([{id: 'tree_node_id'}])}>
+                    Select tree node
+                </button>
+            </div>
+        ) : null,
+}));
+
 const multiValueAttribute = {...mockFormAttribute, multiple_values: true};
 const singleValueAttribute = {...mockFormAttribute, multiple_values: false};
 
@@ -59,6 +70,7 @@ const defaultProps = {
     backendValues: [],
     setBackendValues: mockSetBackendValues,
     isReadOnly: false,
+    joinLibraryContext: undefined as any,
 };
 
 const LinkRecordButtonWrapper = (props: typeof defaultProps) => {
@@ -275,6 +287,58 @@ describe('useLinkRecord', () => {
             });
 
             expect(mockSetBackendValues).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('when joinLibraryContext has a linked tree', () => {
+        const joinLibraryContextWithTree = {
+            mandatoryAttribute: {
+                linked_tree: {
+                    id: 'my_tree_id',
+                },
+            },
+        };
+
+        beforeEach(() => {
+            mockOnValueSubmit.mockResolvedValue({
+                status: APICallStatus.SUCCESS,
+                values: [{id_value: 'new_tree_node_value'}],
+            });
+        });
+
+        it('should open SelectTreeNodeModal instead of SelectRecordForLinkModal', async () => {
+            render(
+                <LinkRecordButtonWrapper
+                    {...defaultProps}
+                    attribute={singleValueAttribute}
+                    joinLibraryContext={joinLibraryContextWithTree}
+                />,
+            );
+
+            await userEvent.click(screen.getByRole('button'));
+
+            expect(screen.getByTestId('select-tree-node-modal')).toBeInTheDocument();
+            expect(screen.queryByTestId('select-record-modal')).not.toBeInTheDocument();
+        });
+
+        it('should call onValueSubmit with selected tree node', async () => {
+            render(
+                <LinkRecordButtonWrapper
+                    {...defaultProps}
+                    attribute={singleValueAttribute}
+                    joinLibraryContext={joinLibraryContextWithTree}
+                />,
+            );
+
+            await userEvent.click(screen.getByRole('button'));
+            await userEvent.click(screen.getByTestId('select-tree-node'));
+
+            await waitFor(() => {
+                expect(mockOnValueSubmit).toHaveBeenCalledWith(
+                    [expect.objectContaining({value: expect.objectContaining({id: 'tree_node_id'})})],
+                    null,
+                );
+            });
         });
     });
 });
