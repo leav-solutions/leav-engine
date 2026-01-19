@@ -1,9 +1,9 @@
 .flagIcon {
-    border-radius: 100%;
+    border-radius: calc(var(--general-border-radius-xs) * 1px);
 }
 
 .select {
-    width: 130px;
+    width: 108px;
 }
 
 .select :global(.kit-select-option-icon):has(.flagIcon) {
