@@ -91,6 +91,15 @@ describe('Plugins', () => {
         });
     });
 
+    describe('Register a start function', () => {
+        test('Plugins should be able to register a start function', async () => {
+            const hasStarted = await makeGraphQlCall(`{
+                hasFakePluginStarted
+            }`);
+            expect(hasStarted.data.data.hasFakePluginStarted).toBe(true);
+        });
+    });
+
     describe('Launch a task from a plugin', () => {
         test('Plugins should be able to launch a task in taskManager', async () => {
             const exportTaskId = await makeGraphQlCall(`{

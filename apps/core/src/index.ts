@@ -22,6 +22,7 @@ import {type IUtils} from './utils/utils';
 import {logger} from '@leav/logger';
 import {setupLogger} from './utils/logger/logger';
 import {type ILogsCollectorInterface} from './interface/logsCollector';
+import {type ICorePluginsApp} from 'app/core/pluginsApp';
 
 (async function () {
     let conf: IConfig;
@@ -88,6 +89,7 @@ import {type ILogsCollectorInterface} from './interface/logsCollector';
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
     const utils: IUtils = coreContainer.cradle['core.utils'];
+    const pluginsApp: ICorePluginsApp = coreContainer.cradle['core.app.core.plugins'];
 
     const _createRequiredDirectories = async () => {
         if (!(await utils.fileExists('/files'))) {
@@ -111,9 +113,11 @@ import {type ILogsCollectorInterface} from './interface/logsCollector';
 
     logger.info(`Starting core in mode ${conf.coreMode}`);
 
+    await initPlugins(conf.pluginsPath, pluginsContainer);
+
     switch (conf.coreMode) {
         case CoreMode.SERVER:
-            await initPlugins(conf.pluginsPath, pluginsContainer);
+            await pluginsApp.startPlugins();
             await server.init();
             await server.initConsumers();
             await monitoringServerInstance.init();

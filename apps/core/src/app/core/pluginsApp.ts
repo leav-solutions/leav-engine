@@ -5,8 +5,10 @@ import {type IPluginsDomain} from 'domain/plugins/pluginsDomain';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IPluginInfos} from '../../_types/plugin';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IAppModule} from '_types/shared';
 
-export interface ICorePluginsApp extends IGraphqlAppModule {
+export interface ICorePluginsApp extends IGraphqlAppModule, IAppModule {
+    startPlugins(): Promise<void>;
     registerPlugin(path: string, plugin: IPluginInfos): void;
 }
 
@@ -15,6 +17,7 @@ interface IDeps {
 }
 
 export default function ({'core.domain.plugins': pluginsDomain}: IDeps): ICorePluginsApp {
+    const _startFunctions: Array<() => Promise<void>> = [];
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -45,6 +48,16 @@ export default function ({'core.domain.plugins': pluginsDomain}: IDeps): ICorePl
         },
         registerPlugin(path: string, plugin: IPluginInfos) {
             return pluginsDomain.registerPlugin(path, plugin);
+        },
+        async startPlugins(): Promise<void> {
+            for (const fct of _startFunctions) {
+                await fct();
+            }
+        },
+        extensionPoints: {
+            registerStart: (fct: () => Promise<void>) => {
+                _startFunctions.push(fct);
+            },
         },
     };
 }
