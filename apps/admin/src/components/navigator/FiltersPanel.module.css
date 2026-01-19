@@ -1,17 +1,17 @@
-.filter{
-    margin-bottom:.5em;
+.filter {
+    margin-bottom: 0.5em;
 }
-.filterAttribute{
-    border-top-right-radius:0 !important;
-    border-bottom-right-radius:0 !important;
+.filterAttribute {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }
-.filterFunction{
-    border-radius:0 !important;
+.filterFunction {
+    border-radius: 0 !important;
 }
-.filterValue{
-    border-radius:0 !important;
+.filterValue {
+    border-radius: 0 !important;
 }
-.filterRemove{
-    border-top-left-radius:0 !important;
-    border-bottom-left-radius:0 !important;
+.filterRemove {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }

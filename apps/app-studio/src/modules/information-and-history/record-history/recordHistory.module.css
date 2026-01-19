@@ -1,10 +1,12 @@
 .recordHistoryTitle {
-    padding: 0 calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-m) * 1px);
+    padding: 0 calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-m) * 1px)
+        calc(var(--general-spacing-m) * 1px);
 }
 
 .recordHistoryContainer {
     overflow-y: auto;
-    padding: calc(var(--general-spacing-xxs) * 1px) calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-m) * 1px);
+    padding: calc(var(--general-spacing-xxs) * 1px) calc(var(--general-spacing-m) * 1px)
+        calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-m) * 1px);
 
     /* This selector should be removed when RecordHistory component will be moved to this module */
     & > div {

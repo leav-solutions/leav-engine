@@ -7,7 +7,9 @@ Date: 19/11/2024
 We used to use [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) to handle drag and drop on LEAV. Unfortunately, this library is not maintained anymore by Atlassian and we need to find a new one for future development and eventually migrate previous code.
 
 ### Options:
+
 1. [pragmatic-drag-and-drop](https://github.com/atlassian/pragmatic-drag-and-drop)
+
     - Pros:
         - Maintained by Atlassian (the team behind react-beautiful-dnd)
         - Actively maintained
@@ -15,6 +17,7 @@ We used to use [react-beautiful-dnd](https://github.com/atlassian/react-beautifu
         - Unknown by the team
 
 2. [dnd-kit](https://github.com/clauderic/dnd-kit)
+
     - Pros:
         - Known by the team (already used in other projects)
         - Lot of embedded use cases (lists, grid...)
@@ -24,6 +27,7 @@ We used to use [react-beautiful-dnd](https://github.com/atlassian/react-beautifu
         - Migration needed for existing code
 
 3. [react-dnd](https://github.com/react-dnd/react-dnd)
+
     - Pros:
         - Very modular
         - Very popular (~21k stars on Github)
@@ -39,7 +43,8 @@ We used to use [react-beautiful-dnd](https://github.com/atlassian/react-beautifu
         - Maintenance is pretty random as it might depend on small teams or even individuals
 
 ## Sources
-- https://github.com/atlassian/react-beautiful-dnd/issues/2672
+
+-   https://github.com/atlassian/react-beautiful-dnd/issues/2672
 
 ## Decision:
 

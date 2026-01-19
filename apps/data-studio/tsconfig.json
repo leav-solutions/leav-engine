@@ -1,15 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": "src",
-    "outDir": "dist",
-    "module": "esnext",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "types": [
-      "jest"
-    ],
-    "jsx": "react-jsx"
-  },
-  "include": ["src"]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "src",
+        "outDir": "dist",
+        "module": "esnext",
+        "noEmit": true,
+        "skipLibCheck": true,
+        "types": ["jest"],
+        "jsx": "react-jsx"
+    },
+    "include": ["src"]
 }

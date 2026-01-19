@@ -1,13 +1,13 @@
 query GetUsers($query: String!, $pagination: RecordsPagination) {
     records(
-        library: "users",
+        library: "users"
         filters: [
-            { field: "login", condition: NOT_EQUAL, value: "" },
-            { operator: AND },
-            { field: "email", condition: NOT_EQUAL, value: "" },
-            { operator: AND },
-            { field: "login", condition: CONTAINS, value: $query }
-        ],
+            {field: "login", condition: NOT_EQUAL, value: ""}
+            {operator: AND}
+            {field: "email", condition: NOT_EQUAL, value: ""}
+            {operator: AND}
+            {field: "login", condition: CONTAINS, value: $query}
+        ]
         pagination: $pagination
     ) {
         list {

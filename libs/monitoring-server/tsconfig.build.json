@@ -1,16 +1,16 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "composite": true,
-    "noImplicitReturns": true
-  },
-  "references": [
-      {
-          "path": "../logger/tsconfig.build.json"
-      }
-  ],
-  "include": ["./src"],
-  "exclude": ["**/*.spec.ts"]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "composite": true,
+        "noImplicitReturns": true
+    },
+    "references": [
+        {
+            "path": "../logger/tsconfig.build.json"
+        }
+    ],
+    "include": ["./src"],
+    "exclude": ["**/*.spec.ts"]
 }

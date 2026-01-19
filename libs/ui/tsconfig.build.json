@@ -1,22 +1,19 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "./src",
-    "composite": true,
-    "inlineSources": true,
-    "module": "esnext",
-    "skipLibCheck": true,
-    "types": ["jest", "@types/jest", "@testing-library/jest-dom", "vite/client"],
-    "jsx": "react-jsx",
-    "resolveJsonModule": true,
-    "paths": {
-      "_ui/*": ["./src/*"]
-    }
-  },
-  "include": [
-    "src",
-    "src/**/*.json"
-  ],
-  "exclude": ["**/*.test.*", "**/_tests"]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "./src",
+        "composite": true,
+        "inlineSources": true,
+        "module": "esnext",
+        "skipLibCheck": true,
+        "types": ["jest", "@types/jest", "@testing-library/jest-dom", "vite/client"],
+        "jsx": "react-jsx",
+        "resolveJsonModule": true,
+        "paths": {
+            "_ui/*": ["./src/*"]
+        }
+    },
+    "include": ["src", "src/**/*.json"],
+    "exclude": ["**/*.test.*", "**/_tests"]
 }

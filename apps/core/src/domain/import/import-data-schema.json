@@ -1,227 +1,189 @@
 {
-  "$id": "import-data",
-  "title": "LEAV Import Data",
-  "definitions": {
-    "valueVersion": {
-      "type": "object",
-      "properties": {
-        "treeId": {
-          "type": "string"
+    "$id": "import-data",
+    "title": "LEAV Import Data",
+    "definitions": {
+        "valueVersion": {
+            "type": "object",
+            "properties": {
+                "treeId": {
+                    "type": "string"
+                },
+                "library": {
+                    "type": "string"
+                },
+                "element": {
+                    "description": "Object representing the element to process",
+                    "type": ["array", "null"],
+                    "items": {
+                        "$ref": "#/definitions/match"
+                    }
+                }
+            },
+            "required": ["treeId", "library", "element"]
         },
-        "library": {
-          "type": "string"
-        },
-        "element": {
-          "description": "Object representing the element to process",
-          "type": ["array", "null"],
-          "items": {
-            "$ref": "#/definitions/match"
-          }
-        }
-      },
-      "required": [
-        "treeId",
-        "library",
-        "element"
-      ]
-    },
-    "match": {
-      "description": "Attribute/value pair used to find an element",
-      "type": "object",
-      "properties": {
-        "attribute": {
-          "type": "string",
-          "description": "Attribute key"
+        "match": {
+            "description": "Attribute/value pair used to find an element",
+            "type": "object",
+            "properties": {
+                "attribute": {
+                    "type": "string",
+                    "description": "Attribute key"
+                },
+                "value": {
+                    "type": ["string", "null"],
+                    "description": "Attribute value to search"
+                }
+            },
+            "required": ["attribute", "value"]
         },
         "value": {
-          "type": ["string", "null"],
-          "description": "Attribute value to search"
-        }
-      },
-      "required": [
-        "attribute",
-        "value"
-      ]
-    },
-    "value": {
-      "description": "Single value object to process, either textual value or list of matches to find an element",
-      "type": "object",
-      "properties": {
-        "library": {
-          "type": "string",
-          "description": "Library key (only for tree attributes)"
-        },
-        "payload": {
-          "oneOf": [
-            {
-              "type": "string"
+            "description": "Single value object to process, either textual value or list of matches to find an element",
+            "type": "object",
+            "properties": {
+                "library": {
+                    "type": "string",
+                    "description": "Library key (only for tree attributes)"
+                },
+                "payload": {
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/match"
+                            }
+                        }
+                    ]
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "Metadata values on linked attributes",
+                    "additionalProperties": {
+                        "type": ["string", "number"]
+                    }
+                },
+                "version": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/valueVersion"
+                    }
+                }
             },
-            {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/match"
-              }
-            }
-          ]
-        },
-        "metadata": {
-          "type": "object",
-          "description": "Metadata values on linked attributes",
-          "additionalProperties": {
-            "type": ["string", "number"]
-          }
-        },
-        "version":{
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/valueVersion"
-          }
-        }
-      },
-      "required": [
-        "payload"
-      ]
-    },
-    "data": {
-      "description": "Data object to process",
-      "type": "object",
-      "properties": {
-        "attribute": {
-          "type": "string",
-          "description": "Attribute key"
-        },
-        "values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/value"
-          }
-        },
-        "action": {
-          "type": "string",
-          "enum": [
-            "add",
-            "replace"
-          ]
-        }
-      },
-      "required": [
-        "attribute",
-        "values",
-        "action"
-      ]
-    },
-    "element": {
-      "description": "Object representing the element to process",
-      "type": "object",
-      "properties": {
-        "library": {
-          "type": "string",
-          "description": "Library key"
-        },
-        "matches": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/match"
-          }
-        },
-        "mode": {
-          "type": "string",
-          "enum": [
-            "update",
-            "insert",
-            "upsert"
-          ]
+            "required": ["payload"]
         },
         "data": {
-          "type": "array",
-          "description": "List of simple/advanced attributes data to process",
-          "items": {
-            "$ref": "#/definitions/data"
-          }
-        }
-      },
-      "required": [
-        "library",
-        "matches",
-        "data"
-      ]
-    },
-    "tree": {
-      "description": "Tree element to process",
-      "type": "object",
-      "properties": {
-        "library": {
-          "type": "string",
-          "description": "Library key"
-        },
-        "treeId": {
-          "type": "string",
-          "description": "Tree key"
-        },
-        "matches": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/match"
-          }
-        },
-        "parent": {
-          "type": "object",
-          "properties": {
-            "library": {
-              "type": "string",
-              "description": "Library key"
+            "description": "Data object to process",
+            "type": "object",
+            "properties": {
+                "attribute": {
+                    "type": "string",
+                    "description": "Attribute key"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/value"
+                    }
+                },
+                "action": {
+                    "type": "string",
+                    "enum": ["add", "replace"]
+                }
             },
-            "matches": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/match"
-              }
-            }
-          },
-          "required": [
-            "library",
-            "matches"
-          ]
+            "required": ["attribute", "values", "action"]
         },
-        "order": {
-          "description": "Order of the element within its parent",
-          "type": "integer"
+        "element": {
+            "description": "Object representing the element to process",
+            "type": "object",
+            "properties": {
+                "library": {
+                    "type": "string",
+                    "description": "Library key"
+                },
+                "matches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/match"
+                    }
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["update", "insert", "upsert"]
+                },
+                "data": {
+                    "type": "array",
+                    "description": "List of simple/advanced attributes data to process",
+                    "items": {
+                        "$ref": "#/definitions/data"
+                    }
+                }
+            },
+            "required": ["library", "matches", "data"]
         },
-        "action": {
-          "type": "string",
-          "enum": [
-            "update",
-            "remove"
-          ]
+        "tree": {
+            "description": "Tree element to process",
+            "type": "object",
+            "properties": {
+                "library": {
+                    "type": "string",
+                    "description": "Library key"
+                },
+                "treeId": {
+                    "type": "string",
+                    "description": "Tree key"
+                },
+                "matches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/match"
+                    }
+                },
+                "parent": {
+                    "type": "object",
+                    "properties": {
+                        "library": {
+                            "type": "string",
+                            "description": "Library key"
+                        },
+                        "matches": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/match"
+                            }
+                        }
+                    },
+                    "required": ["library", "matches"]
+                },
+                "order": {
+                    "description": "Order of the element within its parent",
+                    "type": "integer"
+                },
+                "action": {
+                    "type": "string",
+                    "enum": ["update", "remove"]
+                }
+            },
+            "required": ["library", "treeId", "matches", "action"]
         }
-      },
-      "required": [
-        "library",
-        "treeId",
-        "matches",
-        "action"
-      ]
-    }
-  },
-  "type": "object",
-  "properties": {
-    "elements": {
-      "description": "List of elements to process",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/element"
-      }
     },
-    "trees": {
-      "description": "List of tree elements to process",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/tree"
-      }
-    }
-  },
-  "required": [
-    "elements",
-    "trees"
-  ]
+    "type": "object",
+    "properties": {
+        "elements": {
+            "description": "List of elements to process",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/element"
+            }
+        },
+        "trees": {
+            "description": "List of tree elements to process",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/tree"
+            }
+        }
+    },
+    "required": ["elements", "trees"]
 }

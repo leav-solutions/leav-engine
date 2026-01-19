@@ -1,5 +1,5 @@
 query panelAttributeCount($library: ID!, $filters: [RecordFilterInput]) {
-  records(library: $library, filters: $filters) {
-    totalCount
-  }
+    records(library: $library, filters: $filters) {
+        totalCount
+    }
 }

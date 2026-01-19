@@ -11,12 +11,13 @@ fragment RecordHistoryLogEntry on Log {
     time
     topic {
         attribute {
-            ... RecordHistoryLogAttribute
+            ...RecordHistoryLogAttribute
         }
     }
     user {
         id
-        whoAmI { # Don't know why, but frontend need that to load record !
+        whoAmI {
+            # Don't know why, but frontend need that to load record !
             id
             library {
                 id
@@ -39,17 +40,16 @@ fragment RecordHistoryLogEntry on Log {
     }
 }
 
-query getRecordHistory($record: LogTopicRecordFilterInput!, $attributeId: String, $actions: [LogAction!], $pagination: Pagination) {
-    logs(filters: {
-        topic: {
-            record: $record,
-            attribute: $attributeId
-        },
-        actions: $actions,
-    }, pagination: $pagination) {
+query getRecordHistory(
+    $record: LogTopicRecordFilterInput!
+    $attributeId: String
+    $actions: [LogAction!]
+    $pagination: Pagination
+) {
+    logs(filters: {topic: {record: $record, attribute: $attributeId}, actions: $actions}, pagination: $pagination) {
         total
         logs {
-            ... RecordHistoryLogEntry
+            ...RecordHistoryLogEntry
         }
     }
 }

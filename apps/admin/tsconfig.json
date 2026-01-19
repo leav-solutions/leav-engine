@@ -1,14 +1,11 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": "src",
-    "module": "esnext",
-    "noEmit": true,
-    "outDir": "dist",
-    "jsx": "react-jsx",
-  },
-  "include": [
-    "src",
-    "src/_types/custom.d.ts"
-  ],
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "src",
+        "module": "esnext",
+        "noEmit": true,
+        "outDir": "dist",
+        "jsx": "react-jsx"
+    },
+    "include": ["src", "src/_types/custom.d.ts"]
 }

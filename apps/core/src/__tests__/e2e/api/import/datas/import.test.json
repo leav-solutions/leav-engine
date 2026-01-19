@@ -1,80 +1,80 @@
 {
-  "elements": [
-    {
-      "library": "test_import",
-      "matches": [],
-      "mode": "insert",
-      "data": [
+    "elements": [
         {
-          "attribute": "create_record_test_label",
-          "values": [
-            {
-              "payload": "Label 1"
-            }
-          ],
-          "action": "replace"
+            "library": "test_import",
+            "matches": [],
+            "mode": "insert",
+            "data": [
+                {
+                    "attribute": "create_record_test_label",
+                    "values": [
+                        {
+                            "payload": "Label 1"
+                        }
+                    ],
+                    "action": "replace"
+                },
+                {
+                    "attribute": "create_record_test_lov",
+                    "values": [
+                        {
+                            "payload": "Value 1"
+                        }
+                    ],
+                    "action": "replace"
+                }
+            ]
         },
         {
-          "attribute": "create_record_test_lov",
-          "values": [
-            {
-              "payload": "Value 1"
-            }
-          ],
-          "action": "replace"
-        }
-      ]
-    },
-    {
-      "library": "test_import",
-      "matches": [],
-      "mode": "insert",
-      "data": [
-        {
-          "attribute": "create_record_test_label",
-          "values": [
-            {
-              "payload": "Label 2"
-            }
-          ],
-          "action": "replace"
+            "library": "test_import",
+            "matches": [],
+            "mode": "insert",
+            "data": [
+                {
+                    "attribute": "create_record_test_label",
+                    "values": [
+                        {
+                            "payload": "Label 2"
+                        }
+                    ],
+                    "action": "replace"
+                },
+                {
+                    "attribute": "create_record_test_lov",
+                    "values": [
+                        {
+                            "payload": "Value 2"
+                        }
+                    ],
+                    "action": "replace"
+                }
+            ]
         },
         {
-          "attribute": "create_record_test_lov",
-          "values": [
-            {
-              "payload": "Value 2"
-            }
-          ],
-          "action": "replace"
+            "library": "test_import",
+            "matches": [],
+            "mode": "insert",
+            "data": [
+                {
+                    "attribute": "create_record_test_label",
+                    "values": [
+                        {
+                            "payload": "Label 3"
+                        }
+                    ],
+                    "action": "replace"
+                },
+                {
+                    "attribute": "create_record_test_lov",
+                    "values": [
+                        {
+                            "payload": "Value 3"
+                        }
+                    ],
+                    "action": "replace"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "library": "test_import",
-      "matches": [],
-      "mode": "insert",
-      "data": [
-        {
-          "attribute": "create_record_test_label",
-          "values": [
-            {
-              "payload": "Label 3"
-            }
-          ],
-          "action": "replace"
-        },
-        {
-          "attribute": "create_record_test_lov",
-          "values": [
-            {
-              "payload": "Value 3"
-            }
-          ],
-          "action": "replace"
-        }
-      ]
-    }
-  ],
-  "trees": []
+    ],
+    "trees": []
 }

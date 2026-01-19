@@ -8,7 +8,5 @@
         "declaration": true,
         "typeRoots": ["./src/_types", "./node_modules/@types"]
     },
-    "exclude": [
-        "applications"
-    ]
+    "exclude": ["applications"]
 }

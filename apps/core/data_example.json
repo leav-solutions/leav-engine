@@ -2,7 +2,7 @@
     "libraries": [
         {
             "id": "products",
-            "label": { "fr": "Products" },
+            "label": {"fr": "Products"},
             "attributes": ["label", "category", "price", "advanced_date", "advanced_extended", "checkbox"],
             "permissions_conf": {
                 "permissionTreeAttributes": ["category"],
@@ -11,7 +11,7 @@
         },
         {
             "id": "categories",
-            "label": { "fr": "Catégories" },
+            "label": {"fr": "Catégories"},
             "attributes": ["name"],
             "recordIdentityConf": {
                 "label": "name"
@@ -19,7 +19,7 @@
         },
         {
             "id": "ubs",
-            "label": { "fr": "UBs" },
+            "label": {"fr": "UBs"},
             "attributes": ["label", "eans", "price"],
             "recordIdentityConf": {
                 "label": "label"
@@ -27,7 +27,7 @@
         },
         {
             "id": "regions",
-            "label": { "fr": "Régions" },
+            "label": {"fr": "Régions"},
             "attributes": ["name"],
             "recordIdentityConf": {
                 "label": "name"
@@ -39,41 +39,41 @@
             "id": "label",
             "type": "simple",
             "format": "text",
-            "label": { "fr": "Libellé" },
+            "label": {"fr": "Libellé"},
             "multiple_values": false
         },
         {
             "id": "category",
             "type": "tree",
             "linked_tree": "categories",
-            "label": { "fr": "Catégorie" },
+            "label": {"fr": "Catégorie"},
             "multiple_values": true
         },
         {
             "id": "name",
             "type": "advanced",
             "format": "text",
-            "label": { "fr": "Nom" },
+            "label": {"fr": "Nom"},
             "multiple_values": false
         },
         {
             "id": "advanced_date",
             "type": "advanced",
             "format": "date",
-            "label": { "fr": "Avancé date" },
+            "label": {"fr": "Avancé date"},
             "multiple_values": false
         },
         {
             "id": "checkbox",
             "type": "simple",
             "format": "boolean",
-            "label": { "fr": "Simple Booléen" }
+            "label": {"fr": "Simple Booléen"}
         },
         {
             "id": "advanced_extended",
             "type": "advanced",
             "format": "extended",
-            "label": { "fr": "Avancé étendu" },
+            "label": {"fr": "Avancé étendu"},
             "multiple_values": false,
             "embedded_fields": [
                 {
@@ -109,14 +109,14 @@
             "id": "eans",
             "type": "advanced_link",
             "linked_library": "products",
-            "label": { "fr": "EANs" },
+            "label": {"fr": "EANs"},
             "multiple_values": true
         },
         {
             "id": "price",
             "type": "advanced",
             "format": "numeric",
-            "label": { "fr": "Prix" },
+            "label": {"fr": "Prix"},
             "multiple_values": false,
             "versions_conf": {
                 "versionable": true,
@@ -125,47 +125,47 @@
             "actions_list": {
                 "deleteValue": [],
                 "getValue": [
-                  {
-                    "is_system": false,
-                    "id": "formatNumber",
-                    "params": [
-                      {
-                        "name": "decimals",
-                        "value": "2"
-                      },
-                      {
-                        "name": "thousandsSeparator",
-                        "value": " "
-                      },
-                      {
-                        "name": "decimalsSeparator",
-                        "value": ","
-                      },
-                      {
-                        "name": "prefix",
-                        "value": ""
-                      },
-                      {
-                        "name": "suffix",
-                        "value": "€"
-                      }
-                    ]
-                  }
+                    {
+                        "is_system": false,
+                        "id": "formatNumber",
+                        "params": [
+                            {
+                                "name": "decimals",
+                                "value": "2"
+                            },
+                            {
+                                "name": "thousandsSeparator",
+                                "value": " "
+                            },
+                            {
+                                "name": "decimalsSeparator",
+                                "value": ","
+                            },
+                            {
+                                "name": "prefix",
+                                "value": ""
+                            },
+                            {
+                                "name": "suffix",
+                                "value": "€"
+                            }
+                        ]
+                    }
                 ],
                 "saveValue": [
-                  {
-                    "is_system": true,
-                    "id": "validateFormat",
-                    "params": null
-                  }
+                    {
+                        "is_system": true,
+                        "id": "validateFormat",
+                        "params": null
+                    }
                 ]
-              }
+            }
         }
     ],
     "trees": [
         {
             "id": "categories",
-            "label": { "fr": "Catégories" },
+            "label": {"fr": "Catégories"},
             "libraries": ["categories"],
             "content": [
                 {
@@ -205,7 +205,7 @@
         },
         {
             "id": "regions",
-            "label": { "fr": "Régions" },
+            "label": {"fr": "Régions"},
             "libraries": ["regions"],
             "content": [
                 {

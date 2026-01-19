@@ -8,15 +8,15 @@ const moduleLocalesPaths = [
     'apps/data-studio/src/locales/',
     'apps/login/src/locales/',
     'apps/portal/src/locales/',
-    'libs/ui/src/locales/'
+    'libs/ui/src/locales/',
 ];
 
 const translationsPathsByModule = moduleLocalesPaths.map(moduleLocalePath =>
     fs
         .readdirSync(moduleLocalePath)
         .flatMap(moduleLocale =>
-            fs.readdirSync(moduleLocalePath + moduleLocale).map(file => moduleLocalePath + moduleLocale + '/' + file)
-        )
+            fs.readdirSync(moduleLocalePath + moduleLocale).map(file => moduleLocalePath + moduleLocale + '/' + file),
+        ),
 );
 
 const translationsDesync = [];
@@ -29,17 +29,18 @@ for (const translationFiles of translationsPathsByModule) {
         compareFilesBothWay(
             {
                 translations: firstLocaleTranslation,
-                errorDisplayName: firstLocalePath
+                errorDisplayName: firstLocalePath,
             },
             {
                 translations: nextTranslationFile,
-                errorDisplayName: localePath
-            }
+                errorDisplayName: localePath,
+            },
         );
     }
 }
 
 if (translationsDesync.length > 0) {
+    // eslint-disable-next-line no-console
     console.error('There is a desynchronization between translations files: ', translationsDesync);
     process.exit(1);
 }
@@ -58,20 +59,20 @@ function verifyTranslationKeys(source, toCheck, path = []) {
                 verifyTranslationKeys(
                     {translations: source.translations[translationKey], errorDisplayName: source.errorDisplayName},
                     {translations: toCheck.translations[translationKey], errorDisplayName: toCheck.errorDisplayName},
-                    [...path, translationKey]
+                    [...path, translationKey],
                 );
             } else {
                 translationsDesync.push(
                     `Missing ${path.join('/')}/${translationKey} in ${toCheck.errorDisplayName} from ${
                         source.errorDisplayName
-                    }`
+                    }`,
                 );
             }
         } else if (!toCheck.translations[translationKey]) {
             translationsDesync.push(
                 `Missing ${path.join('/')}/${translationKey} in ${toCheck.errorDisplayName} from ${
                     source.errorDisplayName
-                }`
+                }`,
             );
         }
     });

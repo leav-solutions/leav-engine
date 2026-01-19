@@ -5,8 +5,8 @@
         "rootDir": "./src",
         "strictNullChecks": true,
         "noImplicitReturns": true,
-        "noUnusedLocals": true,
+        "noUnusedLocals": true
     },
     "include": ["./src", "./src/**/*.json"],
     "exclude": ["**/__tests__", "**/*.test.*"]
-  }
+}

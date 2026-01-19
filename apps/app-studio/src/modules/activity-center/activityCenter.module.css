@@ -8,7 +8,8 @@
 
 .activityCenterTabContent {
     overflow-y: auto;
-    padding: 0 calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+    padding: 0 calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-s) * 1px)
+        calc(var(--general-spacing-m) * 1px);
     height: 100%;
 }
 

@@ -4,5 +4,5 @@
 
 If any update are made in this repository you must rebuild and push the dist folder updates
 
-- Run cmd `yarn build`
-- Then add all updates in your commit from libs/utils/dist/ folder
+-   Run cmd `yarn build`
+-   Then add all updates in your commit from libs/utils/dist/ folder

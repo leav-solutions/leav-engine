@@ -28,10 +28,5 @@
         }
     ],
     "include": ["src/**/*"],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts",
-        "**/__tests__",
-        "dist"
-    ]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "dist"]
 }

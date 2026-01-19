@@ -1,33 +1,33 @@
 directive @client on FIELD
 
 type ActiveLibraryPermissions {
-    access_library: Boolean!,
-    access_record: Boolean!,
-    create_record: Boolean!,
-    edit_record: Boolean!,
+    access_library: Boolean!
+    access_record: Boolean!
+    create_record: Boolean!
+    edit_record: Boolean!
     delete_record: Boolean!
 }
 
 type ActiveLibrary {
-    id: String!,
-    name: String!,
-    filter: String!,
-    behavior: LibraryBehavior!,
-    attributes: [Any]!,
-    trees: [String]!,
+    id: String!
+    name: String!
+    filter: String!
+    behavior: LibraryBehavior!
+    attributes: [Any]!
+    trees: [String]!
     permissions: ActiveLibraryPermissions!
 }
 
 type ActiveTreePermissions {
-    access_tree: Boolean!,
-    edit_children: Boolean!,
+    access_tree: Boolean!
+    edit_children: Boolean!
 }
 
 type ActiveTree {
-    id: String!,
-    libraries: [ActiveTreeLibraries!]!,
-    label: String!,
-    behavior: TreeBehavior!,
+    id: String!
+    libraries: [ActiveTreeLibraries!]!
+    label: String!
+    behavior: TreeBehavior!
     permissions: ActiveTreePermissions!
 }
 
@@ -55,25 +55,24 @@ enum InfoChannel {
 }
 
 type Info {
-    content: String!,
-    type: InfoType!,
-    time: Int!,
-    priority: InfoPriority,
+    content: String!
+    type: InfoType!
+    time: Int!
+    priority: InfoPriority
     channel: InfoChannel
 }
 
 type BaseInfo {
-    content: String!,
+    content: String!
     type: InfoType
 }
 
-
 extend type Query {
-    activeLib: ActiveLibrary,
-    activeTree: ActiveTree,
-    baseInfo: BaseInfo,
+    activeLib: ActiveLibrary
+    activeTree: ActiveTree
+    baseInfo: BaseInfo
     infosStack: [Info!]
-    lang: String!,
-    availableLangs: [String!]!,
+    lang: String!
+    availableLangs: [String!]!
     defaultLang: String!
 }
