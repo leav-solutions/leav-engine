@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AttributeSimpleRepo clearAllValues Should delete field of given attribute 1`] = `undefined`;
 

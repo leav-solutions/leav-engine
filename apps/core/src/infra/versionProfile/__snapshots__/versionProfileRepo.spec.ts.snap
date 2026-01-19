@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`versionProfileRepo Delete versionProfile Should delete a version profile 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 

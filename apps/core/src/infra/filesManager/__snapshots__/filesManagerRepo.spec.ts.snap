@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`FilesManagerRepo getParentRecord 1`] = `"FOR r in @@value0 FILTER (r.@value1 == @value2 AND r.@value3 == @value4) RETURN MERGE(r, {library: @value5})"`;
 

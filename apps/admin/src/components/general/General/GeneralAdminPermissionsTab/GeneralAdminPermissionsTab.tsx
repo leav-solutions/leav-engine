@@ -51,6 +51,7 @@ function GeneralAdminPermissionsTab(): JSX.Element {
             PermissionsActions.admin_create_api_key,
             PermissionsActions.admin_delete_api_key,
         ],
+        plugins: [PermissionsActions.admin_access_plugins],
     };
 
     return <DefinePermByUserGroupView type={PermissionTypes.admin} actions={groupedPermissionsActions} />;

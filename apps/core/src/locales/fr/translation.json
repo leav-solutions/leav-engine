@@ -191,6 +191,7 @@
         "admin_create_api_key": "Créer une clé d'API",
         "admin_edit_api_key": "Modifier une clé d'API",
         "admin_delete_api_key": "Supprimer une clé d'API",
+        "admin_access_plugins": "Accéder aux plugins",
         "access_attribute": "Voir l'attribut",
         "edit_value": "Modifier une valeur",
         "set_value": "Définir cette valeur",

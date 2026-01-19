@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`dbUtils findCoreEntity Filter with a LIKE on ID 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) OR LIKE(el.label, @value6, true) RETURN el"`;
 
