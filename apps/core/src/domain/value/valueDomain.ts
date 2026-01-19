@@ -662,7 +662,9 @@ const valueDomain = function ({
                         ctx,
                     });
                 } catch (error) {
-                    logger.error(`Error executing post-delete actions: ${error.message}`, {error});
+                    logger.error(
+                        `Error executing post-delete actions on attribute ${attributeProps.id} record ${recordId}: ${error.stack}`,
+                    );
                 }
 
                 // Make sure attribute is returned here
@@ -750,7 +752,9 @@ const valueDomain = function ({
                     ctx,
                 });
             } catch (error) {
-                logger.error(`Error executing post-save actions: ${error.message}`, {error});
+                logger.error(
+                    `Error executing post-save actions on attribute ${attribute.id} record ${record.id}: ${error.stack}`,
+                );
             }
         }
 
