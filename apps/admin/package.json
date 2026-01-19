@@ -60,7 +60,7 @@
         "@graphql-codegen/typescript-operations": "5.0.7",
         "@graphql-codegen/typescript-react-apollo": "4.4.0",
         "@semantic-ui-react/craco-less": "2.0.2",
-        "@testing-library/jest-dom": "5.11.9",
+        "@testing-library/jest-dom": "5.17.0",
         "@testing-library/react": "11.2.7",
         "@testing-library/react-hooks": "8.0.1",
         "@testing-library/user-event": "13.5.0",
