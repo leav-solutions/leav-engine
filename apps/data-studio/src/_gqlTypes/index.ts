@@ -867,6 +867,7 @@ export type TreeNodePermissionsConfInput = {
 };
 
 export type TreePermissionsDependentValuesConfInput = {
+  allowByDefault: Scalars['Boolean']['input'];
   dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 

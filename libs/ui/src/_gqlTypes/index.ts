@@ -847,6 +847,7 @@ export type TreeNodePermissionsConfInput = {
 };
 
 export type TreePermissionsDependentValuesConfInput = {
+  allowByDefault: Scalars['Boolean']['input'];
   dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 
@@ -997,7 +998,7 @@ export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | nu
 
 export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
-export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
+export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
 export type AttributeDetailsFragment =
   | AttributeDetailsLinkAttributeFragment
@@ -1161,6 +1162,8 @@ export type ViewDetailsFragment = { id: string, shared: boolean, label: any, des
 
 export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null };
 
+export type TreeAttributeForMassEditionFragment = { id: string, tree_values?: Array<{ node?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null } } } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null };
+
 export type AttributesByLibAttributeWithPermissionsLinkAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, permissions: { access_attribute: boolean }, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null };
 
 export type AttributesByLibAttributeWithPermissionsStandardAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?:
@@ -1168,7 +1171,7 @@ export type AttributesByLibAttributeWithPermissionsStandardAttributeFragment = {
     | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null }
    | null, permissions: { access_attribute: boolean } };
 
-export type AttributesByLibAttributeWithPermissionsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions: { access_attribute: boolean } };
+export type AttributesByLibAttributeWithPermissionsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, permissions: { access_attribute: boolean } };
 
 export type AttributesByLibAttributeWithPermissionsFragment =
   | AttributesByLibAttributeWithPermissionsLinkAttributeFragment
@@ -1278,7 +1281,7 @@ export type GetAttributeByIdQueryVariables = Exact<{
 export type GetAttributeByIdQuery = { attributes?: { list: Array<
       | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
       | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     > } | null };
 
 export type GetAttributesByLibQueryVariables = Exact<{
@@ -1324,7 +1327,7 @@ export type SaveAttributeMutationVariables = Exact<{
 export type SaveAttributeMutation = { saveAttribute:
     | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
+    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
    };
 
 export type ExportQueryVariables = Exact<{
@@ -1753,6 +1756,13 @@ export type TreeFilterByDefaultValuesQueryVariables = Exact<{
 
 export type TreeFilterByDefaultValuesQuery = { treeNodeChildren: { list: Array<{ accessRecordByDefaultPermission?: boolean | null, id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> } };
 
+export type AttributeWithValuesForMassEditionQueryVariables = Exact<{
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type AttributeWithValuesForMassEditionQuery = { attributes?: { list: Array<{ id: string, tree_values?: Array<{ node?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null } } } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null }> } | null };
+
 export type GetAttributesByLibWithPermissionsQueryVariables = Exact<{
   library: Scalars['String']['input'];
 }>;
@@ -1764,7 +1774,7 @@ export type GetAttributesByLibWithPermissionsQuery = { attributes?: { list: Arra
           | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null }
           | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null }
          | null, permissions: { access_attribute: boolean } }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions: { access_attribute: boolean } }
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, permissions: { access_attribute: boolean } }
     > } | null };
 
 export type ExplorerAttributesQueryVariables = Exact<{
@@ -1983,6 +1993,11 @@ export const AttributeDetailsFragmentDoc = gql`
     linked_tree {
       id
       label
+    }
+    permissions_conf_dependent_values {
+      dependenciesTreeAttributes {
+        id
+      }
     }
   }
 }
@@ -2477,6 +2492,27 @@ export const ViewDetailsFragmentDoc = gql`
 }
     ${ViewDetailsFilterFragmentDoc}
 ${RecordIdentityFragmentDoc}`;
+export const TreeAttributeForMassEditionFragmentDoc = gql`
+    fragment TreeAttributeForMassEdition on TreeAttribute {
+  id
+  tree_values {
+    node {
+      id
+      record {
+        id
+        whoAmI {
+          id
+          label
+          color
+        }
+      }
+    }
+    allowedDependentValues {
+      nodeId
+    }
+  }
+}
+    `;
 export const AttributesByLibLinkAttributeWithPermissionsFragmentDoc = gql`
     fragment AttributesByLibLinkAttributeWithPermissions on LinkAttribute {
   valuesList: values_list {
@@ -2515,6 +2551,11 @@ export const AttributesByLibAttributeWithPermissionsFragmentDoc = gql`
           id
           label
         }
+      }
+    }
+    permissions_conf_dependent_values {
+      dependenciesTreeAttributes {
+        id
       }
     }
   }
@@ -5251,6 +5292,51 @@ export type TreeFilterByDefaultValuesQueryHookResult = ReturnType<typeof useTree
 export type TreeFilterByDefaultValuesLazyQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesLazyQuery>;
 export type TreeFilterByDefaultValuesSuspenseQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesSuspenseQuery>;
 export type TreeFilterByDefaultValuesQueryResult = Apollo.QueryResult<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>;
+export const AttributeWithValuesForMassEditionDocument = gql`
+    query AttributeWithValuesForMassEdition($attributeId: ID!) {
+  attributes(filters: {id: $attributeId}) {
+    list {
+      ...TreeAttributeForMassEdition
+    }
+  }
+}
+    ${TreeAttributeForMassEditionFragmentDoc}`;
+
+/**
+ * __useAttributeWithValuesForMassEditionQuery__
+ *
+ * To run a query within a React component, call `useAttributeWithValuesForMassEditionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAttributeWithValuesForMassEditionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAttributeWithValuesForMassEditionQuery({
+ *   variables: {
+ *      attributeId: // value for 'attributeId'
+ *   },
+ * });
+ */
+export function useAttributeWithValuesForMassEditionQuery(baseOptions: Apollo.QueryHookOptions<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables> & ({ variables: AttributeWithValuesForMassEditionQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>(AttributeWithValuesForMassEditionDocument, options);
+      }
+export function useAttributeWithValuesForMassEditionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>(AttributeWithValuesForMassEditionDocument, options);
+        }
+// @ts-ignore
+export function useAttributeWithValuesForMassEditionSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>): Apollo.UseSuspenseQueryResult<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>;
+export function useAttributeWithValuesForMassEditionSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>): Apollo.UseSuspenseQueryResult<AttributeWithValuesForMassEditionQuery | undefined, AttributeWithValuesForMassEditionQueryVariables>;
+export function useAttributeWithValuesForMassEditionSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>(AttributeWithValuesForMassEditionDocument, options);
+        }
+export type AttributeWithValuesForMassEditionQueryHookResult = ReturnType<typeof useAttributeWithValuesForMassEditionQuery>;
+export type AttributeWithValuesForMassEditionLazyQueryHookResult = ReturnType<typeof useAttributeWithValuesForMassEditionLazyQuery>;
+export type AttributeWithValuesForMassEditionSuspenseQueryHookResult = ReturnType<typeof useAttributeWithValuesForMassEditionSuspenseQuery>;
+export type AttributeWithValuesForMassEditionQueryResult = Apollo.QueryResult<AttributeWithValuesForMassEditionQuery, AttributeWithValuesForMassEditionQueryVariables>;
 export const GetAttributesByLibWithPermissionsDocument = gql`
     query getAttributesByLibWithPermissions($library: String!) {
   attributes(filters: {libraries: [$library]}) {

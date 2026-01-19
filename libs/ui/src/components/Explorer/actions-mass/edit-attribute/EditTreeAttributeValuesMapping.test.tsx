@@ -4,7 +4,7 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {EditTreeAttributeValuesMapping} from './EditTreeAttributeValuesMapping';
 import {type AttributeDetailsTreeAttributeFragment, AttributeType} from '_ui/_gqlTypes';
-import {type TreeAttributeNodeValue} from './useListTreeAttributeValuesHook';
+import {type ITreeAttributeNodeValue} from './useListTreeAttributeValuesHook';
 
 jest.mock('./EditTreeAttributeValueLine', () => ({
     EditTreeAttributeValueLine: ({valueOccurrenceNodeId, valueOccurrenceCount}) => (
@@ -15,7 +15,7 @@ jest.mock('./EditTreeAttributeValueLine', () => ({
 }));
 
 jest.mock('./useListTreeAttributeValuesHook', () => ({
-    useListTreeAttributeValuesHook: () => [{id: 'node-1'}, {id: 'node-2'}, {id: 'node-3'}] as TreeAttributeNodeValue[],
+    useListTreeAttributeValuesHook: () => [{id: 'node-1'}, {id: 'node-2'}, {id: 'node-3'}] as ITreeAttributeNodeValue[],
 }));
 
 const mockSelectedAttribute = {

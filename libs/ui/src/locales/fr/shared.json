@@ -758,6 +758,7 @@
             "editAttribute_value_occurrences_to_edit_one": "{{count, number}} élément à traiter",
             "editAttribute_value_occurrences_to_edit_other": "{{count, number}} éléments à traiter",
             "editAttribute_value_undefined": "Non défini",
+            "editAttribute_value_do_not_change": "Ne pas changer",
             "editAttribute_submit_notification_title": "Demande de modification en masse",
             "editAttribute_submit_notification_description": "Votre demande de modification de {{counter, number}} éléments a bien été prise en compte. Vous serez notifié une fois l'opération terminée.",
             "editAttribute_submit_error": "Une erreur est survenue lors de la demande d'une modification en masse. Veuillez contacter un administrateur.",

@@ -5,6 +5,7 @@ import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type ILibraryDomain} from 'domain/library/libraryDomain';
 import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
@@ -25,11 +26,16 @@ import {
     type IGetCoreAttributesParams,
     type IValuesListConf,
 } from '../../../_types/attribute';
-import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
+import {
+    AttributeDependentValuesPermissionsActions,
+    AttributePermissionsActions,
+    PermissionTypes,
+} from '../../../_types/permissions';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
 import {type ICoreApp} from '../coreApp';
 import {type Override} from '@leav/utils';
+import {type ITreeNode} from '_types/tree';
 
 export type ICoreAttributeApp = IGraphqlAppModule;
 
@@ -40,6 +46,7 @@ interface IDeps {
     'core.domain.tree': ITreeDomain;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.permission': IPermissionDomain;
+    'core.domain.permission.attributeDependentValues': IAttributeDependentValuesPermissionDomain;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.app.graphql': IGraphqlApp;
     'core.app.core': ICoreApp;
@@ -53,6 +60,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
         'core.domain.library': libraryDomain,
         'core.domain.tree': treeDomain,
         'core.domain.permission': permissionDomain,
+        'core.domain.permission.attributeDependentValues': attributeDependentValuesPermissionDomain,
         'core.domain.versionProfile': versionProfileDomain,
         'core.app.graphql': graphqlApp,
         'core.app.core': coreApp,
@@ -207,11 +215,24 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         reverse_link: String
                     }
 
+                    type TreeAllowedDependentValues {
+                        # nodeId may be null for root node
+                        nodeId: ID
+                    }
+
+                    type TreeDependentValuesNode {
+                        # node may be null for root node
+                        node: TreeNodeLight
+                        allowedDependentValues: [TreeAllowedDependentValues!]
+                    }
+
                     type TreeAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_tree: Tree,
                         values_list: TreeValuesListConf,
                         permissions_conf_dependent_values: TreePermissionsDependentValuesConf
+                        """ List of all tree nodes with their allowed dependent values for this attribute, include null node for root if applicable."""
+                        tree_values: [TreeDependentValuesNode!]
                     }
 
                     input AttributeInput {
@@ -484,6 +505,51 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                     )
                                 ).filter(r => r !== null),
                             };
+                        },
+                        tree_values: async (attributeData: IAttribute, _, ctx: IQueryInfos) => {
+                            const treeValues: Array<ITreeNode | null> = (
+                                await treeDomain.getElementChildren({
+                                    treeId: attributeData.linked_tree,
+                                    nodeId: null,
+                                    ctx,
+                                })
+                            ).list;
+
+                            // Even when attribute is required, we may need to know allowed dependent values for root (null) node
+                            treeValues.push(null);
+
+                            const hasDependentValue =
+                                attributeData.permissions_conf_dependent_values != null &&
+                                attributeData.permissions_conf_dependent_values.dependenciesTreeAttributes.length ===
+                                    1 &&
+                                attributeData.permissions_conf_dependent_values.dependenciesTreeAttributes[0] ===
+                                    attributeData.id;
+
+                            const allValues = treeValues
+                                .filter(childNode => !attributeData.required || childNode !== null)
+                                .map(childNode => ({
+                                    nodeId: childNode?.id || null,
+                                }));
+
+                            return Promise.all(
+                                treeValues.map(async child => ({
+                                    node: child,
+                                    allowedDependentValues:
+                                        (hasDependentValue &&
+                                            (await attributeDependentValuesPermissionDomain.filterAllowedDependentValuesOnItself(
+                                                {
+                                                    action: AttributeDependentValuesPermissionsActions.SET_VALUE,
+                                                    attributeId: attributeData.id,
+                                                    targetValue: {
+                                                        nodeId: child?.id || null,
+                                                    },
+                                                    allValues,
+                                                    ctx,
+                                                },
+                                            ))) ||
+                                        null,
+                                })),
+                            );
                         },
                     },
                     StandardValuesListConf: {

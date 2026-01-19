@@ -27,7 +27,6 @@ export const EditTreeAttributeValuesMapping: FunctionComponent<{
                     <EditTreeAttributeValueLine
                         key={index}
                         treeNodeValues={treeAttributeValues}
-                        selectedAttribute={selectedAttribute}
                         valueOccurrenceNodeId={occurrence.value.id}
                         valueOccurrenceCount={occurrence.count}
                         setAttributeMapping={setAttributeMapping}
@@ -37,7 +36,6 @@ export const EditTreeAttributeValuesMapping: FunctionComponent<{
             {noValueCount > 0 && (
                 <EditTreeAttributeValueLine
                     treeNodeValues={treeAttributeValues}
-                    selectedAttribute={selectedAttribute}
                     valueOccurrenceNodeId={null}
                     valueOccurrenceCount={noValueCount}
                     setAttributeMapping={setAttributeMapping}

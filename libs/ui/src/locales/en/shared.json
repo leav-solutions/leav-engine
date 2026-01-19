@@ -758,6 +758,7 @@
             "editAttribute_value_occurrences_to_edit_one": "{{count, number}} element to edit",
             "editAttribute_value_occurrences_to_edit_other": "{{count, number}} elements to edit",
             "editAttribute_value_undefined": "Undefined",
+            "editAttribute_value_do_not_change": "Do not change",
             "editAttribute_submit_notification_title": "Bulk edit request",
             "editAttribute_submit_notification_description": "Your request to edit {{counter, number}} items has been received. You will be notified once the operation is complete.",
             "editAttribute_submit_error": "An error occurred while requesting a bulk edit. Please contact an administrator.",
