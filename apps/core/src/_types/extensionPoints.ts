@@ -24,6 +24,7 @@ export interface IExtensionPointsFunctions extends IExtensionPoints {
     registerEventActions: (actions: string[], prefix: string) => void;
     registerActions: (actions: IActionsListFunction[]) => void;
     registerTaskTypes: (types: string[]) => void;
+    registerStart: (fct: () => Promise<void>) => void;
     /**
      * Method to register some Express routes inside LEAV Core.
      *

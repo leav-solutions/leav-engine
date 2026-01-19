@@ -3,12 +3,22 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export interface IFakeDomain {
     execWorker({fromTask}: {fromTask: string}): void;
+    startPlugin(): void;
+    getPluginStarted(): boolean;
 }
 
 export default function (): IFakeDomain {
+    let pluginStarted: boolean = false;
+
     return {
         async execWorker(params): Promise<void> {
             void params;
+        },
+        startPlugin(): void {
+            pluginStarted = true;
+        },
+        getPluginStarted(): boolean {
+            return pluginStarted;
         },
     };
 }

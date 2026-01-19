@@ -26,6 +26,7 @@ import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IGlobalThis} from './e2eUtils';
 import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
+import {type ICorePluginsApp} from 'app/core/pluginsApp';
 
 declare const globalThis: IGlobalThis;
 
@@ -67,6 +68,7 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     });
 
     const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+    const pluginsApp: ICorePluginsApp = coreContainer.cradle['core.app.core.plugins'];
 
     // Clear all caches (redis cache for example might persist between runs)
     const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
@@ -81,6 +83,7 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     await amqp.consumer.channel.deleteQueue(conf.tasksManager.queues.execOrders);
 
     await initPlugins(conf.pluginsPath, pluginsContainer);
+    await pluginsApp.startPlugins();
 
     return {coreContainer, dbUtils};
 };

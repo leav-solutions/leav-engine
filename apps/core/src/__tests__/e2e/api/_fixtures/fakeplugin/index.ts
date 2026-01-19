@@ -10,12 +10,14 @@ import {type IAttributeDomain} from '../../../../../domain/attribute/attributeDo
 import {type IAttribute} from '../../../../../_types/attribute';
 import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {FakePluginTaskType} from './_types/_types';
+import {type IFakeDomain} from './domain/fakeDomain';
 
 interface IDeps {
     translator: i18n;
     'core.infra.value': IValueRepo;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tasksManager': ITasksManagerDomain;
+    'fakeplugin.domain': IFakeDomain;
 }
 
 enum FakePluginActions {
@@ -28,6 +30,7 @@ export default function ({
     'core.infra.value': valueRepo,
     'core.domain.attribute': attributeDomain,
     'core.domain.tasksManager': tasksManagerDomain,
+    'fakeplugin.domain': fakeDomain,
 }: IDeps): IPluginInitModule {
     const _fakeReplaceValueAction = {
         id: 'fakeReplaceValue',
@@ -71,6 +74,7 @@ export default function ({
                         fakePluginQuery: String!
                         fakePluginTranslation: String!
                         fakePluginTask(taskName: String!): String!
+                        hasFakePluginStarted: Boolean!
                     }
                 `,
                 resolvers: {
@@ -95,6 +99,7 @@ export default function ({
                                 },
                                 ctx,
                             ),
+                        hasFakePluginStarted: () => fakeDomain.getPluginStarted(),
                     },
                 },
             });
@@ -104,7 +109,10 @@ export default function ({
             extensionPoints.registerEventActions(Object.values(FakePluginActions), 'fakeplugin');
 
             extensionPoints.registerActions([_fakeReplaceValueAction]);
+
             extensionPoints.registerTaskTypes([FakePluginTaskType.FAKE_TYPE]);
+
+            extensionPoints.registerStart(async () => fakeDomain.startPlugin());
         },
     };
 }
