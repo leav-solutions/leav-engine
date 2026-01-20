@@ -22,7 +22,6 @@ const tableHeaderMinLineHeight = 22;
 
 const DataViewContainerDivStyled = styled.div`
     flex: 1 1 min-content;
-    max-height: minmax(0, 1fr);
     overflow: hidden;
 
     &.headless {
@@ -97,6 +96,8 @@ interface IDataViewProps {
         mode?: 'simple' | 'multiple';
     };
     hideTableHeader: boolean;
+    useSmallHeaderSize?: boolean;
+    tableBodyHeight?: string;
 }
 
 // TODO: tests will fail if we don't check attributeToDisplay because we have a render with no attributes but data is present. We should check why there's this behavior
@@ -123,6 +124,8 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         itemActions,
         selection: {onSelectItem, onSelectionChange, selectedKeys, isMassSelectionAll, mode},
         hideTableHeader = false,
+        useSmallHeaderSize = false,
+        tableBodyHeight,
     }) => {
         const {t} = useSharedTranslation();
 
@@ -132,6 +135,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         const columns = attributesToDisplay.map<KitTableColumnType<IItemData>>(attributeName => ({
             title: attributeName === WHO_AM_I_COLUMN ? t('explorer.name') : attributesProperties[attributeName].label,
             dataIndex: USELESS,
+            ellipsis: useSmallHeaderSize,
             width: getFieldColumnWidth(attributesProperties[attributeName]),
             shouldCellUpdate: (record, prevRecord) =>
                 isMassSelectionAll ||
@@ -185,9 +189,13 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                         'row-clickable': itemActionToUseOnRowClick,
                     })}
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
+                    headerLineSize={useSmallHeaderSize ? 's' : undefined}
                     columns={columns}
                     tableLayout="fixed"
-                    scroll={{y: hideTableHeader ? '100%' : scrollHeight, x: '100%'}}
+                    scroll={{
+                        y: tableBodyHeight ?? (hideTableHeader ? '100%' : scrollHeight),
+                        x: '100%',
+                    }}
                     dataSource={dataGroupedFilteredSorted}
                     pagination={false}
                     rowSelection={_rowSelection}
