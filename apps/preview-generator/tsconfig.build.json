@@ -9,7 +9,7 @@
         "declarationMap": false,
         "declaration": false,
         "sourceMap": true,
-        "composite": false,
+        "composite": false
     },
     "references": [
         {
@@ -29,12 +29,5 @@
         }
     ],
     "include": ["src/**/*"],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts",
-        "**/__tests__",
-        "dist",
-        "src/bench",
-        "src/types"
-    ]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "dist", "src/bench", "src/types"]
 }

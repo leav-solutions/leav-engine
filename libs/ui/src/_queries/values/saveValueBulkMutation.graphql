@@ -1,3 +1,13 @@
-mutation SAVE_VALUE_BULK($libraryId: ID!, $recordsFilters: [RecordFilterInput]!, $attributeId: ID!, $mapValues: [MapValueInput!]!) {
-  saveValueBulk(libraryId: $libraryId, recordsFilters: $recordsFilters, attributeId: $attributeId, mapValues: $mapValues)
+mutation SAVE_VALUE_BULK(
+    $libraryId: ID!
+    $recordsFilters: [RecordFilterInput]!
+    $attributeId: ID!
+    $mapValues: [MapValueInput!]!
+) {
+    saveValueBulk(
+        libraryId: $libraryId
+        recordsFilters: $recordsFilters
+        attributeId: $attributeId
+        mapValues: $mapValues
+    )
 }

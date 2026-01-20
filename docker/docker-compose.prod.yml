@@ -41,7 +41,7 @@ x-env-core: &env-core
   SERVER_SUPPORT_EMAIL: support@example.com
 
 x-env-amqp: &env-amqp
-  AMQP_PROTOCOL: 'amqp'
+  AMQP_PROTOCOL: "amqp"
   AMQP_HOST: message-broker
   AMQP_USERNAME: leav
   AMQP_PWD: LeavEngine!
@@ -186,8 +186,8 @@ services:
     labels:
       - traefik.enable=true
     depends_on:
-        core:
-            condition: service_healthy
+      core:
+        condition: service_healthy
     environment:
       <<: [*env-sync-scan, *env-amqp]
     volumes:

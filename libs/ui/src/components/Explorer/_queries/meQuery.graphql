@@ -1,6 +1,6 @@
 query Me {
     me {
-        id 
+        id
         whoAmI {
             id
             library {

@@ -1,4 +1,3 @@
-
 query libraryExportProfiles($libraryId: [ID!]) {
     libraries(filters: {id: $libraryId}) {
         list {

@@ -1,7 +1,7 @@
-query ExplorerSelectionIds($libraryId: ID!, $filters: [RecordFilterInput],) {
+query ExplorerSelectionIds($libraryId: ID!, $filters: [RecordFilterInput]) {
     records(library: $libraryId, filters: $filters) {
-    list {
-      id
+        list {
+            id
+        }
     }
-  }
 }

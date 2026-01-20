@@ -11,28 +11,28 @@ Export profiles are configured in the library settings under the `export` key:
 
 ```json
 {
-  "export": {
-    "defaultProfile": "Default Export",
-    "profiles": [
-      {
-        "label": "Default Export",
-        "columns": [
-          {
-            "columnLabel": "Product Name",
-            "attribute": "product_name"
-          },
-          {
-            "columnLabel": "SKU",
-            "attribute": "product_sku"
-          },
-          {
-            "columnLabel": "Price",
-            "attribute": "product_price"
-          }
+    "export": {
+        "defaultProfile": "Default Export",
+        "profiles": [
+            {
+                "label": "Default Export",
+                "columns": [
+                    {
+                        "columnLabel": "Product Name",
+                        "attribute": "product_name"
+                    },
+                    {
+                        "columnLabel": "SKU",
+                        "attribute": "product_sku"
+                    },
+                    {
+                        "columnLabel": "Price",
+                        "attribute": "product_price"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  }
+    }
 }
 ```
 
@@ -41,21 +41,21 @@ Export profiles are configured in the library settings under the `export` key:
 ### Export Config Object
 
 | Field            | Type   | Required | Description                            |
-|------------------|--------|----------|----------------------------------------|
+| ---------------- | ------ | -------- | -------------------------------------- |
 | `defaultProfile` | string | Yes      | Label of the profile to use by default |
 | `profiles`       | array  | Yes      | Array of profile objects (minimum 1)   |
 
 ### Profile Object
 
 | Field     | Type   | Required | Description                         |
-|-----------|--------|----------|-------------------------------------|
+| --------- | ------ | -------- | ----------------------------------- |
 | `label`   | string | Yes      | Display name for the profile        |
 | `columns` | array  | Yes      | Array of column objects (minimum 1) |
 
 ### Column Object
 
 | Field         | Type   | Required | Description                                                           |
-|---------------|--------|----------|-----------------------------------------------------------------------|
+| ------------- | ------ | -------- | --------------------------------------------------------------------- |
 | `columnLabel` | string | Yes      | Header label for the column in the export (can be null or empty)      |
 | `attribute`   | string | Yes      | Attribute ID to export (can be null or empty for placeholder columns) |
 
@@ -65,26 +65,26 @@ Export profiles are configured in the library settings under the `export` key:
 
 ```json
 {
-  "defaultProfile": "Basic Info",
-  "profiles": [
-    {
-      "label": "Basic Info",
-      "columns": [
+    "defaultProfile": "Basic Info",
+    "profiles": [
         {
-          "columnLabel": "ID",
-          "attribute": "id"
-        },
-        {
-          "columnLabel": "Name",
-          "attribute": "name"
-        },
-        {
-          "columnLabel": "Email",
-          "attribute": "email"
+            "label": "Basic Info",
+            "columns": [
+                {
+                    "columnLabel": "ID",
+                    "attribute": "id"
+                },
+                {
+                    "columnLabel": "Name",
+                    "attribute": "name"
+                },
+                {
+                    "columnLabel": "Email",
+                    "attribute": "email"
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
@@ -92,43 +92,43 @@ Export profiles are configured in the library settings under the `export` key:
 
 ```json
 {
-  "defaultProfile": "Full Export",
-  "profiles": [
-    {
-      "label": "Full Export",
-      "columns": [
+    "defaultProfile": "Full Export",
+    "profiles": [
         {
-          "columnLabel": "Name",
-          "attribute": "name"
+            "label": "Full Export",
+            "columns": [
+                {
+                    "columnLabel": "Name",
+                    "attribute": "name"
+                },
+                {
+                    "columnLabel": "Email",
+                    "attribute": "email"
+                },
+                {
+                    "columnLabel": "Phone",
+                    "attribute": "phone"
+                },
+                {
+                    "columnLabel": "Address",
+                    "attribute": "address"
+                }
+            ]
         },
         {
-          "columnLabel": "Email",
-          "attribute": "email"
-        },
-        {
-          "columnLabel": "Phone",
-          "attribute": "phone"
-        },
-        {
-          "columnLabel": "Address",
-          "attribute": "address"
+            "label": "Minimal Export",
+            "columns": [
+                {
+                    "columnLabel": "Name",
+                    "attribute": "name"
+                },
+                {
+                    "columnLabel": "Email",
+                    "attribute": "email"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "label": "Minimal Export",
-      "columns": [
-        {
-          "columnLabel": "Name",
-          "attribute": "name"
-        },
-        {
-          "columnLabel": "Email",
-          "attribute": "email"
-        }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
@@ -138,27 +138,27 @@ Empty or null attributes can be used to create placeholder columns in the export
 
 ```json
 {
-  "defaultProfile": "With Placeholders",
-  "profiles": [
-    {
-      "id": "123e4567-e89b-42d3-a456-426614174000",
-      "label": "With Placeholders",
-      "columns": [
+    "defaultProfile": "With Placeholders",
+    "profiles": [
         {
-          "columnLabel": "Product Name",
-          "attribute": "product_name"
-        },
-        {
-          "columnLabel": "Notes",
-          "attribute": ""
-        },
-        {
-          "columnLabel": "Custom Field",
-          "attribute": null
+            "id": "123e4567-e89b-42d3-a456-426614174000",
+            "label": "With Placeholders",
+            "columns": [
+                {
+                    "columnLabel": "Product Name",
+                    "attribute": "product_name"
+                },
+                {
+                    "columnLabel": "Notes",
+                    "attribute": ""
+                },
+                {
+                    "columnLabel": "Custom Field",
+                    "attribute": null
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
@@ -167,17 +167,13 @@ Empty or null attributes can be used to create placeholder columns in the export
 ### Get Columns from Profile
 
 ```typescript
-const columns = await exportProfileDomain.getColumnsFromProfileConfig(
-  'profileLabel',
-  'libraryId',
-  ctx
-);
+const columns = await exportProfileDomain.getColumnsFromProfileConfig('profileLabel', 'libraryId', ctx);
 ```
 
 **Returns:**
 
-- Array of `IExportColumn` objects if successful
-- `undefined` if the configuration is invalid or an error occurs
+-   Array of `IExportColumn` objects if successful
+-   `undefined` if the configuration is invalid or an error occurs
 
 ### Behavior
 
@@ -193,12 +189,12 @@ const columns = await exportProfileDomain.getColumnsFromProfileConfig(
 
 The configuration is validated using Joi schema with the following rules:
 
-- **defaultProfile**: Must be a non-empty string
-- **profiles**: Must have at least 1 profile
-- **profile.label**: Must be a non-empty string
-- **profile.columns**: Must have at least 1 column
-- **column.columnLabel**: Can be any string (including null/empty)
-- **column.attribute**: Can be any string (including null/empty)
+-   **defaultProfile**: Must be a non-empty string
+-   **profiles**: Must have at least 1 profile
+-   **profile.label**: Must be a non-empty string
+-   **profile.columns**: Must have at least 1 column
+-   **column.columnLabel**: Can be any string (including null/empty)
+-   **column.attribute**: Can be any string (including null/empty)
 
 ## Common Issues
 

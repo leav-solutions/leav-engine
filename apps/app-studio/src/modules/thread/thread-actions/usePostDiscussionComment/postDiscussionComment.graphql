@@ -3,4 +3,3 @@ mutation PostDiscussionComment($comment: DiscussionCommentInput!) {
         id
     }
 }
-

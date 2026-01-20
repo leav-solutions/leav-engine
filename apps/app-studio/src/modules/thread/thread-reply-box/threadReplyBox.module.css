@@ -5,7 +5,8 @@
     grid-template-columns: auto 444px auto;
     grid-template-rows: 90px;
     z-index: 2;
-    margin: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px) 0 calc(var(--general-spacing-m) * 1px);
+    margin: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px) 0
+        calc(var(--general-spacing-m) * 1px);
     padding-bottom: 3px;
     gap: 10px;
 }

@@ -13,18 +13,18 @@ Here below is an exemple of a `local.js` file:
 ```javascript
 module.exports = {
     db: {
-        url: "http://root@localhost:8529", // the url of the arangoDB instance
-        name: "leav_core", // the name of the database
+        url: 'http://root@localhost:8529', // the url of the arangoDB instance
+        name: 'leav_core', // the name of the database
     },
     logs: {
-        level: "silly", // set the level (verbosity) of the logs
-        transport: ["console"], // Tell to pipe the logs to the console.
+        level: 'silly', // set the level (verbosity) of the logs
+        transport: ['console'], // Tell to pipe the logs to the console.
     },
     auth: {
-        scheme: "jwt", // set the auth scheme between the serv er and client app.
-        key: "mysecretkey",
-        algorithm: "HS256",
-        tokenExpiration: "7d",
+        scheme: 'jwt', // set the auth scheme between the serv er and client app.
+        key: 'mysecretkey',
+        algorithm: 'HS256',
+        tokenExpiration: '7d',
         passwordRegex: /^.{6,20}$/,
     },
 };
@@ -41,7 +41,7 @@ It can be configured with the `PLUGINS_PATH` environment variable or the `plugin
 
 ### VSCode
 
-VSCode can natively handle the debugging of the core running in a Docker container. 
+VSCode can natively handle the debugging of the core running in a Docker container.
 Just add the following configuration in your `launch.json` or workspace settings:
 
 ```json
@@ -55,16 +55,14 @@ Just add the following configuration in your `launch.json` or workspace settings
     "port": 9229,
     "restart": true,
     "sourceMaps": true,
-    "outFiles": [
-        "${workspaceRoot}/apps/core/**/*.ts"
-    ],
+    "outFiles": ["${workspaceRoot}/apps/core/**/*.ts"],
     "trace": true
 }
 ```
 
 You might have to adjust the `localRoot` and `outFiles` depending on your local settings.
 
-Then start your debug session and enjoy! 
+Then start your debug session and enjoy!
 You can set breakpoints right on your TS files and watch it breaking when using your app normally.
 
 ### JetBrains suite
@@ -73,5 +71,5 @@ Just follow the doc on https://www.jetbrains.com/help/webstorm/running-and-debug
 
 ### Troubleshooting
 
-If you stop on a breakpoint for a while, the core might crash because the connection with RabbitMQ is lost. 
+If you stop on a breakpoint for a while, the core might crash because the connection with RabbitMQ is lost.
 Just restart the core when you release the breakpoint.

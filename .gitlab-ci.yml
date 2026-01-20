@@ -648,12 +648,17 @@ e2e-sync-scan:
         - libs/message-broker/**/*
         - libs/utils/**/*
 
-.e2e_service_leav_core: &e2e_service_leav_core
-  # May be use build images from same MR pipeline in the future
+.e2e_service_leav_core: &e2e_service_leav_core # May be use build images from same MR pipeline in the future
   name: registry.aristid.com/dev/leav/leav/core:develop
   alias: leav_core
   pull_policy: always
-  command: ["sh", "-x", "-c", "echo 'En attente des services...' && until nc -zvw 30 arangodb 8529 && nc -zvw 30 rabbitmq 5672 && nc -zvw 30 redis 6379; do sleep 1; done && yarn run db:migrate && yarn run start"]
+  command:
+    [
+      "sh",
+      "-x",
+      "-c",
+      "echo 'En attente des services...' && until nc -zvw 30 arangodb 8529 && nc -zvw 30 rabbitmq 5672 && nc -zvw 30 redis 6379; do sleep 1; done && yarn run db:migrate && yarn run start",
+    ]
   variables:
     CORE_MODE: e2ePlaywright
     NODE_ENV: development
@@ -693,7 +698,7 @@ e2e-playwright:
     - yarn workspace e2e-playwright run start
   artifacts:
     paths:
-        - test-apps/e2e-playwright/playwright-report
+      - test-apps/e2e-playwright/playwright-report
     when: always
   rules:
     - if: $DISABLE_E2E_PLAYWRIGHT_JOBS == "true"
@@ -714,7 +719,7 @@ e2e-playwright:
 
 .default_docker_build: &default_docker_build
   image: *docker_image
-  tags: 
+  tags:
     - ${RUNNER}
   services:
     - *docker_in_docker_image
@@ -796,7 +801,7 @@ e2e-playwright:
 # but probably not will we use qemu !
 build-docker-arm64:
   stage: build
-  tags: 
+  tags:
     - docker-build
   when: manual
   allow_failure: true

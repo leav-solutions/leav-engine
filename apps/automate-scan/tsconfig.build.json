@@ -12,28 +12,22 @@
         "composite": false
     },
     "references": [
-      {
-        "path": "../../libs/app-root-path/tsconfig.build.json"
-      },
-      {
-        "path": "../../libs/config-manager/tsconfig.build.json"
-      },
-      {
-        "path": "../../libs/logger/tsconfig.build.json"
-      },
-      {
-        "path": "../../libs/utils/tsconfig.json"
-      },
-      {
-        "path": "../../libs/monitoring-server/tsconfig.build.json"
-      }
+        {
+            "path": "../../libs/app-root-path/tsconfig.build.json"
+        },
+        {
+            "path": "../../libs/config-manager/tsconfig.build.json"
+        },
+        {
+            "path": "../../libs/logger/tsconfig.build.json"
+        },
+        {
+            "path": "../../libs/utils/tsconfig.json"
+        },
+        {
+            "path": "../../libs/monitoring-server/tsconfig.build.json"
+        }
     ],
     "include": ["src/**/*"],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts",
-        "**/__tests__",
-        "dist",
-        "src/types"
-    ]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "dist", "src/types"]
 }

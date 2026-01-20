@@ -3,19 +3,16 @@ Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/0
 This file is released under LGPL V3
 License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="{{GLOBAL_BASE_URL}}/global-favicon" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Powered by LEAV-Engine"
-    />
-    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
-    <!--
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="{{GLOBAL_BASE_URL}}/global-favicon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="description" content="Powered by LEAV-Engine" />
+        <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
+        <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -24,17 +21,17 @@ License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>LEAV Engine - Portal</title>
-    <script>
-        window.__dynamic_base__ = `{{APPLICATION_BASE_URL}}`;
-        window.__global_base_url__ = `{{GLOBAL_BASE_URL}}`;
-    </script>
-  </head>
-  <body>
-    <script type="module" src="/src/index.tsx"></script>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
+        <title>LEAV Engine - Portal</title>
+        <script>
+            window.__dynamic_base__ = `{{APPLICATION_BASE_URL}}`;
+            window.__global_base_url__ = `{{GLOBAL_BASE_URL}}`;
+        </script>
+    </head>
+    <body>
+        <script type="module" src="/src/index.tsx"></script>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -43,6 +40,5 @@ License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    --></body>
 </html>

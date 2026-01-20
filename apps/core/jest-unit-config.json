@@ -1,10 +1,6 @@
 {
     "testEnvironment": "node",
-    "moduleFileExtensions": [
-        "ts",
-        "js",
-        "mjs"
-    ],
+    "moduleFileExtensions": ["ts", "js", "mjs"],
     "transform": {
         "\\.(ts|tsx)$": [
             "ts-jest",
@@ -20,15 +16,10 @@
             }
         ]
     },
-    "transformIgnorePatterns": [
-        "node_modules/(?!graphql-upload)"
-    ],
+    "transformIgnorePatterns": ["node_modules/(?!graphql-upload)"],
     "globalSetup": "<rootDir>/src/__tests__/global-setup.ts",
     "testRegex": ".spec.(ts)$",
-    "setupFiles": [
-        "<rootDir>/src/__tests__/setup.ts",
-        "<rootDir>/src/__tests__/jestUtils.ts"
-    ],
+    "setupFiles": ["<rootDir>/src/__tests__/setup.ts", "<rootDir>/src/__tests__/jestUtils.ts"],
     "moduleNameMapper": {
         "exceljs": "<rootDir>/../../node_modules/exceljs/dist/exceljs.js",
         "^uuid$": "uuid",

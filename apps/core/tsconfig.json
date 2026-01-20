@@ -9,7 +9,5 @@
         "noImplicitReturns": true
         // "strictNullChecks": true
     },
-    "exclude": [
-        "applications"
-    ]
+    "exclude": ["applications"]
 }

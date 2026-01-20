@@ -6,7 +6,7 @@ It first tries to read the APP_ROOT_PATH env variable. If not supplied, try to d
 ## Usage
 
 ```javascript
-import {appRootPath} from '@leav/app-root-path'
+import {appRootPath} from '@leav/app-root-path';
 
-const rootPath =  appRootPath();
+const rootPath = appRootPath();
 ```

@@ -1,13 +1,13 @@
 mutation activateNewRecord($libraryId: ID!, $recordId: ID!, $formId: String) {
     activateNewRecord(library: $libraryId, recordId: $recordId, formId: $formId) {
-            record {
-                ...RecordIdentity
-            }
-            valuesErrors {
-                type
-                attribute
-                input
-                message
-            }
+        record {
+            ...RecordIdentity
+        }
+        valuesErrors {
+            type
+            attribute
+            input
+            message
+        }
     }
 }

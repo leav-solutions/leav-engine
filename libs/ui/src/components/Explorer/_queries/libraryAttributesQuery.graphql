@@ -26,12 +26,12 @@ fragment LibraryAttribute on Attribute {
 }
 
 query GetLibraryAttributes($libraryId: ID!) {
-  libraries(filters: {id: [$libraryId]}) {
-    list {
-        id
-        attributes {
-            ...LibraryAttribute
+    libraries(filters: {id: [$libraryId]}) {
+        list {
+            id
+            attributes {
+                ...LibraryAttribute
+            }
         }
     }
-  }
 }

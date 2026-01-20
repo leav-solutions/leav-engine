@@ -7,7 +7,7 @@
             }
         }
     },
-    "ignore":[
+    "ignore": [
         "**/[!*.(ts|js|tsx|jsx)]",
         "apps/core/applications",
         "apps/core/src/plugins",
@@ -17,6 +17,7 @@
         ".gitlab-ci-local",
         "**/.gitkeep",
         ".*",
+        "**/*.md",
         "config",
         "public",
         "scripts",
@@ -31,7 +32,6 @@
         "**/filesForTest/*",
         "**/*.css",
         "**/*.less",
-        "**/README.md",
         "**/*.graphql",
         "**/*.yml",
         "apps/core/exports/*",
@@ -54,8 +54,6 @@
         "**/*tsconfig*",
         "**/*.tsbuildinfo",
         ".idea",
-        "**/ADR.md",
-        "**/docs/adr/*.md",
         "**/_gqlTypes/index.*",
         "**/__generated__/index.*",
         "**/*.xlsx"

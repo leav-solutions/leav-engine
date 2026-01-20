@@ -1,7 +1,7 @@
 query GetRecordIdCard($id: String, $libraryId: ID!, $ignoreAccessRecordByDefaultPermission: Boolean!) {
     records(
-        library: $libraryId,
-        filters: [{field: "id", condition: EQUAL, value: $id}],
+        library: $libraryId
+        filters: [{field: "id", condition: EQUAL, value: $id}]
         ignoreAccessRecordByDefaultPermission: $ignoreAccessRecordByDefaultPermission
     ) {
         list {

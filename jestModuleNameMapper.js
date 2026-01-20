@@ -9,5 +9,5 @@ module.exports = {
     '^__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1',
     '^_tests/(.*)$': '<rootDir>/src/_tests/$1',
     '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
-    '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'
+    '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1',
 };

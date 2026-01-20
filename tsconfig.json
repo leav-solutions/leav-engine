@@ -1,40 +1,36 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "lib": ["es6", "dom", "esnext"],
-    "rootDir": "./",
-    /* /!\ Paths are relative to the src folder of each app. Each app must set its baseUrl to src */
-    "paths": {
-      "@leav/*": ["../../../libs/*/src"],
-      "_ui/*": ["../../../libs/ui/src/*"]
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "CommonJS",
+        "lib": ["es6", "dom", "esnext"],
+        "rootDir": "./",
+        /* /!\ Paths are relative to the src folder of each app. Each app must set its baseUrl to src */
+        "paths": {
+            "@leav/*": ["../../../libs/*/src"],
+            "_ui/*": ["../../../libs/ui/src/*"]
+        },
+        "strict": true,
+        "noImplicitAny": false,
+        "strictNullChecks": false,
+        "alwaysStrict": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "react",
+        "noImplicitReturns": false,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "downlevelIteration": true,
+        "noFallthroughCasesInSwitch": false,
+        "sourceMap": true,
+        "declaration": true,
+        "outDir": "dist",
+        "useUnknownInCatchVariables": false
     },
-    "strict": true,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "alwaysStrict": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react",
-    "noImplicitReturns": false,
-    "noImplicitThis": true,
-    "noUnusedLocals": false,
-    "downlevelIteration": true,
-    "noFallthroughCasesInSwitch": false,
-    "sourceMap": true,
-    "declaration": true,
-    "outDir": "dist",
-    "useUnknownInCatchVariables": false
-  },
-  "exclude": [
-      "node_modules",
-      "**/dist/**/*",
-      "./.eslintrc.js"
-  ]
+    "exclude": ["node_modules", "**/dist/**/*", "./.eslintrc.js"]
 }

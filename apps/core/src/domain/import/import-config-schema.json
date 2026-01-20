@@ -24,16 +24,11 @@
                                     "type": "string"
                                 }
                             },
-                            "required": [
-                                "name",
-                                "value"
-                            ]
+                            "required": ["name", "value"]
                         }
                     }
                 },
-                "required": [
-                    "id"
-                ]
+                "required": ["id"]
             }
         },
         "actionsList": {
@@ -68,16 +63,10 @@
                 },
                 "relation": {
                     "type": "string",
-                    "enum": [
-                        "and",
-                        "or"
-                    ]
+                    "enum": ["and", "or"]
                 }
             },
-            "required": [
-                "permissionTreeAttributes",
-                "relation"
-            ]
+            "required": ["permissionTreeAttributes", "relation"]
         }
     },
     "definitions": {
@@ -100,10 +89,7 @@
                             "type": "string"
                         }
                     },
-                    "required": [
-                        "libraryId",
-                        "recordId"
-                    ]
+                    "required": ["libraryId", "recordId"]
                 },
                 "fullTextAttributes": {
                     "type": "array",
@@ -116,11 +102,7 @@
                 },
                 "behavior": {
                     "type": "string",
-                    "enum": [
-                        "standard",
-                        "files",
-                        "directories"
-                    ]
+                    "enum": ["standard", "files", "directories"]
                 },
                 "recordIdentityConf": {
                     "type": "object",
@@ -152,10 +134,7 @@
                     }
                 }
             },
-            "required": [
-                "id",
-                "behavior"
-            ]
+            "required": ["id", "behavior"]
         },
         "attribute": {
             "type": "object",
@@ -171,15 +150,7 @@
                 },
                 "format": {
                     "type": "string",
-                    "enum": [
-                        "text",
-                        "numeric",
-                        "date",
-                        "date_range",
-                        "encrypted",
-                        "boolean",
-                        "extended"
-                    ]
+                    "enum": ["text", "numeric", "date", "date_range", "encrypted", "boolean", "extended"]
                 },
                 "readonly": {
                     "type": "boolean"
@@ -210,9 +181,7 @@
                                 "type": "string"
                             }
                         },
-                        "required": [
-                            "id"
-                        ]
+                        "required": ["id"]
                     }
                 },
                 "linked_library": {
@@ -235,13 +204,7 @@
                 },
                 "type": {
                     "type": "string",
-                    "enum": [
-                        "simple",
-                        "simple_link",
-                        "advanced",
-                        "advanced_link",
-                        "tree"
-                    ]
+                    "enum": ["simple", "simple_link", "advanced", "advanced_link", "tree"]
                 },
                 "unique": {
                     "type": "boolean"
@@ -265,19 +228,14 @@
                             }
                         }
                     },
-                    "required": [
-                        "enable"
-                    ]
+                    "required": ["enable"]
                 },
                 "versions_conf": {
                     "type": "object",
                     "properties": {
                         "mode": {
                             "type": "string",
-                            "enum": [
-                                "simple",
-                                "smart"
-                            ]
+                            "enum": ["simple", "smart"]
                         },
                         "profile": {
                             "type": "string"
@@ -286,17 +244,13 @@
                             "type": "boolean"
                         }
                     },
-                    "required": [
-                        "versionable"
-                    ]
+                    "required": ["versionable"]
                 },
                 "permissions_conf": {
                     "$ref": "#/$defs/permissions_conf"
                 }
             },
-            "required": [
-                "id"
-            ]
+            "required": ["id"]
         },
         "tree": {
             "type": "object",
@@ -306,10 +260,7 @@
                 },
                 "behavior": {
                     "type": "string",
-                    "enum": [
-                        "standard",
-                        "files"
-                    ]
+                    "enum": ["standard", "files"]
                 },
                 "label": {
                     "$ref": "#/$defs/systemTranslation"
@@ -326,10 +277,7 @@
                                 "$ref": "#/$defs/permissions_conf"
                             }
                         },
-                        "required": [
-                            "libraryId",
-                            "permissionsConf"
-                        ]
+                        "required": ["libraryId", "permissionsConf"]
                     }
                 },
                 "libraries": {
@@ -350,17 +298,11 @@
                                 }
                             }
                         },
-                        "required": [
-                            "allowMultiplePositions",
-                            "allowedAtRoot",
-                            "allowedChildren"
-                        ]
+                        "required": ["allowMultiplePositions", "allowedAtRoot", "allowedChildren"]
                     }
                 }
             },
-            "required": [
-                "id"
-            ]
+            "required": ["id"]
         },
         "version_profile": {
             "type": "object",

@@ -1,8 +1,8 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "module": "ES2022",
-    "outDir": "dist/esm",
-    "inlineSources": true,
-  }
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "module": "ES2022",
+        "outDir": "dist/esm",
+        "inlineSources": true
+    }
 }

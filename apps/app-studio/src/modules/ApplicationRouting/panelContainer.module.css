@@ -18,7 +18,7 @@
         border-bottom: 1px solid var(--general-utilities-border);
     }
 
-     /* KitModal content selector */
+    /* KitModal content selector */
     & > div > div:nth-child(2) {
         /* Fix border radius issue of KitModal content inside modal */
         border-bottom-left-radius: calc(var(--general-border-radius-s) * 1px);
@@ -41,7 +41,7 @@
     height: 100%;
 
     /* Override the padding of EditRecord.tsx form */
-    & > :first-child  > div:nth-child(2) > div > div:has(> form) {
+    & > :first-child > div:nth-child(2) > div > div:has(> form) {
         padding: calc(var(--general-spacing-xs) * 1px);
     }
 }
@@ -72,7 +72,7 @@
         padding: 0;
 
         /* Override the padding of EditRecord.tsx form */
-         & > :first-child > div:nth-child(2) > div > div:has(> form) {
+        & > :first-child > div:nth-child(2) > div > div:has(> form) {
             padding: calc(var(--general-spacing-xs) * 1px);
         }
     }
