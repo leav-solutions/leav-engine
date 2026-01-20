@@ -41,14 +41,6 @@ const ActionButton = styled(KitButton)<{$hasNoValue: boolean}>`
     margin-top: ${props => (props.$hasNoValue ? 0 : 'calc((var(--general-spacing-xs)) * 1px)')};
 `;
 
-const ExplorerWrapper = styled.div`
-    max-height: ${INPUT_MAX_HEIGHT};
-
-    > div {
-        max-height: ${INPUT_MAX_HEIGHT};
-    }
-`;
-
 export const useLinkRecords = ({
     libraryId,
     recordId,
@@ -113,64 +105,64 @@ export const useLinkRecords = ({
     return {
         LinkRecordsExplorer: recordId && (
             <>
-                <ExplorerWrapper>
-                    <Explorer
-                        ref={_handleExplorerRef}
-                        defaultViewSettings={{
-                            attributesIds: columnsToDisplay,
-                        }}
-                        entrypoint={{
-                            type: 'link',
-                            parentLibraryId: libraryId,
-                            parentRecordId: recordId,
-                            linkAttributeId: attribute.id,
-                        }}
-                        defaultCallbacks={{
-                            item: {
-                                remove: handleExplorerRemoveValue,
+                <Explorer
+                    ref={_handleExplorerRef}
+                    defaultViewSettings={{
+                        attributesIds: columnsToDisplay,
+                    }}
+                    entrypoint={{
+                        type: 'link',
+                        parentLibraryId: libraryId,
+                        parentRecordId: recordId,
+                        linkAttributeId: attribute.id,
+                    }}
+                    defaultCallbacks={{
+                        item: {
+                            remove: handleExplorerRemoveValue,
+                        },
+                        mass: {
+                            deactivate: handleExplorerMassDeactivateValues,
+                        },
+                        primary: {
+                            link: handleExplorerLinkValue,
+                            create: handleExplorerCreateValue,
+                        },
+                    }}
+                    showTitle={false}
+                    showSearch={false}
+                    selectionMode={attribute.multiple_values ? 'multiple' : 'simple'}
+                    disableSelection={
+                        isReadOnly ||
+                        !attribute.multiple_values ||
+                        (attribute.required && attribute.multiple_values && backendValues.length === 1)
+                    }
+                    defaultActionsForItem={_getExplorerItemActions()}
+                    itemActions={[
+                        {
+                            label: t('explorer.edit-item'),
+                            icon: <FontAwesomeIcon icon={faEye} />,
+                            useItemActionOnRowClick: true,
+                            callback: item => {
+                                openEditRecordModal({
+                                    library: item.libraryId,
+                                    record: {
+                                        id: item.itemId,
+                                        label: item.whoAmI?.label,
+                                        subLabel: item.whoAmI?.subLabel,
+                                        color: item.whoAmI?.color,
+                                        library: {id: item.libraryId},
+                                    },
+                                    editionFormId,
+                                });
                             },
-                            mass: {
-                                deactivate: handleExplorerMassDeactivateValues,
-                            },
-                            primary: {
-                                link: handleExplorerLinkValue,
-                                create: handleExplorerCreateValue,
-                            },
-                        }}
-                        showTitle={false}
-                        showSearch={false}
-                        selectionMode={attribute.multiple_values ? 'multiple' : 'simple'}
-                        disableSelection={
-                            isReadOnly ||
-                            !attribute.multiple_values ||
-                            (attribute.required && attribute.multiple_values && backendValues.length === 1)
-                        }
-                        defaultActionsForItem={_getExplorerItemActions()}
-                        itemActions={[
-                            {
-                                label: t('explorer.edit-item'),
-                                icon: <FontAwesomeIcon icon={faEye} />,
-                                useItemActionOnRowClick: true,
-                                callback: item => {
-                                    openEditRecordModal({
-                                        library: item.libraryId,
-                                        record: {
-                                            id: item.itemId,
-                                            label: item.whoAmI?.label,
-                                            subLabel: item.whoAmI?.subLabel,
-                                            color: item.whoAmI?.color,
-                                            library: {id: item.libraryId},
-                                        },
-                                        editionFormId,
-                                    });
-                                },
-                            },
-                        ]}
-                        joinLibraryContext={joinLibraryContext}
-                        hidePrimaryActions
-                        hideTableHeader
-                    />
-                </ExplorerWrapper>
+                        },
+                    ]}
+                    joinLibraryContext={joinLibraryContext}
+                    hidePrimaryActions
+                    hideTableHeader={!columnsToDisplay?.length}
+                    useSmallHeaderSize
+                    tableBodyHeight={INPUT_MAX_HEIGHT} // In a form we want the table body height at 320px
+                />
                 {!isReadOnly && (
                     <KitSpace size="xs" style={{padding: '1rem'}}>
                         <KitTooltip title={explorerActions?.linkAction?.label}>

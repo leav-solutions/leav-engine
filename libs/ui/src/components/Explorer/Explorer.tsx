@@ -120,6 +120,8 @@ export interface IExplorerProps {
     hideSelectAllAction?: boolean;
     hidePrimaryActions?: boolean;
     hideTableHeader?: boolean;
+    useSmallHeaderSize?: boolean;
+    tableBodyHeight?: string;
     creationFormId?: string;
     joinLibraryContext?: JoinLibraryContextFragment;
 }
@@ -152,6 +154,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             showSearch = false,
             hidePrimaryActions = false,
             hideTableHeader = false,
+            useSmallHeaderSize = false,
+            tableBodyHeight,
             ignoreViewByDefault = false,
             defaultActionsForItem = ['replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
@@ -379,6 +383,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                     attributesProperties={data?.attributes ?? emptyObject}
                                     attributesToDisplay={[WHO_AM_I_COLUMN, ...view.attributesIds]}
                                     hideTableHeader={hideTableHeader}
+                                    useSmallHeaderSize={useSmallHeaderSize}
                                     paginationProps={
                                         entrypoint.type === 'library' && !noPagination
                                             ? {
@@ -406,6 +411,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                             : (view.massSelection as string[]),
                                         mode: selectionMode,
                                     }}
+                                    tableBodyHeight={tableBodyHeight}
                                 />
                             )}
                         </ExplorerPageDivStyled>
