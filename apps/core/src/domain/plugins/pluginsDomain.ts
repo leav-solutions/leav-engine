@@ -29,12 +29,12 @@ export default function ({
         },
         async getRegisteredPlugins(ctx): Promise<IRegisteredPlugin[]> {
             const accessPluginsList = await adminPermissionDomain.getAdminPermission({
-                action: AdminPermissionsActions.ACCESS_PLUGINS,
+                action: AdminPermissionsActions.LIST_PLUGINS,
                 ctx,
             });
 
             if (!accessPluginsList) {
-                throw new PermissionError(AdminPermissionsActions.ACCESS_PLUGINS);
+                throw new PermissionError(AdminPermissionsActions.LIST_PLUGINS);
             }
 
             return pluginsRepo.getRegisteredPlugins();
