@@ -542,7 +542,8 @@
         "unknown_attribute": "Attribut inconnu",
         "unknown_user": "Utilisateur inconnu",
         "show_history": "Voir tout l'historique ({{total}} événements)",
-        "hide_history": "Masquer l'historique ({{total}} événements)"
+        "hide_history": "Masquer l'historique ({{total}} événements)",
+        "of": "de"
     },
     "view": {
         "views": "Vues",

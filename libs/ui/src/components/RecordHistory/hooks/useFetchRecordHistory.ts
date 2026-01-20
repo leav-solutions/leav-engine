@@ -1,9 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {LogAction, useGetRecordHistoryQuery} from '_ui/_gqlTypes';
+import {LogAction} from '_ui/_gqlTypes';
 import {type LogEntry} from '../_types';
 import {useCallback, useEffect, useState} from 'react';
+import {useQuery} from '@apollo/client';
+import {getRecordHistoryQuery} from '_ui/components/RecordHistory/_queries/recordHistoryQuery';
 
 export interface IUseFetchRecordHistoryHook {
     loading: boolean;
@@ -21,6 +23,8 @@ export interface IUseFetchRecordHistoryProps {
 
 export const RECORD_HISTORY_LOGS_PAGE = 50;
 export const RECORD_HISTORY_LOGS_FIRST_PAGE = 1;
+const DEPTH_EMBEDDED_FIELDS = 100;
+
 const eventsToFetch = [LogAction.VALUE_SAVE, LogAction.VALUE_DELETE];
 
 export const useFetchRecordHistory = ({
@@ -36,7 +40,7 @@ export const useFetchRecordHistory = ({
         error,
         data: history,
         refetch,
-    } = useGetRecordHistoryQuery({
+    } = useQuery(getRecordHistoryQuery(DEPTH_EMBEDDED_FIELDS), {
         fetchPolicy: 'network-only',
         variables: {
             record: {
