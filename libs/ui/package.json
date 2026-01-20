@@ -25,7 +25,7 @@
     "repository": "https://github.com/leav-solutions/leav-engine",
     "devDependencies": {
         "@apollo/client": "3.8.1",
-        "@babel/preset-env": "7.28.5",
+        "@babel/preset-env": "7.28.6",
         "@babel/preset-react": "7.28.5",
         "@graphql-codegen/add": "5.0.3",
         "@graphql-codegen/cli": "6.1.1",

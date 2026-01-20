@@ -47,7 +47,7 @@
         "@types/jsonwebtoken": "9.0.10",
         "@types/lodash": "4.17.23",
         "@types/ms": "0.7.34",
-        "@types/node": "24.10.7",
+        "@types/node": "24.10.9",
         "@types/nodemailer": "6.4.21",
         "@types/ws": "8.5.3",
         "axios": "1.13.2",

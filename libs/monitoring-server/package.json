@@ -21,7 +21,7 @@
     "license": "LGPL3",
     "stableVersion": "1.0.0",
     "dependencies": {
-        "@hono/node-server": "1.19.8",
+        "@hono/node-server": "1.19.9",
         "@leav/logger": "workspace:libs/logger",
         "hono": "4.10.7",
         "prom-client": "15.1.3"
