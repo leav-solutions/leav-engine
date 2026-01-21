@@ -1,7 +1,7 @@
 {
     "name": "login",
     "description": "Application to login to LEAV when OIDC is not set.",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "private": true,
     "stableVersion": "0.1.0",
     "scripts": {
