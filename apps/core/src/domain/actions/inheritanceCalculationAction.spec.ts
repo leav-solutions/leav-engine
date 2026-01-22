@@ -8,14 +8,7 @@ import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
 
 const mockCalculationsVariable = {
-    processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
-        {
-            payload: `${variable}Value`,
-            raw_payload: 'testRawValue',
-            recordId: '1',
-            library: 'meh',
-        },
-    ],
+    processVariableString: jest.fn(),
 };
 
 const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -28,6 +21,19 @@ const action = inheritanceCalculationAction({
 }).action;
 
 describe('inheritanceCalculationAction', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        mockCalculationsVariable.processVariableString.mockImplementation(
+            async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
+                {
+                    payload: `${variable}Value`,
+                    raw_payload: 'testRawValue',
+                    recordId: '1',
+                    library: 'meh',
+                },
+            ],
+        );
+    });
     test('Simply call processVariableString', async () => {
         const ctx: IActionsListContext = {
             attribute: {
@@ -162,5 +168,68 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.values[0].payload).toBe('42Value');
         expect((res.values[0] as any).raw_payload).toBe('testRawValue');
+    });
+
+    describe('Empty inheritance cases', () => {
+        beforeEach(() => {
+            mockCalculationsVariable.processVariableString.mockImplementation(
+                async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [],
+            );
+        });
+
+        test('Return origin values for empty inheritance, for get action type', async () => {
+            const ctx: IActionsListContext = {
+                attribute: {
+                    id: 'meh',
+                    type: AttributeTypes.SIMPLE,
+                },
+                userId: 'test',
+                actionEvent: ActionsListEvents.GET_VALUE,
+            };
+
+            const res = await action(
+                [
+                    {
+                        payload: 'OriginValue',
+                        raw_payload: 'OriginRawValue',
+                    },
+                ],
+                {
+                    Description: 'test',
+                    Formula: '42',
+                },
+                ctx,
+            );
+
+            expect(res.values[0].payload).toBe('OriginValue');
+            expect((res.values[0] as any).raw_payload).toBe('OriginRawValue');
+        });
+
+        test('Return not values for empty inheritance, for other action types', async () => {
+            const ctx: IActionsListContext = {
+                attribute: {
+                    id: 'meh',
+                    type: AttributeTypes.SIMPLE,
+                },
+                userId: 'test',
+                actionEvent: ActionsListEvents.SAVE_VALUE,
+            };
+
+            const res = await action(
+                [
+                    {
+                        payload: 'OriginValue',
+                        raw_payload: 'OriginRawValue',
+                    },
+                ],
+                {
+                    Description: 'test',
+                    Formula: '42',
+                },
+                ctx,
+            );
+
+            expect(res.values).toHaveLength(0);
+        });
     });
 });

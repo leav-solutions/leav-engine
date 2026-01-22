@@ -56,7 +56,7 @@ export default function ({
             const result = await calculationVariable.processVariableString(ctx, formula, []);
 
             if (!result.length) {
-                return {values, errors: []};
+                return {values: ctx.actionEvent === ActionsListEvents.GET_VALUE ? values : [], errors: []};
             }
 
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
@@ -77,7 +77,7 @@ export default function ({
                 values:
                     ctx.actionEvent === ActionsListEvents.GET_VALUE
                         ? [...(values ?? []), ...inheritedValues]
-                        : [...inheritedValues],
+                        : inheritedValues,
                 errors: [],
             };
         },
