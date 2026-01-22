@@ -101,6 +101,12 @@ export const useLinkRecord = ({
         'linked_tree' in joinLibraryContext.mandatoryAttribute &&
         joinLibraryContext.mandatoryAttribute.linked_tree?.id;
 
+    const isValuesListEnabled = attribute.linkValuesList?.enable;
+
+    const valuesList = isValuesListEnabled ? attribute.linkValuesList?.values?.map(value => value.id) : undefined;
+
+    const allowFreeEntry = isValuesListEnabled ? Boolean(attribute.linkValuesList?.allowFreeEntry) : true;
+
     return {
         LinkRecordButton: !isReadOnly ? (
             <>
@@ -151,8 +157,8 @@ export const useLinkRecord = ({
                         replacementMode={isReplacementMode}
                         selectionMode={!attribute.multiple_values ? 'simple' : 'multiple'}
                         hideSelectAllAction={!attribute.multiple_values}
-                        valuesList={attribute.linkValuesList?.values?.map(value => value.id)}
-                        allowFreeEntry={attribute.linkValuesList?.allowFreeEntry}
+                        valuesList={valuesList}
+                        allowFreeEntry={allowFreeEntry}
                         isMultivalue={attribute.multiple_values}
                         onClose={() => setIsModalOpen(false)}
                         joinLibraryContext={joinLibraryContext}
