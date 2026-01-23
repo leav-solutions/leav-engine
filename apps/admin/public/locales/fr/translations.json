@@ -266,7 +266,8 @@
             "applications": "Applications",
             "application": "Application",
             "version_profiles": "Profils de version",
-            "api_keys": "Clés API"
+            "api_keys": "Clés API",
+            "plugins": "Plugins"
         }
     },
     "login": {

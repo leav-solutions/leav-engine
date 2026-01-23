@@ -4,13 +4,25 @@
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import {mockPlugin} from '../../__tests__/mocks/plugins';
 import pluginsDomain from './pluginsDomain';
+import {mockCtx} from '../../__tests__/mocks/shared';
+import {systemUserId} from '../../_constants/users';
+import type {IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {IGetAdminPermissionParams} from '../permission/_types';
 
 describe('PluginsDomain', () => {
     const mockPluginsRepo: Mockify<IPluginsRepo> = {
         registerPlugin: jest.fn().mockImplementation((path, infos) => ({path, infos})),
         getRegisteredPlugins: jest.fn().mockReturnValue([{path: '/fake/path', infos: {...mockPlugin}}]),
     };
-    const plugins = pluginsDomain({'core.infra.plugins': mockPluginsRepo as IPluginsRepo});
+
+    const mockAdminPermissionDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(true),
+    };
+
+    const plugins = pluginsDomain({
+        'core.infra.plugins': mockPluginsRepo as IPluginsRepo,
+        'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+    });
 
     test('Register plugin', async () => {
         const pluginToRegister = {...mockPlugin};
@@ -23,7 +35,7 @@ describe('PluginsDomain', () => {
     });
 
     test('Get registered plugins', async () => {
-        const registeredPlugins = plugins.getRegisteredPlugins();
+        const registeredPlugins = await plugins.getRegisteredPlugins({userId: systemUserId});
 
         expect(registeredPlugins).toHaveLength(1);
         expect(registeredPlugins[0].path).toBe('/fake/path');

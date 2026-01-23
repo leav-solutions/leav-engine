@@ -100,6 +100,7 @@ export enum AdminPermissionsActions {
     EDIT_API_KEY = 'admin_edit_api_key',
     DELETE_API_KEY = 'admin_delete_api_key',
     EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings',
+    LIST_PLUGINS = 'admin_list_plugins',
     // Only backend for now, not configurable from the admin UI
     ACCESS_LOGS = 'admin_access_logs',
     IMPORT_CONFIG_CLEAR_DATABASE = 'admin_import_config_clear_database',

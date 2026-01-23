@@ -6,10 +6,12 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-import {useGetVersionQuery} from '_gqlTypes';
+import {PermissionsActions, useGetVersionQuery} from '_gqlTypes';
+import useUserData from '../../../../hooks/useUserData';
 
 function GeneralInfosTab(): JSX.Element {
     const {loading, error, data} = useGetVersionQuery();
+    const userData = useUserData();
     const {t} = useTranslation();
 
     // If version starts with a number, add a v in front of it
@@ -28,13 +30,15 @@ function GeneralInfosTab(): JSX.Element {
                     {data && <span>{t('general.version', {version})}</span>}
                 </List.Content>
             </List.Item>
-            <List.Item>
-                <List.Icon name="puzzle piece" />
-                <List.Content>
-                    <List.Header>{t('plugins.title')}</List.Header>
-                    <PluginsExplorer />
-                </List.Content>
-            </List.Item>
+            {userData.permissions[PermissionsActions.admin_list_plugins] && (
+                <List.Item>
+                    <List.Icon name="puzzle piece" />
+                    <List.Content>
+                        <List.Header>{t('plugins.title')}</List.Header>
+                        <PluginsExplorer />
+                    </List.Content>
+                </List.Item>
+            )}
         </List>
     );
 }

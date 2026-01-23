@@ -3,22 +3,40 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import {IPluginInfos, IRegisteredPlugin} from '_types/plugin';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {AdminPermissionsActions} from '../../_types/permissions';
+import {type IPermissionDomain} from '../permission/permissionDomain';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import PermissionError from '../../errors/PermissionError';
 
 interface IDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
     'core.infra.plugins': IPluginsRepo;
 }
 
 export interface IPluginsDomain {
     registerPlugin(path: string, plugin: IPluginInfos): IRegisteredPlugin;
-    getRegisteredPlugins(): IRegisteredPlugin[];
+    getRegisteredPlugins(ctx: IQueryInfos): Promise<IRegisteredPlugin[]>;
 }
 
-export default function ({'core.infra.plugins': pluginsRepo}: IDeps): IPluginsDomain {
+export default function ({
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.infra.plugins': pluginsRepo,
+}: IDeps): IPluginsDomain {
     return {
         registerPlugin(path: string, plugin: IPluginInfos): IRegisteredPlugin {
             return pluginsRepo.registerPlugin(path, plugin);
         },
-        getRegisteredPlugins(): IRegisteredPlugin[] {
+        async getRegisteredPlugins(ctx): Promise<IRegisteredPlugin[]> {
+            const accessPluginsList = await adminPermissionDomain.getAdminPermission({
+                action: AdminPermissionsActions.LIST_PLUGINS,
+                ctx,
+            });
+
+            if (!accessPluginsList) {
+                throw new PermissionError(AdminPermissionsActions.LIST_PLUGINS);
+            }
+
             return pluginsRepo.getRegisteredPlugins();
         },
     };

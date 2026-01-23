@@ -6,6 +6,7 @@ import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IPluginInfos} from '../../_types/plugin';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type IAppModule} from '_types/shared';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 export interface ICorePluginsApp extends IGraphqlAppModule, IAppModule {
     startPlugins(): Promise<void>;
@@ -35,16 +36,14 @@ export default function ({'core.domain.plugins': pluginsDomain}: IDeps): ICorePl
                 `,
                 resolvers: {
                     Query: {
-                        plugins() {
-                            return pluginsDomain.getRegisteredPlugins().map(p => p.infos);
+                        async plugins(_, _args, ctx: IQueryInfos): Promise<IPluginInfos[]> {
+                            return (await pluginsDomain.getRegisteredPlugins(ctx)).map(p => p.infos);
                         },
                     },
                 },
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
         registerPlugin(path: string, plugin: IPluginInfos) {
             return pluginsDomain.registerPlugin(path, plugin);

@@ -191,6 +191,7 @@
         "admin_create_api_key": "Create API key",
         "admin_edit_api_key": "Edit API key",
         "admin_delete_api_key": "Delete API key",
+        "admin_list_plugins": "List plugins",
         "access_attribute": "Access attribute",
         "edit_value": "Edit value",
         "set_value": "Set that value",

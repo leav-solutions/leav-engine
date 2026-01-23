@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`apiKeyRepo Delete ApiKey Should delete a version key 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
