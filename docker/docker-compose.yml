@@ -15,7 +15,7 @@ x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
 x-dir-preview_generator: &dir-preview_generator /app/apps/preview-generator
 x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
 
-x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
+x-volume-yarn: &volume-yarn yarn:/app/.yarn
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
 x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
 x-volume-admin-modules: &volume-admin-modules node_modules_admin:/app/apps/admin/node_modules
@@ -42,6 +42,8 @@ x-mount_point-previews: &mount_point-previews ../previews/:/results
 x-mount_point-exports: &mount_point-exports ../exports:/exports
 x-mount_point-imports: &mount_point-imports ../imports:/imports
 x-mount_point-cache: &mount_point-cache ../cache:/cache
+# Must be after volume-yarn mount because it overrides .yarn/releases folder
+x-mount_point-yarn_releases: &mount_point-yarn_releases ../.yarn/releases:/app/.yarn/releases
 
 # Lists of allowed and ignored files
 # Use ", " characters as separators between files
@@ -185,7 +187,7 @@ services:
       - *mount_point-exports
       - *mount_point-imports
       - *mount_point-cache
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
       - *volume-admin-modules
@@ -202,6 +204,7 @@ services:
       - *volume-monitoring_server-modules
       - *volume-ui-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     ports:
       - "9229:9229"
       - "4001"
@@ -223,7 +226,7 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
       - *volume-app_root_path-modules
@@ -232,6 +235,7 @@ services:
       - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     ports:
       - "9231:9231"
     working_dir: *dir-core
@@ -252,7 +256,7 @@ services:
       - *mount_point-scripts
       - *mount_point-imports
       - *mount_point-exports
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
       - *volume-app_root_path-modules
@@ -261,6 +265,7 @@ services:
       - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     ports:
       - "9232:9232"
     working_dir: *dir-core
@@ -281,7 +286,7 @@ services:
       - *mount_point-scripts
       - *mount_point-imports
       - *mount_point-exports
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
       - *volume-app_root_path-modules
@@ -290,6 +295,7 @@ services:
       - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-core
     healthcheck: *healthcheck-localhost-44444
     ports:
@@ -309,7 +315,7 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
       - *volume-app_root_path-modules
@@ -318,6 +324,7 @@ services:
       - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     ports:
       - "9235:9235"
     working_dir: *dir-core
@@ -342,9 +349,10 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-admin-modules
       - *volume-shared-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-admin
     depends_on:
       core:
@@ -367,9 +375,10 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-data_studio-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-data_studio
     depends_on:
       core:
@@ -392,9 +401,10 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-app_studio-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-app_studio
     depends_on:
       core:
@@ -417,9 +427,10 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-login-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-login
     depends_on:
       core:
@@ -444,9 +455,10 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-portal-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-portal
     depends_on:
       core:
@@ -463,7 +475,7 @@ services:
       - *mount_point-repo
       - *mount_point-files
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-automate_scan-modules
       - *volume-app_root_path-modules
@@ -471,6 +483,7 @@ services:
       - *volume-logger-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-automate_scan
     healthcheck: *healthcheck-localhost-44444
     depends_on:
@@ -498,6 +511,7 @@ services:
       - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     ports:
       - "9230:9230"
     working_dir: *dir-core
@@ -520,7 +534,7 @@ services:
       - *mount_point-files
       - *mount_point-previews
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-preview_generator-modules
       - *volume-app_root_path-modules
@@ -529,6 +543,7 @@ services:
       - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-preview_generator
     healthcheck: *healthcheck-localhost-44444
     depends_on:
@@ -553,11 +568,12 @@ services:
       - *mount_point-repo
       - *mount_point-files
       - *mount_point-scripts
-      - *volume-yarn-cache
+      - *volume-yarn
       - *volume-shared-modules
       - *volume-sync_scan-modules
       - *volume-config_manager-modules
       - *volume-message_broker-modules
+      - *mount_point-yarn_releases
     working_dir: *dir-sync_scan
 
   # Proxy
@@ -713,7 +729,7 @@ volumes:
     driver: local
   elasticsearch_data:
     driver: local
-  yarn_cache:
+  yarn:
     driver: local
   node_modules_shared:
     driver: local
