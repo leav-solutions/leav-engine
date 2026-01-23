@@ -293,6 +293,7 @@ export default function ({
                         """ Save values in bulk for all records matching the filters """
                         saveValueBulk(libraryId: ID!, recordsFilters: [RecordFilterInput]!, attributeId: ID!, mapValues: [MapValueInput!]!): ID!
 
+                        """ The returned values are the deleted ones """ 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
                     }
                 `,

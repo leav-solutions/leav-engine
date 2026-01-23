@@ -169,5 +169,19 @@ describe('attributeSimpleRepo', () => {
                 expect(values).toEqual([]);
             });
         });
+
+        describe('deleteValue', () => {
+            test('Should return the deleted value', async () => {
+                const value = await attributeSimpleRepo.deleteValue({
+                    library: libraryId,
+                    attribute: simpleTextAttribute,
+                    recordId: record1.id,
+                    value: {payload: record1Value.payload},
+                    ctx,
+                });
+
+                expect(value).toEqual(record1Value);
+            });
+        });
     });
 });

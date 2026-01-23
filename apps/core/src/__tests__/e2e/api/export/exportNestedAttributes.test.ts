@@ -227,7 +227,6 @@ describe('Export Nested Attributes', () => {
             const buffer = await getFileDataBuffer(filepath);
             const excelData = await getExcelData(buffer);
 
-            console.log('excelData', excelData);
             // Should navigate 2 levels deep: event.created_by.created_by
             // And return the label of the user, not "[object Object]"
             expect(excelData[0].length).toBeGreaterThan(0);

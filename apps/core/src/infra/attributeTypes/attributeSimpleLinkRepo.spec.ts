@@ -96,9 +96,10 @@ describe('AttributeSimpleLinkRepo', () => {
     describe('deleteValue', () => {
         test('Should delete a value', async () => {
             const deletedValueData = {
-                payload: {
-                    id: '123456',
-                },
+                payload: 'old_value_record_id',
+                attribute: mockAttribute.id,
+                created_by: null,
+                modified_by: null,
             };
 
             const attrSimpleRepo = {
@@ -123,7 +124,7 @@ describe('AttributeSimpleLinkRepo', () => {
             });
 
             expect(attrSimpleRepo.deleteValue.mock.calls.length).toBe(1);
-            expect(attrSimpleRepo.deleteValue).toBeCalledWith({
+            expect(attrSimpleRepo.deleteValue).toHaveBeenCalledWith({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: {
@@ -139,9 +140,11 @@ describe('AttributeSimpleLinkRepo', () => {
             });
 
             expect(deletedVal).toMatchObject({
-                ...deletedValueData,
+                created_by: null,
+                modified_by: null,
+                attribute: mockAttribute.id,
                 payload: {
-                    id: '123456',
+                    id: 'old_value_record_id',
                     library: 'test_linked_lib',
                 },
             });
