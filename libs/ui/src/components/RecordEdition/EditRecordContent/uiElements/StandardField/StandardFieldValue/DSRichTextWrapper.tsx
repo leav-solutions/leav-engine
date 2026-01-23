@@ -94,6 +94,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     return (
         <KitRichText
             id={attribute.id}
+            style={{width: '100%', height: '100%'}}
             autoFocus={isFocused}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}

@@ -74,8 +74,10 @@ function StandardFieldValue({
     } else {
         switch (attribute.format) {
             case AttributeFormat.text:
-            case AttributeFormat.extended:
                 valueContent = <DSInputWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.extended:
+                valueContent = <DSRichTextWrapper {...commonProps} />;
                 break;
             case AttributeFormat.date:
                 valueContent = <DSDatePickerWrapper {...commonProps} />;
