@@ -129,6 +129,29 @@ describe('runActionsList', () => {
         expect(res).toEqual([val, {payload: EMPTY_VALUE}]);
     });
 
+    test('Should throw if an action is not found', async () => {
+        const domain = actionListDomain(depsBase);
+        const availActions = [
+            {
+                id: 'validate',
+                name: 'validate',
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}],
+                })),
+            },
+        ];
+
+        domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
+
+        await expect(
+            domain.runActionsList(
+                [{id: 'actionNotExists', name: 'Action not exists', params: [], is_system: false}],
+                [val],
+                ctx,
+            ),
+        ).rejects.toThrow(/Run action list - action actionNotExists not found/);
+    });
+
     test('Should throw if an action throws', async () => {
         const domain = actionListDomain(depsBase);
         const availActions = [

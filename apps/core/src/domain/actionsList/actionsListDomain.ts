@@ -106,7 +106,11 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                           return all;
                       }, {})
                     : {};
-                const actionFunc = availActions.find(availableAction => availableAction.id === action.id).action;
+                const actionDetail = availActions.find(availableAction => availableAction.id === action.id);
+                if (!actionDetail) {
+                    throw new Error(`Run action list - action ${action.id} not found`);
+                }
+                const actionFunc = actionDetail.action;
 
                 // run each actions separately to catch the context of the error.
                 const {values: actionFuncValues, errors} = await actionFunc(resultAction, params, ctx);
