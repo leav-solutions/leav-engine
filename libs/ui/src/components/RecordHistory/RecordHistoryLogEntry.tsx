@@ -74,16 +74,24 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         extendedValueBefore: unknown | undefined,
         extendedValueAfter: unknown | undefined,
         path: string[] = [],
-        diffs: Array<{path: string; before: any; after: any}> = [],
-    ): Array<{path: string; before: unknown; after: unknown}> => {
+        diffs: Array<{path: string; before: string | null; after: string | null}> = [],
+    ): Array<{path: string; before: string | null; after: string | null}> => {
         if (
-            typeof extendedValueBefore !== 'object' ||
-            extendedValueBefore === null ||
-            typeof extendedValueAfter !== 'object' ||
-            extendedValueAfter === null
+            (typeof extendedValueBefore !== 'object' || extendedValueBefore === null) &&
+            (typeof extendedValueAfter !== 'object' || extendedValueAfter === null)
         ) {
             if (extendedValueBefore !== extendedValueAfter) {
-                diffs.push({path: path.join('.'), before: extendedValueBefore, after: extendedValueAfter});
+                diffs.push({
+                    path: path.join('.'),
+                    before:
+                        extendedValueBefore === null || extendedValueBefore === undefined
+                            ? null
+                            : String(extendedValueBefore),
+                    after:
+                        extendedValueAfter === null || extendedValueAfter === undefined
+                            ? null
+                            : String(extendedValueAfter),
+                });
             }
 
             return diffs;
@@ -150,9 +158,9 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
                                 {i < arr.length - 1 && ` ${t('record_history.of')}`}
                             </span>
                         ))}
-                    :{diff.before !== undefined ? formatValue({asString: diff.before as string}) : noValue}
+                    :{diff.before !== null ? formatValue({asString: diff.before}) : noValue}
                     <KitTypography.Text size="fontSize5">→</KitTypography.Text>
-                    {diff.after !== undefined ? formatValue({asString: diff.after as string}) : noValue}
+                    {diff.after !== null ? formatValue({asString: diff.after}) : noValue}
                 </KitSpace>
             ));
         }
