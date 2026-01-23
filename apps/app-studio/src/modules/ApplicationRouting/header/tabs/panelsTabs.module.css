@@ -1,6 +1,13 @@
-/* TODO: Remove this when KitTabs will be responsive */
-.scrollable {
-    overflow-y: hidden;
-    min-width: fit-content;
-    padding-bottom: 2px;
+.tabsWrapper {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.firstPanelTabsWrapper {
+    justify-content: end;
+}
+
+.sliderTabsWrapper {
+    justify-content: start;
 }
