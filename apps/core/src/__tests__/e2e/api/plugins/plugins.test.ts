@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import {e2eNonAdminUser, makeGraphQlCall} from '../e2eUtils';
 import {waitForTaskCompletion} from '../taskUtils';
 import {TaskStatus} from '../../../../_types/tasksManager';
 import {FakePluginTaskType} from '../_fixtures/fakeplugin/_types/_types';
@@ -11,21 +11,29 @@ describe('Plugins', () => {
      * /!\ fake-plugin install is managed in globalSetup.js
      */
     describe('Get plugins list', () => {
-        test('Return plugins list', async () => {
-            const resPlugins = await makeGraphQlCall(`{
-                plugins {
-                    name
-                    description
-                    version
-                    author
-                }
-            }`);
+        const gqlPluginsQuery = `{
+            plugins {
+                name
+                description
+                version
+                author
+            }
+        }`;
+
+        test('Return plugins list for admin', async () => {
+            const resPlugins = await makeGraphQlCall(gqlPluginsQuery);
 
             expect(resPlugins.status).toBe(200);
 
             const fakePluginData = resPlugins.data.data.plugins.find(p => p.name === 'fakeplugin');
 
             expect(fakePluginData).toBeDefined();
+        });
+
+        it('Non admin users should not be authorized to list plugins', async () => {
+            await expect(makeGraphQlCall(gqlPluginsQuery, {user: e2eNonAdminUser()})).rejects.toThrow(
+                /Action forbidden/,
+            );
         });
     });
 
