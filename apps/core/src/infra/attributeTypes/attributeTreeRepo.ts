@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {type IDbDocument} from 'infra/db/_types';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
@@ -244,7 +245,17 @@ export default function ({
                     return acc;
                 }
 
-                acc.push(_buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge));
+                const treeValue = _buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge);
+                if (treeValue.payload == null) {
+                    logger.warn(
+                        `[AttributeTreeRepo] Unable to find record for tree ${attribute.linked_tree} and node ${r.id} (id_value: ${r.edge._id})`,
+                        {
+                            edge: r.edge,
+                        },
+                    );
+                } else {
+                    acc.push(treeValue);
+                }
 
                 return acc;
             }, []);
@@ -318,9 +329,27 @@ export default function ({
             return recordIds.map(recordId => {
                 const record = treeElements.find(r => r.recordId === recordId);
                 return (
-                    record?.values.map(r =>
-                        _buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge),
-                    ) || []
+                    record?.values
+                        .map(r => {
+                            const treeValue = _buildTreeValue(
+                                attribute.linked_tree,
+                                r.id,
+                                _buildRemoteRecord(r.record),
+                                r.edge,
+                            );
+
+                            if (treeValue.payload == null) {
+                                logger.warn(
+                                    `[AttributeTreeRepo] Unable to find record for tree ${attribute.linked_tree} and node ${r.id} (id_value: ${r.edge._id})`,
+                                    {
+                                        edge: r.edge,
+                                    },
+                                );
+                                return null;
+                            }
+                            return treeValue;
+                        })
+                        .filter(Boolean) || []
                 );
             });
         },
@@ -357,6 +386,7 @@ export default function ({
                 aql`
                     LET node = DOCUMENT(edge._to)
                     COLLECT nodeRec = node WITH COUNT INTO occurrences
+                    FILTER nodeRec != null
                     RETURN {value: nodeRec, count: occurrences}
             `,
             );
