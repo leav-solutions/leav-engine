@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AttributeSimpleRepo clearAllValues Should delete field of given attribute 1`] = `undefined`;
 
@@ -10,7 +10,8 @@ exports[`AttributeSimpleRepo createValue Should create a new index value 1`] = `
                 WITH @value1
                 IN @@value2
                 OPTIONS { keepNull: false }
-                RETURN NEW"
+                RETURN NEW
+            "
 `;
 
 exports[`AttributeSimpleRepo createValue Should create a new index value 2`] = `
@@ -31,7 +32,8 @@ exports[`AttributeSimpleRepo deleteValue Should delete a value 1`] = `
                 WITH @value1
                 IN @@value2
                 OPTIONS { keepNull: false }
-                RETURN NEW"
+                RETURN OLD
+            "
 `;
 
 exports[`AttributeSimpleRepo deleteValue Should delete a value 2`] = `

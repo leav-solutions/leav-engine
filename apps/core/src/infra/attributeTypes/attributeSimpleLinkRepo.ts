@@ -89,10 +89,10 @@ export default function ({
                     type: AttributeTypes.SIMPLE,
                 },
             });
+
             return {
                 ...deletedValue,
-                // deletedValue returns null payload, so override it here !
-                payload: {id: args.value.payload?.id, library: args.attribute.linked_library},
+                payload: {id: deletedValue.payload, library: args.attribute.linked_library},
             };
         },
         // To get values from advanced reverse link attribute into simple link.

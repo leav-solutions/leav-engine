@@ -33,13 +33,16 @@ export default function ({
         ctx: IQueryInfos,
     ): Promise<IStandardValue> {
         const collec = dbService.db.collection(library);
+        const isValueDeleted = value.payload === null;
+
         const res = await dbService.execute({
             query: aql`
                 UPDATE ${{_key: recordId}}
                 WITH ${{[attribute.id]: value.payload}}
                 IN ${collec}
                 OPTIONS { keepNull: false }
-                RETURN NEW`,
+                RETURN ${literal(isValueDeleted ? 'OLD' : 'NEW')}
+            `,
             ctx,
         });
 

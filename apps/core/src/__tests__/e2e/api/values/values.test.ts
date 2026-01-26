@@ -545,16 +545,56 @@ describe('Values', () => {
     });
 
     test('Delete value simple', async () => {
+        await makeGraphQlCall(`mutation {
+            saveValue(
+                library: "${testLibName}",
+                recordId: "${recordId}",
+                attribute: "${attrSimpleName}",
+                value: {payload: "TEST VAL"}) { id_value }
+          }`);
+
         const res = await makeGraphQlCall(`mutation {
                 deleteValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
-                    attribute: "${attrSimpleName}") { id_value }
+                    attribute: "${attrSimpleName}") { 
+                        id_value,
+                        ... on Value {
+                            payload
+                        } 
+                    }
               }`);
 
         expect(res.status).toBe(200);
-
         expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.deleteValue).toEqual([{id_value: null, payload: 'TEST VAL'}]);
+    });
+
+    test('Delete value on simple link attribute', async () => {
+        await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrSimpleLinkName}",
+                    value: {payload: "${recordIdLinked}"}) { id_value }
+              }`);
+
+        const res = await makeGraphQlCall(`mutation {
+                deleteValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrSimpleLinkName}") { 
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+              }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.deleteValue).toEqual([{payload: {id: recordIdLinked}}]);
     });
 
     test('Delete value on tree attribute', async () => {

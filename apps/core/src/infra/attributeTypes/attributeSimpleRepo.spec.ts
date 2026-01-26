@@ -89,17 +89,14 @@ describe('AttributeSimpleRepo', () => {
 
     describe('deleteValue', () => {
         test('Should delete a value', async () => {
-            const updatedRecordData = {
+            const deletedValueData = {
                 _id: 'test_lib/222435651',
                 _rev: '_WSywvyC--_',
                 _key: 222435651,
+                [mockAttribute.id]: 'old_value',
             };
 
-            const deletedValueData = {
-                payload: null,
-            };
-
-            const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
+            const mockDbServ = {db: new Database(), execute: global.__mockPromise([deletedValueData])};
 
             const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
 
@@ -117,7 +114,12 @@ describe('AttributeSimpleRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-            expect(deletedVal).toMatchObject(deletedValueData);
+            expect(deletedVal).toMatchObject({
+                payload: deletedValueData[mockAttribute.id],
+                attribute: mockAttribute.id,
+                created_by: null,
+                modified_by: null,
+            });
         });
     });
 

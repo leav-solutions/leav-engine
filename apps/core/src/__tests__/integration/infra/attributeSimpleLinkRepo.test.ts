@@ -200,6 +200,28 @@ describe('attributeSimpleLinkRepo', () => {
                     expect(values).toEqual([]);
                 });
             });
+
+            describe('deleteValue', () => {
+                test('Should return the deleted value', async () => {
+                    const value = await attributeSimpleLinkRepo.deleteValue({
+                        library: libraryId,
+                        attribute: simpleLinkAttribute,
+                        recordId: record1.id,
+                        value: {payload: record1Value.payload},
+                        ctx,
+                    });
+
+                    expect(value).toEqual({
+                        attribute: simpleLinkAttribute.id,
+                        created_by: null,
+                        modified_by: null,
+                        payload: {
+                            id: remoteRecord1.id,
+                            library: remoteRecord1.library,
+                        },
+                    });
+                });
+            });
         });
     });
 });
