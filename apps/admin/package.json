@@ -34,7 +34,7 @@
         "i18next-xhr-backend": "3.2.2",
         "jsoneditor": "9.7.4",
         "jsoneditor-react": "3.1.2",
-        "lodash": "4.17.21",
+        "lodash": "4.17.23",
         "node-fetch": "2.6.7",
         "react": "16.14.0",
         "react-dnd": "11.1.3",
