@@ -5020,25 +5020,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bugsnag/browser@npm:^8.4.0":
-  version: 8.4.0
-  resolution: "@bugsnag/browser@npm:8.4.0"
+"@bugsnag/browser@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "@bugsnag/browser@npm:8.8.0"
   dependencies:
-    "@bugsnag/core": "npm:^8.4.0"
-  checksum: 10/a1d870db5cbe917f4e2eeacf14aacc602decd695925367a1f02a4edce6d8c6ed3445bd2cdb5f4bfd3e9fbd79a415a86c3c8bcde8c4314eb29222b88bd6398181
+    "@bugsnag/core": "npm:^8.8.0"
+  checksum: 10/b9ce318633214be4f9f5d3363a326cade7b9a3a4c1437ef1419c82827b7786e8df155a2ff12ab53e44447ef84e9ede29241caaafd7c53363c430a22db5e3b26f
   languageName: node
   linkType: hard
 
-"@bugsnag/core@npm:^8.4.0":
-  version: 8.4.0
-  resolution: "@bugsnag/core@npm:8.4.0"
+"@bugsnag/core@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "@bugsnag/core@npm:8.8.0"
   dependencies:
     "@bugsnag/cuid": "npm:^3.0.0"
     "@bugsnag/safe-json-stringify": "npm:^6.0.0"
     error-stack-parser: "npm:^2.0.3"
     iserror: "npm:^0.0.2"
     stack-generator: "npm:^2.0.3"
-  checksum: 10/2f7960271957d63e8bab751a4e75e38f347c387eb67c07f306ba13d9d85c8a2e6fcdb0327723ed937604b4acacdb71156cb43d95445cd82d3834c2278e7e5dd1
+  checksum: 10/d16b47282ee503b396b6fdb617a9cd9acbf79853d3b3491dda6e1d9aa59ca790176fe29ee9ccfa49fc1f5a6f69d4e744647d2fa8a392a4ec838d67d856ddf8c1
   languageName: node
   linkType: hard
 
@@ -5049,39 +5049,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bugsnag/js@npm:8.4.0":
-  version: 8.4.0
-  resolution: "@bugsnag/js@npm:8.4.0"
+"@bugsnag/js@npm:8.8.0":
+  version: 8.8.0
+  resolution: "@bugsnag/js@npm:8.8.0"
   dependencies:
-    "@bugsnag/browser": "npm:^8.4.0"
-    "@bugsnag/node": "npm:^8.4.0"
-  checksum: 10/504dde34ad40ceec2009f5b05e6eabdc01b5055ce0cbb281a965600bed15b4422d53646d67e61d45595d9099d3a147b02653062f8ccd7d4c5f495e5dc1cb0f6d
+    "@bugsnag/browser": "npm:^8.8.0"
+    "@bugsnag/node": "npm:^8.8.0"
+  checksum: 10/a0c09d672d8e142458ebdf3f463ccf5ee5eb97b4630cf8a3d9c4b8023b9cd61a431e3ff3adae84cce78144c2ac8da3719f627ad51990ff633a5ae5c1fcf3c351
   languageName: node
   linkType: hard
 
-"@bugsnag/node@npm:^8.4.0":
-  version: 8.4.0
-  resolution: "@bugsnag/node@npm:8.4.0"
+"@bugsnag/node@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "@bugsnag/node@npm:8.8.0"
   dependencies:
-    "@bugsnag/core": "npm:^8.4.0"
+    "@bugsnag/core": "npm:^8.8.0"
     byline: "npm:^5.0.0"
     error-stack-parser: "npm:^2.0.3"
     iserror: "npm:^0.0.2"
     pump: "npm:^3.0.0"
     stack-generator: "npm:^2.0.3"
-  checksum: 10/764864030511702dfedf6fec51a2faf88c5d2c64e3c3bcd59c244fd5d0d31aa124577731365a25d7da14aaba469c002dda6e32dbc2cdc0f0bfabb9e72b6e5ef8
+  checksum: 10/a923c93502c8a08e2f09f4f3a4a0b9cc80b4812aa07e29d650df48ec77d9a0a562888287c9a531174627d7d0915a36dabb67d87f452dc5234475516e6f0a7420
   languageName: node
   linkType: hard
 
-"@bugsnag/plugin-react@npm:8.4.0":
-  version: 8.4.0
-  resolution: "@bugsnag/plugin-react@npm:8.4.0"
+"@bugsnag/plugin-react@npm:8.8.0":
+  version: 8.8.0
+  resolution: "@bugsnag/plugin-react@npm:8.8.0"
   peerDependencies:
     "@bugsnag/core": ^8.0.0
   peerDependenciesMeta:
     "@bugsnag/core":
       optional: true
-  checksum: 10/d7311562ec683440a6f255674912bc2b620c581a02b285737f5e4b56685d74a6893548a2d8a51965a56886d28430454340e6be01c4687300bd1c155b906d931f
+  checksum: 10/a986bcfb19138f07c25f777c5c16842b1ff9d98b7b0f2002ca87be365fe1cbf076d70ea0ac780e3f88bd94c9daa5372c741859540880d4c89a766f3664d75e7b
   languageName: node
   linkType: hard
 
@@ -13192,8 +13192,8 @@ __metadata:
   resolution: "app-studio@workspace:apps/app-studio"
   dependencies:
     "@apollo/client": "npm:3.8.1"
-    "@bugsnag/js": "npm:8.4.0"
-    "@bugsnag/plugin-react": "npm:8.4.0"
+    "@bugsnag/js": "npm:8.8.0"
+    "@bugsnag/plugin-react": "npm:8.8.0"
     "@fortawesome/fontawesome-svg-core": "npm:7.0.1"
     "@fortawesome/free-regular-svg-icons": "npm:7.0.1"
     "@fortawesome/free-solid-svg-icons": "npm:7.0.1"
@@ -15636,7 +15636,7 @@ __metadata:
   resolution: "core@workspace:apps/core"
   dependencies:
     "@apollo/server": "npm:4.11.0"
-    "@bugsnag/js": "npm:8.4.0"
+    "@bugsnag/js": "npm:8.8.0"
     "@elastic/elasticsearch": "npm:8.10.0"
     "@graphql-tools/schema": "npm:10.0.31"
     "@leav/app-root-path": "workspace:libs/app-root-path"
