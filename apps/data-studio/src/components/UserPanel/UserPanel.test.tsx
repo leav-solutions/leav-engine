@@ -18,6 +18,30 @@ jest.mock('@leav/utils', () => ({
 }));
 
 describe('UserPanel', () => {
+    const {location} = window;
+    const mockLocation: Location = {...location, reload: jest.fn(), search: ''};
+
+    beforeAll(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: mockLocation,
+        });
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+        // Restore original window.location after tests
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: location,
+        });
+    });
+
     test('Should display some menu items', async () => {
         render(
             <BrowserRouter>
@@ -34,10 +58,6 @@ describe('UserPanel', () => {
         jest.spyOn(leavUi, 'useAuth').mockImplementation(() => ({
             logout: mockLogout,
         }));
-
-        const mockedLocation = {...window.location, reload: jest.fn()};
-        delete window.location;
-        window.location = mockedLocation;
 
         render(
             <BrowserRouter>

@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ExcelJS from 'exceljs';
 
-export default async (buffer: ExcelJS.Buffer): Promise<string[][][]> => {
+export default async (buffer: Buffer): Promise<string[][][]> => {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    await workbook.xlsx.load(buffer as unknown as ExcelJS.Buffer);
     const data: string[][][] = [];
 
     workbook.eachSheet((s, i) => {

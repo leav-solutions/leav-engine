@@ -7,19 +7,33 @@ import {renderHook} from '_ui/_tests/testUtils';
 const fetchMock = jest.fn();
 global.fetch = fetchMock;
 
-const mockedLocation = {...window.location, reload: jest.fn(), assign: jest.fn()};
-delete window.location;
-window.location = mockedLocation;
-
 jest.mock('_ui/constants', () => ({
     GLOBAL_BASE_URL: '/global-base',
 }));
 
 describe('useAuth', () => {
-    beforeEach(() => {
-        fetchMock.mockClear();
-        mockedLocation.reload.mockClear();
-        mockedLocation.assign.mockClear();
+    const {location} = window;
+    const mockLocation: Location = {...location, reload: jest.fn(), assign: jest.fn()};
+
+    beforeAll(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: mockLocation,
+        });
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+        // Restore original window.location after tests
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: location,
+        });
     });
 
     it('should reload page on empty logout', async () => {
@@ -32,9 +46,9 @@ describe('useAuth', () => {
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock).toHaveBeenCalledWith('/global-base/auth/logout', {method: 'POST'});
-        expect(mockedLocation.assign).not.toHaveBeenCalled();
-        expect(mockedLocation.reload).toHaveBeenCalledTimes(1);
-        expect(mockedLocation.reload).toHaveBeenCalledWith();
+        expect(mockLocation.assign).not.toHaveBeenCalled();
+        expect(mockLocation.reload).toHaveBeenCalledTimes(1);
+        expect(mockLocation.reload).toHaveBeenCalledWith();
     });
 
     it('Should go to redirectUrl if present in response logout', async () => {
@@ -49,8 +63,8 @@ describe('useAuth', () => {
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock).toHaveBeenCalledWith('/global-base/auth/logout', {method: 'POST'});
-        expect(mockedLocation.assign).toHaveBeenCalledTimes(1);
-        expect(mockedLocation.assign).toHaveBeenCalledWith('redirectUrl');
-        expect(mockedLocation.reload).not.toHaveBeenCalled();
+        expect(mockLocation.assign).toHaveBeenCalledTimes(1);
+        expect(mockLocation.assign).toHaveBeenCalledWith('redirectUrl');
+        expect(mockLocation.reload).not.toHaveBeenCalled();
     });
 });

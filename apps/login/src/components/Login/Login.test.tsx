@@ -48,11 +48,14 @@ const _enterCredentialsAndSubmit = () => {
 
 describe('Login', () => {
     const {location} = window;
+    const mockLocation: Location = {...location, replace: jest.fn(), search: ''};
 
     beforeAll(() => {
-        delete window.location;
-        window.location = {...location, replace: jest.fn(), search: ''};
-        Object.defineProperty(window.location, 'replace', jest.fn());
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: mockLocation,
+        });
     });
 
     afterEach(() => {
@@ -60,7 +63,12 @@ describe('Login', () => {
     });
 
     afterAll(() => {
-        window.location = location;
+        // Restore original window.location after tests
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: location,
+        });
     });
 
     test('Type credentials in login form and redirects to root', async () => {
