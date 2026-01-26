@@ -109,11 +109,16 @@ export default function ({
                 value: value.payload,
             };
 
+            // For extended format we don't want to merge object with previous value
+            // because we are not able to do partial updates on extended attributes.
+            const mergeObjects = attribute.format !== AttributeFormats.EXTENDED;
+
             const resVal = await dbService.execute({
                 query: aql`
                     UPDATE ${{_key: value.id_value}}
                     WITH ${valueData}
                     IN ${valCollec}
+                    OPTIONS { mergeObjects: ${mergeObjects} }
                     RETURN NEW`,
                 ctx,
             });

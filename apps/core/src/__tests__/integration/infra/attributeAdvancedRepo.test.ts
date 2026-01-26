@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IAttributeAdvancedRepo} from 'infra/attributeTypes/attributeAdvancedRepo';
 import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
@@ -74,6 +74,29 @@ describe('attributeAdvancedRepo', () => {
             id: 'text_attr_mono',
             type: AttributeTypes.ADVANCED,
             multiple_values: false,
+        };
+
+        const advancedExtendedAttribute: IAttributeWithRevLink = {
+            id: 'extended_attr',
+            type: AttributeTypes.ADVANCED,
+            multiple_values: true,
+            format: AttributeFormats.EXTENDED,
+            embedded_fields: [
+                {
+                    id: 'key1',
+                    format: AttributeFormats.EXTENDED,
+                    embedded_fields: [
+                        {
+                            id: 'subkey1',
+                            format: AttributeFormats.TEXT,
+                        },
+                    ],
+                },
+                {
+                    id: 'key2',
+                    format: AttributeFormats.TEXT,
+                },
+            ],
         };
 
         let record1: IRecord;
@@ -289,6 +312,29 @@ describe('attributeAdvancedRepo', () => {
             id: 'text_attr_multi',
             type: AttributeTypes.ADVANCED,
             multiple_values: true,
+        };
+
+        const advancedExtendedAttribute: IAttributeWithRevLink = {
+            id: 'extended_attr',
+            type: AttributeTypes.ADVANCED,
+            format: AttributeFormats.EXTENDED,
+            multiple_values: true,
+            embedded_fields: [
+                {
+                    id: 'key1',
+                    format: AttributeFormats.EXTENDED,
+                    embedded_fields: [
+                        {
+                            id: 'subkey1',
+                            format: AttributeFormats.TEXT,
+                        },
+                    ],
+                },
+                {
+                    id: 'key2',
+                    format: AttributeFormats.TEXT,
+                },
+            ],
         };
 
         let record1: IRecord;
@@ -524,6 +570,77 @@ describe('attributeAdvancedRepo', () => {
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));
                     expect(values).toHaveLength(3);
+                });
+            });
+
+            describe('createValue', () => {
+                test('Create extended attribute value', async () => {
+                    const recordWithExtendedAttr = await createRecord({});
+
+                    const value = await attributeAdvancedRepo.createValue({
+                        library: libraryId,
+                        attribute: advancedExtendedAttribute,
+                        recordId: recordWithExtendedAttr.id,
+                        value: {
+                            payload: JSON.stringify({
+                                key1: {
+                                    subkey1: 'subvalue1',
+                                },
+                                key2: 'value2',
+                            }),
+                        },
+                        ctx,
+                    });
+
+                    expect(value.payload).toEqual(
+                        JSON.stringify({
+                            key1: {
+                                subkey1: 'subvalue1',
+                            },
+                            key2: 'value2',
+                        }),
+                    );
+                });
+            });
+
+            describe('updateValue', () => {
+                test('Update extended attribute value (no partial update)', async () => {
+                    const recordWithExtendedAttr = await createRecord({});
+
+                    const newValue = await attributeAdvancedRepo.createValue({
+                        library: libraryId,
+                        attribute: advancedExtendedAttribute,
+                        recordId: recordWithExtendedAttr.id,
+                        value: {
+                            payload: JSON.stringify({
+                                key1: {
+                                    subkey1: 'subvalue1',
+                                },
+                                key2: 'value2',
+                            }),
+                        },
+                        ctx,
+                    });
+
+                    const value = await attributeAdvancedRepo.updateValue({
+                        library: libraryId,
+                        attribute: advancedExtendedAttribute,
+                        recordId: recordWithExtendedAttr.id,
+                        value: {
+                            id_value: newValue.id_value,
+                            payload: JSON.stringify({
+                                key2: 'value2',
+                            }),
+                        },
+                        ctx,
+                    });
+
+                    expect(value.id_value).toBe(newValue.id_value);
+                    expect(value.payload).toEqual(
+                        JSON.stringify({
+                            key2: 'value2',
+                        }),
+                    );
                 });
             });
         });
