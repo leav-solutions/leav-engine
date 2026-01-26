@@ -289,6 +289,7 @@ export interface GET_LIB_BY_ID_libraries_list_recordIdentityConf {
     color: string | null;
     preview: string | null;
     treeColorPreview: string | null;
+    parentContext: string | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_defaultView {
