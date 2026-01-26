@@ -43,6 +43,7 @@ export const libraryDetailsFragment = gql`
             color
             preview
             treeColorPreview
+            parentContext
         }
         defaultView {
             id

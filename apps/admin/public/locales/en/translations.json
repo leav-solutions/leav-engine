@@ -88,6 +88,7 @@
         "mandatory_attribute": "Join attribute",
         "default_view": "Default view",
         "fulltext_attributes": "Fulltext search attributes",
+        "parent_context": "Parent context",
         "index_fulltext_search": "Refresh fulltext index",
         "purge": {
             "title": "Purge",

@@ -10,7 +10,14 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
-import {formatIDString, getFieldError, isLinkAttribute, localizedLabel, isTreeAttribute} from '../../../../../../utils';
+import {
+    formatIDString,
+    getFieldError,
+    isLinkAttribute,
+    isSimpleLinkAttribute,
+    localizedLabel,
+    isTreeAttribute,
+} from '../../../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, LibraryBehavior} from '_gqlTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
@@ -64,6 +71,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             color: null,
             preview: null,
             treeColorPreview: null,
+            parentContext: null,
         },
         settings: {},
         permissions: {
@@ -96,6 +104,17 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
               }))
         : [];
     mandatoryAttributeOptions.unshift({key: '', value: '', text: ''});
+
+    const parentContextOptions = initialValues.attributes
+        ? initialValues.attributes
+              .filter(attr => isSimpleLinkAttribute(attr))
+              .map(attr => ({
+                  key: attr.id,
+                  value: attr.id,
+                  text: localizedLabel(attr.label, lang),
+              }))
+        : [];
+    parentContextOptions.unshift({key: '', value: '', text: ''});
 
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
@@ -149,6 +168,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                 color: yup.string().nullable(),
                 preview: yup.string().nullable(),
                 treeColorPreview: yup.string().nullable(),
+                parentContext: yup.string().nullable(),
             })
             .nullable(),
     });
@@ -378,6 +398,18 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                                         ? recordIdentityConf.treeColorPreview
                                         : ''
                                 }
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.parentContext')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={parentContextOptions}
+                                name="recordIdentityConf.parentContext"
+                                disabled={readonly}
+                                label={t('libraries.parent_context')}
+                                value={recordIdentityConf?.parentContext ?? ''}
                                 onChange={_handleChangeWithSubmit}
                             />
                         </FormFieldWrapper>

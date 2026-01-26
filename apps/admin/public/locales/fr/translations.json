@@ -88,6 +88,7 @@
         "mandatory_attribute": "Attribut de jointure",
         "default_view": "Vue par défaut",
         "fulltext_attributes": "Attributs de recherche fulltext",
+        "parent_context": "Contexte parent",
         "index_fulltext_search": "Rafraichir index fulltext",
         "purge": {
             "title": "Purge",

@@ -199,6 +199,10 @@ export function isLinkAttribute(
     return linkTypes.includes(attribute.type);
 }
 
+export function isSimpleLinkAttribute(attribute: GET_ATTRIBUTE_BY_ID_attributes_list): boolean {
+    return attribute.type === AttributeType.simple_link;
+}
+
 export function isTreeAttribute(
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list,
 ): attribute is GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {

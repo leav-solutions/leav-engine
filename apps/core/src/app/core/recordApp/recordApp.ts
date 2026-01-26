@@ -143,7 +143,8 @@ export default function ({
                         color: ID,
                         preview: ID,
                         treeColorPreview: ID,
-                        subLabel: ID
+                        subLabel: ID,
+                        parentContext: ID
                     }
 
                     input RecordIdentityConfInput {
@@ -151,7 +152,8 @@ export default function ({
                         color: ID,
                         preview: ID,
                         treeColorPreview: ID,
-                        subLabel: ID
+                        subLabel: ID,
+                        parentContext: ID
                     }
 
                     input RecordInput {

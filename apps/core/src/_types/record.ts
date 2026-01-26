@@ -99,6 +99,7 @@ export interface IRecordIdentityConf {
     preview?: string;
     treeColorPreview?: string;
     subLabel?: string;
+    parentContext?: string;
 }
 
 export interface IRecordUpdateEvent {
