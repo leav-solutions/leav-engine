@@ -20,16 +20,23 @@ interface IPanelCreationFormProps {
 export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({formId, libraryId}) => {
     const navigate = useNavigate();
     const [application] = useApplicationSettingsContext();
-    const {recordId, where, recordPanelId} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
 
     const {currentPanel} = retrievePanelDetails({application, recordPanelId});
     const {saveValues} = useExecuteSaveValueBatchMutation();
 
-    const {previousRecordId} = useGetPreviousPanelParams({
+    const currentWorkspace = application.workspaces.find(({id}) => id === workspaceId);
+
+    const {previousRecordId: previousRecordIdFromParams} = useGetPreviousPanelParams({
         currentRecordId: recordId,
         currentWhere: where,
         currentRecordPanelId: recordPanelId,
     });
+
+    let previousRecordId = previousRecordIdFromParams;
+    if (!previousRecordIdFromParams && currentWorkspace.type === 'record') {
+        previousRecordId = currentWorkspace.recordId;
+    }
 
     return (
         <EditRecordPage

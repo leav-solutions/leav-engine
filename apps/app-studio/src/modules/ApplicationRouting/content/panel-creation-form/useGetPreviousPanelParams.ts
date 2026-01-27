@@ -1,8 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+
+import {APP_BASE_URL} from '../../../../constants';
+
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export const useGetPreviousPanelParams = ({currentRecordId, currentWhere, currentRecordPanelId}) => {
     const [previousRecordPanelId, previousWhere, previousRecordId] = location.pathname
+        .replace(APP_BASE_URL, '')
         .split(`/${currentRecordId}/${currentWhere}/${currentRecordPanelId}`)[0] // get previous panels
         .split('/') // split all params
         .reverse(); // get only third last params
