@@ -1,11 +1,25 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "baseUrl": "src",
         "outDir": "dist",
-        "isolatedModules": false,
-        "strictNullChecks": true,
+        "paths": {
+            "_types/*": ["../../apps/core/src/_types/*"],
+            "app/*": ["../../apps/core/src/app/*"],
+            "domain/*": ["../../apps/core/src/domain/*"],
+            "errors/*": ["../../apps/core/src/errors/*"],
+            "infra/*": ["../../apps/core/src/infra/*"],
+            "interface/*": ["../../apps/core/src/interface/*"],
+            "utils/*": ["../../apps/core/src/utils/*"],
+            "@leav/logger": ["../../libs/logger/src/index.ts"],
+            "@leav/message-broker": ["../../libs/message-broker/src/index.ts"],
+            "@leav/app-root-path": ["../../libs/app-root-path/src/index.ts"],
+            "@leav/config-manager": ["../../libs/config-manager/src/index.ts"],
+            "@leav/monitoring-server": ["../../libs/monitoring-server/src/index.ts"]
+        },
+        "isolatedModules": true,
         "noImplicitReturns": true,
-        "noUnusedLocals": true
+        "skipLibCheck": true
+        // "strictNullChecks": true, // must be ignored because of imports from the core library
+        // "noUnusedLocals": true // must be ignored because of imports from the core library
     }
 }

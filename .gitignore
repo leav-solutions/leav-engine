@@ -106,3 +106,5 @@ graphql.config.yml
 ## E2e Playwright
 /test-apps/e2e-playwright/test-results/
 /test-apps/e2e-playwright/playwright-report/
+/test-apps/e2e-playwright/imports/
+
