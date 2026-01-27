@@ -64,7 +64,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         localizedTranslation(attribute?.label, lang) || attribute?.id || t('record_history.unknown_attribute');
 
     const formatValue = (logData: LogEntryData) => {
-        if (attribute?.format === AttributeFormat.rich_text) {
+        if (attribute?.format === AttributeFormat.rich_text || attribute?.format === AttributeFormat.extended) {
             return (
                 <KitTypography.AdvancedParagraph size="fontSize5" ellipsis={{rows: 4, expandable: true}}>
                     {logData.asString}
