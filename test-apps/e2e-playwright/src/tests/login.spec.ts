@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {test, expect} from '@playwright/test';
 import config from '../config';
+import {AccessPortalPage} from '../../pages/AccessPortalPage';
 
 test.describe('Login', () => {
     test('Login, access portal', async ({page}) => {
@@ -10,15 +11,10 @@ test.describe('Login', () => {
 
         expect(page.url()).toContain(`${config.baseUrl}/app/login`);
 
-        await page.getByLabel('Identifiant').fill(config.auth.username);
-        await page.getByLabel('Mot de passe').fill(config.auth.password);
-        await page.getByRole('button', {name: 'Se connecter'}).click();
+        const accessPortalPage = new AccessPortalPage(page);
 
-        // Wait for navigation to portal
-        await page.waitForURL(/\/app\/portal/);
+        accessPortalPage.login({id: config.auth.username, password: config.auth.password});
 
-        expect(page.url()).toContain(`${config.baseUrl}/app/portal`);
-
-        await page.getByRole('heading', {name: 'app-studio (fr)'}).isVisible();
+        await expect(accessPortalPage.pageTitle).toBeVisible();
     });
 });

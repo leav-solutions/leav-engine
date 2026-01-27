@@ -42,8 +42,13 @@ export default defineConfig({
     /* Configure projects for major browsers */
     projects: [
         {
-            name: 'setup',
+            name: 'setup leav',
             testMatch: /global\.setup\.ts/,
+            teardown: 'cleanup leav',
+        },
+        {
+            name: 'cleanup leav',
+            testMatch: /global\.teardown\.ts/,
         },
         {
             name: 'tests',
@@ -51,7 +56,7 @@ export default defineConfig({
                 ...devices['Desktop Chrome'],
                 // storageState: 'storage/.auth/user.json'
             },
-            dependencies: ['setup'],
+            dependencies: ['setup leav'],
         },
     ],
 });
