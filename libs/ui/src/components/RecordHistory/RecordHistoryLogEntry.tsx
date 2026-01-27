@@ -11,6 +11,10 @@ import {type FunctionComponent} from 'react';
 import {type LogEntry, type LogEntryAttribute, type LogEntryData, type LogEntryValue} from './_types';
 import styled from 'styled-components';
 import {type IEmbeddedField} from '_ui/components/RecordHistory/_queries/recordHistoryQuery';
+import {
+    getExtendedAttributeDiffs,
+    getExtendedAttributeLabels,
+} from '_ui/components/RecordHistory/utils/extendedAttribute';
 
 interface IRecordHistoryLogEntryProps {
     index: number;
@@ -70,75 +74,23 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         return <KitTypography.Text size="fontSize5">{logData.asString}</KitTypography.Text>;
     };
 
-    const _getExtendedAttributeDiffs = (
-        extendedValueBefore: unknown | undefined,
-        extendedValueAfter: unknown | undefined,
-        path: string[] = [],
-        diffs: Array<{path: string; before: string | null; after: string | null}> = [],
-    ): Array<{path: string; before: string | null; after: string | null}> => {
-        if (
-            (typeof extendedValueBefore !== 'object' || extendedValueBefore === null) &&
-            (typeof extendedValueAfter !== 'object' || extendedValueAfter === null)
-        ) {
-            if (extendedValueBefore !== extendedValueAfter) {
-                diffs.push({
-                    path: path.join('.'),
-                    before:
-                        extendedValueBefore === null || extendedValueBefore === undefined
-                            ? null
-                            : String(extendedValueBefore),
-                    after:
-                        extendedValueAfter === null || extendedValueAfter === undefined
-                            ? null
-                            : String(extendedValueAfter),
-                });
-            }
-
-            return diffs;
-        }
-
-        const keys = new Set([...Object.keys(extendedValueBefore || {}), ...Object.keys(extendedValueAfter || {})]);
-        for (const key of keys) {
-            _getExtendedAttributeDiffs(extendedValueBefore?.[key], extendedValueAfter?.[key], [...path, key], diffs);
-        }
-
-        return diffs;
-    };
-
-    const _getExtendedAttributeLabels = (path: string, embeddedFields: IEmbeddedField[]): string[] => {
-        let nestedEmbeddedFields = [...embeddedFields];
-        let current: IEmbeddedField = null;
-        const labels: string[] = [];
-
-        for (const id of path.split('.')) {
-            current = nestedEmbeddedFields.find(attr => attr.id === id);
-            if (!current) {
-                break;
-            }
-            labels.push(
-                localizedTranslation(current?.label, lang) || current?.id || t('record_history.unknown_attribute'),
-            );
-            nestedEmbeddedFields = current.embedded_fields ?? [];
-        }
-
-        return labels;
-    };
-
     const formatValueChange = () => {
         const noValue = <KitTypography.Text size="fontSize5">{t('record_history.no_value')}</KitTypography.Text>;
 
         if (attribute?.format === AttributeFormat.extended) {
-            const diffs = _getExtendedAttributeDiffs(
+            const diffs = getExtendedAttributeDiffs(
                 hasValue(before) ? JSON.parse(before.asString) : undefined,
                 hasValue(after) ? JSON.parse(after.asString) : undefined,
             );
 
             return diffs.map(diff => (
                 <KitSpace size="xxs" direction="horizontal" wrap>
-                    {_getExtendedAttributeLabels(
+                    {getExtendedAttributeLabels(
                         diff.path,
                         (attribute as RecordHistoryLogAttributeStandardAttributeFragment)
                             .embedded_fields as IEmbeddedField[],
+                        lang,
+                        t('record_history.unknown_attribute'),
                     )
                         .reverse()
                         .map((key, i, arr) => (
