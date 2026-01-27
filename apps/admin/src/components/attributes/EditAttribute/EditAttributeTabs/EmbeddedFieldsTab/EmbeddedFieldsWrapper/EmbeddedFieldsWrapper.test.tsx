@@ -7,6 +7,8 @@ import EmbeddedFieldsDisplay from '../EmbeddedFieldsDisplay';
 import EmbeddedFieldsForm from '../EmbeddedFieldsForm';
 import EmbeddedFieldsWrapper from './EmbeddedFieldsWrapper';
 
+jest.mock('../../../../../../hooks/useLang');
+
 describe('EmbeddedFieldsWrapper', () => {
     const handleSave = jest.fn();
     test('should return something', () => {

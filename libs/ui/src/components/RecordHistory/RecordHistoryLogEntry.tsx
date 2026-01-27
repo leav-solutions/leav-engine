@@ -127,17 +127,6 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     const formatValueChange = () => {
         const noValue = <KitTypography.Text size="fontSize5">{t('record_history.no_value')}</KitTypography.Text>;
 
-        if (attribute?.multiple_values) {
-            const uniqValue = !hasBefore && hasAfter ? after : hasBefore && !hasAfter ? before : null;
-            if (uniqValue != null) {
-                return (
-                    <KitSpace size="xxs" direction="horizontal" wrap>
-                        {formatValue(uniqValue)}
-                    </KitSpace>
-                );
-            }
-        }
-
         if (attribute?.format === AttributeFormat.extended) {
             const diffs = _getExtendedAttributeDiffs(
                 hasValue(before) ? JSON.parse(before.asString) : undefined,
@@ -163,6 +152,18 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
                     {diff.after !== null ? formatValue({asString: diff.after}) : noValue}
                 </KitSpace>
             ));
+        }
+
+        if (attribute?.multiple_values) {
+            const uniqValue = !hasBefore && hasAfter ? after : hasBefore && !hasAfter ? before : null;
+
+            if (uniqValue != null) {
+                return (
+                    <KitSpace size="xxs" direction="horizontal" wrap>
+                        {formatValue(uniqValue)}
+                    </KitSpace>
+                );
+            }
         }
 
         return (
