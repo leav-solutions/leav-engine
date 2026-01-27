@@ -201,6 +201,76 @@ describe('attributeSimpleLinkRepo', () => {
                 });
             });
 
+            describe('countValuesOccurrences', () => {
+                let record3WithoutAttr: IRecord;
+                let record4WithoutAttr: IRecord;
+                let recordWithLink1: IRecord;
+
+                beforeAll(async () => {
+                    record3WithoutAttr = await createRecord({});
+                    record4WithoutAttr = await createRecord({});
+                    recordWithLink1 = await createRecord({});
+                    await createValue(simpleLinkAttribute, recordWithLink1.id, remoteRecord1.id);
+                });
+
+                afterAll(async () => {
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record3WithoutAttr.id,
+                        ctx,
+                    });
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record4WithoutAttr.id,
+                        ctx,
+                    });
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: recordWithLink1.id,
+                        ctx,
+                    });
+                });
+                test('Should return values occurrences for an attribute', async () => {
+                    const occurrences = await attributeSimpleLinkRepo.countValuesOccurrences({
+                        library: libraryId,
+                        attribute: simpleLinkAttribute,
+                        recordIds: [record1.id, record2.id, recordWithLink1.id],
+                        ctx,
+                    });
+
+                    expect(occurrences).toHaveLength(2);
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {value: {id: remoteRecord1.id, library: remoteRecord1.library}, count: 2},
+                            {value: {id: remoteRecord2.id, library: remoteRecord2.library}, count: 1},
+                        ]),
+                    );
+                });
+                test('Should return null values occurrences for an attribute', async () => {
+                    const occurrences = await attributeSimpleLinkRepo.countValuesOccurrences({
+                        library: libraryId,
+                        attribute: simpleLinkAttribute,
+                        recordIds: [
+                            record1.id,
+                            record2.id,
+                            record3WithoutAttr.id,
+                            record4WithoutAttr.id,
+                            recordWithLink1.id,
+                        ],
+                        ctx,
+                    });
+
+                    expect(occurrences).toHaveLength(3);
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {value: {id: remoteRecord1.id, library: remoteRecord1.library}, count: 2},
+                            {value: {id: remoteRecord2.id, library: remoteRecord2.library}, count: 1},
+                            {value: null, count: 2},
+                        ]),
+                    );
+                });
+            });
+
             describe('deleteValue', () => {
                 test('Should return the deleted value', async () => {
                     const value = await attributeSimpleLinkRepo.deleteValue({

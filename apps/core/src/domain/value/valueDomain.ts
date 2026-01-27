@@ -34,7 +34,7 @@ import {
     type IStandardValue,
     type IValue,
     type IValuesOptions,
-    type IValuesOccurrencesResult,
+    type IValuesOccurrences,
 } from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -171,7 +171,7 @@ export interface IValueDomain {
         recordFilters: IRecordFilterLight[];
         options?: {version?: IValueVersion};
         ctx: IQueryInfos;
-    }): Promise<IValuesOccurrencesResult>;
+    }): Promise<IValuesOccurrences>;
 }
 
 export interface IValueDomainDeps {
@@ -1369,19 +1369,15 @@ const valueDomain = function ({
 
             const attribute = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
 
-            if (attribute.type !== AttributeTypes.TREE) {
+            if (
+                ![AttributeTypes.TREE, AttributeTypes.ADVANCED_LINK, AttributeTypes.SIMPLE_LINK].includes(
+                    attribute.type,
+                )
+            ) {
                 throw new ValidationError({
                     [attributeId]: {
                         msg: Errors.UNSUPPORTED_ATTRIBUTE_TYPE,
                         vars: {attributeType: attribute.type},
-                    },
-                });
-            }
-            if (attribute.multiple_values) {
-                throw new ValidationError({
-                    [attributeId]: {
-                        msg: Errors.UNSUPPORTED_ATTRIBUTE_MULTI_VALUE,
-                        vars: {},
                     },
                 });
             }
@@ -1398,6 +1394,14 @@ const valueDomain = function ({
                 });
             }
 
+            let reverseLink: IAttribute | undefined;
+            if (!!attribute.reverse_link) {
+                reverseLink = await attributeDomain.getAttributeProperties({
+                    id: attribute.reverse_link as string,
+                    ctx,
+                });
+            }
+
             const records = await findRecordsHelper({
                 params: {
                     library: libraryId,
@@ -1409,22 +1413,13 @@ const valueDomain = function ({
                 ctx,
             });
 
-            const occurrences = await valueRepo.countValuesOccurrences({
+            return valueRepo.countValuesOccurrences({
                 library: libraryId,
-                attribute,
+                attribute: {...attribute, reverse_link: reverseLink},
                 recordIds: records.list.map(r => r.id),
                 options,
                 ctx,
             });
-
-            // occurrences count may result in approximative results if some records multiple values on the attribute in db
-            // Its is important for front to not have a negative number
-            const noValueCount = Math.max(
-                records.list.length - occurrences.reduce((acc, curr) => acc + curr.count, 0),
-                0,
-            );
-
-            return {occurrences, noValueCount};
         },
     };
 };

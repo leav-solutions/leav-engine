@@ -364,49 +364,70 @@ export default function ({
                 return [];
             }
 
-            if (attribute.multiple_values) {
-                throw new Error('countValuesOccurrences is not supported for multiple values tree attributes.');
-            }
+            const valuesEdgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
-            const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            // For all recordIds,
+            // retrieve the corresponding edges and count the occurrences of each linked value,
+            // including unlinked records
+            const query = aql`
+                LET allRecordIds = ${recordIds}
+                LET linkedValuesGroups = (
+                    FOR edge IN ${valuesEdgeCollec}
 
-            // For all recordIds, retrieve edge._to and count the occurrences of each node (record)
-            const queryParts = [
-                aql`
-                FOR recordId IN ${recordIds}
-                    FOR edge IN ${valuesLinksCollec}
-                        FILTER edge._from == CONCAT(${library}, '/', recordId) 
-                        AND edge.attribute == ${attribute.id}
-                `,
-            ];
-            queryParts.push(
-                options?.version ? aql`FILTER edge.version == ${options.version}` : aql`FILTER edge.version == null`,
-            );
-            queryParts.push(
-                aql`
-                    LET node = DOCUMENT(edge._to)
-                    COLLECT nodeRec = node WITH COUNT INTO occurrences
-                    FILTER nodeRec != null
-                    RETURN {value: nodeRec, count: occurrences}
-            `,
-            );
+                        FILTER edge.attribute == ${attribute.id}
+                        ${options?.version ? aql`FILTER edge.version == ${options.version}` : aql`FILTER edge.version == null`}
+                        FILTER PARSE_IDENTIFIER(edge._from).key IN allRecordIds
 
-            const query = join(queryParts);
+                        // Get the linked node and ensure it exists, necessary to build the node value with linked record
+                        LET nodeLinkedTo = DOCUMENT(edge._to)
+                        FILTER nodeLinkedTo != null
+
+                        COLLECT nodeRecord = nodeLinkedTo INTO grouped
+
+                        // Keep track of which records are linked to this value
+                        LET groupLinkedRecordIds = (FOR g IN grouped[*].edge._from RETURN PARSE_IDENTIFIER(g).key)
+                        RETURN { value: nodeRecord, count: COUNT(grouped), groupLinkedRecordIds }
+                )
+
+                LET linkedRecordIds = UNIQUE(FLATTEN(linkedValuesGroups[*].groupLinkedRecordIds))
+                LET linkGroupWithoutRecordIds = (FOR r IN linkedValuesGroups RETURN UNSET(r, 'groupLinkedRecordIds'))
+
+                // Find unlinked records
+                LET unlinkedRecordIds = OUTERSECTION(allRecordIds, linkedRecordIds)
+                LET unlinkedRecordCount = COUNT(unlinkedRecordIds)
+
+                // Add null value for unlinked records
+                LET finalResultArray = APPEND(
+                    linkGroupWithoutRecordIds,
+                    unlinkedRecordCount > 0 ? [{ valueId: null, count: unlinkedRecordCount }] : []
+                )
+
+                // Flatten result array
+                FOR r IN finalResultArray RETURN r
+            `;
+
             const res = await dbService.execute<
-                Array<{value: {_key: string; libraryId: string; recordId: string}; count: number}>
+                Array<{value: {_key: string; libraryId: string; recordId: string} | null; count: number}>
             >({query, ctx});
 
-            return res.map(({value, count}) => ({
-                value: {
-                    id: value._key,
-                    treeId: attribute.linked_tree,
-                    record: {
-                        id: value.recordId,
-                        library: value.libraryId,
-                    },
-                },
-                count,
-            }));
+            return res.map(({value, count}) =>
+                value
+                    ? {
+                          value: {
+                              id: value._key,
+                              treeId: attribute.linked_tree,
+                              record: {
+                                  id: value.recordId,
+                                  library: value.libraryId,
+                              },
+                          },
+                          count,
+                      }
+                    : {
+                          value: null,
+                          count,
+                      },
+            );
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);

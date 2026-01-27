@@ -10,7 +10,6 @@ import isEmptyValue from '../../domain/value/helpers/isEmptyValue';
 import {type IUtils} from 'utils/utils';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type IRecord} from '_types/record';
 import {
     type ISaveValue,
     type IBaseValue,
@@ -20,7 +19,7 @@ import {
     type IValueVersion,
 } from '_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {AttributeCondition} from '../../_types/record';
+import {AttributeCondition, type IRecord} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
@@ -315,7 +314,7 @@ export default function ({
                                       }, {})
                                     : null;
 
-                            const {occurrences, noValueCount} = await valueDomain.countValuesOccurrences({
+                            const occurrences = await valueDomain.countValuesOccurrences({
                                 libraryId: library,
                                 attributeId: attribute,
                                 recordFilters,
@@ -323,9 +322,13 @@ export default function ({
                                 ctx,
                             });
 
+                            const noValueOccurrence = occurrences.find(occ => occ.value == null);
+
                             return {
-                                occurrences: occurrences.map(occ => ({...occ, attribute})), // add attribute for GenericRecordValueOccurrences.__resolveType
-                                noValueCount,
+                                occurrences: occurrences
+                                    .filter(occ => occ.value != null)
+                                    .map(occ => ({...occ, attribute})), // add attribute for GenericRecordValueOccurrences.__resolveType
+                                noValueCount: noValueOccurrence ? noValueOccurrence.count : 0,
                             };
                         },
                     },
@@ -410,6 +413,9 @@ export default function ({
                             switch (attrProps.type) {
                                 case AttributeTypes.TREE:
                                     return 'TreeValueOccurrences';
+                                case AttributeTypes.SIMPLE_LINK:
+                                case AttributeTypes.ADVANCED_LINK:
+                                    return 'LinkValueOccurrences';
                                 default:
                                     return null;
                             }

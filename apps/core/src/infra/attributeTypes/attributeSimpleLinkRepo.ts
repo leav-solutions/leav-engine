@@ -6,13 +6,13 @@ import {type IDbDocument} from 'infra/db/_types';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {type IRecord} from '_types/record';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {type ILinkValue, ISaveValue} from '../../_types/value';
+import {type ILinkBaseValue, type ILinkValue, type IValuesOccurrences} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
-import {type IQueryInfos} from '_types/queryInfos';
 import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
+import _ from 'lodash';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -214,6 +214,79 @@ export default function ({
                 },
                 {} as Record<string, ILinkValue[]>,
             );
+        },
+        async countValuesOccurrences({
+            library,
+            attribute,
+            recordIds,
+            ctx,
+        }): Promise<IValuesOccurrences<ILinkBaseValue>> {
+            const libCollec = dbService.db.collection(library);
+
+            // For all recordIds, retrieve the linked value and count the occurrences of each linked value
+            const query = aql`
+                FOR rec IN ${libCollec}
+                    FILTER rec._key IN ${recordIds}
+
+                    // Keep only record with linked value
+                    LET linkedId = rec.${attribute.id}
+                    FILTER linkedId != null
+                    
+                    // Group by linkedId and count occurrences
+                    COLLECT recordId = linkedId WITH COUNT INTO count
+                    RETURN { recordId, count }
+            `;
+
+            const res = await dbService.execute<Array<{recordId: string; count: number}>>({query, ctx});
+
+            // Compute total occurrences to find unlinked records, each recordId without linked value counts as 1
+            const countOccurrences = _.sum(res.map(r => r.count));
+
+            return res
+                .map(({recordId, count}) => ({
+                    value: {id: recordId, library: attribute.linked_library},
+                    count,
+                }))
+                .concat(
+                    countOccurrences < recordIds.length
+                        ? [{value: null, count: recordIds.length - countOccurrences}]
+                        : [],
+                );
+        },
+        async countReverseValuesOccurrences({
+            advancedLinkAttr,
+            recordIds,
+            ctx,
+        }): Promise<IValuesOccurrences<ILinkBaseValue>> {
+            const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
+            const reverseLinkId = (advancedLinkAttr.reverse_link as IAttribute)?.id;
+
+            const query = aql`
+                FOR rec IN ${libCollec}
+                    // Select each record linking to one of the recordIds
+                    FILTER rec.${reverseLinkId} IN ${recordIds}
+
+                    // Keep linked recordId to compute unlinked later
+                    RETURN { recordId : rec._key, linkRecordId: rec.${reverseLinkId} }
+            `;
+
+            const res = await dbService.execute<Array<{recordId: string; linkRecordId: string}>>({
+                query,
+                ctx,
+            });
+
+            // Compute total occurrences to find unlinked records, each recordId without linked value counts as 1
+            const countOccurrences = _.uniq(res.map(({linkRecordId}) => linkRecordId)).length;
+            return res
+                .map(({recordId}) => ({
+                    value: {id: recordId, library: advancedLinkAttr.linked_library},
+                    count: 1, // Each record can only link to one recordId, so reverse link values always have count 1
+                }))
+                .concat(
+                    countOccurrences < recordIds.length
+                        ? [{value: null, count: recordIds.length - countOccurrences}]
+                        : [],
+                );
         },
         sortQueryPart({attributes, order}) {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);

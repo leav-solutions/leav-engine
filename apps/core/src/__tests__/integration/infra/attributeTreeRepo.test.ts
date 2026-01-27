@@ -329,7 +329,7 @@ describe('attributeTreeRepo', () => {
                     expect(values2).toEqual([record2Value]);
                 });
 
-                test('countValuesOccurrences should not count those values node', async () => {
+                test('countValuesOccurrences should count those values node', async () => {
                     const occurrences = await attributeTreeRepo.countValuesOccurrences({
                         library: libraryId,
                         attribute: treeMonoAttribute,
@@ -353,9 +353,13 @@ describe('attributeTreeRepo', () => {
                                 }),
                                 count: 1,
                             },
+                            {
+                                value: null,
+                                count: 1,
+                            },
                         ]),
                     );
-                    expect(occurrences).toHaveLength(2);
+                    expect(occurrences).toHaveLength(3);
                 });
             });
 
@@ -407,16 +411,20 @@ describe('attributeTreeRepo', () => {
                                 }),
                                 count: 1,
                             },
+                            {
+                                value: null,
+                                count: 1,
+                            },
                         ]),
                     );
-                    expect(occurrences).toHaveLength(3);
+                    expect(occurrences).toHaveLength(4);
                 });
 
                 test('Should return number of occurrences for each node (partial)', async () => {
                     const occurrences = await attributeTreeRepo.countValuesOccurrences({
                         library: libraryId,
                         attribute: treeMonoAttribute,
-                        recordIds: [record1.id, record5.id, record6.id],
+                        recordIds: [record1.id, record5.id],
                         ctx,
                     });
 
@@ -441,18 +449,24 @@ describe('attributeTreeRepo', () => {
                     expect(occurrences).toHaveLength(2);
                 });
 
-                test('Should return empty for record without values', async () => {
+                test('Should return null value for record without values', async () => {
+                    const record7 = await createRecord({});
                     const occurrences = await attributeTreeRepo.countValuesOccurrences({
                         library: libraryId,
                         attribute: treeMonoAttribute,
-                        recordIds: [record6.id],
+                        recordIds: [record6.id, record7.id],
                         ctx,
                     });
 
-                    expect(occurrences).toHaveLength(0);
+                    expect(occurrences).toEqual([
+                        {
+                            value: null,
+                            count: 2,
+                        },
+                    ]);
                 });
 
-                test('Should return empty for non existing records', async () => {
+                test('Should return null value for non existing records', async () => {
                     const occurrences = await attributeTreeRepo.countValuesOccurrences({
                         library: libraryId,
                         attribute: treeMonoAttribute,
@@ -460,7 +474,12 @@ describe('attributeTreeRepo', () => {
                         ctx,
                     });
 
-                    expect(occurrences).toHaveLength(0);
+                    expect(occurrences).toEqual([
+                        {
+                            value: null,
+                            count: 1,
+                        },
+                    ]);
                 });
             });
 
@@ -747,15 +766,80 @@ describe('attributeTreeRepo', () => {
             });
 
             describe('countValuesOccurrences', () => {
-                test('Should throw no supported multi value tree attribute', async () => {
-                    await expect(
-                        attributeTreeRepo.countValuesOccurrences({
-                            library: libraryId,
-                            attribute: treeMultiAttribute,
-                            recordIds: [record1.id, record2.id],
-                            ctx,
-                        }),
-                    ).rejects.toThrow(/is not supported for multiple values tree attributes/);
+                let record3NoValue: IRecord;
+                let record4NoValue: IRecord;
+                let record5Value2: IRecord;
+
+                beforeAll(async () => {
+                    record3NoValue = await createRecord({});
+                    record4NoValue = await createRecord({});
+                    record5Value2 = await createRecord({});
+                    await createValue(treeMultiAttribute, record5Value2.id, remoteNode2.id);
+                });
+
+                afterAll(async () => {
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record3NoValue.id,
+                        ctx,
+                    });
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record4NoValue.id,
+                        ctx,
+                    });
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record5Value2.id,
+                        ctx,
+                    });
+                });
+
+                test('Should return number of occurrences for each node (all)', async () => {
+                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                        library: libraryId,
+                        attribute: treeMultiAttribute,
+                        recordIds: [record1.id, record2.id, record3NoValue.id, record4NoValue.id, record5Value2.id],
+                        ctx,
+                    });
+
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {
+                                value: expect.objectContaining({
+                                    id: remoteNode1.id,
+                                    record: expect.objectContaining({id: remoteRecord1.id}),
+                                }),
+                                count: 1,
+                            },
+                            {
+                                value: expect.objectContaining({
+                                    id: remoteNode2.id,
+                                    record: expect.objectContaining({id: remoteRecord2.id}),
+                                }),
+                                count: 2,
+                            },
+                            {
+                                value: expect.objectContaining({
+                                    id: remoteNode3.id,
+                                    record: expect.objectContaining({id: remoteRecord3.id}),
+                                }),
+                                count: 1,
+                            },
+                            {
+                                value: expect.objectContaining({
+                                    id: remoteNode4.id,
+                                    record: expect.objectContaining({id: remoteRecord4.id}),
+                                }),
+                                count: 1,
+                            },
+                            {
+                                value: null,
+                                count: 2,
+                            },
+                        ]),
+                    );
+                    expect(occurrences).toHaveLength(5);
                 });
             });
 

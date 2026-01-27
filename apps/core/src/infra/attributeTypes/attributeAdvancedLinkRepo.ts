@@ -4,7 +4,7 @@
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {type IUtils} from 'utils/utils';
-import {type ILinkValue, type IValueEdge} from '_types/value';
+import {type ILinkBaseValue, type IValuesOccurrences, type ILinkValue, type IValueEdge} from '_types/value';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
@@ -384,6 +384,81 @@ export default function ({
                     edgeLinkRecords?.map(v => _buildLinkValue(v.linkedRecord, v.edge, !!attribute.reverse_link)) || []
                 );
             });
+        },
+        async countValuesOccurrences({
+            library,
+            attribute,
+            recordIds,
+            options,
+            ctx,
+        }): Promise<IValuesOccurrences<ILinkBaseValue>> {
+            if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
+                return attributeSimpleLinkRepo.countReverseValuesOccurrences({
+                    advancedLinkAttr: attribute,
+                    recordIds,
+                    ctx,
+                });
+            }
+
+            const valuesEdgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const isReverse = !!attribute.reverse_link;
+            const edgeAttribute = isReverse
+                ? typeof attribute.reverse_link === 'string'
+                    ? attribute.reverse_link
+                    : attribute.reverse_link.id
+                : attribute.id;
+            const fromField = isReverse ? '_to' : '_from';
+            const toField = isReverse ? '_from' : '_to';
+
+            // For all recordIds,
+            // retrieve the corresponding edges and count the occurrences of each linked value,
+            // including unlinked records
+            const query = aql`
+                LET allRecordIds = ${recordIds}
+                LET linkedValuesGroups = (
+                    FOR edge IN ${valuesEdgeCollec}
+
+                        FILTER edge.attribute == ${edgeAttribute}
+                        ${options?.version ? aql`FILTER edge.version == ${options.version}` : aql`FILTER edge.version == null`}
+                        FILTER PARSE_IDENTIFIER(edge.${fromField}).key IN allRecordIds
+
+                        // Get the linked record and ensure it exists
+                        Let recordLinkedTo = DOCUMENT(edge.${toField})
+                        FILTER recordLinkedTo != null
+                        COLLECT record = recordLinkedTo INTO grouped
+
+                        // Keep track of which records are linked to this value
+                        LET groupLinkedRecordIds = (FOR g IN grouped[*].edge.${fromField} RETURN PARSE_IDENTIFIER(g).key)
+                        RETURN { value: record._key, count: LENGTH(grouped), groupLinkedRecordIds }
+                )
+
+                LET linkedRecordIds = UNIQUE(FLATTEN(linkedValuesGroups[*].groupLinkedRecordIds))
+                LET linkGroupWithoutRecordIds = (FOR r IN linkedValuesGroups RETURN UNSET(r, 'groupLinkedRecordIds'))
+                
+                // Find unlinked records
+                LET unlinkedRecordIds = OUTERSECTION(allRecordIds, linkedRecordIds)
+                LET unlinkedRecordCount = COUNT(unlinkedRecordIds)
+
+                // Add null value for unlinked records
+                LET finalResultArray = APPEND(
+                    linkGroupWithoutRecordIds,
+                    unlinkedRecordCount > 0 ? [{ valueId: null, count: unlinkedRecordCount }] : []
+                )
+
+                // Flatten result array
+                FOR r IN finalResultArray RETURN r
+            `;
+
+            const res = await dbService.execute<Array<{value: string | null; count: number}>>({query, ctx});
+            return res.map(({value, count}) => ({
+                value: value
+                    ? {
+                          id: value,
+                          library: isReverse ? library : attribute.linked_library,
+                      }
+                    : null,
+                count,
+            }));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
