@@ -86,7 +86,8 @@ export default function ({
                 ctx,
             });
             const savedEdge: Partial<IDbEdge> = resEdge.length ? resEdge[0] : {};
-            const res: IStandardValue = {
+
+            return {
                 id_value: savedVal._key,
                 payload: savedVal.value,
                 attribute: savedEdge.attribute,
@@ -97,8 +98,6 @@ export default function ({
                 metadata: savedEdge.metadata,
                 version: savedEdge.version ?? null,
             };
-
-            return res;
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
@@ -109,11 +108,16 @@ export default function ({
                 value: value.payload,
             };
 
+            // For extended format we don't want to merge object with previous value
+            // because we are not able to do partial updates on extended attributes.
+            const mergeObjects = attribute.format !== AttributeFormats.EXTENDED;
+
             const resVal = await dbService.execute({
                 query: aql`
                     UPDATE ${{_key: value.id_value}}
                     WITH ${valueData}
                     IN ${valCollec}
+                    OPTIONS { mergeObjects: ${mergeObjects} }
                     RETURN NEW`,
                 ctx,
             });
@@ -149,7 +153,7 @@ export default function ({
             });
             const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            const res: IStandardValue = {
+            return {
                 id_value: savedVal._key,
                 payload: savedVal.value,
                 attribute: savedEdge.attribute,
@@ -160,8 +164,6 @@ export default function ({
                 metadata: savedEdge.metadata,
                 version: savedEdge.version ?? null,
             };
-
-            return res;
         },
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
@@ -317,7 +319,7 @@ export default function ({
 
             return {
                 id_value: valueId,
-                payload: valueLinks[0].value,
+                payload: valueLinks[0].payload,
                 attribute: valueLinks[0].attribute,
                 modified_at: valueLinks[0].modified_at,
                 created_at: valueLinks[0].created_at,

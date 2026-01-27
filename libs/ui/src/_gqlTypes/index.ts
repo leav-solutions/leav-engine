@@ -341,6 +341,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -439,6 +450,9 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -571,6 +585,7 @@ export enum PermissionsActions {
   admin_access_libraries = 'admin_access_libraries',
   admin_access_logs = 'admin_access_logs',
   admin_access_permissions = 'admin_access_permissions',
+  admin_access_plugins = 'admin_access_plugins',
   admin_access_tasks = 'admin_access_tasks',
   admin_access_trees = 'admin_access_trees',
   admin_access_version_profiles = 'admin_access_version_profiles',
@@ -794,7 +809,6 @@ export enum TaskType {
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -1228,9 +1242,19 @@ export type LibraryAttributeFragment =
 
 export type LibraryAttributeLinkFragment = { linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null };
 
-export type RecordHistoryLogEntryFragment = { action?: LogAction | null, time: number, topic?: { attribute?: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean } | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null };
+export type RecordHistoryLogEntryFragment = { action?: LogAction | null, time: number, topic?: { attribute?:
+      | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }
+      | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null }
+     | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null };
 
-export type RecordHistoryLogAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
+export type RecordHistoryLogAttributeLinkAttributeTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
+
+export type RecordHistoryLogAttributeStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null };
+
+export type RecordHistoryLogAttributeFragment =
+  | RecordHistoryLogAttributeLinkAttributeTreeAttributeFragment
+  | RecordHistoryLogAttributeStandardAttributeFragment
+;
 
 export type CheckApplicationExistenceQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -1899,7 +1923,10 @@ export type GetRecordHistoryQueryVariables = Exact<{
 }>;
 
 
-export type GetRecordHistoryQuery = { logs?: { total: number, logs: Array<{ action?: LogAction | null, time: number, topic?: { attribute?: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean } | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
+export type GetRecordHistoryQuery = { logs?: { total: number, logs: Array<{ action?: LogAction | null, time: number, topic?: { attribute?:
+          | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }
+          | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null }
+         | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -2725,6 +2752,12 @@ export const RecordHistoryLogAttributeFragmentDoc = gql`
   type
   format
   multiple_values
+  ... on StandardAttribute {
+    embedded_fields {
+      id
+      label
+    }
+  }
 }
     `;
 export const RecordHistoryLogEntryFragmentDoc = gql`

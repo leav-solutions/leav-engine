@@ -411,7 +411,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {
                 db: mockDb as unknown as Database,
-                execute: global.__mockPromise([{...edgeRes, value: 'test val'}]),
+                execute: global.__mockPromise([{...edgeRes, payload: 'test val'}]),
             };
 
             const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});

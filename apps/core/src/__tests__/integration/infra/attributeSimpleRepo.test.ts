@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeTypes} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IAttributeSimpleRepo} from 'infra/attributeTypes/attributeSimpleRepo';
 import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
@@ -69,6 +69,28 @@ describe('attributeSimpleRepo', () => {
         const simpleTextAttribute: IAttributeWithRevLink = {
             id: 'text_attr',
             type: AttributeTypes.SIMPLE,
+        };
+
+        const simpleExtendedAttribute: IAttributeWithRevLink = {
+            id: 'extended_attr',
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.EXTENDED,
+            embedded_fields: [
+                {
+                    id: 'key1',
+                    format: AttributeFormats.EXTENDED,
+                    embedded_fields: [
+                        {
+                            id: 'subkey1',
+                            format: AttributeFormats.TEXT,
+                        },
+                    ],
+                },
+                {
+                    id: 'key2',
+                    format: AttributeFormats.TEXT,
+                },
+            ],
         };
 
         let record1: IRecord;
@@ -167,6 +189,75 @@ describe('attributeSimpleRepo', () => {
                 });
 
                 expect(values).toEqual([]);
+            });
+        });
+
+        describe('createValue', () => {
+            test('Create extended attribute value', async () => {
+                const recordWithExtendedAttr = await createRecord({});
+
+                const value = await attributeSimpleRepo.createValue({
+                    library: libraryId,
+                    attribute: simpleExtendedAttribute,
+                    recordId: recordWithExtendedAttr.id,
+                    value: {
+                        payload: JSON.stringify({
+                            key1: {
+                                subkey1: 'subvalue1',
+                            },
+                            key2: 'value2',
+                        }),
+                    },
+                    ctx,
+                });
+
+                expect(value.payload).toEqual(
+                    JSON.stringify({
+                        key1: {
+                            subkey1: 'subvalue1',
+                        },
+                        key2: 'value2',
+                    }),
+                );
+            });
+        });
+
+        describe('updateValue', () => {
+            test('Update extended attribute value (no partial update)', async () => {
+                const recordWithExtendedAttr = await createRecord({});
+
+                await attributeSimpleRepo.createValue({
+                    library: libraryId,
+                    attribute: simpleExtendedAttribute,
+                    recordId: recordWithExtendedAttr.id,
+                    value: {
+                        payload: JSON.stringify({
+                            key1: {
+                                subkey1: 'subvalue1',
+                            },
+                            key2: 'value2',
+                        }),
+                    },
+                    ctx,
+                });
+
+                const value = await attributeSimpleRepo.updateValue({
+                    library: libraryId,
+                    attribute: simpleExtendedAttribute,
+                    recordId: recordWithExtendedAttr.id,
+                    value: {
+                        payload: JSON.stringify({
+                            key2: 'value2',
+                        }),
+                    },
+                    ctx,
+                });
+
+                expect(value.payload).toEqual(
+                    JSON.stringify({
+                        key2: 'value2',
+                    }),
+                );
             });
         });
 

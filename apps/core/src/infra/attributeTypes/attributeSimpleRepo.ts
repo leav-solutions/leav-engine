@@ -34,13 +34,16 @@ export default function ({
     ): Promise<IStandardValue> {
         const collec = dbService.db.collection(library);
         const isValueDeleted = value.payload === null;
+        // For extended format we don't want to merge object with previous value
+        // because we are not able to do partial updates on extended attributes.
+        const mergeObjects = attribute.format !== AttributeFormats.EXTENDED;
 
         const res = await dbService.execute({
             query: aql`
                 UPDATE ${{_key: recordId}}
                 WITH ${{[attribute.id]: value.payload}}
                 IN ${collec}
-                OPTIONS { keepNull: false }
+                OPTIONS { keepNull: false, mergeObjects: ${mergeObjects} }
                 RETURN ${literal(isValueDeleted ? 'OLD' : 'NEW')}
             `,
             ctx,

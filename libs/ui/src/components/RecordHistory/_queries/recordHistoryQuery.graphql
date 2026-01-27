@@ -4,6 +4,12 @@ fragment RecordHistoryLogAttribute on Attribute {
     type
     format
     multiple_values
+    ... on StandardAttribute {
+        embedded_fields {
+            id
+            label
+        }
+    }
 }
 
 fragment RecordHistoryLogEntry on Log {

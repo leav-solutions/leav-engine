@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {AttributeFormat, LogAction} from '_ui/_gqlTypes';
+import {AttributeFormat, LogAction, type RecordHistoryLogAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
@@ -10,6 +10,11 @@ import dayjs from 'dayjs';
 import {type FunctionComponent} from 'react';
 import {type LogEntry, type LogEntryAttribute, type LogEntryData, type LogEntryValue} from './_types';
 import styled from 'styled-components';
+import {type IEmbeddedField} from '_ui/components/RecordHistory/_queries/recordHistoryQuery';
+import {
+    getExtendedAttributeDiffs,
+    getExtendedAttributeLabels,
+} from '_ui/components/RecordHistory/utils/extendedAttribute';
 
 interface IRecordHistoryLogEntryProps {
     index: number;
@@ -59,7 +64,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         localizedTranslation(attribute?.label, lang) || attribute?.id || t('record_history.unknown_attribute');
 
     const formatValue = (logData: LogEntryData) => {
-        if (attribute?.format === AttributeFormat.rich_text) {
+        if (attribute?.format === AttributeFormat.rich_text || attribute?.format === AttributeFormat.extended) {
             return (
                 <KitTypography.AdvancedParagraph size="fontSize5" ellipsis={{rows: 4, expandable: true}}>
                     {logData.asString}
@@ -72,8 +77,38 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     const formatValueChange = () => {
         const noValue = <KitTypography.Text size="fontSize5">{t('record_history.no_value')}</KitTypography.Text>;
 
+        if (attribute?.format === AttributeFormat.extended) {
+            const diffs = getExtendedAttributeDiffs(
+                hasValue(before) ? JSON.parse(before.asString) : undefined,
+                hasValue(after) ? JSON.parse(after.asString) : undefined,
+            );
+
+            return diffs.map(diff => (
+                <KitSpace size="xxs" direction="horizontal" wrap>
+                    {getExtendedAttributeLabels(
+                        diff.path,
+                        (attribute as RecordHistoryLogAttributeStandardAttributeFragment)
+                            .embedded_fields as IEmbeddedField[],
+                        lang,
+                        t('record_history.unknown_attribute'),
+                    )
+                        .reverse()
+                        .map((key, i, arr) => (
+                            <span key={key}>
+                                <strong>{key}</strong>
+                                {i < arr.length - 1 && ` ${t('record_history.of')}`}
+                            </span>
+                        ))}
+                    :{diff.before !== null ? formatValue({asString: diff.before}) : noValue}
+                    <KitTypography.Text size="fontSize5">→</KitTypography.Text>
+                    {diff.after !== null ? formatValue({asString: diff.after}) : noValue}
+                </KitSpace>
+            ));
+        }
+
         if (attribute?.multiple_values) {
             const uniqValue = !hasBefore && hasAfter ? after : hasBefore && !hasAfter ? before : null;
+
             if (uniqValue != null) {
                 return (
                     <KitSpace size="xxs" direction="horizontal" wrap>
@@ -86,7 +121,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         return (
             <KitSpace size="xxs" direction="horizontal" wrap>
                 {hasBefore ? formatValue(before) : noValue}
-                <KitTypography.Text size="fontSize5"> → </KitTypography.Text>
+                <KitTypography.Text size="fontSize5">→</KitTypography.Text>
                 {hasAfter ? formatValue(after) : noValue}
             </KitSpace>
         );

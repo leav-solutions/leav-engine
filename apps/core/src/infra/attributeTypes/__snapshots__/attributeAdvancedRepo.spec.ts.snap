@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AttributeStandardRepo createValue Should create a new advanced value 1`] = `
 "
@@ -148,6 +148,7 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 1`] =
                     UPDATE @value0
                     WITH @value1
                     IN @@value2
+                    OPTIONS { mergeObjects: @value3 }
                     RETURN NEW"
 `;
 
@@ -160,6 +161,7 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] =
   "value1": {
     "value": "test val",
   },
+  "value3": true,
 }
 `;
 

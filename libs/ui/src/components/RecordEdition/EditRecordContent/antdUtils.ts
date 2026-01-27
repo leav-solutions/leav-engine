@@ -53,6 +53,8 @@ const formatStandardInitialValue = (
         case AttributeFormat.rich_text:
         case AttributeFormat.boolean:
             return standardValue.raw_payload;
+        case AttributeFormat.extended:
+            return JSON.stringify(standardValue.raw_payload);
         case AttributeFormat.numeric:
             return Number(standardValue.raw_payload);
         case AttributeFormat.date:

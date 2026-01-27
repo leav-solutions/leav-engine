@@ -1,13 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type QueryResult} from '@apollo/client';
+import {type QueryResult, useQuery} from '@apollo/client';
+import * as ApolloClient from '@apollo/client';
 import {renderHook} from '@testing-library/react';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {RECORD_HISTORY_LOGS_FIRST_PAGE, RECORD_HISTORY_LOGS_PAGE, useFetchRecordHistory} from './useFetchRecordHistory';
+import {getRecordHistoryQuery} from '../_queries/recordHistoryQuery';
+import {type GetRecordHistoryQueryHookResult} from '_ui/_gqlTypes';
+import {gqlUnchecked} from '_ui/_utils';
 
 describe('useFetchRecordHistory', () => {
-    const useGetRecordHistoryQuerySpy = jest.spyOn(gqlTypes, 'useGetRecordHistoryQuery');
+    const useQuerySpy = jest.spyOn(ApolloClient, 'useQuery');
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -47,7 +51,7 @@ describe('useFetchRecordHistory', () => {
 
         // for next calls/pages
         const refetchMock = jest.fn().mockImplementation((variables: gqlTypes.GetRecordHistoryQueryVariables) => {
-            useGetRecordHistoryQuerySpy.mockReturnValue(
+            useQuerySpy.mockReturnValue(
                 useGetRecordHistoryQueryReturnValueFct({
                     pagination: variables.pagination,
                 }),
@@ -56,7 +60,7 @@ describe('useFetchRecordHistory', () => {
         });
 
         // for first call/page
-        useGetRecordHistoryQuerySpy.mockReturnValue(
+        useQuerySpy.mockReturnValue(
             useGetRecordHistoryQueryReturnValueFct({
                 pagination: {limit: RECORD_HISTORY_LOGS_FIRST_PAGE, offset: 0},
             }),
@@ -68,7 +72,7 @@ describe('useFetchRecordHistory', () => {
             }),
         );
 
-        expect(gqlTypes.useGetRecordHistoryQuery).toHaveBeenCalledWith({
+        expect(useQuerySpy).toHaveBeenCalledWith(getRecordHistoryQuery(100), {
             fetchPolicy: 'network-only',
             variables: {
                 record: {
@@ -116,7 +120,7 @@ describe('useFetchRecordHistory', () => {
 
     it('Should fetch record history for a record attribute, and reset when change props', async () => {
         const fetchedLogs = [{id: 'log-attribute-1'}, {id: 'log-attribute-2'}];
-        useGetRecordHistoryQuerySpy.mockReturnValue({
+        useQuerySpy.mockReturnValue({
             loading: false,
             data: {logs: {logs: fetchedLogs, total: 42}},
         } as QueryResult<any, any>);
@@ -128,7 +132,7 @@ describe('useFetchRecordHistory', () => {
             },
         });
 
-        expect(gqlTypes.useGetRecordHistoryQuery).toHaveBeenCalledWith({
+        expect(useQuerySpy).toHaveBeenCalledWith(getRecordHistoryQuery(100), {
             fetchPolicy: 'network-only',
             variables: {
                 record: {
@@ -145,7 +149,7 @@ describe('useFetchRecordHistory', () => {
         expect(result.current.total).toBe(42);
         expect(result.current.logs).toEqual(fetchedLogs);
 
-        useGetRecordHistoryQuerySpy.mockReturnValue({
+        useQuerySpy.mockReturnValue({
             loading: true,
         } as QueryResult<any, any>);
         rerender({
@@ -159,7 +163,7 @@ describe('useFetchRecordHistory', () => {
     });
 
     it('Should set loading if fetching is in progress', async () => {
-        useGetRecordHistoryQuerySpy.mockReturnValue({
+        useQuerySpy.mockReturnValue({
             loading: true,
         } as QueryResult<any, any>);
 
@@ -175,7 +179,7 @@ describe('useFetchRecordHistory', () => {
     });
 
     it('Should set inError if fetching return an error', async () => {
-        useGetRecordHistoryQuerySpy.mockReturnValue({
+        useQuerySpy.mockReturnValue({
             loading: false,
             error: {message: 'Some error'},
         } as QueryResult<any, any>);

@@ -542,7 +542,8 @@
         "unknown_attribute": "unknown attribute",
         "unknown_user": "unknown user",
         "show_history": "See full history ({{total}} entries)",
-        "hide_history": "Hide history ({{total}} entries)"
+        "hide_history": "Hide history ({{total}} entries)",
+        "of": "of"
     },
     "view": {
         "views": "Views",

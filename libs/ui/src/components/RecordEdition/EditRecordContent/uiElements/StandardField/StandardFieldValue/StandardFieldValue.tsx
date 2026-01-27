@@ -53,6 +53,7 @@ function StandardFieldValue({
         AttributeFormat.boolean,
         AttributeFormat.rich_text,
         AttributeFormat.color,
+        AttributeFormat.extended,
     ];
 
     const commonProps = {
@@ -73,6 +74,7 @@ function StandardFieldValue({
     } else {
         switch (attribute.format) {
             case AttributeFormat.text:
+            case AttributeFormat.extended:
                 valueContent = <DSInputWrapper {...commonProps} />;
                 break;
             case AttributeFormat.date:

@@ -6,6 +6,8 @@ import React from 'react';
 import {Header} from 'semantic-ui-react';
 import EmbeddedFieldsDisplay from './EmbeddedFieldsDisplay';
 
+jest.mock('../../../../../../hooks/useLang');
+
 describe('EmbeddedFieldsDisplay', () => {
     const mockAttribute = {
         id: 'test',
@@ -23,6 +25,6 @@ describe('EmbeddedFieldsDisplay', () => {
     });
 
     test('should display id in input disabled', () => {
-        expect(comp.find(Header).prop('children')).toBe(mockAttribute.id);
+        expect(comp.find(Header).prop('children')).toBe(mockAttribute.label.fr);
     });
 });
