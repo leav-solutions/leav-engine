@@ -262,6 +262,103 @@ describe('attributeTreeRepo', () => {
                 });
             });
 
+            describe('one target node values do exists anymore', () => {
+                let recordForDelete: IRecord;
+                let remoteRecordForDelete: IRecord;
+                let remoteNodeForDelete: ITreeNodeLight;
+                let recordForDeleteValue: ILinkValue;
+
+                beforeEach(async () => {
+                    recordForDelete = await createRecord({});
+                    remoteRecordForDelete = await createRemoteRecord({
+                        ['attr_data_for_delete']: 99,
+                    });
+
+                    remoteNodeForDelete = await treeRepo.addElement({
+                        treeId,
+                        element: {
+                            id: remoteRecordForDelete.id,
+                            library: remoteRecordForDelete.library,
+                        },
+                        parent: null,
+                        ctx,
+                    });
+
+                    recordForDeleteValue = await createValue(
+                        treeMonoAttribute,
+                        recordForDelete.id,
+                        remoteNodeForDelete.id,
+                    );
+
+                    await treeRepo.deleteElement({
+                        treeId,
+                        nodeId: remoteNodeForDelete.id,
+                        ctx,
+                        deleteChildren: true,
+                    });
+                });
+
+                test('getValuesBatch should filter those values node', async () => {
+                    const values = await attributeTreeRepo.getValuesBatch({
+                        library: libraryId,
+                        attribute: treeMonoAttribute,
+                        recordIds: [record1.id, recordForDelete.id, record2.id],
+                        ctx,
+                    });
+
+                    expect(values).toEqual([[record1Value], [], [record2Value]]);
+                });
+
+                test('getValues should filter those values node', async () => {
+                    const values = await attributeTreeRepo.getValues({
+                        library: libraryId,
+                        attribute: treeMonoAttribute,
+                        recordId: recordForDelete.id,
+                        ctx,
+                    });
+
+                    expect(values).toEqual([]);
+
+                    const values2 = await attributeTreeRepo.getValues({
+                        library: libraryId,
+                        attribute: treeMonoAttribute,
+                        recordId: record2.id,
+                        ctx,
+                    });
+
+                    expect(values2).toEqual([record2Value]);
+                });
+
+                test('countValuesOccurrences should not count those values node', async () => {
+                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                        library: libraryId,
+                        attribute: treeMonoAttribute,
+                        recordIds: [record1.id, recordForDelete.id, record2.id],
+                        ctx,
+                    });
+
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {
+                                value: expect.objectContaining({
+                                    id: remoteNode1.id,
+                                    record: expect.objectContaining({id: remoteRecord1.id}),
+                                }),
+                                count: 1,
+                            },
+                            {
+                                value: expect.objectContaining({
+                                    id: remoteNode2.id,
+                                    record: expect.objectContaining({id: remoteRecord2.id}),
+                                }),
+                                count: 1,
+                            },
+                        ]),
+                    );
+                    expect(occurrences).toHaveLength(2);
+                });
+            });
+
             describe('countValuesOccurrences', () => {
                 let record3: IRecord;
                 let record4: IRecord;
@@ -659,6 +756,83 @@ describe('attributeTreeRepo', () => {
                             ctx,
                         }),
                     ).rejects.toThrow(/is not supported for multiple values tree attributes/);
+                });
+            });
+
+            describe('one target node values do exists anymore', () => {
+                let recordForDelete: IRecord;
+                let remoteRecordForDelete: IRecord;
+                let remoteNodeForDelete: ITreeNodeLight;
+                let recordForDeleteValue1: ILinkValue;
+                let recordForDeleteValue2: ILinkValue;
+
+                beforeEach(async () => {
+                    recordForDelete = await createRecord({});
+                    remoteRecordForDelete = await createRemoteRecord({
+                        ['attr_data_for_delete']: 99,
+                    });
+
+                    remoteNodeForDelete = await treeRepo.addElement({
+                        treeId,
+                        element: {
+                            id: remoteRecordForDelete.id,
+                            library: remoteRecordForDelete.library,
+                        },
+                        parent: null,
+                        ctx,
+                    });
+
+                    recordForDeleteValue1 = await createValue(
+                        treeMultiAttribute,
+                        recordForDelete.id,
+                        remoteNodeForDelete.id,
+                    );
+                    recordForDeleteValue2 = await createValue(treeMultiAttribute, recordForDelete.id, remoteNode3.id);
+
+                    await treeRepo.deleteElement({
+                        treeId,
+                        nodeId: remoteNodeForDelete.id,
+                        ctx,
+                        deleteChildren: true,
+                    });
+                });
+
+                test('getValuesBatch should filter those values node', async () => {
+                    const values = await attributeTreeRepo.getValuesBatch({
+                        library: libraryId,
+                        attribute: treeMultiAttribute,
+                        recordIds: [record1.id, recordForDelete.id, record2.id],
+                        ctx,
+                    });
+
+                    expect(values).toEqual([
+                        expect.arrayContaining([record1Value1, record1Value2]),
+                        expect.arrayContaining([recordForDeleteValue2]),
+                        expect.arrayContaining([record2Value1, record2Value2]),
+                    ]);
+                    expect(values[0]).toHaveLength(2);
+                    expect(values[1]).toHaveLength(1);
+                    expect(values[2]).toHaveLength(2);
+                });
+
+                test('getValues should filter those values node', async () => {
+                    const values = await attributeTreeRepo.getValues({
+                        library: libraryId,
+                        attribute: treeMultiAttribute,
+                        recordId: recordForDelete.id,
+                        ctx,
+                    });
+
+                    expect(values).toEqual([recordForDeleteValue2]);
+
+                    const values2 = await attributeTreeRepo.getValues({
+                        library: libraryId,
+                        attribute: treeMultiAttribute,
+                        recordId: record2.id,
+                        ctx,
+                    });
+
+                    expect(values2).toEqual(expect.arrayContaining([record2Value1, record2Value2]));
                 });
             });
 
