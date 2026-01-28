@@ -33,6 +33,7 @@ RUN rsync -av \
     --exclude="node_modules/" \
     --include="package.json" \
     --include="apps/core/dist/" \
+    --include="apps/core/src/" \
     --include="apps/core/applications/" \
     --include="apps/core/config/" \
     --include="apps/core/package.json" \
@@ -43,6 +44,7 @@ RUN rsync -av \
     --exclude="libs/types/" \
     --include="libs/*/" \
     --include="libs/*/dist/" \
+    --include="libs/*/src/" \
     --include="libs/*/package.json" \
     --exclude="libs/*/*" \
     /build/ /install/ && \
