@@ -153,6 +153,9 @@
         "linked_attribute": "Attribut lié",
         "multi_tree_display_option": "Option d’affichage des valeurs d’arbre",
         "multi_link_display_option": "Option d’affichage des valeurs liées multiples",
+        "smart_filter": {
+            "enable": "Activer le filtre intelligent"
+        },
         "multi_display_options": {
             "avatar": "Avatar",
             "tag": "Tag",

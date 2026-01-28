@@ -213,6 +213,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         linked_library: Library, # TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
                         values_list: LinkValuesListConf,
                         reverse_link: String
+                        smart_filter: SmartFilterConf
                     }
 
                     type TreeAllowedDependentValues {
@@ -259,6 +260,8 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         settings: JSONObject
                         multi_link_display_option: MultiDisplayOption
                         multi_tree_display_option: MultiDisplayOption
+                        """ only for link attribute """
+                        smart_filter: SmartFilterConfInput
                     }
 
                     type EmbeddedAttribute {
@@ -326,6 +329,14 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         allowFreeEntry: Boolean,
                         allowListUpdate: Boolean,
                         values: [String!]
+                    }
+
+                    type SmartFilterConf {
+                        enable: Boolean!
+                    }
+
+                    input SmartFilterConfInput {
+                        enable: Boolean!
                     }
 
                     input AttributesFiltersInput {

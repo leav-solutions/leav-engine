@@ -47,6 +47,7 @@ describe('InfosTab', () => {
                 profile: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.profile : null,
             },
             character_limit: null,
+            smart_filter: null,
         },
     };
 

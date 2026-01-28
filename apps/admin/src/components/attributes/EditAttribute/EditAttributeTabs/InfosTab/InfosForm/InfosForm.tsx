@@ -66,6 +66,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     libraries: [],
     multi_link_display_option: MultiDisplayOption.avatar,
     multi_tree_display_option: MultiDisplayOption.avatar,
+    smart_filter: null,
 };
 
 const FormWrapper = styled(Form)`
@@ -479,6 +480,21 @@ function InfosForm({
                                 value: format,
                             }))}
                             value={values.multi_link_display_option ?? ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isLinkAttribute && (
+                    <FormFieldWrapper error={_getErrorByField('smart_filter.enable')}>
+                        <Form.Checkbox
+                            label={t('attributes.smart_filter.enable')}
+                            disabled={values.system || readonly}
+                            width="8"
+                            toggle
+                            name="smart_filter.enable"
+                            aria-label="smart_filter.enable"
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            checked={!!values.smart_filter?.enable}
                         />
                     </FormFieldWrapper>
                 )}
