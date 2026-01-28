@@ -148,7 +148,7 @@ import {type ICorePluginsApp} from 'app/core/pluginsApp';
             await monitoringServerInstance.init();
             break;
         case CoreMode.E2E_PLAYWRIGHT:
-            await initPlugins(conf.pluginsPath, pluginsContainer);
+            await pluginsApp.startPlugins();
             await server.init();
             await server.initConsumers();
             await indexationManager.init();
