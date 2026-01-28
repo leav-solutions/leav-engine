@@ -14,7 +14,7 @@ import {
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import DOMPurify from 'dompurify';
-import {KitAvatar, KitBadge, KitSpace, KitTag, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitBadge, KitIdCard, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
@@ -110,28 +110,30 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 switch (attributeProperties.format) {
                     case AttributeFormat.boolean:
                         return {
-                            idCardProps: {
-                                description: value.valuePayload ? String(t('global.yes')) : String(t('global.no')),
-                            },
+                            children: (
+                                <KitIdCard
+                                    description={value.valuePayload ? String(t('global.yes')) : String(t('global.no'))}
+                                />
+                            ),
                             type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type']),
                         };
                     case AttributeFormat.color:
                         const color = new AggregationColor(value.valueRawPayload);
                         return {
-                            idCardProps: {
-                                description: value.valuePayload,
-                                avatarProps: {
-                                    color: color.toHexString(),
-                                    shape: 'square',
-                                    className: multiColorTagAvatarClassName,
-                                },
-                            },
+                            children: (
+                                <KitIdCard
+                                    description={value.valuePayload}
+                                    avatarProps={{
+                                        color: color.toHexString(),
+                                        shape: 'square',
+                                        className: multiColorTagAvatarClassName,
+                                    }}
+                                />
+                            ),
                         };
                     case AttributeFormat.date_range:
                         return {
-                            idCardProps: {
-                                description: _getDateRangeValueContent(value.valuePayload),
-                            },
+                            children: <KitIdCard description={_getDateRangeValueContent(value.valuePayload)} />,
                             type: 'primary',
                         };
                     default:
@@ -140,7 +142,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 ? '●●●●●●●●●●●●'
                                 : value.valuePayload;
                         return {
-                            idCardProps: {description: valueContent},
+                            children: <KitIdCard description={valueContent} />,
                             type: 'primary',
                         };
                 }
@@ -153,7 +155,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         <TableTagGroup
                             tags={values.map(value => ({
                                 type: 'primary',
-                                idCardProps: {description: value.linkPayload?.whoAmI.label ?? undefined},
+                                children: <KitIdCard description={value.linkPayload?.whoAmI.label ?? undefined} />,
                             }))}
                         />
                     );
@@ -190,7 +192,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         <TableTagGroup
                             tags={values.map(value => ({
                                 type: 'primary',
-                                idCardProps: {description: value.treePayload?.record.whoAmI.label ?? undefined},
+                                children: (
+                                    <KitIdCard description={value.treePayload?.record.whoAmI.label ?? undefined} />
+                                ),
                             }))}
                         />
                     );
@@ -235,11 +239,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 case AttributeFormat.boolean:
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
                     content = (
-                        <KitTag
-                            key={attributeProperties.id}
-                            type={!!value.valuePayload ? 'primary' : 'neutral'}
-                            idCardProps={{description: valueToDisplay}}
-                        />
+                        <KitTag key={attributeProperties.id} type={!!value.valuePayload ? 'primary' : 'neutral'}>
+                            <KitIdCard description={valueToDisplay} />
+                        </KitTag>
                     );
                     break;
                 case AttributeFormat.rich_text:

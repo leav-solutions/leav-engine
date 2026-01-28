@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton, KitTag} from 'aristid-ds';
+import {KitButton, KitIdCard, KitTag} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
@@ -93,7 +93,9 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
             >
                 {viewName === '' ? t('explorer.viewList.manage-views') : viewName}
                 {view.viewModified && (
-                    <ModifiedStyledKitTag type="error" idCardProps={{description: String(t('explorer.modified'))}} />
+                    <ModifiedStyledKitTag type="error">
+                        <KitIdCard description={String(t('explorer.modified'))} />
+                    </ModifiedStyledKitTag>
                 )}
             </KitButton>,
         );
