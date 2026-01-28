@@ -5,7 +5,7 @@ import {type TFunction} from 'i18next';
 import {type GetUserTasksQuery, TaskStatus} from '../../../__generated__';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClock, faSpinner, faBan, faTimes, faDownload} from '@fortawesome/free-solid-svg-icons';
-import {KitButton, KitProgress, KitSpace, KitTag, KitTooltip, KitTypography} from 'aristid-ds';
+import {KitButton, KitIdCard, KitProgress, KitSpace, KitTag, KitTooltip, KitTypography} from 'aristid-ds';
 import {activityCenterTag} from '../activityCenter.module.css';
 import {type IKitNotification} from 'aristid-ds/dist/Kit/Feedback/Notification/types';
 import {type ReactNode} from 'react';
@@ -126,11 +126,9 @@ export const getTaskDisplayData = ({
                 notificationType: 'neutral',
                 notificationIcon: <FontAwesomeIcon icon={faClock} />,
                 taskStatusTag: (
-                    <KitTag
-                        className={activityCenterTag}
-                        idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                        type="neutral"
-                    />
+                    <KitTag className={activityCenterTag} type="neutral">
+                        <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                    </KitTag>
                 ),
                 taskProgress: (
                     <KitProgress
@@ -146,11 +144,9 @@ export const getTaskDisplayData = ({
                 notificationType: 'info',
                 notificationIcon: <FontAwesomeIcon icon={faSpinner} />,
                 taskStatusTag: (
-                    <KitTag
-                        className={activityCenterTag}
-                        idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                        type="secondary"
-                    />
+                    <KitTag className={activityCenterTag} type="secondary">
+                        <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                    </KitTag>
                 ),
                 taskProgress: <KitProgress label={t('activity_center.progress')} percent={percent} />,
                 taskDurationInfo: buildDurationInfo(task.startedAt, null, t, lang),
@@ -160,11 +156,9 @@ export const getTaskDisplayData = ({
                 notificationType: 'neutral',
                 notificationIcon: hasProgress ? undefined : <FontAwesomeIcon icon={faBan} />,
                 taskStatusTag: (
-                    <KitTag
-                        className={activityCenterTag}
-                        idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                        type="neutral"
-                    />
+                    <KitTag className={activityCenterTag} type="neutral">
+                        <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                    </KitTag>
                 ),
                 taskProgress: (
                     <KitProgress
@@ -180,11 +174,9 @@ export const getTaskDisplayData = ({
                 ? {
                       notificationType: 'warning',
                       taskStatusTag: (
-                          <KitTag
-                              className={activityCenterTag}
-                              idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                              type="neutral" // TODO: When DS will be updated, use correct tag type
-                          />
+                          <KitTag className={activityCenterTag} type="neutral">
+                              <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                          </KitTag>
                       ),
                       taskProgress: (
                           <KitProgress
@@ -201,11 +193,9 @@ export const getTaskDisplayData = ({
                       notificationType: 'neutral',
                       notificationIcon: <FontAwesomeIcon icon={faBan} />,
                       taskStatusTag: (
-                          <KitTag
-                              className={activityCenterTag}
-                              idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                              type="neutral"
-                          />
+                          <KitTag className={activityCenterTag} type="neutral">
+                              <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                          </KitTag>
                       ),
                       taskProgress: (
                           <KitProgress
@@ -222,11 +212,9 @@ export const getTaskDisplayData = ({
             return {
                 notificationType: 'success',
                 taskStatusTag: (
-                    <KitTag
-                        className={activityCenterTag}
-                        idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                        type="success"
-                    />
+                    <KitTag className={activityCenterTag} type="success">
+                        <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                    </KitTag>
                 ),
                 taskProgress: (
                     <KitProgress
@@ -243,11 +231,9 @@ export const getTaskDisplayData = ({
             return {
                 notificationType: 'error',
                 taskStatusTag: (
-                    <KitTag
-                        className={activityCenterTag}
-                        idCardProps={{description: t(`activity_center.tasks.status.${task.status}`)}}
-                        type="error"
-                    />
+                    <KitTag className={activityCenterTag} type="error">
+                        <KitIdCard description={t(`activity_center.tasks.status.${task.status}`)} />
+                    </KitTag>
                 ),
                 taskProgress: (
                     <KitProgress

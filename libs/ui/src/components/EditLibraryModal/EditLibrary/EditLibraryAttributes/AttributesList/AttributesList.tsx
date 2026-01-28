@@ -5,7 +5,7 @@ import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {localizedTranslation, type Override} from '@leav/utils';
 import {Table, type TableColumnsType, type TablePaginationConfig} from 'antd';
 import {type FilterValue, type SorterResult} from 'antd/es/table/interface';
-import {KitButton, KitInput, KitTag} from 'aristid-ds';
+import {KitButton, KitIdCard, KitInput, KitTag} from 'aristid-ds';
 import {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {defaultPaginationPageSize, tagColorByAttributeFormat, tagColorByAttributeType} from '../../../../../constants';
@@ -154,10 +154,9 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
                         borderColor: tagColorByAttributeType[type][0],
                         backgroundColor: tagColorByAttributeType[type][1],
                     }}
-                    idCardProps={{
-                        description: t(`attributes.type_${type}`),
-                    }}
-                />
+                >
+                    <KitIdCard description={t(`attributes.type_${type}`)} />
+                </KitTag>
             ),
             filters: Object.values(AttributeType).map(type => ({
                 text: t(`attributes.type_${type}`),
@@ -183,10 +182,9 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
                             borderColor: tagColorByAttributeFormat[format][0],
                             backgroundColor: tagColorByAttributeFormat[format][1],
                         }}
-                        idCardProps={{
-                            description: t(`attributes.format_${format}`),
-                        }}
-                    />
+                    >
+                        <KitIdCard description={t(`attributes.format_${format}`)} />
+                    </KitTag>
                 ) : null,
             filters: Object.values(AttributeFormat).map(format => ({
                 text: t(`attributes.format_${format}`),

@@ -6,7 +6,7 @@ import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, type Override} from '@leav/utils';
 import {Table, type TableColumnsType, type TablePaginationConfig} from 'antd';
 import {type FilterValue, type SorterResult} from 'antd/lib/table/interface';
-import {KitButton, KitInput, KitTag} from 'aristid-ds';
+import {KitButton, KitIdCard, KitInput, KitTag} from 'aristid-ds';
 import {type Key, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {
@@ -214,10 +214,9 @@ function AttributesList({
                         borderColor: tagColorByAttributeType[type][0],
                         backgroundColor: tagColorByAttributeType[type][1],
                     }}
-                    idCardProps={{
-                        description: t(`attributes.type_${type}`),
-                    }}
-                />
+                >
+                    <KitIdCard description={t(`attributes.type_${type}`)} />
+                </KitTag>
             ),
             filters: Object.values(AttributeType).map(type => ({
                 text: t(`attributes.type_${type}`),
@@ -243,10 +242,9 @@ function AttributesList({
                             borderColor: tagColorByAttributeFormat[format][0],
                             backgroundColor: tagColorByAttributeFormat[format][1],
                         }}
-                        idCardProps={{
-                            description: t(`attributes.format_${format}`),
-                        }}
-                    />
+                    >
+                        <KitIdCard description={t(`attributes.format_${format}`)} />
+                    </KitTag>
                 ) : null,
             filters: Object.values(AttributeFormat).map(format => ({
                 text: t(`attributes.format_${format}`),

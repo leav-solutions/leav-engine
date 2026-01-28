@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState, type FunctionComponent} from 'react';
 import {type ITreeMapElement} from './_types';
-import {KitButton, KitTag, KitTypography} from 'aristid-ds';
+import {KitButton, KitIdCard, KitTag, KitTypography} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import {type ITreeNodeWithRecord} from '_ui/types';
@@ -99,7 +99,11 @@ const SelectedChildrenCount: FunctionComponent<{
 
     const selectedChildrenCount = countSelectedNodes(node, selectedNodes);
 
-    return selectedChildrenCount > 0 ? <KitTag idCardProps={{description: selectedChildrenCount}} /> : null;
+    return selectedChildrenCount > 0 ? (
+        <KitTag>
+            <KitIdCard description={selectedChildrenCount} />
+        </KitTag>
+    ) : null;
 };
 
 const countSelectedNodes = (node: ITreeMapElement, selectedNodes: string[]): number =>

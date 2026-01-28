@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitRadio, KitSpace, KitTag} from 'aristid-ds';
+import {KitIdCard, KitRadio, KitSpace, KitTag} from 'aristid-ds';
 import {type RadioGroupProps} from 'aristid-ds/dist/Kit/DataEntry/Radio';
 import {type FunctionComponent} from 'react';
 
@@ -14,7 +14,11 @@ interface ISelectViewTypeProps {
 export const SelectViewType: FunctionComponent<ISelectViewTypeProps> = ({value, onChange}) => {
     const {t} = useSharedTranslation();
 
-    const comingSoonTag = <KitTag type="secondary" idCardProps={{description: String(t('explorer.coming-soon'))}} />;
+    const comingSoonTag = (
+        <KitTag type="secondary">
+            <KitIdCard description={String(t('explorer.coming-soon'))} />
+        </KitTag>
+    );
 
     return (
         <KitRadio.Group value={value} onChange={onChange}>
