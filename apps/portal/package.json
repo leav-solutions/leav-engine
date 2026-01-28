@@ -17,7 +17,7 @@
         "tscheck:watch": "tsc -w --noEmit -p ."
     },
     "dependencies": {
-        "@ant-design/icons": "5.2.6",
+        "@ant-design/icons": "5.6.1",
         "@apollo/client": "3.8.1",
         "@apollo/link-error": "2.0.0-beta.3",
         "@leav/ui": "workspace:libs/ui",

@@ -115,13 +115,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons-svg@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "@ant-design/icons-svg@npm:4.3.0"
-  checksum: 10/66a728a23a344f3dc5cbbf0c4260b9e17f7d70e8814e0428ed6494afe0507085559b0e5fbfb9ead4a8ef9ecc811c2869db34cbe086de00e3b7fd5e4ccc1b4f64
-  languageName: node
-  linkType: hard
-
 "@ant-design/icons-svg@npm:^4.4.0":
   version: 4.4.2
   resolution: "@ant-design/icons-svg@npm:4.4.2"
@@ -129,23 +122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:5.2.6":
-  version: 5.2.6
-  resolution: "@ant-design/icons@npm:5.2.6"
-  dependencies:
-    "@ant-design/colors": "npm:^7.0.0"
-    "@ant-design/icons-svg": "npm:^4.3.0"
-    "@babel/runtime": "npm:^7.11.2"
-    classnames: "npm:^2.2.6"
-    rc-util: "npm:^5.31.1"
-  peerDependencies:
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: 10/559a53c5f1e14e72a2c462816f2765bbdf92cf3c57111ad9a5d5494d6e98586936e7a1db295c1a7f7726cadd01b57d49a38e79ac04595d681f83c1cee88c0c3e
-  languageName: node
-  linkType: hard
-
-"@ant-design/icons@npm:^5.5.1":
+"@ant-design/icons@npm:5.6.1, @ant-design/icons@npm:^5.5.1":
   version: 5.6.1
   resolution: "@ant-design/icons@npm:5.6.1"
   dependencies:
@@ -8731,7 +8708,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/ui@workspace:libs/ui"
   dependencies:
-    "@ant-design/icons": "npm:5.2.6"
+    "@ant-design/icons": "npm:5.6.1"
     "@apollo/client": "npm:3.8.1"
     "@babel/preset-env": "npm:7.28.6"
     "@babel/preset-react": "npm:7.28.5"
@@ -16072,7 +16049,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "data-studio@workspace:apps/data-studio"
   dependencies:
-    "@ant-design/icons": "npm:5.2.6"
+    "@ant-design/icons": "npm:5.6.1"
     "@apollo/client": "npm:3.8.1"
     "@apollo/link-error": "npm:2.0.0-beta.3"
     "@fortawesome/fontawesome-svg-core": "npm:7.0.1"
@@ -23412,7 +23389,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "login@workspace:apps/login"
   dependencies:
-    "@ant-design/icons": "npm:5.2.6"
+    "@ant-design/icons": "npm:5.6.1"
     "@apollo/client": "npm:3.8.1"
     "@leav/ui": "workspace:libs/ui"
     "@testing-library/jest-dom": "npm:5.17.0"
@@ -25204,7 +25181,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "portal@workspace:apps/portal"
   dependencies:
-    "@ant-design/icons": "npm:5.2.6"
+    "@ant-design/icons": "npm:5.6.1"
     "@apollo/client": "npm:3.8.1"
     "@apollo/link-error": "npm:2.0.0-beta.3"
     "@graphql-codegen/cli": "npm:6.1.1"
