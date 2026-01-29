@@ -13,7 +13,7 @@ import {
     type UIFilter,
 } from '../../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck} from '@fortawesome/free-solid-svg-icons';
+import {faCheck, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {EmptyValueCheckbox} from '../EmptyValueCheckbox';
 
 interface IFilterValueListDropDownProps {
@@ -144,9 +144,10 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
     return (
         <>
             <KitInput
+                prefix={<FontAwesomeIcon icon={faSearch} />}
+                placeholder={t('global.search')}
                 value={searchText}
                 onChange={e => setSearchText(e.target.value)}
-                placeholder={t('global.search') + '...'}
                 allowClear
             />
             <EmptyValueCheckbox onSelect={_handleOnCheckEmptyValue} filter={filter} />

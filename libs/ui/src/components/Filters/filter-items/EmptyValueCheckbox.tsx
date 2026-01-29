@@ -30,6 +30,7 @@ export const EmptyValueCheckbox: FunctionComponent<IEmptyValueCheckboxProps> = (
             checkable
             treeData={[{title: t('filters.empty-value'), key: EMPTY_VALUE_KEY, isLeaf: true}]}
             checkedKeys={filter.withEmptyValues ? [EMPTY_VALUE_KEY] : []}
+            selectedKeys={filter.withEmptyValues ? [EMPTY_VALUE_KEY] : []}
             onSelect={onChange}
             onCheck={onChange}
         />

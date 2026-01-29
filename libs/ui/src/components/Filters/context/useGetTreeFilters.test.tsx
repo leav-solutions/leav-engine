@@ -3,16 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook, waitFor} from '@testing-library/react';
 import {useGetTreeFilters} from './useGetTreeFilters';
-import {useGetLibraryByIdQuery, useTreeFilterByDefaultValuesLazyQuery} from '_ui/_gqlTypes';
+import {useGetLibraryByIdQuery, useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery} from '_ui/_gqlTypes';
 
 jest.mock('_ui/_gqlTypes', () => ({
+    ...jest.requireActual('_ui/_gqlTypes'),
     useGetLibraryByIdQuery: jest.fn(),
-    useTreeFilterByDefaultValuesLazyQuery: jest.fn(),
+    useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery: jest.fn(),
 }));
 
 describe('useGetTreeFilters', () => {
     const mockLibraryId = 'test-library-id';
-    const mockTreeFilterByDefaultValues = jest.fn();
+    const mockLoadTreeContent = jest.fn();
 
     const mockLibraryData = {
         libraries: {
@@ -43,6 +44,7 @@ describe('useGetTreeFilters', () => {
                 list: [
                     {
                         id: 'node1',
+                        childrenCount: 0,
                         accessRecordByDefaultPermission: true,
                         record: {
                             id: 'record1',
@@ -54,6 +56,7 @@ describe('useGetTreeFilters', () => {
                     },
                     {
                         id: 'node2',
+                        childrenCount: 0,
                         accessRecordByDefaultPermission: false,
                         record: {
                             id: 'record2',
@@ -64,6 +67,7 @@ describe('useGetTreeFilters', () => {
                         },
                     },
                 ],
+                totalCount: 2,
             },
         },
     };
@@ -74,6 +78,7 @@ describe('useGetTreeFilters', () => {
                 list: [
                     {
                         id: 'node3',
+                        childrenCount: 0,
                         accessRecordByDefaultPermission: true,
                         record: {
                             id: 'record3',
@@ -84,13 +89,17 @@ describe('useGetTreeFilters', () => {
                         },
                     },
                 ],
+                totalCount: 1,
             },
         },
     };
 
     beforeEach(() => {
         jest.clearAllMocks();
-        (useTreeFilterByDefaultValuesLazyQuery as jest.Mock).mockReturnValue([mockTreeFilterByDefaultValues, {}]);
+        (useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery as jest.Mock).mockReturnValue([
+            mockLoadTreeContent,
+            {},
+        ]);
     });
 
     describe('Initial state', () => {
@@ -126,7 +135,7 @@ describe('useGetTreeFilters', () => {
                 }),
             );
 
-            expect(mockTreeFilterByDefaultValues).not.toHaveBeenCalled();
+            expect(mockLoadTreeContent).not.toHaveBeenCalled();
         });
 
         test('should not fetch data when libraryId is empty', () => {
@@ -142,7 +151,7 @@ describe('useGetTreeFilters', () => {
                 }),
             );
 
-            expect(mockTreeFilterByDefaultValues).not.toHaveBeenCalled();
+            expect(mockLoadTreeContent).not.toHaveBeenCalled();
         });
 
         test('should not fetch data when library is still loading', () => {
@@ -158,7 +167,7 @@ describe('useGetTreeFilters', () => {
                 }),
             );
 
-            expect(mockTreeFilterByDefaultValues).not.toHaveBeenCalled();
+            expect(mockLoadTreeContent).not.toHaveBeenCalled();
         });
     });
 
@@ -169,9 +178,7 @@ describe('useGetTreeFilters', () => {
                 loading: false,
             });
 
-            mockTreeFilterByDefaultValues
-                .mockResolvedValueOnce(mockTreeResponse1)
-                .mockResolvedValueOnce(mockTreeResponse2);
+            mockLoadTreeContent.mockResolvedValueOnce(mockTreeResponse1).mockResolvedValueOnce(mockTreeResponse2);
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -184,19 +191,23 @@ describe('useGetTreeFilters', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(mockTreeFilterByDefaultValues).toHaveBeenCalledTimes(2);
-            expect(mockTreeFilterByDefaultValues).toHaveBeenCalledWith({
+            expect(mockLoadTreeContent).toHaveBeenCalledTimes(2);
+            expect(mockLoadTreeContent).toHaveBeenCalledWith({
                 variables: {
                     treeId: 'tree1',
+                    node: null,
+                    pagination: {offset: 0, limit: 20},
                     accessRecordByDefaultPermission: {
                         attributeId: 'attribute1',
                         libraryId: mockLibraryId,
                     },
                 },
             });
-            expect(mockTreeFilterByDefaultValues).toHaveBeenCalledWith({
+            expect(mockLoadTreeContent).toHaveBeenCalledWith({
                 variables: {
                     treeId: 'tree2',
+                    node: null,
+                    pagination: {offset: 0, limit: 20},
                     accessRecordByDefaultPermission: {
                         attributeId: 'attribute2',
                         libraryId: mockLibraryId,
@@ -230,9 +241,9 @@ describe('useGetTreeFilters', () => {
                 loading: false,
             });
 
-            mockTreeFilterByDefaultValues
+            mockLoadTreeContent
                 .mockResolvedValueOnce(mockTreeResponse1)
-                .mockResolvedValueOnce({data: {treeNodeChildren: {list: []}}});
+                .mockResolvedValueOnce({data: {treeNodeChildren: {list: [], totalCount: 0}}});
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -279,7 +290,7 @@ describe('useGetTreeFilters', () => {
             });
 
             expect(result.current.data).toEqual({});
-            expect(mockTreeFilterByDefaultValues).not.toHaveBeenCalled();
+            expect(mockLoadTreeContent).not.toHaveBeenCalled();
         });
 
         test('should handle missing permissions_conf', async () => {
@@ -318,9 +329,9 @@ describe('useGetTreeFilters', () => {
                 loading: false,
             });
 
-            mockTreeFilterByDefaultValues
-                .mockResolvedValueOnce({data: {treeNodeChildren: {list: null}}})
-                .mockResolvedValueOnce({data: {treeNodeChildren: {list: []}}});
+            mockLoadTreeContent
+                .mockResolvedValueOnce({data: {treeNodeChildren: {list: [], totalCount: 0}}})
+                .mockResolvedValueOnce({data: {treeNodeChildren: {list: [], totalCount: 0}}});
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -344,14 +355,14 @@ describe('useGetTreeFilters', () => {
                 loading: false,
             });
 
-            mockTreeFilterByDefaultValues.mockResolvedValue(mockTreeResponse1);
+            mockLoadTreeContent.mockResolvedValue(mockTreeResponse1);
 
             const {rerender} = renderHook(({libraryId, skip}) => useGetTreeFilters({libraryId, skip}), {
                 initialProps: {libraryId: mockLibraryId, skip: false},
             });
 
             await waitFor(() => {
-                expect(mockTreeFilterByDefaultValues).toHaveBeenCalledTimes(2);
+                expect(mockLoadTreeContent).toHaveBeenCalledTimes(2);
             });
 
             jest.clearAllMocks();
@@ -359,7 +370,7 @@ describe('useGetTreeFilters', () => {
             rerender({libraryId: 'new-library-id', skip: false});
 
             await waitFor(() => {
-                expect(mockTreeFilterByDefaultValues).toHaveBeenCalled();
+                expect(mockLoadTreeContent).toHaveBeenCalled();
             });
         });
 
@@ -369,18 +380,18 @@ describe('useGetTreeFilters', () => {
                 loading: false,
             });
 
-            mockTreeFilterByDefaultValues.mockResolvedValue(mockTreeResponse1);
+            mockLoadTreeContent.mockResolvedValue(mockTreeResponse1);
 
             const {rerender} = renderHook(({libraryId, skip}) => useGetTreeFilters({libraryId, skip}), {
                 initialProps: {libraryId: mockLibraryId, skip: true},
             });
 
-            expect(mockTreeFilterByDefaultValues).not.toHaveBeenCalled();
+            expect(mockLoadTreeContent).not.toHaveBeenCalled();
 
             rerender({libraryId: mockLibraryId, skip: false});
 
             await waitFor(() => {
-                expect(mockTreeFilterByDefaultValues).toHaveBeenCalled();
+                expect(mockLoadTreeContent).toHaveBeenCalled();
             });
         });
     });

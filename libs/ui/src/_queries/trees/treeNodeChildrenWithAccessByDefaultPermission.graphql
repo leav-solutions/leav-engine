@@ -1,0 +1,49 @@
+query GetTreeNodeChildrenWithAccessByDefaultPermissionQuery(
+    $treeId: ID!
+    $node: ID
+    $pagination: Pagination
+    $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput
+    $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput
+    $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput
+) {
+    treeNodeChildren(
+        treeId: $treeId
+        node: $node
+        pagination: $pagination
+        childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+        dependentValuesPermissionFilter: $dependentValuesPermissionFilter
+        accessRecordByDefaultPermission: $accessRecordByDefaultPermission
+    ) {
+        totalCount
+        list {
+            id
+            order
+            childrenCount
+            record {
+                ...RecordIdentity
+                active: property(attribute: "active") {
+                    ... on Value {
+                        value
+                    }
+                }
+            }
+            ancestors {
+                id
+                record {
+                    id
+                    library {
+                        id
+                        label
+                    }
+                    ...RecordIdentity
+                }
+            }
+            permissions {
+                access_tree
+                detach
+                edit_children
+            }
+            accessRecordByDefaultPermission
+        }
+    }
+}

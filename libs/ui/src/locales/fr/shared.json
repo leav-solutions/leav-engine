@@ -310,7 +310,10 @@
         "activate": "Activer",
         "add": "Ajouter",
         "add-condition": "Ajouter une condition",
-        "empty-value": "Non défini"
+        "empty-value": "Non défini",
+        "visible-by-default": "Valeurs affichée(s) par défaut",
+        "hidden-by-default": "Valeurs masquée(s) par défaut",
+        "select-all": "Tout sélectionner"
     },
     "filter-item": {
         "no-operator": "Si"

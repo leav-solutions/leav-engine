@@ -602,6 +602,7 @@ export enum PermissionsActions {
   admin_edit_version_profile = 'admin_edit_version_profile',
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
+  admin_list_plugins = 'admin_list_plugins',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -1677,6 +1678,18 @@ export type TreeNodeChildrenQueryVariables = Exact<{
 
 export type TreeNodeChildrenQuery = { treeNodeChildren: { totalCount?: number | null, list: Array<{ id: string, order?: number | null, childrenCount?: number | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> } };
 
+export type GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  node?: InputMaybe<Scalars['ID']['input']>;
+  pagination?: InputMaybe<Pagination>;
+  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
+  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
+}>;
+
+
+export type GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery = { treeNodeChildren: { totalCount?: number | null, list: Array<{ id: string, order?: number | null, childrenCount?: number | null, accessRecordByDefaultPermission?: boolean | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> } };
+
 export type GetUserDataQueryVariables = Exact<{
   keys: Array<Scalars['String']['input']> | Scalars['String']['input'];
   global?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1760,14 +1773,6 @@ export type SaveViewMutationVariables = Exact<{
 
 
 export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
-
-export type TreeFilterByDefaultValuesQueryVariables = Exact<{
-  treeId: Scalars['ID']['input'];
-  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
-}>;
-
-
-export type TreeFilterByDefaultValuesQuery = { treeNodeChildren: { list: Array<{ accessRecordByDefaultPermission?: boolean | null, id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> } };
 
 export type AttributeWithValuesForMassEditionQueryVariables = Exact<{
   attributeId: Scalars['ID']['input'];
@@ -4887,6 +4892,91 @@ export type TreeNodeChildrenQueryHookResult = ReturnType<typeof useTreeNodeChild
 export type TreeNodeChildrenLazyQueryHookResult = ReturnType<typeof useTreeNodeChildrenLazyQuery>;
 export type TreeNodeChildrenSuspenseQueryHookResult = ReturnType<typeof useTreeNodeChildrenSuspenseQuery>;
 export type TreeNodeChildrenQueryResult = Apollo.QueryResult<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>;
+export const GetTreeNodeChildrenWithAccessByDefaultPermissionQueryDocument = gql`
+    query GetTreeNodeChildrenWithAccessByDefaultPermissionQuery($treeId: ID!, $node: ID, $pagination: Pagination, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
+  treeNodeChildren(
+    treeId: $treeId
+    node: $node
+    pagination: $pagination
+    childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+    dependentValuesPermissionFilter: $dependentValuesPermissionFilter
+    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
+  ) {
+    totalCount
+    list {
+      id
+      order
+      childrenCount
+      record {
+        ...RecordIdentity
+        active: property(attribute: "active") {
+          ... on Value {
+            value
+          }
+        }
+      }
+      ancestors {
+        id
+        record {
+          id
+          library {
+            id
+            label
+          }
+          ...RecordIdentity
+        }
+      }
+      permissions {
+        access_tree
+        detach
+        edit_children
+      }
+      accessRecordByDefaultPermission
+    }
+  }
+}
+    ${RecordIdentityFragmentDoc}`;
+
+/**
+ * __useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery__
+ *
+ * To run a query within a React component, call `useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      node: // value for 'node'
+ *      pagination: // value for 'pagination'
+ *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
+ *      dependentValuesPermissionFilter: // value for 'dependentValuesPermissionFilter'
+ *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
+ *   },
+ * });
+ */
+export function useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery(baseOptions: Apollo.QueryHookOptions<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables> & ({ variables: GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>(GetTreeNodeChildrenWithAccessByDefaultPermissionQueryDocument, options);
+      }
+export function useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>(GetTreeNodeChildrenWithAccessByDefaultPermissionQueryDocument, options);
+        }
+// @ts-ignore
+export function useGetTreeNodeChildrenWithAccessByDefaultPermissionQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>;
+export function useGetTreeNodeChildrenWithAccessByDefaultPermissionQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery | undefined, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>;
+export function useGetTreeNodeChildrenWithAccessByDefaultPermissionQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>(GetTreeNodeChildrenWithAccessByDefaultPermissionQueryDocument, options);
+        }
+export type GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryHookResult = ReturnType<typeof useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery>;
+export type GetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQueryHookResult = ReturnType<typeof useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery>;
+export type GetTreeNodeChildrenWithAccessByDefaultPermissionQuerySuspenseQueryHookResult = ReturnType<typeof useGetTreeNodeChildrenWithAccessByDefaultPermissionQuerySuspenseQuery>;
+export type GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryResult = Apollo.QueryResult<GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQuery, GetTreeNodeChildrenWithAccessByDefaultPermissionQueryQueryVariables>;
 export const GetUserDataDocument = gql`
     query GET_USER_DATA($keys: [String!]!, $global: Boolean) {
   userData(keys: $keys, global: $global) {
@@ -5255,66 +5345,6 @@ export function useSaveViewMutation(baseOptions?: Apollo.MutationHookOptions<Sav
 export type SaveViewMutationHookResult = ReturnType<typeof useSaveViewMutation>;
 export type SaveViewMutationResult = Apollo.MutationResult<SaveViewMutation>;
 export type SaveViewMutationOptions = Apollo.BaseMutationOptions<SaveViewMutation, SaveViewMutationVariables>;
-export const TreeFilterByDefaultValuesDocument = gql`
-    query TreeFilterByDefaultValues($treeId: ID!, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
-  treeNodeChildren(
-    treeId: $treeId
-    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
-  ) {
-    list {
-      accessRecordByDefaultPermission
-      id
-      record {
-        id
-        whoAmI {
-          label
-          id
-          library {
-            id
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useTreeFilterByDefaultValuesQuery__
- *
- * To run a query within a React component, call `useTreeFilterByDefaultValuesQuery` and pass it any options that fit your needs.
- * When your component renders, `useTreeFilterByDefaultValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTreeFilterByDefaultValuesQuery({
- *   variables: {
- *      treeId: // value for 'treeId'
- *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
- *   },
- * });
- */
-export function useTreeFilterByDefaultValuesQuery(baseOptions: Apollo.QueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables> & ({ variables: TreeFilterByDefaultValuesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
-      }
-export function useTreeFilterByDefaultValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
-        }
-// @ts-ignore
-export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>): Apollo.UseSuspenseQueryResult<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>;
-export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>): Apollo.UseSuspenseQueryResult<TreeFilterByDefaultValuesQuery | undefined, TreeFilterByDefaultValuesQueryVariables>;
-export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
-        }
-export type TreeFilterByDefaultValuesQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesQuery>;
-export type TreeFilterByDefaultValuesLazyQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesLazyQuery>;
-export type TreeFilterByDefaultValuesSuspenseQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesSuspenseQuery>;
-export type TreeFilterByDefaultValuesQueryResult = Apollo.QueryResult<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>;
 export const AttributeWithValuesForMassEditionDocument = gql`
     query AttributeWithValuesForMassEdition($attributeId: ID!) {
   attributes(filters: {id: $attributeId}) {

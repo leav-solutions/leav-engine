@@ -12,7 +12,7 @@ import {ExtendedAttributeDropDown} from './ExtendedAttributeDropDown';
 import {LinkAttributeDropDown} from './LinkAttributeDropdown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 import {TextAttributeDropDown} from './TextAttributeDropDown';
-import {TreeAttributeDropDown} from './TreeAttributeDropDown';
+import {TreeAttributeDropDown} from './tree/TreeAttributeDropDown';
 import {FilterValueListDropDown} from './FilterValueListDropDown';
 import {
     isUIFilterLink,
