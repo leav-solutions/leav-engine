@@ -24,6 +24,7 @@ export interface IRecordIdentityWhoAmI {
     color?: string | null;
     library: IRecordIdentityLibrary;
     preview?: IPreviewScalar | null;
+    parentContext?: IRecordIdentityWhoAmI[] | null;
 }
 
 export interface IRecordIdentity {

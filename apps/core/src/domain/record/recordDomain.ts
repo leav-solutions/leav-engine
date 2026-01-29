@@ -366,6 +366,10 @@ export default function ({
 
             labelValues = getValuesToDisplay(labelValues);
 
+            if (!labelValues.length) {
+                return null;
+            }
+
             const value: IValue['payload'] | undefined = labelValues?.[0]?.payload;
 
             if (utils.isLinkAttribute(labelAttributeProps)) {
@@ -516,6 +520,56 @@ export default function ({
             interpolation: {escapeValue: false},
         });
 
+    const _getParentContext = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity[] | null> => {
+        if (!record) {
+            return null;
+        }
+
+        const lib = await validateHelper.validateLibrary(record.library, ctx);
+        const conf = lib.recordIdentityConf || {};
+        const parentContext = conf.parentContext;
+
+        // If no parent context attribute is defined, return null
+        if (!parentContext) {
+            return null;
+        }
+
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null,
+        };
+
+        // Get the value of the parent context attribute (must be a SIMPLE_LINK)
+        let parentContextValues = await valueDomain.getValues({
+            library: lib.id,
+            recordId: record.id,
+            attribute: parentContext,
+            options: valuesOptions,
+            ctx,
+        });
+
+        parentContextValues = getValuesToDisplay(parentContextValues);
+
+        // If no value, return null (no parent context)
+        if (!parentContextValues.length || !parentContextValues[0]?.payload) {
+            return null;
+        }
+
+        const parentRecord: IRecord = parentContextValues[0].payload;
+
+        // Get the full identity of the parent record
+        const parentIdentity = await _getRecordIdentity(parentRecord, ctx);
+
+        // Recursively get the parent context of the parent record
+        const ancestorContext = await _getParentContext(parentRecord, ctx);
+
+        // Build the context path: ancestors first, current parent first, then ancestors
+        if (ancestorContext) {
+            return [parentIdentity, ...ancestorContext];
+        }
+
+        return [parentIdentity];
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
@@ -615,6 +669,8 @@ export default function ({
             return preview;
         };
 
+        const getParentContext = conf.parentContext ? () => _getParentContext(record, ctx) : null;
+
         return {
             id: record.id,
             library: lib,
@@ -622,6 +678,7 @@ export default function ({
             getSubLabel,
             getColor,
             getPreview,
+            getParentContext,
         };
     };
 

@@ -91,6 +91,7 @@ export interface IRecordIdentity {
     getSubLabel?: () => Promise<string | null>;
     getColor?: () => Promise<string | null>;
     getPreview?: () => Promise<IPreview | null>;
+    getParentContext?: () => Promise<IRecordIdentity[] | null>;
 }
 
 export interface IRecordIdentityConf {

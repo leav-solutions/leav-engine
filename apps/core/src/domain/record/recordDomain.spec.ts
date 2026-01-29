@@ -1393,6 +1393,374 @@ describe('RecordDomain', () => {
             expect(await res.getColor?.()).toBeFalsy();
             expect(await res.getPreview?.()).toBeFalsy();
         });
+
+        describe('Record entity with parentContext', () => {
+            test('Return record identity with parent context', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                };
+
+                const parentRecord = {
+                    id: '111111111',
+                    library: 'parent_lib',
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        parentContext: 'parent_link_attr',
+                        label: 'label_attr',
+                    },
+                };
+
+                const parentLibData = {
+                    id: 'parent_lib',
+                    recordIdentityConf: {
+                        label: 'label_attr',
+                    },
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: jest.fn().mockImplementation(({attribute}) => {
+                        if (attribute === 'parent_link_attr') {
+                            return Promise.resolve([{payload: parentRecord}]);
+                        }
+                        if (attribute === 'label_attr') {
+                            return Promise.resolve([{payload: 'Parent Label'}]);
+                        }
+                        return Promise.resolve([]);
+                    }),
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockImplementation((type, id) => {
+                    if (id === 'test_lib') {
+                        return libData;
+                    }
+                    if (id === 'parent_lib') {
+                        return parentLibData;
+                    }
+                    return null;
+                });
+
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockImplementation(libraryId => {
+                        if (libraryId === 'test_lib') {
+                            return libData;
+                        }
+                        if (libraryId === 'parent_lib') {
+                            return parentLibData;
+                        }
+                        return null;
+                    }),
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple),
+                };
+
+                const recDomain = recordDomain({
+                    ...depsBase,
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig,
+                });
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.getParentContext).toBeDefined();
+                const parentContext = await res.getParentContext();
+                expect(parentContext).toHaveLength(1);
+                expect(parentContext[0].id).toBe('111111111');
+                expect(parentContext[0].library).toEqual(parentLibData);
+                expect(await parentContext[0].getLabel()).toBe('Parent Label');
+            });
+
+            test('Return record identity with nested parent context', async () => {
+                const record = {
+                    id: '333333333',
+                    library: 'child_lib',
+                };
+
+                const parentRecord = {
+                    id: '222222222',
+                    library: 'parent_lib',
+                };
+
+                const grandParentRecord = {
+                    id: '111111111',
+                    library: 'grandparent_lib',
+                };
+
+                const childLibData = {
+                    id: 'child_lib',
+                    recordIdentityConf: {
+                        parentContext: 'parent_link_attr',
+                        label: 'label_attr',
+                    },
+                };
+
+                const parentLibData = {
+                    id: 'parent_lib',
+                    recordIdentityConf: {
+                        parentContext: 'grandparent_link_attr',
+                        label: 'label_attr',
+                    },
+                };
+
+                const grandParentLibData = {
+                    id: 'grandparent_lib',
+                    recordIdentityConf: {
+                        label: 'label_attr',
+                    },
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: jest.fn().mockImplementation(({library, attribute}) => {
+                        if (library === 'child_lib' && attribute === 'parent_link_attr') {
+                            return Promise.resolve([{payload: parentRecord}]);
+                        }
+                        if (library === 'parent_lib' && attribute === 'grandparent_link_attr') {
+                            return Promise.resolve([{payload: grandParentRecord}]);
+                        }
+                        if (library === 'parent_lib' && attribute === 'label_attr') {
+                            return Promise.resolve([{payload: 'Parent Label'}]);
+                        }
+                        if (library === 'grandparent_lib' && attribute === 'label_attr') {
+                            return Promise.resolve([{payload: 'GrandParent Label'}]);
+                        }
+                        return Promise.resolve([]);
+                    }),
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockImplementation((type, id) => {
+                    if (id === 'child_lib') {
+                        return childLibData;
+                    }
+                    if (id === 'parent_lib') {
+                        return parentLibData;
+                    }
+                    if (id === 'grandparent_lib') {
+                        return grandParentLibData;
+                    }
+                    return null;
+                });
+
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockImplementation(libraryId => {
+                        if (libraryId === 'child_lib') {
+                            return childLibData;
+                        }
+                        if (libraryId === 'parent_lib') {
+                            return parentLibData;
+                        }
+                        if (libraryId === 'grandparent_lib') {
+                            return grandParentLibData;
+                        }
+                        return null;
+                    }),
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple),
+                };
+
+                const recDomain = recordDomain({
+                    ...depsBase,
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig,
+                });
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.getParentContext).toBeDefined();
+                const parentContext = await res.getParentContext();
+                expect(parentContext).toHaveLength(2);
+                // Index 0 is the direct parent, index 1 is the grandparent, etc.
+                expect(parentContext[0].id).toBe('222222222');
+                expect(parentContext[0].library).toEqual(parentLibData);
+                expect(await parentContext[0].getLabel()).toBe('Parent Label');
+                expect(parentContext[1].id).toBe('111111111');
+                expect(parentContext[1].library).toEqual(grandParentLibData);
+                expect(await parentContext[1].getLabel()).toBe('GrandParent Label');
+            });
+
+            test('Return null when no parentContext is configured', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        label: 'label_attr',
+                    },
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: jest.fn(),
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const recDomain = recordDomain({
+                    ...depsBase,
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                    'core.utils': mockUtils as IUtils,
+                });
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.getParentContext).toBeNull();
+            });
+
+            test('Return null when parentContext attribute has no value', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        parentContext: 'parent_link_attr',
+                        label: 'label_attr',
+                    },
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: jest.fn().mockImplementation(({attribute}) => {
+                        if (attribute === 'parent_link_attr') {
+                            return Promise.resolve([]);
+                        }
+                        return Promise.resolve([]);
+                    }),
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
+                };
+
+                const recDomain = recordDomain({
+                    ...depsBase,
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                    'core.utils': mockUtils as IUtils,
+                });
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.getParentContext).toBeDefined();
+                const parentContext = await res.getParentContext();
+                expect(parentContext).toBeNull();
+            });
+
+            test('Use record id as label when parent record has no label', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                };
+
+                const parentRecord = {
+                    id: '111111111',
+                    library: 'parent_lib',
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        parentContext: 'parent_link_attr',
+                        label: 'label_attr',
+                    },
+                };
+
+                const parentLibData = {
+                    id: 'parent_lib',
+                    recordIdentityConf: {
+                        label: 'label_attr',
+                    },
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: jest.fn().mockImplementation(({attribute}) => {
+                        if (attribute === 'parent_link_attr') {
+                            return Promise.resolve([{payload: parentRecord}]);
+                        }
+                        if (attribute === 'label_attr') {
+                            return Promise.resolve([{payload: null}]);
+                        }
+                        return Promise.resolve([]);
+                    }),
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockImplementation((type, id) => {
+                    if (id === 'test_lib') {
+                        return libData;
+                    }
+                    if (id === 'parent_lib') {
+                        return parentLibData;
+                    }
+                    return null;
+                });
+
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockImplementation(libraryId => {
+                        if (libraryId === 'test_lib') {
+                            return libData;
+                        }
+                        if (libraryId === 'parent_lib') {
+                            return parentLibData;
+                        }
+                        return null;
+                    }),
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple),
+                };
+
+                const recDomain = recordDomain({
+                    ...depsBase,
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig,
+                });
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.getParentContext).toBeDefined();
+                const parentContext = await res.getParentContext();
+                expect(parentContext).toHaveLength(1);
+                expect(parentContext[0].id).toBe('111111111');
+                expect(parentContext[0].library).toEqual(parentLibData);
+                expect(parentContext[0].getLabel).toBeDefined();
+                const parentLabel = await parentContext[0].getLabel();
+                expect(parentLabel).toBeNull();
+            });
+        });
     });
 
     describe('Deactivate record', () => {

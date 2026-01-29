@@ -229,4 +229,199 @@ describe('Record identity', () => {
         expect(res.data.data.records.list[0].whoAmI.label).toBe('my tree label');
         expect(res.data.data.records.list[0].whoAmI.color).toBe('#654321');
     });
+
+    describe('Parent context', () => {
+        const parentContextLibraryId = 'record_identity_parent_context_library';
+        const parentLibraryId = 'record_identity_parent_library';
+        const grandParentLibraryId = 'record_identity_grandparent_library';
+        const parentLinkAttributeId = 'record_identity_parent_link_attribute';
+        const grandParentLinkAttributeId = 'record_identity_grandparent_link_attribute';
+        const parentLabelAttributeId = 'record_identity_parent_label_attribute';
+
+        let childRecordId;
+        let parentRecordId;
+        let grandParentRecordId;
+
+        beforeAll(async () => {
+            // Create label attribute for parent context
+            await gqlSaveAttribute({
+                id: parentLabelAttributeId,
+                label: 'Parent Label Attribute',
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.TEXT,
+            });
+
+            // Create grandparent library
+            await makeGraphQlCall(`
+                mutation {
+                    saveLibrary(library: {
+                        id: "${grandParentLibraryId}",
+                        label: {en: "GrandParent Library"},
+                        attributes: ["${parentLabelAttributeId}"],
+                        recordIdentityConf: {
+                            label: "${parentLabelAttributeId}"
+                        }
+                    }) { id }
+                }
+            `);
+
+            // Create link attribute for grandparent
+            await gqlSaveAttribute({
+                id: grandParentLinkAttributeId,
+                label: 'GrandParent Link Attribute',
+                type: AttributeTypes.SIMPLE_LINK,
+                linkedLibrary: grandParentLibraryId,
+            });
+
+            // Create parent library with parentContext pointing to grandparent
+            await makeGraphQlCall(`
+                mutation {
+                    saveLibrary(library: {
+                        id: "${parentLibraryId}",
+                        label: {en: "Parent Library"},
+                        attributes: ["${parentLabelAttributeId}", "${grandParentLinkAttributeId}"],
+                        recordIdentityConf: {
+                            label: "${parentLabelAttributeId}",
+                            parentContext: "${grandParentLinkAttributeId}"
+                        }
+                    }) { id }
+                }
+            `);
+
+            // Create link attribute for parent
+            await gqlSaveAttribute({
+                id: parentLinkAttributeId,
+                label: 'Parent Link Attribute',
+                type: AttributeTypes.SIMPLE_LINK,
+                linkedLibrary: parentLibraryId,
+            });
+
+            // Create child library with parentContext pointing to parent
+            await makeGraphQlCall(`
+                mutation {
+                    saveLibrary(library: {
+                        id: "${parentContextLibraryId}",
+                        label: {en: "Child Library"},
+                        attributes: ["${parentLinkAttributeId}"],
+                        recordIdentityConf: {
+                            parentContext: "${parentLinkAttributeId}"
+                        }
+                    }) { id }
+                }
+            `);
+
+            // Create records
+            const resCreate = await makeGraphQlCall(`
+                mutation {
+                    grandparent: createRecord(library: "${grandParentLibraryId}") { record { id } }
+                    parent: createRecord(library: "${parentLibraryId}") { record { id } }
+                    child: createRecord(library: "${parentContextLibraryId}") { record { id } }
+                }
+            `);
+
+            grandParentRecordId = resCreate.data.data.grandparent.record.id;
+            parentRecordId = resCreate.data.data.parent.record.id;
+            childRecordId = resCreate.data.data.child.record.id;
+
+            // Set up parent context chain
+            await gqlSaveValue(parentLabelAttributeId, grandParentLibraryId, grandParentRecordId, 'GrandParent Label');
+            await gqlSaveValue(grandParentLinkAttributeId, parentLibraryId, parentRecordId, grandParentRecordId);
+            await gqlSaveValue(parentLabelAttributeId, parentLibraryId, parentRecordId, 'Parent Label');
+            await gqlSaveValue(parentLinkAttributeId, parentContextLibraryId, childRecordId, parentRecordId);
+        });
+
+        test('Retrieve record identity with parent context', async () => {
+            const res = await makeGraphQlCall(`
+                {
+                    records(
+                        library: "${parentContextLibraryId}",
+                        filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${childRecordId}"}]
+                    ) {
+                        list {
+                            id
+                            whoAmI {
+                                id
+                                library { id }
+                                parentContext {
+                                    id
+                                    library { id }
+                                    label
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.records.list[0].whoAmI.id).toBe(childRecordId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext).toHaveLength(2);
+
+            // First should be parent
+            expect(res.data.data.records.list[0].whoAmI.parentContext[0].id).toBe(parentRecordId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[0].library.id).toBe(parentLibraryId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[0].label).toBe('Parent Label');
+
+            // Second should be grandparent
+            expect(res.data.data.records.list[0].whoAmI.parentContext[1].id).toBe(grandParentRecordId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[1].library.id).toBe(grandParentLibraryId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[1].label).toBe('GrandParent Label');
+        });
+
+        test('Retrieve record identity without parent context when not configured', async () => {
+            const res = await makeGraphQlCall(`
+                {
+                    records(
+                        library: "${testLibraryId}",
+                        filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                    ) {
+                        list {
+                            id
+                            whoAmI {
+                                id
+                                parentContext {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.records.list[0].whoAmI.parentContext).toBeNull();
+        });
+
+        test('Retrieve single level parent context', async () => {
+            const res = await makeGraphQlCall(`
+                {
+                    records(
+                        library: "${parentLibraryId}",
+                        filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${parentRecordId}"}]
+                    ) {
+                        list {
+                            id
+                            whoAmI {
+                                id
+                                parentContext {
+                                    id
+                                    library { id }
+                                    label
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.records.list[0].whoAmI.parentContext).toHaveLength(1);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[0].id).toBe(grandParentRecordId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[0].library.id).toBe(grandParentLibraryId);
+            expect(res.data.data.records.list[0].whoAmI.parentContext[0].label).toBe('GrandParent Label');
+        });
+    });
 });

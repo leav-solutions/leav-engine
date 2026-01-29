@@ -135,7 +135,8 @@ export default function ({
                         label: String,
                         subLabel: String,
                         color: String,
-                        preview: Preview
+                        preview: Preview,
+                        parentContext: [RecordIdentity!]
                     }
 
                     type RecordIdentityConf {
@@ -144,7 +145,7 @@ export default function ({
                         preview: ID,
                         treeColorPreview: ID,
                         subLabel: ID,
-                        parentContext: ID
+                        parentContext: ID,
                     }
 
                     input RecordIdentityConfInput {
@@ -528,6 +529,8 @@ export default function ({
                             recordIdentity.getColor?.(),
                         preview: async (recordIdentity: IRecordIdentity): Promise<IPreview | null> =>
                             recordIdentity.getPreview?.(),
+                        parentContext: async (recordIdentity: IRecordIdentity): Promise<IRecordIdentity[] | null> =>
+                            recordIdentity.getParentContext?.(),
                     },
                     Preview: new GraphQLScalarType({
                         name: 'Preview',

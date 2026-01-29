@@ -12,6 +12,10 @@ query GetRecordIdCard($id: String, $libraryId: ID!, $ignoreAccessRecordByDefault
                 label
                 subLabel
                 preview
+                parentContext {
+                    id
+                    label
+                }
             }
         }
     }
