@@ -1,21 +1,25 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    type TreeAttributeDetailsFragment,
-    useGetLibraryByIdQuery,
-    useTreeFilterByDefaultValuesLazyQuery,
-} from '_ui/_gqlTypes';
+import {type TreeAttributeDetailsFragment, useGetLibraryByIdQuery, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {useEffect, useState} from 'react';
+import {defaultPaginationPageSize} from '_ui/constants';
+
+interface ITreeNode {
+    nodeId: string;
+    libraryId: string;
+    value: string;
+    label: string;
+}
 
 export interface ITreeFilters {
-    [x: string]: Array<{nodeId: string; libraryId: string; value: string; label: string}>;
+    [x: string]: ITreeNode[];
 }
 
 export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: boolean}) => {
     const [treeFilters, setTreeFilters] = useState<ITreeFilters>({});
     const [treeFiltersLoading, setTreeFiltersLoading] = useState(true);
-    const [treeFilterByDefaultValues] = useTreeFilterByDefaultValuesLazyQuery();
+    const [loadTreeContent] = useTreeNodeChildrenLazyQuery();
 
     const {data: libraryData, loading: libraryLoading} = useGetLibraryByIdQuery({
         variables: {
@@ -25,7 +29,7 @@ export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: b
     });
 
     useEffect(() => {
-        if (skip || !libraryId || libraryLoading) {
+        if (skip || !libraryId || libraryLoading || !libraryData) {
             return;
         }
 
@@ -40,33 +44,72 @@ export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: b
                     )?.linked_tree?.id,
                 })) || [];
 
+            const _fetchChildrenPage = async (
+                treeId: string,
+                attributeId: string,
+                parentNodeKey: string | null,
+                offset: number,
+            ) => {
+                const {data} = await loadTreeContent({
+                    variables: {
+                        treeId,
+                        node: parentNodeKey,
+                        pagination: {offset, limit: defaultPaginationPageSize},
+                        accessRecordByDefaultPermission: {
+                            attributeId,
+                            libraryId,
+                        },
+                    },
+                });
+
+                const {list, totalCount} = data?.treeNodeChildren ?? {list: [], totalCount: 0};
+
+                const records: ITreeNode[] = [];
+
+                for (const node of list) {
+                    if (node.accessRecordByDefaultPermission) {
+                        records.push({
+                            nodeId: node.id,
+                            libraryId: node.record.whoAmI.library.id,
+                            value: node.record.id,
+                            label: node.record.whoAmI.label,
+                        });
+                    }
+
+                    if (node.childrenCount > 0) {
+                        const childrenRecords = await _fetchAllChildren(treeId, attributeId, node.id);
+                        records.push(...childrenRecords);
+                    }
+                }
+
+                return {records, totalCount};
+            };
+
+            const _fetchAllChildren = async (
+                treeId: string,
+                attributeId: string,
+                parentNodeKey: string | null,
+                offset = 0,
+                accumulated: ITreeNode[] = [],
+            ): Promise<ITreeNode[]> => {
+                const {records, totalCount} = await _fetchChildrenPage(treeId, attributeId, parentNodeKey, offset);
+                const allRecords = [...accumulated, ...records];
+
+                const nextOffset = offset + defaultPaginationPageSize;
+                if (nextOffset < totalCount) {
+                    return _fetchAllChildren(treeId, attributeId, parentNodeKey, nextOffset, allRecords);
+                }
+
+                return allRecords;
+            };
+
             const treeResponse = await Promise.all(
                 treeAttributesWithExtendedPermissions.map(async attribute => {
-                    const res = await treeFilterByDefaultValues({
-                        variables: {
-                            treeId: attribute.treeId,
-                            accessRecordByDefaultPermission: {
-                                attributeId: attribute.attributeId,
-                                libraryId,
-                            },
-                        },
-                    });
+                    const recordIds = await _fetchAllChildren(attribute.treeId, attribute.attributeId, null);
 
                     return {
                         attributeId: attribute.attributeId,
-                        recordIds:
-                            res?.data?.treeNodeChildren?.list
-                                ?.map(item =>
-                                    item.accessRecordByDefaultPermission
-                                        ? {
-                                              nodeId: item.id,
-                                              libraryId: item.record.whoAmI.library.id,
-                                              value: item.record.id,
-                                              label: item.record.whoAmI.label,
-                                          }
-                                        : undefined,
-                                )
-                                .filter(Boolean) || [],
+                        recordIds,
                     };
                 }),
             );
@@ -83,7 +126,7 @@ export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: b
         };
 
         fetchTreeFilters();
-    }, [skip, libraryId, libraryLoading]);
+    }, [skip, libraryId, libraryLoading, libraryData, loadTreeContent]);
 
     return {
         data: treeFilters,

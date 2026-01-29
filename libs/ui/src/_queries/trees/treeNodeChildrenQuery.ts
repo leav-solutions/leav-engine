@@ -35,6 +35,7 @@ export const getTreeNodeChildrenQuery = gql`
             detach
             edit_children
         }
+        accessRecordByDefaultPermission
     }
 
     query TREE_NODE_CHILDREN(
@@ -43,6 +44,7 @@ export const getTreeNodeChildrenQuery = gql`
         $pagination: Pagination
         $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput
         $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput
+        $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput
     ) {
         treeNodeChildren(
             treeId: $treeId
@@ -50,6 +52,7 @@ export const getTreeNodeChildrenQuery = gql`
             pagination: $pagination
             childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
             dependentValuesPermissionFilter: $dependentValuesPermissionFilter
+            accessRecordByDefaultPermission: $accessRecordByDefaultPermission
         ) {
             totalCount
             list {

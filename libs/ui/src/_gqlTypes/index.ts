@@ -602,6 +602,7 @@ export enum PermissionsActions {
   admin_edit_version_profile = 'admin_edit_version_profile',
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
+  admin_list_plugins = 'admin_list_plugins',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -1159,7 +1160,7 @@ export type TreeDetailsFragment = { id: string, label?: any | null, behavior: Tr
 
 export type TreeLightFragment = { id: string, label?: any | null };
 
-export type TreeNodeChildFragment = { id: string, order?: number | null, childrenCount?: number | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } };
+export type TreeNodeChildFragment = { id: string, order?: number | null, childrenCount?: number | null, accessRecordByDefaultPermission?: boolean | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } };
 
 export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null };
 
@@ -1672,10 +1673,11 @@ export type TreeNodeChildrenQueryVariables = Exact<{
   pagination?: InputMaybe<Pagination>;
   childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
   dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
 }>;
 
 
-export type TreeNodeChildrenQuery = { treeNodeChildren: { totalCount?: number | null, list: Array<{ id: string, order?: number | null, childrenCount?: number | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> } };
+export type TreeNodeChildrenQuery = { treeNodeChildren: { totalCount?: number | null, list: Array<{ id: string, order?: number | null, childrenCount?: number | null, accessRecordByDefaultPermission?: boolean | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> } };
 
 export type GetUserDataQueryVariables = Exact<{
   keys: Array<Scalars['String']['input']> | Scalars['String']['input'];
@@ -2451,6 +2453,7 @@ export const TreeNodeChildFragmentDoc = gql`
     detach
     edit_children
   }
+  accessRecordByDefaultPermission
 }
     ${RecordIdentityFragmentDoc}`;
 export const ViewDetailsFilterFragmentDoc = gql`
@@ -4832,13 +4835,14 @@ export type SaveTreeMutationHookResult = ReturnType<typeof useSaveTreeMutation>;
 export type SaveTreeMutationResult = Apollo.MutationResult<SaveTreeMutation>;
 export type SaveTreeMutationOptions = Apollo.BaseMutationOptions<SaveTreeMutation, SaveTreeMutationVariables>;
 export const TreeNodeChildrenDocument = gql`
-    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput) {
+    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
   treeNodeChildren(
     treeId: $treeId
     node: $node
     pagination: $pagination
     childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
     dependentValuesPermissionFilter: $dependentValuesPermissionFilter
+    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
   ) {
     totalCount
     list {
@@ -4865,6 +4869,7 @@ export const TreeNodeChildrenDocument = gql`
  *      pagination: // value for 'pagination'
  *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
  *      dependentValuesPermissionFilter: // value for 'dependentValuesPermissionFilter'
+ *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
  *   },
  * });
  */

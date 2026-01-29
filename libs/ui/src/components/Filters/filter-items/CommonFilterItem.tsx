@@ -86,6 +86,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
                 placement: 'bottomLeft',
                 dropdownRender: () => <FilterDropDown filter={filter} canReset={canReset} canRemove={!isPinned} />,
             }}
+            showSingleValue
         />
     );
 };

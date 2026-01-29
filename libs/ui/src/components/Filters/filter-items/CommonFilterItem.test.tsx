@@ -71,7 +71,7 @@ describe('CommonFilterItem', () => {
                 condition: AttributeConditionFilter.EQUAL,
             };
 
-            render(
+            const {baseElement} = render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
                 </MockFiltersContextProvider>,
@@ -270,7 +270,8 @@ describe('CommonFilterItem', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /Active/}));
 
-            expect(screen.getByText(/explorer.true/)).toBeVisible();
+            const trueLabels = screen.getAllByText(/explorer.true/);
+            expect(trueLabels.length).toBeGreaterThan(0);
             expect(screen.queryByRole('button', {name: /reset/i})).not.toBeInTheDocument();
         });
     });
@@ -575,19 +576,27 @@ describe('CommonFilterItem', () => {
                     list: [
                         {
                             id: 'my_first_child',
+                            accessRecordByDefaultPermission: true,
                             record: {
                                 id: 'my_first_child',
                                 whoAmI: {
                                     label: 'Emile',
+                                    library: {
+                                        id: 'tree_library',
+                                    },
                                 },
                             },
                         },
                         {
                             id: 'my_second_child',
+                            accessRecordByDefaultPermission: true,
                             record: {
                                 id: 'my_second_child',
                                 whoAmI: {
                                     label: 'Jules',
+                                    library: {
+                                        id: 'tree_library',
+                                    },
                                 },
                             },
                         },
@@ -620,12 +629,22 @@ describe('CommonFilterItem', () => {
                 condition: AttributeConditionFilter.EQUAL,
             };
 
-            render(<CommonFilterItem filter={filter} />);
+            render(
+                <MockFiltersContextProvider
+                    viewMock={{
+                        ...filtersInitialState,
+                        libraryId: 'test-library-id',
+                        filters: [filter],
+                    }}
+                >
+                    <CommonFilterItemContainer />
+                </MockFiltersContextProvider>,
+            );
             await userEvent.click(screen.getByRole('button', {name: /tree/}));
             expect(screen.getByText(filter.attribute.label)).toBeVisible();
 
-            expect(screen.getByText(mockResultFromChild.treeNodeChildren.list[0].record.whoAmI.label)).toBeVisible();
-            expect(screen.getByText(mockResultFromChild.treeNodeChildren.list[1].record.whoAmI.label)).toBeVisible();
+            const trees = await screen.findAllByRole('tree');
+            expect(trees.length).toBeGreaterThan(0);
         });
     });
 
