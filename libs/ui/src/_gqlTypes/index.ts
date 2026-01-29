@@ -1763,14 +1763,6 @@ export type SaveViewMutationVariables = Exact<{
 
 export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
-export type TreeFilterByDefaultValuesQueryVariables = Exact<{
-  treeId: Scalars['ID']['input'];
-  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
-}>;
-
-
-export type TreeFilterByDefaultValuesQuery = { treeNodeChildren: { list: Array<{ accessRecordByDefaultPermission?: boolean | null, id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> } };
-
 export type AttributeWithValuesForMassEditionQueryVariables = Exact<{
   attributeId: Scalars['ID']['input'];
 }>;
@@ -5260,66 +5252,6 @@ export function useSaveViewMutation(baseOptions?: Apollo.MutationHookOptions<Sav
 export type SaveViewMutationHookResult = ReturnType<typeof useSaveViewMutation>;
 export type SaveViewMutationResult = Apollo.MutationResult<SaveViewMutation>;
 export type SaveViewMutationOptions = Apollo.BaseMutationOptions<SaveViewMutation, SaveViewMutationVariables>;
-export const TreeFilterByDefaultValuesDocument = gql`
-    query TreeFilterByDefaultValues($treeId: ID!, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
-  treeNodeChildren(
-    treeId: $treeId
-    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
-  ) {
-    list {
-      accessRecordByDefaultPermission
-      id
-      record {
-        id
-        whoAmI {
-          label
-          id
-          library {
-            id
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useTreeFilterByDefaultValuesQuery__
- *
- * To run a query within a React component, call `useTreeFilterByDefaultValuesQuery` and pass it any options that fit your needs.
- * When your component renders, `useTreeFilterByDefaultValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTreeFilterByDefaultValuesQuery({
- *   variables: {
- *      treeId: // value for 'treeId'
- *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
- *   },
- * });
- */
-export function useTreeFilterByDefaultValuesQuery(baseOptions: Apollo.QueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables> & ({ variables: TreeFilterByDefaultValuesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
-      }
-export function useTreeFilterByDefaultValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
-        }
-// @ts-ignore
-export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>): Apollo.UseSuspenseQueryResult<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>;
-export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>): Apollo.UseSuspenseQueryResult<TreeFilterByDefaultValuesQuery | undefined, TreeFilterByDefaultValuesQueryVariables>;
-export function useTreeFilterByDefaultValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>(TreeFilterByDefaultValuesDocument, options);
-        }
-export type TreeFilterByDefaultValuesQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesQuery>;
-export type TreeFilterByDefaultValuesLazyQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesLazyQuery>;
-export type TreeFilterByDefaultValuesSuspenseQueryHookResult = ReturnType<typeof useTreeFilterByDefaultValuesSuspenseQuery>;
-export type TreeFilterByDefaultValuesQueryResult = Apollo.QueryResult<TreeFilterByDefaultValuesQuery, TreeFilterByDefaultValuesQueryVariables>;
 export const AttributeWithValuesForMassEditionDocument = gql`
     query AttributeWithValuesForMassEdition($attributeId: ID!) {
   attributes(filters: {id: $attributeId}) {
