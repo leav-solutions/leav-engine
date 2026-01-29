@@ -21,6 +21,7 @@
     "testRegex": ".spec.(ts)$",
     "setupFiles": ["<rootDir>/src/__tests__/setup.ts", "<rootDir>/src/__tests__/jestUtils.ts"],
     "moduleNameMapper": {
+        "graphql-upload/GraphQLUpload.mjs": "<rootDir>/src/__tests__/mocks/graphql-upload.ts",
         "exceljs": "<rootDir>/../../node_modules/exceljs/dist/exceljs.js",
         "^uuid$": "uuid",
         "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
