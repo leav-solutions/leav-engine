@@ -75,6 +75,7 @@ export const libraryDetailsFragment = gql`
             color
             preview
             treeColorPreview
+            parentContext
         }
         permissions {
             admin_library

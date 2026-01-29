@@ -748,6 +748,7 @@ export type LibraryInput = {
 export type LibraryPermissions = {
   access_library: Scalars['Boolean']['output'];
   access_record: Scalars['Boolean']['output'];
+  access_record_by_default: Scalars['Boolean']['output'];
   admin_library: Scalars['Boolean']['output'];
   create_record: Scalars['Boolean']['output'];
   delete_record: Scalars['Boolean']['output'];
@@ -976,6 +977,7 @@ export type Mutation = {
   deleteRecord: Record;
   deleteTasks: Scalars['Boolean']['output'];
   deleteTree: Tree;
+  /**  The returned values are the deleted ones  */
   deleteValue: Array<GenericValue>;
   deleteVersionProfile: VersionProfile;
   deleteView: View;
@@ -1397,6 +1399,7 @@ export enum PermissionsActions {
   admin_edit_version_profile = 'admin_edit_version_profile',
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
+  admin_list_plugins = 'admin_list_plugins',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -1786,6 +1789,7 @@ export type RecordIdentity = {
   id: Scalars['ID']['output'];
   label?: Maybe<Scalars['String']['output']>;
   library: Library;
+  parentContext?: Maybe<Array<RecordIdentity>>;
   preview?: Maybe<Scalars['Preview']['output']>;
   subLabel?: Maybe<Scalars['String']['output']>;
 };
@@ -1793,6 +1797,7 @@ export type RecordIdentity = {
 export type RecordIdentityConf = {
   color?: Maybe<Scalars['ID']['output']>;
   label?: Maybe<Scalars['ID']['output']>;
+  parentContext?: Maybe<Scalars['ID']['output']>;
   preview?: Maybe<Scalars['ID']['output']>;
   subLabel?: Maybe<Scalars['ID']['output']>;
   treeColorPreview?: Maybe<Scalars['ID']['output']>;
@@ -1801,6 +1806,7 @@ export type RecordIdentityConf = {
 export type RecordIdentityConfInput = {
   color?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['ID']['input']>;
+  parentContext?: InputMaybe<Scalars['ID']['input']>;
   preview?: InputMaybe<Scalars['ID']['input']>;
   subLabel?: InputMaybe<Scalars['ID']['input']>;
   treeColorPreview?: InputMaybe<Scalars['ID']['input']>;
@@ -2625,7 +2631,7 @@ export type GetRecordIdCardQueryVariables = Exact<{
 }>;
 
 
-export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
+export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null, parentContext?: Array<{ id: string, label?: string | null }> | null } }> } };
 
 export type PanelAttributeCountQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -2892,6 +2898,10 @@ export const GetRecordIdCardDocument = gql`
         label
         subLabel
         preview
+        parentContext {
+          id
+          label
+        }
       }
     }
   }

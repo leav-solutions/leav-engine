@@ -210,18 +210,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -700,6 +688,7 @@ export enum RecordFilterOperator {
 export type RecordIdentityConfInput = {
   color?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['ID']['input']>;
+  parentContext?: InputMaybe<Scalars['ID']['input']>;
   preview?: InputMaybe<Scalars['ID']['input']>;
   subLabel?: InputMaybe<Scalars['ID']['input']>;
   treeColorPreview?: InputMaybe<Scalars['ID']['input']>;
@@ -1043,7 +1032,7 @@ export type LibraryDetailsFragment = { id: string, label?: any | null, behavior:
   > | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
       | { id: string, label?: any | null }
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
-    > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
+    > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
 
 export type LibraryAttributesLinkAttributeFragment = { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null };
 
@@ -1447,7 +1436,7 @@ export type GetLibraryByIdQuery = { libraries?: { list: Array<{ id: string, labe
       > | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
-        > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null }> } | null };
+        > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null }> } | null };
 
 export type GetLibraryPermissionsQueryVariables = Exact<{
   libraryId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
@@ -1475,7 +1464,7 @@ export type SaveLibraryMutation = { saveLibrary: { id: string, label?: any | nul
     > | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
         | { id: string, label?: any | null }
         | { id: string, label?: any | null, linked_tree?: { id: string } | null }
-      > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null } };
+      > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -2157,6 +2146,7 @@ export const LibraryDetailsFragmentDoc = gql`
     color
     preview
     treeColorPreview
+    parentContext
   }
   permissions {
     admin_library
