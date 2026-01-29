@@ -211,8 +211,13 @@ describe('Export', () => {
                         await gqlSaveValue(attrId, exportLibName, recordId2, '#FF5733');
                         break;
                     case AttributeFormats.RICH_TEXT:
-                        await gqlSaveValue(attrId, exportLibName, recordId1, 'rich text');
-                        await gqlSaveValue(attrId, exportLibName, recordId2, 'rich text');
+                        await gqlSaveValue(attrId, exportLibName, recordId1, "<p>C'est un rich text</p>");
+                        await gqlSaveValue(
+                            attrId,
+                            exportLibName,
+                            recordId2,
+                            "<p>Je mets ici un texte <em>avec</em> </p><p>de la mise en <strong>page</strong> </p><p style='text-align: right;'>Pour voir ce que ca fait </p>",
+                        );
                         break;
                     case AttributeFormats.DATE_RANGE:
                         await gqlSaveValue(
@@ -516,7 +521,7 @@ describe('Export', () => {
                         MASKED_VALUE,
                         'true',
                         '#FF5733',
-                        'rich text',
+                        'Je mets ici un texte avec de la mise en page Pour voir ce que ca fait ',
                     ],
                     [
                         'text',
@@ -526,7 +531,7 @@ describe('Export', () => {
                         MASKED_VALUE,
                         'true',
                         '#FF5733',
-                        'rich text',
+                        "C'est un rich text",
                     ],
                 ],
             ]);

@@ -115,6 +115,14 @@ export default function ({
             }));
         }
 
+        if (attribute.format === AttributeFormats.RICH_TEXT) {
+            values = values.map(v => ({
+                ...v,
+                // Remove HTML tags for export
+                payload: v.payload?.replace(/<\/?[^>]+(>|$)/g, '') || '',
+            }));
+        }
+
         return values;
     };
 
