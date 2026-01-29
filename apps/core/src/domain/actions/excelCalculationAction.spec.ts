@@ -190,7 +190,7 @@ describe('excelCalculationAction', () => {
                 {
                     Description: 'test',
                     Formula: 'T("resultat {toto} {tata} {titi}")',
-                    'Return only calculated value': true,
+                    'Return only calculated value': 'true',
                 },
                 ctxForSave,
             );
@@ -355,7 +355,7 @@ describe('excelCalculationAction', () => {
                 {
                     Description: 'test',
                     Formula: '"resultat {toto} {tata} {titi}"',
-                    'Return only calculated value': true,
+                    'Return only calculated value': 'true',
                 },
                 ctxForSave,
             );

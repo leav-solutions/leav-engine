@@ -162,7 +162,7 @@ describe('inheritanceCalculationAction', () => {
             {
                 Description: 'test',
                 Formula: '42',
-                'Return only calculated value': true,
+                'Return only calculated value': 'true',
             },
             ctx,
         );
@@ -226,7 +226,7 @@ describe('inheritanceCalculationAction', () => {
                 {
                     Description: 'test',
                     Formula: '42',
-                    'Return only calculated value': true,
+                    'Return only calculated value': 'true',
                 },
                 ctx,
             );
