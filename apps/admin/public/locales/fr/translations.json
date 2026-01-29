@@ -189,6 +189,7 @@
         "version_profile": "Profil de version",
         "custom-config": "Custom config",
         "example": "Exemple : ",
+        "action_description": "Description : ",
         "dependencies": {
             "title": "Dépendances",
             "no_dependencies_configured": "Aucune dépendance configurée pour cet attribut. Sélectionnez un attribut de dépendance dans le sélecteur à droite.",

@@ -112,7 +112,7 @@ describe('inheritanceCalculationAction', () => {
         expect(resultValue.library).toBe('meh');
     });
 
-    test('Return origin values along calculation result, for get action type', async () => {
+    test('Return origin values along calculation result by default', async () => {
         const ctx: IActionsListContext = {
             attribute: {
                 id: 'meh',
@@ -142,7 +142,7 @@ describe('inheritanceCalculationAction', () => {
         expect((res.values[1] as any).raw_payload).toBe('testRawValue');
     });
 
-    test('Return not origin values along calculation result, for other action types', async () => {
+    test('Return not origin values along calculation result when "Return only calculated value" is true', async () => {
         const ctx: IActionsListContext = {
             attribute: {
                 id: 'meh',
@@ -162,6 +162,7 @@ describe('inheritanceCalculationAction', () => {
             {
                 Description: 'test',
                 Formula: '42',
+                'Return only calculated value': true,
             },
             ctx,
         );
@@ -177,7 +178,7 @@ describe('inheritanceCalculationAction', () => {
             );
         });
 
-        test('Return origin values for empty inheritance, for get action type', async () => {
+        test('Return origin values for empty inheritance by default', async () => {
             const ctx: IActionsListContext = {
                 attribute: {
                     id: 'meh',
@@ -205,7 +206,7 @@ describe('inheritanceCalculationAction', () => {
             expect((res.values[0] as any).raw_payload).toBe('OriginRawValue');
         });
 
-        test('Return not values for empty inheritance, for other action types', async () => {
+        test('Return not values for empty inheritance when "Return only calculated value" is true', async () => {
             const ctx: IActionsListContext = {
                 attribute: {
                     id: 'meh',
@@ -225,6 +226,7 @@ describe('inheritanceCalculationAction', () => {
                 {
                     Description: 'test',
                     Formula: '42',
+                    'Return only calculated value': true,
                 },
                 ctx,
             );

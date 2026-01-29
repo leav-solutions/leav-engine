@@ -101,6 +101,10 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
                         onBlur={_onBlur}
                     />
                     <div>
+                        {t('attributes.action_description')}
+                        {param.description}
+                    </div>
+                    <div>
                         {t('attributes.example')}
                         {param.helper_value}
                     </div>
