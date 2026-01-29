@@ -25,11 +25,18 @@ interface IDeps {
 
 type ActionsListExcelValueType = string | number | boolean | {};
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type ActionParams = {
+    Formula: true;
+    Description: true;
+    ['Return only calculated value']: false;
+};
+
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable,
     'core.utils.logger': logger,
     config,
-}: IDeps): IActionsListFunction<{Formula: true; Description: true}> {
+}: IDeps): IActionsListFunction<ActionParams> {
     const _processReplacement = async (
         context: IActionsListContext,
         initialValues: ActionsListValueType[],
@@ -89,12 +96,8 @@ export default function ({
     });
 
     const debug = config.actions.excel.debug ?? false;
-    const actionWithHyperformula: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
-        values,
-        params,
-        ctx,
-    ) => {
-        const {Formula: formula} = params;
+    const actionWithHyperformula: IActionsListFunction<ActionParams>['action'] = async (values, params, ctx) => {
+        const {Formula: formula, ['Return only calculated value']: returnOnlyCalculatedValue} = params;
 
         if (formula === '') {
             return _buildSameValuesResult(values);
@@ -145,17 +148,13 @@ export default function ({
         };
 
         return {
-            values: ctx.actionEvent === ActionsListEvents.GET_VALUE ? [...values, finalResult] : [finalResult],
+            values: returnOnlyCalculatedValue ? [finalResult] : [...values, finalResult],
             errors: [],
         };
     };
 
-    const actionWithHotFormulaParser: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
-        values,
-        params,
-        ctx,
-    ) => {
-        const {Formula: formula} = params;
+    const actionWithHotFormulaParser: IActionsListFunction<ActionParams>['action'] = async (values, params, ctx) => {
+        const {Formula: formula, ['Return only calculated value']: returnOnlyCalculatedValue} = params;
 
         const finalFormula = await _replaceVariables(
             formula,
@@ -194,7 +193,7 @@ export default function ({
         };
 
         return {
-            values: ctx.actionEvent === ActionsListEvents.GET_VALUE ? [...values, finalResult] : [finalResult],
+            values: returnOnlyCalculatedValue ? [finalResult] : [...values, finalResult],
             errors: [],
         };
     };
@@ -220,6 +219,14 @@ export default function ({
                 description: 'Excel formula to perform, place variables like so : {attribute_identifier}',
                 required: true,
                 helper_value: '21*2',
+            },
+            {
+                name: 'Return only calculated value',
+                type: 'boolean',
+                description:
+                    'Return only the calculated value, without the original values. For "get value" or "save value" actions, it is necessary to keep this unchecked to allow value override.',
+                required: false,
+                helper_value: 'false',
             },
         ],
         action: config.actions.excel.useNewHyperformula ? actionWithHyperformula : actionWithHotFormulaParser,

@@ -159,7 +159,7 @@ describe('excelCalculationAction', () => {
             });
         });
 
-        test('Return origin values along calculation result, for get action type', async () => {
+        test('Return origin values along calculation result by default', async () => {
             const action = _excelCalculationAction.action;
             const res = await action(
                 [mockStandardValue],
@@ -183,13 +183,14 @@ describe('excelCalculationAction', () => {
             });
         });
 
-        test('Return not origin values along calculation result, for other action types', async () => {
+        test('Return not origin values along calculation result when "Return only calculated value" is true', async () => {
             const action = _excelCalculationAction.action;
             const res = await action(
                 [mockStandardValue],
                 {
                     Description: 'test',
                     Formula: 'T("resultat {toto} {tata} {titi}")',
+                    'Return only calculated value': true,
                 },
                 ctxForSave,
             );
@@ -323,7 +324,7 @@ describe('excelCalculationAction', () => {
             });
         });
 
-        test('Return origin values along calculation result, for get action type', async () => {
+        test('Return origin values along calculation result by default', async () => {
             const action = _excelCalculationAction.action;
             const res = await action(
                 [mockStandardValue],
@@ -347,13 +348,14 @@ describe('excelCalculationAction', () => {
             });
         });
 
-        test('Return origin values along calculation result, for other action types', async () => {
+        test('Return origin values along calculation result when "Return only calculated value" is true', async () => {
             const action = _excelCalculationAction.action;
             const res = await action(
                 [mockStandardValue],
                 {
                     Description: 'test',
                     Formula: '"resultat {toto} {tata} {titi}"',
+                    'Return only calculated value': true,
                 },
                 ctxForSave,
             );

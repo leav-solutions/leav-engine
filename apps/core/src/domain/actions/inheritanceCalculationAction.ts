@@ -11,10 +11,17 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type ActionParams = {
+    Formula: true;
+    Description: true;
+    ['Return only calculated value']: false;
+};
+
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null,
     'core.domain.attribute': attributeDomain = null,
-}: IDeps = {}): IActionsListFunction<{Formula: true; Description: true}> {
+}: IDeps = {}): IActionsListFunction<ActionParams> {
     return {
         id: 'inheritanceCalculation',
         name: 'Inheritance calculation',
@@ -47,16 +54,24 @@ export default function ({
                 required: true,
                 helper_value: '',
             },
+            {
+                name: 'Return only calculated value',
+                type: 'boolean',
+                description:
+                    'Return only the calculated value, without the original values. For "get value" or "save value" actions, it is necessary to keep this unchecked to allow value override.',
+                required: false,
+                helper_value: 'false',
+            },
         ],
         action: async (values, params, ctx) => {
-            const {Formula: formula} = params;
+            const {Formula: formula, ['Return only calculated value']: returnOnlyCalculatedValue} = params;
             const attrProps = await attributeDomain.getAttributeProperties({id: ctx.attribute.id, ctx});
             let inheritedValues = [];
 
             const result = await calculationVariable.processVariableString(ctx, formula, []);
 
             if (!result.length) {
-                return {values, errors: []};
+                return {values: returnOnlyCalculatedValue ? [] : values, errors: []};
             }
 
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
@@ -74,10 +89,7 @@ export default function ({
             }
 
             return {
-                values:
-                    ctx.actionEvent === ActionsListEvents.GET_VALUE
-                        ? [...(values ?? []), ...inheritedValues]
-                        : [...inheritedValues],
+                values: returnOnlyCalculatedValue ? inheritedValues : [...(values ?? []), ...inheritedValues],
                 errors: [],
             };
         },
