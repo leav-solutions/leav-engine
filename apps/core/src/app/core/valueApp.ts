@@ -263,7 +263,22 @@ export default function ({
                         noValueCount: Int!
                     }
 
+                    interface GenericDistinctValues {
+                        count: Int!
+                    }
+
+                    type TreeDistinctValues implements GenericDistinctValues {
+                        value: TreeNode
+                        count: Int!
+                    }
+
+                    type LinkDistinctValues implements GenericDistinctValues {
+                        value: Record
+                        count: Int!
+                    }
+
                     extend type Query {
+                        """ deprecated Use listDistinctValues instead """
                         countValuesOccurrences(
                             library: ID!,
                             """ Attribute should be tree and mono valued """
@@ -272,6 +287,15 @@ export default function ({
                             recordFilters: [RecordFilterInput],
                             version: [ValueVersionInput],
                         ): ValuesOccurrences
+
+                        listDistinctValues(
+                            library: ID!,
+                            """ Attribute should be tree or link """
+                            attribute: ID!,
+                            """ Filters to apply on records, same filters as for records query """
+                            recordFilters: [RecordFilterInput],
+                            version: [ValueVersionInput],
+                        ): [GenericDistinctValues!]
                     }
 
                     extend type Mutation {
@@ -330,6 +354,29 @@ export default function ({
                                     .map(occ => ({...occ, attribute})), // add attribute for GenericRecordValueOccurrences.__resolveType
                                 noValueCount: noValueOccurrence ? noValueOccurrence.count : 0,
                             };
+                        },
+                        async listDistinctValues(
+                            _,
+                            {library, attribute, recordFilters, version},
+                            ctx: IQueryInfos,
+                        ): Promise<Array<{value: IBaseValue; attribute: string; count: number}>> {
+                            const formattedVersion =
+                                Array.isArray(version) && version.length
+                                    ? version.reduce((allVers, vers) => {
+                                          allVers[vers.treeId] = vers.treeNodeId;
+                                          return allVers;
+                                      }, {})
+                                    : null;
+
+                            const distinctValues = await valueDomain.countValuesOccurrences({
+                                libraryId: library,
+                                attributeId: attribute,
+                                recordFilters,
+                                options: {version: formattedVersion},
+                                ctx,
+                            });
+
+                            return distinctValues.map(occ => ({...occ, attribute})); // add attribute for GenericDistinctValues.__resolveType
                         },
                     },
                     Mutation: {
@@ -416,6 +463,23 @@ export default function ({
                                 case AttributeTypes.SIMPLE_LINK:
                                 case AttributeTypes.ADVANCED_LINK:
                                     return 'LinkValueOccurrences';
+                                default:
+                                    return null;
+                            }
+                        },
+                    },
+                    GenericDistinctValues: {
+                        __resolveType: async (fieldValue, ctx) => {
+                            const attribute = Array.isArray(fieldValue)
+                                ? fieldValue[0].attribute
+                                : fieldValue.attribute;
+                            const attrProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+                            switch (attrProps.type) {
+                                case AttributeTypes.TREE:
+                                    return 'TreeDistinctValues';
+                                case AttributeTypes.SIMPLE_LINK:
+                                case AttributeTypes.ADVANCED_LINK:
+                                    return 'LinkDistinctValues';
                                 default:
                                     return null;
                             }
