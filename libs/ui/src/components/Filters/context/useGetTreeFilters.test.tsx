@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook, waitFor} from '@testing-library/react';
 import {useGetTreeFilters} from './useGetTreeFilters';
-import {useGetLibraryByIdQuery, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {useGetLibraryByIdQuery, useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery} from '_ui/_gqlTypes';
 
 jest.mock('_ui/_gqlTypes', () => ({
     ...jest.requireActual('_ui/_gqlTypes'),
     useGetLibraryByIdQuery: jest.fn(),
-    useTreeNodeChildrenLazyQuery: jest.fn(),
+    useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery: jest.fn(),
 }));
 
 describe('useGetTreeFilters', () => {
@@ -96,7 +96,10 @@ describe('useGetTreeFilters', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        (useTreeNodeChildrenLazyQuery as jest.Mock).mockReturnValue([mockLoadTreeContent, {}]);
+        (useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery as jest.Mock).mockReturnValue([
+            mockLoadTreeContent,
+            {},
+        ]);
     });
 
     describe('Initial state', () => {

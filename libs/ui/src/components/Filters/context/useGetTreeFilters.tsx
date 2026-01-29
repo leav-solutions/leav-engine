@@ -1,7 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type TreeAttributeDetailsFragment, useGetLibraryByIdQuery, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {
+    type TreeAttributeDetailsFragment,
+    useGetLibraryByIdQuery,
+    useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery,
+} from '_ui/_gqlTypes';
 import {useEffect, useState} from 'react';
 import {defaultPaginationPageSize} from '_ui/constants';
 
@@ -19,7 +23,7 @@ export interface ITreeFilters {
 export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: boolean}) => {
     const [treeFilters, setTreeFilters] = useState<ITreeFilters>({});
     const [treeFiltersLoading, setTreeFiltersLoading] = useState(true);
-    const [loadTreeContent] = useTreeNodeChildrenLazyQuery();
+    const [loadTreeContent] = useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery();
 
     const {data: libraryData, loading: libraryLoading} = useGetLibraryByIdQuery({
         variables: {

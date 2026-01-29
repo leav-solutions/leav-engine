@@ -609,7 +609,7 @@ describe('CommonFilterItem', () => {
                 loading: false,
             };
 
-            jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
+            jest.spyOn(gqlTypes, 'useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery').mockReturnValue([
                 jest.fn().mockImplementation(() => ({data: mockResultFromChild})),
                 mockResult as gqlTypes.TreeNodeChildrenQueryResult,
             ]);

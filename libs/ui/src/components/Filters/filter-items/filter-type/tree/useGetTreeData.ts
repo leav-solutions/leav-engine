@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useEffect, useState} from 'react';
-import {useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize} from '_ui/constants';
 
 export interface ITreeNode {
@@ -22,7 +22,7 @@ interface IUseGetTreeDataProps {
 }
 
 export const useGetTreeData = ({treeId, attributeId, libraryId}: IUseGetTreeDataProps) => {
-    const [loadTreeContent] = useTreeNodeChildrenLazyQuery();
+    const [loadTreeContent] = useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery();
     const [treeData, setTreeData] = useState<ITreeNode[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
