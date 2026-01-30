@@ -68,6 +68,9 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     const [colorTypeDictionnary, setColorTypeDictionnary] = useState<IColorDic>({});
     const {loading, data} = useGetActionsListQueryQuery({
         variables: {attId: attribute ? attribute.id : undefined},
+        // important to avoid a bug (?) where action param value are override !
+        // https://aristid.atlassian.net/browse/LEAVC-596
+        fetchPolicy: 'no-cache',
     });
 
     const [saveAttributeActionsList, {loading: loadingSave}] = useSaveAttributeActionListMutation(

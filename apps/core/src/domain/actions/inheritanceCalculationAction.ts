@@ -71,7 +71,7 @@ export default function ({
             const result = await calculationVariable.processVariableString(ctx, formula, []);
 
             if (!result.length) {
-                return {values: returnOnlyCalculatedValue ? [] : values, errors: []};
+                return {values: returnOnlyCalculatedValue === 'true' ? [] : values, errors: []};
             }
 
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
@@ -89,7 +89,8 @@ export default function ({
             }
 
             return {
-                values: returnOnlyCalculatedValue ? inheritedValues : [...(values ?? []), ...inheritedValues],
+                values:
+                    returnOnlyCalculatedValue === 'true' ? inheritedValues : [...(values ?? []), ...inheritedValues],
                 errors: [],
             };
         },

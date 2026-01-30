@@ -524,6 +524,7 @@ const valueDomain = function ({
         attribute,
         value,
         skipReadonly,
+        skipActions,
         ctx,
     }: IDeleteValueParams) => {
         // Check permission
@@ -632,15 +633,16 @@ const valueDomain = function ({
             return [];
         }
 
-        const actionsListRes = !!attributeProps.actions_list?.deleteValue
-            ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, [existingValue], {
-                  ...ctx,
-                  attribute: attributeProps,
-                  recordId,
-                  library,
-                  actionEvent: ActionsListEvents.DELETE_VALUE,
-              })
-            : [existingValue];
+        const actionsListRes =
+            !skipActions && !!attributeProps.actions_list?.deleteValue
+                ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, [existingValue], {
+                      ...ctx,
+                      attribute: attributeProps,
+                      recordId,
+                      library,
+                      actionEvent: ActionsListEvents.DELETE_VALUE,
+                  })
+                : [existingValue];
 
         const deletedValues = await Promise.all(
             actionsListRes.map(async actionsListResValue => {
@@ -653,14 +655,15 @@ const valueDomain = function ({
                 });
 
                 try {
-                    await postDeleteValue({
-                        attribute: attributeProps,
-                        value: deletedValue,
-                        libraryId: library,
-                        recordId,
-                        deps: {actionsListDomain, attributeDomain, utils},
-                        ctx,
-                    });
+                    !skipActions &&
+                        (await postDeleteValue({
+                            attribute: attributeProps,
+                            value: deletedValue,
+                            libraryId: library,
+                            recordId,
+                            deps: {actionsListDomain, attributeDomain, utils},
+                            ctx,
+                        }));
                 } catch (error) {
                     logger.error(
                         `Error executing post-delete actions on attribute ${attributeProps.id} record ${recordId}: ${error.stack}`,
@@ -1354,10 +1357,10 @@ const valueDomain = function ({
 
             return saveRes;
         },
-        async deleteValue({library, recordId, attribute, value, skipReadonly, ctx}) {
+        async deleteValue({library, recordId, attribute, value, skipReadonly, skipActions, ctx}) {
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
-            return _executeDeleteValue({library, recordId, attribute, value, skipReadonly, ctx});
+            return _executeDeleteValue({library, recordId, attribute, value, skipReadonly, skipActions, ctx});
         },
         formatValue: _formatValue,
         async countValuesOccurrences({libraryId, attributeId, recordFilters, options, ctx}) {

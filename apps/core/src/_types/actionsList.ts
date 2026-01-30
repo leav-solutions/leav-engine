@@ -33,7 +33,7 @@ export interface IActionsListContext extends IQueryInfos {
     recordId?: string;
 }
 
-export type ActionsListParams<T extends string | number | symbol> = Record<T, any>;
+export type ActionsListParams<T extends string | number | symbol> = Record<T, string>;
 
 export type ActionsListParamsConfig<ParamsRequired extends Record<string, boolean>> = {
     [Name in keyof ParamsRequired]: {

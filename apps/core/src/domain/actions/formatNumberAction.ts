@@ -90,7 +90,7 @@ export default function (): IActionsListFunction<{
                 elementValue.payload = isNaN(Number(elementValue.payload))
                     ? ''
                     : flow(
-                          partialRight(_toString, userParams.decimals),
+                          partialRight(_toString, userParams.decimals) as any,
                           partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
                           partialRight(_addPrefix, userParams.prefix),
                           partialRight(_addSuffix, userParams.suffix),

@@ -148,7 +148,7 @@ export default function ({
         };
 
         return {
-            values: returnOnlyCalculatedValue ? [finalResult] : [...values, finalResult],
+            values: returnOnlyCalculatedValue === 'true' ? [finalResult] : [...values, finalResult],
             errors: [],
         };
     };
@@ -193,7 +193,7 @@ export default function ({
         };
 
         return {
-            values: returnOnlyCalculatedValue ? [finalResult] : [...values, finalResult],
+            values: returnOnlyCalculatedValue === 'true' ? [finalResult] : [...values, finalResult],
             errors: [],
         };
     };
