@@ -39,6 +39,13 @@ export interface IAttribute extends ICoreEntity {
      * only for tree attribute
      */
     permissions_conf_dependent_values?: ITreePermissionsDependentValuesConf;
+
+    /**
+     * only for link attribute
+     */
+    smart_filter?: {
+        enable: boolean;
+    };
 }
 
 export enum ValueVersionMode {

@@ -35,9 +35,10 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     libraries: null,
     multi_link_display_option: MultiDisplayOption.avatar,
     multi_tree_display_option: MultiDisplayOption.avatar,
+    smart_filter: null,
 };
 
-export const mockAttrSimple = {...base, id: 'simple_attribute'};
+export const mockAttrSimple = {...base, id: 'simple_attribute', smart_filter: null};
 export const mockAttrId = {...base, id: 'id', system: true};
 export const mockAttrSimpleWithValuesList = {
     ...mockAttrSimple,
@@ -117,6 +118,7 @@ export const mockAttrTree: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute = {
     id: 'tree_attribute',
     type: AttributeType.tree,
     linked_tree: {id: 'test_tree'},
+    smart_filter: null,
 };
 export const mockAttrTreeMultival: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute = {
     ...mockAttrTree,
