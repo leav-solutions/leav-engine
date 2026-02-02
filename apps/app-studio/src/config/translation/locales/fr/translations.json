@@ -52,7 +52,7 @@
             "delete_task_description_one": "Vous êtes sur le point de supprimer cette tâche.",
             "delete_task_description_other": "Vous êtes sur le point de supprimer ces tâches.",
             "no_tasks": "Aucune tâche pour l'instant",
-            "started_at": "Démarré le",
+            "started_at": "Démarrée le",
             "completed_at": "Terminée le",
             "duration": "Durée",
             "duration_less_than_minute": "moins d'une minute",
