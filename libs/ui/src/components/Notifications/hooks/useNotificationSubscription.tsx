@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useNotificationSubscription} from '_ui/_gqlTypes';
-import {SUBSCRIPTION_NOTIFICATION_DURATION} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitSpace, KitNotification, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
+import {SUBSCRIPTION_NOTIFICATION_DURATION} from '_ui/constants';
 
 export const useNotificationsSubscription = () => {
     const {t} = useSharedTranslation();
@@ -16,8 +16,7 @@ export const useNotificationsSubscription = () => {
             if (!data?.data?.notification?.title) {
                 return;
             }
-            const {level, title, message, attachments, relatedEntities, date} = data.data.notification;
-
+            const {level, title, message, attachments, relatedEntities, date, displayDuration} = data.data.notification;
             const kitNotificationLevel = typeof KitNotification[level] === 'function' ? level : 'info';
 
             KitNotification[kitNotificationLevel]({
@@ -29,7 +28,7 @@ export const useNotificationsSubscription = () => {
                         {dayjs.unix(date).format('HH:mm DD/MM/YYYY')}
                     </KitTypography.Text>
                 ),
-                duration: SUBSCRIPTION_NOTIFICATION_DURATION,
+                duration: displayDuration === 0 ? undefined : (displayDuration ?? SUBSCRIPTION_NOTIFICATION_DURATION),
                 footer: (
                     <KitSpace direction="horizontal" size="xs">
                         {attachments?.map(attachment => (

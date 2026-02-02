@@ -34,6 +34,7 @@ export default function ({
                                     notification: {
                                         ...notification.content,
                                         date: notification.date,
+                                        displayDuration: notification.displayDuration,
                                     },
                                     recipientUserIds: [notification.recipientUserId],
                                 } satisfies IPubSubNotificationData,

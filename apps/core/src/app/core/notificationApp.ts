@@ -43,11 +43,12 @@ export default function ({'core.domain.eventsManager': eventsManager = null}: ID
                         url: String!,
                         label: String!
                     }
-                        
+
                     type Notification {
                         level: NotificationLevel!,
                         title: String!,
                         message: String!,
+                        displayDuration: Int,
                         relatedEntities: [RelatedEntity!],
                         attachments: [Attachment!],
                         date: Int!

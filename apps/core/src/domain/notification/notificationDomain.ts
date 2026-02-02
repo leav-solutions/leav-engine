@@ -84,6 +84,7 @@ export default function ({
 
                 const notifications: INotification[] = notification.recipients.userIds.map(userId => ({
                     date: dayjs().unix(),
+                    displayDuration: notification.displayDuration,
                     recipientUserId: userId,
                     content: notification.content,
                 }));
