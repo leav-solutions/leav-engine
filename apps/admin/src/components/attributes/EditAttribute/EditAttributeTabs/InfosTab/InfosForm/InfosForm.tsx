@@ -487,7 +487,7 @@ function InfosForm({
                     <FormFieldWrapper error={_getErrorByField('smart_filter.enable')}>
                         <Form.Checkbox
                             label={t('attributes.smart_filter.enable')}
-                            disabled={values.system || readonly}
+                            disabled={readonly}
                             width="8"
                             toggle
                             name="smart_filter.enable"
