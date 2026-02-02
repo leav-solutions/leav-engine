@@ -9,15 +9,22 @@ import {withFilter} from 'graphql-subscriptions';
 import {type IUtils} from 'utils/utils';
 import {type IPubSubNotificationData, TriggerNames} from '../../_types/eventsManager';
 import {type IQueryInfos} from '_types/queryInfos';
+import {type IList} from '../../_types/list';
+import {type INotification} from '../../_types/notification';
+import {type INotificationDomain} from '../../domain/notification/notificationDomain';
 
 export type INotificationApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.utils'?: IUtils;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.notification'?: INotificationDomain;
 }
 
-export default function ({'core.domain.eventsManager': eventsManager = null}: IDeps): INotificationApp {
+export default function ({
+    'core.domain.eventsManager': eventsManager = null,
+    'core.domain.notification': notificationDomain = null,
+}: IDeps): INotificationApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -43,16 +50,31 @@ export default function ({'core.domain.eventsManager': eventsManager = null}: ID
                         url: String!,
                         label: String!
                     }
-
+                   
+                   type NotificationsList {
+                        totalCount: Int!
+                        list: [Notification!]!
+                    }
+                         
                     type Notification {
+                        id: ID!,
+                        date: Int!,
                         level: NotificationLevel!,
                         title: String!,
                         message: String!,
                         displayDuration: Int,
                         relatedEntities: [RelatedEntity!],
                         attachments: [Attachment!],
-                        date: Int!
                         taskId: ID
+                    }
+
+                    extend type Query {
+                        notifications: NotificationsList!
+                    }
+
+                    extend type Mutation {
+                        deleteNotification(notificationId: ID!): Notification!
+                        deleteAllNotifications: [Notification!]!
                     }
 
                     type Subscription {
@@ -60,26 +82,38 @@ export default function ({'core.domain.eventsManager': eventsManager = null}: ID
                     }
                 `,
                 resolvers: {
+                    Query: {
+                        notifications: (_: never, _args: never, ctx: IQueryInfos): Promise<IList<INotification>> =>
+                            notificationDomain.getNotifications(ctx),
+                    },
+                    Mutation: {
+                        deleteAllNotifications: (_: never, _args: never, ctx: IQueryInfos): Promise<INotification[]> =>
+                            notificationDomain.deleteAllNotifications(ctx),
+                        deleteNotification: (
+                            _: never,
+                            args: {notificationId: string},
+                            ctx: IQueryInfos,
+                        ): Promise<INotification> => notificationDomain.deleteNotification(args.notificationId, ctx),
+                    },
+                    Notification: Object.fromEntries(
+                        ['level', 'title', 'message', 'relatedEntities', 'attachments', 'taskId'].map(key => [
+                            key,
+                            ({content}: INotification) => content[key],
+                        ]),
+                    ),
                     Subscription: {
                         notification: {
                             subscribe: withFilter(
                                 () => eventsManager.subscribe([TriggerNames.NOTIFICATION]),
-                                (payload: PublishedEvent<IPubSubNotificationData>, _, ctx: IQueryInfos) => {
-                                    if (payload.recipientUserIds.includes(ctx.userId)) {
-                                        return true;
-                                    }
-
-                                    return false;
-                                },
+                                (payload: PublishedEvent<IPubSubNotificationData>, _, ctx: IQueryInfos) =>
+                                    payload.recipientUserIds.includes(ctx.userId),
                             ),
                         },
                     },
                 },
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
     };
 }

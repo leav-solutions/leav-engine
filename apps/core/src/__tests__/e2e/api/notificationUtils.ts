@@ -6,9 +6,10 @@ import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {NOTIFICATION_EMAIL_TASK_ID_HEADER} from '../../../_constants/notifications';
 import {waitGraphqlWebSocketMessage} from './e2eUtils';
 import {type IMailpitMsgFull, waitMailpitMessage} from './mailpitUtils';
+import {type INotification} from '../../../_types/notification';
 
 export const waitWebSocketNotification = (graphqlClient: GraphqlWsClient, taskId: string) =>
-    waitGraphqlWebSocketMessage<Pick<IPubSubNotificationData, 'notification'>>(
+    waitGraphqlWebSocketMessage<{notification: Omit<INotification, 'content'> & INotification['content']}>(
         graphqlClient,
         subscriptionGraphqlQuery,
         {},
@@ -22,10 +23,11 @@ export const waitEmailNotification = async (taskId: string): Promise<IMailpitMsg
 const subscriptionGraphqlQuery = `
         subscription {
             notification {
+                id
+                date
                 level
                 message
                 title
-                date
                 attachments {
                     label
                     url

@@ -4,9 +4,7 @@
 
 import {type IQueryInfos} from './queryInfos';
 
-export interface INotification {
-    // May be add an id field later
-
+export interface INotification extends ICoreEntity {
     /**
      * Timestamp of the notification creation in milliseconds since epoch
      */
@@ -84,4 +82,8 @@ export enum NotificationChannels {
 export interface INotificationChannel {
     type: NotificationChannels;
     sendNotifications(notifications: INotification[], ctx: IQueryInfos): Promise<void>;
+}
+
+export interface INotificationFilterOptions extends ICoreEntityFilterOptions {
+    recipientUserId?: string;
 }
