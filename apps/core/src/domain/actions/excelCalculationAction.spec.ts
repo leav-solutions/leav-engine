@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
 import {ActionsListEvents, type ActionsListValueType, type IActionsListContext} from '../../_types/actionsList';
-import {type ICalculationVariable, type IVariableValue} from 'domain/helpers/calculationVariable';
+import {type ICalculationVariable, type IVariableValue} from 'domain/helpers/calculations/calculationVariable';
 import excelCalculationAction from './excelCalculationAction';
 import {type IValue} from '_types/value';
 import {Errors} from '../../_types/errors';

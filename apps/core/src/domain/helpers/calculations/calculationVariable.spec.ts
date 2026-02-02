@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListEvents, type IActionsListContext} from '../../../_types/actionsList';
-import calculationVariable, {type IVariableValue} from '.';
+import calculationVariable, {type IVariableValue} from './calculationVariable';
 
 const mockCalculationsVariableFunctions = {
     test: {

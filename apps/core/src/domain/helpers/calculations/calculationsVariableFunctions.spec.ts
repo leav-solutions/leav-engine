@@ -4,7 +4,7 @@
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {ActionsListEvents, type IActionsListContext} from '../../../_types/actionsList';
-import calculationsVariableFunctions from '.';
+import calculationsVariableFunctions from './calculationsVariableFunctions';
 import {TypeGuards} from '../../../utils';
 
 const mockRecordDomain = {
