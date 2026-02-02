@@ -80,6 +80,20 @@ export default function ({
     'core.utils': utils,
     translator,
 }: IExportDomainDeps): IExportDomain {
+    /**
+     * Decodes a string containing some HTML entities into their corresponding characters.
+     * Those html string generated from https://github.com/ueberdosis/tiptap
+     *
+     * @remarks
+     * The list of named entities handled in this function (`&amp;`, `&lt;`, `&gt;`)
+     * is not exhaustive. HTML defines many more named entities (such as `&nbsp;`, `&copy;`, etc.)
+     * that are not decoded by this function. For full HTML entity decoding, consider using a dedicated
+     * library or extending this function to handle additional entities.
+     */
+    function decodeTipTapHtmlEntities(text: string): string {
+        return text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    }
+
     const _getFormattedValues = async (
         attribute: IAttribute,
         values: IValue[],
@@ -118,8 +132,8 @@ export default function ({
         if (attribute.format === AttributeFormats.RICH_TEXT) {
             values = values.map(v => ({
                 ...v,
-                // Remove HTML tags for export
-                payload: v.payload?.replace(/<\/?[^>]+(>|$)/g, '') || '',
+                // Remove HTML tags and decode HTML entities for export
+                payload: v.payload ? decodeTipTapHtmlEntities(v.payload.replace(/<\/?[^>]+(>|$)/g, '')) : '',
             }));
         }
 
