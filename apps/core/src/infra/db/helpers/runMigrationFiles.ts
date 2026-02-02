@@ -8,6 +8,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IDbService} from '../dbService';
 import {MIGRATIONS_COLLECTION_NAME} from '../dbUtils';
 import loadMigrationFile from './loadMigrationFile';
+import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
 
 interface IExecuteMigrationParams {
     files: string[];
@@ -18,6 +19,7 @@ interface IExecuteMigrationParams {
         depsManager: AwilixContainer;
         dbService: IDbService;
         logger: ILogger;
+        cacheService: ICachesService;
     };
     ctx: IQueryInfos;
 }
@@ -56,6 +58,14 @@ export default async (params: IExecuteMigrationParams): Promise<void> => {
                     file: fileKeyWithoutExtension,
                     date: Date.now(),
                 });
+
+                // Clear cache after each migrations to ensure consistency
+                // If db was modified by migrations, cached data may be stale
+                await Promise.all(
+                    Object.values(ECacheType).map(cacheType =>
+                        params.deps.cacheService.getCache(cacheType).deleteAll(),
+                    ),
+                );
             } catch (err) {
                 err.message = `[DB Migration Error] ${fileKey}: } ${err.message}`;
                 throw err;

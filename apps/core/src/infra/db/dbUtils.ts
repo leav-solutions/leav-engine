@@ -156,7 +156,7 @@ export default function ({
                     executedMigrations,
                     migrationsDir: folder,
                     prefix,
-                    deps: {depsManager, dbService, logger},
+                    deps: {depsManager, dbService, logger, cacheService},
                     ctx,
                 });
 
@@ -186,9 +186,6 @@ export default function ({
 
                 await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolderPath, pluginName);
             }
-
-            /** Clear cache */
-            await Promise.all(Object.values(ECacheType).map(cacheType => cacheService.getCache(cacheType).deleteAll()));
         },
 
         /**
