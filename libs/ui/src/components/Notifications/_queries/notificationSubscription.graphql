@@ -4,6 +4,7 @@ subscription Notification {
         message
         title
         date
+        displayDuration
         attachments {
             label
             url

@@ -18,6 +18,7 @@ export enum TriggerNames {
 export interface IPubSubNotificationData {
     notification: INotificationContent & {
         date: number;
+        displayDuration?: number;
     };
     recipientUserIds: string[];
 }

@@ -18,6 +18,8 @@ export interface INotification {
     recipientUserId: string;
 
     content: INotificationContent;
+
+    displayDuration?: number;
 }
 
 export interface INotificationContent {
@@ -61,6 +63,11 @@ export interface ICreateNotification {
     priority: 'urgent' | 'normal';
 
     content: INotificationContent;
+
+    /**
+     * Duration of the notification in ms, 0 for persistent
+     */
+    displayDuration?: number;
 
     /**
      * Channels to send the notification to (if not set, all channels will be used)
