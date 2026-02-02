@@ -205,9 +205,23 @@ export interface IAttributeTypeRepo<
         ctx,
     }: {
         library: string;
-        attribute: IAttribute;
+        attribute: IAttributeWithRevLink;
         recordIds: string[];
         options?: {version?: IValueVersion};
+        ctx: IQueryInfos;
+    }): Promise<IValuesOccurrences<IBaseValueByAttributeType[AttributeType]>>;
+
+    /**
+     * Count occurrences of reverse link values for given records
+     * Only for simple link reverse attributes
+     */
+    countReverseValuesOccurrences?({
+        advancedLinkAttr,
+        recordIds,
+        ctx,
+    }: {
+        advancedLinkAttr: IAttributeWithRevLink;
+        recordIds: string[];
         ctx: IQueryInfos;
     }): Promise<IValuesOccurrences<IBaseValueByAttributeType[AttributeType]>>;
 

@@ -134,7 +134,7 @@ export interface IValueRepo {
         ctx,
     }: {
         library: string;
-        attribute: IAttribute; // For now only tree attributes are supported, so dont need IAttributeWithRevLink
+        attribute: IAttributeWithRevLink;
         recordIds: string[];
         options?: {version?: IValueVersion};
         ctx: IQueryInfos;

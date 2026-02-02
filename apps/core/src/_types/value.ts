@@ -185,11 +185,6 @@ export interface IBaseValueByAttributeType {
 }
 
 export type IValuesOccurrences<SimpleValueType extends IBaseValue = IBaseValue> = Array<{
-    value: SimpleValueType;
+    value: SimpleValueType['payload'] | null;
     count: number;
 }>;
-
-export interface IValuesOccurrencesResult<BaseValueType extends IBaseValue = IBaseValue> {
-    occurrences: IValuesOccurrences<BaseValueType>;
-    noValueCount: number;
-}

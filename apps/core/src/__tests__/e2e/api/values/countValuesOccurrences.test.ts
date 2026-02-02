@@ -142,23 +142,6 @@ describe('countValuesOccurrences', () => {
         );
     });
 
-    it('should throw error if attribute is tree multiple values', async () => {
-        const gqlQuery = `query {
-            countValuesOccurrences(
-                library: "${testLibName}",
-                attribute: "${attrTreeMultiValueName}"
-            ) {
-                occurrences {
-                    count
-                }
-            }
-        }`;
-
-        await expect(makeGraphQlCall(gqlQuery)).rejects.toThrow(
-            /Multiple values attribute are not supported for this operation/,
-        );
-    });
-
     it('without record filters should count occurrences of tree values', async () => {
         const {occurrences, noValueCount} = await countValuesOccurrences(testLibName, attrTreeMonoValueName);
 
@@ -318,5 +301,38 @@ describe('countValuesOccurrences', () => {
         });
 
         return res.data.data.countValuesOccurrences;
+    }
+
+    async function listDistinctValues(
+        libraryId: string,
+        attributeId: string,
+        recordFilters?: string,
+    ): Promise<Array<{count: number; treeNode?: {value: {id: string}}; record?: {value: {id: string}}}>> {
+        const gqlQuery = `query {
+            listDistinctValues(
+                library: "${libraryId}",
+                attribute: "${attributeId}"
+                ${recordFilters ? `, recordFilters: ${recordFilters}` : ''}
+            ) {
+                    count
+                    ... on TreeDistinctValues {
+                        treeNode: value {
+                            id
+                        }
+                    }
+                    ... on LinkDistinctValues {
+                        record: value {
+                            id
+                        }
+                    }
+                }
+            
+        }`;
+
+        const res = await makeGraphQlCall(gqlQuery, {
+            user: e2eGuestUser(),
+        });
+
+        return res.data.data.listDistinctValues;
     }
 });
