@@ -11,20 +11,28 @@ import {
 } from '_types/notification';
 import {type IQueryInfos} from '_types/queryInfos';
 import dayjs from 'dayjs';
+import {type INotificationRepo} from '../../infra/notification/notificationRepo';
+import {type IList} from '../../_types/list';
+import {type INotificationFilterOptions} from '../../_types/notification';
 
 export interface INotificationDomain {
-    createNotification(notification: ICreateNotification, ctx: IQueryInfos): Promise<void>;
+    createNotification(notification: ICreateNotification, ctx: IQueryInfos): Promise<INotification[]>;
+    getNotifications(ctx: IQueryInfos): Promise<IList<INotification>>;
+    deleteAllNotifications(ctx: IQueryInfos): Promise<INotification[]>;
+    deleteNotification(notificationId: string, ctx: IQueryInfos): Promise<INotification>;
 }
 
 export interface INotificationDomainDeps {
     'core.domain.notification.emailChannel': INotificationChannel;
     'core.domain.notification.webSocketChannel': INotificationChannel;
+    'core.infra.notification': INotificationRepo;
     config: IConfig;
 }
 
 export default function ({
     'core.domain.notification.emailChannel': emailChannel,
     'core.domain.notification.webSocketChannel': webSocketChannel,
+    'core.infra.notification': notificationRepo,
     config,
 }: INotificationDomainDeps): INotificationDomain {
     if (config.notification.enable === false) {
@@ -59,7 +67,7 @@ export default function ({
         );
 
     return {
-        async createNotification(notification: ICreateNotification, ctx: IQueryInfos): Promise<void> {
+        async createNotification(notification: ICreateNotification, ctx: IQueryInfos): Promise<INotification[]> {
             try {
                 if (notification.recipients.userIds.length === 0 && notification.recipients.groupIds.length === 0) {
                     throw new Error('No recipients specified for the notification');
@@ -89,21 +97,72 @@ export default function ({
                     content: notification.content,
                 }));
 
-                // save notifications to the database
+                const createdNotifications = await Promise.all(
+                    notifications.map(n => notificationRepo.createNotification(n, ctx)),
+                );
 
-                await sendNotificationsViaChannels(notifications, notification.channels || defaultChannelsType, ctx);
+                await sendNotificationsViaChannels(
+                    createdNotifications,
+                    notification.channels || defaultChannelsType,
+                    ctx,
+                );
+
+                return createdNotifications;
             } catch (error) {
                 logger.error(`Error creating notification: ${error.message}`);
+                return [];
             }
+        },
+        async getNotifications(ctx: IQueryInfos): Promise<IList<INotification>> {
+            const filters: INotificationFilterOptions = {
+                recipientUserId: ctx.userId,
+            };
+
+            return notificationRepo.getNotifications(
+                {
+                    filters,
+                    withCount: true,
+                },
+                ctx,
+            );
+        },
+        async deleteAllNotifications(ctx: IQueryInfos): Promise<INotification[]> {
+            return notificationRepo.deleteNotificationsByRecipientUserId(ctx.userId, ctx);
+        },
+        async deleteNotification(notificationId: string, ctx: IQueryInfos): Promise<INotification> {
+            const notification = (await notificationRepo.getNotifications({filters: {id: notificationId}}, ctx))
+                .list[0];
+
+            if (!notification) {
+                throw new Error(`Notification with ID ${notificationId} not found`);
+            } else if (notification.recipientUserId !== ctx.userId) {
+                throw new Error(`User ${ctx.userId} is not authorized to delete notification ${notificationId}`);
+            }
+
+            return notificationRepo.deleteNotificationById(notificationId, ctx);
         },
     };
 }
 
 function notificationsDisabled(): INotificationDomain {
     logger.verbose('Notification system is disabled in the configuration.');
+
     return {
-        async createNotification(): Promise<void> {
+        async createNotification(): Promise<INotification[]> {
             logger.silly('Notification system is disabled. Skipping notification creation.');
+            return [];
+        },
+        async getNotifications(): Promise<IList<INotification>> {
+            logger.silly('Notification system is disabled. Skipping notification retrieval.');
+            return {totalCount: 0, list: []};
+        },
+        async deleteNotification(): Promise<INotification> {
+            logger.silly('Notification system is disabled. Skipping notification deletion.');
+            return null;
+        },
+        async deleteAllNotifications(): Promise<INotification[]> {
+            logger.silly('Notification system is disabled. Skipping notifications deletion.');
+            return [];
         },
     };
 }

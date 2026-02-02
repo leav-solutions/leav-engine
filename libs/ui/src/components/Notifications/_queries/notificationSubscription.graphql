@@ -1,9 +1,10 @@
 subscription Notification {
     notification {
+        id
+        date
         level
         message
         title
-        date
         displayDuration
         attachments {
             label

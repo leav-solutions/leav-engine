@@ -31,11 +31,7 @@ export default function ({
                             {
                                 triggerName: TriggerNames.NOTIFICATION,
                                 data: {
-                                    notification: {
-                                        ...notification.content,
-                                        date: notification.date,
-                                        displayDuration: notification.displayDuration,
-                                    },
+                                    notification,
                                     recipientUserIds: [notification.recipientUserId],
                                 } satisfies IPubSubNotificationData,
                             },

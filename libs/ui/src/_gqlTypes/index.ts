@@ -164,6 +164,8 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
+  /**  only for link attribute  */
+  smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
@@ -209,6 +211,18 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -573,7 +587,6 @@ export enum PermissionsActions {
   admin_access_libraries = 'admin_access_libraries',
   admin_access_logs = 'admin_access_logs',
   admin_access_permissions = 'admin_access_permissions',
-  admin_access_plugins = 'admin_access_plugins',
   admin_access_tasks = 'admin_access_tasks',
   admin_access_trees = 'admin_access_trees',
   admin_access_version_profiles = 'admin_access_version_profiles',
@@ -736,6 +749,10 @@ export type SheetInput = {
   type: ImportType;
 };
 
+export type SmartFilterConfInput = {
+  enable: Scalars['Boolean']['input'];
+};
+
 export type SortApiKeysInput = {
   field: ApiKeysSortableFields;
   order?: InputMaybe<SortOrder>;
@@ -799,6 +816,7 @@ export enum TaskType {
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -1907,7 +1925,7 @@ export type UpdateViewMutation = { updateView: { id: string, shared: boolean, la
 export type NotificationSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationSubscription = { notification: { level: NotificationLevel, message: string, title: string, date: number, displayDuration?: number | null, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
+export type NotificationSubscription = { notification: { id: string, date: number, level: NotificationLevel, message: string, title: string, displayDuration?: number | null, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
 
 export type GetRecordHistoryQueryVariables = Exact<{
   record: LogTopicRecordFilterInput;
@@ -6021,10 +6039,11 @@ export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMut
 export const NotificationDocument = gql`
     subscription Notification {
   notification {
+    id
+    date
     level
     message
     title
-    date
     displayDuration
     attachments {
       label

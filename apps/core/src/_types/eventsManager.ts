@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {type INotificationContent} from './notification';
+import {type INotification} from './notification';
 import {type ITask} from './tasksManager';
 
 export enum TriggerNames {
@@ -16,10 +16,7 @@ export enum TriggerNames {
 }
 
 export interface IPubSubNotificationData {
-    notification: INotificationContent & {
-        date: number;
-        displayDuration?: number;
-    };
+    notification: INotification;
     recipientUserIds: string[];
 }
 

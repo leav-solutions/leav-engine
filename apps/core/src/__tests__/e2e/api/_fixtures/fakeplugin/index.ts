@@ -11,12 +11,14 @@ import {type IAttribute} from '../../../../../_types/attribute';
 import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {FakePluginTaskType} from './_types/_types';
 import {type IFakeDomain} from './domain/fakeDomain';
+import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';
 
 interface IDeps {
     translator: i18n;
     'core.infra.value': IValueRepo;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.notification': INotificationDomain;
     'fakeplugin.domain': IFakeDomain;
 }
 
@@ -30,6 +32,7 @@ export default function ({
     'core.infra.value': valueRepo,
     'core.domain.attribute': attributeDomain,
     'core.domain.tasksManager': tasksManagerDomain,
+    'core.domain.notification': notificationDomain,
     'fakeplugin.domain': fakeDomain,
 }: IDeps): IPluginInitModule {
     const _fakeReplaceValueAction = {
@@ -76,8 +79,33 @@ export default function ({
                         fakePluginTask(taskName: String!): String!
                         hasFakePluginStarted: Boolean!
                     }
+                    
+                    extend type Mutation {
+                        fakePluginCreateNotification(title: String!): ID!
+                    }
                 `,
                 resolvers: {
+                    Mutation: {
+                        fakePluginCreateNotification: async (_parent, {title}, ctx): Promise<string> =>
+                            (
+                                await notificationDomain.createNotification(
+                                    {
+                                        emitterUserId: ctx.userId,
+                                        recipients: {
+                                            userIds: [ctx.userId],
+                                            groupIds: [],
+                                        },
+                                        priority: 'normal',
+                                        content: {
+                                            level: 'info',
+                                            title,
+                                            message: 'message',
+                                        },
+                                    },
+                                    ctx,
+                                )
+                            )[0].id,
+                    },
                     Query: {
                         fakePluginQuery: () => 'ok!',
                         fakePluginTranslation: () => translator.t('fakeplugin.testtranslation', {lng: 'fr'}),
