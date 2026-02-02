@@ -50,7 +50,7 @@ export const useNotificationsSubscription = () => {
                                     window.location.href = relatedEntity.url;
                                 }}
                             >
-                                {t('global.show')}
+                                {relatedEntity.label ?? t('global.show')}
                             </KitButton>
                         ))}
                     </KitSpace>
