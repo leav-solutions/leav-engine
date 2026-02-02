@@ -8,6 +8,7 @@ const moduleLocalesPaths = [
     'apps/data-studio/src/locales/',
     'apps/login/src/locales/',
     'apps/portal/src/locales/',
+    'apps/app-studio/src/config/translation/locales/',
     'libs/ui/src/locales/',
 ];
 

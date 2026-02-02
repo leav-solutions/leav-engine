@@ -7,7 +7,9 @@
         "information": "Information",
         "are_you_sure": "Are you sure?",
         "sign_out": "Logout",
-        "download": "Download"
+        "download": "Download",
+        "delete": "Delete",
+        "delete_all": "Delete all"
     },
     "display_mode": {
         "select_display": "Select display",
@@ -41,12 +43,10 @@
         "title": "Activity center",
         "open": "Open activity center",
         "close": "Close activity center",
-        "long_tasks": "Long tasks",
-        "notifications": "Notifications",
+        "long_tasks_title": "Long tasks",
+        "notifications_title": "Notifications",
         "progress": "Progress",
         "tasks": {
-            "delete": "Delete",
-            "delete_all": "Delete all",
             "delete_task_one": "Delete this task?",
             "delete_task_other": "Delete these tasks?",
             "delete_task_description_one": "You are about to delete this task.",
@@ -68,6 +68,20 @@
                 "PENDING_CANCEL": "Pending cancel",
                 "RUNNING": "Running"
             }
+        },
+        "notifications": {
+            "no_notifications": "No notification yet",
+            "duration_less_than_minute": "Less than a minute ago",
+            "duration_minutes_one": "{{minutes}} minute ago",
+            "duration_minutes_other": "{{minutes}} minutes ago",
+            "duration_hours_one": "{{hours}} hour ago",
+            "duration_hours_other": "{{hours}} hours ago",
+            "duration_days_one": "{{days}} day ago",
+            "duration_days_other": "{{days}} days ago",
+            "delete_notification_one": "Delete this notification?",
+            "delete_notification_other": "Delete these notifications?",
+            "delete_notification_description_one": "You are about to delete this notification.",
+            "delete_notification_description_other": "You are about to delete these notifications."
         }
     },
     "temporary": {

@@ -7,7 +7,9 @@
         "information": "Informations",
         "are_you_sure": "Êtes-vous sûr ?",
         "sign_out": "Déconnexion",
-        "download": "Télécharger"
+        "download": "Télécharger",
+        "delete": "Supprimer",
+        "delete_all": "Tout supprimer"
     },
     "display_mode": {
         "select_display": "Sélection d'affichage",
@@ -41,12 +43,10 @@
         "title": "Centre d'activité",
         "open": "Ouvrir le centre d'activité",
         "close": "Fermer le centre d'activité",
-        "long_tasks": "Tâches longues",
-        "notifications": "Notifications",
+        "long_tasks_title": "Tâches longues",
+        "notifications_title": "Notifications",
         "progress": "Progression",
         "tasks": {
-            "delete": "Supprimer",
-            "delete_all": "Tout supprimer",
             "delete_task_one": "Supprimer cette tâche ?",
             "delete_task_other": "Supprimer ces tâches ?",
             "delete_task_description_one": "Vous êtes sur le point de supprimer cette tâche.",
@@ -68,6 +68,20 @@
                 "PENDING_CANCEL": "En annulation",
                 "RUNNING": "En cours"
             }
+        },
+        "notifications": {
+            "no_notifications": "Aucune notification pour l'instant",
+            "duration_less_than_minute": "Il y a moins d'une minute",
+            "duration_minutes_one": "Il y a {{minutes}} minute",
+            "duration_minutes_other": "Il y a {{minutes}} minutes",
+            "duration_hours_one": "Il y a {{hours}} heure",
+            "duration_hours_other": "Il y a {{hours}} heures",
+            "duration_days_one": "Il y a {{days}} jour",
+            "duration_days_other": "Il y a {{days}} jours",
+            "delete_notification_one": "Supprimer cette notification ?",
+            "delete_notification_other": "Supprimer ces notifications ?",
+            "delete_notification_description_one": "Vous êtes sur le point de supprimer cette notification.",
+            "delete_notification_description_other": "Vous êtes sur le point de supprimer ces notifications."
         }
     },
     "temporary": {
