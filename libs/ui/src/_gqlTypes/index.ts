@@ -6049,10 +6049,6 @@ export const NotificationDocument = gql`
       label
       url
     }
-    relatedEntities {
-      label
-      url
-    }
   }
 }
     `;

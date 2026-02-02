@@ -77,7 +77,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
-            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'global.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with PENDING status', () => {
@@ -98,7 +98,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
-            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'global.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with RUNNING status', () => {
@@ -124,7 +124,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
-            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'global.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with PENDING_CANCEL status without progress', () => {
@@ -148,7 +148,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
-            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'global.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with PENDING_CANCEL status with progress', () => {
@@ -174,7 +174,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
-            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'global.delete'})).not.toBeInTheDocument();
         });
 
         it('should render a task with CANCELED status without progress', () => {
@@ -198,7 +198,7 @@ describe('TasksList', () => {
             expect(screen.queryByText(/^activity_center\.tasks\.started_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.completed_at/)).not.toBeInTheDocument();
             expect(screen.queryByText(/^activity_center\.tasks\.duration/)).not.toBeInTheDocument();
-            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'global.delete'})).toBeInTheDocument();
         });
 
         it('should render a task with CANCELED status with progress', () => {
@@ -224,7 +224,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
-            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'global.delete'})).toBeInTheDocument();
         });
 
         it('should render a task with DONE status', () => {
@@ -250,7 +250,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
-            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'global.delete'})).toBeInTheDocument();
         });
 
         it('should render a task with FAILED status', () => {
@@ -276,7 +276,7 @@ describe('TasksList', () => {
             expect(screen.getByText(/^activity_center\.tasks\.started_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.completed_at/)).toBeInTheDocument();
             expect(screen.getByText(/^activity_center\.tasks\.duration/)).toBeInTheDocument();
-            expect(screen.getByRole('button', {name: 'activity_center.tasks.delete'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'global.delete'})).toBeInTheDocument();
         });
     });
 
@@ -297,7 +297,7 @@ describe('TasksList', () => {
 
             render(<TasksList />);
 
-            const archiveButton = screen.getByRole('button', {name: 'activity_center.tasks.delete'});
+            const archiveButton = screen.getByRole('button', {name: 'global.delete'});
             expect(archiveButton).toBeInTheDocument();
 
             await userEvent.click(archiveButton);
@@ -320,7 +320,7 @@ describe('TasksList', () => {
             });
             render(<TasksList />);
 
-            expect(screen.queryByRole('button', {name: 'activity_center.tasks.delete_all'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'global.delete_all'})).not.toBeInTheDocument();
         });
 
         it('should call archiveUserTasks when archive all button is clicked and confirmed', async () => {
@@ -340,7 +340,7 @@ describe('TasksList', () => {
 
             render(<TasksList />);
 
-            const archiveAllButton = screen.getByRole('button', {name: 'activity_center.tasks.delete_all'});
+            const archiveAllButton = screen.getByRole('button', {name: 'global.delete_all'});
             expect(archiveAllButton).toBeInTheDocument();
 
             await userEvent.click(archiveAllButton);

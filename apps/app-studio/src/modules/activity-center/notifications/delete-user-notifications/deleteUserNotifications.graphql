@@ -1,0 +1,11 @@
+mutation deleteUserNotification($notificationId: ID!) {
+    deleteNotification(notificationId: $notificationId) {
+        id
+    }
+}
+
+mutation deleteAllUserNotifications {
+    deleteAllNotifications {
+        id
+    }
+}

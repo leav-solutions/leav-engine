@@ -1,0 +1,19 @@
+query getUserNotifications {
+    notifications {
+        list {
+            id
+            date
+            level
+            message
+            title
+            attachments {
+                label
+                url
+            }
+            relatedEntities {
+                label
+                url
+            }
+        }
+    }
+}

@@ -134,7 +134,7 @@ export const TasksList = () => {
                         onClick={() => onArchiveUserTasks(userTasks)}
                         danger
                     >
-                        {t('activity_center.tasks.delete_all')}
+                        {t('global.delete_all')}
                     </KitButton>
                 </div>
             )}

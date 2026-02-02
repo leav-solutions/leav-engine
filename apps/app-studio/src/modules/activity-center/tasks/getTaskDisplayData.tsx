@@ -82,12 +82,12 @@ const buildArchiveUserTaskButton = (
     onArchiveUserTasks: (tasks: Task[]) => void,
     t: TFunction,
 ): ReactNode => (
-    <KitTooltip title={t('activity_center.tasks.delete')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+    <KitTooltip title={t('global.delete')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
         <KitButton
             type="tertiary"
             size="s"
             icon={<FontAwesomeIcon icon={faTimes} />}
-            aria-label={t('activity_center.tasks.delete')}
+            aria-label={t('global.delete')}
             onClick={() => onArchiveUserTasks([task])}
         />
     </KitTooltip>

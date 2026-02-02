@@ -1,0 +1,17 @@
+subscription subscribeToUserNotifications {
+    notification {
+        id
+        date
+        level
+        message
+        title
+        attachments {
+            label
+            url
+        }
+        relatedEntities {
+            label
+            url
+        }
+    }
+}
