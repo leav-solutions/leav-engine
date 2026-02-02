@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
-import {type ICalculationVariable} from 'domain/helpers/calculationVariable';
+import {type ICalculationVariable} from 'domain/helpers/calculations/calculationVariable';
 import {Parser} from 'hot-formula-parser';
 import {DetailedCellError, HyperFormula} from 'hyperformula';
 import {type IValue} from '_types/value';

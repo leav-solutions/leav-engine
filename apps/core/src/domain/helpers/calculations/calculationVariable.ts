@@ -5,7 +5,7 @@
 import {type ActionsListValueType, type IActionsListContext} from '_types/actionsList';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
-import {type IVariableFunctions} from '../calculationsVariableFunctions';
+import {type IVariableFunctions} from './calculationsVariableFunctions';
 import {type ITreeNode} from '../../../_types/tree';
 
 interface IDeps {

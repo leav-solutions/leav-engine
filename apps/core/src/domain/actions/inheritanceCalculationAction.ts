@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type ICalculationVariable} from 'domain/helpers/calculationVariable';
+import {type ICalculationVariable} from 'domain/helpers/calculations/calculationVariable';
 import {ActionsListIOTypes, type IActionsListFunction, ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 
