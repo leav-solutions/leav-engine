@@ -216,7 +216,7 @@ describe('Export', () => {
                             attrId,
                             exportLibName,
                             recordId2,
-                            "<p>Je mets ici un texte <em>avec</em> </p><p>de la mise en <strong>page</strong> </p><p style='text-align: right;'>Pour voir ce que ca fait </p>",
+                            "<p>Je mets ici un texte <em>avec &lt;&amp;&gt;</em> </p><p>de la mise en <strong>page</strong> </p><p style='text-align: right;'>Pour voir ce que ca fait </p>",
                         );
                         break;
                     case AttributeFormats.DATE_RANGE:
@@ -521,7 +521,7 @@ describe('Export', () => {
                         MASKED_VALUE,
                         'true',
                         '#FF5733',
-                        'Je mets ici un texte avec de la mise en page Pour voir ce que ca fait ',
+                        'Je mets ici un texte avec <&> de la mise en page Pour voir ce que ca fait ',
                     ],
                     [
                         'text',
