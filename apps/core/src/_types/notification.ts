@@ -4,7 +4,7 @@
 
 import {type IQueryInfos} from './queryInfos';
 
-export interface INotification extends Omit<ICoreEntity, 'label'>, INotificationContent {
+export interface INotification extends Omit<ICoreEntity, 'label'>, INotificationContent, INotificationMetadata {
     /**
      * Timestamp of the notification creation in milliseconds since epoch
      */
@@ -34,6 +34,24 @@ export interface INotificationContent {
     }>;
 }
 
+export interface INotificationMetadata {
+    /**
+     * Priority of the notification, may change which channel is used to send it (no yet implemented)
+     */
+    priority?: 'urgent' | 'normal';
+
+    /**
+     * Duration of the notification in ms, 0 for persistent
+     */
+    displayDuration?: number;
+
+    /**
+     * Optional task ID associated with the notification
+     * For email, will be added as a custom header (X-Task-Id)
+     */
+    taskId?: string;
+}
+
 export interface ICreateNotification {
     emitterUserId: string;
 
@@ -49,23 +67,9 @@ export interface ICreateNotification {
         groupIds: string[];
     };
 
-    /**
-     * Priority of the notification, may change which channel is used to send it (no yet implemented)
-     */
-    priority: 'urgent' | 'normal';
-
     content: INotificationContent;
 
-    /**
-     * Duration of the notification in ms, 0 for persistent
-     */
-    displayDuration?: number;
-
-    /**
-     * Optional task ID associated with the notification
-     * For email, will be added as a custom header (X-Task-Id)
-     */
-    taskId?: string;
+    metadata?: INotificationMetadata;
 
     /**
      * Channels to send the notification to (if not set, all channels will be used)

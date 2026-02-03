@@ -528,13 +528,15 @@ export default function ({
                                 },
                             ],
                         },
+                        metadata: {
+                            priority: 'normal',
+                            taskId: task.id,
+                        },
                         recipients: {
                             userIds: [ctx.userId],
                             groupIds: [],
                         },
                         emitterUserId: ctx.userId,
-                        priority: 'normal',
-                        taskId: task.id,
                     },
                     ctx,
                 );
@@ -553,13 +555,15 @@ export default function ({
                                 date: new Date().toLocaleString(ctx.lang),
                             }),
                         },
+                        metadata: {
+                            priority: 'normal',
+                            taskId: task.id,
+                        },
                         recipients: {
                             userIds: [ctx.userId],
                             groupIds: [],
                         },
                         emitterUserId: ctx.userId,
-                        priority: 'normal',
-                        taskId: task.id,
                     },
                     ctx,
                 );
