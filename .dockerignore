@@ -34,3 +34,9 @@
 /LICENSE_HEADER
 /jestModuleNameMapper.js
 /commitlint.config.cjs
+
+**/__tests__/
+**/*.spec.ts
+**/*.test.ts
+**/*.spec.tsx
+**/*.test.tsx
