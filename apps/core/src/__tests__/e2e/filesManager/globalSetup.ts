@@ -14,6 +14,21 @@ import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 export async function setup() {
     try {
         const conf = await getConfig();
+        // Export it here to avoid await in e2eUtils before creating the graphql client
+        globalThis.graphqlUrl = `http://${conf.server.host}:${conf.server.port}/graphql`;
+
+        // Fake user to avoid e2eUtils loading error
+        // Not used in filesManager e2e tests, but required for global setup to work
+        // May be merge those tests in api tests
+        // But those ones are not working for now
+        globalThis.guestUser = {
+            userId: '',
+            groupsId: [],
+        };
+        globalThis.nonAdminUser = {
+            userId: '',
+            groupsId: [],
+        };
 
         await initDb(conf);
 
