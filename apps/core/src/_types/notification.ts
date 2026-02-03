@@ -16,6 +16,8 @@ export interface INotification extends Omit<ICoreEntity, 'label'>, INotification
     userId: string;
 
     displayDuration?: number;
+
+    taskId?: string;
 }
 
 export interface INotificationContent {
@@ -30,12 +32,6 @@ export interface INotificationContent {
         url: string;
         label: string;
     }>;
-
-    /**
-     * Optional task ID associated with the notification
-     * For email, will be added as a custom header (X-Task-Id)
-     */
-    taskId?: string;
 }
 
 export interface ICreateNotification {
@@ -64,6 +60,12 @@ export interface ICreateNotification {
      * Duration of the notification in ms, 0 for persistent
      */
     displayDuration?: number;
+
+    /**
+     * Optional task ID associated with the notification
+     * For email, will be added as a custom header (X-Task-Id)
+     */
+    taskId?: string;
 
     /**
      * Channels to send the notification to (if not set, all channels will be used)

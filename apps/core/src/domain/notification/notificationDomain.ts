@@ -98,6 +98,7 @@ export default function ({
                         date: dayjs().unix(),
                         userId,
                         displayDuration: notification.displayDuration,
+                        taskId: notification.taskId,
                         ...notification.content,
                     }),
                 );

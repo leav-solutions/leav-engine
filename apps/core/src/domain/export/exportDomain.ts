@@ -527,7 +527,6 @@ export default function ({
                                     url: config.server.publicUrl + url,
                                 },
                             ],
-                            taskId: task.id,
                         },
                         recipients: {
                             userIds: [ctx.userId],
@@ -535,6 +534,7 @@ export default function ({
                         },
                         emitterUserId: ctx.userId,
                         priority: 'normal',
+                        taskId: task.id,
                     },
                     ctx,
                 );
@@ -552,7 +552,6 @@ export default function ({
                                 interpolation: {escapeValue: false},
                                 date: new Date().toLocaleString(ctx.lang),
                             }),
-                            taskId: task.id,
                         },
                         recipients: {
                             userIds: [ctx.userId],
@@ -560,6 +559,7 @@ export default function ({
                         },
                         emitterUserId: ctx.userId,
                         priority: 'normal',
+                        taskId: task.id,
                     },
                     ctx,
                 );
