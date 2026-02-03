@@ -1,0 +1,11 @@
+mutation SaveAttribute($attribute: AttributeInput!) {
+    saveAttribute(attribute: $attribute) {
+        id
+    }
+}
+
+mutation DeleteAttribute($attributeId: ID!) {
+    deleteAttribute(id: $attributeId) {
+        id
+    }
+}

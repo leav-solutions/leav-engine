@@ -5,9 +5,9 @@ import {test as setup} from '@playwright/test';
 import {ApplicationClient} from '../utils/ApplicationClient';
 import {AttributeClient} from '../utils/AttributeClient';
 import {LibraryClient} from '../utils/LibraryClient';
-import {AttributeFormats, AttributeTypes} from '../../../../apps/core/src/_types/attribute';
 import {initialData} from '../data';
 import {DataClient} from '../utils/DataClient';
+import {AttributeFormat, AttributeType} from '../_gqlTypes';
 import {
     STANDARD_FIELD_ATTRIBUTE_BOOLEAN_ID,
     STANDARD_FIELD_ATTRIBUTE_BOOLEAN_LABEL,
@@ -38,60 +38,55 @@ setup('Create test database', async ({}) => {
     await applicationClient.createApplication('app-studio');
     const attributeClient = new AttributeClient();
 
-    await attributeClient.createAttribute(
-        LABEL_ATTRIBUTE,
-        AttributeTypes.SIMPLE,
-        LABEL_ATTRIBUTE,
-        AttributeFormats.TEXT,
-    );
+    await attributeClient.createAttribute(LABEL_ATTRIBUTE, AttributeType.simple, LABEL_ATTRIBUTE, AttributeFormat.text);
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_TEXT_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_TEXT_LABEL,
-        AttributeFormats.TEXT,
+        AttributeFormat.text,
     );
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_BOOLEAN_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_BOOLEAN_LABEL,
-        AttributeFormats.BOOLEAN,
+        AttributeFormat.boolean,
     );
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_DATE_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_DATE_LABEL,
-        AttributeFormats.DATE,
+        AttributeFormat.date,
     );
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_COLOR_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_COLOR_LABEL,
-        AttributeFormats.COLOR,
+        AttributeFormat.color,
     );
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_PASSWORD_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_PASSWORD_LABEL,
-        AttributeFormats.ENCRYPTED,
+        AttributeFormat.encrypted,
     );
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_LABEL,
-        AttributeFormats.DATE_RANGE,
+        AttributeFormat.date_range,
     );
 
     await attributeClient.createAttribute(
         STANDARD_FIELD_ATTRIBUTE_RICH_TEXT_ID,
-        AttributeTypes.SIMPLE,
+        AttributeType.simple,
         STANDARD_FIELD_ATTRIBUTE_RICH_TEXT_LABEL,
-        AttributeFormats.RICH_TEXT,
+        AttributeFormat.rich_text,
     );
 
     await attributeClient.createValuesListAttribute(

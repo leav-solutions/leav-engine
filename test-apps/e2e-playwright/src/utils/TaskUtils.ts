@@ -1,23 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {TaskStatus} from '../_gqlTypes';
 import {GenericClient} from './GenericClient';
-import {type ITask, TaskStatus} from '../../../../apps/core/src/_types/tasksManager';
+
+export interface ITask {
+    id: string;
+    status: TaskStatus;
+}
 
 export class TaskUtil extends GenericClient {
     public async getTask(taskId: string): Promise<ITask> {
-        const taskQuery = `
-        query {
-          tasks(filters: {id: "${taskId}"}) {
-            list {
-              id
-              status
-            }
-          }
-        }
-      `;
-        const res: any = await this.makeGraphqlCall(taskQuery);
-        return res.data.data.tasks.list[0];
+        const res = await this.sdk.GetTasks({
+            filters: {id: taskId},
+        });
+        return res.tasks.list[0];
     }
 
     public async waitForTaskCompletion(taskId: string, timeout = 30000, interval = 50): Promise<ITask> {

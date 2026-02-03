@@ -2,27 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GenericClient} from './GenericClient';
-import {AttributeFormats, AttributeTypes} from '../../../../apps/core/src/_types/attribute';
+import {AttributeFormat, AttributeType, type AttributeInput} from '../_gqlTypes';
 
 export class AttributeClient extends GenericClient {
     public async createAttribute(
         id: string,
-        type: AttributeTypes,
+        type: AttributeType,
         label: string,
-        format?: AttributeFormats,
+        format?: AttributeFormat,
         required?: boolean,
         unique?: boolean,
         description?: string,
     ): Promise<void> {
-        const query = `
-            mutation SaveAttribute($attribute: AttributeInput!) {
-                saveAttribute(attribute: $attribute) {
-                    id
-                }
-            }
-        `;
-
-        const payload = {
+        const payload: AttributeInput = {
             id,
             type,
             format,
@@ -33,55 +25,32 @@ export class AttributeClient extends GenericClient {
             readonly: false,
         };
 
-        await this.makeGraphqlCall(query, {attribute: payload});
+        await this.sdk.SaveAttribute({attribute: payload});
         console.info(`Attribute ${label} created successfully!`);
     }
 
     public async createValuesListAttribute(id: string, label: string, values: string[]) {
-        await this.createAttribute(
+        const payload: AttributeInput = {
             id,
-            AttributeTypes.SIMPLE,
-            label,
-            AttributeFormats.TEXT,
-            false,
-            false,
-            'description',
-        );
-
-        const query = `
-            mutation SAVE_ATTRIBUTE($attrData: AttributeInput!) {
-                saveAttribute(attribute: $attrData) {
-                    id
-                }
-            }
-        `;
-
-        const payload = {
-            attrData: {
-                id,
-                values_list: {
-                    enable: true,
-                    values,
-                },
+            type: AttributeType.simple,
+            format: AttributeFormat.text,
+            label: {en: label},
+            required: false,
+            unique: false,
+            readonly: false,
+            values_list: {
+                enable: true,
+                values,
             },
         };
 
-        await this.makeGraphqlCall(query, payload);
+        await this.sdk.SaveAttribute({attribute: payload});
+        console.info(`Attribute ${label} created successfully!`);
     }
 
     public async deleteAttribute(attributesIds: string[]) {
         for (const attributeId of attributesIds) {
-            const query = `
-          mutation DeleteAttribute($attributeId: ID!) {
-            deleteAttribute(id: $attributeId) {
-              id
-            }
-          }
-        `;
-            const payload = {
-                attributeId,
-            };
-            await this.makeGraphqlCall(query, payload);
+            await this.sdk.DeleteAttribute({attributeId});
         }
     }
 }

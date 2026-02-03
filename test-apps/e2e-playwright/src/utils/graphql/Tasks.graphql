@@ -1,0 +1,8 @@
+query GetTasks($filters: TaskFiltersInput) {
+    tasks(filters: $filters) {
+        list {
+            id
+            status
+        }
+    }
+}
