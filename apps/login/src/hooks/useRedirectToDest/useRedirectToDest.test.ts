@@ -11,16 +11,27 @@ jest.mock('react-router-dom', () => ({
 
 describe('useRedirectToDest', () => {
     const replaceMock = jest.fn();
-    const originalWindow = {...window};
+    const mockLocation: Location = {...location, replace: replaceMock, search: ''};
 
-    beforeEach(() => {
-        delete window.location;
-        window.location = {replace: replaceMock} as any;
+    beforeAll(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: mockLocation,
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
-        window.location = originalWindow.location;
+    });
+
+    afterAll(() => {
+        // Restore original window.location after tests
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            writable: true,
+            value: location,
+        });
     });
 
     it('should redirect to the destination when it is present in the query params', () => {

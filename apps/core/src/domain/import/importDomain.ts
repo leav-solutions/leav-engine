@@ -1161,7 +1161,7 @@ export default function ({
             let elementIndex = 0;
             const excelMapping: IExcelMapping = {};
             const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(buffer);
+            await workbook.xlsx.load(buffer as unknown as ExcelJS.Buffer);
 
             for (const [indexSheet, dataSheet] of data.entries()) {
                 let {

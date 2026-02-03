@@ -33,7 +33,7 @@
         "prettier": "3.3.3",
         "ts-jest": "29.4.6",
         "tsx": "4.21.0",
-        "typescript": "5.5.3"
+        "typescript": "5.9.3"
     },
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
