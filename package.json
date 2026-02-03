@@ -37,7 +37,7 @@
     },
     "devDependencies": {
         "@aristid/eslint-plugin": "1.3.0",
-        "@babel/preset-env": "7.28.6",
+        "@babel/preset-env": "7.29.0",
         "@commitlint/cli": "19.8.1",
         "@commitlint/config-conventional": "19.8.1",
         "@types/babel__preset-env": "^7",
