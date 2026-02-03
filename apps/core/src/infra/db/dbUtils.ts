@@ -16,10 +16,10 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IKeyValue} from '_types/shared';
 import {type ITree} from '_types/tree';
 import {type IDbValueVersion, type IValueVersion} from '_types/value';
-import {ECacheType, type ICachesService} from '../cache/cacheService';
+import {type ICachesService} from '../cache/cacheService';
 import {type IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
-import {type IExecuteWithCount} from './_types';
+import {type IDbDocument, type IExecuteWithCount} from './_types';
 import {CORE_INDEX_FIELD} from '../indexation/indexationService';
 import {CORE_IN_CREATION_BY} from '../../_types/record';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
@@ -32,7 +32,7 @@ export type CustomFilterConditionsFunc = (
     strictFilters: boolean,
 ) => GeneratedAqlQuery;
 
-export interface IFindCoreEntityParams {
+export interface IFindCoreEntityParams<T extends ICoreEntity, DbDocument extends IDbDocument = IDbDocument> {
     collectionName: string;
     filters?: ICoreEntityFilterOptions;
     strictFilters?: boolean;
@@ -41,6 +41,7 @@ export interface IFindCoreEntityParams {
     sort?: ISortParams;
     customFilterConditions?: IKeyValue<CustomFilterConditionsFunc>;
     nonStrictFields?: string[];
+    mapFromDbDocument?: (doc: DbDocument) => T;
     ctx: IQueryInfos;
 }
 
@@ -49,7 +50,9 @@ export interface IDbUtils {
     cleanup?<T extends {}>(record: {}): T;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
-    findCoreEntity?<T extends ICoreEntity>(params: IFindCoreEntityParams): Promise<IList<T>>;
+    findCoreEntity?<T extends ICoreEntity, DbDocument extends IDbDocument = IDbDocument>(
+        params: IFindCoreEntityParams<T, DbDocument>,
+    ): Promise<IList<T>>;
     clearDatabase?(): Promise<void>;
 }
 
@@ -235,8 +238,8 @@ export default function ({
          * @param filters
          * @param strictFilters
          */
-        async findCoreEntity<T extends ITree | ILibrary | IAttribute>(
-            params: IFindCoreEntityParams,
+        async findCoreEntity<T extends ICoreEntity, DbDocument extends IDbDocument = IDbDocument>(
+            params: IFindCoreEntityParams<T, DbDocument>,
         ): Promise<IList<T>> {
             const {
                 collectionName = null,
@@ -247,6 +250,7 @@ export default function ({
                 sort = null,
                 customFilterConditions = {},
                 nonStrictFields = ['label', '_key'],
+                mapFromDbDocument = ret.cleanup,
                 ctx = getSystemQueryContext('dbUtils:findCoreEntity'),
             } = params;
 
@@ -293,7 +297,7 @@ export default function ({
 
             return {
                 totalCount: withCount ? (res as IExecuteWithCount).totalCount : null,
-                list: results.map(ret.cleanup),
+                list: results.map(mapFromDbDocument),
             };
         },
         convertValueVersionToDb(version: IValueVersion): IDbValueVersion {

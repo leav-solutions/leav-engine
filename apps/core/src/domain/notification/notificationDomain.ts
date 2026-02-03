@@ -6,14 +6,17 @@ import {type IConfig} from '_types/config';
 import {
     type INotificationChannel,
     type ICreateNotification,
-    type INotification,
     type NotificationChannels,
+    type INotification,
 } from '_types/notification';
 import {type IQueryInfos} from '_types/queryInfos';
 import dayjs from 'dayjs';
-import {type INotificationRepo} from '../../infra/notification/notificationRepo';
+import {
+    type INotificationFilterOptionsInRepo,
+    type ICreateNotificationInRepo,
+    type INotificationRepo,
+} from '../../infra/notification/notificationRepo';
 import {type IList} from '../../_types/list';
-import {type INotificationFilterOptions} from '../../_types/notification';
 
 export interface INotificationDomain {
     createNotification(notification: ICreateNotification, ctx: IQueryInfos): Promise<INotification[]>;
@@ -90,15 +93,17 @@ export default function ({
                     }`,
                 );
 
-                const notifications: INotification[] = notification.recipients.userIds.map(userId => ({
-                    date: dayjs().unix(),
-                    displayDuration: notification.displayDuration,
-                    recipientUserId: userId,
-                    content: notification.content,
-                }));
+                const notificationsToCreate: ICreateNotificationInRepo[] = notification.recipients.userIds.map(
+                    userId => ({
+                        date: dayjs().unix(),
+                        userId,
+                        displayDuration: notification.displayDuration,
+                        ...notification.content,
+                    }),
+                );
 
                 const createdNotifications = await Promise.all(
-                    notifications.map(n => notificationRepo.createNotification(n, ctx)),
+                    notificationsToCreate.map(n => notificationRepo.createNotification(n, ctx)),
                 );
 
                 await sendNotificationsViaChannels(
@@ -114,8 +119,8 @@ export default function ({
             }
         },
         async getNotifications(ctx: IQueryInfos): Promise<IList<INotification>> {
-            const filters: INotificationFilterOptions = {
-                recipientUserId: ctx.userId,
+            const filters: INotificationFilterOptionsInRepo = {
+                userId: ctx.userId,
             };
 
             return notificationRepo.getNotifications(
@@ -135,7 +140,7 @@ export default function ({
 
             if (!notification) {
                 throw new Error(`Notification with ID ${notificationId} not found`);
-            } else if (notification.recipientUserId !== ctx.userId) {
+            } else if (notification.userId !== ctx.userId) {
                 throw new Error(`User ${ctx.userId} is not authorized to delete notification ${notificationId}`);
             }
 

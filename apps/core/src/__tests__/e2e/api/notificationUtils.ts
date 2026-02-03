@@ -6,10 +6,9 @@ import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {NOTIFICATION_EMAIL_TASK_ID_HEADER} from '../../../_constants/notifications';
 import {waitGraphqlWebSocketMessage} from './e2eUtils';
 import {type IMailpitMsgFull, waitMailpitMessage} from './mailpitUtils';
-import {type INotification} from '../../../_types/notification';
 
 export const waitWebSocketNotification = (graphqlClient: GraphqlWsClient, taskId: string) =>
-    waitGraphqlWebSocketMessage<{notification: Omit<INotification, 'content'> & INotification['content']}>(
+    waitGraphqlWebSocketMessage<{notification: IPubSubNotificationData['notification']}>(
         graphqlClient,
         subscriptionGraphqlQuery,
         {},

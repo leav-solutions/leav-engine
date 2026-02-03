@@ -95,12 +95,6 @@ export default function ({
                             ctx: IQueryInfos,
                         ): Promise<INotification> => notificationDomain.deleteNotification(args.notificationId, ctx),
                     },
-                    Notification: Object.fromEntries(
-                        ['level', 'title', 'message', 'relatedEntities', 'attachments', 'taskId'].map(key => [
-                            key,
-                            ({content}: INotification) => content[key],
-                        ]),
-                    ),
                     Subscription: {
                         notification: {
                             subscribe: withFilter(
