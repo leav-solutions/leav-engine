@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {e2eGuestUser, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 import {AttributeCondition} from '../../../../_types/record';
 import {ViewSizes, ViewTypes} from '../../../../_types/views';
 
@@ -93,6 +93,148 @@ describe('Views', () => {
             expect(resDeleteView.status).toBe(200);
             expect(resDeleteView.data.errors).toBeUndefined();
             expect(resDeleteView.data.data.deleteView.id).toBe(viewId);
+        });
+    });
+
+    describe('Permissions', () => {
+        describe('Private views', () => {
+            it('Should not be able to edit views owned by other users', async () => {
+                const resSaveView = await makeGraphQlCall(`mutation {
+                saveView(view: {
+                  library: "${testLibName}",
+                  display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
+                  shared: false,
+                  label: {en: "test_first_view"},
+                  description: {en: "Best view ever!"},
+                  color: "#FFFFFF",
+                  filters: [
+                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
+                  ],
+                  sort: {field: "created_at", order: asc}
+                }) {
+                  id
+                }
+            }`);
+
+                const savedViewId = resSaveView.data.data.saveView.id;
+
+                const mutationUpdateView = `mutation {
+                updateView(view: {
+                  id: "${savedViewId}",
+                  display: {type: ${ViewTypes.LIST}},
+                }) {
+                  id
+                  display {
+                    type
+                  }
+                }
+            }`;
+
+                await expect(makeGraphQlCall(mutationUpdateView, {user: e2eGuestUser()})).rejects.toThrow(
+                    /USER_IS_NOT_VIEW_OWNER/,
+                );
+            });
+
+            it('Should not be able to delete views owned by other users', async () => {
+                const resSaveView = await makeGraphQlCall(`mutation {
+                saveView(view: {
+                  library: "${testLibName}",
+                  display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
+                  shared: false,
+                  label: {en: "test_first_view"},
+                  description: {en: "Best view ever!"},
+                  color: "#FFFFFF",
+                  filters: [
+                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
+                  ],
+                  sort: {field: "created_at", order: asc}
+                }) {
+                  id
+                }
+            }`);
+
+                const savedViewId = resSaveView.data.data.saveView.id;
+
+                const mutationDeleteView = `mutation {
+                deleteView(viewId: "${savedViewId}") {
+                  id
+                }
+            }`;
+
+                await expect(makeGraphQlCall(mutationDeleteView, {user: e2eGuestUser()})).rejects.toThrow(
+                    /USER_IS_NOT_VIEW_OWNER/,
+                );
+            });
+        });
+
+        describe('Shared views', () => {
+            it('Should not be able to edit shared views owned by other users', async () => {
+                const resSaveView = await makeGraphQlCall(`mutation {
+                saveView(view: {
+                  library: "${testLibName}",
+                  display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
+                  shared: true,
+                  label: {en: "test_first_view"},
+                  description: {en: "Best view ever!"},
+                  color: "#FFFFFF",
+                  filters: [
+                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
+                  ],
+                  sort: {field: "created_at", order: asc}
+                }) {
+                  id
+                }
+            }`);
+
+                const savedViewId = resSaveView.data.data.saveView.id;
+
+                const mutationUpdateView = `mutation {
+                updateView(view: {
+                  id: "${savedViewId}",
+                  display: {type: ${ViewTypes.LIST}},
+                }) {
+                  id
+                  display {
+                    type
+                  }
+                }
+            }`;
+
+                await expect(makeGraphQlCall(mutationUpdateView, {user: e2eGuestUser()})).rejects.toThrow(
+                    /USER_IS_NOT_VIEW_OWNER/,
+                );
+            });
+
+            it('Should not be able to delete shared views owned by other users', async () => {
+                const resSaveView = await makeGraphQlCall(`mutation {
+                saveView(view: {
+                  library: "${testLibName}",
+                  display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
+                  shared: false,
+                  label: {en: "test_first_view"},
+                  description: {en: "Best view ever!"},
+                  color: "#FFFFFF",
+                  filters: [
+                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
+                  ],
+                  sort: {field: "created_at", order: asc}
+                }) {
+                  id
+                }
+            }`);
+
+                const savedViewId = resSaveView.data.data.saveView.id;
+
+                const mutationDeleteView = `mutation {
+                deleteView(viewId: "${savedViewId}") {
+                  id
+                }
+            }`;
+
+                await expect(makeGraphQlCall(mutationDeleteView, {user: e2eGuestUser()})).rejects.toThrow(
+                    /USER_IS_NOT_VIEW_OWNER/,
+                );
+            });
         });
     });
 });
