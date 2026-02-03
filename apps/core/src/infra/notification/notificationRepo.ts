@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
 import {type IList} from '_types/list';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -8,15 +9,45 @@ import {type IGetCoreEntitiesParams} from '_types/shared';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {type INotification} from '../../_types/notification';
+import {type IDbDocument} from 'infra/db/_types';
 
 export const NOTIFICATIONS_COLLECTION_NAME = 'core_notifications';
 
+export type ICreateNotificationInRepo = Omit<INotification, 'id'>;
+
+export type INotificationFilterOptionsInRepo = ICoreEntityFilterOptions &
+    Partial<Pick<INotificationBaseDocument, 'userId'>>;
+
+export type IGetNotificationParams = IGetCoreEntitiesParams & {
+    filters?: INotificationFilterOptionsInRepo;
+};
+
 export interface INotificationRepo {
-    createNotification(notification: INotification, ctx: IQueryInfos): Promise<INotification>;
-    getNotifications(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<INotification>>;
+    createNotification(notification: ICreateNotificationInRepo, ctx: IQueryInfos): Promise<INotification>;
+    getNotifications(params: IGetNotificationParams, ctx: IQueryInfos): Promise<IList<INotification>>;
     deleteNotificationById(notificationId: string, ctx: IQueryInfos): Promise<INotification>;
-    deleteNotificationsByRecipientUserId(recipientUserId: string, ctx: IQueryInfos): Promise<INotification[]>;
+    deleteNotificationsByRecipientUserId(userId: string, ctx: IQueryInfos): Promise<INotification[]>;
 }
+
+type INotificationBaseDocument = {
+    date: number;
+    userId: string;
+    level: 'success' | 'info' | 'warning' | 'error';
+    title: string;
+    message: string;
+    relatedEntities?: Array<{
+        url: string;
+        label: string;
+    }>;
+    attachments?: Array<{
+        url: string;
+        label: string;
+    }>;
+    taskId?: string;
+    displayDuration?: number;
+};
+
+type INotificationDbDocument = INotificationBaseDocument & IDbDocument;
 
 export interface INotificationRepoDeps {
     'core.infra.db.dbService': IDbService;
@@ -27,17 +58,23 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
 }: INotificationRepoDeps): INotificationRepo {
-    return {
-        async createNotification(notification: INotification, ctx: IQueryInfos): Promise<INotification> {
-            const collection = dbService.db.collection(NOTIFICATIONS_COLLECTION_NAME);
-            const docToInsert = dbUtils.convertToDoc(notification);
+    const notificationFromDbDocument = (doc: INotificationDbDocument): INotification =>
+        dbUtils.cleanup<INotificationDbDocument>(doc);
 
-            const newNotification = await dbService.execute({
+    const createDocumentFromNotification = (notification: ICreateNotificationInRepo): INotificationBaseDocument =>
+        notification;
+
+    return {
+        async createNotification(notification: ICreateNotificationInRepo, ctx: IQueryInfos): Promise<INotification> {
+            const collection = dbService.db.collection(NOTIFICATIONS_COLLECTION_NAME);
+            const docToInsert = createDocumentFromNotification(notification);
+
+            const newNotification = await dbService.execute<INotificationDbDocument[]>({
                 query: aql`INSERT ${docToInsert} IN ${collection} RETURN NEW`,
                 ctx,
             });
 
-            return dbUtils.cleanup(newNotification[0]);
+            return notificationFromDbDocument(newNotification[0]);
         },
         async getNotifications(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<INotification>> {
             const defaultParams: IGetCoreEntitiesParams = {
@@ -49,43 +86,41 @@ export default function ({
             };
             const initializedParams = {...defaultParams, ...params};
 
-            return dbUtils.findCoreEntity<INotification>({
+            return dbUtils.findCoreEntity<INotification, INotificationDbDocument>({
                 ...initializedParams,
                 collectionName: NOTIFICATIONS_COLLECTION_NAME,
                 customFilterConditions: {
-                    recipientUserId: (filterKey, filterVal) => aql`el.${filterKey} == ${filterVal}`,
+                    userId: (filterKey, filterVal) => aql`el.${filterKey} == ${filterVal}`,
                 },
+                mapFromDbDocument: notificationFromDbDocument,
                 ctx,
             });
         },
         async deleteNotificationById(notificationId: string, ctx: IQueryInfos): Promise<INotification> {
             const collection = dbService.db.collection(NOTIFICATIONS_COLLECTION_NAME);
 
-            const deletedNotification = await dbService.execute({
+            const deletedNotification = await dbService.execute<INotificationDbDocument[]>({
                 query: aql`REMOVE ${{
                     _key: notificationId,
                 }} IN ${collection} RETURN OLD`,
                 ctx,
             });
 
-            return dbUtils.cleanup(deletedNotification[0]);
+            return notificationFromDbDocument(deletedNotification[0]);
         },
-        async deleteNotificationsByRecipientUserId(
-            recipientUserId: string,
-            ctx: IQueryInfos,
-        ): Promise<INotification[]> {
+        async deleteNotificationsByRecipientUserId(userId: string, ctx: IQueryInfos): Promise<INotification[]> {
             const collection = dbService.db.collection(NOTIFICATIONS_COLLECTION_NAME);
 
-            const deletedNotifications = await dbService.execute({
+            const deletedNotifications = await dbService.execute<INotificationDbDocument[]>({
                 query: aql`
                     FOR notification IN ${collection}
-                        FILTER notification.recipientUserId == ${recipientUserId}
+                        FILTER notification.userId == ${userId}
                         REMOVE notification IN ${collection}
                         RETURN OLD`,
                 ctx,
             });
 
-            return deletedNotifications.map(dbUtils.cleanup) as INotification[];
+            return deletedNotifications.map(notificationFromDbDocument);
         },
     };
 }

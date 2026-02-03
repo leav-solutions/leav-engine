@@ -46,10 +46,10 @@ export default function ({
     };
 
     const sendNotification = async (notification: INotification, ctx: IQueryInfos): Promise<void> => {
-        const userIdentity = await userDomain.getUserIdentity(notification.recipientUserId, ctx);
+        const userIdentity = await userDomain.getUserIdentity(notification.userId, ctx);
         const email = await userIdentity.getEmail();
-        const title = notification.content.title;
-        const taskId = notification.content.taskId;
+        const title = notification.title;
+        const taskId = notification.taskId;
 
         logger.debug(`Sending email notification "${title}" ${taskId ? `for task "${taskId}"` : ''} to "${email}"`);
 
@@ -59,8 +59,8 @@ export default function ({
         const htmlWithData = template({
             appName: globalSettings.name,
             publicUrl: config.server.publicUrl,
-            message: notification.content.message,
-            links: [...(notification.content.relatedEntities || []), ...(notification.content.attachments || [])],
+            message: notification.message,
+            links: [...(notification.relatedEntities || []), ...(notification.attachments || [])],
         });
 
         await mailerService.sendEmail(
@@ -83,7 +83,7 @@ export default function ({
                         await sendNotification(notification, ctx);
                     } catch (error) {
                         logger.error(
-                            `Error sending email notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`,
+                            `Error sending email notification "${notification.title}" to user ${notification.userId}: ${error.message}`,
                         );
                     }
                 }),

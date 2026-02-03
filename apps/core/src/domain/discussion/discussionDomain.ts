@@ -209,12 +209,14 @@ export default function ({
                                 },
                             ],
                         },
+                        metadata: {
+                            priority: 'normal',
+                        },
                         recipients: {
                             userIds: params.mentions.users,
                             groupIds: [],
                         },
                         emitterUserId: ctx.userId,
-                        priority: 'normal',
                     },
                     ctx,
                 );

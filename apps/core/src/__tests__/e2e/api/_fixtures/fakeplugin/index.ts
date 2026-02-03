@@ -95,7 +95,9 @@ export default function ({
                                             userIds: [ctx.userId],
                                             groupIds: [],
                                         },
-                                        priority: 'normal',
+                                        metadata: {
+                                            priority: 'normal',
+                                        },
                                         content: {
                                             level: 'info',
                                             title,

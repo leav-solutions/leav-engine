@@ -4,6 +4,7 @@
 import {getCoreDep} from '../integrationTestUtils';
 import {type ILibraryRepo} from 'infra/library/libraryRepo';
 import {type IPermissionRepo} from 'infra/permission/permissionRepo';
+import {type INotificationRepo} from 'infra/notification/notificationRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
 
@@ -14,5 +15,7 @@ export const getRecordRepo = (): IRecordRepo => getCoreDep<IRecordRepo>('core.in
 export const getTreeRepo = (): ITreeRepo => getCoreDep<ITreeRepo>('core.infra.tree');
 
 export const getPermissionRepo = (): IPermissionRepo => getCoreDep<IPermissionRepo>('core.infra.permission');
+
+export const getNotificationRepo = (): INotificationRepo => getCoreDep<INotificationRepo>('core.infra.notification');
 
 export * from '../integrationTestUtils';

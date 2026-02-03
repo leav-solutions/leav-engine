@@ -4,7 +4,7 @@
 
 import {type IQueryInfos} from './queryInfos';
 
-export interface INotification extends ICoreEntity {
+export interface INotification extends Omit<ICoreEntity, 'label'>, INotificationContent, INotificationMetadata {
     /**
      * Timestamp of the notification creation in milliseconds since epoch
      */
@@ -13,11 +13,11 @@ export interface INotification extends ICoreEntity {
     /**
      * User ID of the notification recipient
      */
-    recipientUserId: string;
-
-    content: INotificationContent;
+    userId: string;
 
     displayDuration?: number;
+
+    taskId?: string;
 }
 
 export interface INotificationContent {
@@ -32,6 +32,18 @@ export interface INotificationContent {
         url: string;
         label: string;
     }>;
+}
+
+export interface INotificationMetadata {
+    /**
+     * Priority of the notification, may change which channel is used to send it (no yet implemented)
+     */
+    priority?: 'urgent' | 'normal';
+
+    /**
+     * Duration of the notification in ms, 0 for persistent
+     */
+    displayDuration?: number;
 
     /**
      * Optional task ID associated with the notification
@@ -55,17 +67,9 @@ export interface ICreateNotification {
         groupIds: string[];
     };
 
-    /**
-     * Priority of the notification, may change which channel is used to send it (no yet implemented)
-     */
-    priority: 'urgent' | 'normal';
-
     content: INotificationContent;
 
-    /**
-     * Duration of the notification in ms, 0 for persistent
-     */
-    displayDuration?: number;
+    metadata?: INotificationMetadata;
 
     /**
      * Channels to send the notification to (if not set, all channels will be used)
@@ -82,8 +86,4 @@ export enum NotificationChannels {
 export interface INotificationChannel {
     type: NotificationChannels;
     sendNotifications(notifications: INotification[], ctx: IQueryInfos): Promise<void>;
-}
-
-export interface INotificationFilterOptions extends ICoreEntityFilterOptions {
-    recipientUserId?: string;
 }

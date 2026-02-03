@@ -184,6 +184,9 @@ export default function ({
                             date: new Date().toLocaleString(ctx.lang),
                             total: records.list.length,
                         }),
+                    },
+                    metadata: {
+                        priority: 'normal',
                         taskId: task.id,
                     },
                     recipients: {
@@ -191,7 +194,6 @@ export default function ({
                         groupIds: [],
                     },
                     emitterUserId: ctx.userId,
-                    priority: 'normal',
                     channels: [NotificationChannels.WEB_SOCKET],
                 },
                 ctx,
@@ -213,6 +215,9 @@ export default function ({
                             interpolation: {escapeValue: false},
                             date: new Date().toLocaleString(ctx.lang),
                         }),
+                    },
+                    metadata: {
+                        priority: 'normal',
                         taskId: task.id,
                     },
                     recipients: {
@@ -220,7 +225,6 @@ export default function ({
                         groupIds: [],
                     },
                     emitterUserId: ctx.userId,
-                    priority: 'normal',
                     channels: [NotificationChannels.WEB_SOCKET],
                 },
                 ctx,
