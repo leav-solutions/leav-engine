@@ -1911,7 +1911,7 @@ export type UpdateViewMutation = { updateView: { id: string, shared: boolean, la
 export type NotificationSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationSubscription = { notification: { id: string, date: number, level: NotificationLevel, message: string, title: string, displayDuration?: number | null, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
+export type NotificationSubscription = { notification: { id: string, date: number, level: NotificationLevel, message: string, title: string, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
 
 export type GetRecordHistoryQueryVariables = Exact<{
   record: LogTopicRecordFilterInput;
@@ -6030,7 +6030,6 @@ export const NotificationDocument = gql`
     level
     message
     title
-    displayDuration
     attachments {
       label
       url
