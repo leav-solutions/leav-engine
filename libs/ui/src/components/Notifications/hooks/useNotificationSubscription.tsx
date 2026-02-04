@@ -16,7 +16,7 @@ export const useNotificationsSubscription = () => {
             if (!data?.data?.notification?.title) {
                 return;
             }
-            const {level, title, message, attachments, relatedEntities, date, displayDuration} = data.data.notification;
+            const {level, title, message, attachments, relatedEntities, date} = data.data.notification;
             const kitNotificationLevel = typeof KitNotification[level] === 'function' ? level : 'info';
 
             KitNotification[kitNotificationLevel]({
@@ -28,7 +28,7 @@ export const useNotificationsSubscription = () => {
                         {dayjs.unix(date).format('HH:mm DD/MM/YYYY')}
                     </KitTypography.Text>
                 ),
-                duration: displayDuration === 0 ? undefined : (displayDuration ?? SUBSCRIPTION_NOTIFICATION_DURATION),
+                duration: SUBSCRIPTION_NOTIFICATION_DURATION,
                 footer: (
                     <KitSpace direction="horizontal" size="xs">
                         {attachments?.map(attachment => (

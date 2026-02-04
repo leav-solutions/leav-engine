@@ -5,7 +5,6 @@ subscription Notification {
         level
         message
         title
-        displayDuration
         attachments {
             label
             url

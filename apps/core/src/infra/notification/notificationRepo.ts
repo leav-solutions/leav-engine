@@ -44,7 +44,6 @@ type INotificationBaseDocument = {
         label: string;
     }>;
     taskId?: string;
-    displayDuration?: number;
 };
 
 type INotificationDbDocument = INotificationBaseDocument & IDbDocument;
