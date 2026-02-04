@@ -20,7 +20,6 @@ describe('notificationRepo', () => {
         title: 'Test Notification',
         message: 'This is a test notification message.',
         taskId: 'task-123',
-        displayDuration: 5000,
         attachments: [
             {
                 url: 'http://example.com/attachment1',
@@ -52,7 +51,6 @@ describe('notificationRepo', () => {
             expect(notification.userId).toBe('1');
             expect(notification.level).toBe('info');
             expect(notification.taskId).toBe('task-123');
-            expect(notification.displayDuration).toBe(5000);
             expect(notification.attachments).toHaveLength(1);
             expect(notification.relatedEntities).toHaveLength(1);
         });
@@ -139,7 +137,6 @@ describe('notificationRepo', () => {
                 expect(notification.message).toBe(fullNotificationData.message);
                 expect(notification.level).toBe(fullNotificationData.level);
                 expect(notification.taskId).toBe(fullNotificationData.taskId);
-                expect(notification.displayDuration).toBe(fullNotificationData.displayDuration);
                 expect(notification.attachments).toEqual(fullNotificationData.attachments);
                 expect(notification.relatedEntities).toEqual(fullNotificationData.relatedEntities);
             });

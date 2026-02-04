@@ -62,7 +62,6 @@ export default function ({
                         level: NotificationLevel!,
                         title: String!,
                         message: String!,
-                        displayDuration: Int,
                         relatedEntities: [RelatedEntity!],
                         attachments: [Attachment!],
                         taskId: ID

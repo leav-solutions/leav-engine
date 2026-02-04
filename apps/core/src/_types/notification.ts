@@ -15,8 +15,6 @@ export interface INotification extends Omit<ICoreEntity, 'label'>, INotification
      */
     userId: string;
 
-    displayDuration?: number;
-
     taskId?: string;
 }
 
@@ -39,11 +37,6 @@ export interface INotificationMetadata {
      * Priority of the notification, may change which channel is used to send it (no yet implemented)
      */
     priority?: 'urgent' | 'normal';
-
-    /**
-     * Duration of the notification in ms, 0 for persistent
-     */
-    displayDuration?: number;
 
     /**
      * Optional task ID associated with the notification
