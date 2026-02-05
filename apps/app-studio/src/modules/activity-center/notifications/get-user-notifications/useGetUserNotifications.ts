@@ -9,6 +9,7 @@ export const useGetUserNotifications = () => {
     const [userNotifications, setUserNotifications] = useState<Map<string, Notification>>(new Map());
 
     const {loading, error} = useGetUserNotificationsQuery({
+        fetchPolicy: 'network-only',
         onCompleted: ({notifications}) => {
             setUserNotifications(new Map(notifications.list.map(notification => [notification.id, notification])));
         },

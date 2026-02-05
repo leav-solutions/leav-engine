@@ -9,6 +9,7 @@ export const useGetUserTasks = (userId: string) => {
     const [userTasks, setUserTasks] = useState<Map<string, Task>>(new Map());
 
     const {loading, error} = useGetUserTasksQuery({
+        fetchPolicy: 'network-only',
         variables: {
             filters: {
                 created_by: userId,
