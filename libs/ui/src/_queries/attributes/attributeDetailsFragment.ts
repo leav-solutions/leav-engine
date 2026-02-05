@@ -49,6 +49,9 @@ export const attributeDetailsFragment = gql`
                 label
             }
             reverse_link
+            smart_filter {
+                enable
+            }
         }
         ... on TreeAttribute {
             linked_tree {

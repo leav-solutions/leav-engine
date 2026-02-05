@@ -9,7 +9,13 @@ import {AttributeFormat} from '_ui/_gqlTypes';
 import {getAttributeConditionOptions} from '../filter-items/filter-type/useConditionOptionsByType';
 import {type TFunction} from 'i18next';
 import {nullValueConditions} from '../conditionsHelper';
-import {isUIFilterStandard, isUIFilterTree, type IUIFilterStandard, type UIFilter} from '../_types';
+import {
+    isUIFilterStandard,
+    isUIFilterTree,
+    isUIFilterWithSmartFilter,
+    type IUIFilterStandard,
+    type UIFilter,
+} from '../_types';
 import {ACTIVE_ATTRIBUTE_ID} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
@@ -24,7 +30,7 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
 
     const filterValues: string[] = filter.withEmptyValues ? [t('filters.empty-value')] : [];
 
-    if (isUIFilterTree(filter)) {
+    if (isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
         return [...filterValues, ...(filter.formattedValue ?? [])];
     }
 

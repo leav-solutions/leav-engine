@@ -9,6 +9,9 @@ fragment AttributesByLibLinkAttributeWithPermissions on LinkAttribute {
     linked_library {
         id
     }
+    smart_filter {
+        enable
+    }
 }
 
 fragment AttributesByLibAttributeWithPermissions on Attribute {

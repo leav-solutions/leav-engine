@@ -20,8 +20,10 @@ import {
     isUIFilterThrough,
     isUIFilterTree,
     isUIFilterValueList,
+    isUIFilterWithSmartFilter,
     type UIFilter,
 } from '../../_types';
+import {SmartFilterAttributeDropdown} from './smart-filter/SmartFilterAttributeDropdown';
 
 export const FilterDropdownContent: FunctionComponent<{
     filter: UIFilter;
@@ -31,6 +33,10 @@ export const FilterDropdownContent: FunctionComponent<{
 }> = ({filter, onFilterChange, selectDropDownRef, removeThroughCondition = false}) => {
     if (isUIFilterValueList(filter)) {
         return <FilterValueListDropDown filter={filter} onFilterChange={onFilterChange} />;
+    }
+
+    if (isUIFilterWithSmartFilter(filter)) {
+        return <SmartFilterAttributeDropdown filter={filter} onFilterChange={onFilterChange} />;
     }
 
     if (isUIFilterStandard(filter)) {

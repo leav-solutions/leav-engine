@@ -4,7 +4,13 @@
 import {type RecordFilterInput, type ViewInput} from '_ui/_gqlTypes';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {type IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
-import {isUIFilterTree, isUIFilterThrough, isUIFilterValueList, type UIFilter} from '_ui/components/Filters/_types';
+import {
+    isUIFilterTree,
+    isUIFilterThrough,
+    isUIFilterValueList,
+    type UIFilter,
+    isUIFilterWithSmartFilter,
+} from '_ui/components/Filters/_types';
 
 export const prepareViewForRequest = (
     view: IViewSettingsState,
@@ -27,13 +33,6 @@ export const prepareViewForRequest = (
                 withEmptyValues: filter.withEmptyValues,
             };
         }
-        if (isUIFilterThrough(filter)) {
-            return {
-                field: `${filter.field}.${filter.subField}`,
-                value: filter.value,
-                condition: filter.subCondition,
-            };
-        }
 
         if (isUIFilterValueList(filter)) {
             return {
@@ -43,6 +42,24 @@ export const prepareViewForRequest = (
                 value: filter.value?.[0],
                 condition: filter.condition,
                 withEmptyValues: filter.withEmptyValues,
+            };
+        }
+
+        if (isUIFilterWithSmartFilter(filter)) {
+            return {
+                field: filter.field, // We use the field here because we want to keep the full path to the attribute (ex: link_attribute.id)
+                // TODO : save filter values as string[] when filter and handle fields with libraries
+                value: filter.value?.[0],
+                condition: filter.condition,
+                withEmptyValues: filter.withEmptyValues,
+            };
+        }
+
+        if (isUIFilterThrough(filter)) {
+            return {
+                field: `${filter.field}.${filter.subField}`,
+                value: filter.value,
+                condition: filter.subCondition,
             };
         }
 

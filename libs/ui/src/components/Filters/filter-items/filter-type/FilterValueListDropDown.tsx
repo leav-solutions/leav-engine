@@ -14,7 +14,7 @@ import {
 } from '../../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck, faSearch} from '@fortawesome/free-solid-svg-icons';
-import {EmptyValueCheckbox} from '../EmptyValueCheckbox';
+import {EmptyValueCheckbox} from '../shared/EmptyValueCheckbox';
 
 interface IFilterValueListDropDownProps {
     filter: IUIFilterValueList;
@@ -151,27 +151,25 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
                 allowClear
             />
             <EmptyValueCheckbox onSelect={_handleOnCheckEmptyValue} filter={filter} />
-            {filter.condition === RecordFilterCondition.EQUAL && (
-                <ListDivStyled role="group" aria-label={String(t('explorer.filter-value'))}>
-                    {filteredOptions.map(opt => {
-                        const selected = isChecked(opt.value);
-                        return (
-                            <OptionRow
-                                key={opt.value}
-                                $selected={selected}
-                                role="button"
-                                aria-pressed={selected}
-                                tabIndex={0}
-                                onClick={() => _handleToggle(opt.value)}
-                                onKeyDown={e => onKeyToggle(e, opt.value)}
-                            >
-                                <Label>{opt.label}</Label>
-                                <RightIcon $visible={selected} icon={faCheck} />
-                            </OptionRow>
-                        );
-                    })}
-                </ListDivStyled>
-            )}
+            <ListDivStyled role="group" aria-label={String(t('explorer.filter-value'))}>
+                {filteredOptions.map(opt => {
+                    const selected = isChecked(opt.value);
+                    return (
+                        <OptionRow
+                            key={opt.value}
+                            $selected={selected}
+                            role="button"
+                            aria-pressed={selected}
+                            tabIndex={0}
+                            onClick={() => _handleToggle(opt.value)}
+                            onKeyDown={e => onKeyToggle(e, opt.value)}
+                        >
+                            <Label>{opt.label}</Label>
+                            <RightIcon $visible={selected} icon={faCheck} />
+                        </OptionRow>
+                    );
+                })}
+            </ListDivStyled>
         </>
     );
 };

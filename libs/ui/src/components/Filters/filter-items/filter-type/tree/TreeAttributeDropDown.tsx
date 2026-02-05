@@ -11,8 +11,8 @@ import {ErrorDisplay} from '_ui/components/ErrorDisplay';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useTreesSearch} from './useTreesSearch';
 import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
-import {EmptyValueCheckbox} from '../../EmptyValueCheckbox';
-import {SelectAllCheckbox} from '../../SelectAllCheckbox';
+import {EmptyValueCheckbox} from '../../shared/EmptyValueCheckbox';
+import {SelectAllCheckbox} from '../../shared/SelectAllCheckbox';
 import {buildFlattenTree} from './utils/buildFlattenTreeMap';
 import {getSelectAllState} from './utils/getSelectAllState';
 import {filterTreeByPermission} from './utils/filterTreeByPermission';
@@ -34,6 +34,7 @@ const FilteredTreeSpacer = styled(KitSpace)`
 
 const DropdownContentWrapper = styled(KitSpace)`
     width: 327px;
+    justify-content: center;
 `;
 
 export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDownProps> = ({
@@ -155,11 +156,19 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
     };
 
     if (isLoading) {
-        return <KitLoader />;
+        return (
+            <DropdownContentWrapper>
+                <KitLoader />
+            </DropdownContentWrapper>
+        );
     }
 
     if (error) {
-        return <ErrorDisplay message={error.message} />;
+        return (
+            <DropdownContentWrapper>
+                <ErrorDisplay message={error.message} />
+            </DropdownContentWrapper>
+        );
     }
 
     return (

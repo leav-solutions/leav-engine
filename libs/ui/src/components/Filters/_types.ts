@@ -40,6 +40,9 @@ export interface IUIFilterLinkAttribute extends IUIFilterBaseAttribute {
     linkedLibrary?: {
         id: string;
     };
+    smartFilter?: {
+        enable?: boolean;
+    };
 }
 
 export interface IUIFilterTreeAttribute extends IUIFilterBaseAttribute {
@@ -94,6 +97,14 @@ export interface IUIFilterTree extends Omit<IUIFilterBase, 'value' | 'formattedV
     field: string[];
 }
 
+export interface IUIFilterSmartFiler extends Omit<IUIFilterBase, 'value' | 'formattedValue'> {
+    attribute: IUIFilterLinkAttribute;
+    value: string[] | null;
+    formattedValue?: string[] | null;
+    condition: RecordFilterCondition | null;
+    field: string;
+}
+
 export interface IUIFilterValueList extends Omit<IUIFilterBase, 'value' | 'formattedValue'> {
     attribute: (IUIFilterStandardAttribute | IUIFilterLinkAttribute) & {
         valuesList:
@@ -125,7 +136,13 @@ export interface IUIFilterTreeValueList extends Omit<IUIFilterTree, 'attribute' 
     field: string[];
 }
 
-export type UIFilter = IUIFilterStandard | IUIFilterLink | IUIFilterThrough | IUIFilterValueList | IUIFilterTree;
+export type UIFilter =
+    | IUIFilterStandard
+    | IUIFilterLink
+    | IUIFilterThrough
+    | IUIFilterValueList
+    | IUIFilterTree
+    | IUIFilterSmartFiler;
 
 export const isUIFilterStandard = (filter: UIFilter): filter is IUIFilterStandard =>
     [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type);
@@ -139,7 +156,7 @@ export const isUIFilterThrough = (filter: UIFilter): filter is IUIFilterThrough 
     filter.condition === ThroughConditionFilter.THROUGH;
 
 export const isUIFilterValueList = (filter: UIFilter): filter is IUIFilterValueList =>
-    (isUIFilterStandard(filter) || isUIFilterLink(filter)) && isValueList(filter);
+    (isUIFilterStandard(filter) || isUIFilterLink(filter) || isUIFilterWithSmartFilter(filter)) && isValueList(filter);
 
 export const isUIFilterStandardWithValueList = (filter: UIFilter): filter is IUIFilterStandardValueList =>
     [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type) && isValueList(filter);
@@ -152,6 +169,9 @@ export const isUIFilterTree = (filter: UIFilter): filter is IUIFilterTree =>
 
 export const isUIFilterTreeWithValueList = (filter: UIFilter): filter is IUIFilterTreeValueList =>
     isUIFilterTree(filter) && isValueList(filter);
+
+export const isUIFilterWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFiler =>
+    (isUIFilterLink(filter) || isUIFilterThrough(filter)) && filter.attribute.smartFilter?.enable;
 
 const isValueList = (filter: UIFilter): filter is UIFilter & {attribute: {valuesList: {enabled: true}}} =>
     !!filter.attribute?.valuesList && filter.attribute?.valuesList.enable;
