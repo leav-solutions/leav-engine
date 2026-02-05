@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
 import {type IFilterChildrenDropDownProps} from './_types';
-import {EmptyValueCheckbox} from '../EmptyValueCheckbox';
+import {EmptyValueCheckbox} from '../shared/EmptyValueCheckbox';
 
 export const ColorAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
     const _handleOnCheckEmptyValue = (selected: boolean) => {

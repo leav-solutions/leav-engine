@@ -7,7 +7,9 @@ import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {AttributeConditionFilter} from '_ui/types';
 import {
     type UIFilter,
+    type IUIFilterLink,
     type IUIFilterStandard,
+    type IUIFilterThrough,
     type IUIFilterTree,
     isUIFilterStandard,
     isUIFilterThrough,
@@ -16,6 +18,8 @@ import {
     type IUIFilterValueList,
     type FiltersOperator,
     isUIFilterLinkWithValueList,
+    isUIFilterWithSmartFilter,
+    type IUIFilterSmartFiler,
 } from './_types';
 import {nullValueConditions} from './conditionsHelper';
 
@@ -93,7 +97,9 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
     {operator: RecordFilterOperator.CLOSE_BRACKET},
 ];
 
-const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilterValueList): RecordFilterInput[] => {
+const _generateConditionsFromMultipleValues = (
+    filter: IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+): RecordFilterInput[] => {
     if (!filter.value || filter.value.length === 0) {
         return [];
     }
@@ -174,6 +180,13 @@ export const prepareFiltersForRequest = (
                     return true;
                 }
 
+                if (isUIFilterWithSmartFilter(filter)) {
+                    return (
+                        (filter.value !== null && filter.value.length > 0) ||
+                        (filter.condition && nullValueConditions.includes(filter.condition))
+                    );
+                }
+
                 if (isUIFilterThrough(filter)) {
                     return (
                         filter.subField &&
@@ -211,7 +224,7 @@ export const prepareFiltersForRequest = (
             })
             .map(filter => {
                 //@ts-ignore typscript does not recognize filter as a UIFilter
-                if (isUIFilterValueList(filter) || isUIFilterTree(filter)) {
+                if (isUIFilterValueList(filter) || isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
                     if (filter.condition && nullValueConditions.includes(filter.condition)) {
                         const baseConditions = [
                             {
@@ -220,12 +233,18 @@ export const prepareFiltersForRequest = (
                                 value: null,
                             },
                         ];
-                        return _addEmptyCondition(baseConditions, filter as IUIFilterTree | IUIFilterValueList);
+                        return _addEmptyCondition(
+                            baseConditions,
+                            filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+                        );
                     }
                     const baseConditions = _generateConditionsFromMultipleValues(
-                        filter as IUIFilterTree | IUIFilterValueList,
+                        filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
                     );
-                    return _addEmptyCondition(baseConditions, filter as IUIFilterTree | IUIFilterValueList);
+                    return _addEmptyCondition(
+                        baseConditions,
+                        filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+                    );
                 }
 
                 if (isUIFilterStandard(filter as UIFilter)) {
@@ -238,11 +257,12 @@ export const prepareFiltersForRequest = (
                             break;
                     }
                 }
-                const baseConditions = [
+                const filterWithStringValue = filter as IUIFilterStandard | IUIFilterLink | IUIFilterThrough;
+                const baseConditions: RecordFilterInput[] = [
                     {
-                        field: filter.field as string,
-                        condition: filter.condition,
-                        value: filter.value,
+                        field: filterWithStringValue.field as string,
+                        condition: filterWithStringValue.condition as RecordFilterCondition,
+                        value: filterWithStringValue.value,
                     },
                 ];
                 return _addEmptyCondition(baseConditions, filter as UIFilter);

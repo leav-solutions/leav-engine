@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type RefObject} from 'react';
-import {type IUIFilterLink, type IUIFilterStandard, type IUIFilterThrough, type IUIFilterTree} from '../../_types';
+import {
+    type IUIFilterSmartFiler,
+    type IUIFilterLink,
+    type IUIFilterStandard,
+    type IUIFilterThrough,
+    type IUIFilterTree,
+} from '../../_types';
 
 export interface IFilterChildrenDropDownProps {
     filter: IUIFilterStandard;
@@ -20,5 +26,11 @@ export interface IFilterChildrenLinkDropDownProps {
 export interface IFilterChildrenTreeDropDownProps {
     filter: IUIFilterTree;
     onFilterChange: (filterData: IUIFilterTree) => void;
+    selectDropDownRef?: RefObject<HTMLDivElement>;
+}
+
+export interface IFilterChildrenSmartFilterDropDownProps {
+    filter: IUIFilterSmartFiler;
+    onFilterChange: (filterData: IUIFilterSmartFiler) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
 }

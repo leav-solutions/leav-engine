@@ -11,6 +11,7 @@ import {
     isUIFilterThrough,
     isUIFilterTree,
     isUIFilterValueList,
+    isUIFilterWithSmartFilter,
     type FiltersOperator,
 } from '../_types';
 import {hasOnlyNoValueConditions, nullValueConditions} from '../conditionsHelper';
@@ -112,10 +113,11 @@ export type UIFiltersAction =
 
 const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
     const hasValueList = payload.attribute.valuesList?.enable;
+    const isSmartFilter = isUIFilterWithSmartFilter(payload as UIFilter);
     let condition = hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
         ? null
         : (conditionsByFormat[(payload as IUIFilterStandard).attribute.format][0] ?? null);
-    if (hasValueList) {
+    if (hasValueList || isSmartFilter) {
         condition = AttributeConditionFilter.EQUAL;
     }
 

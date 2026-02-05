@@ -1,0 +1,10 @@
+query SmartFilterListValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
+    listDistinctValues(library: $library, attribute: $attribute, recordFilters: $recordFilters) {
+        ... on LinkDistinctValues {
+            count
+            value {
+                ...RecordIdentity
+            }
+        }
+    }
+}

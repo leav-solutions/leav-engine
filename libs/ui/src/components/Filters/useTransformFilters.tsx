@@ -199,6 +199,7 @@ export const useTransformFilters = () => {
                         attribute: {
                             ...filterAttributeBase,
                             linkedLibrary: attributeData.linked_library!,
+                            smartFilter: attributeData.smart_filter ?? undefined,
                         },
                         subCondition: filter.subCondition ?? null,
                         subField: filter.subField,
@@ -216,6 +217,7 @@ export const useTransformFilters = () => {
                             ...filterAttributeBase,
                             linkedLibrary: attributeData.linked_library!,
                             valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!,
+                            smartFilter: attributeData.smart_filter ?? undefined,
                         },
                         withEmptyValues: filter.withEmptyValues ?? false,
                     };
@@ -231,6 +233,7 @@ export const useTransformFilters = () => {
                         attribute: {
                             ...filterAttributeBase,
                             linkedLibrary: attributeData.linked_library!,
+                            smartFilter: attributeData.smart_filter ?? undefined,
                         },
                     };
 

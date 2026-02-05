@@ -19,6 +19,9 @@ fragment LinkAttributeDetails on LinkAttribute {
             }
         }
     }
+    smart_filter {
+        enable
+    }
 }
 
 fragment TreeAttributeDetails on TreeAttribute {

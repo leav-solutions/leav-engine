@@ -95,6 +95,9 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     linkedTree: _isLibraryTreeAttribute(attributeDetailsById[attributeId])
                         ? (attributeDetailsById[attributeId].linked_tree ?? undefined)
                         : undefined,
+                    smartFilter: _isLibraryLinkAttribute(attributeDetailsById[attributeId])
+                        ? (attributeDetailsById[attributeId].smart_filter ?? undefined)
+                        : undefined,
                 },
             },
         });
