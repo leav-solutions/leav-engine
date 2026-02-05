@@ -9,7 +9,6 @@ import {
 } from '_gqlTypes/TREE_NODE_CHILDREN';
 import {type WithOptional} from '_types/WithOptional';
 import {type ITreeNode, type ITreeNodeData, fakeRootId} from '_types/trees';
-import {type FetchResult} from 'apollo-link';
 import {type ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
 import React, {useState} from 'react';
@@ -202,19 +201,18 @@ const TreeExplorer = ({
             const siblings = parentNode !== null ? parentNode.children : treeData;
             if (siblings?.length) {
                 await Promise.all(
-                    (siblings as ITreeItem[]).map(
-                        (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> =>
-                            getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
-                                ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
-                                      mutation: moveTreeElementQuery,
-                                      variables: {
-                                          treeId: tree.id,
-                                          nodeId: s.id,
-                                          parentTo,
-                                          order: i,
-                                      },
-                                  })
-                                : Promise.resolve(),
+                    (siblings as ITreeItem[]).map((s, i) =>
+                        getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
+                            ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
+                                  mutation: moveTreeElementQuery,
+                                  variables: {
+                                      treeId: tree.id,
+                                      nodeId: s.id,
+                                      parentTo,
+                                      order: i,
+                                  },
+                              })
+                            : Promise.resolve(),
                     ),
                 );
             }

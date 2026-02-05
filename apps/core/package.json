@@ -59,7 +59,7 @@
         "typescript": "5.9.3"
     },
     "dependencies": {
-        "@apollo/server": "4.11.0",
+        "@apollo/server": "4.12.2",
         "@bugsnag/js": "8.8.1",
         "@elastic/elasticsearch": "8.10.0",
         "@graphql-tools/schema": "10.0.31",

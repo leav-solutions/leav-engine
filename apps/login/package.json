@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "@ant-design/icons": "5.6.1",
-        "@apollo/client": "3.8.1",
+        "@apollo/client": "3.14.0",
         "@leav/ui": "workspace:libs/ui",
         "aristid-ds": "14.0.0-1708442",
         "graphql": "15.0.0",

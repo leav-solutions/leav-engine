@@ -15,7 +15,7 @@
         "tscheck": "tsc --noEmit -p ."
     },
     "dependencies": {
-        "@apollo/client": "3.8.1",
+        "@apollo/client": "3.14.0",
         "@bugsnag/js": "8.8.1",
         "@bugsnag/plugin-react": "8.8.0",
         "@fortawesome/fontawesome-svg-core": "7.0.1",

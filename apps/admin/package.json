@@ -19,7 +19,7 @@
         "postinstall": "node scripts/fixSemanticUiCss.js"
     },
     "dependencies": {
-        "@apollo/client": "3.8.1",
+        "@apollo/client": "3.14.0",
         "@leav/utils": "workspace:libs/utils",
         "@reduxjs/toolkit": "1.7.1",
         "cross-fetch": "3.1.5",

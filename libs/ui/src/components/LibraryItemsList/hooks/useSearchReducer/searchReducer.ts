@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type GraphQLErrors} from '@apollo/client/errors';
+import {type GraphQLFormattedError} from 'graphql';
 import getFieldsFromView from '_ui/components/LibraryItemsList/helpers/getFieldsFromView';
 import {
     type IAttribute,
@@ -15,7 +15,7 @@ import {type IValueVersion} from '_ui/types/values';
 import {type IView, type IViewDisplay} from '_ui/types/views';
 import {ViewSizes, ViewTypes} from '_ui/_gqlTypes';
 import {defaultView} from '../../constants';
-import {type ISearchRecord, type ISearchSort, type ISearchState} from './_types';
+import {type SearchStateError, type ISearchRecord, type ISearchSort, type ISearchState} from './_types';
 
 export enum SearchActionTypes {
     UPDATE_RESULT = 'UPDATE_RESULT',
@@ -52,7 +52,7 @@ export enum SearchActionTypes {
 interface ISearchResult {
     type: SearchActionTypes.UPDATE_RESULT;
     records: ISearchRecord[];
-    errors?: GraphQLErrors;
+    errors?: readonly GraphQLFormattedError[];
     totalCount: number;
 }
 
@@ -162,7 +162,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 ...state,
                 records: action.records ?? state.records,
                 totalCount: action.totalCount ?? state.totalCount,
-                errors: action.errors ?? [],
+                errors: (action.errors as SearchStateError[]) ?? [],
                 loading: false,
             };
         }

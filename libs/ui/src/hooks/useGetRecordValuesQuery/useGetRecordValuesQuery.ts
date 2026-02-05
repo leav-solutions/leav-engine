@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {type QueryResult, useQuery} from '@apollo/client';
+import {type ApolloQueryResult, type QueryResult, useQuery} from '@apollo/client';
 import {type Override} from '@leav/utils';
 import {useState} from 'react';
 import {RecordFilterCondition, type RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
@@ -78,6 +78,8 @@ export const useGetRecordValuesQuery = (
         ...query,
         loading: query.loading || typeof queryData === undefined,
         data: queryData,
-        refetch: customRefetch,
+        refetch: customRefetch as (
+            variables?: Partial<IGetRecordColumnsValuesVariables>,
+        ) => Promise<ApolloQueryResult<IGetRecordColumnsValues>>,
     };
 };
