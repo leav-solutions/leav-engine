@@ -27,6 +27,7 @@ jest.mock('_ui/components/LibraryItemsList/LibraryItemsListEmpty', () => ({notif
 
 jest.spyOn(useGetRecordUpdatesSubscription, 'useGetRecordUpdatesSubscription').mockReturnValue({
     loading: false,
+    restart: jest.fn(),
 });
 
 jest.mock('aristid-ds', () => {

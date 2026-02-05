@@ -15,7 +15,7 @@ import {
 import {type IValueVersion} from '_ui/types/values';
 import {type IView, type IViewDisplay} from '_ui/types/views';
 import {type PermissionsActions, type SortOrder} from '_ui/_gqlTypes';
-import {type GraphQLError, type GraphQLErrorExtensions} from 'graphql';
+import {type GraphQLFormattedError, type GraphQLErrorExtensions} from 'graphql';
 import {
     type ILibraryDetailExtended,
     type ILibraryDetailExtendedLinkedTree,
@@ -56,7 +56,7 @@ export interface ISidebarState {
 }
 
 export type SearchStateError = Override<
-    GraphQLError,
+    GraphQLFormattedError,
     {
         extensions: GraphQLErrorExtensions & {
             record?: {

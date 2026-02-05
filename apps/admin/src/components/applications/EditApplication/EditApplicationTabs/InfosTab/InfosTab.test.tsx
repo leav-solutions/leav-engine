@@ -21,6 +21,14 @@ jest.mock(
         },
 );
 
+const mockHistoryPush = jest.fn();
+jest.mock('react-router-dom-v5', () => ({
+    ...jest.requireActual('react-router-v5'),
+    useHistory: () => ({
+        push: mockHistoryPush,
+    }),
+}));
+
 describe('InfosTab', () => {
     test('Display form, edit value and submit on blur', async () => {
         let saveCalled = false;

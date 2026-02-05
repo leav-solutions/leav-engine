@@ -815,6 +815,7 @@ describe('Explorer', () => {
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false,
+            restart: jest.fn(),
         });
 
         jest.clearAllMocks();

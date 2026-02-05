@@ -158,6 +158,7 @@ describe('EditRecordPage', () => {
         useGetRecordValuesQueryMock.mockClear();
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false,
+            restart: jest.fn(),
         });
     });
 

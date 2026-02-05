@@ -48,13 +48,6 @@ describe('BodyCell', () => {
             locations: [],
             path: [],
             message: 'error message',
-            name: 'error',
-            source: null,
-            nodes: [],
-            positions: [],
-            originalError: null,
-            toJSON: jest.fn(),
-            [Symbol.toStringTag]: 'Error',
             extensions: {
                 fields: {
                     [mockCell.column.id]: 'error message',
