@@ -24,7 +24,7 @@
         "@fortawesome/react-fontawesome": "3.0.2",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
-        "aristid-ds": "14.0.0-1708442",
+        "aristid-ds": "15.0.0-06322cf",
         "classnames": "2.5.1",
         "dayjs": "1.11.19",
         "graphql": "16.12.0",
