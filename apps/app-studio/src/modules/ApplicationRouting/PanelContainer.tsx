@@ -9,18 +9,17 @@ import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {PanelHeader} from './header/PanelHeader';
-import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {
     selfContainingPanel,
-    popupPanel,
     popupContent,
-    popupCreationFormPanel,
+    centerPopupForCreationForm,
     fullpagePopup,
     hiddenPopup,
     centerPopup,
     sliderPanel,
+    fullpageOverlay,
 } from './panelContainer.module.css';
 import {WORKSPACE_PANEL_CONTAINER_ID} from '../../constants';
 
@@ -29,13 +28,12 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
     const navigate = useNavigate();
-    const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
+    const {currentPanel} = retrievePanelDetails({application, recordPanelId});
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const match = useMatch(AbsolutePaths.recordPanel);
 
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
-    const isFormPanel = isCreationFormPanel || currentPanel.type === 'editionForm';
 
     const isPanelInFullpage = where === 'fullpage';
     const isPanelInPopup = where === 'popup';
@@ -80,17 +78,18 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             <KitModal
                 isOpen
                 showCloseIcon={!hasPanelInFullpageAfterPopup}
-                className={cn(popupPanel, {
+                className={cn({
                     [centerPopup]: isPanelInPopup,
+                    [centerPopupForCreationForm]: isCreationFormPanel,
                     [fullpagePopup]: isPanelInFullpage,
                     [hiddenPopup]: hasPanelInFullpageAfterPopup,
                 })}
                 portalClassName={cn({
-                    [popupCreationFormPanel]: isCreationFormPanel,
                     [hiddenPopup]: hasPanelInFullpageAfterPopup,
+                    [fullpageOverlay]: isPanelInFullpage,
                 })}
-                width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationFormPanel (as modal use html with style attribute)
-                height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationFormPanel (as modal use html with style attribute)
+                width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationOverlay (as modal use html with style attribute)
+                height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationOverlay (as modal use html with style attribute)
                 title={<PanelHeader />}
                 footer={isCreationFormPanel ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 close={closeContainer}

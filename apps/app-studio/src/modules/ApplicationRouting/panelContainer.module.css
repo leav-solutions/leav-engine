@@ -1,57 +1,71 @@
-.popupPanel {
-    /* KitModal header title selector */
-    & > div > div:nth-child(1) > div {
-        && {
-            padding-right: calc(var(--general-spacing-xxs) * 1px);
-        }
-    }
-
-    /* KitModal content selector */
-    & > div > div:nth-child(2) {
-        padding: 0;
+.fullpageOverlay {
+    :global(.kit-modal-overlay) {
+        background: unset;
     }
 }
 
 .centerPopup {
-    /* KitModal header selector */
-    & > div > div:nth-child(1) {
+    :global(.kit-modal-header) {
         border-bottom: 1px solid var(--general-utilities-border);
+        padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+
+        :global(.kit-modal-title) {
+            padding-right: calc(var(--general-spacing-xs) * 1px);
+        }
     }
 
-    /* KitModal content selector */
-    & > div > div:nth-child(2) {
-        /* Fix border radius issue of KitModal content inside modal */
-        border-bottom-left-radius: calc(var(--general-border-radius-s) * 1px);
-        border-bottom-right-radius: calc(var(--general-border-radius-s) * 1px);
+    :global(.kit-modal-content-wrapper) {
+        padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+
+        :global(.kit-modal-content) {
+            & > div > section > div > div > div:has(form) {
+                /* Remove form default padding to keep only the modal padding */
+                padding: 0;
+            }
+        }
     }
 }
 
-.popupCreationFormPanel {
-    & > div > div > div {
+.centerPopupForCreationForm {
+    & > div {
         height: auto;
         max-height: 80vh;
         width: 656px;
     }
 }
 
-.popupContent {
-    flex: auto;
-    display: flex;
-    overflow: hidden;
-    height: 100%;
-
-    /* Override the padding of EditRecord.tsx form */
-    & > :first-child > div:nth-child(2) > div > div:has(> form) {
-        padding: calc(var(--general-spacing-xs) * 1px);
-    }
-}
-
 .fullpagePopup {
-    border-left: 1px solid var(--general-utilities-border);
-    border-top: 1px solid var(--general-utilities-border);
+    /* Add padding left to keep workspaces menu box-shadow visible */
+    --workspace-menu-padding-left: 4px;
+    padding-left: var(--workspace-menu-padding-left);
 
     & > div {
+        background-color: var(--general-colors-primary-50);
         box-shadow: none;
+
+        :global(.kit-modal-header) {
+            && {
+                border-bottom: none;
+                padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px)
+                    calc(var(--general-spacing-s) * 1px)
+                    calc(var(--general-spacing-m) * 1px - var(--workspace-menu-padding-left));
+                padding-bottom: 0;
+
+                :global(.kit-modal-title) {
+                    padding-right: calc(var(--general-spacing-xs) * 1px);
+                }
+            }
+        }
+
+        :global(.kit-modal-content-wrapper) {
+            /* Use the margin instead of the padding so the box-shadow is visible */
+            margin: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-m) * 1px)
+                calc(var(--general-spacing-s) * 1px)
+                calc(var(--general-spacing-m) * 1px - var(--workspace-menu-padding-left));
+            padding: 0;
+            box-shadow: var(--general-utilities-shadow-light);
+            border-radius: calc(var(--general-border-radius-s) * 1px);
+        }
     }
 }
 
@@ -59,21 +73,29 @@
     visibility: hidden;
 }
 
+.popupContent {
+    flex: auto;
+    display: flex;
+    overflow: hidden;
+    height: 100%;
+}
+
 .sliderPanel {
     /* Panel header selector */
-    section > div:nth-child(1) {
-        padding-bottom: calc(var(--general-spacing-m) * 1px);
+    & > section > div:nth-child(1) {
         gap: calc(var(--general-spacing-xxs) * 1px);
     }
 
     /* Panel content selector */
-    section > div:nth-child(2) {
-        /* Remove panel padding as sidepanel as already its own padding */
-        padding: 0;
+    & > section > div:nth-child(2) {
+        & > section > div:nth-child(1) > :has(*) {
+            /* Add space between header and content (if there is a header) */
+            padding-bottom: calc(var(--general-spacing-m) * 1px);
+        }
 
-        /* Override the padding of EditRecord.tsx form */
-        & > :first-child > div:nth-child(2) > div > div:has(> form) {
-            padding: calc(var(--general-spacing-xs) * 1px);
+        & > section > div:nth-child(2) > div > div:has(> form) {
+            /* Remove form default padding to keep only the sidepanel padding */
+            padding: 0;
         }
     }
 }
