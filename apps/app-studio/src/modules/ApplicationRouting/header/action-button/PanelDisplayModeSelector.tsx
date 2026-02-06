@@ -9,7 +9,6 @@ import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
-import {panelDisplayModeSelector} from './panelDisplayModeSelector.module.css';
 import {DisplayModeItem} from './DisplayModeItem';
 import {type Where} from '_ui/hooks/useIFrameMessenger/types';
 
@@ -99,7 +98,6 @@ export const PanelDisplayModeSelector: FunctionComponent = () => {
         >
             <KitTooltip title={t('display_mode.select_display')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
                 <KitButton
-                    className={panelDisplayModeSelector}
                     size="m"
                     aria-label={t('display_mode.select_display')}
                     icon={
