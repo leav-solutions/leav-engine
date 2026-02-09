@@ -5,7 +5,7 @@ import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {type IUtils} from 'utils/utils';
 import {type ILinkBaseValue, type IValuesOccurrences, type ILinkValue, type IValueEdge} from '_types/value';
-import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
+import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
 import {type IDbService} from '../db/dbService';
@@ -13,7 +13,8 @@ import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
-import {type IDbDocument} from 'infra/db/_types';
+import {type IDbDocument, type IDbEdge} from 'infra/db/_types';
+import {type EdgeCollection} from 'arangojs/collection';
 
 interface ISavedValueResult {
     edge: IValueEdge;
@@ -602,6 +603,34 @@ export default function ({
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
+        },
+        async clearMultipleValues({libraryId, attribute, ctx}): Promise<void> {
+            const edgeValuesLinksCollection = dbService.db.collection(
+                VALUES_LINKS_COLLECTION,
+            ) as EdgeCollection<IDbEdge>;
+
+            // We retrieve all the edges of the attribute sorted by created_at in descending order
+            const edges = await dbService.execute({
+                query: aql`
+                        FOR edge IN ${edgeValuesLinksCollection}
+                            FILTER edge.attribute == ${attribute.id}
+                            AND LIKE(edge._from, ${libraryId + '/%'})
+                            SORT edge.created_at DESC
+                            RETURN edge
+                    `,
+                ctx,
+            });
+
+            if (edges.length <= 1) {
+                return;
+            }
+
+            // The most recent one is the first one, we delete the others
+            for (const edge of edges.slice(1)) {
+                await edgeValuesLinksCollection.remove({_key: edge._key}); // Delete the edge
+            }
+
+            return;
         },
     };
 }

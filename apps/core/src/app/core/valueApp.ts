@@ -23,6 +23,7 @@ import {AttributeCondition, type IRecord} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
+import {type IGarbageDomain} from '../../domain/garbage/garbageDomain';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
@@ -32,6 +33,7 @@ interface IDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.value.tasks.saveValueBulk': ISaveValueBulkTask;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
+    'core.domain.garbage': IGarbageDomain;
     'core.utils': IUtils;
 }
 
@@ -42,6 +44,7 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.utils': utils,
+    'core.domain.garbage': garbageDomain,
 }: IDeps): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
@@ -318,6 +321,8 @@ export default function ({
 
                         """ The returned values are the deleted ones """ 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
+                        
+                        clearMultipleValues(attributeId: ID!): String!
                     }
                 `,
                 resolvers: {
@@ -449,6 +454,14 @@ export default function ({
                                 value: valToDelete,
                                 ctx,
                             });
+                        },
+                        async clearMultipleValues(
+                            _: never,
+                            {attributeId}: {attributeId: string},
+                            ctx: IQueryInfos,
+                        ): Promise<string> {
+                            await garbageDomain.clearMultipleValues(attributeId, ctx);
+                            return ''; // FIXME: should return a task id
                         },
                     },
                     GenericValueOccurrences: {

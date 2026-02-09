@@ -143,6 +143,16 @@ export interface IValueRepo {
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
 
     deleteAllValuesByRecord(params: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<void>;
+
+    clearMultipleValues?({
+        libraryId,
+        attribute,
+        ctx,
+    }: {
+        libraryId: string;
+        attribute: IAttribute;
+        ctx: IQueryInfos;
+    }): Promise<void>;
 }
 
 interface IDeps {
@@ -293,6 +303,9 @@ export default function ({
                 `,
                 ctx,
             });
+        },
+        clearMultipleValues({libraryId, attribute, ctx}): Promise<void> {
+            return attributeTypesRepo.getTypeRepo(attribute).clearMultipleValues({libraryId, attribute, ctx});
         },
     };
 }

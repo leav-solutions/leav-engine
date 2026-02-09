@@ -6,7 +6,7 @@ import {type DocumentCollection, type EdgeCollection} from 'arangojs/collection'
 import {type IDbUtils} from 'infra/db/dbUtils';
 import {type IDbDocument, type IDbEdge} from 'infra/db/_types';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
+import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
 import {type IStandardValue, type IValueEdge} from '../../_types/value';
@@ -368,6 +368,36 @@ export default function ({
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
+        },
+        async clearMultipleValues({libraryId, attribute, ctx}): Promise<void> {
+            const edgeValuesLinksCollection = dbService.db.collection(
+                VALUES_LINKS_COLLECTION,
+            ) as EdgeCollection<IDbEdge>;
+            const valuesCollection = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
+
+            // We retrieve all the edges of the attribute sorted by created_at in descending order
+            const edges = await dbService.execute({
+                query: aql`
+                        FOR edge IN ${edgeValuesLinksCollection}
+                            FILTER edge.attribute == ${attribute.id}
+                            AND LIKE(edge._from, ${libraryId + '/%'})
+                            SORT edge.created_at DESC
+                            RETURN edge
+                    `,
+                ctx,
+            });
+
+            if (edges.length <= 1) {
+                return;
+            }
+
+            // The most recent one is the first one, we delete the others
+            for (const edge of edges.slice(1)) {
+                await valuesCollection.remove({_key: String(edge._to.split('/')[1])}); // Delete the value
+                await edgeValuesLinksCollection.remove({_key: edge._key}); // Delete the edge
+            }
+
+            return;
         },
     };
 }
