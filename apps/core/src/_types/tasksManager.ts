@@ -74,6 +74,7 @@ export enum TaskType {
     IMPORT_DATA = 'IMPORT_DATA',
     INDEXATION = 'INDEXATION',
     SAVE_VALUE_BULK = 'SAVE_VALUE_BULK',
+    PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
 }
 
 export interface ITaskRole {

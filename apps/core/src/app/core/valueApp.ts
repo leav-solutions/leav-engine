@@ -23,7 +23,7 @@ import {AttributeCondition, type IRecord} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
-import {type IGarbageDomain} from '../../domain/garbage/garbageDomain';
+import {type IPurgeMultipleValuesTask} from '../../domain/value/tasks/purgeMultipleValues';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
@@ -33,8 +33,8 @@ interface IDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.value.tasks.saveValueBulk': ISaveValueBulkTask;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
-    'core.domain.garbage': IGarbageDomain;
     'core.utils': IUtils;
+    'core.domain.value.tasks.purgeMultipleValues': IPurgeMultipleValuesTask;
 }
 
 export default function ({
@@ -44,7 +44,7 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.utils': utils,
-    'core.domain.garbage': garbageDomain,
+    'core.domain.value.tasks.purgeMultipleValues': purgeMultipleValuesTask,
 }: IDeps): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
@@ -322,7 +322,8 @@ export default function ({
                         """ The returned values are the deleted ones """ 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
                         
-                        clearMultipleValues(attributeId: ID!): String!
+                        """ Purge multiples values of a mono attribute and keep only the more recent one """
+                        purgeMultipleValues(attributeId: ID!): String!
                     }
                 `,
                 resolvers: {
@@ -455,13 +456,12 @@ export default function ({
                                 ctx,
                             });
                         },
-                        async clearMultipleValues(
+                        async purgeMultipleValues(
                             _: never,
                             {attributeId}: {attributeId: string},
                             ctx: IQueryInfos,
                         ): Promise<string> {
-                            await garbageDomain.clearMultipleValues(attributeId, ctx);
-                            return ''; // FIXME: should return a task id
+                            return purgeMultipleValuesTask.purgeMultipleValues({attributeId, ctx});
                         },
                     },
                     GenericValueOccurrences: {
