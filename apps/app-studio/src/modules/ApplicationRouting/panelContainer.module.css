@@ -1,3 +1,8 @@
+.modalExtraRightPortal {
+    height: 100%;
+    width: auto;
+}
+
 .fullpageOverlay {
     :global(.kit-modal-overlay) {
         background: unset;
@@ -93,9 +98,16 @@
             padding-bottom: calc(var(--general-spacing-m) * 1px);
         }
 
-        & > section > div:nth-child(2) > div > div:has(> form) {
-            /* Remove form default padding to keep only the sidepanel padding */
+        &:has(:global(.informationAndHistory), :global(.thread)) {
+            /* Remove sidepanel padding if we want to display the information and history or thread panel inside */
             padding: 0;
+        }
+
+        & > section > div:nth-child(2) {
+            & > div > div:has(> form) {
+                /* Remove form default padding to keep only the sidepanel padding */
+                padding: 0;
+            }
         }
     }
 }
