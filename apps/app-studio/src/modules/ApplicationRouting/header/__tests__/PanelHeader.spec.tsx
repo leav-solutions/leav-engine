@@ -324,7 +324,7 @@ describe('PanelHeader', () => {
             const displayModeButton = screen.queryByRole('button', {name: /display_mode.select_display/i});
             expect(informationButton).not.toBeInTheDocument();
             expect(discussionButton).not.toBeInTheDocument();
-            expect(displayModeButton).toBeInTheDocument();
+            expect(displayModeButton).not.toBeInTheDocument();
         });
     });
 });
