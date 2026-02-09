@@ -134,6 +134,8 @@
         "informations": "Informations",
         "multiple_values": "Valeurs multiples",
         "allow_multiple_values": "Autoriser les valeurs multiples",
+        "purge_multiple_values": "Purger les valeurs multiples",
+        "purge_multiple_values_confirm": "Êtes-vous sûr de vouloir purger toutes les valeurs multiples de cet attribut et ne garder que la plus récente ? Cette action est irréversible.",
         "remove_value": "Supprimer la valeur",
         "values_versions": "Versions de valeurs",
         "versionable": "Valeurs versionables",
