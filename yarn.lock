@@ -277,9 +277,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:4.12.2":
-  version: 4.12.2
-  resolution: "@apollo/server@npm:4.12.2"
+"@apollo/server@npm:4.13.0":
+  version: 4.13.0
+  resolution: "@apollo/server@npm:4.13.0"
   dependencies:
     "@apollo/cache-control-types": "npm:^1.0.3"
     "@apollo/server-gateway-interface": "npm:^1.1.1"
@@ -296,6 +296,7 @@ __metadata:
     "@types/express-serve-static-core": "npm:^4.17.30"
     "@types/node-fetch": "npm:^2.6.1"
     async-retry: "npm:^1.2.1"
+    content-type: "npm:^1.0.5"
     cors: "npm:^2.8.5"
     express: "npm:^4.21.1"
     loglevel: "npm:^1.6.8"
@@ -307,7 +308,7 @@ __metadata:
     whatwg-mimetype: "npm:^3.0.0"
   peerDependencies:
     graphql: ^16.6.0
-  checksum: 10/742ee13a858186be20e23a5090bb8dbd4bb0c6774acd8189c38a959a86c8c88d1ae67b3b644626bd76c09531d565256ef8f27781b85e40caede5be775b22e408
+  checksum: 10/7dbe6b7f2ff8dc3d397310c90fb0da281cec744346e9b7591066c2102c72f98b300df5b1c5b526eef8ed443a5d88123a19fdd53ec44c064598799cc73bc91469
   languageName: node
   linkType: hard
 
@@ -4881,18 +4882,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ckeditor/ckeditor5-react@npm:6.1.0":
-  version: 6.1.0
-  resolution: "@ckeditor/ckeditor5-react@npm:6.1.0"
+"@ckeditor/ckeditor5-react@npm:6.3.0":
+  version: 6.3.0
+  resolution: "@ckeditor/ckeditor5-react@npm:6.3.0"
   dependencies:
     prop-types: "npm:^15.7.2"
   peerDependencies:
-    "@ckeditor/ckeditor5-core": ">=37.0.0"
-    "@ckeditor/ckeditor5-engine": ">=37.0.0"
-    "@ckeditor/ckeditor5-utils": ">=37.0.0"
-    "@ckeditor/ckeditor5-watchdog": ">=37.0.0"
+    "@ckeditor/ckeditor5-core": ">=41.3.1"
+    "@ckeditor/ckeditor5-editor-multi-root": ">=41.3.1"
+    "@ckeditor/ckeditor5-engine": ">=41.3.1"
+    "@ckeditor/ckeditor5-utils": ">=41.3.1"
+    "@ckeditor/ckeditor5-watchdog": ">=41.3.1"
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
-  checksum: 10/181965902f5745f268030ee86c4239df5e7975adfeb479bd21906861e473f6cf5fc7e4135bd03922e90575481b64bb27b7ff826ad7eabd9c46d69288d9cbe9b6
+  checksum: 10/ce1a8d905078e5038d55efebafadaa9277149d4a990dc33b54a9c6bfdcfa982d89f5aa4d6331199d09cb3782e665805a408ba265a8b095c9a8138cbfae376d78
   languageName: node
   linkType: hard
 
@@ -8310,7 +8312,7 @@ __metadata:
     "@babel/preset-env": "npm:7.29.0"
     "@babel/preset-react": "npm:7.28.5"
     "@ckeditor/ckeditor5-build-inline": "npm:39.0.2"
-    "@ckeditor/ckeditor5-react": "npm:6.1.0"
+    "@ckeditor/ckeditor5-react": "npm:6.3.0"
     "@dnd-kit/core": "npm:6.1.0"
     "@dnd-kit/sortable": "npm:8.0.0"
     "@dnd-kit/utilities": "npm:3.2.2"
@@ -14463,17 +14465,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"content-type@npm:^1.0.5, content-type@npm:~1.0.5":
+  version: 1.0.5
+  resolution: "content-type@npm:1.0.5"
+  checksum: 10/585847d98dc7fb8035c02ae2cb76c7a9bd7b25f84c447e5ed55c45c2175e83617c8813871b4ee22f368126af6b2b167df655829007b21aa10302873ea9c62662
+  languageName: node
+  linkType: hard
+
 "content-type@npm:~1.0.4":
   version: 1.0.4
   resolution: "content-type@npm:1.0.4"
   checksum: 10/5ea85c5293475c0cdf2f84e2c71f0519ced565840fb8cbda35997cb67cc45b879d5b9dbd37760c4041ca7415a3687f8a5f2f87b556b2aaefa49c0f3436a346d4
-  languageName: node
-  linkType: hard
-
-"content-type@npm:~1.0.5":
-  version: 1.0.5
-  resolution: "content-type@npm:1.0.5"
-  checksum: 10/585847d98dc7fb8035c02ae2cb76c7a9bd7b25f84c447e5ed55c45c2175e83617c8813871b4ee22f368126af6b2b167df655829007b21aa10302873ea9c62662
   languageName: node
   linkType: hard
 
@@ -14652,7 +14654,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "core@workspace:apps/core"
   dependencies:
-    "@apollo/server": "npm:4.12.2"
+    "@apollo/server": "npm:4.13.0"
     "@bugsnag/js": "npm:8.8.1"
     "@elastic/elasticsearch": "npm:8.10.0"
     "@graphql-tools/schema": "npm:10.0.31"
