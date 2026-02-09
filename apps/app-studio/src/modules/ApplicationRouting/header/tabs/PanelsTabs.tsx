@@ -128,6 +128,10 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
                 })}
             >
                 <KitTabs
+                    key={
+                        // Use a key based on the presence of the flap panel to force a re-render when the flap panel is opened
+                        hasFlapPanel ? 'flap' : 'normal'
+                    }
                     items={tabItems}
                     variant="pill"
                     size="xsmall"

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useCallback, type FunctionComponent} from 'react';
+import {useCallback, useEffect, useState, type FunctionComponent} from 'react';
 import {useMatch, useParams, useRoutes} from 'react-router-dom';
 import cn from 'classnames';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
@@ -14,8 +14,11 @@ import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/typ
 import {AbsolutePaths} from './router/paths';
 import {FlapContainer} from './FlapContainer';
 import {panel, panelContent, firstPanel, firstPanelContent, panelHeader} from './panel.module.css';
+import {createPortal} from 'react-dom';
+import {MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
 
 export const Panel: FunctionComponent = () => {
+    const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
@@ -38,8 +41,23 @@ export const Panel: FunctionComponent = () => {
         [hasFlapPanel, match?.pathname],
     );
 
+    useEffect(() => {
+        if (!isPanelInSlider && hasFlapPanel && !isFirstPanel) {
+            const extraRightElement = document.getElementById(`${MODAL_EXTRA_RIGHT_PORTAL_ID}_${recordPanelId}`);
+            setModalExtraRightElement(extraRightElement ?? undefined);
+        } else {
+            setModalExtraRightElement(undefined);
+        }
+    }, [hasFlapPanel, isFirstPanel, recordPanelId]);
+
+    const flapContainerComponent = modalExtraRightElement ? (
+        createPortal(<FlapContainer ref={setFlapRef} />, modalExtraRightElement)
+    ) : (
+        <FlapContainer ref={setFlapRef} />
+    );
+
     if (isPanelInSlider && hasFlapPanel) {
-        return <FlapContainer ref={setFlapRef} />;
+        return flapContainerComponent;
     }
 
     return (
@@ -79,7 +97,7 @@ export const Panel: FunctionComponent = () => {
                     {NextLevelRoutes}
                 </div>
             </section>
-            {hasFlapPanel && <FlapContainer ref={setFlapRef} />}
+            {hasFlapPanel && flapContainerComponent}
         </>
     );
 };

@@ -3,6 +3,11 @@
     width: auto;
 }
 
+.modalExtraRightPortalWithFlap {
+    width: 576px; /* Value of KitSidePanel size "l" */
+    min-width: 576px; /* Value of KitSidePanel size "l" */
+}
+
 .fullpageOverlay {
     :global(.kit-modal-overlay) {
         background: unset;
