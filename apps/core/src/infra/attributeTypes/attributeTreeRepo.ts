@@ -231,9 +231,12 @@ export default function ({
                 }
             }
 
-            const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+            const limitAndSort = literal(
+                !attribute.multiple_values && !forceGetAllValues ? 'SORT edge.created_at DESC LIMIT 1' : '',
+            );
+
             queryParts.push(aql`
-                ${limitOne}
+                ${limitAndSort}
                 RETURN {id: vertex._key, record, edge}
             `);
 
@@ -292,6 +295,7 @@ export default function ({
                 )`);
 
             if (!attribute.multiple_values && !options?.forceGetAllValues) {
+                queryParts.push(aql`SORT edge.created_at DESC`);
                 queryParts.push(aql`
                     COLLECT collectedRecId = recordKey INTO grouped
                     LET first = FIRST(grouped)

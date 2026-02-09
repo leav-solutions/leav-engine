@@ -218,11 +218,15 @@ export default function ({
                 }
             }
 
-            const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+            const sortAndLimit = literal(
+                !attribute.multiple_values && !forceGetAllValues ? 'SORT edge.created_at DESC LIMIT 1' : '',
+            );
+
             queryParts.push(aql`
-                ${limitOne}
+                ${sortAndLimit}
                 RETURN {value, edge}
             `);
+
             const query = join(queryParts);
             const res = await dbService.execute({query, ctx});
 
@@ -255,6 +259,7 @@ export default function ({
                             FOR edge IN ${edgeCollec}
                                 FILTER edge._from == CONCAT(${library}, '/', recordId)
                                 AND edge.attribute == ${attribute.id}
+                                SORT edge.created_at DESC
                                 ${filterVersion}
                                 LET value = DOCUMENT(edge._to)
                                 RETURN { value, edge }

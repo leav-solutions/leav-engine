@@ -102,7 +102,7 @@ exports[`AttributeStandardRepo getValues Should return values filtered by versio
                 @@value1
                 FILTER edge.attribute == @value2
                  FILTER edge.version == @value3 
-                LIMIT 1
+                SORT edge.created_at DESC LIMIT 1
                 RETURN {value, edge}
             "
 `;
