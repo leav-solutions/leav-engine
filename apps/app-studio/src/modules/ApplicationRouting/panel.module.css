@@ -5,7 +5,6 @@
     flex-direction: column;
     display: flex;
     overflow: hidden;
-    padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
 }
 
 .panelContent {
@@ -13,20 +12,20 @@
     background: var(--general-utilities-light);
     border-radius: calc(var(--general-border-radius-s) * 1px);
     overflow: hidden;
+
+    /* Apply padding for form panels */
+    & > div > div:has(> form) {
+        padding: calc(var(--general-spacing-s) * 1px);
+    }
 }
 
 .firstPanel {
     padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
-    gap: calc(var(--general-spacing-s) * 1px);
+    gap: calc(var(--general-spacing-xs) * 1px);
 }
 
 .firstPanelContent {
     box-shadow: var(--general-utilities-shadow-light);
-
-    /* Apply padding as first panel content doesn't have any padding coming from a wrapper*/
-    & > div > div:has(> form) {
-        padding: calc(var(--general-spacing-s) * 1px);
-    }
 }
 
 .panelHeader {

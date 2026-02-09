@@ -74,6 +74,7 @@ export const PanelHeader: FunctionComponent<{
                             targetRecordId={currentRecordId ?? recordId}
                             targetLibraryId={currentLibraryId ?? libraryId}
                         />
+                        {!isFirstPanel && !hidePanelDisplayModeSelector && <PanelDisplayModeSelector />}
                     </KitSpace>
                 )}
             </KitSpace>
@@ -90,7 +91,6 @@ export const PanelHeader: FunctionComponent<{
                     className={panelHeaderTabs}
                 />
             )}
-            {!isFirstPanel && !hidePanelDisplayModeSelector && <PanelDisplayModeSelector />}
         </div>
     );
 };

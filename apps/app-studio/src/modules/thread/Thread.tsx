@@ -9,6 +9,7 @@ import {useThreads} from './useThreads/useThreads';
 import {StatusBar} from './thread-status-bar/ThreadStatusBar';
 import {useUser} from '_ui/hooks';
 import {sidePanel, container, center} from './thread.module.css';
+import cn from 'classnames';
 
 export const Thread: FunctionComponent = () => {
     const {userData} = useUser();
@@ -31,7 +32,7 @@ export const Thread: FunctionComponent = () => {
     }
 
     return (
-        <div className={sidePanel}>
+        <div className={cn('thread', sidePanel)}>
             {mainThread ? (
                 <>
                     <StatusBar threadId={mainThread.id} threadStatusId={mainThread.status} />

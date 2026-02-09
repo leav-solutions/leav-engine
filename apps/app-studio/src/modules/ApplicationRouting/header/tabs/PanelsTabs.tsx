@@ -9,7 +9,7 @@ import {LangContext} from '_ui/contexts/LangContext';
 import cn from 'classnames';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths, RelativePaths} from '../../router/paths';
-import {tabsWrapper, firstPanelTabsWrapper, sliderTabsWrapper} from './panelsTabs.module.css';
+import {tabsWrapper, sliderTabsWrapper} from './panelsTabs.module.css';
 import {useGetPanelsAttributeCounts} from './panels-attribute-counts/useGetPanelsAttributeCounts';
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -124,11 +124,14 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
         tabItems.length > 1 && (
             <div
                 className={cn(tabsWrapper, className, {
-                    [firstPanelTabsWrapper]: where === undefined,
                     [sliderTabsWrapper]: where === 'slider',
                 })}
             >
                 <KitTabs
+                    key={
+                        // Use a key based on the presence of the flap panel to force a re-render when the flap panel is opened
+                        hasFlapPanel ? 'flap' : 'normal'
+                    }
                     items={tabItems}
                     variant="pill"
                     size="xsmall"

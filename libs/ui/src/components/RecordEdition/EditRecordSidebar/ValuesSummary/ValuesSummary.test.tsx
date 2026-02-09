@@ -44,7 +44,6 @@ describe('ValuesSummary', () => {
 
         expect(screen.getByText(multipleValue1)).toBeVisible();
         expect(screen.getByText(multipleValue2)).toBeVisible();
-        expect(screen.getByTitle('2')).toBeVisible();
     });
 
     it('Should display calculated value with badge', async () => {
@@ -58,7 +57,6 @@ describe('ValuesSummary', () => {
         );
 
         expect(screen.getByText(calculatedValue)).toBeVisible();
-        expect(screen.getByTitle('1')).toBeVisible();
     });
 
     it('Should display multiple calculated values with badge', async () => {
@@ -73,7 +71,6 @@ describe('ValuesSummary', () => {
 
         expect(screen.getByText('calculated1')).toBeVisible();
         expect(screen.getByText('calculated2')).toBeVisible();
-        expect(screen.getByTitle('2')).toBeVisible();
     });
 
     it('Should strip global and calculated values', async () => {

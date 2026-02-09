@@ -256,10 +256,12 @@ describe('PanelsTabs', () => {
                 },
             });
 
-            renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" />);
+            const {container} = renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" />);
 
             expect(screen.getByText('Panneau avec attribut')).toBeInTheDocument();
-            expect(screen.getByTitle('42')).toBeInTheDocument();
+            const badgeCount = container.querySelector('.ant-badge-count[data-show="true"]');
+            expect(badgeCount).toBeInTheDocument();
+            expect(badgeCount).toHaveTextContent('42');
         });
 
         it('should not display a badge for panels without attributeSource', () => {
@@ -268,13 +270,13 @@ describe('PanelsTabs', () => {
                 panelsCounts: {},
             });
 
-            renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" />);
+            const {container} = renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" />);
 
             expect(screen.getByText('Panneau 1')).toBeInTheDocument();
             expect(screen.getByText('Panneau 2')).toBeInTheDocument();
 
-            // Checking that no badge is displayed (no title with a number)
-            expect(screen.queryByTitle(/^\d+$/)).not.toBeInTheDocument();
+            // Checking that no badge count is displayed (badge count is in sup.ant-badge-count with data-show="true")
+            expect(container.querySelector('.ant-badge-count[data-show="true"]')).toBeNull();
         });
     });
 

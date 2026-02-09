@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, useCallback, useRef} from 'react';
+import {type FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
 import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
@@ -9,33 +9,41 @@ import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {PanelHeader} from './header/PanelHeader';
-import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {
     selfContainingPanel,
-    popupPanel,
     popupContent,
-    popupCreationFormPanel,
+    centerPopupForCreationForm,
     fullpagePopup,
     hiddenPopup,
     centerPopup,
     sliderPanel,
+    fullpageOverlay,
+    modalExtraRightPortal,
+    modalExtraRightPortalWithFlap,
 } from './panelContainer.module.css';
-import {WORKSPACE_PANEL_CONTAINER_ID} from '../../constants';
+import {WORKSPACE_PANEL_CONTAINER_ID, MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
+import {createPortal} from 'react-dom';
+import {retrievePreviousPanelURLParams} from './utils/retrievePreviousPanelURLParams';
 
 export const PanelContainer: FunctionComponent = ({children}) => {
+    const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
     const navigate = useNavigate();
-    const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId});
+    const {currentPanel} = retrievePanelDetails({application, recordPanelId});
+    const {previousRecordPanelId, isPreviousPanelFirstLevel} = retrievePreviousPanelURLParams({
+        recordId,
+        where,
+        recordPanelId,
+    });
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const match = useMatch(AbsolutePaths.recordPanel);
 
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
-    const isFormPanel = isCreationFormPanel || currentPanel.type === 'editionForm';
 
     const isPanelInFullpage = where === 'fullpage';
     const isPanelInPopup = where === 'popup';
@@ -49,6 +57,17 @@ export const PanelContainer: FunctionComponent = ({children}) => {
         },
         [isPanelInSlider, match.pathname],
     );
+
+    useEffect(() => {
+        if (isPanelInSlider && !isPreviousPanelFirstLevel) {
+            const extraRightElement = document.getElementById(
+                `${MODAL_EXTRA_RIGHT_PORTAL_ID}_${previousRecordPanelId}`,
+            );
+            setModalExtraRightElement(extraRightElement);
+        } else {
+            setModalExtraRightElement(undefined);
+        }
+    }, [isPanelInSlider, isPreviousPanelFirstLevel, previousRecordPanelId]);
 
     const closeContainer = () => {
         const closingPath = hasFlapPanel
@@ -80,20 +99,29 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             <KitModal
                 isOpen
                 showCloseIcon={!hasPanelInFullpageAfterPopup}
-                className={cn(popupPanel, {
+                className={cn({
                     [centerPopup]: isPanelInPopup,
+                    [centerPopupForCreationForm]: isCreationFormPanel,
                     [fullpagePopup]: isPanelInFullpage,
                     [hiddenPopup]: hasPanelInFullpageAfterPopup,
                 })}
                 portalClassName={cn({
-                    [popupCreationFormPanel]: isCreationFormPanel,
                     [hiddenPopup]: hasPanelInFullpageAfterPopup,
+                    [fullpageOverlay]: isPanelInFullpage,
                 })}
-                width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationFormPanel (as modal use html with style attribute)
-                height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationFormPanel (as modal use html with style attribute)
+                width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationOverlay (as modal use html with style attribute)
+                height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationOverlay (as modal use html with style attribute)
                 title={<PanelHeader />}
                 footer={isCreationFormPanel ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 close={closeContainer}
+                extraRight={
+                    <div
+                        id={`${MODAL_EXTRA_RIGHT_PORTAL_ID}_${recordPanelId}`}
+                        className={cn(modalExtraRightPortal, {
+                            [modalExtraRightPortalWithFlap]: hasFlapPanel,
+                        })}
+                    />
+                }
                 {...fullpageModalProps}
             >
                 <div className={popupContent} ref={explorerContainerRef}>
@@ -108,7 +136,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     if (isPanelInSlider) {
         const isSelfContainingPanel = currentPanel.type === 'custom' && currentPanel.isSelfContaining;
 
-        return isSelfContainingPanel ? (
+        const sliderPanelComponent = isSelfContainingPanel ? (
             <KitSidePanel
                 className={selfContainingPanel}
                 ref={setPanelRef}
@@ -135,5 +163,12 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 {children}
             </KitSidePanel>
         );
+
+        if (modalExtraRightElement) {
+            return createPortal(sliderPanelComponent, modalExtraRightElement);
+        }
+
+        // For the first level slider panel, we return the component directly
+        return sliderPanelComponent;
     }
 };

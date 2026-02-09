@@ -11,12 +11,13 @@ import {
 } from './informationAndHistory.module.css';
 import {RecordInformation} from './record-information/RecordInformation';
 import {RecordHistoryContainer} from './record-history/RecordHistoryContainer';
+import cn from 'classnames';
 
 export const InformationAndHistory = () => {
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
 
     return (
-        <div className={informationAndHistoryContainer}>
+        <div className={cn('informationAndHistory', informationAndHistoryContainer)}>
             <InformationAndHistoryHeader />
             <div className={informationAndHistoryContentContainer}>
                 <RecordInformation recordId={flapRecordId} libraryId={flapLibraryId} />
