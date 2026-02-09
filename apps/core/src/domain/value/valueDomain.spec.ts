@@ -572,6 +572,7 @@ describe('ValueDomain', () => {
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
+                getValues: global.__mockPromise([]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -616,6 +617,7 @@ describe('ValueDomain', () => {
         test('Should ignore version when saving version on a non versionable attribute', async () => {
             const mockValRepo = {
                 createValue: global.__mockPromise({}),
+                getValues: global.__mockPromise([]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -957,6 +959,7 @@ describe('ValueDomain', () => {
 
                 const mockValRepo = {
                     createValue: global.__mockPromise(savedValueData),
+                    getValues: global.__mockPromise([]),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1116,6 +1119,7 @@ describe('ValueDomain', () => {
 
                 const mockValRepo = {
                     createValue: global.__mockPromise(savedValueData),
+                    getValues: global.__mockPromise([]),
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1389,7 +1393,13 @@ describe('ValueDomain', () => {
                     payload: 'identical',
                     raw_payload: 'identical',
                 }),
-                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}]),
+                getValues: global.__mockPromise([
+                    {
+                        id_value: 12345,
+                        payload: 'identical',
+                        raw_payload: 'identical',
+                    },
+                ]),
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1623,6 +1633,11 @@ describe('ValueDomain', () => {
                 getValueById: global.__mockPromise({
                     id_value: '12345',
                 }),
+                getValues: global.__mockPromise([
+                    {
+                        id_value: '12345',
+                    },
+                ]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1687,6 +1702,7 @@ describe('ValueDomain', () => {
                 getValueById: global.__mockPromise({
                     id_value: '12345',
                 }),
+                getValues: global.__mockPromise([]),
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {

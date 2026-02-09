@@ -408,7 +408,7 @@ const valueDomain = function ({
         const {value, attribute, library, recordId, reverseLink, ctx} = params;
 
         let v: IValue;
-        if (attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.SIMPLE_LINK) {
+        if (attribute.multiple_values === false) {
             v = (
                 await valueRepo.getValues({
                     library,
@@ -728,6 +728,8 @@ const valueDomain = function ({
         if (areValuesIdentical) {
             savedValue = valueBefore;
         } else {
+            value = valueBefore?.id_value ? {...value, id_value: valueBefore.id_value} : value;
+
             savedValue = await saveOneValue(
                 library,
                 record.id,

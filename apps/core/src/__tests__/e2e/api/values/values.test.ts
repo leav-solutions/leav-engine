@@ -10,6 +10,7 @@ import {
     gqlGetValue,
     gqlSaveAttribute,
     gqlSaveTree,
+    gqlSaveValue,
     makeGraphQlCall,
 } from '../e2eUtils';
 import {type ILinkValue} from '_types/value';
@@ -37,12 +38,15 @@ describe('Values', () => {
     let recordId: string;
     let recordIdBatch: string;
     let recordIdLinked: string;
+    let recordIdLinked2: string;
     let recordUniqueId: string;
     let recordIdPostSaveActions: string;
     let recordIdPostDeleteActions: string;
     let advValueId: string;
     let treeElemId: string;
+    let treeElemId2: string;
     let nodeTreeElem: string;
+    let nodeTreeElem2: string;
 
     beforeAll(async () => {
         // Create attributes
@@ -272,7 +276,9 @@ describe('Values', () => {
             c4: createRecord(library: "${treeLibName}") { record {id} },
             c5: createRecord(library: "${testLibName}") { record {id} },
             c6: createRecord(library: "${testLibName}") { record {id} },
-            c7: createRecord(library: "${testLibName}") { record {id} }
+            c7: createRecord(library: "${testLibName}") { record {id} },
+            c8: createRecord(library: "${testLibName}") { record {id} },
+            c9: createRecord(library: "${treeLibName}") { record {id} }
         }`);
 
         recordId = resRecord.data.data.c1.record.id;
@@ -282,9 +288,12 @@ describe('Values', () => {
         recordUniqueId = resRecord.data.data.c5.record.id;
         recordIdPostSaveActions = resRecord.data.data.c6.record.id;
         recordIdPostDeleteActions = resRecord.data.data.c7.record.id;
+        recordIdLinked2 = resRecord.data.data.c8.record.id;
+        treeElemId2 = resRecord.data.data.c9.record.id;
 
         // Add element to tree
         nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});
+        nodeTreeElem2 = await gqlAddElemToTree(treeName, {id: treeElemId2, library: treeLibName});
     });
 
     test('Save value tree', async () => {
@@ -311,6 +320,35 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
         expect(res.data.data.saveValue[0].payload.record.id).toBe(treeElemId);
+    });
+
+    test('Save value on tree monovalue attribute with no id_value should replace the current value', async () => {
+        await gqlSaveValue(attrAdvancedName, testLibName, recordId, nodeTreeElem);
+        const oldValue = (await gqlGetValue(testLibName, recordId, attrTreeName))[0];
+
+        const res = await makeGraphQlCall(`mutation {
+            saveValue(
+                library: "${testLibName}",
+                recordId: "${recordId}",
+                attribute: "${attrTreeName}",
+                value: {payload: "${nodeTreeElem2}"}) {
+                    id_value
+
+                    ... on TreeValue {
+                        payload {
+                            record {
+                                id
+                            }
+                        }
+                    }
+                }
+            }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveValue[0].id_value).toBe(oldValue.id_value);
+        expect(res.data.data.saveValue[0].payload.record.id).toBe(treeElemId2);
     });
 
     test('Save value simple', async () => {
@@ -505,6 +543,31 @@ describe('Values', () => {
         advValueId = res.data.data.saveValue[0].id_value;
     });
 
+    test('Save value on advanced monovalue attribute with no id_value should replace the current value', async () => {
+        await gqlSaveValue(attrAdvancedName, testLibName, recordId, 'test value');
+        const oldValue = (await gqlGetValue(testLibName, recordId, attrAdvancedName))[0];
+
+        const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrAdvancedName}",
+                    value: {payload: "new value"}) {
+                        id_value
+                        ... on Value {
+                            payload
+                        }
+                    }
+              }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveValue[0].payload).toBe('new value');
+        expect(res.data.data.saveValue[0].id_value).toBe(oldValue.id_value);
+
+        advValueId = res.data.data.saveValue[0].id_value;
+    });
+
     test('Save value advanced link', async () => {
         const res = await makeGraphQlCall(`mutation {
                 saveValue(
@@ -527,6 +590,31 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
         expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
+    });
+
+    test('Save value on advanced link monovalue attribute with no id_value should replace the current value', async () => {
+        await gqlSaveValue(attrAdvancedLinkName, testLibName, recordId, recordIdLinked);
+        const oldValue = (await gqlGetValue(testLibName, recordId, attrAdvancedLinkName))[0];
+
+        const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrAdvancedLinkName}",
+                    value: {payload: "${recordIdLinked2}"}) {
+                        id_value
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+              }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked2);
+        expect(res.data.data.saveValue[0].id_value).toBe(oldValue.id_value);
     });
 
     test('Delete value advanced', async () => {
