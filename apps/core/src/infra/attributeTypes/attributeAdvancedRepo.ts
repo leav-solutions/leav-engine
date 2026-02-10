@@ -375,26 +375,30 @@ export default function ({
             ) as EdgeCollection<IDbEdge>;
             const valuesCollection = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
 
-            // We retrieve all the edges of the attribute sorted by created_at in descending order
-            const edges = await dbService.execute({
+            const recordsEdges = await dbService.execute({
                 query: aql`
-                        FOR edge IN ${edgeValuesLinksCollection}
-                            FILTER edge.attribute == ${attribute.id}
-                            AND LIKE(edge._from, ${libraryId + '/%'})
-                            SORT edge.created_at DESC
-                            RETURN edge
-                    `,
+                    FOR edge IN ${edgeValuesLinksCollection}
+                       FILTER edge.attribute == ${attribute.id}
+                       AND LIKE(edge._from, ${libraryId + '/%'})
+                       COLLECT recordId = edge._from INTO valuesByRecord
+                       FILTER LENGTH(valuesByRecord) > 1
+                       LET sortedEdges = (
+                           FOR e IN valuesByRecord[*].edge
+                               SORT e.created_at DESC
+                           RETURN e
+                       )
+                    RETURN { recordId, edges: sortedEdges }
+                `,
                 ctx,
             });
 
-            if (edges.length <= 1) {
-                return;
-            }
+            for (const {edges} of recordsEdges) {
+                const edgesToRemove = edges.slice(1); // The most recent one is the first one, we delete the others
 
-            // The most recent one is the first one, we delete the others
-            for (const edge of edges.slice(1)) {
-                await valuesCollection.remove({_key: String(edge._to.split('/')[1])}); // Delete the value
-                await edgeValuesLinksCollection.remove({_key: edge._key}); // Delete the edge
+                for (const edge of edgesToRemove) {
+                    await valuesCollection.remove({_key: String(edge._to.split('/')[1])}); // Delete the value
+                    await edgeValuesLinksCollection.remove(edge._key); // Delete the edge
+                }
             }
 
             return;

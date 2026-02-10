@@ -92,21 +92,23 @@ describe('Purge multiple values', () => {
         recordTarget2 = await gqlCreateRecord(testLibId);
         testRecordId = await gqlCreateRecord(testLibId);
 
-        idValue1 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value1'});
         // wait to be sure that created_at is different between the two values
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const waitSecondToEnsureDiffCreateAt = () => new Promise(resolve => setTimeout(resolve, 1000));
+
+        idValue1 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value1'});
+        await waitSecondToEnsureDiffCreateAt();
         idValue2 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value2'});
 
         idRecordValue1 = await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
             payload: recordTarget1,
         });
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await waitSecondToEnsureDiffCreateAt();
         idRecordValue2 = await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
             payload: recordTarget2,
         });
 
         idNodeValue1 = await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId1});
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await waitSecondToEnsureDiffCreateAt();
         idNodeValue2 = await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId2});
 
         // Set multiple values property as false for all attributes
@@ -143,8 +145,19 @@ describe('Purge multiple values', () => {
         const purgeMultipleValuesTaskId = (await makeGraphQlCall(gqlMutation)).data.data.purgeMultipleValues;
         await waitForTaskCompletedWithStatus(purgeMultipleValuesTaskId, TaskStatus.DONE);
 
+        // Enable multipleValues to check that only the latest value remains, because of the gqlGetValue query
+        // returning a single value when multipleValues is false, even if several values exist for the record
+        await gqlSaveAttribute({
+            id: attrAdvancedId,
+            type: AttributeTypes.ADVANCED,
+            label: 'Test attr advanced',
+            multipleValues: true,
+            linkedLibrary: testLibId,
+        });
+
         const values = await gqlGetValue(testLibId, testRecordId, attrAdvancedId);
 
+        expect(values).toHaveLength(1);
         expect(values).toEqual([
             {
                 id_value: idValue2,
@@ -160,8 +173,19 @@ describe('Purge multiple values', () => {
         const purgeMultipleValuesTaskId = (await makeGraphQlCall(gqlMutation)).data.data.purgeMultipleValues;
         await waitForTaskCompletedWithStatus(purgeMultipleValuesTaskId, TaskStatus.DONE);
 
+        // Enable multipleValues to check that only the latest value remains, because of the gqlGetValue query
+        // returning a single value when multipleValues is false, even if several values exist for the record
+        await gqlSaveAttribute({
+            id: attrAdvancedLinkId,
+            type: AttributeTypes.ADVANCED_LINK,
+            label: 'Test attr advanced link',
+            multipleValues: true,
+            linkedLibrary: testLibId,
+        });
+
         const values = await gqlGetValue(testLibId, testRecordId, attrAdvancedLinkId);
 
+        expect(values).toHaveLength(1);
         expect(values).toEqual([
             {
                 id_value: idRecordValue2,
@@ -182,8 +206,19 @@ describe('Purge multiple values', () => {
         const purgeMultipleValuesTaskId = (await makeGraphQlCall(gqlMutation)).data.data.purgeMultipleValues;
         await waitForTaskCompletedWithStatus(purgeMultipleValuesTaskId, TaskStatus.DONE);
 
+        // Enable multipleValues to check that only the latest value remains, because of the gqlGetValue query
+        // returning a single value when multipleValues is false, even if several values exist for the record
+        await gqlSaveAttribute({
+            id: attrTreeId,
+            type: AttributeTypes.TREE,
+            label: 'Test attr tree',
+            multipleValues: true,
+            linkedTree: treeId,
+        });
+
         const values = await gqlGetValue(testLibId, testRecordId, attrTreeId);
 
+        expect(values).toHaveLength(1);
         expect(values).toEqual([
             {
                 id_value: idNodeValue2,

@@ -609,25 +609,29 @@ export default function ({
                 VALUES_LINKS_COLLECTION,
             ) as EdgeCollection<IDbEdge>;
 
-            // We retrieve all the edges of the attribute sorted by created_at in descending order
-            const edges = await dbService.execute({
+            const recordsEdges = await dbService.execute({
                 query: aql`
-                        FOR edge IN ${edgeValuesLinksCollection}
-                            FILTER edge.attribute == ${attribute.id}
-                            AND LIKE(edge._from, ${libraryId + '/%'})
-                            SORT edge.created_at DESC
-                            RETURN edge
-                    `,
+                    FOR edge IN ${edgeValuesLinksCollection}
+                       FILTER edge.attribute == ${attribute.id}
+                       AND LIKE(edge._from, ${libraryId + '/%'})
+                       COLLECT recordId = edge._from INTO valuesByRecord
+                       FILTER LENGTH(valuesByRecord) > 1
+                       LET sortedEdges = (
+                           FOR e IN valuesByRecord[*].edge
+                               SORT e.created_at DESC
+                           RETURN e
+                       )
+                    RETURN { recordId, edgeKeys: sortedEdges[*]._key }
+                `,
                 ctx,
             });
 
-            if (edges.length <= 1) {
-                return;
-            }
+            for (const {edgeKeys} of recordsEdges) {
+                const edgesToRemove = edgeKeys.slice(1); // The most recent one is the first one, we delete the others
 
-            // The most recent one is the first one, we delete the others
-            for (const edge of edges.slice(1)) {
-                await edgeValuesLinksCollection.remove({_key: edge._key}); // Delete the edge
+                for (const edgeKey of edgesToRemove) {
+                    await edgeValuesLinksCollection.remove(edgeKey);
+                }
             }
 
             return;
