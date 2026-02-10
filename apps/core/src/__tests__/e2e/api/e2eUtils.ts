@@ -388,6 +388,7 @@ export async function gqlGetValue(libraryId: string, recordId: string, attribute
                         ... on LinkValue {
                             linkPayload: payload {
                                 whoAmI {
+                                    id
                                     label
                                 }
                             }
