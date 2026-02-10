@@ -111,7 +111,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 })}
                 width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationOverlay (as modal use html with style attribute)
                 height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationOverlay (as modal use html with style attribute)
-                title={<PanelHeader />}
+                title={<PanelHeader hidePanelDisplayModeSelector={isCreationFormPanel} />}
                 footer={isCreationFormPanel ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 close={closeContainer}
                 extraRight={
@@ -153,7 +153,13 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                 className={sliderPanel}
                 ref={setPanelRef}
                 size="l"
-                headerExtra={<PanelHeader actionPosition="right" hidePanelTabs />}
+                headerExtra={
+                    <PanelHeader
+                        actionPosition="right"
+                        hidePanelTabs
+                        hidePanelDisplayModeSelector={isCreationFormPanel}
+                    />
+                }
                 onCloseAfterAnimation={closeContainer}
                 floating
                 closable

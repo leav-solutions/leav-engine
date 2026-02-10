@@ -31,6 +31,7 @@ export const Panel: FunctionComponent = () => {
     const currentWorkspace = application.workspaces.find(({id}) => id === workspaceId);
     const currentRecordId = isFirstPanel && currentWorkspace.type === 'record' ? currentWorkspace.recordId : recordId;
     const hasFlapPanel = flapPanelId !== undefined;
+    const isCreationFormPanel = currentPanel.type === 'creationForm';
 
     const setFlapRef = useCallback(
         (flapRef: KitSidePanelRef | null) => {
@@ -70,7 +71,12 @@ export const Panel: FunctionComponent = () => {
                 {(isFirstPanel || !currentPanel.isStandalone) && (
                     <div className={panelHeader}>
                         {/* `fullpage`, `popup` and `slider` are managed by `<PanelContainer />` */}
-                        {isFirstPanel && <PanelHeader currentRecordId={currentRecordId} />}
+                        {isFirstPanel && (
+                            <PanelHeader
+                                currentRecordId={currentRecordId}
+                                hidePanelDisplayModeSelector={isCreationFormPanel}
+                            />
+                        )}
                         <PanelsTabs
                             enabled={isPanelInSlider}
                             workspaceId={workspaceId}
