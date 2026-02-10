@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "@playwright/test": "1.57.0",
-        "axios": "1.13.4"
+        "axios": "1.13.5"
     },
     "devDependencies": {
         "typescript": "5.9.3"
