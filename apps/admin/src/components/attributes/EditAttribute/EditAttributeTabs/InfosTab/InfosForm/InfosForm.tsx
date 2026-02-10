@@ -31,6 +31,7 @@ import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
 import {type AttributeInfosFormValues} from '../_types';
 import AttributeLibraries from './AttributeLibraries';
+import ConfirmedButton from '../../../../../shared/ConfirmedButton';
 
 interface IInfosFormProps {
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list | null;
@@ -211,13 +212,11 @@ function InfosForm({
         };
 
         const _handlePurgeMultipleValues = async () => {
-            if (window.confirm(t('attributes.purge_multiple_values_confirm'))) {
-                await purgeMultipleValues({
-                    variables: {
-                        attributeId: attribute.id,
-                    },
-                });
-            }
+            await purgeMultipleValues({
+                variables: {
+                    attributeId: attribute.id,
+                },
+            });
         };
 
         const allowFormat = [AttributeType.advanced, AttributeType.simple].includes(values.type);
@@ -474,14 +473,14 @@ function InfosForm({
                 )}
                 {purgeMultipleValuesActionAvailable && (
                     <FormFieldWrapper>
-                        <Button
-                            color="red"
-                            onClick={_handlePurgeMultipleValues}
-                            loading={purgeMultipleValuesLoading}
-                            aria-label="purge_multiple_values"
+                        <ConfirmedButton
+                            action={_handlePurgeMultipleValues}
+                            confirmMessage={t('attributes.purge_multiple_values_confirm')}
                         >
-                            <Icon name="trash alternate outline" /> {t('attributes.purge_multiple_values')}
-                        </Button>
+                            <Button color="red" loading={purgeMultipleValuesLoading} aria-label="purge_multiple_values">
+                                <Icon name="trash alternate outline" /> {t('attributes.purge_multiple_values')}
+                            </Button>
+                        </ConfirmedButton>
                     </FormFieldWrapper>
                 )}
                 {isMultiValuesTreeAttribute && (
