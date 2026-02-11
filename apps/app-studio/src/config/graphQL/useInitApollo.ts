@@ -69,7 +69,7 @@ export const useInitApollo = (
 
     const client = new ApolloClient({
         link: from([errorLink, splitLink]),
-        connectToDevTools: import.meta.env.DEV,
+        devtools: {enabled: import.meta.env.DEV},
         cache: new InMemoryCache({
             possibleTypes: gqlPossibleTypes,
         }),
