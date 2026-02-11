@@ -27,11 +27,14 @@
     :global(.kit-modal-content-wrapper) {
         padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
 
-        :global(.kit-modal-content) {
-            & > div > section > div > div > div:has(form) {
-                /* Remove form default padding to keep only the modal padding */
-                padding: 0;
-            }
+        /* Remove modal content padding if it contains a form */
+        &:has(:global(.edit-record-content-container)) {
+            padding: 0;
+        }
+
+        /* Apply padding to the edit record content container to keep focused input border visible */
+        :global(.edit-record-content-container) {
+            padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
         }
     }
 }
@@ -91,27 +94,31 @@
 }
 
 .sliderPanel {
-    /* Panel header selector */
+    /* KitSidePanel header selector */
     & > section > div:nth-child(1) {
         gap: calc(var(--general-spacing-xxs) * 1px);
     }
 
-    /* Panel content selector */
+    /* KitSidePanel content selector */
     & > section > div:nth-child(2) {
-        & > section > div:nth-child(1) > :has(*) {
-            /* Add space between header and content (if there is a header) */
-            padding-bottom: calc(var(--general-spacing-m) * 1px);
+        padding: 0;
+
+        /* Panel header selector */
+        & > section > div:nth-child(1) {
+            padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px) 0
+                calc(var(--general-spacing-m) * 1px);
         }
 
-        &:has(:global(.informationAndHistory), :global(.thread)) {
-            /* Remove sidepanel padding if we want to display the information and history or thread panel inside */
-            padding: 0;
-        }
-
+        /* Panel content selector */
         & > section > div:nth-child(2) {
-            & > div > div:has(> form) {
-                /* Remove form default padding to keep only the sidepanel padding */
-                padding: 0;
+            /* Apply padding to the panel content if it does not contain a form */
+            &:not(:has(:global(.edit-record-content-container))) {
+                padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+            }
+
+            /* Apply padding to the edit record content container to keep focused input border visible */
+            :global(.edit-record-content-container) {
+                padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
             }
         }
     }

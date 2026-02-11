@@ -66,6 +66,7 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
                 }
                 navigate(RelativePaths.closeCurrentPanel, {relative: 'path'});
             }}
+            removePadding
         />
     );
 };
