@@ -80,4 +80,23 @@ describe('RedirectToFirstWorkspace component guard', () => {
         expect(spyNavigate).toHaveBeenCalledTimes(1);
         expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: `/${firstWorkspaceId}`}, {});
     });
+
+    it('should redirect to not found when no workspace is found', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        const applicationWithoutWorkspaces: Application = {
+            workspaces: [],
+            libraries: {},
+        };
+
+        spyUseApplicationSettingsContext.mockReturnValue([applicationWithoutWorkspaces] as any);
+
+        render(<RedirectToFirstWorkspace />);
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith('No workspace found');
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
 });

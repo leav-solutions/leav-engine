@@ -9,11 +9,21 @@ import {AbsolutePaths} from '../router/paths';
 
 export const RedirectToFirstRecordPanel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId} = useParams();
+    const {workspaceId, panelId, recordId, where} = useParams();
 
     const {libraryId} = retrievePanelDetails({application, panelId});
 
-    const panelRecordId = application.libraries[libraryId].recordPanels[0].id;
+    if (!libraryId) {
+        console.error(`Library not found for panel with id ${panelId}`);
+        return <Navigate replace to={AbsolutePaths.notFound} />;
+    }
+
+    const panelRecordId = application.libraries[libraryId]?.recordPanels?.[0]?.id;
+
+    if (!panelRecordId) {
+        console.error(`No record panel found for library with id ${libraryId}`);
+        return <Navigate replace to={AbsolutePaths.notFound} />;
+    }
 
     return (
         <Navigate
@@ -22,7 +32,7 @@ export const RedirectToFirstRecordPanel: FunctionComponent = () => {
                 workspaceId,
                 panelId,
                 recordId,
-                where: 'fullpage',
+                where: where ?? 'fullpage',
                 recordPanelId: panelRecordId,
             })}
         />

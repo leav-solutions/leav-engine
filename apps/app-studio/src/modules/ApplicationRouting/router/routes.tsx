@@ -13,6 +13,7 @@ import {AbsolutePaths, UnreachablePaths} from './paths';
 import {RedirectToFirstRecordPanelAllowedInCompactMode} from '../guards/RedirectToFirstRecordPanelAllowedInCompactMode';
 import {RedirectCreationFormPanelToPopup} from '../guards/RedirectCreationFormPanelToPopup';
 import {WorkspacePanelContainer} from '../WorkspacePanelContainer';
+import {NotFound} from '../NotFound';
 
 // panelWithFlap route need to be before the panel route because router will match the first route that matches the path
 const panelPaths = [AbsolutePaths.panelWithFlap, AbsolutePaths.panel];
@@ -38,6 +39,15 @@ export const firstLevelRoutes: RouteObject[] = [
         ],
     },
     {
+        element: <WorkspacesNavigationMenu />,
+        children: [
+            {
+                path: AbsolutePaths.notFound,
+                element: <NotFound />,
+            },
+        ],
+    },
+    {
         path: '*',
         element: <RedirectToFirstWorkspace />,
     },
@@ -46,11 +56,13 @@ export const firstLevelRoutes: RouteObject[] = [
 // recordWherePanelWithFlap route need to be before the recordWherePanel because router will match the first route that matches the path
 const recordWherePanelPaths = [UnreachablePaths.recordWherePanelWithFlap, UnreachablePaths.recordWherePanel];
 
+const unreachableRecordPaths = [UnreachablePaths.recordWhere, UnreachablePaths.record];
+
 export const nextLevelRoutes: RouteObject[] = [
-    {
-        path: UnreachablePaths.record,
+    ...unreachableRecordPaths.map(unreachableRecordPath => ({
+        path: unreachableRecordPath,
         element: <RedirectToFirstRecordPanel />,
-    },
+    })),
     ...recordWherePanelPaths.map(recordWherePanelPath => ({
         path: recordWherePanelPath,
         element: (

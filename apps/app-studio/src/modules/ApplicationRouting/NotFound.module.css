@@ -1,0 +1,14 @@
+.notFoundContainer {
+    width: 100%;
+}
+
+.resumeNavigation {
+    display: flex;
+    align-items: center;
+
+    & > a[type='button'] {
+        font-size: calc(var(--general-typography-fontSize6) * 1px);
+        line-height: calc(var(--general-typography-fontSize6) * 1px);
+        padding-left: calc(var(--general-spacing-xxs) * 1px);
+    }
+}

@@ -188,4 +188,128 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
         expect(spyNavigate).toHaveBeenCalledTimes(1);
         expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/completePath', relative: 'path'}, {});
     });
+
+    it('should redirect to not found when current panel is not found', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        spyUseParams.mockReturnValue({
+            workspaceId,
+            panelId: currentPanelId,
+            recordId: currentRecordId,
+            where,
+            recordPanelId: currentRecordPanelId,
+        });
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            currentPanel: undefined,
+        } as any);
+
+        render(
+            <RedirectToFirstRecordPanelAllowedInCompactMode>
+                <div>Test children</div>
+            </RedirectToFirstRecordPanelAllowedInCompactMode>,
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            `Current panel not found for record panel with id ${currentRecordPanelId}`,
+        );
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
+
+    it('should redirect to not found when workspace is not found', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        spyUseParams.mockReturnValue({
+            workspaceId,
+            panelId: currentPanelId,
+            recordId: currentRecordId,
+            where,
+            recordPanelId: currentRecordPanelId,
+        });
+        spyUseApplicationSettingsContext.mockReturnValue([
+            {
+                workspaces: [],
+                libraries: application.libraries,
+            } as Application,
+        ] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            currentPanel: {
+                id: currentRecordPanelId,
+                type: 'editionForm',
+                formId: 'edition',
+                hideInCompactMode: true,
+            },
+            libraryId: 'map',
+            panelType: 'recordPanels',
+        });
+
+        render(
+            <RedirectToFirstRecordPanelAllowedInCompactMode>
+                <div>Test children</div>
+            </RedirectToFirstRecordPanelAllowedInCompactMode>,
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            `Workspace not found for record panel with id ${currentRecordPanelId}`,
+        );
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
+
+    it('should redirect to not found when no record panel allowed in compact mode is found', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        const applicationWithoutAllowedRecordPanel: Application = {
+            workspaces: application.workspaces,
+            libraries: {
+                map: {
+                    libraryPanels: application.libraries.map.libraryPanels,
+                    recordPanels: [
+                        {
+                            id: currentRecordPanelId,
+                            type: 'editionForm',
+                            formId: 'edition',
+                            hideInCompactMode: true,
+                        },
+                    ],
+                },
+            },
+        };
+
+        spyUseParams.mockReturnValue({
+            workspaceId,
+            panelId: currentPanelId,
+            recordId: currentRecordId,
+            where,
+            recordPanelId: currentRecordPanelId,
+        });
+        spyUseApplicationSettingsContext.mockReturnValue([applicationWithoutAllowedRecordPanel] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            currentPanel: {
+                id: currentRecordPanelId,
+                type: 'editionForm',
+                formId: 'edition',
+                hideInCompactMode: true,
+            },
+            libraryId: 'map',
+            panelType: 'recordPanels',
+        });
+
+        render(
+            <RedirectToFirstRecordPanelAllowedInCompactMode>
+                <div>Test children</div>
+            </RedirectToFirstRecordPanelAllowedInCompactMode>,
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith('No record panel allowed in slider found');
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
 });

@@ -4,7 +4,7 @@
 import {type FunctionComponent} from 'react';
 import {generatePath, Navigate, useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {RelativePaths} from '../router/paths';
+import {AbsolutePaths, RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 
 export const RedirectToFirstRecordPanelAllowedInCompactMode: FunctionComponent = ({children}) => {
@@ -13,22 +13,30 @@ export const RedirectToFirstRecordPanelAllowedInCompactMode: FunctionComponent =
 
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
+    if (!currentPanel) {
+        console.error(`Current panel not found for record panel with id ${recordPanelId}`);
+        return <Navigate replace to={AbsolutePaths.notFound} />;
+    }
+
     const currentPanelShouldBeHidden = currentPanel.hideInCompactMode && ['slider', 'popup'].includes(where);
     if (!currentPanelShouldBeHidden) {
         return <>{children}</>;
     }
 
-    // TODO: handle case where workspaceId is undefined, should redirect to 404
     const workspace = application.workspaces.find(({id}) => id === workspaceId);
+
+    if (!workspace) {
+        console.error(`Workspace not found for record panel with id ${recordPanelId}`);
+        return <Navigate replace to={AbsolutePaths.notFound} />;
+    }
 
     const firstRecordPanelAllowedInCompactMode = application.libraries[workspace.libraryId].recordPanels.find(
         panel => !panel.hideInCompactMode,
     );
 
     if (!firstRecordPanelAllowedInCompactMode) {
-        // TODO: handle case where no record panel is allowed in slider
         console.error('No record panel allowed in slider found');
-        return <>{children}</>;
+        return <Navigate replace to={AbsolutePaths.notFound} />;
     }
 
     return (

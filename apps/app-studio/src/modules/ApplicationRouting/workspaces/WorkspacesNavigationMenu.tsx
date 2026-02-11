@@ -21,7 +21,7 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
 
     const items: ComponentProps<typeof KitSideMenu>['items'] = useMemo(
         () =>
-            application.workspaces.map(workspace => {
+            application?.workspaces?.map(workspace => {
                 // As suggested by FontAwesome documentation, we need this workaround to use the string notation
                 // More info: https://docs.fontawesome.com/web/use-with/react/add-icons#workaround
                 // @ts-expect-error: Type 'string' is not assignable to type 'IconProp'
@@ -36,7 +36,7 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
                     },
                 };
             }),
-        [application.workspaces, lang],
+        [application?.workspaces, lang],
     );
 
     return (

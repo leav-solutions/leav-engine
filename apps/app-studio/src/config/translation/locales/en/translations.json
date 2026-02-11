@@ -9,7 +9,8 @@
         "sign_out": "Logout",
         "download": "Download",
         "delete": "Delete",
-        "delete_all": "Delete all"
+        "delete_all": "Delete all",
+        "home_page": "home page"
     },
     "display_mode": {
         "select_display": "Select display",
@@ -94,6 +95,9 @@
     },
     "error": {
         "title": "Error loading data",
-        "description": "A technical error has occurred, please reload the page. If the error persists, please contact the Aristid support."
+        "description": "A technical error has occurred, please reload the page. If the error persists, please contact the Aristid support.",
+        "page_does_not_exist": "This page does not exist...",
+        "page_does_not_seem_to_exist_anymore": "This page doesn't seem to exist anymore.",
+        "resume_navigation": "Resume navigation by returning to the"
     }
 }
