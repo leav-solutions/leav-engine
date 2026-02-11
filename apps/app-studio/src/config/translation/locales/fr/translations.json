@@ -9,7 +9,8 @@
         "sign_out": "Déconnexion",
         "download": "Télécharger",
         "delete": "Supprimer",
-        "delete_all": "Tout supprimer"
+        "delete_all": "Tout supprimer",
+        "home_page": "page d'accueil"
     },
     "display_mode": {
         "select_display": "Sélection d'affichage",
@@ -94,6 +95,9 @@
     },
     "error": {
         "title": "Erreur de chargement des données",
-        "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid."
+        "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",
+        "page_does_not_exist": "Cette page n'existe pas ...",
+        "page_does_not_seem_to_exist_anymore": "Cette page ne semble pas ou plus exister.",
+        "resume_navigation": "Reprenez votre navigation en retournant à la"
     }
 }

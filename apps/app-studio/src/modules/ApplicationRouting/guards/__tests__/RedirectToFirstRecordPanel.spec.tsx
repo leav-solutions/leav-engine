@@ -5,6 +5,7 @@ import {render} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../types';
+import * as RetrievePanelDetails from '../../utils/retrievePanelDetails';
 import {RedirectToFirstRecordPanel} from '../RedirectToFirstRecordPanel';
 
 jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
@@ -18,11 +19,16 @@ jest.mock('react-router-dom', () => ({
     generatePath: jest.fn(),
 }));
 
+jest.mock('../../utils/retrievePanelDetails', () => ({
+    retrievePanelDetails: jest.fn(),
+}));
+
 describe('RedirectToFirstRecordPanel component guard', () => {
     const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
     const spyNavigate = jest.spyOn(ReactRouter, 'Navigate');
     const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
     const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyRetrievePanelDetails = jest.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
 
     const workspaceId = '42';
     const currentPanelId = 'maps';
@@ -83,6 +89,9 @@ describe('RedirectToFirstRecordPanel component guard', () => {
         spyUseParams.mockReturnValue({workspaceId, panelId: currentPanelId, recordId: currentRecordId});
         spyGeneratePath.mockReturnValueOnce('/completePath');
         spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            libraryId: 'map',
+        } as any);
 
         render(<RedirectToFirstRecordPanel />);
 
@@ -97,5 +106,55 @@ describe('RedirectToFirstRecordPanel component guard', () => {
 
         expect(spyNavigate).toHaveBeenCalledTimes(1);
         expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/completePath'}, {});
+    });
+
+    it('should redirect to not found when library is not found for panel', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        spyUseParams.mockReturnValue({workspaceId, panelId: currentPanelId, recordId: currentRecordId});
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            libraryId: undefined,
+        } as any);
+
+        render(<RedirectToFirstRecordPanel />);
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`Library not found for panel with id ${currentPanelId}`);
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
+
+    it('should redirect to not found when no record panel is found for library', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        const libraryIdWithoutRecordPanels = 'mapWithoutRecordPanels';
+        const applicationWithoutRecordPanels: Application = {
+            workspaces: application.workspaces,
+            libraries: {
+                ...application.libraries,
+                [libraryIdWithoutRecordPanels]: {
+                    libraryPanels: application.libraries.map.libraryPanels,
+                    recordPanels: [],
+                },
+            },
+        };
+
+        spyUseParams.mockReturnValue({workspaceId, panelId: currentPanelId, recordId: currentRecordId});
+        spyUseApplicationSettingsContext.mockReturnValue([applicationWithoutRecordPanels] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            libraryId: libraryIdWithoutRecordPanels,
+        } as any);
+
+        render(<RedirectToFirstRecordPanel />);
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            `No record panel found for library with id ${libraryIdWithoutRecordPanels}`,
+        );
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
     });
 });

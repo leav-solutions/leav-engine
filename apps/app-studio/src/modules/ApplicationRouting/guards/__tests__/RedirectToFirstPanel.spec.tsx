@@ -136,5 +136,61 @@ describe('RedirectToFirstPanel component guard', () => {
         expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: `/${firstWorkspaceId}/${firstRecordPanelId}`}, {});
     });
 
-    it.todo('should redirect 404');
+    it('should redirect to not found when workspace is not found', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        const workspaceId = '42';
+        const application: Application = {
+            workspaces: [],
+            libraries: {},
+        };
+
+        spyUseParams.mockReturnValue({workspaceId});
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+
+        render(<RedirectToFirstPanel />);
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`Workspace with id ${workspaceId} not found`);
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
+
+    it('should redirect to not found when no panel is found for workspace', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        const workspaceId = '42';
+        const application: Application = {
+            workspaces: [
+                {
+                    id: workspaceId,
+                    icon: 'fa-layer-group',
+                    title: {
+                        fr: 'PACs',
+                        en: 'Roadmap',
+                    },
+                    type: 'library',
+                    libraryId: 'map',
+                },
+            ],
+            libraries: {
+                map: {
+                    libraryPanels: [],
+                    recordPanels: [],
+                },
+            },
+        };
+
+        spyUseParams.mockReturnValue({workspaceId});
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+
+        render(<RedirectToFirstPanel />);
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`No panel found for workspace with id ${workspaceId}`);
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
 });

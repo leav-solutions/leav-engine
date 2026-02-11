@@ -154,6 +154,36 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
         expect(spyGeneratePath).not.toHaveBeenCalled();
     });
 
+    it('should redirect to not found when panel is not found', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+        spyUseParams.mockReturnValue({
+            workspaceId,
+            panelId: currentPanelId,
+            recordId: currentRecordId,
+            where: 'slider',
+            recordPanelId: currentRecordPanelId,
+        });
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            currentPanel: undefined,
+        } as any);
+
+        render(
+            <RedirectCreationFormPanelToPopup>
+                <div>Test children</div>
+            </RedirectCreationFormPanelToPopup>,
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            `Current panel not found for record panel with id ${currentRecordPanelId}`,
+        );
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
+
+        consoleErrorSpy.mockRestore();
+    });
+
     it('should redirect to popup when panel is a creation form and where is slider', async () => {
         spyUseParams.mockReturnValue({
             workspaceId,

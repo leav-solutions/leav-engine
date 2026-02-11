@@ -4,13 +4,18 @@
 import {type FunctionComponent} from 'react';
 import {generatePath, Navigate, useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {RelativePaths} from '../router/paths';
+import {AbsolutePaths, RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 
 export const RedirectCreationFormPanelToPopup: FunctionComponent = ({children}) => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
+
+    if (!currentPanel) {
+        console.error(`Current panel not found for record panel with id ${recordPanelId}`);
+        return <Navigate replace to={AbsolutePaths.notFound} />;
+    }
 
     const shouldRedirectToPopup = currentPanel.type === 'creationForm' && where !== 'popup';
 
