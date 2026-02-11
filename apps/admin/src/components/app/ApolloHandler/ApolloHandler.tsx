@@ -126,7 +126,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                 fetch,
             }),
         ]),
-        connectToDevTools: process.env.NODE_ENV === 'development',
+        devtools: {enabled: process.env.NODE_ENV === 'development'},
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).
