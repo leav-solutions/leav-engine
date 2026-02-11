@@ -260,7 +260,11 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
                     <EditRecordButtons />
-                    <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} $removePadding={removePadding}>
+                    <Content
+                        className="edit-record-content-container"
+                        $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}
+                        $removePadding={removePadding}
+                    >
                         {permissionsLoading ? (
                             <EditRecordSkeleton rows={5} />
                         ) : canEdit ? (
