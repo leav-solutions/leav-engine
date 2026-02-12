@@ -1,0 +1,38 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+export const INITIAL_VALUES_QUERY_PARAMS = 'formInitialValues';
+
+const removeFromQueryParams = (paramToRemove: string) => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get(paramToRemove)) {
+        searchParams.delete(paramToRemove);
+        const queryParams = searchParams.size > 0 ? `?${searchParams.toString()}` : '';
+        history.replaceState({}, '', `${location.pathname}${queryParams}`);
+    }
+};
+
+export const useGetInitialRecordValues = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const decodedParams = decodeURIComponent(searchParams.get(INITIAL_VALUES_QUERY_PARAMS) ?? '{}');
+    let initialValues = null;
+    try {
+        initialValues = JSON.parse(decodedParams);
+        removeFromQueryParams(INITIAL_VALUES_QUERY_PARAMS);
+    } catch {
+        return [];
+    }
+
+    if (!initialValues || Object.keys(initialValues).length === 0) {
+        return [];
+    }
+
+    const values = [];
+    Object.keys(initialValues).forEach(attributeId => {
+        initialValues[attributeId].forEach(val => {
+            values.push({attribute: attributeId, payload: val});
+        });
+    });
+
+    return values;
+};

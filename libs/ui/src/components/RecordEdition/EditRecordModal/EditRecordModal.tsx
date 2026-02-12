@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useEffect, useRef, useState} from 'react';
-import {KitButton, KitModal, KitSpace, KitTypography} from 'aristid-ds';
+import {KitButton, KitLoader, KitModal, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IValueVersion} from '_ui/types';
-import {type RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
+import {type RecordIdentityFragment, useCreateRecordMutation, usePurgeRecordMutation} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
@@ -15,8 +15,8 @@ import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
-import useExecuteCreateEmptyRecordMutation from '../EditRecordContent/hooks/useCreateEmptyRecordMutation';
-import {APICallStatus} from '../EditRecordContent/_types';
+import {useGetInitialRecordValues} from '../EditRecordPage/getInitialRecordValues';
+import {ErrorComponent} from '../EditRecordPage/ErrorComponent';
 
 export interface IEditRecordModalProps {
     className?: string;
@@ -98,27 +98,40 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const {t} = useSharedTranslation();
     const [antdForm] = useForm();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
-    const [clickedSubmitButton, setClickedSubmitButton] = useState<SubmitButtonsName | null>(null);
-    const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
+    const clickedSubmitButton = useRef<SubmitButtonsName | null>(null);
+    const [createRecord] = useCreateRecordMutation();
     const [purgeRecordMutation] = usePurgeRecordMutation();
 
     const formElementId = useRef(window.crypto.randomUUID());
     const [isCreation, setIsCreation] = useState(!record);
+    const [isReady, setIsReady] = useState(!!record);
+    const [isError, setIsError] = useState(false);
     const [formId, setFormId] = useState<string>(
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition'),
     );
+    const values = useGetInitialRecordValues();
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
     const modalTitle =
         currentRecord?.label && currentRecord.label.trim() ? currentRecord.label : t('record_edition.new_record');
 
     useEffect(() => {
         const createEmptyRecordFunction = async () => {
-            const res = await createEmptyRecord(library);
-            if (res?.status === APICallStatus.ERROR) {
-                // TODO : call KitNotification error
-                return null;
+            const {data} = await createRecord({
+                variables: {
+                    library,
+                    skipActivate: true,
+                    data: {values},
+                },
+            });
+
+            const recordId = data?.createRecord.record?.id;
+            setCurrentRecord(data?.createRecord.record.whoAmI ?? null);
+            if (!recordId) {
+                setIsError(true);
+                return;
             }
-            setCurrentRecord(res?.record ?? null);
+
+            setIsReady(true);
         };
 
         if (open && isCreation && !currentRecord) {
@@ -127,7 +140,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     }, [open, currentRecord]);
 
     const _handleClickSubmit = (button: SubmitButtonsName) => {
-        setClickedSubmitButton(button);
+        clickedSubmitButton.current = button;
     };
 
     const _purgeRecordOnCreationCancel = () =>
@@ -158,14 +171,14 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
         setCurrentRecord(newRecord);
 
-        if (onCreateAndEdit && clickedSubmitButton === 'createAndEdit') {
+        if (onCreateAndEdit && clickedSubmitButton.current === 'createAndEdit') {
             setFormId(editionFormId ?? 'edition');
             setIsCreation(false);
             onCreateAndEdit(newRecord);
             return;
         }
 
-        if (onCreate && clickedSubmitButton === 'create') {
+        if (onCreate && clickedSubmitButton.current === 'create') {
             onCreate(newRecord);
             return;
         }
@@ -179,7 +192,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 _purgeRecordOnCreationCancel();
             }
         }
-
         return onClose();
     };
 
@@ -219,19 +231,23 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
             showCloseIcon
             destroyOnClose
         >
-            <EditRecord
-                antdForm={antdForm}
-                isFormCreationMode={isCreation}
-                formId={formId}
-                formElementId={formElementId.current}
-                record={currentRecord}
-                library={library}
-                onCreate={_handleCreate}
-                valuesVersion={valuesVersion}
-                showSidebar={showSidebar}
-                enableSidebar={enableSidebar}
-                withInfoButton={withInfoButton}
-            />
+            {isError && <ErrorComponent />}
+            {!isReady && <KitLoader />}
+            {isReady && (
+                <EditRecord
+                    antdForm={antdForm}
+                    isFormCreationMode={isCreation}
+                    formId={formId}
+                    formElementId={formElementId.current}
+                    record={currentRecord}
+                    library={library}
+                    onCreate={_handleCreate}
+                    valuesVersion={valuesVersion}
+                    showSidebar={showSidebar}
+                    enableSidebar={enableSidebar}
+                    withInfoButton={withInfoButton}
+                />
+            )}
         </KitModalStyled>
     );
 };

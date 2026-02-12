@@ -212,18 +212,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -802,7 +790,6 @@ export enum TaskType {
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -1508,6 +1495,7 @@ export type CreateEmptyRecordMutation = { createEmptyRecord: { record?: { id: st
 
 export type CreateRecordMutationVariables = Exact<{
   library: Scalars['ID']['input'];
+  skipActivate?: InputMaybe<Scalars['Boolean']['input']>;
   data?: InputMaybe<CreateRecordDataInput>;
 }>;
 
@@ -4122,8 +4110,8 @@ export type CreateEmptyRecordMutationHookResult = ReturnType<typeof useCreateEmp
 export type CreateEmptyRecordMutationResult = Apollo.MutationResult<CreateEmptyRecordMutation>;
 export type CreateEmptyRecordMutationOptions = Apollo.BaseMutationOptions<CreateEmptyRecordMutation, CreateEmptyRecordMutationVariables>;
 export const CreateRecordDocument = gql`
-    mutation CREATE_RECORD($library: ID!, $data: CreateRecordDataInput) {
-  createRecord(library: $library, data: $data) {
+    mutation CREATE_RECORD($library: ID!, $skipActivate: Boolean, $data: CreateRecordDataInput) {
+  createRecord(library: $library, skipActivate: $skipActivate, data: $data) {
     record {
       ...RecordIdentity
     }
@@ -4152,6 +4140,7 @@ export type CreateRecordMutationFn = Apollo.MutationFunction<CreateRecordMutatio
  * const [createRecordMutation, { data, loading, error }] = useCreateRecordMutation({
  *   variables: {
  *      library: // value for 'library'
+ *      skipActivate: // value for 'skipActivate'
  *      data: // value for 'data'
  *   },
  * });

@@ -18,6 +18,7 @@ export type ICreateRecordValue = Override<
 
 export interface ICreateRecordParams {
     library: string;
+    skipActivate?: boolean;
     data?: {
         values: ICreateRecordValue[];
         version: IValueVersionFromGql;

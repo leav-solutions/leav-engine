@@ -6,6 +6,8 @@ import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/type
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../../../router/paths';
 
+export const INIIAL_VALUES_QUERY_PARAMS = 'formInitialValues';
+
 /**
  * Navigate to an already defined panel from an iframe panel.
  * If flapRecordId, flapLibraryId and flapPanelId are provided, open record panel with a flap panel.
@@ -28,7 +30,16 @@ export const useNavigateToPanel = (): {
     const isInSlider = currentWhere === 'slider';
 
     return {
-        navigateToPanel: ({libraryId, recordId, where, panelId, flapRecordId, flapLibraryId, flapPanelId}) => {
+        navigateToPanel: ({
+            libraryId,
+            recordId,
+            where,
+            panelId,
+            flapRecordId,
+            flapLibraryId,
+            flapPanelId,
+            queryParams,
+        }) => {
             if (recordId === undefined) {
                 // TODO: manage panels without recordId
                 return;
@@ -42,6 +53,18 @@ export const useNavigateToPanel = (): {
                 : RelativePaths.nextLevelPanel;
 
             const panelPath = shouldOpenFlap ? nextLevelPanelPath + '/' + RelativePaths.openFlap : nextLevelPanelPath;
+            const searchParams: Record<string, string> = queryParams ?? {};
+            if (searchParams[INIIAL_VALUES_QUERY_PARAMS]) {
+                searchParams[INIIAL_VALUES_QUERY_PARAMS] = JSON.stringify(searchParams[INIIAL_VALUES_QUERY_PARAMS]);
+            }
+
+            const search =
+                '?' +
+                Object.entries(searchParams)
+                    .map(([name, value]) => `${name}=${encodeURIComponent(value)}`)
+                    .join('&');
+
+            let path = '';
 
             if (panelId === undefined) {
                 if (
@@ -53,29 +76,29 @@ export const useNavigateToPanel = (): {
                 }
                 const firstRecordPanelId = application.libraries[libraryId].recordPanels[0].id;
 
-                return navigate(
-                    generatePath(panelPath, {
-                        recordId,
-                        where,
-                        recordPanelId: firstRecordPanelId,
-                        flapRecordId,
-                        flapLibraryId,
-                        flapPanelId,
-                    }),
-                );
-            }
-
-            return navigate(
-                generatePath(panelPath, {
+                path = generatePath(panelPath, {
+                    recordId,
+                    where,
+                    recordPanelId: firstRecordPanelId,
+                    flapRecordId,
+                    flapLibraryId,
+                    flapPanelId,
+                });
+                return navigate(`${path}${search !== '?' ? search : ''}`);
+            } else {
+                path = generatePath(panelPath, {
                     recordId,
                     where,
                     recordPanelId: panelId,
                     flapRecordId,
                     flapLibraryId,
                     flapPanelId,
-                }),
-                isInSlider ? {relative: 'path'} : undefined,
-            );
+                });
+            }
+
+            const panelPathWithQueryParams = `${path}${search !== '?' ? search : ''}`;
+
+            return navigate(panelPathWithQueryParams, isInSlider ? {relative: 'path'} : undefined);
         },
     };
 };

@@ -70,6 +70,7 @@ export interface IRecordDomain {
         library: string;
         values?: ISaveValue[];
         verifyRequiredAttributes?: boolean;
+        skipActivate?: boolean;
         ctx: IQueryInfos;
     }): Promise<ICreateRecordResult>;
 
@@ -786,11 +787,16 @@ export default function ({
                 valuesErrors: null,
             };
         },
-        async createRecord({library, values, verifyRequiredAttributes, ctx}): Promise<ICreateRecordResult> {
+        async createRecord({
+            library,
+            values,
+            verifyRequiredAttributes,
+            skipActivate,
+            ctx,
+        }): Promise<ICreateRecordResult> {
             let createdRecord: IRecord;
             try {
                 createdRecord = await this.createEmptyRecord({library, ctx});
-
                 // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = (values ?? []).map(v => ({...v, id_value: null}));
 
@@ -800,6 +806,7 @@ export default function ({
                     values: cleanValues,
                     ctx,
                 });
+
                 if (errors?.length) {
                     logger.error(`Error during save values batch for record ${createdRecord.id} in createRecord`, {
                         errors,
@@ -826,24 +833,29 @@ export default function ({
                         })),
                     };
                 }
-                const {valuesErrors} = await this.activateNewRecord({
-                    library,
-                    recordId: createdRecord.id,
-                    skipVerifyRequiredAttributes: !verifyRequiredAttributes,
-                    ctx,
-                });
-                if (valuesErrors?.length) {
-                    logger.error(`Error during activate new record ${createdRecord.id} in createRecord`, {
-                        valuesErrors,
-                    });
-                    await this.deleteRecord({library, id: createdRecord.id, ctx}).catch(err => {
-                        logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
-                    });
 
-                    return {
-                        record: null,
-                        valuesErrors,
-                    };
+                if (!skipActivate) {
+                    const {valuesErrors} = await this.activateNewRecord({
+                        library,
+                        recordId: createdRecord.id,
+                        skipVerifyRequiredAttributes: !verifyRequiredAttributes,
+                        ctx,
+                    });
+                    if (valuesErrors?.length) {
+                        logger.error(`Error during activate new record ${createdRecord.id} in createRecord`, {
+                            valuesErrors,
+                        });
+                        await this.deleteRecord({library, id: createdRecord.id, ctx}).catch(err => {
+                            logger.verbose(
+                                `Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`,
+                            );
+                        });
+
+                        return {
+                            record: null,
+                            valuesErrors,
+                        };
+                    }
                 }
                 return {record: createdRecord, valuesErrors: null};
             } catch (error) {
