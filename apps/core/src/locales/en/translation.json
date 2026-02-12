@@ -235,6 +235,10 @@
         "save_value_bulk": {
             "label": "Bulk edit of attribute {{attributeId}} in library {{libraryId}}",
             "description": "Bulk edit"
+        },
+        "purge_multiple_values": {
+            "label": "Purge multiple values of attribute {{attributeId}}",
+            "description": "Purge multiple values"
         }
     },
     "import": {
@@ -260,7 +264,11 @@
         "discussion_comment_mention_title": "You were mentioned in a comment",
         "discussion_comment_mention_link_label": "See the comment",
         "discussion_comment_mention_message_with_record_label": "You were mentioned by {{author}} in a comment on {{recordLabel}}. Click the link below to view the comment.",
-        "discussion_comment_mention_message_without_record_label": "You were mentioned by {{author}} in a comment. Click the link below to view the comment."
+        "discussion_comment_mention_message_without_record_label": "You were mentioned by {{author}} in a comment. Click the link below to view the comment.",
+        "purge_multiple_values_complete_title": "Multiple values purge completed successfully",
+        "purge_multiple_values_complete_message": "Your multiple values purge requested on {{date}} is complete.",
+        "purge_multiple_values_error_title": "Multiple values purge encountered an error.",
+        "purge_multiple_values_error_message": "The multiple values purge requested on {{date}} failed. Please contact your administrator."
     },
     "indexation": {
         "index_database": "Indexation {{library}}"

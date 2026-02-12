@@ -23,6 +23,7 @@ import {AttributeCondition, type IRecord} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
+import {type IPurgeMultipleValuesTask} from '../../domain/value/tasks/purgeMultipleValues';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
@@ -33,6 +34,7 @@ interface IDeps {
     'core.domain.value.tasks.saveValueBulk': ISaveValueBulkTask;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
     'core.utils': IUtils;
+    'core.domain.value.tasks.purgeMultipleValues': IPurgeMultipleValuesTask;
 }
 
 export default function ({
@@ -42,6 +44,7 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.utils': utils,
+    'core.domain.value.tasks.purgeMultipleValues': purgeMultipleValuesTask,
 }: IDeps): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
@@ -318,6 +321,9 @@ export default function ({
 
                         """ The returned values are the deleted ones """ 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
+                        
+                        """ Purge multiples values of a mono attribute and keep only the more recent one """
+                        purgeMultipleValues(attributeId: ID!): String!
                     }
                 `,
                 resolvers: {
@@ -449,6 +455,13 @@ export default function ({
                                 value: valToDelete,
                                 ctx,
                             });
+                        },
+                        async purgeMultipleValues(
+                            _: never,
+                            {attributeId}: {attributeId: string},
+                            ctx: IQueryInfos,
+                        ): Promise<string> {
+                            return purgeMultipleValuesTask.purgeMultipleValues({attributeId, ctx});
                         },
                     },
                     GenericValueOccurrences: {

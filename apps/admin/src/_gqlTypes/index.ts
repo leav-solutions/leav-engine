@@ -212,6 +212,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -331,6 +343,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -429,6 +452,9 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -787,9 +813,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
+  PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -1595,6 +1624,13 @@ export type DeleteValueMutationVariables = Exact<{
 
 
 export type DeleteValueMutation = { deleteValue: Array<{ id_value?: string | null, attribute: { id: string } }> };
+
+export type PurgeMultipleValuesMutationVariables = Exact<{
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type PurgeMultipleValuesMutation = { purgeMultipleValues: string };
 
 export type SaveValueBatchMutationVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -4742,6 +4778,37 @@ export function useDeleteValueMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteValueMutationHookResult = ReturnType<typeof useDeleteValueMutation>;
 export type DeleteValueMutationResult = Apollo.MutationResult<DeleteValueMutation>;
 export type DeleteValueMutationOptions = Apollo.BaseMutationOptions<DeleteValueMutation, DeleteValueMutationVariables>;
+export const PurgeMultipleValuesDocument = gql`
+    mutation PURGE_MULTIPLE_VALUES($attributeId: ID!) {
+  purgeMultipleValues(attributeId: $attributeId)
+}
+    `;
+export type PurgeMultipleValuesMutationFn = Apollo.MutationFunction<PurgeMultipleValuesMutation, PurgeMultipleValuesMutationVariables>;
+
+/**
+ * __usePurgeMultipleValuesMutation__
+ *
+ * To run a mutation, you first call `usePurgeMultipleValuesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePurgeMultipleValuesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [purgeMultipleValuesMutation, { data, loading, error }] = usePurgeMultipleValuesMutation({
+ *   variables: {
+ *      attributeId: // value for 'attributeId'
+ *   },
+ * });
+ */
+export function usePurgeMultipleValuesMutation(baseOptions?: Apollo.MutationHookOptions<PurgeMultipleValuesMutation, PurgeMultipleValuesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PurgeMultipleValuesMutation, PurgeMultipleValuesMutationVariables>(PurgeMultipleValuesDocument, options);
+      }
+export type PurgeMultipleValuesMutationHookResult = ReturnType<typeof usePurgeMultipleValuesMutation>;
+export type PurgeMultipleValuesMutationResult = Apollo.MutationResult<PurgeMultipleValuesMutation>;
+export type PurgeMultipleValuesMutationOptions = Apollo.BaseMutationOptions<PurgeMultipleValuesMutation, PurgeMultipleValuesMutationVariables>;
 export const SaveValueBatchDocument = gql`
     mutation SAVE_VALUE_BATCH($library: ID!, $recordId: ID!, $version: [ValueVersionInput!], $values: [ValueBatchInput!]!) {
   saveValueBatch(

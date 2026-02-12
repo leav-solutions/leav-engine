@@ -263,9 +263,23 @@ export interface IAttributeTypeRepo<
      * Clear all values of given attribute. Can be used to cleanup values when an attribute is deleted for example.
      *
      * @param attribute
-     * @return Promise<number> TRUE if operation succeed
+     * @return Promise<boolean> TRUE if operation succeed
      */
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
+
+    /**
+     * Delete all multiple values of an attribute and keep only the most recent one.
+     * @return Promise<boolean> TRUE if operation succeed
+     */
+    clearMultipleValues?({
+        libraryId,
+        attribute,
+        ctx,
+    }: {
+        libraryId: string;
+        attribute: IAttribute;
+        ctx: IQueryInfos;
+    }): Promise<void>;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';

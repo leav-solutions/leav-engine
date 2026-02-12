@@ -6,7 +6,7 @@ import VersionProfilesSelector from 'components/versionProfiles/VersionProfilesS
 import {Formik, type FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Form, Icon, Message} from 'semantic-ui-react';
+import {Button, Form, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
@@ -18,13 +18,20 @@ import {
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
-import {AttributeFormat, AttributeType, ValueVersionMode, MultiDisplayOption} from '_gqlTypes';
+import {
+    AttributeFormat,
+    AttributeType,
+    ValueVersionMode,
+    MultiDisplayOption,
+    usePurgeMultipleValuesMutation,
+} from '_gqlTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
 import {type AttributeInfosFormValues} from '../_types';
 import AttributeLibraries from './AttributeLibraries';
+import ConfirmedButton from '../../../../../shared/ConfirmedButton';
 
 interface IInfosFormProps {
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list | null;
@@ -91,6 +98,8 @@ function InfosForm({
 }: IInfosFormProps): JSX.Element {
     const {t} = useTranslation();
     const {lang: userLang, availableLangs, defaultLang} = useLang();
+
+    const [purgeMultipleValues, {loading: purgeMultipleValuesLoading}] = usePurgeMultipleValuesMutation();
 
     const isNewAttribute = attribute === null;
     const initialValues: AttributeInfosFormValues =
@@ -202,6 +211,14 @@ function InfosForm({
             }
         };
 
+        const _handlePurgeMultipleValues = async () => {
+            await purgeMultipleValues({
+                variables: {
+                    attributeId: attribute.id,
+                },
+            });
+        };
+
         const allowFormat = [AttributeType.advanced, AttributeType.simple].includes(values.type);
         const allowMultipleValues = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
             values.type,
@@ -216,6 +233,9 @@ function InfosForm({
         const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
         const isMultiValuesLinkAttribute = AttributeType.advanced_link === values.type && !!values.multiple_values;
         const isMultiValuesTreeAttribute = isTreeAttribute && !!values.multiple_values;
+        const purgeMultipleValuesActionAvailable =
+            [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(values.type) &&
+            !attribute?.multiple_values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_ATTRIBUTES_attributes_list>(
@@ -449,6 +469,18 @@ function InfosForm({
                             onBlur={_handleBlur}
                             checked={!!values.multiple_values}
                         />
+                    </FormFieldWrapper>
+                )}
+                {purgeMultipleValuesActionAvailable && (
+                    <FormFieldWrapper>
+                        <ConfirmedButton
+                            action={_handlePurgeMultipleValues}
+                            confirmMessage={t('attributes.purge_multiple_values_confirm')}
+                        >
+                            <Button color="red" loading={purgeMultipleValuesLoading} aria-label="purge_multiple_values">
+                                <Icon name="trash alternate outline" /> {t('attributes.purge_multiple_values')}
+                            </Button>
+                        </ConfirmedButton>
                     </FormFieldWrapper>
                 )}
                 {isMultiValuesTreeAttribute && (

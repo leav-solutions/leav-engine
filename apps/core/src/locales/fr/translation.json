@@ -235,6 +235,10 @@
         "save_value_bulk": {
             "label": "Modification en masse de l'attribut {{attributeId}} dans la bibliothèque {{libraryId}}",
             "description": "Modification en masse"
+        },
+        "purge_multiple_values": {
+            "label": "Purge des valeurs multiples de l'attribut {{attributeId}}",
+            "description": "Purge des valeurs multiples"
         }
     },
     "import": {
@@ -260,7 +264,11 @@
         "discussion_comment_mention_title": "Vous avez été mentionné dans un commentaire",
         "discussion_comment_mention_link_label": "Voir le commentaire",
         "discussion_comment_mention_message_with_record_label": "Vous avez été mentionné par {{author}} dans un commentaire sur {{recordLabel}}. Cliquez sur le lien ci-dessous pour voir le commentaire.",
-        "discussion_comment_mention_message_without_record_label": "Vous avez été mentionné par {{author}} dans un commentaire. Cliquez sur le lien ci-dessous pour voir le commentaire."
+        "discussion_comment_mention_message_without_record_label": "Vous avez été mentionné par {{author}} dans un commentaire. Cliquez sur le lien ci-dessous pour voir le commentaire.",
+        "purge_multiple_values_complete_title": "Purge des valeurs multiples terminée avec succès",
+        "purge_multiple_values_complete_message": "La purge des valeurs multiples demandée le {{date}} est terminée.",
+        "purge_multiple_values_error_title": "La purge des valeurs multiples a rencontré une erreur.",
+        "purge_multiple_values_error_message": "La purge des valeurs multiples demandée le {{date}} a échoué. Veuillez contacter votre administrateur."
     },
     "indexation": {
         "index_database": "Indexation {{library}}"

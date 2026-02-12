@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {type IDbDocument} from 'infra/db/_types';
+import {type IDbDocument, type IDbEdge} from 'infra/db/_types';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {type IUtils} from 'utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
@@ -16,6 +16,7 @@ import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
+import {type EdgeCollection} from 'arangojs/collection';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -542,6 +543,38 @@ export default function ({
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
+        },
+        async clearMultipleValues({libraryId, attribute, ctx}): Promise<void> {
+            const edgeValuesLinksCollection = dbService.db.collection(
+                VALUES_LINKS_COLLECTION,
+            ) as EdgeCollection<IDbEdge>;
+
+            const recordsEdges = await dbService.execute({
+                query: aql`
+                    FOR edge IN ${edgeValuesLinksCollection}
+                       FILTER edge.attribute == ${attribute.id}
+                       AND LIKE(edge._from, ${libraryId + '/%'})
+                       COLLECT recordId = edge._from INTO valuesByRecord
+                       FILTER LENGTH(valuesByRecord) > 1
+                       LET sortedEdges = (
+                           FOR e IN valuesByRecord[*].edge
+                               SORT e.created_at DESC
+                           RETURN e
+                       )
+                    RETURN { recordId, edgeKeys: sortedEdges[*]._key }
+                `,
+                ctx,
+            });
+
+            for (const {edgeKeys} of recordsEdges) {
+                const edgesToRemove = edgeKeys.slice(1); // The most recent one is the first one, we delete the others
+
+                for (const edgeKey of edgesToRemove) {
+                    await edgeValuesLinksCollection.remove(edgeKey);
+                }
+            }
+
+            return;
         },
     };
 }
