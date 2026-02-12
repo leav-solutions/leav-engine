@@ -321,6 +321,7 @@ export interface IPreview {
 
 export interface IApplicationsConfig {
     rootFolder: string;
+    assetsMaxAge?: string; // string with ms format
 }
 
 export interface IFilesConfig {
