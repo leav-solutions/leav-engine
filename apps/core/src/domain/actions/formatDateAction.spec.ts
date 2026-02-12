@@ -58,11 +58,11 @@ describe('formatDateAction', () => {
                         {localized},
                         {
                             ...ctx,
-                            lang: 'ko-KR',
+                            lang: 'de-DE',
                         },
                     )
                 ).values[0].payload,
-            ).toBe('37년 2월 28일 오후 11시');
+            ).toBe('28. Februar 37 um 23 Uhr');
         });
 
         // TODO: rise error to inform user without break app
