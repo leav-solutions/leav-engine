@@ -26,6 +26,7 @@ import {type IPreviewAttributesSettings, type IPreviewVersion, type IPreviewVers
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
+import './configureDayjs';
 
 export type ToAny<T> = {
     // common type

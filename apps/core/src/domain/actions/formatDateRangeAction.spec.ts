@@ -44,13 +44,13 @@ describe('formatDateRangeAction', () => {
                 {localized},
                 {
                     ...ctx,
-                    lang: 'ko-KR',
+                    lang: 'fr-FR',
                 },
             );
             expect(resKoKr.errors).toEqual([]);
             expect(resKoKr.values[0].payload).toEqual({
-                from: '37년 2월 28일 오후 11:42',
-                to: '37년 2월 28일 오후 11:43',
+                from: '28 février 37 à 23:42',
+                to: '28 février 37 à 23:43',
             });
         });
 

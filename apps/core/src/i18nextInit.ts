@@ -4,6 +4,7 @@
 import {type IConfig} from '_types/config';
 import i18next, {type i18n} from 'i18next';
 import Backend from 'i18next-fs-backend';
+import {loadLocalesForDayjs} from './utils/configureDayjs';
 
 export default async (config: IConfig): Promise<i18n> => {
     await i18next.use(Backend).init({
@@ -16,6 +17,8 @@ export default async (config: IConfig): Promise<i18n> => {
             loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json',
         },
     });
+
+    loadLocalesForDayjs(config.lang);
 
     return i18next;
 };
