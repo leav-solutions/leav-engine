@@ -6,12 +6,12 @@ import {GenericClient} from './GenericClient';
 export class LibraryClient extends GenericClient {
     public async createLibrary(id: string, label: string, libAttributes: string[], settings?: any): Promise<void> {
         const query = `
-            mutation SaveLibrary($library: LibraryInput!) {
-                saveLibrary(library: $library) {
-                    id
-                }
-            }
-        `;
+        mutation SaveLibrary($library: LibraryInput!) {
+          saveLibrary(library: $library) {
+            id
+          }
+        }
+      `;
 
         const payload: any = {
             id,
@@ -20,6 +20,13 @@ export class LibraryClient extends GenericClient {
                 fr: label + ' (fr)',
             },
             attributes: libAttributes || [],
+            recordIdentityConf: {
+                label: 'label',
+                subLabel: null,
+                preview: null,
+                color: null,
+                treeColorPreview: null,
+            },
         };
 
         if (settings) {
@@ -27,6 +34,7 @@ export class LibraryClient extends GenericClient {
         }
 
         await this.makeGraphqlCall(query, {library: payload});
+
         console.info(`Library ${libAttributes} created successfully!`);
     }
 

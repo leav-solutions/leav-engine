@@ -1,9 +1,26 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-export const testLib1 = 'test_library1';
-export const attribute1 = 'simple_text_attribute_1';
-export const attribute2 = 'simple_text_attribute_2';
+
+import {
+    STANDARD_FIELD_ATTRIBUTE_COLOR_ID,
+    STANDARD_FIELD_ATTRIBUTE_DATE_ID,
+    STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID,
+    STANDARD_FIELD_ATTRIBUTE_DROPDOWN_ID,
+    STANDARD_FIELD_ATTRIBUTE_DROPDOWN_OPTION_1,
+    STANDARD_FIELD_ATTRIBUTE_TEXT_ID,
+    LABEL_ATTRIBUTE,
+    STANDARD_FIELD_LIBRARY_ID,
+    TEST_TEXT_RECORD_LABEL,
+    TEST_TEXT_RECORD_INITIAL_VALUE,
+    TEST_DATE_RECORD_LABEL,
+    TEST_DATE_RECORD_INITIAL_VALUE,
+    TEST_COLOR_RECORD_LABEL,
+    TEST_COLOR_RECORD_INITIAL_VALUE,
+    TEST_DATE_RANGE_RECORD_LABEL,
+    TEST_DATE_RANGE_RECORD_INITIAL_VALUE,
+    TEST_DROPDOWN_RECORD_LABEL,
+} from './constants';
 
 export const actions = {
     ADD: 'add',
@@ -12,45 +29,106 @@ export const actions = {
 export const initialData = {
     elements: [
         {
-            library: testLib1,
+            library: STANDARD_FIELD_LIBRARY_ID,
             matches: [
                 {
-                    attribute: attribute1,
-                    value: 'test_value_1',
+                    attribute: LABEL_ATTRIBUTE,
+                    value: TEST_TEXT_RECORD_LABEL,
                 },
             ],
             data: [
                 {
-                    attribute: attribute1,
-                    values: [{payload: 'random texte 1'}],
+                    attribute: LABEL_ATTRIBUTE,
+                    values: [{payload: TEST_TEXT_RECORD_LABEL}],
                     action: actions.ADD,
                 },
-
                 {
-                    attribute: attribute2,
-                    values: [{payload: 'autre random 1'}],
+                    attribute: STANDARD_FIELD_ATTRIBUTE_TEXT_ID,
+                    values: [{payload: TEST_TEXT_RECORD_INITIAL_VALUE}],
                     action: actions.ADD,
                 },
             ],
         },
         {
-            library: testLib1,
+            library: STANDARD_FIELD_LIBRARY_ID,
             matches: [
                 {
-                    attribute: attribute1,
-                    value: 'test_value_2',
+                    attribute: LABEL_ATTRIBUTE,
+                    value: TEST_DATE_RECORD_LABEL,
                 },
             ],
             data: [
                 {
-                    attribute: attribute1,
-                    values: [{payload: 'random texte 2'}],
+                    attribute: LABEL_ATTRIBUTE,
+                    values: [{payload: TEST_DATE_RECORD_LABEL}],
                     action: actions.ADD,
                 },
-
                 {
-                    attribute: attribute2,
-                    values: [{payload: 'autre random 2'}],
+                    attribute: STANDARD_FIELD_ATTRIBUTE_DATE_ID,
+                    values: [{payload: TEST_DATE_RECORD_INITIAL_VALUE}],
+                    action: actions.ADD,
+                },
+            ],
+        },
+        {
+            library: STANDARD_FIELD_LIBRARY_ID,
+            matches: [
+                {
+                    attribute: LABEL_ATTRIBUTE,
+                    value: TEST_COLOR_RECORD_LABEL,
+                },
+            ],
+            data: [
+                {
+                    attribute: LABEL_ATTRIBUTE,
+                    values: [{payload: TEST_COLOR_RECORD_LABEL}],
+                    action: actions.ADD,
+                },
+                {
+                    attribute: STANDARD_FIELD_ATTRIBUTE_COLOR_ID,
+                    values: [{payload: TEST_COLOR_RECORD_INITIAL_VALUE}],
+                    action: actions.ADD,
+                },
+            ],
+        },
+        {
+            library: STANDARD_FIELD_LIBRARY_ID,
+            matches: [
+                {
+                    attribute: LABEL_ATTRIBUTE,
+                    value: TEST_DATE_RANGE_RECORD_LABEL,
+                },
+            ],
+            data: [
+                {
+                    attribute: LABEL_ATTRIBUTE,
+                    values: [{payload: TEST_DATE_RANGE_RECORD_LABEL}],
+                    action: actions.ADD,
+                },
+                {
+                    attribute: STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID,
+                    values: [{payload: TEST_DATE_RANGE_RECORD_INITIAL_VALUE}],
+                    action: actions.ADD,
+                },
+            ],
+        },
+        {
+            library: STANDARD_FIELD_LIBRARY_ID,
+            matches: [
+                {
+                    attribute: LABEL_ATTRIBUTE,
+                    value: TEST_DROPDOWN_RECORD_LABEL,
+                },
+            ],
+            data: [
+                {
+                    attribute: LABEL_ATTRIBUTE,
+                    values: [{payload: TEST_DROPDOWN_RECORD_LABEL}],
+                    action: actions.ADD,
+                },
+                {
+                    attribute: STANDARD_FIELD_ATTRIBUTE_DROPDOWN_ID,
+                    values: [{payload: STANDARD_FIELD_ATTRIBUTE_DROPDOWN_OPTION_1}],
                     action: actions.ADD,
                 },
             ],

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GenericClient} from './GenericClient';
-import {type AttributeTypes, type AttributeFormats} from '../../../../apps/core/src/_types/attribute';
+import {AttributeFormats, AttributeTypes} from '../../../../apps/core/src/_types/attribute';
 
 export class AttributeClient extends GenericClient {
     public async createAttribute(
@@ -35,6 +35,38 @@ export class AttributeClient extends GenericClient {
 
         await this.makeGraphqlCall(query, {attribute: payload});
         console.info(`Attribute ${label} created successfully!`);
+    }
+
+    public async createValuesListAttribute(id: string, label: string, values: string[]) {
+        await this.createAttribute(
+            id,
+            AttributeTypes.SIMPLE,
+            label,
+            AttributeFormats.TEXT,
+            false,
+            false,
+            'description',
+        );
+
+        const query = `
+            mutation SAVE_ATTRIBUTE($attrData: AttributeInput!) {
+                saveAttribute(attribute: $attrData) {
+                    id
+                }
+            }
+        `;
+
+        const payload = {
+            attrData: {
+                id,
+                values_list: {
+                    enable: true,
+                    values,
+                },
+            },
+        };
+
+        await this.makeGraphqlCall(query, payload);
     }
 
     public async deleteAttribute(attributesIds: string[]) {
