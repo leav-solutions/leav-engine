@@ -243,6 +243,7 @@ export const validateConfig = (conf: IConfig) => {
         }),
         applications: Joi.object().keys({
             rootFolder: Joi.string().required(),
+            assetsMaxAge: Joi.string().optional(),
         }),
         files: Joi.object().keys({
             rootPaths: Joi.string().required(),

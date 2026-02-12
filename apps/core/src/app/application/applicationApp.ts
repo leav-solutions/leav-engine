@@ -443,6 +443,7 @@ export default function ({
                         express.static(req.ctx.appFolder, {
                             extensions: ['html'],
                             fallthrough: false,
+                            maxAge: config.applications.assetsMaxAge,
                         })(req, res, next);
 
                         return next();

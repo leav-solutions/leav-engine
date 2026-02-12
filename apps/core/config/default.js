@@ -234,6 +234,7 @@ module.exports = {
     },
     applications: {
         rootFolder: process.env.APPLICATIONS_FOLDER || 'applications',
+        assetsMaxAge: process.env.APPLICATIONS_ASSETS_MAX_AGE || '1h',
     },
     files: {
         rootPaths: process.env.FILES_ROOT_PATHS,

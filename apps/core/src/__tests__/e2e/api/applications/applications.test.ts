@@ -4,6 +4,7 @@
 import axios from 'axios';
 import {getConfig} from '../../../../config';
 import {e2eNonAdminGroupId, e2eNonAdminUser, gqlCreateRecord, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import ms from 'ms';
 
 /**
  * Convert a JavaScript object to GraphQL object literal syntax (keys without quotes)
@@ -52,7 +53,9 @@ describe('Applications', () => {
             const resAsset = await axios.get(urlAsset);
 
             expect(resAsset.status).toBe(200);
-            expect(resAsset.headers['cache-control']).toBe('public, max-age=0');
+            expect(resAsset.headers['cache-control']).toBe(
+                `public, max-age=${ms(conf.applications.assetsMaxAge) / 1000}`,
+            );
             expect(resAsset.data).toContain('This file is not a test file, it is a fixture for applications tests');
         });
     });
