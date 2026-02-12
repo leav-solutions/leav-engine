@@ -435,6 +435,7 @@ export default function ({
                                     /{{MATOMO_SITE_ID}}/g,
                                     (config.matomo.enable && config.matomo.siteId) || '',
                                 );
+                            res.setHeader('Cache-Control', 'no-cache, max-age=0, must-revalidate');
                             res.send(modifiedIndex);
                             return next(); // needed to update consultation history
                         }

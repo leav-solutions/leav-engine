@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import axios from 'axios';
+import {getConfig} from '../../../../config';
 import {e2eNonAdminGroupId, e2eNonAdminUser, gqlCreateRecord, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 
 /**
@@ -29,6 +31,31 @@ const toGraphQLObject = (obj: unknown): string => {
 };
 
 describe('Applications', () => {
+    describe('Access application', () => {
+        test('App index should have no-cache cache-control header', async () => {
+            const conf = await getConfig();
+            const urlLoginApp = `http://${conf.server.host}:${conf.server.port}/app/login`;
+
+            const resLogin = await axios.get(urlLoginApp);
+
+            expect(resLogin.status).toBe(200);
+            expect(resLogin.headers['cache-control']).toBe('no-cache, max-age=0, must-revalidate');
+            expect(resLogin.data).toContain('LEAV Engine - Login');
+            expect(resLogin.data).toContain('window.__dynamic_base__ = `/app/login`');
+            expect(resLogin.data).toContain('window.__global_base_url__ = ``');
+        });
+
+        test('App asset should have public cache-control header', async () => {
+            const conf = await getConfig();
+            const urlAsset = `http://${conf.server.host}:${conf.server.port}/app/login/index-hashed.js`;
+
+            const resAsset = await axios.get(urlAsset);
+
+            expect(resAsset.status).toBe(200);
+            expect(resAsset.headers['cache-control']).toBe('public, max-age=0');
+            expect(resAsset.data).toContain('This file is not a test file, it is a fixture for applications tests');
+        });
+    });
     test('Create application', async () => {
         const res = await makeGraphQlCall(`mutation {
                 saveApplication(application: {
