@@ -712,6 +712,58 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingCampaignInput = {
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  thematics: Array<ReportFramingThematicInput>;
+};
+
+export type ReportFramingCategoryInput = {
+  categoryId: Scalars['String']['input'];
+  children: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingContentInput = {
+  campaigns: Array<ReportFramingCampaignInput>;
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingItemInput = {
+  columnId: Scalars['String']['input'];
+  referenceValue?: InputMaybe<Scalars['Int']['input']>;
+  value?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReportFramingThematicInput = {
+  categories: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SheetInput = {
   keyIndex?: InputMaybe<Scalars['Int']['input']>;
   keyToIndex?: InputMaybe<Scalars['Int']['input']>;
@@ -787,9 +839,11 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
+  PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -1816,7 +1870,10 @@ export type CountValuesOccurrencesQueryVariables = Exact<{
 }>;
 
 
-export type CountValuesOccurrencesQuery = { countValuesOccurrences?: { noValueCount: number, occurrences: Array<{ count: number, value: { id: string } }> } | null };
+export type CountValuesOccurrencesQuery = { listDistinctValues?: Array<
+    | { count: number }
+    | { count: number, treeNode?: { id: string } | null }
+  > | null };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -5557,19 +5614,16 @@ export type ExplorerLinkAttributeSuspenseQueryHookResult = ReturnType<typeof use
 export type ExplorerLinkAttributeQueryResult = Apollo.QueryResult<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>;
 export const CountValuesOccurrencesDocument = gql`
     query CountValuesOccurrences($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
-  countValuesOccurrences(
+  listDistinctValues(
     library: $library
     attribute: $attribute
     recordFilters: $recordFilters
   ) {
-    noValueCount
-    occurrences {
-      ... on TreeValueOccurrences {
-        value {
-          id
-        }
+    count
+    ... on TreeDistinctValues {
+      treeNode: value {
+        id
       }
-      count
     }
   }
 }

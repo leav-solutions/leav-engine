@@ -312,6 +312,8 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
+  /**  only for link attribute  */
+  smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
@@ -367,6 +369,18 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -601,6 +615,10 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export type GenericDistinctValues = {
+  count: Scalars['Int']['output'];
+};
+
 export type GenericValue = {
   attribute: Attribute;
   created_at?: Maybe<Scalars['Int']['output']>;
@@ -612,10 +630,6 @@ export type GenericValue = {
   modified_at?: Maybe<Scalars['Int']['output']>;
   modified_by?: Maybe<Record>;
   version?: Maybe<Array<Maybe<ValueVersion>>>;
-};
-
-export type GenericValueOccurrences = {
-  count: Scalars['Int']['output'];
 };
 
 export type GlobalSettings = {
@@ -789,6 +803,7 @@ export type LinkAttribute = Attribute & {
   required: Scalars['Boolean']['output'];
   reverse_link?: Maybe<Scalars['String']['output']>;
   settings?: Maybe<Scalars['JSONObject']['output']>;
+  smart_filter?: Maybe<SmartFilterConf>;
   system: Scalars['Boolean']['output'];
   type: AttributeType;
   values_list?: Maybe<LinkValuesListConf>;
@@ -808,6 +823,11 @@ export type LinkAttributeLabelArgs = {
 
 export type LinkAttributePermissionsArgs = {
   record?: InputMaybe<AttributePermissionsRecord>;
+};
+
+export type LinkDistinctValues = GenericDistinctValues & {
+  count: Scalars['Int']['output'];
+  value?: Maybe<Record>;
 };
 
 export type LinkValue = GenericValue & {
@@ -955,6 +975,16 @@ export type MapValueInput = {
   before?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type MoveThematicResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematic?: Maybe<MoveThematicResultThematic>;
+};
+
+export type MoveThematicResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -988,9 +1018,14 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
+  initRenewCampaigns: Scalars['String']['output'];
+  moveOrCopyCampaignThematic: MoveThematicResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
+  /**  Purge multiples values of a mono attribute and keep only the more recent one  */
+  purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
+  removeCampaigns: RemoveCampaignsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1010,6 +1045,7 @@ export type Mutation = {
   treeAddElement: TreeNode;
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   upload: Array<UploadData>;
 };
@@ -1158,6 +1194,22 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationInitRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  fromPacId: Scalars['String']['input'];
+  redirectUrl: Scalars['String']['input'];
+  toPacId: Scalars['String']['input'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicArgs = {
+  fromCampaignId: Scalars['String']['input'];
+  moveThematic: Scalars['Boolean']['input'];
+  thematicId: Scalars['String']['input'];
+  toCampaignId: Scalars['String']['input'];
+};
+
+
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1168,9 +1220,19 @@ export type MutationPurgeInactiveRecordsArgs = {
 };
 
 
+export type MutationPurgeMultipleValuesArgs = {
+  attributeId: Scalars['ID']['input'];
+};
+
+
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCampaignsArgs = {
+  campaignsIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1276,6 +1338,11 @@ export type MutationTreeMoveElementArgs = {
   order?: InputMaybe<Scalars['Int']['input']>;
   parentTo?: InputMaybe<Scalars['ID']['input']>;
   treeId: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1490,10 +1557,10 @@ export type Query = {
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
   availableActions?: Maybe<Array<Action>>;
-  countValuesOccurrences?: Maybe<ValuesOccurrences>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
+  framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
@@ -1501,6 +1568,7 @@ export type Query = {
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']['output']>>;
   libraries?: Maybe<LibrariesList>;
+  listDistinctValues?: Maybe<Array<GenericDistinctValues>>;
   logs?: Maybe<Logs>;
   me?: Maybe<Record>;
   notifications: NotificationsList;
@@ -1542,14 +1610,6 @@ export type QueryAttributesArgs = {
 };
 
 
-export type QueryCountValuesOccurrencesArgs = {
-  attribute: Scalars['ID']['input'];
-  library: Scalars['ID']['input'];
-  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
-  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
-};
-
-
 export type QueryDoesFileExistAsChildArgs = {
   filename: Scalars['String']['input'];
   parentNode?: InputMaybe<Scalars['ID']['input']>;
@@ -1568,6 +1628,13 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
+};
+
+
+export type QueryFramingReportArgs = {
+  content?: InputMaybe<ReportFramingContentInput>;
+  pacID: Scalars['String']['input'];
+  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1605,6 +1672,14 @@ export type QueryLibrariesArgs = {
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortLibraries>;
   strictFilters?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryListDistinctValuesArgs = {
+  attribute: Scalars['ID']['input'];
+  library: Scalars['ID']['input'];
+  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
 
@@ -1902,6 +1977,70 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
+export type RenewCampaignResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  thematic_id: Scalars['ID']['output'];
+};
+
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingCampaignInput = {
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  thematics: Array<ReportFramingThematicInput>;
+};
+
+export type ReportFramingCategoryInput = {
+  categoryId: Scalars['String']['input'];
+  children: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingContentInput = {
+  campaigns: Array<ReportFramingCampaignInput>;
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingItemInput = {
+  columnId: Scalars['String']['input'];
+  referenceValue?: InputMaybe<Scalars['Int']['input']>;
+  value?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReportFramingThematicInput = {
+  categories: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID']['output'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SheetInput = {
   keyIndex?: InputMaybe<Scalars['Int']['input']>;
   keyToIndex?: InputMaybe<Scalars['Int']['input']>;
@@ -1911,6 +2050,14 @@ export type SheetInput = {
   mode: ImportMode;
   treeLinkLibrary?: InputMaybe<Scalars['String']['input']>;
   type: ImportType;
+};
+
+export type SmartFilterConf = {
+  enable: Scalars['Boolean']['output'];
+};
+
+export type SmartFilterConfInput = {
+  enable: Scalars['Boolean']['input'];
 };
 
 export type SortApiKeysInput = {
@@ -2105,9 +2252,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
+  PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -2189,6 +2339,11 @@ export enum TreeBehavior {
 export type TreeDependentValuesNode = {
   allowedDependentValues?: Maybe<Array<TreeAllowedDependentValues>>;
   node?: Maybe<TreeNodeLight>;
+};
+
+export type TreeDistinctValues = GenericDistinctValues & {
+  count: Scalars['Int']['output'];
+  value?: Maybe<TreeNode>;
 };
 
 export type TreeElement = {
@@ -2338,11 +2493,6 @@ export type TreeValue = GenericValue & {
   version?: Maybe<Array<Maybe<ValueVersion>>>;
 };
 
-export type TreeValueOccurrences = GenericValueOccurrences & {
-  count: Scalars['Int']['output'];
-  value: TreeNode;
-};
-
 export type TreeValuesListConf = {
   allowFreeEntry?: Maybe<Scalars['Boolean']['output']>;
   allowListUpdate?: Maybe<Scalars['Boolean']['output']>;
@@ -2480,11 +2630,6 @@ export type ValuesListConfInput = {
   values?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
-export type ValuesOccurrences = {
-  noValueCount: Scalars['Int']['output'];
-  occurrences: Array<GenericValueOccurrences>;
-};
-
 export type ValuesVersionsConf = {
   mode?: Maybe<ValueVersionMode>;
   profile?: Maybe<VersionProfile>;
@@ -2607,6 +2752,11 @@ export type ViewValuesVersionInput = {
 export type ViewsList = {
   list: Array<View>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type RemoveCampaignsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
 };
 
 export type SaveValueBatchResult = {
