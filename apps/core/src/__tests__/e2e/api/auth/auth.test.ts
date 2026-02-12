@@ -73,7 +73,7 @@ describe('Auth', () => {
         expect(initialRefresh).toBeTruthy();
 
         // Now call GraphQL with only the refresh token to trigger rotation
-        const graphQlUrl = await getGraphQLUrl();
+        const graphQlUrl = getGraphQLUrl();
         const query = `{
             me { id }
         }`;
@@ -109,7 +109,7 @@ describe('Auth', () => {
         // This test verifies that when both an API key and cookies are present,
         // an AuthenticationError is thrown to prevent ambiguous authentication
 
-        const graphQlUrl = await getGraphQLUrl();
+        const graphQlUrl = getGraphQLUrl();
 
         // Step 1: Create an API key for user "2" (non-admin user)
         const resSaveApiKey = await makeGraphQlCall(`mutation {

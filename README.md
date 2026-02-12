@@ -333,15 +333,13 @@ docker compose exec <service_name> /bin/sh
 Though you can run unit testing inside the container, it might not be very convenient and resource consuming.
 You'd better run it locally, on your machine with a standard `yarn run test`.
 
-### E2E/Integration tests
+### E2E/Integration tests in core
 
-End-to-end or integration testing needs to be run inside the container as it starts a server, access to the DB, etc.
-This can be done by either:
+See project [core](./apps/core/README.md#tests)
 
--   Need to run with mailpit: `docker compose --profile mail up -d`
--   Running a shell in the _core_ container and executing `yarn run test:e2e` or `yarn run test:e2e:api` or
-    `yarn run test:integration`
--   Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
+### E2E Playwright
+
+See project [e2e-playwright](./test-apps/e2e-playwright/README.md)
 
 ---
 

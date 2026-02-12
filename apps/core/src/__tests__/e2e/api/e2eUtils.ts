@@ -3,10 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // eslint-disable-next-line max-classes-per-file
 import WebSocket from 'ws';
+import {GraphQLClient} from 'graphql-request';
 import {type Client as GraphqlWsClient, createClient as createGraphqlWsClient} from 'graphql-ws';
 import axios, {type AxiosResponse} from 'axios';
 import FormData from 'form-data';
 import jwt, {type Algorithm} from 'jsonwebtoken';
+import {getSdk} from '../_gqlTypes';
 import {type ActionsListConfig} from '_types/actionsList';
 import {type ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
@@ -27,6 +29,7 @@ export interface IGlobalThis {
     guestUser: IE2EUserParams;
     nonAdminUser: IE2EUserParams;
     nonAdminGroupId: string;
+    graphqlUrl: string;
 }
 declare const globalThis: IGlobalThis;
 
@@ -67,11 +70,7 @@ export const e2eNonAdminUser = (): IE2EUser => e2eUser(globalThis.nonAdminUser);
 
 export const e2eNonAdminGroupId = (): string => globalThis.nonAdminGroupId;
 
-export async function getGraphQLUrl() {
-    const conf = await getConfig();
-
-    return `http://${conf.server.host}:${conf.server.port}/graphql`;
-}
+export const getGraphQLUrl = () => globalThis.graphqlUrl;
 
 export class E2EGraphQLError extends Error {
     public constructor(
@@ -87,10 +86,34 @@ export interface IMakeGraphQlCallOptions {
     skipLogErrors?: boolean;
 }
 
+export const getSdkWithUser = (user: IE2EUser): ReturnType<typeof getSdk> =>
+    getSdk(
+        new GraphQLClient(globalThis.graphqlUrl, {
+            requestMiddleware: async request => {
+                const token = await user.getAuthToken();
+
+                if (request.headers instanceof Headers) {
+                    request.headers.append('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${token}`);
+                } else {
+                    request.headers = {
+                        ...request.headers,
+                        Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
+                    };
+                }
+
+                return request;
+            },
+        }),
+    );
+
+export const adminUserSdk = getSdkWithUser(e2eAdminUser());
+export const guestUserSdk = getSdkWithUser(e2eGuestUser());
+export const nonAdminUserSdk = getSdkWithUser(e2eNonAdminUser());
+
 export async function makeGraphQlCall(query: string | FormData, options?: IMakeGraphQlCallOptions): Promise<any> {
     const user = options?.user ?? e2eAdminUser();
     try {
-        const url = await getGraphQLUrl();
+        const url = getGraphQLUrl();
         const token = await user.getAuthToken();
 
         const data = typeof query === 'string' ? {query} : query;
@@ -122,7 +145,7 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
 }
 export async function importFileGraphQlCall(query: string, filePath: string, sheets = undefined) {
     try {
-        const url = await getGraphQLUrl();
+        const url = getGraphQLUrl();
         const token = await e2eAdminUser().getAuthToken();
 
         const operations = {

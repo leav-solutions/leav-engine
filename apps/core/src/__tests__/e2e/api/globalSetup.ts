@@ -178,6 +178,8 @@ export async function setup() {
         await _setupFakePlugin();
 
         const conf = await getConfig();
+        // Export it here to avoid await in e2eUtils before creating the graphql client
+        globalThis.graphqlUrl = `http://${conf.server.host}:${conf.server.port}/graphql`;
 
         await _createRequiredDirectories(conf);
         await initDb(conf);

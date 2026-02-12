@@ -1,0 +1,31 @@
+mutation SaveApiKey($apiKey: ApiKeyInput!) {
+    saveApiKey(apiKey: $apiKey) {
+        id
+        label
+        key
+        expiresAt
+        user {
+            id
+        }
+    }
+}
+
+query GetApiKeys {
+    apiKeys {
+        list {
+            id
+            label
+            key
+            expiresAt
+            user {
+                id
+            }
+        }
+    }
+}
+
+mutation DeleteApiKey($id: String!) {
+    deleteApiKey(id: $id) {
+        id
+    }
+}
