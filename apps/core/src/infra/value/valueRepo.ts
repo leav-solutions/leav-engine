@@ -7,7 +7,7 @@ import {type IDbService} from 'infra/db/dbService';
 import {type IConfig} from '_types/config';
 import {type IAttribute} from '_types/attribute';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type IValuesOccurrences, type ISaveValue, type IValue, type IValueVersion, type IBaseValue} from '_types/value';
+import {type IDistinctValue, type ISaveValue, type IValue, type IValueVersion, type IBaseValue} from '_types/value';
 import {
     type IAttributeTypesRepo,
     type IAttributeWithRevLink,
@@ -126,7 +126,7 @@ export interface IValueRepo {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
-    countValuesOccurrences?({
+    listDistinctValues?({
         library,
         attribute,
         recordIds,
@@ -138,7 +138,7 @@ export interface IValueRepo {
         recordIds: string[];
         options?: {version?: IValueVersion};
         ctx: IQueryInfos;
-    }): Promise<IValuesOccurrences>;
+    }): Promise<IDistinctValue>;
 
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
 
@@ -273,14 +273,14 @@ export default function ({
                 ctx,
             });
         },
-        countValuesOccurrences({library, attribute, recordIds, options, ctx}): Promise<IValuesOccurrences> {
+        listDistinctValues({library, attribute, recordIds, options, ctx}): Promise<IDistinctValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            if (!typeRepo.countValuesOccurrences) {
+            if (!typeRepo.listDistinctValues) {
                 throw new Error(
-                    `Attribute type repo for type "${attribute.type}" does not implement countValuesOccurrences method`,
+                    `Attribute type repo for type "${attribute.type}" does not implement listDistinctValues method`,
                 );
             }
-            return typeRepo.countValuesOccurrences({
+            return typeRepo.listDistinctValues({
                 library,
                 attribute,
                 recordIds,

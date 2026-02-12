@@ -317,7 +317,7 @@ export default function ({
                                       }, {})
                                     : null;
 
-                            const distinctValues = await valueDomain.countValuesOccurrences({
+                            const distinctValues = await valueDomain.listDistinctValues({
                                 libraryId: library,
                                 attributeId: attribute,
                                 recordFilters,

@@ -4,7 +4,7 @@
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {type IUtils} from 'utils/utils';
-import {type ILinkBaseValue, type IValuesOccurrences, type ILinkValue, type IValueEdge} from '_types/value';
+import {type ILinkBaseValue, type IDistinctValue, type ILinkValue, type IValueEdge} from '_types/value';
 import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
@@ -391,13 +391,13 @@ export default function ({
                 );
             });
         },
-        async countValuesOccurrences({
+        async listDistinctValues({
             library,
             attribute,
             recordIds,
             options,
             ctx,
-        }): Promise<IValuesOccurrences<ILinkBaseValue>> {
+        }): Promise<IDistinctValue<ILinkBaseValue>> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.countReverseValuesOccurrences({
                     advancedLinkAttr: attribute,

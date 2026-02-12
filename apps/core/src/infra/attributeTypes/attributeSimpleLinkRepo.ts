@@ -6,7 +6,7 @@ import {type IDbDocument} from 'infra/db/_types';
 import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {type IRecord} from '_types/record';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {type ILinkBaseValue, type ILinkValue, type IValuesOccurrences} from '../../_types/value';
+import {type ILinkBaseValue, type ILinkValue, type IDistinctValue} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
@@ -215,12 +215,7 @@ export default function ({
                 {} as Record<string, ILinkValue[]>,
             );
         },
-        async countValuesOccurrences({
-            library,
-            attribute,
-            recordIds,
-            ctx,
-        }): Promise<IValuesOccurrences<ILinkBaseValue>> {
+        async listDistinctValues({library, attribute, recordIds, ctx}): Promise<IDistinctValue<ILinkBaseValue>> {
             const libCollec = dbService.db.collection(library);
 
             // For all recordIds, retrieve the linked value and count the occurrences of each linked value
@@ -257,7 +252,7 @@ export default function ({
             advancedLinkAttr,
             recordIds,
             ctx,
-        }): Promise<IValuesOccurrences<ILinkBaseValue>> {
+        }): Promise<IDistinctValue<ILinkBaseValue>> {
             const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
             const reverseLinkId = (advancedLinkAttr.reverse_link as IAttribute)?.id;
 

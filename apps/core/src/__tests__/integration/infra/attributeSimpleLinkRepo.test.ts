@@ -201,7 +201,7 @@ describe('attributeSimpleLinkRepo', () => {
                 });
             });
 
-            describe('countValuesOccurrences', () => {
+            describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithoutAttr: IRecord;
                 let recordWithLink1: IRecord;
@@ -231,7 +231,7 @@ describe('attributeSimpleLinkRepo', () => {
                     });
                 });
                 test('Should return values occurrences for an attribute', async () => {
-                    const occurrences = await attributeSimpleLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeSimpleLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordIds: [record1.id, record2.id, recordWithLink1.id],
@@ -247,7 +247,7 @@ describe('attributeSimpleLinkRepo', () => {
                     );
                 });
                 test('Should return null values occurrences for an attribute', async () => {
-                    const occurrences = await attributeSimpleLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeSimpleLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: simpleLinkAttribute,
                         recordIds: [

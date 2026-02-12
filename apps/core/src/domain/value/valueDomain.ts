@@ -34,7 +34,7 @@ import {
     type IStandardValue,
     type IValue,
     type IValuesOptions,
-    type IValuesOccurrences,
+    type IDistinctValue,
 } from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -159,7 +159,7 @@ export interface IValueDomain {
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
-    countValuesOccurrences({
+    listDistinctValues({
         libraryId,
         attributeId,
         recordFilters,
@@ -171,7 +171,7 @@ export interface IValueDomain {
         recordFilters: IRecordFilterLight[];
         options?: {version?: IValueVersion};
         ctx: IQueryInfos;
-    }): Promise<IValuesOccurrences>;
+    }): Promise<IDistinctValue>;
 }
 
 export interface IValueDomainDeps {
@@ -1369,7 +1369,7 @@ const valueDomain = function ({
             return _executeDeleteValue({library, recordId, attribute, value, skipReadonly, skipActions, ctx});
         },
         formatValue: _formatValue,
-        async countValuesOccurrences({libraryId, attributeId, recordFilters, options, ctx}) {
+        async listDistinctValues({libraryId, attributeId, recordFilters, options, ctx}) {
             await validate.validateLibrary(libraryId, ctx);
             await validate.validateLibraryAttribute(libraryId, attributeId, ctx);
 
@@ -1387,7 +1387,7 @@ const valueDomain = function ({
                     },
                 });
             }
-            // If the attribute has an actions list to get value, we cannot retrieve occurrences with countValuesOccurrences
+            // If the attribute has an actions list to get value, we cannot retrieve distinct values with listDistinctValues
             // In that case, we should use getRecordFieldValue for each record instead and aggregate the results, which is less efficient
             // May be check only excelCalculation or inheritanceCalculation actions because theirs are not idempotent !
             // https://gitlab.aristid.com/dev/leav/leav/-/merge_requests/1351#note_193389
@@ -1419,7 +1419,7 @@ const valueDomain = function ({
                 ctx,
             });
 
-            return valueRepo.countValuesOccurrences({
+            return valueRepo.listDistinctValues({
                 library: libraryId,
                 attribute: {...attribute, reverse_link: reverseLink},
                 recordIds: records.list.map(r => r.id),
