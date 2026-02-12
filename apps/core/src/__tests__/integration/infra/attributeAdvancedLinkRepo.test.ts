@@ -986,5 +986,37 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
             });
         });
+
+        describe('clearMultipleValues', () => {
+            test('Should remain only the more recent value', async () => {
+                // We use a multi-value attribute to no be biased with the getValues function which return
+                // only the more recent value if there is some values on a mono attribute.
+                const advancedLinkMultiAttribute: IAttributeWithRevLink = {
+                    id: 'link_attr_multi',
+                    type: AttributeTypes.ADVANCED_LINK,
+                    linked_library: remoteLibraryId,
+                    multiple_values: true,
+                };
+
+                const record = await createRecord({});
+                await createValue(advancedLinkMultiAttribute, record.id, remoteRecord1.id);
+                const value2 = await createValue(advancedLinkMultiAttribute, record.id, remoteRecord2.id);
+
+                await attributeAdvancedLinkRepo.clearMultipleValues({
+                    libraryId,
+                    attribute: advancedLinkMultiAttribute,
+                    ctx,
+                });
+
+                const values = await attributeAdvancedLinkRepo.getValues({
+                    library: libraryId,
+                    attribute: advancedLinkMultiAttribute,
+                    recordId: record.id,
+                    ctx,
+                });
+
+                expect(values).toEqual([value2]);
+            });
+        });
     });
 });

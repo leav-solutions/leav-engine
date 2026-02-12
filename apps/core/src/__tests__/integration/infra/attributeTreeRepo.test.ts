@@ -1028,5 +1028,37 @@ describe('attributeTreeRepo', () => {
                 });
             });
         });
+
+        describe('clearMultipleValues', () => {
+            test('Should remain only the more recent value', async () => {
+                // We use a multi-value attribute to no be biased with the getValues function which return
+                // only the more recent value if there is some values on a mono attribute.
+                const treeMultiAttribute: IAttributeWithRevLink = {
+                    id: 'tree_attr_multi',
+                    type: AttributeTypes.TREE,
+                    linked_tree: treeId,
+                    multiple_values: true,
+                };
+
+                const record = await createRecord({});
+                await createValue(treeMultiAttribute, record.id, remoteNode1.id);
+                const recordValue = await createValue(treeMultiAttribute, record.id, remoteNode2.id);
+
+                await attributeTreeRepo.clearMultipleValues({
+                    libraryId,
+                    attribute: treeMultiAttribute,
+                    ctx,
+                });
+
+                const values = await attributeTreeRepo.getValues({
+                    library: libraryId,
+                    attribute: treeMultiAttribute,
+                    recordId: record.id,
+                    ctx,
+                });
+
+                expect(values).toEqual([recordValue]);
+            });
+        });
     });
 });
