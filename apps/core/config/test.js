@@ -77,4 +77,8 @@ module.exports = {
         sessionDatabase: 15,
     },
     pluginsPath: ['/plugins/fakeplugin'],
+    applications: {
+        rootFolder: 'src/__tests__/e2e/api/_fixtures/applications',
+        assetsMaxAge: '42h',
+    },
 };
