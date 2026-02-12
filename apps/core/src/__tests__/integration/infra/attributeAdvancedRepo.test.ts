@@ -69,13 +69,13 @@ describe('attributeAdvancedRepo', () => {
             ctx,
         });
 
-    describe('2 records exists with advanced mono attribute', () => {
-        const advancedTextMonoAttribute: IAttributeWithRevLink = {
-            id: 'text_attr_mono',
-            type: AttributeTypes.ADVANCED,
-            multiple_values: false,
-        };
+    const advancedTextMonoAttribute: IAttributeWithRevLink = {
+        id: 'text_attr_mono',
+        type: AttributeTypes.ADVANCED,
+        multiple_values: false,
+    };
 
+    describe('2 records exists with advanced mono attribute', () => {
         const advancedExtendedAttribute: IAttributeWithRevLink = {
             id: 'extended_attr',
             type: AttributeTypes.ADVANCED,
@@ -641,6 +641,32 @@ describe('attributeAdvancedRepo', () => {
                             key2: 'value2',
                         }),
                     );
+                });
+            });
+
+            describe('clearMultipleValues', () => {
+                test('Should remain only the more recent value', async () => {
+                    const record3 = await createRecord({});
+
+                    // We use a multi-value attribute to no be biased with the getValues function which return
+                    // only the more recent value if there is some values on a mono attribute.
+                    await createValue(advancedTextMultiAttribute, record3.id, 'value1');
+                    const record3Value2 = await createValue(advancedTextMultiAttribute, record3.id, 'value2');
+
+                    await attributeAdvancedRepo.clearMultipleValues({
+                        libraryId,
+                        attribute: advancedTextMultiAttribute,
+                        ctx,
+                    });
+
+                    const values = await attributeAdvancedRepo.getValues({
+                        library: libraryId,
+                        attribute: advancedTextMultiAttribute,
+                        recordId: record3.id,
+                        ctx,
+                    });
+
+                    expect(values).toEqual([record3Value2]);
                 });
             });
         });
