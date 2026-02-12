@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {AttributeCondition, TreeCondition} from '../../../../_types/record';
+import {AttributeCondition, Operator, TreeCondition} from '../../../../_types/record';
 import {
     e2eNonAdminGroupId,
     e2eNonAdminUser,
@@ -436,6 +436,54 @@ describe('Records', () => {
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
+        });
+
+        test('Should NOT activate a new record when skipActivation is set', async () => {
+            // Create an empty record without required fields
+            const resultCreation = await makeGraphQlCall(`mutation {
+                c1: createRecord(library: "${testLibName}", skipActivate: true) { record { id } },
+                c2: createRecord(library: "${testLibName}") { record { id } },
+            }`);
+            expect(resultCreation.status).toBe(200);
+
+            const recordIdC1 = resultCreation.data.data.c1.record.id;
+            const recordIdC2 = resultCreation.data.data.c2.record.id;
+
+            const res = await makeGraphQlCall(`{
+                c1: records(
+                    library: "${testLibName}",
+                    retrieveInactive: true,
+                    filters: [
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordIdC1}"},,
+                    ]
+                ) {
+                    list {
+                        id
+                        active
+                    }
+                }
+                c2: records(
+                    library: "${testLibName}",
+                    retrieveInactive: true,
+                    filters: [
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordIdC2}"},,
+                    ]
+                ) {
+                    list {
+                        id
+                        active
+                    }
+                }
+            }`);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.c1.list.length).toBe(1);
+            expect(res.data.data.c1.list[0].id).toBe(recordIdC1);
+            expect(res.data.data.c1.list[0].active).toBe(false);
+            expect(res.data.data.c2.list.length).toBe(1);
+            expect(res.data.data.c2.list[0].id).toBe(recordIdC2);
+            expect(res.data.data.c2.list[0].active).toBe(true);
         });
 
         test('Create and activate records', async () => {

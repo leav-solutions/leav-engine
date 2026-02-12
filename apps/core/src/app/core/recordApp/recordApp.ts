@@ -268,7 +268,7 @@ export default function ({
                         # activateNewRecord should not have use CreateRecordResult, because it is now coupled with createRecord !
                         # This methode does not need to return record !
                         activateNewRecord(library: ID!, recordId: ID!, formId: String): CreateRecordResult!
-                        createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
+                        createRecord(library: ID!, skipActivate: Boolean, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
                         activateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
@@ -361,7 +361,7 @@ export default function ({
                                 ctx,
                             });
                         },
-                        async createRecord(_, {library, data}: ICreateRecordParams, ctx: IQueryInfos) {
+                        async createRecord(_, {library, skipActivate, data}: ICreateRecordParams, ctx: IQueryInfos) {
                             const valuesVersion = data?.version ? convertVersionFromGqlFormat(data.version) : null;
                             const valuesToSave = data
                                 ? data.values.map(value => ({
@@ -371,10 +371,10 @@ export default function ({
                                       metadata: utils.nameValArrayToObj(value.metadata),
                                   }))
                                 : null;
-
                             return recordDomain.createRecord({
                                 library,
                                 values: valuesToSave,
+                                skipActivate: skipActivate ?? false,
                                 verifyRequiredAttributes: true,
                                 ctx,
                             });

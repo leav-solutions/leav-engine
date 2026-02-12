@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, type ReactNode, useEffect, useRef, useState} from 'react';
-import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
+import {KitButton, KitDivider, KitLoader, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IValueVersion} from '_ui/types';
-import {type RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
+import {type RecordIdentityFragment, useCreateRecordMutation, usePurgeRecordMutation} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {type PossibleSubmitButtons, type SubmitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
@@ -15,10 +15,11 @@ import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {APICallStatus} from '../EditRecordContent/_types';
-import useExecuteCreateEmptyRecordMutation from '../EditRecordContent/hooks/useCreateEmptyRecordMutation';
 import {createPortal} from 'react-dom';
 import {SUBMIT_BUTTONS_PORTAL} from '_ui/constants';
+import {ErrorBoundary} from '_ui/components/ErrorBoundary';
+import {ErrorComponent} from './ErrorComponent';
+import {useGetInitialRecordValues} from './getInitialRecordValues';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -75,16 +76,18 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 }) => {
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
-    const [clickedSubmitButton, setClickedSubmitButton] = useState<SubmitButtonsName | null>(null);
+    const clickedSubmitButton = useRef<SubmitButtonsName | null>(null);
     const formElementId = useRef(window.crypto.randomUUID());
     const [isCreation, setIsCreation] = useState(!record);
-    const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
+    const [isReady, setIsReady] = useState(!!record);
+    const [isError, setIsError] = useState(false);
+    const [createRecord] = useCreateRecordMutation();
     const [purgeRecordMutation] = usePurgeRecordMutation();
     const [formId, setFormId] = useState<string>(
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition'),
     );
-
     const [formCreateButtonsContainer, setFormCreateButtonsContainer] = useState<HTMLElement>();
+    const values = useGetInitialRecordValues();
 
     useEffect(() => {
         if (isSubmitButtonsPortal) {
@@ -97,21 +100,30 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
     useEffect(() => {
         const createEmptyRecordFunction = async () => {
-            const res = await createEmptyRecord(library);
-            if (res?.status === APICallStatus.ERROR) {
-                // TODO : call KitNotification error
-                return null;
+            const {data} = await createRecord({
+                variables: {
+                    library,
+                    skipActivate: true,
+                    data: {values},
+                },
+            });
+            const recordId = data?.createRecord.record?.id;
+            setCurrentRecord(data?.createRecord.record.whoAmI ?? null);
+            if (!recordId) {
+                setIsError(true);
+                return;
             }
-            setCurrentRecord(res?.record ?? null);
+
+            setIsReady(true);
         };
 
-        if (isCreation) {
+        if (isCreation && !isReady) {
             createEmptyRecordFunction();
         }
     }, []);
 
     const _handleClickSubmit = (button: SubmitButtonsName) => {
-        setClickedSubmitButton(button);
+        clickedSubmitButton.current = button;
     };
 
     const _purgeRecordOnCreationCancel = () =>
@@ -157,14 +169,14 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
         setCurrentRecord(newRecord);
 
-        if (onCreateAndEdit && clickedSubmitButton === 'createAndEdit') {
+        if (onCreateAndEdit && clickedSubmitButton.current === 'createAndEdit') {
             setFormId(editionFormId ?? 'edition');
             setIsCreation(false);
             onCreateAndEdit(newRecord);
             return;
         }
 
-        if (onCreate && clickedSubmitButton === 'create') {
+        if (onCreate && clickedSubmitButton.current === 'create') {
             onCreate(newRecord);
             return;
         }
@@ -197,22 +209,28 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             {isSubmitButtonsPortal &&
                 formCreateButtonsContainer &&
                 createPortal(displayedSubmitButtons, formCreateButtonsContainer)}
-            <EditRecord
-                antdForm={antdForm}
-                formId={formId}
-                isFormCreationMode={isCreation}
-                formElementId={formElementId.current}
-                record={currentRecord}
-                library={library}
-                valuesVersion={valuesVersion}
-                onCreate={_handleCreate}
-                containerStyle={showHeader ? {height: 'calc(100% - 82px)'} : {height: '100%'}}
-                withInfoButton={withInfoButton}
-                enableSidebar={enableSidebar}
-                showSidebar={showSidebar}
-                sidebarContainer={sidebarContainer}
-                removePadding={removePadding}
-            />
+            <ErrorBoundary>
+                {isError && <ErrorComponent />}
+                {!isReady && <KitLoader />}
+                {isReady && (
+                    <EditRecord
+                        antdForm={antdForm}
+                        formId={formId}
+                        isFormCreationMode={isCreation}
+                        formElementId={formElementId.current}
+                        record={currentRecord}
+                        library={library}
+                        valuesVersion={valuesVersion}
+                        onCreate={_handleCreate}
+                        containerStyle={showHeader ? {height: 'calc(100% - 82px)'} : {height: '100%'}}
+                        withInfoButton={withInfoButton}
+                        enableSidebar={enableSidebar}
+                        showSidebar={showSidebar}
+                        sidebarContainer={sidebarContainer}
+                        removePadding={removePadding}
+                    />
+                )}
+            </ErrorBoundary>
         </>
     );
 };

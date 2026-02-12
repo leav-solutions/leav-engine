@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {screen, render} from '_ui/_tests/testUtils';
+import {screen, render, waitFor, act} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
 import {Form} from 'antd';
@@ -12,11 +12,11 @@ let user!: ReturnType<typeof userEvent.setup>;
 
 const editRecordFn = jest.fn();
 jest.mock('../EditRecord', () => ({
-    EditRecord: ({antdForm, record, onCreate, ...props}) => {
+    EditRecord: ({antdForm, formElementId, isFormCreationMode, onCreate, ...props}) => {
         editRecordFn(props);
-        const fields = [{name: 'jeanjau', value: record ? 'EditRecord' : 'CreateRecord'}];
+        const fields = [{name: 'jeanjau', value: !isFormCreationMode ? 'EditRecord' : 'CreateRecord'}];
         return (
-            <Form form={antdForm} fields={fields}>
+            <Form form={antdForm} id={formElementId} fields={fields} onFinish={() => onCreate(mockRecord)}>
                 <Form.Item name="jeanjau">
                     <input />
                 </Form.Item>
@@ -26,9 +26,9 @@ jest.mock('../EditRecord', () => ({
     },
 }));
 
-const mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
+const mockUseCreateRecordMutation = jest.fn().mockReturnValue({
     data: {
-        createEmptyRecord: {
+        createRecord: {
             record: {
                 id: 'new_record_id',
                 whoAmI: {
@@ -53,8 +53,8 @@ const mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
 describe('EditRecordPage', () => {
     beforeEach(() => {
         user = userEvent.setup();
-        jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
-            mockUseCreateEmptyRecordMutation,
+        jest.spyOn(gqlTypes, 'useCreateRecordMutation').mockImplementation(() => [
+            mockUseCreateRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
         jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
@@ -67,8 +67,9 @@ describe('EditRecordPage', () => {
         test('Display page in create mode', async () => {
             render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={null} />);
 
-            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
-            expect(screen.getByText(/new_record/)).toBeInTheDocument();
+            const createRecord = await screen.findByDisplayValue('CreateRecord');
+            expect(createRecord).toBeInTheDocument();
+            expect(screen.getByText(/New Record/)).toBeInTheDocument();
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
@@ -122,10 +123,12 @@ describe('EditRecordPage', () => {
             expect(
                 screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'}),
             ).not.toBeInTheDocument();
-            await userEvent.type(screen.getByDisplayValue('CreateRecord'), 'Something');
+            const createRecord = await screen.findByDisplayValue('CreateRecord');
+            await userEvent.type(createRecord, 'Something');
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
+            const modal = await screen.findByRole('dialog', {hidden: true});
 
-            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).toBeInTheDocument();
+            expect(modal).toBeVisible();
             expect(mockOnClose).not.toHaveBeenCalled();
 
             await userEvent.click(screen.queryByText('global.confirm'));
@@ -180,11 +183,15 @@ describe('EditRecordPage', () => {
             );
 
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
-            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+            });
+            await user.click(screen.getByText('record_edition.create_and_edit'));
 
-            await user.click(screen.getByText('simulate_create_record'));
-
-            expect(await screen.findByDisplayValue('EditRecord')).toBeInTheDocument();
+            const editButton = await screen.findByDisplayValue('EditRecord');
+            await waitFor(() => {
+                expect(editButton).toBeInTheDocument();
+            });
         });
     });
 
@@ -216,11 +223,13 @@ describe('EditRecordPage', () => {
                 />,
             );
 
-            expect(editRecordFn).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    formId: 'creation-form',
-                }),
-            );
+            waitFor(() => {
+                expect(editRecordFn).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        formId: 'creation-form',
+                    }),
+                );
+            });
         });
 
         test('Shoud call EditRecord with edition FromId', async () => {

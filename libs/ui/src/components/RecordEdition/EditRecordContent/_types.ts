@@ -92,6 +92,14 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
 export type CreateEmptyRecordFunc = (library: string) => Promise<ICreateRecordResult>;
+export type CreateRecordFunc = (
+    library: string,
+    skipActivate?: boolean,
+    data?: {
+        values: Array<Omit<IValueToSubmit, 'idValue'>>;
+        version: IValueVersion;
+    },
+) => Promise<ICreateRecordResult>;
 export type DeleteMultipleValuesFunc = (
     attribute: string,
     values: RecordProperty[],

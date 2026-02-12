@@ -7,8 +7,8 @@ import {recordIdentityFragment} from '../../gqlFragments';
 
 const createRecordMutation = gql`
     ${recordIdentityFragment}
-    mutation CREATE_RECORD($library: ID!, $data: CreateRecordDataInput) {
-        createRecord(library: $library, data: $data) {
+    mutation CREATE_RECORD($library: ID!, $skipActivate: Boolean, $data: CreateRecordDataInput) {
+        createRecord(library: $library, skipActivate: $skipActivate, data: $data) {
             record {
                 ...RecordIdentity
             }

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {screen, render} from '_ui/_tests/testUtils';
+import {screen, render, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordModal} from './EditRecordModal';
 import {Form} from 'antd';
@@ -13,11 +13,11 @@ let user!: ReturnType<typeof userEvent.setup>;
 
 const editRecordFn = jest.fn();
 jest.mock('../EditRecord', () => ({
-    EditRecord: ({antdForm, record, onCreate, ...props}) => {
+    EditRecord: ({antdForm, formElementId, isFormCreationMode, onCreate, ...props}) => {
         editRecordFn(props);
-        const fields = [{name: 'leonbloum', value: record ? 'EditRecord' : 'CreateRecord'}];
+        const fields = [{name: 'leonbloum', value: !isFormCreationMode ? 'EditRecord' : 'CreateRecord'}];
         return (
-            <Form form={antdForm} fields={fields}>
+            <Form form={antdForm} id={formElementId} fields={fields} onFinish={() => onCreate(mockRecord)}>
                 <Form.Item name="leonbloum">
                     <input />
                 </Form.Item>
@@ -28,15 +28,16 @@ jest.mock('../EditRecord', () => ({
 }));
 
 describe('EditRecordModal', () => {
-    let mockUseCreateEmptyRecordMutation = jest.fn();
+    let mockUseCreateRecordMutation = jest.fn();
     let mockUsePurgeRecordMutation = jest.fn();
 
     beforeEach(() => {
         user = userEvent.setup();
         ReactModal.setAppElement(document.createElement('div'));
-        mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
+
+        mockUseCreateRecordMutation = jest.fn().mockReturnValue({
             data: {
-                createEmptyRecord: {
+                createRecord: {
                     record: {
                         id: 'new_record_id',
                         whoAmI: {
@@ -57,8 +58,8 @@ describe('EditRecordModal', () => {
                 },
             },
         });
-        jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
-            mockUseCreateEmptyRecordMutation,
+        jest.spyOn(gqlTypes, 'useCreateRecordMutation').mockImplementation(() => [
+            mockUseCreateRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
         jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
@@ -68,14 +69,16 @@ describe('EditRecordModal', () => {
     });
 
     afterEach(() => {
-        mockUseCreateEmptyRecordMutation.mockReset();
+        mockUseCreateRecordMutation.mockReset();
     });
 
     describe('create mode', () => {
         test('Display modal in create mode', async () => {
             render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
 
-            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+            const createRecord = await screen.findByDisplayValue('CreateRecord');
+            expect(createRecord).toBeInTheDocument();
+
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
         });
@@ -136,10 +139,11 @@ describe('EditRecordModal', () => {
             expect(
                 screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'}),
             ).not.toBeInTheDocument();
-            await userEvent.type(screen.getByDisplayValue('CreateRecord'), 'Something');
+            const createRecord = await screen.findByDisplayValue('CreateRecord');
+            await userEvent.type(createRecord, 'Something');
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
-
-            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).toBeInTheDocument();
+            const modalTitle = await screen.findByText('record_edition.cancel_confirm_modal_title');
+            expect(modalTitle).toBeInTheDocument();
             expect(mockOnClose).not.toHaveBeenCalled();
 
             await userEvent.click(screen.queryByText('global.confirm'));
@@ -150,13 +154,13 @@ describe('EditRecordModal', () => {
         test('Should call createEmptyRecord if modal is opened', async () => {
             render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
 
-            expect(mockUseCreateEmptyRecordMutation).toHaveBeenCalled();
+            expect(mockUseCreateRecordMutation).toHaveBeenCalled();
         });
 
         test('Should not call createEmptyRecord if modal is not opened', async () => {
             render(<EditRecordModal open={false} library="test_lib" onClose={jest.fn()} record={null} />);
 
-            expect(mockUseCreateEmptyRecordMutation).not.toHaveBeenCalled();
+            expect(mockUseCreateRecordMutation).not.toHaveBeenCalled();
         });
     });
 
@@ -184,11 +188,15 @@ describe('EditRecordModal', () => {
                 />,
             );
 
-            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+            const createRecord = await screen.findByDisplayValue('CreateRecord');
+            expect(createRecord).toBeInTheDocument();
 
-            await user.click(screen.getByText('simulate_create_record'));
+            await user.click(screen.getByText('record_edition.create_and_edit'));
 
-            expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
+            const editButton = await screen.findByDisplayValue('EditRecord');
+            await waitFor(() => {
+                expect(editButton).toBeInTheDocument();
+            });
         });
 
         test('Should not open modal on click on close', async () => {
@@ -199,7 +207,8 @@ describe('EditRecordModal', () => {
                 screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'}),
             ).not.toBeInTheDocument();
             await userEvent.type(screen.getByDisplayValue('EditRecord'), 'Something');
-            await userEvent.click(screen.getByRole('button', {name: /close/, hidden: true}));
+            const closeButton = await screen.findByRole('button', {name: 'global.close', hidden: true});
+            await userEvent.click(closeButton);
 
             expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
             expect(mockOnClose).toHaveBeenCalled();
@@ -207,7 +216,7 @@ describe('EditRecordModal', () => {
     });
 
     describe('custom form ids', () => {
-        test('Shoud call EditRecord with creation FromId', async () => {
+        test('Should call EditRecord with creation FromId', async () => {
             render(
                 <EditRecordModal
                     open
@@ -220,11 +229,13 @@ describe('EditRecordModal', () => {
                 />,
             );
 
-            expect(editRecordFn).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    formId: 'creation-form',
-                }),
-            );
+            await waitFor(() => {
+                expect(editRecordFn).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        formId: 'creation-form',
+                    }),
+                );
+            });
         });
 
         test('Shoud call EditRecord with edition FromId', async () => {

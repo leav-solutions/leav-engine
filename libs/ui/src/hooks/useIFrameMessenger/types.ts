@@ -16,6 +16,8 @@ import {
     type attributeExplorerPanelSchema,
     type baseExplorerPanelSchema,
 } from '_ui/hooks/useIFrameMessenger/schema';
+import {type AnyPrimitive} from '@leav/utils';
+import {type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -102,6 +104,9 @@ export type NavigateToPanelMessage = IMessageBase & {
         flapRecordId?: string;
         flapLibraryId?: LibraryId;
         flapPanelId?: FlapPanelId;
+        queryParams?: Record<string, string> & {
+            formInitialValues?: Record<string, Array<AnyPrimitive | IRecordIdentity | ITreeNodeWithRecord>>;
+        };
     };
 };
 
