@@ -6,7 +6,7 @@
 # More info here: https://docs.docker.com/build/building/multi-stage/#differences-between-legacy-builder-and-buildkit
 
 # Create base builder
-FROM node:24-alpine3.21 AS builder
+FROM node:24-alpine3.23 AS builder
 ARG APP
 WORKDIR /build
 
@@ -53,7 +53,7 @@ RUN rsync -av \
     yarn workspaces focus $APP --production && \
     rm -rf .yarn yarn.lock .yarnrc.yml
 
-FROM node:24-alpine3.21 AS runner
+FROM node:24-alpine3.23 AS runner
 ARG APP
 WORKDIR /app
 
