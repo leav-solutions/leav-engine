@@ -328,6 +328,24 @@ describe('applicationDomain', () => {
                 AdminPermissionsActions.DELETE_APPLICATION,
             );
         });
+
+        test('Throws if application is system', async () => {
+            const mockAppRepo: Mockify<IApplicationRepo> = {
+                getApplications: global.__mockPromise({list: [{...mockApplication, system: true}], totalCount: 1}),
+                deleteApplication: global.__mockPromise({...mockApplication, system: true}),
+            };
+
+            const appDomain = applicationDomain({
+                ...depsBase,
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.infra.application': mockAppRepo as IApplicationRepo,
+            });
+
+            await expect(appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx})).rejects.toThrow(
+                ValidationError,
+            );
+        });
     });
 
     describe('updateConsulationHistory', () => {

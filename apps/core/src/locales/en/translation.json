@@ -72,6 +72,7 @@
         "REQUIRED_ATTRIBUTE_TYPE": "Attribute's type must be specified",
         "SYSTEM_ATTRIBUTE_DELETION": "Cannot delete system attribute",
         "SYSTEM_LIBRARY_DELETION": "Cannot delete system library",
+        "SYSTEM_APPLICATION_DELETION": "Cannot delete system application",
         "SYSTEM_TREE_DELETION": "Cannot delete system tree",
         "TOO_MUCH_LIBRARIES_ON_FILES_TREE": "Cannot bind more than one library on a files tree",
         "UNBINDED_ATTRIBUTES": "Attributes must be binded to library: {{attributes}}",

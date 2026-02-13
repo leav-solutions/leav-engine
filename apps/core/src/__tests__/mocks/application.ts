@@ -6,7 +6,7 @@ import {ApplicationTypes, type IApplication} from '../../_types/application';
 export const mockApplication: MandatoryId<IApplication> = {
     id: 'test_application',
     type: ApplicationTypes.INTERNAL,
-    system: true,
+    system: false,
     label: {fr: 'Test'},
     endpoint: 'my-application',
     description: {fr: 'Super application'},
@@ -21,7 +21,7 @@ export const mockApplication: MandatoryId<IApplication> = {
 export const mockApplicationExternal: IApplication = {
     id: 'test_application',
     type: ApplicationTypes.EXTERNAL,
-    system: true,
+    system: false,
     label: {fr: 'Test'},
     endpoint: 'http://example.com',
     description: {fr: 'Super application'},

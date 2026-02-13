@@ -139,6 +139,7 @@ export default function ({
                     icon: ApplicationIconInput,
                     module: String,
                     endpoint: String,
+                    system: Boolean,
                     settings: JSONObject
                 }
 
