@@ -155,7 +155,7 @@ exports[`AttributeTreeRepo getValues Should return linked tree element filtered 
                     )
                     FILTER edge.attribute == @value3
                  FILTER edge.version == @value4 
-                SORT edge.created_at DESC LIMIT 1
+                SORT edge.created_at DESC, edge._key DESC LIMIT 1
                 RETURN {id: vertex._key, record, edge}
             "
 `;
