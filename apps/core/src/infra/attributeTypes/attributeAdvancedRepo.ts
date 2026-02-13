@@ -219,7 +219,9 @@ export default function ({
             }
 
             const sortAndLimit = literal(
-                !attribute.multiple_values && !forceGetAllValues ? 'SORT edge.created_at DESC LIMIT 1' : '',
+                !attribute.multiple_values && !forceGetAllValues
+                    ? 'SORT edge.created_at DESC, edge._key DESC LIMIT 1'
+                    : '',
             );
 
             queryParts.push(aql`
@@ -259,7 +261,7 @@ export default function ({
                             FOR edge IN ${edgeCollec}
                                 FILTER edge._from == CONCAT(${library}, '/', recordId)
                                 AND edge.attribute == ${attribute.id}
-                                SORT edge.created_at DESC
+                                SORT edge.created_at DESC, edge._key DESC
                                 ${filterVersion}
                                 LET value = DOCUMENT(edge._to)
                                 RETURN { value, edge }
@@ -384,7 +386,7 @@ export default function ({
                        FILTER LENGTH(valuesByRecord) > 1
                        LET sortedEdges = (
                            FOR e IN valuesByRecord[*].edge
-                               SORT e.created_at DESC
+                               SORT e.created_at DESC, e._key DESC
                            RETURN e
                        )
                     RETURN { recordId, edges: sortedEdges }
