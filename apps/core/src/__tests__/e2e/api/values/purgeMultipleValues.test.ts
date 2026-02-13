@@ -92,23 +92,17 @@ describe('Purge multiple values', () => {
         recordTarget2 = await gqlCreateRecord(testLibId);
         testRecordId = await gqlCreateRecord(testLibId);
 
-        // wait to be sure that created_at is different between the two values
-        const waitSecondToEnsureDiffCreateAt = () => new Promise(resolve => setTimeout(resolve, 1000));
-
         idValue1 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value1'});
-        await waitSecondToEnsureDiffCreateAt();
         idValue2 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value2'});
 
         idRecordValue1 = await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
             payload: recordTarget1,
         });
-        await waitSecondToEnsureDiffCreateAt();
         idRecordValue2 = await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
             payload: recordTarget2,
         });
 
         idNodeValue1 = await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId1});
-        await waitSecondToEnsureDiffCreateAt();
         idNodeValue2 = await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId2});
 
         // Set multiple values property as false for all attributes

@@ -226,7 +226,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return only first value if n
                     @@value1
                     FILTER edge.attribute == @value2
                  FILTER edge.version == null 
-                SORT edge.created_at DESC LIMIT 1
+                SORT edge.created_at DESC, edge._key DESC LIMIT 1
                 RETURN {linkedRecord, edge}
             "
 `;
