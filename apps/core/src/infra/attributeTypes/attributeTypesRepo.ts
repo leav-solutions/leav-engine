@@ -108,7 +108,7 @@ export interface IAttributeTypeRepo<
         attribute: IAttributeWithRevLink;
         value: Value;
         ctx: IQueryInfos;
-    }): Promise<Value>;
+    }): Promise<Value | null>;
 
     /**
      * Check if a value is unique

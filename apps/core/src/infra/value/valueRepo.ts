@@ -66,7 +66,7 @@ export interface IValueRepo {
         attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
-    }): Promise<IValue>;
+    }): Promise<IValue | null>;
 
     /**
      * Check if a value is unique expeted for the given record
@@ -246,7 +246,7 @@ export default function ({
                 ctx,
             });
         },
-        deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue | null> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.deleteValue({
                 library,

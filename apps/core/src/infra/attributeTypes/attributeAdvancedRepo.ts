@@ -165,7 +165,7 @@ export default function ({
                 version: savedEdge.version ?? null,
             };
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue | null> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 

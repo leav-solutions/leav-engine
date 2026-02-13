@@ -80,7 +80,7 @@ export default function ({
         async updateValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             return _saveValue(library, recordId, attribute, value, ctx);
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue | null> {
             return _saveValue(library, recordId, attribute, {...value, payload: null}, ctx);
         },
         async isValueUsed({library, excludedRecordId, attribute, value, ctx}): Promise<boolean> {

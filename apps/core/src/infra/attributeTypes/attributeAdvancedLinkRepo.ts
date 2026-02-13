@@ -216,7 +216,7 @@ export default function ({
                 !!attribute.reverse_link,
             );
         },
-        async deleteValue({attribute, value, ctx}): Promise<ILinkValue> {
+        async deleteValue({attribute, value, ctx}): Promise<ILinkValue | null> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 await attributeSimpleLinkRepo.deleteValue({
                     library: attribute.linked_library,
