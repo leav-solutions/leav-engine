@@ -15995,8 +15995,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "e2e-playwright@workspace:test-apps/e2e-playwright"
   dependencies:
+    "@graphql-codegen/add": "npm:5.0.3"
+    "@graphql-codegen/cli": "npm:6.1.1"
+    "@graphql-codegen/client-preset": "npm:4.1.0"
+    "@graphql-codegen/typescript": "npm:5.0.7"
+    "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
+    "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@playwright/test": "npm:1.57.0"
-    axios: "npm:1.13.5"
+    graphql: "npm:16.12.0"
+    graphql-request: "npm:7.4.0"
+    graphql-tag: "npm:2.12.6"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft

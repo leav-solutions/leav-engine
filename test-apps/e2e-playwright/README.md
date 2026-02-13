@@ -31,6 +31,17 @@ yarn start-ui
 yarn start-debug
 ```
 
+# Add graphql query
+
+-   Add .graphql file anywhere in source (but some are already in test-apps/e2e-playwright/src/utils/graphql)
+-   Start your local stack, then
+
+```
+yarn run graphql-generate
+```
+
+-   And use them like `this.sdk.SaveApplication(...)`
+
 ## Gitlab-ci
 
 For now, run job manually in MR, based on develop docker image. Later run them daily and maybe in MR with branch/commit docker image.

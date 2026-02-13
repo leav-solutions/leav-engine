@@ -1,0 +1,11 @@
+mutation SaveLibrary($library: LibraryInput!) {
+    saveLibrary(library: $library) {
+        id
+    }
+}
+
+mutation DeleteLibrary($libraryId: ID!) {
+    deleteLibrary(id: $libraryId) {
+        id
+    }
+}

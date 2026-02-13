@@ -1,0 +1,8 @@
+mutation SaveApplication($application: ApplicationInput!) {
+    saveApplication(application: $application) {
+        endpoint
+        module
+        type
+        id
+    }
+}

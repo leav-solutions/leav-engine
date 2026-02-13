@@ -5,6 +5,7 @@
         "start": "playwright test",
         "start-ui": "playwright test --ui",
         "start-debug": "playwright test --debug",
+        "graphql-generate": "graphql-codegen --config ./codegen.ts",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p .",
         "local-stack-up": "docker compose -f docker-compose.e2e-playwright.yml up -d",
@@ -14,9 +15,17 @@
     },
     "dependencies": {
         "@playwright/test": "1.57.0",
-        "axios": "1.13.5"
+        "graphql": "16.12.0",
+        "graphql-request": "7.4.0",
+        "graphql-tag": "2.12.6"
     },
     "devDependencies": {
+        "@graphql-codegen/add": "5.0.3",
+        "@graphql-codegen/cli": "6.1.1",
+        "@graphql-codegen/client-preset": "4.1.0",
+        "@graphql-codegen/typescript": "5.0.7",
+        "@graphql-codegen/typescript-graphql-request": "6.4.0",
+        "@graphql-codegen/typescript-operations": "5.0.7",
         "typescript": "5.9.3"
     }
 }
