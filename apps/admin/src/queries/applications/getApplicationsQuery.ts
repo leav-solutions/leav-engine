@@ -19,6 +19,7 @@ export const getApplicationsQuery = gql`
                     ...RecordIdentity
                 }
                 url
+                system
             }
         }
     }

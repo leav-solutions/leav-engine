@@ -126,15 +126,20 @@ const ApplicationsList = ({
                         const onClick = () => onRowClick(app);
                         const appLabel = localizedTranslation(app.label, availableLanguages);
                         return (
-                            <Table.Row key={app.id} onClick={onClick}>
+                            <Table.Row key={app.id} onClick={onClick} style={{height: '58px'}}>
                                 <Table.Cell>{appLabel}</Table.Cell>
                                 <Table.Cell>{app.id}</Table.Cell>
                                 <Table.Cell>{app.endpoint}</Table.Cell>
                                 <Table.Cell>{t('applications.types.' + app.type)}</Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
-                                    {actionsList.map(child =>
-                                        React.cloneElement(child as React.ReactElement<any>, {application: app}),
-                                    )}
+                                    {actionsList.map(child => {
+                                        const childElement = child as React.ReactElement<any>;
+                                        const canCloneElement = !(childElement.key === 'delete_app' && app.system);
+
+                                        return canCloneElement
+                                            ? React.cloneElement(childElement, {application: app})
+                                            : undefined;
+                                    })}
                                 </Table.Cell>
                             </Table.Row>
                         );

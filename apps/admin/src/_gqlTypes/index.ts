@@ -1146,7 +1146,7 @@ export type GetApplicationsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationsQuery = { applications?: { list: Array<{ id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, color?: string | null, url?: string | null, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> } | null };
+export type GetApplicationsQuery = { applications?: { list: Array<{ id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, color?: string | null, url?: string | null, system: boolean, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> } | null };
 
 export type SaveApplicationMutationVariables = Exact<{
   application: ApplicationInput;
@@ -2419,6 +2419,7 @@ export const GetApplicationsDocument = gql`
         ...RecordIdentity
       }
       url
+      system
     }
   }
 }
