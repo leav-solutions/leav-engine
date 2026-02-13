@@ -71,7 +71,7 @@ const editionPanelSchema = z.object({
 export const creationPanelSchema = z.object({
     type: z.literal('creationForm'),
     formId: z.string(),
-    attributeSource: z.string(),
+    attributeSource: z.string().optional(),
     isStandalone: z.literal(true),
 });
 
