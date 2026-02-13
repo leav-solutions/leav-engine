@@ -19,7 +19,7 @@
         "@ant-design/icons": "5.6.1",
         "@apollo/client": "3.14.0",
         "@leav/ui": "workspace:libs/ui",
-        "aristid-ds": "15.0.0-06322cf",
+        "aristid-ds": "15.0.0-6a7cc18",
         "graphql": "15.0.0",
         "i18next": "22.5.1",
         "i18next-browser-languagedetector": "7.0.2",
