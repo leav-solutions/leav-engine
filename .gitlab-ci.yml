@@ -705,6 +705,7 @@ e2e-playwright:
   variables:
     FF_NETWORK_PER_BUILD: 1 # important for core to connect to services https://docs.gitlab.com/ci/services/#connecting-services
     BASE_URL: "http://leav_core:4001"
+    TZ: "Europe/Paris" # Necessary for date component timestamp tests
   services:
     - *e2e_service_arangodb
     - *e2e_service_rabbitmq
@@ -714,6 +715,8 @@ e2e-playwright:
     - yarn workspaces focus e2e-playwright
   script:
     - yarn workspace e2e-playwright run start
+  after_script:
+    - echo "Report will be available at https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/test-apps/e2e-playwright/playwright-report/index.html"
   artifacts:
     paths:
       - test-apps/e2e-playwright/playwright-report
