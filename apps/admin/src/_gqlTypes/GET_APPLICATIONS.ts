@@ -38,6 +38,7 @@ export interface GET_APPLICATIONS_applications_list {
     color: string | null;
     icon: GET_APPLICATIONS_applications_list_icon | null;
     url: string | null;
+    system: boolean;
 }
 
 export interface GET_APPLICATIONS_applications {

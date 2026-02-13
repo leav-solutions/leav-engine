@@ -59,6 +59,7 @@ describe('Applications', () => {
             expect(resAsset.data).toContain('This file is not a test file, it is a fixture for applications tests');
         });
     });
+
     test('Create application', async () => {
         const res = await makeGraphQlCall(`mutation {
                 saveApplication(application: {
@@ -118,14 +119,22 @@ describe('Applications', () => {
         expect(res.data.data.applications.list.length).toBe(1);
     });
 
-    test('Delete an application', async () => {
-        const res = await makeGraphQlCall('mutation {deleteApplication(id: "test_app") { id }}');
+    describe('Delete application', () => {
+        test('Delete an non-system application', async () => {
+            const res = await makeGraphQlCall('mutation {deleteApplication(id: "test_app") { id }}');
 
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
 
-        expect(res.data.data.deleteApplication).toBeDefined();
-        expect(res.data.data.deleteApplication.id).toBe('test_app');
+            expect(res.data.data.deleteApplication).toBeDefined();
+            expect(res.data.data.deleteApplication.id).toBe('test_app');
+        });
+
+        test('Cannot delete a system application', async () => {
+            await expect(makeGraphQlCall('mutation {deleteApplication(id: "admin") { id }}')).rejects.toThrow(
+                /Cannot delete system application/,
+            );
+        });
     });
 
     describe('appStudioSettings workspaces permissions filtering', () => {

@@ -114,4 +114,28 @@ describe('Applications', () => {
 
         expect(deleteCalled).toBe(true);
     });
+
+    test('Cannot delete a system application', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: GetApplicationsDocument,
+                    variables: {filters: {}},
+                },
+                result: {
+                    data: {
+                        applications: {
+                            list: [{...mockApplication, id: 'appA', system: true}],
+                        },
+                    },
+                },
+            },
+        ];
+
+        render(<Applications />, {apolloMocks: mocks});
+
+        await screen.findByText('appA');
+
+        expect(screen.queryByRole('button', {name: /delete/})).not.toBeInTheDocument();
+    });
 });

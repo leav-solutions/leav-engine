@@ -233,6 +233,10 @@ export default function ({
                 throw new ValidationError({id: {msg: Errors.UNKNOWN_APPLICATION, vars: {application: id}}});
             }
 
+            if (apps.list[0].system) {
+                throw new ValidationError({id: Errors.SYSTEM_APPLICATION_DELETION});
+            }
+
             const deletedApp = await applicationRepo.deleteApplication({id, ctx});
 
             await _sendAppEvent(

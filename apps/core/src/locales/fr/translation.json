@@ -72,6 +72,7 @@
         "REQUIRED_ATTRIBUTE_TYPE": "Type d'attribut non spécifié",
         "SYSTEM_ATTRIBUTE_DELETION": "Impossible de supprimer un attribut système",
         "SYSTEM_LIBRARY_DELETION": "Impossible de supprimer une bibliothèque système",
+        "SYSTEM_APPLICATION_DELETION": "Impossible de supprimer une application système",
         "SYSTEM_TREE_DELETION": "Impossible de supprimer un arbre système",
         "TOO_MUCH_LIBRARIES_ON_FILES_TREE": "Impossible de lier plus d'une bibliothèque à un arbre de fichiers",
         "UNBINDED_ATTRIBUTES": "Ces attributs doivent être liés à la bibliothèque: {{attributes}}",

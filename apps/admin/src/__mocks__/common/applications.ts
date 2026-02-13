@@ -22,6 +22,7 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
     url: 'http://example.com/app/my-app',
     color: 'orange',
     icon: null,
+    system: false,
 };
 
 export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applications_list> = {
