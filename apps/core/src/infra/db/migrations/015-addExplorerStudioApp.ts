@@ -6,7 +6,7 @@ import {type IDbService} from '../dbService';
 import {type IMigration} from '../../../_types/migration';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {ApplicationTypes, type IApplication} from '../../../_types/application';
-import {APPLICATIONS_COLLECTION_NAME} from 'infra/application/applicationRepo';
+import {APPLICATIONS_COLLECTION_NAME} from '../../application/applicationRepo';
 
 type MigrationApplicationToCreate = IApplication & {
     _key: string;
