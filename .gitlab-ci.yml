@@ -68,9 +68,12 @@ stages:
 ##########
 ## Other checks
 ## For merge requests and merge in develop/main branches
+.disable_check_rule: &disable_check_rule
+  if: $DISABLE_CHECK_JOBS == "true"
+  when: never
+
 .check_ci_rules: &check_ci_rules
-  - if: $DISABLE_CHECK_JOBS == "true"
-    when: never
+  - *disable_check_rule
   - *no_tag_rule
   - *no_duplicate_rule
   - *mr_rule
@@ -112,6 +115,21 @@ translations-check:
   script:
     - node ./scripts/compareTranslations.js
   rules: *check_ci_rules
+
+# https://docs.renovatebot.com/config-validation/
+validate-renovate-config:
+  stage: test
+  script:
+    - npx --yes --package renovate -- renovate-config-validator
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_check_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *mr_rule
+      changes:
+        - renovate.json
 
 ## Other checks
 ##########
