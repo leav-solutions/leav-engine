@@ -18,6 +18,7 @@ import {
     TEST_TEXT_RECORD_INITIAL_VALUE,
     TEST_TEXT_RECORD_LABEL,
 } from '../constants';
+import './polyfillCryptoRandomUUID';
 
 test.describe('Standard type field scenario', () => {
     test.beforeEach(async ({page}) => {
