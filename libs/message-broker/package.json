@@ -1,6 +1,6 @@
 {
     "name": "@leav/message-broker",
-    "version": "1.9.0-1",
+    "version": "1.9.0-2",
     "description": "Shared message broker to use across projects",
     "scripts": {
         "prepublishOnly": "npm run build",
