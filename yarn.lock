@@ -9163,10 +9163,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/eslint-patch@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@rushstack/eslint-patch@npm:1.1.3"
-  checksum: 10/e2bb20e20a4a094cbd5c4c840156631e454623cd20fa2c944721253b8a27243ce8b5a01737cf8bde93f8eeb6d764a511d71ae0a14682e1c8c60a80af1c36aa40
+"@rushstack/eslint-patch@npm:1.15.0":
+  version: 1.15.0
+  resolution: "@rushstack/eslint-patch@npm:1.15.0"
+  checksum: 10/f15a7aeffb57929f17a3ed02106a11ff7c073bdb69a3878736f177dcd188e1ef311622d09aa6cb0a000a2ebd32cc64e56ae11f6ff930a963eaeaf0cc7bebff26
   languageName: node
   linkType: hard
 
@@ -21940,7 +21940,7 @@ __metadata:
     "@babel/preset-env": "npm:7.29.0"
     "@commitlint/cli": "npm:19.8.1"
     "@commitlint/config-conventional": "npm:19.8.1"
-    "@rushstack/eslint-patch": "npm:1.1.3"
+    "@rushstack/eslint-patch": "npm:1.15.0"
     "@types/babel__preset-env": "npm:^7"
     "@types/jest": "npm:29.5.14"
     "@types/testing-library__jest-dom": "npm:5.14.9"
