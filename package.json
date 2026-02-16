@@ -76,10 +76,12 @@
         "ts-jest": "29.4.6"
     },
     "lint-staged": {
-        "*.{ts,js,tsx,jsx}": [
+        "*": [
             "prettier --write",
-            "eslint --fix",
             "license-check-and-add add -f license-check-config.json"
+        ],
+        "*.{ts,js,tsx,jsx}": [
+            "eslint --fix"
         ]
     },
     "engines": {
