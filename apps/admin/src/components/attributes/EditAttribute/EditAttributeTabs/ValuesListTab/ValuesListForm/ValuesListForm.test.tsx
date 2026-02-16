@@ -71,6 +71,11 @@ describe('ValuesListForm', () => {
             comp.find('FormCheckbox[name="enable"] input').simulate('change');
         });
 
+        act(() => {
+            // @ts-ignore
+            comp.find('Confirm[name="enableConfirm"]').props().onConfirm();
+        });
+
         expect(onSubmit).toHaveBeenCalledTimes(3);
     });
 
