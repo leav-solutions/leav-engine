@@ -170,7 +170,7 @@ export default function ({
                 savedValue.newEdge,
             );
         },
-        async deleteValue({attribute, value, library, recordId, ctx}): Promise<ITreeValue> {
+        async deleteValue({attribute, value, library, recordId, ctx}): Promise<ITreeValue | null> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const resEdge = await dbService.execute<Array<{edge: IValueEdge; linkedRecord: IDbDocument & IRecord}>>({

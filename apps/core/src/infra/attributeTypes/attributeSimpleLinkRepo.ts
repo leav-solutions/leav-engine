@@ -81,7 +81,7 @@ export default function ({
         async updateValue(args): Promise<ILinkValue> {
             return _saveValue(args);
         },
-        async deleteValue(args): Promise<ILinkValue> {
+        async deleteValue(args): Promise<ILinkValue | null> {
             const deletedValue = await attributeSimpleRepo.deleteValue({
                 ...args,
                 attribute: {

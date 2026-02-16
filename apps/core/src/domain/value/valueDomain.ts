@@ -654,6 +654,10 @@ const valueDomain = function ({
                     ctx,
                 });
 
+                if (!deletedValue) {
+                    return existingValue; // In case deleteValue return null (ex: for tree attribute), may happened with concurrent deletion of same value (to atomic operation of _execDeleteValue)
+                }
+
                 try {
                     !skipActions &&
                         (await postDeleteValue({
