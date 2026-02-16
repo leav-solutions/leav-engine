@@ -448,39 +448,33 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                             return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
                         },
-                        values_list: async (attributeData: IAttribute, a2, ctx) => {
-                            if (!attributeData?.values_list?.enable) {
-                                return attributeData.values_list;
-                            }
-
-                            // Here, values is a list of record ID. Return record object instead
+                        values_list: async (attributeData: IAttribute, a2, ctx) => ({
+                            ...attributeData.values_list,
                             // TODO: this could be optimized if find() would allow searching for multiple IDs at once
-                            const linkedRecords = await Promise.all(
-                                ((attributeData.values_list.values ?? []) as string[]).map(
-                                    async (recId): Promise<IRecord | null> => {
-                                        const record = await recordDomain.find({
-                                            params: {
-                                                library: attributeData.linked_library,
-                                                filters: [
-                                                    {
-                                                        field: 'id',
-                                                        condition: AttributeCondition.EQUAL,
-                                                        value: recId,
-                                                    },
-                                                ],
-                                            },
-                                            ctx,
-                                        });
+                            values: (
+                                await Promise.all(
+                                    ((attributeData.values_list.values ?? []) as string[]).map(
+                                        async (recId): Promise<IRecord | null> => {
+                                            const record = await recordDomain.find({
+                                                params: {
+                                                    library: attributeData.linked_library,
+                                                    filters: [
+                                                        {
+                                                            field: 'id',
+                                                            condition: AttributeCondition.EQUAL,
+                                                            value: recId,
+                                                        },
+                                                    ],
+                                                },
+                                                ctx,
+                                            });
 
-                                        return record.list.length ? record.list[0] : null;
-                                    },
-                                ),
-                            );
-                            return {
-                                ...attributeData.values_list,
-                                values: linkedRecords.filter(r => r !== null), // Remove invalid values (unknown records)
-                            };
-                        },
+                                            return record.list.length ? record.list[0] : null;
+                                        },
+                                    ),
+                                )
+                            ).filter(r => r !== null), // Remove invalid values (unknown records)
+                        }),
                     },
                     TreeAttribute: {
                         ...commonResolvers,
@@ -494,16 +488,12 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         values_list: async (attributeData: IAttribute, _, ctx) => {
                             ctx.treeId = attributeData.linked_tree;
 
-                            if (!attributeData?.values_list?.enable) {
-                                return attributeData.values_list;
-                            }
-
                             // Here, values is a list of tree nodes
                             return {
                                 ...attributeData.values_list,
                                 values: (
                                     await Promise.all(
-                                        (attributeData.values_list.values as string[]).map(async nodeId => {
+                                        ((attributeData.values_list.values as string[]) ?? []).map(async nodeId => {
                                             const isInTree = await treeDomain.isNodePresent({
                                                 treeId: attributeData.linked_tree,
                                                 nodeId,

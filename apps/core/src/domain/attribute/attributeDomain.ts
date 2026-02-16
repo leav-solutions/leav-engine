@@ -225,9 +225,7 @@ export default function ({
             // TODO: Validate attribute data (linked library, linked tree...)
 
             const attrProps = await getCoreEntityById<IAttribute>('attribute', attrData.id, ctx);
-
             const isExistingAttr = !!attrProps;
-
             const defaultParams = {
                 _key: '',
                 system: false,
@@ -235,8 +233,13 @@ export default function ({
                 multiple_values: false,
                 values_list: {
                     enable: false,
+                    values: [],
+                    allowFreeEntry: false,
+                    allowListUpdate: false,
                 },
             };
+
+            /*** Prepare data ***/
 
             const attrToSave: IAttributeForRepo = isExistingAttr
                 ? {
@@ -245,6 +248,8 @@ export default function ({
                       ...attrData,
                   }
                 : {...defaultParams, ...attrData};
+
+            /*** Permissions checking ***/
 
             // Check permissions
             const action = isExistingAttr
@@ -256,10 +261,12 @@ export default function ({
                 throw new PermissionError(action);
             }
 
-            // Add default actions list on new attribute
+            /*** Actions list ***/
+
             attrToSave.actions_list = getActionsListToSave(attrToSave, attrProps, !isExistingAttr, utils);
 
-            // Check settings validity
+            /*** Checking validity ***/
+
             const validationErrors = await validateAttributeData(
                 attrToSave,
                 {
@@ -277,7 +284,11 @@ export default function ({
                 throw new ValidationError<IAttribute>(validationErrors);
             }
 
-            if (attrToSave.format === AttributeFormats.DATE_RANGE && attrToSave.values_list?.values?.length) {
+            /*** Values list ***/
+
+            if (!attrToSave.values_list?.enable) {
+                attrToSave.values_list = defaultParams.values_list;
+            } else if (attrToSave.format === AttributeFormats.DATE_RANGE && attrToSave.values_list?.values?.length) {
                 attrToSave.values_list.values = (attrToSave.values_list.values as Array<string | IDateRangeValue>).map(
                     (v): IDateRangeValue<number> => {
                         const valuesObj: IDateRangeValue = typeof v !== 'object' ? JSON.parse(v) : v;
@@ -288,6 +299,8 @@ export default function ({
                     },
                 );
             }
+
+            /*** Permissions cache ***/
 
             // If permissions conf changed we clean cache related to this attribute.
             if (
@@ -307,9 +320,13 @@ export default function ({
                 await cacheService.getCache(ECacheType.RAM).deleteData([keyAttr, keyRecAttr]);
             }
 
+            /*** Database operation ***/
+
             const savedAttribute = isExistingAttr
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
+
+            /*** Event sending ***/
 
             await eventsManagerDomain.sendDatabaseEvent<EventAction.ATTRIBUTE_SAVE>(
                 {
@@ -322,6 +339,8 @@ export default function ({
                 },
                 ctx,
             );
+
+            /*** Cache update ***/
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);

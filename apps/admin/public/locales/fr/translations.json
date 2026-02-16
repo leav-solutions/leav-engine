@@ -182,6 +182,7 @@
             "rich_text": "Texte Enrichi"
         },
         "values_list_enable": "Activer",
+        "confirm_values_list_enable": "La liste de valeurs va être vidée. Êtes-vous sûr ?",
         "allow_free_entry": "Autoriser la saisie libre",
         "allow_list_update": "Autoriser la mise à jour de la liste",
         "values": "Valeurs",

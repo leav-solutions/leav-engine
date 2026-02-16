@@ -182,6 +182,7 @@
             "rich_text": "Rich Text"
         },
         "values_list_enable": "Enable",
+        "confirm_values_list_enable": "The values list will be emptied. Are you sure?",
         "allow_free_entry": "Allow free entry",
         "allow_list_update": "Allow list update",
         "values": "Values",

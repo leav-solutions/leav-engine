@@ -184,4 +184,78 @@ describe('Attributes', () => {
         expect(res.data.data.saveAttribute.metadata_fields[0].type).toBe('simple');
         expect(res.data.errors).toBeUndefined();
     });
+
+    test('Should reset values list and configuration if disabled', async () => {
+        const valuesListAttrId = 'simple_values_list_attribute';
+
+        const res = await makeGraphQlCall(`mutation {
+            saveAttribute(
+                attribute: {
+                    id: "${valuesListAttrId}",
+                    type: advanced,
+                    format: text,
+                    label: {fr: "Test attr", en: "Test attr en"},
+                    values_list: {
+                        enable: true,
+                        allowFreeEntry: true,
+                        allowListUpdate: true,
+                        values: [
+                            "value1",
+                            "value2"
+                        ]
+                    },
+                }
+            ) {
+                ... on StandardAttribute {
+                  values_list {
+                    ... on StandardStringValuesListConf {
+                        enable
+                        allowFreeEntry
+                        allowListUpdate
+                        values
+                    }
+                  }
+                }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.saveAttribute.values_list).toBeDefined();
+        expect(res.data.data.saveAttribute.values_list.enable).toBe(true);
+        expect(res.data.data.saveAttribute.values_list.allowFreeEntry).toBe(true);
+        expect(res.data.data.saveAttribute.values_list.allowListUpdate).toBe(true);
+        expect(res.data.data.saveAttribute.values_list.values).toEqual(['value1', 'value2']);
+
+        const res2 = await makeGraphQlCall(`mutation {
+            saveAttribute(
+                attribute: {
+                    id: "${valuesListAttrId}",
+                    type: advanced,
+                    format: text,
+                    label: {fr: "Test attr", en: "Test attr en"},
+                    values_list: {
+                        enable: false,
+                    },
+                }
+            ) {
+                ... on StandardAttribute {
+                  values_list {
+                    ... on StandardStringValuesListConf {
+                        enable
+                        allowFreeEntry
+                        allowListUpdate
+                        values
+                    }
+                  }
+                }
+            }
+        }`);
+
+        expect(res2.status).toBe(200);
+        expect(res2.data.data.saveAttribute.values_list).toBeDefined();
+        expect(res2.data.data.saveAttribute.values_list.enable).toBe(false);
+        expect(res2.data.data.saveAttribute.values_list.allowFreeEntry).toBe(false);
+        expect(res2.data.data.saveAttribute.values_list.allowListUpdate).toBe(false);
+        expect(res2.data.data.saveAttribute.values_list.values).toEqual([]);
+    });
 });

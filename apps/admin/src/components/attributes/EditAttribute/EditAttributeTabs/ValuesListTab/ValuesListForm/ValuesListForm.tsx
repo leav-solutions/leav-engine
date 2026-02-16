@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useCallback, useEffect, useReducer} from 'react';
+import React, {type SyntheticEvent, useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Divider, Form} from 'semantic-ui-react';
+import {Confirm, Divider, Form} from 'semantic-ui-react';
 import {
     type GET_ATTRIBUTES_VALUES_LIST_attributes_list,
     type GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute,
@@ -38,12 +38,29 @@ const reducer = (state: IValuesFormState, action) => {
     switch (action.type) {
         case 'toggle_enable':
             newConf.enable = !newConf.enable;
+
+            if (!newConf.enable) {
+                newConf.allowFreeEntry = false;
+                newConf.allowListUpdate = false;
+                newConf.values = [];
+            }
+
             break;
         case 'toggle_allow_free_entry':
             newConf.allowFreeEntry = !newConf.allowFreeEntry;
+
+            if (!newConf.allowFreeEntry) {
+                newConf.allowListUpdate = false;
+            }
+
             break;
         case 'toggle_allow_list_update':
             newConf.allowListUpdate = !newConf.allowListUpdate;
+
+            if (newConf.allowListUpdate) {
+                newConf.allowFreeEntry = true;
+            }
+
             break;
         case 'change_values':
             if (JSON.stringify(newConf.values) === JSON.stringify(action.values)) {
@@ -88,20 +105,11 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
     }
 
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [showEnableConfirm, setShowEnableConfirm] = useState(false);
 
     const _toggleEnable = () => dispatch({type: 'toggle_enable'});
-    const _toggleAllowFreeEntry = () => {
-        dispatch({type: 'toggle_allow_free_entry'});
-        if (state.conf.allowListUpdate) {
-            dispatch({type: 'toggle_allow_list_update'});
-        }
-    };
-    const _toggleAllowListUpdate = () => {
-        dispatch({type: 'toggle_allow_list_update'});
-        if (!state.conf.allowListUpdate && !state.conf.allowFreeEntry) {
-            dispatch({type: 'toggle_allow_free_entry'});
-        }
-    };
+    const _toggleAllowFreeEntry = () => dispatch({type: 'toggle_allow_free_entry'});
+    const _toggleAllowListUpdate = () => dispatch({type: 'toggle_allow_list_update'});
 
     const _extractValuesToSave = useCallback(
         (conf: IValuesListConf): string[] => {
@@ -189,6 +197,23 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
         }
     };
 
+    const handleEnableChange = (event: SyntheticEvent, data: any) => {
+        if (state.conf.enable && !data.checked && state.conf.values?.length) {
+            setShowEnableConfirm(true);
+        } else {
+            _toggleEnable();
+        }
+    };
+
+    const handleEnableConfirm = () => {
+        setShowEnableConfirm(false);
+        _toggleEnable();
+    };
+
+    const handleEnableCancel = () => {
+        setShowEnableConfirm(false);
+    };
+
     return (
         <Form>
             <Form.Group inline={false}>
@@ -197,7 +222,17 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                     toggle
                     label={t('attributes.values_list_enable')}
                     checked={state.conf.enable}
-                    onChange={_toggleEnable}
+                    onChange={handleEnableChange}
+                />
+                <Confirm
+                    name="enableConfirm"
+                    open={showEnableConfirm}
+                    content={t('attributes.confirm_values_list_enable')}
+                    onCancel={handleEnableCancel}
+                    onConfirm={handleEnableConfirm}
+                    cancelButton={t('admin.cancel')}
+                    closeOnDocumentClick={false}
+                    closeOnDimmerClick={false}
                 />
                 {state.conf.enable && (
                     <>
