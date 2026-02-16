@@ -7,7 +7,7 @@ import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition, type IRecordFilterOption} from '../../_types/record';
 import {
     type IBaseValueByAttributeType,
-    type IValuesOccurrences,
+    type IDistinctValue,
     type ISaveValueByAttributeType,
     type IValueByAttributeType,
     type IValuesOptions,
@@ -197,7 +197,7 @@ export interface IAttributeTypeRepo<
         ctx: IQueryInfos;
     }): Promise<Value[][]>;
 
-    countValuesOccurrences?({
+    listDistinctValues?({
         library,
         attribute,
         recordIds,
@@ -209,7 +209,7 @@ export interface IAttributeTypeRepo<
         recordIds: string[];
         options?: {version?: IValueVersion};
         ctx: IQueryInfos;
-    }): Promise<IValuesOccurrences<IBaseValueByAttributeType[AttributeType]>>;
+    }): Promise<IDistinctValue<IBaseValueByAttributeType[AttributeType]>>;
 
     /**
      * Count occurrences of reverse link values for given records
@@ -223,7 +223,7 @@ export interface IAttributeTypeRepo<
         advancedLinkAttr: IAttributeWithRevLink;
         recordIds: string[];
         ctx: IQueryInfos;
-    }): Promise<IValuesOccurrences<IBaseValueByAttributeType[AttributeType]>>;
+    }): Promise<IDistinctValue<IBaseValueByAttributeType[AttributeType]>>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value

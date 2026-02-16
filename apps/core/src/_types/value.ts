@@ -184,7 +184,7 @@ export interface IBaseValueByAttributeType {
     [AttributeTypes.TREE]: ITreeBaseValue;
 }
 
-export type IValuesOccurrences<SimpleValueType extends IBaseValue = IBaseValue> = Array<{
+export type IDistinctValue<SimpleValueType extends IBaseValue = IBaseValue> = Array<{
     value: SimpleValueType['payload'] | null;
     count: number;
 }>;

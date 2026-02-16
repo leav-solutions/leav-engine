@@ -11,7 +11,7 @@ import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_typ
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
-import {type IValuesOccurrences, type ITreeValue, type IValueEdge, type ITreeBaseValue} from '../../_types/value';
+import {type IDistinctValue, type ITreeValue, type IValueEdge, type ITreeBaseValue} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
@@ -360,13 +360,13 @@ export default function ({
                 );
             });
         },
-        async countValuesOccurrences({
+        async listDistinctValues({
             library,
             attribute,
             recordIds,
             options,
             ctx,
-        }): Promise<IValuesOccurrences<ITreeBaseValue>> {
+        }): Promise<IDistinctValue<ITreeBaseValue>> {
             if (!attribute.linked_tree) {
                 return [];
             }

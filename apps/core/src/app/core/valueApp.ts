@@ -252,20 +252,6 @@ export default function ({
                         after: ID
                     }
 
-                    interface GenericValueOccurrences {
-                        count: Int!
-                    }
-
-                    type TreeValueOccurrences implements GenericValueOccurrences {
-                        value: TreeNode!
-                        count: Int!
-                    }
-
-                    type ValuesOccurrences {
-                        occurrences: [GenericValueOccurrences!]!
-                        noValueCount: Int!
-                    }
-
                     interface GenericDistinctValues {
                         count: Int!
                     }
@@ -281,16 +267,6 @@ export default function ({
                     }
 
                     extend type Query {
-                        """ deprecated Use listDistinctValues instead """
-                        countValuesOccurrences(
-                            library: ID!,
-                            """ Attribute should be tree and mono valued """
-                            attribute: ID!,
-                            """ Filters to apply on records, same filters as for records query """
-                            recordFilters: [RecordFilterInput],
-                            version: [ValueVersionInput],
-                        ): ValuesOccurrences
-
                         listDistinctValues(
                             library: ID!,
                             """ Attribute should be tree or link """
@@ -328,39 +304,6 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        async countValuesOccurrences(
-                            _,
-                            {library, attribute, recordFilters, version},
-                            ctx: IQueryInfos,
-                        ): Promise<{
-                            occurrences: Array<{value: IBaseValue; attribute: string; count: number}>;
-                            noValueCount: number;
-                        }> {
-                            const formattedVersion =
-                                Array.isArray(version) && version.length
-                                    ? version.reduce((allVers, vers) => {
-                                          allVers[vers.treeId] = vers.treeNodeId;
-                                          return allVers;
-                                      }, {})
-                                    : null;
-
-                            const occurrences = await valueDomain.countValuesOccurrences({
-                                libraryId: library,
-                                attributeId: attribute,
-                                recordFilters,
-                                options: {version: formattedVersion},
-                                ctx,
-                            });
-
-                            const noValueOccurrence = occurrences.find(occ => occ.value == null);
-
-                            return {
-                                occurrences: occurrences
-                                    .filter(occ => occ.value != null)
-                                    .map(occ => ({...occ, attribute})), // add attribute for GenericRecordValueOccurrences.__resolveType
-                                noValueCount: noValueOccurrence ? noValueOccurrence.count : 0,
-                            };
-                        },
                         async listDistinctValues(
                             _,
                             {library, attribute, recordFilters, version},
@@ -374,7 +317,7 @@ export default function ({
                                       }, {})
                                     : null;
 
-                            const distinctValues = await valueDomain.countValuesOccurrences({
+                            const distinctValues = await valueDomain.listDistinctValues({
                                 libraryId: library,
                                 attributeId: attribute,
                                 recordFilters,
@@ -462,23 +405,6 @@ export default function ({
                             ctx: IQueryInfos,
                         ): Promise<string> {
                             return purgeMultipleValuesTask.purgeMultipleValues({attributeId, ctx});
-                        },
-                    },
-                    GenericValueOccurrences: {
-                        __resolveType: async (fieldValue, ctx) => {
-                            const attribute = Array.isArray(fieldValue)
-                                ? fieldValue[0].attribute
-                                : fieldValue.attribute;
-                            const attrProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-                            switch (attrProps.type) {
-                                case AttributeTypes.TREE:
-                                    return 'TreeValueOccurrences';
-                                case AttributeTypes.SIMPLE_LINK:
-                                case AttributeTypes.ADVANCED_LINK:
-                                    return 'LinkValueOccurrences';
-                                default:
-                                    return null;
-                            }
                         },
                     },
                     GenericDistinctValues: {

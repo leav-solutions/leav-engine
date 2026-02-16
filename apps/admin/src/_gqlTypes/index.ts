@@ -343,17 +343,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -452,9 +441,6 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
-  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
-  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
-  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -736,6 +722,58 @@ export type RecordsPagination = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingCampaignInput = {
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  thematics: Array<ReportFramingThematicInput>;
+};
+
+export type ReportFramingCategoryInput = {
+  categoryId: Scalars['String']['input'];
+  children: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingContentInput = {
+  campaigns: Array<ReportFramingCampaignInput>;
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingItemInput = {
+  columnId: Scalars['String']['input'];
+  referenceValue?: InputMaybe<Scalars['Int']['input']>;
+  value?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReportFramingThematicInput = {
+  categories: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SheetInput = {

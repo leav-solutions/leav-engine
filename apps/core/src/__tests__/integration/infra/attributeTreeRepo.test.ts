@@ -329,8 +329,8 @@ describe('attributeTreeRepo', () => {
                     expect(values2).toEqual([record2Value]);
                 });
 
-                test('countValuesOccurrences should count those values node', async () => {
-                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                test('listDistinctValues should count those values node', async () => {
+                    const occurrences = await attributeTreeRepo.listDistinctValues({
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record1.id, recordForDelete.id, record2.id],
@@ -363,7 +363,7 @@ describe('attributeTreeRepo', () => {
                 });
             });
 
-            describe('countValuesOccurrences', () => {
+            describe('listDistinctValues', () => {
                 let record3: IRecord;
                 let record4: IRecord;
                 let record5: IRecord;
@@ -381,7 +381,7 @@ describe('attributeTreeRepo', () => {
                 });
 
                 test('Should return number of occurrences for each node (all)', async () => {
-                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                    const occurrences = await attributeTreeRepo.listDistinctValues({
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record1.id, record2.id, record3.id, record4.id, record5.id, record6.id],
@@ -421,7 +421,7 @@ describe('attributeTreeRepo', () => {
                 });
 
                 test('Should return number of occurrences for each node (partial)', async () => {
-                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                    const occurrences = await attributeTreeRepo.listDistinctValues({
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record1.id, record5.id],
@@ -451,7 +451,7 @@ describe('attributeTreeRepo', () => {
 
                 test('Should return null value for record without values', async () => {
                     const record7 = await createRecord({});
-                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                    const occurrences = await attributeTreeRepo.listDistinctValues({
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: [record6.id, record7.id],
@@ -467,7 +467,7 @@ describe('attributeTreeRepo', () => {
                 });
 
                 test('Should return null value for non existing records', async () => {
-                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                    const occurrences = await attributeTreeRepo.listDistinctValues({
                         library: libraryId,
                         attribute: treeMonoAttribute,
                         recordIds: ['non-existing-record'],
@@ -582,9 +582,9 @@ describe('attributeTreeRepo', () => {
                     });
                 });
 
-                describe('countValuesOccurrences', () => {
+                describe('listDistinctValues', () => {
                     test('Should return number of occurrences for each node (all, no version)', async () => {
-                        const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                        const occurrences = await attributeTreeRepo.listDistinctValues({
                             library: libraryId,
                             attribute: treeMonoAttribute,
                             recordIds: [record1.id, record2.id],
@@ -614,7 +614,7 @@ describe('attributeTreeRepo', () => {
                     });
 
                     test('Should return number of occurrences for each node (all, version 1)', async () => {
-                        const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                        const occurrences = await attributeTreeRepo.listDistinctValues({
                             library: libraryId,
                             attribute: treeMonoAttribute,
                             recordIds: [record1.id, record2.id],
@@ -765,7 +765,7 @@ describe('attributeTreeRepo', () => {
                 });
             });
 
-            describe('countValuesOccurrences', () => {
+            describe('listDistinctValues', () => {
                 let record3NoValue: IRecord;
                 let record4NoValue: IRecord;
                 let record5Value2: IRecord;
@@ -796,7 +796,7 @@ describe('attributeTreeRepo', () => {
                 });
 
                 test('Should return number of occurrences for each node (all)', async () => {
-                    const occurrences = await attributeTreeRepo.countValuesOccurrences({
+                    const occurrences = await attributeTreeRepo.listDistinctValues({
                         library: libraryId,
                         attribute: treeMultiAttribute,
                         recordIds: [record1.id, record2.id, record3NoValue.id, record4NoValue.id, record5Value2.id],

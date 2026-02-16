@@ -224,18 +224,7 @@ describe('listDistinctValues', () => {
     });
 
     it('should throw error if attribute is not of tree type', async () => {
-        const gqlQuery = `query {
-            countValuesOccurrences(
-                library: "${testLibName}",
-                attribute: "${attrSimpleName}"
-            ) {
-                occurrences {
-                    count
-                }
-            }
-        }`;
-
-        await expect(makeGraphQlCall(gqlQuery)).rejects.toThrow(
+        await expect(listDistinctValues(testLibName, attrSimpleName)).rejects.toThrow(
             /Attribute type simple is not supported for this operation/,
         );
     });

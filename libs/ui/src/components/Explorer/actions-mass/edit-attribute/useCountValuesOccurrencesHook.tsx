@@ -1,14 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    type CountValuesOccurrencesQuery,
-    type RecordFilterInput,
-    useCountValuesOccurrencesLazyQuery,
-} from '_ui/_gqlTypes';
-import {useEffect} from 'react';
+import {type RecordFilterInput, useCountValuesOccurrencesLazyQuery} from '_ui/_gqlTypes';
+import {useEffect, useMemo} from 'react';
 
-export type ValuesOccurrences = NonNullable<CountValuesOccurrencesQuery['countValuesOccurrences']> & {
+export type ValuesOccurrences = {
+    noValueCount: number;
+    occurrences: Array<{count: number; value: {id: string}}>;
     loading?: boolean;
 };
 export type ValueOccurrence = ValuesOccurrences['occurrences'][0];
@@ -38,9 +36,27 @@ export const useCountValuesOccurrencesHook = ({
         }
     }, [attributeId, libraryId, recordFilters]);
 
+    const noValueCount = useMemo(() => {
+        if (!valuesOccurrences) {
+            return 0;
+        }
+        return valuesOccurrences.listDistinctValues?.find(v => !('treeNode' in v) || v.treeNode === null)?.count || 0;
+    }, [valuesOccurrences]);
+
+    const occurrences = useMemo(() => {
+        if (!valuesOccurrences) {
+            return [];
+        }
+        return (
+            valuesOccurrences.listDistinctValues
+                ?.filter(v => 'treeNode' in v && v.treeNode !== null)
+                .map(v => ({count: v.count, value: {id: (v as {treeNode: {id: string}}).treeNode.id}})) || []
+        );
+    }, [valuesOccurrences]);
+
     return {
-        occurrences: valuesOccurrences?.countValuesOccurrences?.occurrences || [],
-        noValueCount: valuesOccurrences?.countValuesOccurrences?.noValueCount || 0,
+        occurrences,
+        noValueCount,
         loading,
     };
 };

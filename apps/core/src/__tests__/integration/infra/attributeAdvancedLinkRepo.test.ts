@@ -219,7 +219,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
             });
 
-            describe('countValuesOccurrences', () => {
+            describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithLink1: IRecord;
                 beforeAll(async () => {
@@ -243,7 +243,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
 
                 test('Should return values occurrences for an attribute', async () => {
-                    const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordIds: [record1.id, record2.id, record4WithLink1.id],
@@ -260,7 +260,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
 
                 test('Should return null values occurrences for an attribute', async () => {
-                    const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: advancedLinkMonoAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithLink1.id],
@@ -387,7 +387,7 @@ describe('attributeAdvancedLinkRepo', () => {
                     });
                 });
 
-                describe('countValuesOccurrences', () => {
+                describe('listDistinctValues', () => {
                     let record3WithoutAttr: IRecord;
                     let record4WithLink1: IRecord;
                     beforeAll(async () => {
@@ -410,7 +410,7 @@ describe('attributeAdvancedLinkRepo', () => {
                     });
 
                     test('Should return values occurrences for null version', async () => {
-                        const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                        const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                             library: libraryId,
                             attribute: advancedLinkMonoAttribute,
                             recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithLink1.id],
@@ -429,7 +429,7 @@ describe('attributeAdvancedLinkRepo', () => {
                     });
 
                     test('Should return values occurrences for null version', async () => {
-                        const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                        const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                             library: libraryId,
                             attribute: advancedLinkMonoAttribute,
                             recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithLink1.id],
@@ -570,7 +570,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
             });
 
-            describe('countValuesOccurrences', () => {
+            describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithoutAttr: IRecord;
                 let recordWithManyLink: IRecord;
@@ -601,7 +601,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
 
                 test('Should return values occurrences for an attribute', async () => {
-                    const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordIds: [record1.id, record2.id, recordWithManyLink.id],
@@ -620,7 +620,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
 
                 test('Should return null values occurrences for an attribute', async () => {
-                    const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: advancedLinkMultiAttribute,
                         recordIds: [
@@ -925,7 +925,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
             });
 
-            describe('countValuesOccurrences', () => {
+            describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithoutAttr: IRecord;
                 beforeAll(async () => {
@@ -947,7 +947,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
 
                 test('Should return values occurrences for an attribute', async () => {
-                    const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordIds: [record1.id, record2.id],
@@ -966,7 +966,7 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
 
                 test('Should return null values occurrences for an attribute', async () => {
-                    const occurrences = await attributeAdvancedLinkRepo.countValuesOccurrences({
+                    const occurrences = await attributeAdvancedLinkRepo.listDistinctValues({
                         library: libraryId,
                         attribute: advancedLinkReverseAttribute,
                         recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithoutAttr.id],

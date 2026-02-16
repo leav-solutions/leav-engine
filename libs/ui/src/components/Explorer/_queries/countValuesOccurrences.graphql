@@ -1,13 +1,10 @@
 query CountValuesOccurrences($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
-    countValuesOccurrences(library: $library, attribute: $attribute, recordFilters: $recordFilters) {
-        noValueCount
-        occurrences {
-            ... on TreeValueOccurrences {
-                value {
-                    id
-                }
+    listDistinctValues(library: $library, attribute: $attribute, recordFilters: $recordFilters) {
+        count
+        ... on TreeDistinctValues {
+            treeNode: value {
+                id
             }
-            count
         }
     }
 }

@@ -164,6 +164,8 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
+  /**  only for link attribute  */
+  smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
@@ -209,6 +211,18 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -587,6 +601,7 @@ export enum PermissionsActions {
   admin_edit_version_profile = 'admin_edit_version_profile',
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
+  admin_list_plugins = 'admin_list_plugins',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -673,6 +688,7 @@ export enum RecordFilterOperator {
 export type RecordIdentityConfInput = {
   color?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['ID']['input']>;
+  parentContext?: InputMaybe<Scalars['ID']['input']>;
   preview?: InputMaybe<Scalars['ID']['input']>;
   subLabel?: InputMaybe<Scalars['ID']['input']>;
   treeColorPreview?: InputMaybe<Scalars['ID']['input']>;
@@ -708,6 +724,58 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingCampaignInput = {
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  thematics: Array<ReportFramingThematicInput>;
+};
+
+export type ReportFramingCategoryInput = {
+  categoryId: Scalars['String']['input'];
+  children: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingContentInput = {
+  campaigns: Array<ReportFramingCampaignInput>;
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReportFramingItemInput = {
+  columnId: Scalars['String']['input'];
+  referenceValue?: InputMaybe<Scalars['Int']['input']>;
+  value?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReportFramingThematicInput = {
+  categories: Array<ReportFramingCategoryInput>;
+  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
+  framing?: InputMaybe<Array<ReportFramingItemInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SheetInput = {
   keyIndex?: InputMaybe<Scalars['Int']['input']>;
   keyToIndex?: InputMaybe<Scalars['Int']['input']>;
@@ -717,6 +785,10 @@ export type SheetInput = {
   mode: ImportMode;
   treeLinkLibrary?: InputMaybe<Scalars['String']['input']>;
   type: ImportType;
+};
+
+export type SmartFilterConfInput = {
+  enable: Scalars['Boolean']['input'];
 };
 
 export type SortApiKeysInput = {
@@ -779,9 +851,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
+  PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
