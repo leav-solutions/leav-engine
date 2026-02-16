@@ -448,33 +448,39 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                             return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
                         },
-                        values_list: async (attributeData: IAttribute, a2, ctx) => ({
-                            ...attributeData.values_list,
-                            // TODO: this could be optimized if find() would allow searching for multiple IDs at once
-                            values: (
-                                await Promise.all(
-                                    ((attributeData.values_list.values ?? []) as string[]).map(
-                                        async (recId): Promise<IRecord | null> => {
-                                            const record = await recordDomain.find({
-                                                params: {
-                                                    library: attributeData.linked_library,
-                                                    filters: [
-                                                        {
-                                                            field: 'id',
-                                                            condition: AttributeCondition.EQUAL,
-                                                            value: recId,
-                                                        },
-                                                    ],
-                                                },
-                                                ctx,
-                                            });
+                        values_list: async (attributeData: IAttribute, a2, ctx) => {
+                            if (!attributeData.values_list) {
+                                return null;
+                            }
 
-                                            return record.list.length ? record.list[0] : null;
-                                        },
-                                    ),
-                                )
-                            ).filter(r => r !== null), // Remove invalid values (unknown records)
-                        }),
+                            return {
+                                ...attributeData.values_list,
+                                // TODO: this could be optimized if find() would allow searching for multiple IDs at once
+                                values: (
+                                    await Promise.all(
+                                        ((attributeData.values_list?.values ?? []) as string[]).map(
+                                            async (recId): Promise<IRecord | null> => {
+                                                const record = await recordDomain.find({
+                                                    params: {
+                                                        library: attributeData.linked_library,
+                                                        filters: [
+                                                            {
+                                                                field: 'id',
+                                                                condition: AttributeCondition.EQUAL,
+                                                                value: recId,
+                                                            },
+                                                        ],
+                                                    },
+                                                    ctx,
+                                                });
+
+                                                return record.list.length ? record.list[0] : null;
+                                            },
+                                        ),
+                                    )
+                                ).filter(r => r !== null), // Remove invalid values (unknown records)
+                            };
+                        },
                     },
                     TreeAttribute: {
                         ...commonResolvers,
@@ -486,18 +492,20 @@ export default function (deps: IDeps): ICoreAttributeApp {
                             return treeDomain.getTreeProperties(attributeData.linked_tree, ctx);
                         },
                         values_list: async (attributeData: IAttribute, _, ctx) => {
-                            ctx.treeId = attributeData.linked_tree;
+                            if (!attributeData.values_list) {
+                                return null;
+                            }
 
                             // Here, values is a list of tree nodes
                             return {
                                 ...attributeData.values_list,
                                 values: (
                                     await Promise.all(
-                                        ((attributeData.values_list.values as string[]) ?? []).map(async nodeId => {
+                                        ((attributeData.values_list?.values as string[]) ?? []).map(async nodeId => {
                                             const isInTree = await treeDomain.isNodePresent({
                                                 treeId: attributeData.linked_tree,
                                                 nodeId,
-                                                ctx,
+                                                ctx: {...ctx, treeId: attributeData.linked_tree},
                                             });
 
                                             // Add treeId to the tree node for further resolvers
