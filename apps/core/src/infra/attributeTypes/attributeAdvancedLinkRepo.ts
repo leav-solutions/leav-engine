@@ -292,7 +292,9 @@ export default function ({
             }
 
             const sortAndLimit = literal(
-                !attribute.multiple_values && !forceGetAllValues ? 'SORT edge.created_at DESC LIMIT 1' : '',
+                !attribute.multiple_values && !forceGetAllValues
+                    ? 'SORT edge.created_at DESC, edge._key DESC LIMIT 1'
+                    : '',
             );
 
             queryParts.push(aql`
@@ -340,7 +342,7 @@ export default function ({
             }
 
             if (!attribute.multiple_values && !options?.forceGetAllValues) {
-                queryParts.push(aql`SORT edge.created_at DESC`);
+                queryParts.push(aql`SORT edge.created_at DESC, edge._key DESC`);
                 queryParts.push(aql`
                     COLLECT collectedRecId = recordKey INTO grouped
                     LET first = FIRST(grouped)
@@ -618,7 +620,7 @@ export default function ({
                        FILTER LENGTH(valuesByRecord) > 1
                        LET sortedEdges = (
                            FOR e IN valuesByRecord[*].edge
-                               SORT e.created_at DESC
+                               SORT e.created_at DESC, e._key DESC
                            RETURN e
                        )
                     RETURN { recordId, edgeKeys: sortedEdges[*]._key }
