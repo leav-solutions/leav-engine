@@ -1,10 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IPermissionDomain} from '../../domain/permission/permissionDomain';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IApplication} from '../../_types/application';
+import {type ILibraryDomain} from '../../domain/library/libraryDomain';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {type IConfig} from '../../_types/config';
+import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 
 export interface IAppStudioDomain {
     /**
@@ -18,20 +23,22 @@ export interface IAppStudioDomain {
 }
 
 export interface IAppStudioDomainDeps {
+    config: IConfig;
     'core.domain.permission': IPermissionDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.record': IRecordDomain;
 }
 
-export default function ({'core.domain.permission': permissionDomain}: IAppStudioDomainDeps): IAppStudioDomain {
+export default function ({
+    config,
+    'core.domain.permission': permissionDomain,
+    'core.domain.library': libraryDomain,
+    'core.domain.record': recordDomain,
+}: IAppStudioDomainDeps): IAppStudioDomain {
     const _filterWorkspacesByPermissions = async (
-        appStudioSettings: IApplication['appStudioSettings'],
+        workspaces: IApplication['appStudioSettings']['workspaces'],
         ctx: IQueryInfos,
-    ): Promise<IApplication['appStudioSettings']> => {
-        if (!appStudioSettings?.workspaces || !Array.isArray(appStudioSettings.workspaces)) {
-            return appStudioSettings;
-        }
-
-        const workspaces = appStudioSettings.workspaces;
-
+    ) => {
         const filteredWorkspaces = await Promise.all(
             workspaces.map(async workspace => {
                 let canAccess = false;
@@ -61,9 +68,75 @@ export default function ({'core.domain.permission': permissionDomain}: IAppStudi
             }),
         );
 
+        return filteredWorkspaces.filter(workspace => workspace !== null);
+    };
+
+    const _setWorkspacesTitles = async (
+        workspaces: IApplication['appStudioSettings']['workspaces'],
+        ctx: IQueryInfos,
+    ) =>
+        Promise.all(
+            workspaces.map(async workspace => {
+                if (workspace.title) {
+                    return workspace;
+                }
+
+                if (!workspace.libraryId) {
+                    throw new ValidationError<IApplication>({
+                        id: {msg: Errors.APP_STUDIO_WORKSPACE_LIBRARY_ID_REQUIRED, vars: {workspaceId: workspace.id}},
+                    });
+                }
+
+                if (workspace.type === 'library' || !workspace.type) {
+                    const libraryProperties = await libraryDomain.getLibraryProperties(workspace.libraryId, ctx);
+
+                    return {
+                        ...workspace,
+                        title: libraryProperties.label,
+                    };
+                }
+
+                if (!workspace.recordId) {
+                    throw new ValidationError<IApplication>({
+                        id: {msg: Errors.APP_STUDIO_WORKSPACE_RECORD_ID_REQUIRED, vars: {workspaceId: workspace.id}},
+                    });
+                }
+
+                if (workspace.type === 'record') {
+                    const recordProperties = await recordDomain.getRecordIdentity(
+                        {
+                            id: workspace.recordId,
+                            library: workspace.libraryId,
+                        },
+                        ctx,
+                    );
+
+                    const recordLabel = (await recordProperties.getLabel?.()) ?? workspace.recordId;
+
+                    return {
+                        ...workspace,
+                        title: Object.fromEntries(config.lang.available.map(lang => [lang, recordLabel])),
+                    };
+                }
+            }),
+        );
+
+    const _getAppStudioSettings = async (
+        appStudioSettings: IApplication['appStudioSettings'],
+        ctx: IQueryInfos,
+    ): Promise<IApplication['appStudioSettings']> => {
+        if (!appStudioSettings?.workspaces || !Array.isArray(appStudioSettings.workspaces)) {
+            return appStudioSettings;
+        }
+
+        let workspaces = appStudioSettings.workspaces;
+
+        workspaces = await _filterWorkspacesByPermissions(workspaces, ctx);
+        workspaces = await _setWorkspacesTitles(workspaces, ctx);
+
         return {
             ...appStudioSettings,
-            workspaces: filteredWorkspaces.filter(workspace => workspace !== null),
+            workspaces,
         };
     };
 
@@ -71,7 +144,7 @@ export default function ({'core.domain.permission': permissionDomain}: IAppStudi
         async getAppStudioSettings({application, ctx}) {
             const appStudioSettings = application.settings?.application ?? {};
 
-            return _filterWorkspacesByPermissions(appStudioSettings, ctx);
+            return _getAppStudioSettings(appStudioSettings, ctx);
         },
     };
 }

@@ -7,6 +7,18 @@ import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} fr
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import appStudioDomain, {type IAppStudioDomainDeps} from './appStudioDomain';
+import {type ToAny} from '../../utils/utils';
+
+const mockPermissionDomain: Mockify<IPermissionDomain> = {
+    isAllowed: global.__mockPromise(true),
+};
+
+const depsBase: ToAny<IAppStudioDomainDeps> = {
+    config: {},
+    'core.domain.permission': mockPermissionDomain,
+    'core.domain.library': jest.fn(),
+    'core.domain.record': jest.fn(),
+};
 
 describe('appStudioDomain', () => {
     beforeEach(() => jest.clearAllMocks());
@@ -18,20 +30,14 @@ describe('appStudioDomain', () => {
                 settings: {
                     application: {
                         workspaces: [
-                            {id: 'workspace-1', type: 'library', libraryId: 'lib1'},
-                            {id: 'workspace-2', type: 'library', libraryId: 'lib2'},
+                            {id: 'workspace-1', type: 'library', libraryId: 'lib1', title: {en: 'Workspace 1'}},
+                            {id: 'workspace-2', type: 'library', libraryId: 'lib2', title: {en: 'Workspace 2'}},
                         ],
                     },
                 },
             };
 
-            const mockPermissionDomain: Mockify<IPermissionDomain> = {
-                isAllowed: global.__mockPromise(true),
-            };
-
-            const domain = appStudioDomain({
-                'core.domain.permission': mockPermissionDomain as IPermissionDomain,
-            });
+            const domain = appStudioDomain(depsBase);
 
             const result = await domain.getAppStudioSettings({
                 application: mockApplicationWithWorkspaces as IApplication,
@@ -48,13 +54,7 @@ describe('appStudioDomain', () => {
                 settings: undefined,
             };
 
-            const mockPermissionDomain: Mockify<IPermissionDomain> = {
-                isAllowed: global.__mockPromise(true),
-            };
-
-            const domain = appStudioDomain({
-                'core.domain.permission': mockPermissionDomain as IPermissionDomain,
-            });
+            const domain = appStudioDomain(depsBase);
 
             const result = await domain.getAppStudioSettings({
                 application: mockApplicationWithoutSettings as IApplication,
@@ -70,14 +70,24 @@ describe('appStudioDomain', () => {
                 settings: {
                     application: {
                         workspaces: [
-                            {id: 'workspace-allowed', type: 'library', libraryId: 'allowed-lib'},
-                            {id: 'workspace-denied', type: 'library', libraryId: 'denied-lib'},
+                            {
+                                id: 'workspace-allowed',
+                                type: 'library',
+                                libraryId: 'allowed-lib',
+                                title: {en: 'Workspace Allowed'},
+                            },
+                            {
+                                id: 'workspace-denied',
+                                type: 'library',
+                                libraryId: 'denied-lib',
+                                title: {en: 'Workspace Denied'},
+                            },
                         ],
                     },
                 },
             };
 
-            const mockPermissionDomain: Mockify<IPermissionDomain> = {
+            const mockPermissionDomainIsAllowed: Mockify<IPermissionDomain> = {
                 isAllowed: jest.fn().mockImplementation(({type, applyTo}) => {
                     if (type === PermissionTypes.LIBRARY && applyTo === 'allowed-lib') {
                         return Promise.resolve(true);
@@ -87,7 +97,8 @@ describe('appStudioDomain', () => {
             };
 
             const domain = appStudioDomain({
-                'core.domain.permission': mockPermissionDomain,
+                ...depsBase,
+                'core.domain.permission': mockPermissionDomainIsAllowed,
             } as IAppStudioDomainDeps);
 
             const result = await domain.getAppStudioSettings({
@@ -98,13 +109,13 @@ describe('appStudioDomain', () => {
             expect(result.workspaces).toHaveLength(1);
             expect(result.workspaces[0].id).toBe('workspace-allowed');
 
-            expect(mockPermissionDomain.isAllowed).toHaveBeenCalledWith({
+            expect(mockPermissionDomainIsAllowed.isAllowed).toHaveBeenCalledWith({
                 type: PermissionTypes.LIBRARY,
                 action: LibraryPermissionsActions.ACCESS_LIBRARY,
                 applyTo: 'allowed-lib',
                 ctx: mockCtx,
             });
-            expect(mockPermissionDomain.isAllowed).toHaveBeenCalledWith({
+            expect(mockPermissionDomainIsAllowed.isAllowed).toHaveBeenCalledWith({
                 type: PermissionTypes.LIBRARY,
                 action: LibraryPermissionsActions.ACCESS_LIBRARY,
                 applyTo: 'denied-lib',
@@ -123,14 +134,21 @@ describe('appStudioDomain', () => {
                                 type: 'record',
                                 libraryId: 'lib1',
                                 recordId: 'allowed-record',
+                                title: {en: 'Workspace Allowed'},
                             },
-                            {id: 'workspace-denied', type: 'record', libraryId: 'lib1', recordId: 'denied-record'},
+                            {
+                                id: 'workspace-denied',
+                                type: 'record',
+                                libraryId: 'lib1',
+                                recordId: 'denied-record',
+                                title: {en: 'Workspace Denied'},
+                            },
                         ],
                     },
                 },
             };
 
-            const mockPermissionDomain: Mockify<IPermissionDomain> = {
+            const mockPermissionDomainIsAllowed: Mockify<IPermissionDomain> = {
                 isAllowed: jest.fn().mockImplementation(({type, target}) => {
                     if (type === PermissionTypes.RECORD && target?.recordId === 'allowed-record') {
                         return Promise.resolve(true);
@@ -140,7 +158,8 @@ describe('appStudioDomain', () => {
             };
 
             const domain = appStudioDomain({
-                'core.domain.permission': mockPermissionDomain,
+                ...depsBase,
+                'core.domain.permission': mockPermissionDomainIsAllowed,
             } as IAppStudioDomainDeps);
 
             const result = await domain.getAppStudioSettings({
@@ -151,14 +170,14 @@ describe('appStudioDomain', () => {
             expect(result.workspaces).toHaveLength(1);
             expect(result.workspaces[0].id).toBe('workspace-allowed');
 
-            expect(mockPermissionDomain.isAllowed).toHaveBeenCalledWith({
+            expect(mockPermissionDomainIsAllowed.isAllowed).toHaveBeenCalledWith({
                 type: PermissionTypes.RECORD,
                 action: RecordPermissionsActions.ACCESS_RECORD,
                 applyTo: 'lib1',
                 target: {recordId: 'allowed-record'},
                 ctx: mockCtx,
             });
-            expect(mockPermissionDomain.isAllowed).toHaveBeenCalledWith({
+            expect(mockPermissionDomainIsAllowed.isAllowed).toHaveBeenCalledWith({
                 type: PermissionTypes.RECORD,
                 action: RecordPermissionsActions.ACCESS_RECORD,
                 applyTo: 'lib1',

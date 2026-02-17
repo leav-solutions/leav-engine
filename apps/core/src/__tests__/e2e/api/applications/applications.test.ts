@@ -137,7 +137,7 @@ describe('Applications', () => {
         });
     });
 
-    describe('appStudioSettings workspaces permissions filtering', () => {
+    describe('appStudioSettings', () => {
         const allowedLibId = 'test_app_studio_lib_allowed';
         const deniedLibId = 'test_app_studio_lib_denied';
         const appId = 'test_app_studio_workspaces';
@@ -211,6 +211,8 @@ describe('Applications', () => {
                     recordId: deniedRecordId,
                     title: {en: 'Denied Record'},
                 },
+                {id: 'ws-lib-allowed-no-title', type: 'library', libraryId: allowedLibId},
+                {id: 'ws-record-allowed-no-title', type: 'record', libraryId: allowedLibId, recordId: allowedRecordId},
             ];
 
             const settings = {application: {workspaces}};
@@ -231,8 +233,9 @@ describe('Applications', () => {
             await makeGraphQlCall(`mutation { deleteApplication(id: "${appId}") { id } }`);
         });
 
-        test('Admin user should see all workspaces', async () => {
-            const res = await makeGraphQlCall(`{
+        describe('workspaces permissions filtering', () => {
+            test('Admin user should see all workspaces', async () => {
+                const res = await makeGraphQlCall(`{
                 applications(filters: {id: "${appId}"}) {
                     list {
                         id
@@ -241,16 +244,16 @@ describe('Applications', () => {
                 }
             }`);
 
-            expect(res.status).toBe(200);
-            expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
 
-            const app = res.data.data.applications.list[0];
-            expect(app.appStudioSettings.workspaces).toHaveLength(4);
-        });
+                const app = res.data.data.applications.list[0];
+                expect(app.appStudioSettings.workspaces).toHaveLength(6);
+            });
 
-        test('Non-admin user should only see allowed library workspaces', async () => {
-            const res = await makeGraphQlCall(
-                `{
+            test('Non-admin user should only see allowed library workspaces', async () => {
+                const res = await makeGraphQlCall(
+                    `{
                     applications(filters: {id: "${appId}"}) {
                         list {
                             id
@@ -258,21 +261,140 @@ describe('Applications', () => {
                         }
                     }
                 }`,
-                {user: e2eNonAdminUser()},
-            );
+                    {user: e2eNonAdminUser()},
+                );
 
-            expect(res.status).toBe(200);
-            expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
 
-            const app = res.data.data.applications.list[0];
-            const workspaceIds = app.appStudioSettings.workspaces.map(ws => ws.id);
+                const app = res.data.data.applications.list[0];
+                const workspaceIds = app.appStudioSettings.workspaces.map(ws => ws.id);
 
-            // Should only contain allowed workspaces
-            expect(workspaceIds).toContain('ws-lib-allowed');
-            expect(workspaceIds).toContain('ws-record-allowed');
-            expect(workspaceIds).not.toContain('ws-lib-denied');
-            expect(workspaceIds).not.toContain('ws-record-denied');
-            expect(app.appStudioSettings.workspaces).toHaveLength(2);
+                // Should only contain allowed workspaces
+                expect(workspaceIds).toContain('ws-lib-allowed');
+                expect(workspaceIds).toContain('ws-record-allowed');
+                expect(workspaceIds).toContain('ws-lib-allowed-no-title');
+                expect(workspaceIds).toContain('ws-record-allowed-no-title');
+                expect(workspaceIds).not.toContain('ws-lib-denied');
+                expect(workspaceIds).not.toContain('ws-record-denied');
+                expect(app.appStudioSettings.workspaces).toHaveLength(4);
+            });
+        });
+
+        describe('workspaces titles', () => {
+            test('Should return workspace titles if provided', async () => {
+                const res = await makeGraphQlCall(`{
+                        applications(filters: {id: "${appId}"}) {
+                            list {
+                                id
+                                appStudioSettings
+                            }
+                        }
+                    }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                expect(app.appStudioSettings.workspaces[0].title).toEqual({en: 'Allowed Lib'});
+                expect(app.appStudioSettings.workspaces[1].title).toEqual({en: 'Denied Lib'});
+                expect(app.appStudioSettings.workspaces[2].title).toEqual({en: 'Allowed Record'});
+                expect(app.appStudioSettings.workspaces[3].title).toEqual({en: 'Denied Record'});
+            });
+
+            test('Should return workspace titles for both library and record if not provided', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${appId}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                expect(app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-lib-allowed-no-title')?.title).toEqual(
+                    {en: 'Allowed Library'},
+                );
+                expect(
+                    app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-record-allowed-no-title')?.title,
+                ).toEqual({en: allowedRecordId, fr: allowedRecordId});
+            });
+
+            test('Should throw validation error if workspace library ID is undefined and title is not provided', async () => {
+                const appIdWithNoLibraryId = 'test_app_studio_workspaces_no_library_id';
+                const settings = {
+                    application: {
+                        workspaces: [
+                            {
+                                id: 'ws-lib-no-library-id',
+                                type: 'library',
+                            },
+                        ],
+                    },
+                };
+
+                await makeGraphQlCall(`mutation {
+                    saveApplication(application: {
+                        id: "${appIdWithNoLibraryId}",
+                        label: {en: "Test App Studio Workspaces"},
+                        endpoint: "test-app-studio-workspaces",
+                        module: "data-studio",
+                        settings: ${toGraphQLObject(settings)}
+                    }) { id }
+                }`);
+
+                await expect(
+                    makeGraphQlCall(`{
+                    applications(filters: {id: "${appIdWithNoLibraryId}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                   }`),
+                ).rejects.toThrow(/Library ID is required for workspace ws-lib-no-library-id/);
+
+                // Cleanup
+                await makeGraphQlCall(`mutation { deleteApplication(id: "${appIdWithNoLibraryId}") { id } }`);
+            });
+
+            test('Should throw validation error if workspace record ID is undefined', async () => {
+                const appIdWithNoRecordId = 'test_app_studio_workspaces_no_record_id';
+                const settings = {
+                    application: {
+                        workspaces: [{id: 'ws-record-no-record-id', type: 'record', libraryId: allowedLibId}],
+                    },
+                };
+
+                await makeGraphQlCall(`mutation {
+                    saveApplication(application: {
+                        id: "${appIdWithNoRecordId}",
+                        label: {en: "Test App Studio Workspaces"},
+                        endpoint: "test-app-studio-workspaces",
+                        module: "data-studio",
+                        settings: ${toGraphQLObject(settings)}
+                    }) { id }
+                }`);
+
+                // Should throw validation error when checking workspace permissions
+                await expect(
+                    makeGraphQlCall(`{
+                        applications(filters: {id: "${appIdWithNoRecordId}"}) {
+                            list {
+                                id
+                                appStudioSettings
+                            }
+                        }
+                    }`),
+                ).rejects.toThrow(/Missing record ID/);
+
+                // Cleanup
+                await makeGraphQlCall(`mutation { deleteApplication(id: "${appIdWithNoRecordId}") { id } }`);
+            });
         });
     });
 });

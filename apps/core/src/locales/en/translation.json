@@ -4,6 +4,8 @@
         "no": "No"
     },
     "errors": {
+        "APP_STUDIO_WORKSPACE_LIBRARY_ID_REQUIRED": "Library ID is required for workspace {{workspaceId}}",
+        "APP_STUDIO_WORKSPACE_RECORD_ID_REQUIRED": "Record ID is required for workspace {{workspaceId}}",
         "ATTRIBUTE_USED_BY_LIBRARY": "This attribute is used by these libraries: {{libraries}}",
         "ATTRIBUTE_USED_IN_METADATA": "This attribute is used in metadata for these attributes: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Cannot save metadata on simple attribute",
