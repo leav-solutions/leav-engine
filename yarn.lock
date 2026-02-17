@@ -11994,18 +11994,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.10.0":
-  version: 8.10.0
-  resolution: "ajv@npm:8.10.0"
-  dependencies:
-    fast-deep-equal: "npm:^3.1.1"
-    json-schema-traverse: "npm:^1.0.0"
-    require-from-string: "npm:^2.0.2"
-    uri-js: "npm:^4.2.2"
-  checksum: 10/19f265a0895d1156cb13cb22a973cfce5587718b56c7e0141d8d60c1e7a016eb698aecffca158e06d2bac6d199d86c803a7ad686ba61a38e50a9e2e93894209b
-  languageName: node
-  linkType: hard
-
 "ajv@npm:^6.12.4, ajv@npm:^6.12.5, ajv@npm:^6.12.6":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
@@ -21958,7 +21946,6 @@ __metadata:
     "@types/testing-library__jest-dom": "npm:5.14.9"
     "@typescript-eslint/eslint-plugin": "npm:7.18.0"
     "@typescript-eslint/parser": "npm:7.18.0"
-    ajv: "npm:8.10.0"
     commitizen: "npm:4.3.1"
     cz-conventional-changelog: "npm:3.3.0"
     eslint: "npm:8.57.1"
