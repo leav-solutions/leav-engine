@@ -1875,6 +1875,14 @@ export type CountValuesOccurrencesQuery = { listDistinctValues?: Array<
     | { count: number, treeNode?: { id: string } | null }
   > | null };
 
+export type ExplorerLibraryCountDataQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type ExplorerLibraryCountDataQuery = { records: { totalCount?: number | null } };
+
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   attributeIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
@@ -5666,6 +5674,50 @@ export type CountValuesOccurrencesQueryHookResult = ReturnType<typeof useCountVa
 export type CountValuesOccurrencesLazyQueryHookResult = ReturnType<typeof useCountValuesOccurrencesLazyQuery>;
 export type CountValuesOccurrencesSuspenseQueryHookResult = ReturnType<typeof useCountValuesOccurrencesSuspenseQuery>;
 export type CountValuesOccurrencesQueryResult = Apollo.QueryResult<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>;
+export const ExplorerLibraryCountDataDocument = gql`
+    query ExplorerLibraryCountData($libraryId: ID!, $filters: [RecordFilterInput]) {
+  records(library: $libraryId, filters: $filters) {
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useExplorerLibraryCountDataQuery__
+ *
+ * To run a query within a React component, call `useExplorerLibraryCountDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerLibraryCountDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerLibraryCountDataQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useExplorerLibraryCountDataQuery(baseOptions: Apollo.QueryHookOptions<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables> & ({ variables: ExplorerLibraryCountDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>(ExplorerLibraryCountDataDocument, options);
+      }
+export function useExplorerLibraryCountDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>(ExplorerLibraryCountDataDocument, options);
+        }
+// @ts-ignore
+export function useExplorerLibraryCountDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>;
+export function useExplorerLibraryCountDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerLibraryCountDataQuery | undefined, ExplorerLibraryCountDataQueryVariables>;
+export function useExplorerLibraryCountDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>(ExplorerLibraryCountDataDocument, options);
+        }
+export type ExplorerLibraryCountDataQueryHookResult = ReturnType<typeof useExplorerLibraryCountDataQuery>;
+export type ExplorerLibraryCountDataLazyQueryHookResult = ReturnType<typeof useExplorerLibraryCountDataLazyQuery>;
+export type ExplorerLibraryCountDataSuspenseQueryHookResult = ReturnType<typeof useExplorerLibraryCountDataSuspenseQuery>;
+export type ExplorerLibraryCountDataQueryResult = Apollo.QueryResult<ExplorerLibraryCountDataQuery, ExplorerLibraryCountDataQueryVariables>;
 export const ExplorerLibraryDataDocument = gql`
     query ExplorerLibraryData($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
   records(

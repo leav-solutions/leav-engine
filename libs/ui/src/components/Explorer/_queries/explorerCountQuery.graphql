@@ -1,0 +1,5 @@
+query ExplorerLibraryCountData($libraryId: ID!, $filters: [RecordFilterInput]) {
+    records(library: $libraryId, filters: $filters) {
+        totalCount
+    }
+}

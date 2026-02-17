@@ -424,6 +424,17 @@ describe('Explorer', () => {
         },
     };
 
+    const mockExplorerLibraryCountDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryCountDataQuery> = {
+        loading: false,
+        called: true,
+        refetch: jest.fn(),
+        data: {
+            records: {
+                totalCount: mockRecords.length,
+            },
+        },
+    };
+
     const mockExplorerLinkDataQueryResultProperty = [
         {
             id_value: '0',
@@ -781,6 +792,10 @@ describe('Explorer', () => {
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
 
+        jest.spyOn(gqlTypes, 'useExplorerLibraryCountDataQuery').mockImplementation(
+            () => mockExplorerLibraryCountDataQueryResult as gqlTypes.ExplorerLibraryCountDataQueryHookResult,
+        );
+
         jest.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
             () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult,
         );
@@ -1022,7 +1037,7 @@ describe('Explorer', () => {
             const [firstRecordRow] = tableRows;
             expect(within(firstRecordRow).getByRole('checkbox')).toBeInTheDocument();
 
-            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeInTheDocument();
+            expect(screen.queryByText(/explorer.massAction.results/)).toBeInTheDocument();
         });
 
         test('should display the selection checkboxes when defaultCallbacks.item.select is provided', () => {
@@ -1057,7 +1072,7 @@ describe('Explorer', () => {
             const [firstRecordRow] = tableRows;
             expect(within(firstRecordRow).queryByRole('checkbox')).not.toBeInTheDocument();
 
-            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
+            expect(screen.queryByText(/explorer.massAction.results/)).not.toBeInTheDocument();
         });
 
         test('should display the select all action', () => {
@@ -1067,7 +1082,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeVisible();
+            expect(screen.queryByText(/explorer.massAction.results/)).toBeVisible();
         });
 
         test('should not display the select all action', () => {
@@ -2582,7 +2597,7 @@ describe('Explorer', () => {
             expect(tableRows).toHaveLength(1);
 
             // WHEN the user clicks on selection all page only
-            await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
+            await user.click(within(toolbar).getByText(/massAction.results\|2/));
             await user.click(
                 within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_page/}),
             );
@@ -2711,7 +2726,7 @@ describe('Explorer', () => {
             expect(tableRows).toHaveLength(1);
 
             // WHEN the user clicks on the select all checkbox (all pages)
-            await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
+            await user.click(within(toolbar).getByText(/massAction.results\|2/));
             await user.click(
                 within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_all/}),
             );
@@ -2765,7 +2780,7 @@ describe('Explorer', () => {
             expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
 
             // WHEN the user clicks on the select all checkbox
-            await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
+            await user.click(within(toolbar).getByText(/massAction.results\|2/));
             // THEN there is a possibility to de-select all items
             expect(
                 within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.deselect_all/}),
