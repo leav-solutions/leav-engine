@@ -15,7 +15,7 @@ const WorkspaceSchema = z
     .object({
         id: WorkspaceId,
         icon: FontAwesomeIconSchema,
-        title: z.record(LanguageSchema, z.string()),
+        title: z.record(LanguageSchema, z.string()).optional(),
     })
     .and(
         z.union([
