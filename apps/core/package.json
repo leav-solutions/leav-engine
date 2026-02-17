@@ -69,7 +69,7 @@
     "dependencies": {
         "@apollo/server": "4.13.0",
         "@bugsnag/js": "8.8.1",
-        "@elastic/elasticsearch": "8.10.0",
+        "@elastic/elasticsearch": "8.19.1",
         "@graphql-tools/schema": "10.0.31",
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
