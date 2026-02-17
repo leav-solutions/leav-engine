@@ -716,7 +716,7 @@ e2e-playwright:
   script:
     - yarn workspace e2e-playwright run start
   after_script:
-    - echo "Report will be available at https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/test-apps/e2e-playwright/playwright-report/index.html"
+    - echo "Report will be available at $CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/test-apps/e2e-playwright/playwright-report/index.html"
   artifacts:
     paths:
       - test-apps/e2e-playwright/playwright-report
