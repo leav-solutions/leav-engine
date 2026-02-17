@@ -746,8 +746,8 @@
             "copied": "Copié"
         },
         "massAction": {
-            "itemsTotal_one": "{{count, number}} élément",
-            "itemsTotal_other": "{{count, number}} éléments",
+            "results_one": "résultat",
+            "results_other": "résultats",
             "selectedItems_one": "{{count, number}} sélectionné",
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",

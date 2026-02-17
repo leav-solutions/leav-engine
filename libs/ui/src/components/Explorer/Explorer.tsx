@@ -43,6 +43,7 @@ import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReduce
 import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
 import {useExportMassAction} from './actions-mass/useExportMassAction';
 import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
+import {useExplorerCountData} from './_queries/useExplorerCountData';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -225,7 +226,15 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             columnsToDisplay: !joinLibraryContext ? view.attributesIds : [],
         });
 
-        const totalCount = data?.totalCount ?? 0;
+        const totalCountFiltered = data?.totalCount ?? 0;
+
+        const totalCountLibrary = useExplorerCountData({
+            entrypoint,
+            libraryId: view.libraryId,
+            defaultFilters: defaultViewSettings?.filters ?? [],
+            filters: filtersData.filters,
+            skip: viewSettingsLoading,
+        });
 
         const hasNoResults = data === null || data.totalCount === 0;
 
@@ -244,7 +253,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             joinLibraryContext,
             entrypoint,
             isMultivalue,
-            totalCount,
+            totalCount: totalCountFiltered,
             formId: creationFormId,
             refetch,
         });
@@ -265,21 +274,21 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {exportMassAction, ExportModal} = useExportMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('export'),
             store: {view, dispatch: viewSettingsDispatch},
-            totalCount,
+            totalCount: totalCountFiltered,
             onExport: defaultCallbacks?.mass?.export,
         });
 
         const {editAttributeMassAction, editAttributeMassActionModal} = useEditAttributeMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('editAttribute'),
             store: {view},
-            totalCount,
+            totalCount: totalCountFiltered,
         });
 
         const {deactivateMassAction} = useDeactivateMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch: viewSettingsDispatch},
             allVisibleKeys,
-            totalCount,
+            totalCount: totalCountFiltered,
             onDeactivate: defaultCallbacks?.mass?.deactivate,
             refetch,
         });
@@ -294,18 +303,19 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             refetch,
         });
 
-        const _isSelectionDisable = disableSelection || (isLink && !isMultivalue && totalCount > 0);
+        const _isSelectionDisable = disableSelection || (isLink && !isMultivalue && totalCountFiltered > 0);
 
         const massActionSnackbarId = useMemo(() => `${SNACKBAR_MASS_ID}_${Date.now()}`, []);
 
         const {setSelectedKeys, selectAllButton} = useMassActions({
             isEnabled:
-                totalCount > 0 &&
+                totalCountFiltered > 0 &&
                 !_isSelectionDisable &&
                 (isNotEmpty(defaultMassActions) || isNotEmpty(massActions) || !!defaultCallbacks?.item?.select),
             store: {view, dispatch: viewSettingsDispatch},
             filtersStore: filtersData,
-            totalCount,
+            totalCountFiltered,
+            totalCountLibrary,
             allVisibleKeys,
             massActions: [
                 exportMassAction,
@@ -332,9 +342,9 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             () => ({
                 createAction: createPrimaryAction,
                 linkAction: linkPrimaryAction,
-                totalCount,
+                totalCount: totalCountFiltered,
             }),
-            [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCount],
+            [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCountFiltered],
         );
 
         return (
@@ -392,7 +402,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                                   pageSize: view.pageSize,
                                                   setNewPageSize,
                                                   setNewPage,
-                                                  totalCount,
+                                                  totalCount: totalCountFiltered,
                                               }
                                             : undefined
                                     }
