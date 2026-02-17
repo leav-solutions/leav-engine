@@ -139,6 +139,7 @@ Then, all you have to do is:
 
 ```shell
 cd docker
+docker compose build --pull
 docker compose up -d
 ```
 
@@ -181,6 +182,23 @@ docker compose --profile automate up
 ```
 
 More infos about profiles can be found [here](https://docs.docker.com/compose/profiles/)
+
+## Update nodejs docker image
+
+-   Get the current node version from gitlab-ci.yml default.image (for instance node:24-alpine3.21)
+-   Replace that version in the following files
+    -   .gitlab-ci.yml
+    -   docker/DOCKERFILES/CORE/Dockerfile
+    -   docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
+    -   docker/DOCKERFILES/build/core.Dockerfile
+    -   docker/DOCKERFILES/build/generic.Dockerfile
+    -   docker/DOCKERFILES/build/prebuild.Dockerfile
+    -   docker/docker-compose.yml
+-   For your local stack, rebuild your images
+
+```shell
+docker compose build --pull
+```
 
 # Contributing
 
