@@ -68,7 +68,11 @@ export default function ({
         async validateLibrary(library, ctx) {
             const lib = await getCoreEntityById('library', library, ctx);
             if (!lib) {
-                throw utils.generateExplicitValidationError('library', Errors.UNKNOWN_LIBRARY, ctx.lang);
+                throw utils.generateExplicitValidationError(
+                    'library',
+                    {msg: Errors.UNKNOWN_LIBRARY, vars: {library}},
+                    ctx.lang,
+                );
             }
 
             return lib;

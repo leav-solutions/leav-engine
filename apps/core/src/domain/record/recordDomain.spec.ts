@@ -551,6 +551,14 @@ describe('RecordDomain', () => {
                 },
             };
 
+            const fileLibData = {
+                id: 'files',
+                behavior: LibraryBehavior.FILES,
+                recordIdentityConf: {
+                    label: 'label_attr',
+                },
+            };
+
             const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromiseMultiple([
                     [
@@ -589,10 +597,6 @@ describe('RecordDomain', () => {
                 ),
             };
 
-            const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
-            };
-
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest
                     .fn()
@@ -610,12 +614,24 @@ describe('RecordDomain', () => {
                 isTreeAttribute: jest.fn().mockReturnValue(false),
             };
 
+            const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                validateLibrary: jest.fn().mockImplementation(libraryId => {
+                    if (libraryId === 'test_lib') {
+                        return libData;
+                    }
+                    if (libraryId === 'files') {
+                        return fileLibData;
+                    }
+                    return null;
+                }),
+            };
+
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.infra.cache.cacheService': mockCacheService as ICachesService,
                 'core.utils': mockUtilsRecordIdentity as IUtils,
                 config: mockConfig as Config.IConfig,
@@ -705,22 +721,19 @@ describe('RecordDomain', () => {
                     ),
                 };
 
-                const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise(mockAttrSimple),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
@@ -789,22 +802,19 @@ describe('RecordDomain', () => {
                     ),
                 };
 
-                const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise(mockAttrSimple),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
@@ -874,22 +884,19 @@ describe('RecordDomain', () => {
                     ),
                 };
 
-                const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise(mockAttrSimple),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
@@ -958,22 +965,19 @@ describe('RecordDomain', () => {
                     ),
                 };
 
-                const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise(mockAttrSimple),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
@@ -1043,22 +1047,19 @@ describe('RecordDomain', () => {
                     ),
                 };
 
-                const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise(mockAttrSimple),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
@@ -1127,22 +1128,19 @@ describe('RecordDomain', () => {
                     ),
                 };
 
-                const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]}),
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromise(mockAttrSimple),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig,
@@ -1294,20 +1292,19 @@ describe('RecordDomain', () => {
                 id: 'test_lib',
             };
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({totalCount: 1, list: [libData]}),
-            };
-
             const mockValDomain: Mockify<IValueDomain> = {
                 getValues: jest.fn(),
             };
-            const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+            const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                validateLibrary: jest.fn().mockReturnValue(libData),
+            };
 
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.value': mockValDomain as IValueDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.utils': mockUtils as IUtils,
+                'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.infra.cache.cacheService': mockCacheService as ICachesService,
             });
 
@@ -1540,12 +1537,14 @@ describe('RecordDomain', () => {
                     getValues: jest.fn(),
                 };
 
-                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+                const mockValidateHelperLocal: Mockify<IValidateHelper> = {
+                    validateLibrary: jest.fn().mockReturnValue(libData),
+                };
 
                 const recDomain = recordDomain({
                     ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                     'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                 });

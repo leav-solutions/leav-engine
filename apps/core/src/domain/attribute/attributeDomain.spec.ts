@@ -22,6 +22,7 @@ import {mockLibrary} from '../../__tests__/mocks/library';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain, {type IAttributeDomainDeps} from './attributeDomain';
 import {type Mockify} from '@leav/utils';
+import {type IValidateHelper} from 'domain/helpers/validate';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -37,6 +38,9 @@ const mockCachesService: Mockify<ICachesService> = {
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: global.__mockPromise(),
 };
+const mockValidateHelper: Mockify<IValidateHelper> = {
+    validateLibrary: global.__mockPromise(),
+};
 
 const depsBase: ToAny<IAttributeDomainDeps> = {
     config: {},
@@ -45,6 +49,7 @@ const depsBase: ToAny<IAttributeDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.domain.versionProfile': jest.fn(),
+    'core.domain.helpers.validate': mockValidateHelper,
     'core.domain.eventsManager': jest.fn(),
     'core.infra.form': jest.fn(),
     'core.infra.library': jest.fn(),
@@ -154,9 +159,7 @@ describe('attributeDomain', () => {
                 },
             ];
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0}),
-            };
+            mockValidateHelper.validateLibrary.mockResolvedValue({id: 'test', system: true});
 
             const mockAttrRepo = {
                 getLibraryAttributes: global.__mockPromise(attrs),
@@ -164,7 +167,6 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 ...depsBase,
-                'core.infra.library': mockLibRepo,
                 'core.infra.attribute': mockAttrRepo,
                 'core.infra.cache.cacheService': mockCachesService,
                 'core.utils': mockUtils,
