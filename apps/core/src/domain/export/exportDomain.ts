@@ -458,23 +458,31 @@ export default function ({
                             continue;
                         }
 
-                        // get values of full path attribute
-                        const fieldValues = await _getRecFieldValue([record], attr, ctx);
+                        try {
+                            // get values of full path attribute
+                            const fieldValues = await _getRecFieldValue([record], attr, ctx);
 
-                        // get record label or id if last attribute of full path is a link or tree type
-                        const attributeProps = await attributeDomain.getAttributeProperties({
-                            id: attr[attr.length - 1],
-                            ctx,
-                        });
+                            // get record label or id if last attribute of full path is a link or tree type
+                            const attributeProps = await attributeDomain.getAttributeProperties({
+                                id: attr[attr.length - 1],
+                                ctx,
+                            });
 
-                        const value = await _getFormattedValues(
-                            attributeProps,
-                            fieldValues.flat(Infinity) as IValue[],
-                            ctx,
-                        );
+                            const value = await _getFormattedValues(
+                                attributeProps,
+                                fieldValues.flat(Infinity) as IValue[],
+                                ctx,
+                            );
 
-                        // set value(s) and concat them if there are several
-                        subset[attrKey] = value.map(v => v.payload).join(' | ');
+                            // set value(s) and concat them if there are several
+                            subset[attrKey] = value.map(v => v.payload).join(' | ');
+                        } catch (error) {
+                            logger.warn(
+                                `Failed to extract and format value for attribute "${attrKey}" during export: ${error.message}`,
+                                {error},
+                            );
+                            subset[attrKey] = translator.t('export.error_cell_value', {lng: ctx.lang});
+                        }
                     }
 
                     // Add subset object record on excel row document
