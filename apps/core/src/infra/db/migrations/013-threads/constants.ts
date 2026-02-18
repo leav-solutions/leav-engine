@@ -15,3 +15,4 @@ export const THREAD_COMMENTS_ATTRIBUTE_ID = 'discussion_threads_comments';
 
 export const STATUSES_LABEL_ATTRIBUTE_ID = 'statuses_label';
 export const STATUSES_COLOR_ATTRIBUTE_ID = 'statuses_color';
+export const STATUSES_ICON_ID_ATTRIBUTE_ID = 'statuses_id_icon';
