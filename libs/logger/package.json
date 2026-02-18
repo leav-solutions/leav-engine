@@ -1,6 +1,6 @@
 {
     "name": "@leav/logger",
-    "version": "1.9.0-2",
+    "version": "1.9.0-3",
     "description": "leav logger",
     "scripts": {
         "test": "jest -c jest-config.json",
