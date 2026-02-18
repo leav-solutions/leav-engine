@@ -35,6 +35,7 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
  * @param totalCount - used for display purpose only
  * @param onCreate - callback to let outside world known about creating item (and linking)
  * @param refetch - method to call to refresh the list. A new item will be visible if it matches filters and sorts
+ * @param refetchCount - method to call to refresh the count of the library. A new item will be visible if it matches filters and sorts
  */
 export const useCreatePrimaryAction = ({
     isEnabled,
@@ -48,6 +49,7 @@ export const useCreatePrimaryAction = ({
     formId,
     joinLibraryContext,
     refetch,
+    refetchCount,
 }: FeatureHook<{
     libraryId: string;
     entrypoint: Entrypoint;
@@ -64,6 +66,7 @@ export const useCreatePrimaryAction = ({
     joinLibraryContext?: JoinLibraryContextFragment;
     formId?: string;
     refetch: () => void;
+    refetchCount: () => void;
 }>) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -135,6 +138,7 @@ export const useCreatePrimaryAction = ({
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
                         refetch();
+                        refetchCount();
                         _notifyNewCreation(t('upload.file'));
                         setIsModalCreationVisible(false);
                     }}
@@ -148,6 +152,7 @@ export const useCreatePrimaryAction = ({
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
                         refetch();
+                        refetchCount();
                         _notifyNewCreation(t('upload.folder'));
                         setIsModalCreationVisible(false);
                     }}
@@ -194,6 +199,7 @@ export const useCreatePrimaryAction = ({
                             await Promise.resolve(onCreate?.({recordIdCreated: newRecord.id}));
                         }
                         refetch();
+                        refetchCount();
                     }}
                     submitButtons={['create']}
                 />

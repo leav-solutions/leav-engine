@@ -25,7 +25,7 @@ export const useExplorerCountData = ({
 
     const appliedFilters: RecordFilterInput[] = [...activeFilters, ...defaultPreparedFilters];
 
-    const {data: countData} = useExplorerLibraryCountDataQuery({
+    const {data: countData, refetch: refetchCount} = useExplorerLibraryCountDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
         variables: {
@@ -36,5 +36,8 @@ export const useExplorerCountData = ({
 
     const memoizedCountData = useMemo(() => countData?.records?.totalCount ?? 0, [countData]);
 
-    return memoizedCountData;
+    return {
+        countData: memoizedCountData,
+        refetchCount,
+    };
 };
