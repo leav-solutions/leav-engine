@@ -12,7 +12,7 @@ import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTyp
 import {prepareFiltersForRequest} from '_ui/components/Filters';
 import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReducer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronDown} from '@fortawesome/free-solid-svg-icons';
+import {faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import {ResultsCount} from './ResultsCount';
 
 /**
@@ -173,7 +173,7 @@ export const useMassActions = ({
                         totalCountFiltered={totalCountFiltered}
                         totalCountLibrary={totalCountLibrary}
                     />
-                    <FontAwesomeIcon icon={faChevronDown} />
+                    <FontAwesomeIcon icon={faCaretDown} size="2xs" />
                 </KitSpace>
             </KitCheckbox>
         </KitDropDown>

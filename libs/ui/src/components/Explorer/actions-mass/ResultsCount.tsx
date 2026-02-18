@@ -19,14 +19,14 @@ export const ResultsCount: FunctionComponent<IResultCountProps> = ({
     totalCountLibrary,
 }) => (
     <KitTypography.Paragraph>
-        <KitTypography.Text weight="bold" size="fontSize5">
+        <KitTypography.Text weight="bold" size="fontSize7">
             {isInactive
                 ? `${totalCountLibrary} `
                 : totalCountFiltered === totalCountLibrary
                   ? `${totalCountLibrary} `
                   : `${totalCountFiltered} / ${totalCountLibrary} `}
         </KitTypography.Text>
-        <KitTypography.Text weight="medium" size="fontSize5">
+        <KitTypography.Text weight="medium" size="fontSize7">
             {t('explorer.massAction.results', {count: totalCountLibrary})}
         </KitTypography.Text>
     </KitTypography.Paragraph>

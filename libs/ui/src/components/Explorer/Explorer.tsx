@@ -228,7 +228,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const totalCountFiltered = data?.totalCount ?? 0;
 
-        const totalCountLibrary = useExplorerCountData({
+        const {countData: totalCountLibrary, refetchCount} = useExplorerCountData({
             entrypoint,
             libraryId: view.libraryId,
             defaultFilters: defaultViewSettings?.filters ?? [],
@@ -256,6 +256,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             totalCount: totalCountFiltered,
             formId: creationFormId,
             refetch,
+            refetchCount,
         });
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
             isEnabled: isLink,
