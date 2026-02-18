@@ -253,6 +253,9 @@
         "stats_elements": "{{created}} éléments créés, {{updated}} éléments mis à jour, {{ignored}} éléments ignorés",
         "stats_trees": "{{trees}} éléments placés dans un arbre"
     },
+    "export": {
+        "error_cell_value": "Valeur inconnue"
+    },
     "notifications": {
         "export_complete_title": "Export terminé avec succès",
         "export_complete_message": "Votre export demandé le {{date}} est prêt. Vous pouvez le télécharger en cliquant sur le lien ci-dessous.",
