@@ -271,6 +271,35 @@ describe('attributeSimpleLinkRepo', () => {
                 });
             });
 
+            describe('deleteAllLinkValueTo', () => {
+                let remoteRecord3: IRecord;
+                let record3: IRecord;
+                let record4: IRecord;
+                beforeAll(async () => {
+                    remoteRecord3 = await createRemoteRecord({});
+                    record3 = await createRecord({});
+                    record4 = await createRecord({});
+                });
+
+                test('Should delete all values for a linked record', async () => {
+                    await attributeSimpleLinkRepo.deleteAllLinkValueTo(
+                        libraryId,
+                        simpleLinkAttribute,
+                        remoteRecord3.id,
+                        ctx,
+                    );
+
+                    const valuesAfterDeleteLink = await attributeSimpleLinkRepo.getValuesBatch({
+                        library: libraryId,
+                        attribute: simpleLinkAttribute,
+                        recordIds: [record1.id, record2.id, record3.id, record4.id],
+                        ctx,
+                    });
+
+                    expect(valuesAfterDeleteLink).toEqual([[record1Value], [record2Value], [], []]);
+                });
+            });
+
             describe('deleteValue', () => {
                 test('Should return the deleted value', async () => {
                     const value = await attributeSimpleLinkRepo.deleteValue({

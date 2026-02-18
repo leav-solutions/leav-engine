@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {RecordPermissionsActions} from '../../../_types/permissions';
@@ -12,6 +13,9 @@ import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
 import {type IValueRepo} from 'infra/value/valueRepo';
 import {type IRecord} from '../../../_types/record';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {AttributeTypes} from '../../../_types/attribute';
+import {type IAttributeSimpleLinkRepo} from 'infra/attributeTypes/attributeSimpleLinkRepo';
 
 export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 
@@ -19,6 +23,8 @@ interface IDeps {
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeSimpleLinkRepo;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
     'core.infra.value': IValueRepo;
@@ -28,6 +34,8 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.permission.record': recordPermissionDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo,
@@ -45,6 +53,32 @@ export default function ({
 
         if (!canDelete) {
             throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
+        }
+
+        // delete simple link that point to the record to delete
+        const attributesLinkedToLib = await attributeDomain.getAttributes({
+            params: {
+                filters: {
+                    linked_library: library,
+                },
+            },
+            ctx,
+        });
+        for (const attribute of attributesLinkedToLib.list) {
+            if (attribute.type === AttributeTypes.SIMPLE_LINK) {
+                const attributeLibraries = await attributeDomain.getAttributeLibraries({
+                    attributeId: attribute.id,
+                    ctx,
+                });
+                await Promise.all(
+                    attributeLibraries.map(async lib => {
+                        logger.silly(
+                            `Deleting simple link attribute values linked to record ${id} on attribute ${attribute.id} in library ${lib.id}`,
+                        );
+                        await attributeSimpleLinkRepo.deleteAllLinkValueTo(lib.id, attribute, id, ctx);
+                    }),
+                );
+            }
         }
 
         // simple link attribute value are directly in record data in db, so will be deleted with record itself

@@ -183,7 +183,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         });
 
         test('Should create a reverse adv link to a simple link value', async function () {
-            const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
+            const attrSimpleLinkRepo: Mockify<IAttributeSimpleLinkRepo> = {
                 createValue: global.__mockPromise([]),
             };
 
@@ -308,7 +308,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         });
 
         test('Should update a reverse adv link to a simple link value', async function () {
-            const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
+            const attrSimpleLinkRepo: Mockify<IAttributeSimpleLinkRepo> = {
                 updateValue: global.__mockPromise([]),
             };
 
@@ -397,7 +397,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         });
 
         test('Should delete a reverse adv link to simple link value', async function () {
-            const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
+            const attrSimpleLinkRepo: Mockify<IAttributeSimpleLinkRepo> = {
                 deleteValue: global.__mockPromise([]),
             };
 
@@ -714,7 +714,7 @@ describe('AttributeAdvancedLinkRepo', () => {
         });
 
         test('Should return values for reverse advanced link attribute to simple link', async function () {
-            const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
+            const attrSimpleLinkRepo: Mockify<IAttributeSimpleLinkRepo> = {
                 getReverseValues: global.__mockPromise([]),
             };
 
