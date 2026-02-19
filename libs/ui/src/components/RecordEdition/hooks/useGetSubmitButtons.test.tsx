@@ -51,4 +51,44 @@ describe('useGetSubmitButtons', () => {
         expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
         expect(screen.queryByRole('button', {name: /create_and_edit$/})).not.toBeInTheDocument();
     });
+
+    test('Return "cancel" button if in create mode', async () => {
+        const TestComp = () => {
+            const buttons = useGetSubmitButtons(
+                ['createAndEdit', 'closeCancel'],
+                'createAndEdit',
+                true,
+                jest.fn(),
+                jest.fn(),
+            );
+            return <div>{buttons}</div>;
+        };
+
+        render(<TestComp />);
+
+        expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /create_and_edit$/})).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /close$/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /cancel$/})).toBeInTheDocument();
+    });
+
+    test('Return "close" button if not in create mode', async () => {
+        const TestComp = () => {
+            const buttons = useGetSubmitButtons(
+                ['createAndEdit', 'closeCancel'],
+                'createAndEdit',
+                false,
+                jest.fn(),
+                jest.fn(),
+            );
+            return <div>{buttons}</div>;
+        };
+
+        render(<TestComp />);
+
+        expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /create_and_edit$/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /close$/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /cancel$/})).not.toBeInTheDocument();
+    });
 });
