@@ -109,13 +109,13 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const [formId, setFormId] = useState<string>(
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition'),
     );
-    const values = useGetInitialRecordValues();
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
     const modalTitle =
         currentRecord?.label && currentRecord.label.trim() ? currentRecord.label : t('record_edition.new_record');
 
     useEffect(() => {
         const createEmptyRecordFunction = async () => {
+            const values = useGetInitialRecordValues();
             const {data} = await createRecord({
                 variables: {
                     library,
@@ -161,13 +161,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
 
     const showCancelConfirm = useCreateCancelConfirm(_closeAfterConfirm);
 
-    const displayedSubmitButtons = useGetSubmitButtons(
-        submitButtons,
-        formElementId.current,
-        isCreation,
-        _handleClickSubmit,
-    );
-
     const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
         setCurrentRecord(newRecord);
 
@@ -194,6 +187,14 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         }
         return onClose();
     };
+
+    const displayedSubmitButtons = useGetSubmitButtons(
+        submitButtons,
+        formElementId.current,
+        isCreation,
+        _handleClickSubmit,
+        _handleClose,
+    );
 
     return (
         <KitModalStyled

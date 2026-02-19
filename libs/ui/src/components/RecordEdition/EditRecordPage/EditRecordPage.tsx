@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, type ReactNode, useEffect, useRef, useState} from 'react';
+import {type FunctionComponent, type ReactNode, useEffect, useMemo, useRef, useState} from 'react';
 import {KitButton, KitDivider, KitLoader, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -87,7 +87,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition'),
     );
     const [formCreateButtonsContainer, setFormCreateButtonsContainer] = useState<HTMLElement>();
-    const values = useGetInitialRecordValues();
 
     useEffect(() => {
         if (isSubmitButtonsPortal) {
@@ -100,6 +99,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
     useEffect(() => {
         const createEmptyRecordFunction = async () => {
+            const values = useGetInitialRecordValues();
             const {data} = await createRecord({
                 variables: {
                     library,
@@ -144,12 +144,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
     const showCancelConfirm = useCreateCancelConfirm(_closeAfterConfirm);
 
-    const displayedSubmitButtons = useGetSubmitButtons(
-        submitButtons,
-        formElementId.current,
-        isCreation,
-        _handleClickSubmit,
-    );
     const [antdForm] = useForm();
 
     const _handleClose = () => {
@@ -163,8 +157,15 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
         return onClose();
     };
-
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
+
+    const displayedSubmitButtons = useGetSubmitButtons(
+        submitButtons,
+        formElementId.current,
+        isCreation,
+        _handleClickSubmit,
+        _handleClose,
+    );
 
     const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
         setCurrentRecord(newRecord);

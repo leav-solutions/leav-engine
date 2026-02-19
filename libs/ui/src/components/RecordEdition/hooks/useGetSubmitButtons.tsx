@@ -5,7 +5,7 @@ import {KitButton} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type PossibleSubmitButtons, type SubmitButtonsName} from '../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons';
+import {faPenToSquare, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 export const useGetSubmitButtons = (
@@ -13,12 +13,28 @@ export const useGetSubmitButtons = (
     id: string,
     isInCreateMode: boolean,
     onClickSubmit: (button: SubmitButtonsName) => void,
+    onClickCloseCancel?: () => void,
 ) => {
     const {t} = useSharedTranslation();
     const headerSubmitButtons = [];
 
     if (!isInCreateMode) {
         return [];
+    }
+
+    if (buttons.includes('closeCancel') && onClickCloseCancel) {
+        const closeButtonLabel = isInCreateMode ? t('global.cancel') : t('global.close');
+        headerSubmitButtons.push(
+            <KitButton
+                key="close"
+                type="secondary"
+                icon={<FontAwesomeIcon icon={faXmark} />}
+                onClick={() => onClickCloseCancel?.()}
+                size="m"
+            >
+                {closeButtonLabel}
+            </KitButton>,
+        );
     }
 
     if (buttons.includes('create')) {
