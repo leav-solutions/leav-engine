@@ -166,7 +166,7 @@ export const useMassActions = ({
                 indeterminate={hasSelectedSomeItems}
                 checked={hasSelectedAllAvailableItems}
             >
-                <KitSpace size="xs">
+                <KitSpace size="xxs">
                     <ResultsCount
                         t={t}
                         isInactive={isInactive}
