@@ -5381,7 +5381,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/core@npm:6.1.0, @dnd-kit/core@npm:^6.1.0":
+"@dnd-kit/accessibility@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@dnd-kit/accessibility@npm:3.1.1"
+  dependencies:
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 10/961000456a36700a9cd13be51147a818bc100f7dfabb332b80438d02e06f3b556aa0ff46ddf13bdff3b70bc8f9b63dd5a392cc285597ab1f7026e672660c54b6
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/core@npm:6.3.1":
+  version: 6.3.1
+  resolution: "@dnd-kit/core@npm:6.3.1"
+  dependencies:
+    "@dnd-kit/accessibility": "npm:^3.1.1"
+    "@dnd-kit/utilities": "npm:^3.2.2"
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10/a5ae6fa8404765712aa80e308f58cb79bac9a306c274ec8272c405c2a59dd277d24b966348fe8ca6340bb3f0d75f90b8a021fa781edcf65255114d3cf2bef891
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/core@npm:^6.1.0":
   version: 6.1.0
   resolution: "@dnd-kit/core@npm:6.1.0"
   dependencies:
@@ -8358,7 +8383,7 @@ __metadata:
     "@babel/preset-react": "npm:7.28.5"
     "@ckeditor/ckeditor5-build-inline": "npm:39.0.2"
     "@ckeditor/ckeditor5-react": "npm:6.3.0"
-    "@dnd-kit/core": "npm:6.1.0"
+    "@dnd-kit/core": "npm:6.3.1"
     "@dnd-kit/sortable": "npm:8.0.0"
     "@dnd-kit/utilities": "npm:3.2.2"
     "@fortawesome/fontawesome-svg-core": "npm:7.0.1"
