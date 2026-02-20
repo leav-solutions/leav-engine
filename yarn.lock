@@ -8936,26 +8936,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:1.7.1":
-  version: 1.7.1
-  resolution: "@reduxjs/toolkit@npm:1.7.1"
-  dependencies:
-    immer: "npm:^9.0.7"
-    redux: "npm:^4.1.2"
-    redux-thunk: "npm:^2.4.1"
-    reselect: "npm:^4.1.5"
-  peerDependencies:
-    react: ^16.9.0 || ^17.0.0 || 18.0.0-beta
-    react-redux: ^7.2.1 || ^8.0.0-beta
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-redux:
-      optional: true
-  checksum: 10/b0603ca7f15de8169ae69643f1eebd26c4126dde926153b1f0cb63d6dc465243f6c11c577d1d6970b81193025ec0f7d35103fddf6eb52fa8bf92df85d0bd7013
-  languageName: node
-  linkType: hard
-
 "@reduxjs/toolkit@npm:1.9.7":
   version: 1.9.7
   resolution: "@reduxjs/toolkit@npm:1.9.7"
@@ -11870,7 +11850,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:5.0.7"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.0"
     "@leav/utils": "workspace:libs/utils"
-    "@reduxjs/toolkit": "npm:1.7.1"
+    "@reduxjs/toolkit": "npm:1.9.7"
     "@semantic-ui-react/craco-less": "npm:2.0.2"
     "@testing-library/jest-dom": "npm:5.17.0"
     "@testing-library/react": "npm:11.2.7"
@@ -19227,13 +19207,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^9.0.7":
-  version: 9.0.12
-  resolution: "immer@npm:9.0.12"
-  checksum: 10/1eff01ff8286cdbe6cef16cee27a477b99bf34d1a2f55edb4080f7cce9b524d68f3001b9cb205ea21dbf6a874051a9d53dd1e73854c9cb3ec05cdc83a77d3609
-  languageName: node
-  linkType: hard
-
 "immutable@npm:^3.8.1":
   version: 3.8.2
   resolution: "immutable@npm:3.8.2"
@@ -26441,15 +26414,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-thunk@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "redux-thunk@npm:2.4.1"
-  peerDependencies:
-    redux: ^4
-  checksum: 10/b81cdb5fa83dbfb49abc220242dfb9bc76143924d2bf4b62c0730d5dc7eed716b5800e4284e8fed8bd9fc9ea0d7757e5fe8e4a1380e63656782b9f474da25efa
-  languageName: node
-  linkType: hard
-
 "redux-thunk@npm:^2.4.2":
   version: 2.4.2
   resolution: "redux-thunk@npm:2.4.2"
@@ -26459,7 +26423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2":
+"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.0.5":
   version: 4.1.2
   resolution: "redux@npm:4.1.2"
   dependencies:
@@ -26754,13 +26718,6 @@ __metadata:
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"
   checksum: 10/878880ee78ccdce372784f62f52a272048e2d0827c29ae31e7f99da18b62a2b9463ea03a75f277352f4697c100183debb0532371ad515a2d49d4bfe596dd4c20
-  languageName: node
-  linkType: hard
-
-"reselect@npm:^4.1.5":
-  version: 4.1.5
-  resolution: "reselect@npm:4.1.5"
-  checksum: 10/eabf06f34ef316526cb6841cb3fcf0c03a77bec296e03f94e9520d354d539f3f62cfcc50ad07523a74ce21bda9d8009995eca43b60c34b89cb7a264721c81380
   languageName: node
   linkType: hard
 
