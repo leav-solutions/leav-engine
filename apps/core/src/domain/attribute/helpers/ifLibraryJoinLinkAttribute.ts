@@ -28,7 +28,7 @@ export default function ({
         callback: IfLibraryJoinLinkAttributeCallback<R>,
         ctx: IQueryInfos,
     ): Promise<R | void> => {
-        if (![AttributeTypes.ADVANCED_LINK, AttributeTypes.SIMPLE_LINK].includes(attributeProps.type)) {
+        if (attributeProps.type !== AttributeTypes.ADVANCED_LINK) {
             return;
         }
 
