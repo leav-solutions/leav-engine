@@ -325,6 +325,30 @@ describe('Import', () => {
 
                 expect(res.data.data.records.list.length).toBe(0);
             });
+
+            it('should import datasToImportWithEmptySheet.xlsx ignore empty sheets', async () => {
+                const query = `mutation importExcel($file: Upload!, $sheets: [SheetInput!]!) {
+                        importExcel(file: $file, sheets: $sheets)
+                    }`;
+                const importFilePath = path.join(
+                    appRootPath(),
+                    '/src/__tests__/e2e/api/import/datas/datasToImportWithEmptySheet.xlsx',
+                );
+                const sheets = [
+                    {
+                        type: ImportType.STANDARD,
+                        library: testLibName,
+                        mode: ImportMode.INSERT,
+                        mapping: [labelAttributeId, lovAttributeId],
+                    },
+                ];
+
+                const importResult = await importFileGraphQlCall(query, importFilePath, sheets);
+
+                expect(importResult.data.importExcel).toMatch(uuidRegExp);
+
+                await waitForTaskCompletedWithStatus(importResult.data.importExcel, TaskStatus.DONE);
+            });
         });
 
         describe('Link', () => {
