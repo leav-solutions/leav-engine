@@ -9163,10 +9163,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/eslint-patch@npm:1.1.3":
-  version: 1.1.3
-  resolution: "@rushstack/eslint-patch@npm:1.1.3"
-  checksum: 10/e2bb20e20a4a094cbd5c4c840156631e454623cd20fa2c944721253b8a27243ce8b5a01737cf8bde93f8eeb6d764a511d71ae0a14682e1c8c60a80af1c36aa40
+"@rushstack/eslint-patch@npm:1.15.0":
+  version: 1.15.0
+  resolution: "@rushstack/eslint-patch@npm:1.15.0"
+  checksum: 10/f15a7aeffb57929f17a3ed02106a11ff7c073bdb69a3878736f177dcd188e1ef311622d09aa6cb0a000a2ebd32cc64e56ae11f6ff930a963eaeaf0cc7bebff26
   languageName: node
   linkType: hard
 
@@ -21940,7 +21940,7 @@ __metadata:
     "@babel/preset-env": "npm:7.29.0"
     "@commitlint/cli": "npm:19.8.1"
     "@commitlint/config-conventional": "npm:19.8.1"
-    "@rushstack/eslint-patch": "npm:1.1.3"
+    "@rushstack/eslint-patch": "npm:1.15.0"
     "@types/babel__preset-env": "npm:^7"
     "@types/jest": "npm:29.5.14"
     "@types/testing-library__jest-dom": "npm:5.14.9"
@@ -29314,9 +29314,11 @@ __metadata:
   linkType: hard
 
 "ua-parser-js@npm:^0.7.18, ua-parser-js@npm:^0.7.30":
-  version: 0.7.33
-  resolution: "ua-parser-js@npm:0.7.33"
-  checksum: 10/b648d065a8b42a852181346125d0e39c24df66944a1a965b3857ca3ff070f387c18dcc66a090832e5d08a511d27ab8c2f4020bd6f9c7bcc4e140af27ee1dfa4b
+  version: 0.7.41
+  resolution: "ua-parser-js@npm:0.7.41"
+  bin:
+    ua-parser-js: script/cli.js
+  checksum: 10/e41306332d8ace098d51a644a3ba95522ddfc04243727a3c0419efcdf486c8f868c3af8e6a56f6aa86bdc26e6b893abb0b2bde0c9e1a1625a183dfdf839cac82
   languageName: node
   linkType: hard
 
