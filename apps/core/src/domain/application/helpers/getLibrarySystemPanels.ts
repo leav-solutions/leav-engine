@@ -18,39 +18,37 @@ export default function ({translator, config}: IGetLibrarySystemPanelsHelperDeps
     return {
         getLibrarySystemPanels(libraryId: string): IApplication['appStudioSettings'] {
             return {
-                system: {
-                    libraryPanels: [
-                        {
-                            id: `${libraryId}_list`,
-                            type: 'explorer',
-                            actions: [
-                                {
-                                    where: 'popup',
-                                    what: 'record',
-                                    icon: 'fa-pen',
-                                    label: config.lang.available.reduce((labels, lang) => {
-                                        labels[lang] = `${translator.t('appStudio.edit', {lng: lang})}`;
-                                        return labels;
-                                    }, {}),
-                                    onRowClick: true,
-                                },
-                            ],
-                        },
-                    ],
-                    recordPanels: [
-                        {
-                            id: `${libraryId}_edition`,
-                            type: 'editionForm',
-                            formId: 'edition',
-                        },
-                        {
-                            id: `${libraryId}_creation`,
-                            type: 'creationForm',
-                            formId: 'creation',
-                            isStandalone: true,
-                        },
-                    ],
-                },
+                libraryPanels: [
+                    {
+                        id: `${libraryId}_list`,
+                        type: 'explorer',
+                        actions: [
+                            {
+                                where: 'popup',
+                                what: 'record',
+                                icon: 'fa-pen',
+                                label: config.lang.available.reduce((labels, lang) => {
+                                    labels[lang] = `${translator.t('appStudio.edit', {lng: lang})}`;
+                                    return labels;
+                                }, {}),
+                                onRowClick: true,
+                            },
+                        ],
+                    },
+                ],
+                recordPanels: [
+                    {
+                        id: `${libraryId}_edition`,
+                        type: 'editionForm',
+                        formId: 'edition',
+                    },
+                    {
+                        id: `${libraryId}_creation`,
+                        type: 'creationForm',
+                        formId: 'creation',
+                        isStandalone: true,
+                    },
+                ],
             };
         },
     };

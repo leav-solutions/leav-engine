@@ -656,36 +656,34 @@ describe('Applications', () => {
 
                 for (const libraryId of [withoutLibraryPanelsLibId, allowedLibId]) {
                     expect(libraries[libraryId]).toMatchObject({
-                        system: {
-                            libraryPanels: [
-                                {
-                                    id: `${libraryId}_list`,
-                                    type: 'explorer',
-                                    actions: [
-                                        {
-                                            where: 'popup',
-                                            what: 'record',
-                                            icon: 'fa-pen',
-                                            label: {en: 'Edit', fr: 'Éditer'},
-                                            onRowClick: true,
-                                        },
-                                    ],
-                                },
-                            ],
-                            recordPanels: [
-                                {
-                                    id: `${libraryId}_edition`,
-                                    type: 'editionForm',
-                                    formId: 'edition',
-                                },
-                                {
-                                    id: `${libraryId}_creation`,
-                                    type: 'creationForm',
-                                    formId: 'creation',
-                                    isStandalone: true,
-                                },
-                            ],
-                        },
+                        libraryPanels: [
+                            {
+                                id: `${libraryId}_list`,
+                                type: 'explorer',
+                                actions: [
+                                    {
+                                        where: 'popup',
+                                        what: 'record',
+                                        icon: 'fa-pen',
+                                        label: {en: 'Edit', fr: 'Éditer'},
+                                        onRowClick: true,
+                                    },
+                                ],
+                            },
+                        ],
+                        recordPanels: [
+                            {
+                                id: `${libraryId}_edition`,
+                                type: 'editionForm',
+                                formId: 'edition',
+                            },
+                            {
+                                id: `${libraryId}_creation`,
+                                type: 'creationForm',
+                                formId: 'creation',
+                                isStandalone: true,
+                            },
+                        ],
                     });
                 }
             });
@@ -743,36 +741,34 @@ describe('Applications', () => {
 
                 // Not defined in application workspace but defined in library (id: withLibraryPanelsLibId) system panels
                 expect(libraries[withoutLibraryPanelsLibId]).toMatchObject({
-                    system: {
-                        libraryPanels: [
-                            {
-                                id: `${withoutLibraryPanelsLibId}_list`,
-                                type: 'explorer',
-                                actions: [
-                                    {
-                                        where: 'popup',
-                                        what: 'record',
-                                        icon: 'fa-pen',
-                                        label: {en: 'Edit', fr: 'Éditer'},
-                                        onRowClick: true,
-                                    },
-                                ],
-                            },
-                        ],
-                        recordPanels: [
-                            {
-                                id: `${withoutLibraryPanelsLibId}_edition`,
-                                type: 'editionForm',
-                                formId: 'edition',
-                            },
-                            {
-                                id: `${withoutLibraryPanelsLibId}_creation`,
-                                type: 'creationForm',
-                                formId: 'creation',
-                                isStandalone: true,
-                            },
-                        ],
-                    },
+                    libraryPanels: [
+                        {
+                            id: `${withoutLibraryPanelsLibId}_list`,
+                            type: 'explorer',
+                            actions: [
+                                {
+                                    where: 'popup',
+                                    what: 'record',
+                                    icon: 'fa-pen',
+                                    label: {en: 'Edit', fr: 'Éditer'},
+                                    onRowClick: true,
+                                },
+                            ],
+                        },
+                    ],
+                    recordPanels: [
+                        {
+                            id: `${withoutLibraryPanelsLibId}_edition`,
+                            type: 'editionForm',
+                            formId: 'edition',
+                        },
+                        {
+                            id: `${withoutLibraryPanelsLibId}_creation`,
+                            type: 'creationForm',
+                            formId: 'creation',
+                            isStandalone: true,
+                        },
+                    ],
                 });
             });
         });
