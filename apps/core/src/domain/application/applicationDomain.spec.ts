@@ -22,6 +22,7 @@ const depsBase: ToAny<IApplicationDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.application': jest.fn(),
     'core.utils': jest.fn(),
+    'core.domain.application.appStudio': jest.fn(),
     translator: {},
 };
 

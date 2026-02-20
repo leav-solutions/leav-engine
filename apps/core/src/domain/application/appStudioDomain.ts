@@ -12,6 +12,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import uniq from 'lodash/uniq';
 import {type IGetLibrarySystemPanelsHelper} from './helpers/getLibrarySystemPanels';
+import {EXPLORER_STUDIO_APPLICATION} from '_constants/globalSettings';
 
 export interface IAppStudioDomain {
     /**
@@ -166,6 +167,22 @@ export default function ({
         return result;
     };
 
+    const _autoPopulateWorkspacesForExplorerStudio = async (ctx: IQueryInfos) => {
+        const explorerStudioWorkspaces = [];
+
+        const libraries = (await libraryDomain.getLibraries({ctx}))?.list ?? [];
+
+        for (const library of libraries) {
+            explorerStudioWorkspaces.push({
+                id: `${library.id}_workspace`,
+                type: 'library',
+                libraryId: library.id,
+            });
+        }
+
+        return explorerStudioWorkspaces;
+    };
+
     const _getAppStudioSettings = async (
         applicationId: string,
         appStudioSettings: IApplication['appStudioSettings'],
@@ -175,8 +192,11 @@ export default function ({
             return appStudioSettings;
         }
 
-        //TODO: Auto populate workspaces for all libraries if applicationId === 'explorer_studio'
-        let workspaces = appStudioSettings.workspaces;
+        // For now, explorer studio support only auto-populate workspaces. It can't be overridden.
+        let workspaces =
+            applicationId === EXPLORER_STUDIO_APPLICATION
+                ? await _autoPopulateWorkspacesForExplorerStudio(ctx)
+                : appStudioSettings.workspaces;
         let librariesPanels = {};
 
         workspaces = await _filterWorkspacesByPermissions(workspaces, ctx);

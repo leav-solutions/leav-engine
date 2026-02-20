@@ -5,6 +5,7 @@ import axios from 'axios';
 import {getConfig} from '../../../../config';
 import {e2eNonAdminGroupId, e2eNonAdminUser, gqlCreateRecord, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 import ms from 'ms';
+import {EXPLORER_STUDIO_APPLICATION} from '../../../../_constants/globalSettings';
 
 /**
  * Convert a JavaScript object to GraphQL object literal syntax (keys without quotes)
@@ -634,6 +635,45 @@ describe('Applications', () => {
                         }
                     }`),
                 ).rejects.toThrow(/Missing record ID/);
+            });
+        });
+
+        describe('explorer studio', () => {
+            test('Should auto-populate workspaces based on all existing libraries', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${EXPLORER_STUDIO_APPLICATION}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                // Use only libraries created in this test file to avoid conflicts with other libraries created in other tests
+                const appStudioSettingsTestLibrariesIds = [
+                    allowedLibId,
+                    deniedLibId,
+                    noWorkspaceTitleLibId,
+                    withLibraryPanelsLibId,
+                    withoutLibraryPanelsLibId,
+                ];
+
+                const app = res.data.data.applications.list[0];
+
+                expect(app.appStudioSettings.workspaces).toEqual(
+                    expect.arrayContaining(
+                        appStudioSettingsTestLibrariesIds.map(libraryId =>
+                            expect.objectContaining({
+                                id: `${libraryId}_workspace`,
+                                type: 'library',
+                                libraryId,
+                            }),
+                        ),
+                    ),
+                );
             });
         });
 
