@@ -284,5 +284,8 @@
     },
     "default": {
         "admin_users_group_label": "Administrateurs"
+    },
+    "appStudio": {
+        "edit": "Éditer"
     }
 }

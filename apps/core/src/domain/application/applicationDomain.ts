@@ -239,6 +239,8 @@ export default function ({
 
             const deletedApp = await applicationRepo.deleteApplication({id, ctx});
 
+            // TODO: appStudioDomain.deleteLibraryPanels();
+
             await _sendAppEvent(
                 {
                     application: deletedApp,
