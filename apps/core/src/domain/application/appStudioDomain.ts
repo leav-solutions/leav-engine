@@ -26,6 +26,10 @@ export interface IAppStudioDomain {
         application: IApplication;
         ctx: IQueryInfos;
     }): Promise<IApplication['appStudioSettings']>;
+    /**
+     * Check if application has defined panels on each library and delete them
+     */
+    deleteLibraryPanelsForApplication(params: {applicationId: string; ctx: IQueryInfos}): Promise<void>;
 }
 
 export interface IAppStudioDomainDeps {
@@ -197,12 +201,39 @@ export default function ({
         };
     };
 
+    const _deleteLibraryPanelsForApplication = async (applicationId: string, ctx: IQueryInfos) => {
+        const libraries = (await libraryDomain.getLibraries({ctx}))?.list ?? [];
+
+        for (const library of libraries) {
+            const applications = library.settings?.applications;
+
+            if (!applications || !applications?.[applicationId]) {
+                continue;
+            }
+
+            delete applications[applicationId];
+
+            const librarySettingsToSave = {
+                ...library.settings,
+                applications,
+            };
+
+            if (!Object.keys(librarySettingsToSave.applications ?? {}).length) {
+                delete librarySettingsToSave.applications;
+            }
+
+            await libraryDomain.saveLibrary({...library, settings: librarySettingsToSave}, ctx);
+        }
+    };
+
     return {
-        //TODO: Add a function to delete panels in libraries when an application is deleted (data cleaning)
         async getAppStudioSettings({application, ctx}) {
             const appStudioSettings = application.settings?.application ?? {};
 
             return _getAppStudioSettings(application.id, appStudioSettings, ctx);
+        },
+        async deleteLibraryPanelsForApplication({applicationId, ctx}) {
+            return _deleteLibraryPanelsForApplication(applicationId, ctx);
         },
     };
 }

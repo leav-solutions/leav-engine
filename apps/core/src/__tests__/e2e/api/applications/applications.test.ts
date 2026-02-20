@@ -130,6 +130,79 @@ describe('Applications', () => {
             expect(res.data.data.deleteApplication.id).toBe('test_app');
         });
 
+        test('Delete an application should delete library panels associated to the application', async () => {
+            const appIdToDelete = 'test_app_to_delete';
+
+            await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "${appIdToDelete}",
+                    label: {en: "Test App Studio Libraries With Panels"},
+                    endpoint: "test-app-studio-libraries-with-panels",
+                    module: "app-studio",
+                    settings: {}
+                }) { id }
+            }`);
+
+            const libraryIdWithPanels = 'library_with_panels';
+
+            await gqlSaveLibrary(
+                libraryIdWithPanels,
+                'Library with panels',
+                [],
+                toGraphQLObject({
+                    applications: {
+                        [appIdToDelete]: {
+                            libraryPanels: [
+                                {
+                                    id: `${libraryIdWithPanels}_list`,
+                                    type: 'explorer',
+                                    actions: [
+                                        {
+                                            where: 'slider',
+                                            what: 'record',
+                                            icon: 'fa-pen',
+                                            label: {
+                                                en: 'Edit with custom label',
+                                                fr: 'Éditer avec un label personnalisé',
+                                            },
+                                            onRowClick: true,
+                                        },
+                                    ],
+                                },
+                            ],
+                            recordPanels: [
+                                {
+                                    id: `${libraryIdWithPanels}_edition`,
+                                    type: 'editionForm',
+                                    formId: 'editionFormIdOverride',
+                                },
+                                {
+                                    id: `${libraryIdWithPanels}_creation`,
+                                    type: 'creationForm',
+                                    formId: 'creationFormIdOverride',
+                                    isStandalone: true,
+                                },
+                            ],
+                        },
+                    },
+                }),
+            );
+
+            // Delete application
+            await makeGraphQlCall(`mutation {deleteApplication(id: "${appIdToDelete}") { id }}`);
+
+            const libraryWithPanelsRes = await makeGraphQlCall(
+                `{libraries(filters: {id: "${libraryIdWithPanels}"}) { list { id settings } }}`,
+            );
+
+            expect(libraryWithPanelsRes.status).toBe(200);
+            expect(libraryWithPanelsRes.data.errors).toBeUndefined();
+            expect(libraryWithPanelsRes.data.data.libraries.list[0].settings.applications).toBeUndefined();
+
+            // Cleanup
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${libraryIdWithPanels}") { id } }`);
+        });
+
         test('Cannot delete a system application', async () => {
             await expect(makeGraphQlCall('mutation {deleteApplication(id: "admin") { id }}')).rejects.toThrow(
                 /Cannot delete system application/,
