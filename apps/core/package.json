@@ -80,7 +80,7 @@
         "add-filename-increment": "1.0.0",
         "amqplib": "0.10.9",
         "app-root-path": "3.1.0",
-        "arangojs": "8.1.0",
+        "arangojs": "8.8.1",
         "awilix": "12.1.1",
         "bcryptjs": "2.4.3",
         "body-parser": "1.20.4",

@@ -518,7 +518,7 @@ __metadata:
     "@types/express": "npm:5.0.6"
     "@types/jest": "npm:29.5.14"
     amqplib: "npm:0.10.9"
-    arangojs: "npm:8.1.0"
+    arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
     i18next: "npm:24.2.3"
     jest: "npm:29.7.0"
@@ -12414,16 +12414,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arangojs@npm:8.1.0":
-  version: 8.1.0
-  resolution: "arangojs@npm:8.1.0"
+"arangojs@npm:8.8.1":
+  version: 8.8.1
+  resolution: "arangojs@npm:8.8.1"
   dependencies:
     "@types/node": "npm:>=14"
     multi-part: "npm:^4.0.0"
     path-browserify: "npm:^1.0.1"
     x3-linkedlist: "npm:1.2.0"
     xhr: "npm:^2.4.1"
-  checksum: 10/d75f58f2b550005535e16e5bfc41cddf382c28ebb66a9f9a29a5a1fa879d7f3a1c9de8aa747f4f1341696840a44a9a23dc3cd5c1602790520919b965bd2dd000
+  checksum: 10/a0b39df91a963bb7140f7b5ccd33e900b64c9caf8076bb7fb35d598cd84604a175f3e7ed368c318dc1fd601b2eb53a7da3ec864f80f64211584ba7658b750517
   languageName: node
   linkType: hard
 
@@ -14828,7 +14828,7 @@ __metadata:
     add-filename-increment: "npm:1.0.0"
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
-    arangojs: "npm:8.1.0"
+    arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
     axios: "npm:1.13.5"
     bcryptjs: "npm:2.4.3"
@@ -28483,7 +28483,7 @@ __metadata:
     apollo-link: "npm:1.2.14"
     apollo-link-http: "npm:1.5.17"
     app-root-path: "npm:3.1.0"
-    arangojs: "npm:8.1.0"
+    arangojs: "npm:8.8.1"
     graphql: "npm:16.12.0"
     graphql-tag: "npm:2.12.6"
     jest: "npm:29.7.0"
