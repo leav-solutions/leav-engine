@@ -23,20 +23,16 @@ export const SelectViewType: FunctionComponent<ISelectViewTypeProps> = ({value, 
     return (
         <KitRadio.Group value={value} onChange={onChange}>
             <KitSpace direction="vertical" size={0}>
+                <KitRadio value="table">{t('explorer.view-type-table')}</KitRadio>
+                <KitRadio value="timeline">{t('explorer.view-type-planning')}</KitRadio>
                 <KitRadio value="list" disabled>
                     <KitSpace>
                         {t('explorer.view-type-list')} {comingSoonTag}
                     </KitSpace>
                 </KitRadio>
-                <KitRadio value="table">{t('explorer.view-type-table')}</KitRadio>
                 <KitRadio value="mosaic" disabled>
                     <KitSpace>
                         {t('explorer.view-type-mosaic')} {comingSoonTag}
-                    </KitSpace>
-                </KitRadio>
-                <KitRadio value="planning" disabled>
-                    <KitSpace>
-                        {t('explorer.view-type-planning')} {comingSoonTag}
                     </KitSpace>
                 </KitRadio>
             </KitSpace>
