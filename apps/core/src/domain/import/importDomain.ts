@@ -1164,6 +1164,10 @@ export default function ({
             await workbook.xlsx.load(buffer as unknown as ExcelJS.Buffer);
 
             for (const [indexSheet, dataSheet] of data.entries()) {
+                // skip empty sheets
+                if (!dataSheet) {
+                    continue;
+                }
                 let {
                     type,
                     library,
