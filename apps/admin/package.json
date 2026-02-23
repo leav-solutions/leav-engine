@@ -55,9 +55,9 @@
         "yup": "0.32.11"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "6.1.1",
-        "@graphql-codegen/typescript": "5.0.7",
-        "@graphql-codegen/typescript-operations": "5.0.7",
+        "@graphql-codegen/cli": "6.1.2",
+        "@graphql-codegen/typescript": "5.0.8",
+        "@graphql-codegen/typescript-operations": "5.0.8",
         "@graphql-codegen/typescript-react-apollo": "4.4.0",
         "@semantic-ui-react/craco-less": "2.0.2",
         "@testing-library/jest-dom": "5.17.0",
