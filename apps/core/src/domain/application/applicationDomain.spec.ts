@@ -15,6 +15,10 @@ import {mockApplication, mockApplicationExternal} from '../../__tests__/mocks/ap
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationDomain, {type IApplicationDomainDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
 
+const mockAppStudioDomain = {
+    deleteLibraryPanelsForApplication: global.__mockPromise(),
+};
+
 const depsBase: ToAny<IApplicationDomainDeps> = {
     config: {},
     'core.domain.permission.admin': jest.fn(),
@@ -22,7 +26,7 @@ const depsBase: ToAny<IApplicationDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.application': jest.fn(),
     'core.utils': jest.fn(),
-    'core.domain.application.appStudio': jest.fn(),
+    'core.domain.application.appStudio': mockAppStudioDomain,
     translator: {},
 };
 
@@ -270,6 +274,10 @@ describe('applicationDomain', () => {
             const deletedApp = await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
+            expect(mockAppStudioDomain.deleteLibraryPanelsForApplication).toHaveBeenCalledWith({
+                applicationId: mockApplication.id,
+                ctx: mockCtx,
+            });
             expect(deletedApp).toEqual(mockApplication);
         });
 
@@ -288,6 +296,10 @@ describe('applicationDomain', () => {
             await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
+            expect(mockAppStudioDomain.deleteLibraryPanelsForApplication).toHaveBeenCalledWith({
+                applicationId: mockApplication.id,
+                ctx: mockCtx,
+            });
         });
 
         test("Throws if application doesn't exist", async () => {
