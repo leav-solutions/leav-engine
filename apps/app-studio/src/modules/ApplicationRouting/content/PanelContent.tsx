@@ -33,6 +33,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
                 }}
                 editionFormId={panel.formId}
                 library={libraryId}
+                forceDisableSidebarInAppStudio
                 removePadding
             />
         );
