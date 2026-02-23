@@ -505,7 +505,23 @@ export default function ({
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
             }
 
-            return treeRepo.getTrees({params: initializedParams, ctx});
+            const trees = await treeRepo.getTrees({params: initializedParams, ctx});
+
+            const permissions = await Promise.all(
+                trees.list.map(tree =>
+                    treePermissionDomain.getTreePermission({
+                        treeId: tree.id,
+                        action: TreePermissionsActions.ACCESS_TREE,
+                        ctx,
+                    }),
+                ),
+            );
+
+            // filter trees by permissions
+            trees.list = trees.list.filter((_, index) => permissions[index]);
+            trees.totalCount = trees.list.length;
+
+            return trees;
         },
         async getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree> {
             const tree = await getCoreEntityById<ITree>('tree', treeId, ctx);
@@ -800,6 +816,16 @@ export default function ({
                 throw new ValidationError({treeId: Errors.UNKNOWN_TREE});
             }
 
+            const isTreeAccessible = await treePermissionDomain.getTreePermission({
+                treeId,
+                action: TreePermissionsActions.ACCESS_TREE,
+                ctx,
+            });
+
+            if (!isTreeAccessible) {
+                throw new PermissionError(TreePermissionsActions.ACCESS_TREE);
+            }
+
             if (nodeId && !(await this.isNodePresent({treeId, nodeId, ctx}))) {
                 throw new ValidationError({node: Errors.UNKNOWN_NODE});
             }
@@ -830,6 +856,16 @@ export default function ({
         async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {
             if (!treeId) {
                 throw new ValidationError({treeId: Errors.UNKNOWN_TREE});
+            }
+
+            const isTreeAccessible = await treePermissionDomain.getTreePermission({
+                treeId,
+                action: TreePermissionsActions.ACCESS_TREE,
+                ctx,
+            });
+
+            if (!isTreeAccessible) {
+                throw new PermissionError(TreePermissionsActions.ACCESS_TREE);
             }
 
             if (!nodeId) {

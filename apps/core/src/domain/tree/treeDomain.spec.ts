@@ -385,10 +385,12 @@ describe('treeDomain', () => {
             const treeRepo = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1}),
             } satisfies Mockify<ITreeRepo>;
+
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
             });
 
             const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
@@ -405,6 +407,7 @@ describe('treeDomain', () => {
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
             });
 
             await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
@@ -1251,6 +1254,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 ...depsBase,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
             });
 
             const record = await domain.getRecordByNodeId({
