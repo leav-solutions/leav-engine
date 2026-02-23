@@ -675,6 +675,30 @@ describe('Applications', () => {
                     ),
                 );
             });
+
+            test('Should auto-populate explorerProps for library system panels', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${EXPLORER_STUDIO_APPLICATION}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                const appWithoutOverrideLibraryPanels = app.appStudioSettings.libraries[allowedLibId].libraryPanels[0];
+
+                expect(appWithoutOverrideLibraryPanels.explorerProps).toMatchObject({
+                    showSearch: true,
+                    showFilters: true,
+                    showSorts: appWithoutOverrideLibraryPanels.explorerProps.showSorts,
+                    showAttributeLabels: appWithoutOverrideLibraryPanels.explorerProps.showAttributeLabels,
+                    freezeView: appWithoutOverrideLibraryPanels.explorerProps.freezeView,
+                });
+            });
         });
 
         describe('libraries panels', () => {

@@ -144,7 +144,7 @@ export default function ({
 
         const libraryPanels =
             library.settings?.applications?.[applicationId] ??
-            librarySystemPanelsHelper.getLibrarySystemPanels(libraryId);
+            librarySystemPanelsHelper.getLibrarySystemPanels(libraryId, applicationId);
 
         let result = {
             [libraryId]: libraryPanels,
