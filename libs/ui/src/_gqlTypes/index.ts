@@ -800,6 +800,11 @@ export enum TaskType {
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
+
 export enum TreeBehavior {
   files = 'files',
   standard = 'standard'
@@ -996,7 +1001,7 @@ export type DetailsApplicationFragment = { id: string, label: any, type: Applica
 
 export type RecordIdentityFragment = { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } };
 
-export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
+export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
 export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
@@ -1166,7 +1171,7 @@ export type ViewDetailsFilterFragment = { field?: string | null, value?: string 
 
 export type TreeAttributeForMassEditionFragment = { id: string, tree_values?: Array<{ node?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null } } } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null };
 
-export type AttributesByLibAttributeWithPermissionsLinkAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, permissions: { access_attribute: boolean }, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean } | null };
+export type AttributesByLibAttributeWithPermissionsLinkAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, permissions: { access_attribute: boolean }, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null };
 
 export type AttributesByLibAttributeWithPermissionsStandardAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?:
     | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null }
@@ -1181,11 +1186,11 @@ export type AttributesByLibAttributeWithPermissionsFragment =
   | AttributesByLibAttributeWithPermissionsTreeAttributeFragment
 ;
 
-export type AttributesByLibLinkAttributeWithPermissionsFragment = { valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean } | null };
+export type AttributesByLibLinkAttributeWithPermissionsFragment = { valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null };
 
 export type StandardAttributeDetailsFragment = { id: string, type: AttributeType, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null };
 
-export type LinkAttributeDetailsFragment = { label?: any | null, type: AttributeType, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean } | null };
+export type LinkAttributeDetailsFragment = { label?: any | null, type: AttributeType, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null };
 
 export type TreeAttributeDetailsFragment = { id: string, label?: any | null, linked_tree?: { id: string, label?: any | null } | null };
 
@@ -1298,7 +1303,7 @@ export type GetAttributeByIdQueryVariables = Exact<{
 
 
 export type GetAttributeByIdQuery = { attributes?: { list: Array<
-      | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
+      | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
       | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     > } | null };
@@ -1344,7 +1349,7 @@ export type SaveAttributeMutationVariables = Exact<{
 
 
 export type SaveAttributeMutation = { saveAttribute:
-    | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
+    | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
    };
@@ -1781,7 +1786,7 @@ export type GetAttributesByLibWithPermissionsQueryVariables = Exact<{
 
 
 export type GetAttributesByLibWithPermissionsQuery = { attributes?: { list: Array<
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean } | null, permissions: { access_attribute: boolean } }
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, permissions: { access_attribute: boolean } }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?:
           | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null }
           | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null }
@@ -1795,7 +1800,7 @@ export type ExplorerAttributesQueryVariables = Exact<{
 
 
 export type ExplorerAttributesQuery = { attributes?: { list: Array<
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean } | null, permissions: { access_attribute: boolean } }
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, permissions: { access_attribute: boolean } }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean } }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }
     > } | null };
@@ -1806,7 +1811,7 @@ export type ExplorerLinkAttributeQueryVariables = Exact<{
 
 
 export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<
-      | { label?: any | null, type: AttributeType, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean } | null, permissions: { access_attribute: boolean, edit_value: boolean } }
+      | { label?: any | null, type: AttributeType, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } }
       | { id: string, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean } }
       | { label?: any | null, id: string, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } }
     > } | null };
@@ -2057,6 +2062,9 @@ export const AttributeDetailsFragmentDoc = gql`
     reverse_link
     smart_filter {
       enable
+      through {
+        id
+      }
     }
   }
   ... on TreeAttribute {
@@ -2598,6 +2606,9 @@ export const AttributesByLibLinkAttributeWithPermissionsFragmentDoc = gql`
   }
   smart_filter {
     enable
+    through {
+      id
+    }
   }
 }
     ${RecordIdentityFragmentDoc}`;
@@ -2683,6 +2694,9 @@ export const LinkAttributeDetailsFragmentDoc = gql`
   }
   smart_filter {
     enable
+    through {
+      id
+    }
   }
 }
     `;

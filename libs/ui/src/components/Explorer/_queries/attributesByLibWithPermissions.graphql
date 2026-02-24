@@ -11,6 +11,9 @@ fragment AttributesByLibLinkAttributeWithPermissions on LinkAttribute {
     }
     smart_filter {
         enable
+        through {
+            id
+        }
     }
 }
 
