@@ -12,7 +12,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import uniq from 'lodash/uniq';
 import {type IGetLibrarySystemPanelsHelper} from './helpers/getLibrarySystemPanels';
-import {EXPLORER_STUDIO_APPLICATION} from '_constants/globalSettings';
+import {EXPLORER_STUDIO_APPLICATION} from '../../_constants/globalSettings';
 
 export interface IAppStudioDomain {
     /**
