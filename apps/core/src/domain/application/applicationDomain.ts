@@ -23,6 +23,7 @@ import {type ErrorFieldDetail, Errors} from '../../_types/errors';
 import {TriggerNames} from '../../_types/eventsManager';
 import {type IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
+import {type IAppStudioDomain} from './appStudioDomain';
 
 export const MAX_CONSULTATION_HISTORY_SIZE = 10;
 
@@ -55,9 +56,10 @@ export interface IApplicationDomainDeps {
     'core.domain.user': IUserDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.application': IApplicationRepo;
+    'core.domain.application.appStudio': IAppStudioDomain;
     'core.utils': IUtils;
-    translator: i18n;
     config: IConfig;
+    translator: i18n;
 }
 
 export default function ({
@@ -65,9 +67,10 @@ export default function ({
     'core.domain.user': userDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.application': applicationRepo,
+    'core.domain.application.appStudio': appStudioDomain,
     'core.utils': utils,
-    translator,
     config,
+    translator,
 }: IApplicationDomainDeps): IApplicationDomain {
     const _getApplicationProperties = async ({id, ctx}) => {
         const apps = await applicationRepo.getApplications({
@@ -238,6 +241,9 @@ export default function ({
             }
 
             const deletedApp = await applicationRepo.deleteApplication({id, ctx});
+
+            // Make sure to delete library panels associated to the application
+            await appStudioDomain.deleteLibraryPanelsForApplication({applicationId: id, ctx});
 
             await _sendAppEvent(
                 {

@@ -22,7 +22,7 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
 
-    const {currentPanel} = retrievePanelDetails({application, recordPanelId});
+    const {currentPanel} = retrievePanelDetails({application, recordPanelId}) as {currentPanel: CreationFormPanel};
     const {saveValues} = useExecuteSaveValueBatchMutation();
 
     const currentWorkspace = application.workspaces.find(({id}) => id === workspaceId);
@@ -47,7 +47,7 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
             library={libraryId}
             isSubmitButtonsPortal
             onCreate={async ({id: recordIdCreated}) => {
-                if (previousRecordId) {
+                if (currentPanel?.attributeSource && previousRecordId) {
                     await saveValues(
                         {
                             id: recordIdCreated,
@@ -57,7 +57,7 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
                         },
                         [
                             {
-                                attribute: (currentPanel as CreationFormPanel).attributeSource,
+                                attribute: currentPanel.attributeSource,
                                 idValue: null,
                                 value: previousRecordId,
                             },

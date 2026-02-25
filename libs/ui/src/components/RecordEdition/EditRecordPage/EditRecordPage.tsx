@@ -35,9 +35,10 @@ interface IEditRecordPageProps {
     showHeader?: boolean;
     withInfoButton?: boolean;
     onClose?: () => void;
-    showSidebar?: boolean;
-    enableSidebar?: boolean;
-    sidebarContainer?: HTMLElement;
+    showSidebar?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecordPage
+    enableSidebar?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecordPage
+    sidebarContainer?: HTMLElement; // TODO: Should be removed when sidebar is fully removed from EditRecordPage
+    forceDisableSidebarInAppStudio?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecordPage
     isSubmitButtonsPortal?: boolean;
     removePadding?: boolean;
 }
@@ -71,6 +72,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     enableSidebar,
     showSidebar,
     sidebarContainer,
+    forceDisableSidebarInAppStudio,
     isSubmitButtonsPortal = false,
     removePadding = false,
 }) => {
@@ -226,6 +228,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                         containerStyle={showHeader ? {height: 'calc(100% - 82px)'} : {height: '100%'}}
                         withInfoButton={withInfoButton}
                         enableSidebar={enableSidebar}
+                        forceDisableSidebarInAppStudio={forceDisableSidebarInAppStudio}
                         showSidebar={showSidebar}
                         sidebarContainer={sidebarContainer}
                         removePadding={removePadding}

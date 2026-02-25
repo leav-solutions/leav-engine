@@ -50,9 +50,10 @@ interface IEditRecordProps {
     library: string;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
-    showSidebar?: boolean;
-    enableSidebar?: boolean;
-    sidebarContainer?: HTMLElement;
+    showSidebar?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecord
+    enableSidebar?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecord
+    sidebarContainer?: HTMLElement; // TODO: Should be removed when sidebar is fully removed from EditRecord
+    forceDisableSidebarInAppStudio?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecord
     containerStyle?: CSSObject;
     withInfoButton: boolean;
     removePadding?: boolean; // TODO: This prop should be remove when EditRecord will be moved to app-studio or data-studio deleted
@@ -88,6 +89,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     enableSidebar = false,
     showSidebar = false,
     sidebarContainer,
+    forceDisableSidebarInAppStudio = false,
     containerStyle,
     withInfoButton,
     removePadding = false,
@@ -253,7 +255,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         return saveValues(record, valuesToSave, version, true);
     };
 
-    const shouldUseLayoutWithSidebar = state.enableSidebar && state.isOpenSidebar && sidebarContainer === undefined;
+    const shouldUseLayoutWithSidebar =
+        state.enableSidebar && state.isOpenSidebar && sidebarContainer === undefined && !forceDisableSidebarInAppStudio;
 
     return (
         <ErrorBoundary>
@@ -285,7 +288,12 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
                         )}
                     </Content>
-                    <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} sidebarContainer={sidebarContainer} />
+                    {!forceDisableSidebarInAppStudio && (
+                        <EditRecordSidebar
+                            onMetadataSubmit={_handleMetadataSubmit}
+                            sidebarContainer={sidebarContainer}
+                        />
+                    )}
                 </Container>
             </EditRecordReducerContext.Provider>
         </ErrorBoundary>

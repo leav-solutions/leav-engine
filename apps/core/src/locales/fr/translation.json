@@ -4,6 +4,8 @@
         "no": "Non"
     },
     "errors": {
+        "APP_STUDIO_WORKSPACE_LIBRARY_ID_REQUIRED": "L'ID de la bibliothèque est requis pour le workspace {{workspaceId}}",
+        "APP_STUDIO_WORKSPACE_RECORD_ID_REQUIRED": "L'ID de l'élément est requis pour le workspace {{workspaceId}}",
         "ATTRIBUTE_USED_BY_LIBRARY": "Cet attribut est utilisé par les bibliothèques suivantes : {{libraries}}",
         "ATTRIBUTE_USED_IN_METADATA": "Cet attribut est utilisé dans les métadonnées des attributs suivants: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Impossible de sauvegarder des métadonnées sur un attribut simple",
@@ -282,5 +284,8 @@
     },
     "default": {
         "admin_users_group_label": "Administrateurs"
+    },
+    "appStudio": {
+        "edit": "Éditer"
     }
 }

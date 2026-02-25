@@ -160,7 +160,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             ignoreViewByDefault = false,
             defaultActionsForItem = ['replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
-            defaultMassActions = ['deactivate', 'editAttribute'],
+            defaultMassActions = ['deactivate', 'editAttribute', 'export'],
             defaultCallbacks,
             defaultViewSettings,
             joinLibraryContext,

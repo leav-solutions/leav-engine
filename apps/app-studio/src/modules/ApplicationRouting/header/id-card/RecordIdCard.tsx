@@ -50,7 +50,7 @@ export const RecordIdCard: FunctionComponent<{
               title: <KitBreadcrumb items={breadcrumbItems} />,
               description: (
                   <RecordIdCardDescription
-                      label={data?.records?.list?.[0]?.whoAmI?.label}
+                      label={data?.records?.list?.[0]?.whoAmI?.label ?? data?.records?.list?.[0]?.id}
                       sublabel={data?.records?.list?.[0]?.whoAmI?.subLabel}
                   />
               ),

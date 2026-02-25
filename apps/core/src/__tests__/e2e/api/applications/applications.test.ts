@@ -5,6 +5,7 @@ import axios from 'axios';
 import {getConfig} from '../../../../config';
 import {e2eNonAdminGroupId, e2eNonAdminUser, gqlCreateRecord, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 import ms from 'ms';
+import {EXPLORER_STUDIO_APPLICATION} from '../../../../_constants/globalSettings';
 
 /**
  * Convert a JavaScript object to GraphQL object literal syntax (keys without quotes)
@@ -130,6 +131,79 @@ describe('Applications', () => {
             expect(res.data.data.deleteApplication.id).toBe('test_app');
         });
 
+        test('Delete an application should delete library panels associated to the application', async () => {
+            const appIdToDelete = 'test_app_to_delete';
+
+            await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "${appIdToDelete}",
+                    label: {en: "Test App Studio Libraries With Panels"},
+                    endpoint: "test-app-studio-libraries-with-panels",
+                    module: "app-studio",
+                    settings: {}
+                }) { id }
+            }`);
+
+            const libraryIdWithPanels = 'library_with_panels';
+
+            await gqlSaveLibrary(
+                libraryIdWithPanels,
+                'Library with panels',
+                [],
+                toGraphQLObject({
+                    applications: {
+                        [appIdToDelete]: {
+                            libraryPanels: [
+                                {
+                                    id: `${libraryIdWithPanels}_list`,
+                                    type: 'explorer',
+                                    actions: [
+                                        {
+                                            where: 'slider',
+                                            what: 'record',
+                                            icon: 'fa-pen',
+                                            label: {
+                                                en: 'Edit with custom label',
+                                                fr: 'Éditer avec un label personnalisé',
+                                            },
+                                            onRowClick: true,
+                                        },
+                                    ],
+                                },
+                            ],
+                            recordPanels: [
+                                {
+                                    id: `${libraryIdWithPanels}_edition`,
+                                    type: 'editionForm',
+                                    formId: 'editionFormIdOverride',
+                                },
+                                {
+                                    id: `${libraryIdWithPanels}_creation`,
+                                    type: 'creationForm',
+                                    formId: 'creationFormIdOverride',
+                                    isStandalone: true,
+                                },
+                            ],
+                        },
+                    },
+                }),
+            );
+
+            // Delete application
+            await makeGraphQlCall(`mutation {deleteApplication(id: "${appIdToDelete}") { id }}`);
+
+            const libraryWithPanelsRes = await makeGraphQlCall(
+                `{libraries(filters: {id: "${libraryIdWithPanels}"}) { list { id settings } }}`,
+            );
+
+            expect(libraryWithPanelsRes.status).toBe(200);
+            expect(libraryWithPanelsRes.data.errors).toBeUndefined();
+            expect(libraryWithPanelsRes.data.data.libraries.list[0].settings.applications).toBeUndefined();
+
+            // Cleanup
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${libraryIdWithPanels}") { id } }`);
+        });
+
         test('Cannot delete a system application', async () => {
             await expect(makeGraphQlCall('mutation {deleteApplication(id: "admin") { id }}')).rejects.toThrow(
                 /Cannot delete system application/,
@@ -137,21 +211,82 @@ describe('Applications', () => {
         });
     });
 
-    describe('appStudioSettings workspaces permissions filtering', () => {
+    describe('appStudioSettings', () => {
+        const filteredWorkspacesAppId = 'test_app_studio_filtered_workspaces';
+        const workspacesTitlesAppId = 'test_app_studio_workspaces_titles';
+        const workspacesWithoutLibraryIdAppId = 'test_app_studio_workspaces_no_library_id';
+        const workspacesWithoutRecordIdAppId = 'test_app_studio_workspaces_no_record_id';
+        const withoutLibraryPanelsAppId = 'test_app_studio_libraries_without_panels';
+        const librariesPanelsAppId = 'test_app_studio_libraries_panels';
+
         const allowedLibId = 'test_app_studio_lib_allowed';
         const deniedLibId = 'test_app_studio_lib_denied';
-        const appId = 'test_app_studio_workspaces';
+        const noWorkspaceTitleLibId = 'test_app_studio_library_no_workspace_title';
+        const withLibraryPanelsLibId = 'test_app_studio_library_with_panels';
+        const withoutLibraryPanelsLibId = 'test_app_studio_library_without_panels';
+
         let allowedRecordId: string;
         let deniedRecordId: string;
+        let noWorkspaceTitleRecordId: string;
 
         beforeAll(async () => {
-            // Create libraries for workspaces
+            // Create libraries
             await gqlSaveLibrary(allowedLibId, 'Allowed Library');
             await gqlSaveLibrary(deniedLibId, 'Denied Library');
+            await gqlSaveLibrary(noWorkspaceTitleLibId, 'No Workspace Title Library');
+            await gqlSaveLibrary(
+                withLibraryPanelsLibId,
+                'Library with panels',
+                [],
+                toGraphQLObject({
+                    applications: {
+                        [librariesPanelsAppId]: {
+                            libraryPanels: [
+                                {
+                                    id: `${withLibraryPanelsLibId}_list`,
+                                    type: 'explorer',
+                                    actions: [
+                                        {
+                                            where: 'slider',
+                                            what: 'record',
+                                            icon: 'fa-pen',
+                                            label: {
+                                                en: 'Edit with custom label',
+                                                fr: 'Éditer avec un label personnalisé',
+                                            },
+                                            onRowClick: true,
+                                        },
+                                    ],
+                                },
+                            ],
+                            recordPanels: [
+                                {
+                                    id: `${withLibraryPanelsLibId}_edition`,
+                                    type: 'editionForm',
+                                    formId: 'editionFormIdOverride',
+                                },
+                                {
+                                    id: `${withLibraryPanelsLibId}_creation`,
+                                    type: 'creationForm',
+                                    formId: 'creationFormIdOverride',
+                                    isStandalone: true,
+                                },
+                                {
+                                    id: `${withLibraryPanelsLibId}_link_to_other_library`,
+                                    type: 'explorer',
+                                    libraryId: withoutLibraryPanelsLibId,
+                                },
+                            ],
+                        },
+                    },
+                }),
+            );
+            await gqlSaveLibrary(withoutLibraryPanelsLibId, 'Library without panels');
 
-            // Create records for record-type workspaces
+            // Create records
             allowedRecordId = await gqlCreateRecord(allowedLibId);
             deniedRecordId = await gqlCreateRecord(deniedLibId);
+            noWorkspaceTitleRecordId = await gqlCreateRecord(noWorkspaceTitleLibId);
 
             // Set library permissions: allow access to allowedLib, deny access to deniedLib
             await makeGraphQlCall(`mutation {
@@ -193,47 +328,202 @@ describe('Applications', () => {
                 ) { type }
             }`);
 
-            // Create application with workspaces
-            const workspaces = [
-                {id: 'ws-lib-allowed', type: 'library', libraryId: allowedLibId, title: {en: 'Allowed Lib'}},
-                {id: 'ws-lib-denied', type: 'library', libraryId: deniedLibId, title: {en: 'Denied Lib'}},
-                {
-                    id: 'ws-record-allowed',
-                    type: 'record',
-                    libraryId: allowedLibId,
-                    recordId: allowedRecordId,
-                    title: {en: 'Allowed Record'},
+            // Create applications
+            const settingsFilteredWorkspacesApp = {
+                application: {
+                    workspaces: [
+                        {
+                            id: 'ws-lib-allowed',
+                            type: 'library',
+                            libraryId: allowedLibId,
+                            title: {en: 'Allowed Lib'},
+                        },
+                        {id: 'ws-lib-denied', type: 'library', libraryId: deniedLibId, title: {en: 'Denied Lib'}},
+                        {
+                            id: 'ws-record-allowed',
+                            type: 'record',
+                            libraryId: allowedLibId,
+                            recordId: allowedRecordId,
+                            title: {en: 'Allowed Record'},
+                        },
+                        {
+                            id: 'ws-record-denied',
+                            type: 'record',
+                            libraryId: deniedLibId,
+                            recordId: deniedRecordId,
+                            title: {en: 'Denied Record'},
+                        },
+                        {id: 'ws-lib-allowed-no-title', type: 'library', libraryId: allowedLibId},
+                        {
+                            id: 'ws-record-allowed-no-title',
+                            type: 'record',
+                            libraryId: allowedLibId,
+                            recordId: allowedRecordId,
+                        },
+                    ],
                 },
-                {
-                    id: 'ws-record-denied',
-                    type: 'record',
-                    libraryId: deniedLibId,
-                    recordId: deniedRecordId,
-                    title: {en: 'Denied Record'},
-                },
-            ];
-
-            const settings = {application: {workspaces}};
-
+            };
             await makeGraphQlCall(`mutation {
                 saveApplication(application: {
-                    id: "${appId}",
+                    id: "${filteredWorkspacesAppId}",
                     label: {en: "Test App Studio Workspaces"},
                     endpoint: "test-app-studio-workspaces",
-                    module: "data-studio",
-                    settings: ${toGraphQLObject(settings)}
+                    module: "app-studio",
+                    settings: ${toGraphQLObject(settingsFilteredWorkspacesApp)}
+                }) { id }
+            }`);
+
+            const settingsWorkspacesWithoutTitles = {
+                application: {
+                    workspaces: [
+                        {
+                            id: 'ws-library-with-title',
+                            type: 'library',
+                            libraryId: noWorkspaceTitleLibId,
+                            title: {en: 'Library title'},
+                        },
+                        {
+                            id: 'ws-record-with-title',
+                            type: 'record',
+                            libraryId: noWorkspaceTitleLibId,
+                            recordId: noWorkspaceTitleRecordId,
+                            title: {en: 'Record title'},
+                        },
+                        {id: 'ws-library-no-title', type: 'library', libraryId: noWorkspaceTitleLibId},
+                        {
+                            id: 'ws-record-no-title',
+                            type: 'record',
+                            libraryId: noWorkspaceTitleLibId,
+                            recordId: noWorkspaceTitleRecordId,
+                        },
+                    ],
+                },
+            };
+            await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "${workspacesTitlesAppId}",
+                    label: {en: "Test App Studio Workspaces"},
+                    endpoint: "test-app-studio-workspaces",
+                    module: "app-studio",
+                    settings: ${toGraphQLObject(settingsWorkspacesWithoutTitles)}
+                }) { id }
+            }`);
+
+            const settingsWorkspacesWithoutLibraryId = {
+                application: {
+                    workspaces: [
+                        {
+                            id: 'ws-lib-no-library-id',
+                            type: 'library',
+                        },
+                    ],
+                },
+            };
+            await makeGraphQlCall(`mutation {
+                    saveApplication(application: {
+                        id: "${workspacesWithoutLibraryIdAppId}",
+                        label: {en: "Test App Studio Workspaces"},
+                        endpoint: "test-app-studio-workspaces",
+                        module: "app-studio",
+                        settings: ${toGraphQLObject(settingsWorkspacesWithoutLibraryId)}
+                    }) { id }
+                }`);
+
+            const settingsWorkspacesWithoutRecordId = {
+                application: {
+                    workspaces: [{id: 'ws-record-no-record-id', type: 'record', libraryId: allowedLibId}],
+                },
+            };
+            await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "${workspacesWithoutRecordIdAppId}",
+                    label: {en: "Test App Studio Workspaces"},
+                    endpoint: "test-app-studio-workspaces",
+                    module: "app-studio",
+                    settings: ${toGraphQLObject(settingsWorkspacesWithoutRecordId)}
+                }) { id }
+            }`);
+
+            const settingsLibrariesWithoutPanels = {
+                application: {
+                    workspaces: [
+                        {
+                            id: 'ws-lib-without-panels',
+                            type: 'library',
+                            libraryId: withoutLibraryPanelsLibId,
+                        },
+                        {
+                            id: 'ws-allowed-lib',
+                            type: 'library',
+                            libraryId: allowedLibId,
+                        },
+                    ],
+                },
+            };
+            await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "${withoutLibraryPanelsAppId}",
+                    label: {en: "Test App Studio Libraries Without Panels"},
+                    endpoint: "test-app-studio-libraries-without-panels",
+                    module: "app-studio",
+                    settings: ${toGraphQLObject(settingsLibrariesWithoutPanels)}
+                }) { id }
+            }`);
+
+            const settingsLibrariesWithPanels = {
+                application: {
+                    workspaces: [
+                        {
+                            id: 'ws-lib-with-panels',
+                            type: 'library',
+                            libraryId: withLibraryPanelsLibId,
+                        },
+                    ],
+                },
+            };
+            await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "${librariesPanelsAppId}",
+                    label: {en: "Test App Studio Libraries With Panels"},
+                    endpoint: "test-app-studio-libraries-with-panels",
+                    module: "app-studio",
+                    settings: ${toGraphQLObject(settingsLibrariesWithPanels)}
                 }) { id }
             }`);
         });
 
         afterAll(async () => {
-            // Cleanup
-            await makeGraphQlCall(`mutation { deleteApplication(id: "${appId}") { id } }`);
+            // Cleanup records
+            await makeGraphQlCall(
+                `mutation { deleteRecord(library: "${allowedLibId}", id: "${allowedRecordId}") { id } }`,
+            );
+            await makeGraphQlCall(
+                `mutation { deleteRecord(library: "${deniedLibId}", id: "${deniedRecordId}") { id } }`,
+            );
+            await makeGraphQlCall(
+                `mutation { deleteRecord(library: "${noWorkspaceTitleLibId}", id: "${noWorkspaceTitleRecordId}") { id } }`,
+            );
+
+            // Cleanup libraries
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${allowedLibId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${deniedLibId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${noWorkspaceTitleLibId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${withLibraryPanelsLibId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${withoutLibraryPanelsLibId}") { id } }`);
+
+            // Cleanup applications
+            await makeGraphQlCall(`mutation { deleteApplication(id: "${filteredWorkspacesAppId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteApplication(id: "${workspacesTitlesAppId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteApplication(id: "${workspacesWithoutLibraryIdAppId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteApplication(id: "${workspacesWithoutRecordIdAppId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteApplication(id: "${withoutLibraryPanelsAppId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteApplication(id: "${librariesPanelsAppId}") { id } }`);
         });
 
-        test('Admin user should see all workspaces', async () => {
-            const res = await makeGraphQlCall(`{
-                applications(filters: {id: "${appId}"}) {
+        describe('workspaces permissions filtering', () => {
+            test('Admin user should see all workspaces', async () => {
+                const res = await makeGraphQlCall(`{
+                applications(filters: {id: "${filteredWorkspacesAppId}"}) {
                     list {
                         id
                         appStudioSettings
@@ -241,38 +531,310 @@ describe('Applications', () => {
                 }
             }`);
 
-            expect(res.status).toBe(200);
-            expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
 
-            const app = res.data.data.applications.list[0];
-            expect(app.appStudioSettings.workspaces).toHaveLength(4);
-        });
+                const app = res.data.data.applications.list[0];
+                expect(app.appStudioSettings.workspaces).toHaveLength(6);
+            });
 
-        test('Non-admin user should only see allowed library workspaces', async () => {
-            const res = await makeGraphQlCall(
-                `{
-                    applications(filters: {id: "${appId}"}) {
+            test('Non-admin user should only see allowed library workspaces', async () => {
+                const res = await makeGraphQlCall(
+                    `{
+                    applications(filters: {id: "${filteredWorkspacesAppId}"}) {
                         list {
                             id
                             appStudioSettings
                         }
                     }
                 }`,
-                {user: e2eNonAdminUser()},
-            );
+                    {user: e2eNonAdminUser()},
+                );
 
-            expect(res.status).toBe(200);
-            expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
 
-            const app = res.data.data.applications.list[0];
-            const workspaceIds = app.appStudioSettings.workspaces.map(ws => ws.id);
+                const app = res.data.data.applications.list[0];
+                const workspaceIds = app.appStudioSettings.workspaces.map(ws => ws.id);
 
-            // Should only contain allowed workspaces
-            expect(workspaceIds).toContain('ws-lib-allowed');
-            expect(workspaceIds).toContain('ws-record-allowed');
-            expect(workspaceIds).not.toContain('ws-lib-denied');
-            expect(workspaceIds).not.toContain('ws-record-denied');
-            expect(app.appStudioSettings.workspaces).toHaveLength(2);
+                // Should only contain allowed workspaces
+                expect(workspaceIds).toContain('ws-lib-allowed');
+                expect(workspaceIds).toContain('ws-record-allowed');
+                expect(workspaceIds).toContain('ws-lib-allowed-no-title');
+                expect(workspaceIds).toContain('ws-record-allowed-no-title');
+                expect(workspaceIds).not.toContain('ws-lib-denied');
+                expect(workspaceIds).not.toContain('ws-record-denied');
+                expect(app.appStudioSettings.workspaces).toHaveLength(4);
+            });
+        });
+
+        describe('workspaces titles', () => {
+            test('Should return workspace titles if provided', async () => {
+                const res = await makeGraphQlCall(`{
+                        applications(filters: {id: "${workspacesTitlesAppId}"}) {
+                            list {
+                                id
+                                appStudioSettings
+                            }
+                        }
+                    }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                expect(app.appStudioSettings.workspaces[0].title).toEqual({en: 'Library title'});
+                expect(app.appStudioSettings.workspaces[1].title).toEqual({en: 'Record title'});
+            });
+
+            test('Should return workspace titles for both library and record if not provided', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${workspacesTitlesAppId}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                expect(app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-library-no-title')?.title).toEqual({
+                    en: 'No Workspace Title Library',
+                });
+                expect(app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-record-no-title')?.title).toEqual({
+                    en: noWorkspaceTitleRecordId,
+                    fr: noWorkspaceTitleRecordId,
+                });
+            });
+
+            test('Should throw validation error if workspace library ID is undefined and title is not provided', async () => {
+                await expect(
+                    makeGraphQlCall(`{
+                    applications(filters: {id: "${workspacesWithoutLibraryIdAppId}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`),
+                ).rejects.toThrow(/Library ID is required for workspace ws-lib-no-library-id/);
+            });
+
+            test('Should throw validation error if workspace record ID is undefined', async () => {
+                // Should throw validation error when checking workspace permissions
+                await expect(
+                    makeGraphQlCall(`{
+                        applications(filters: {id: "${workspacesWithoutRecordIdAppId}"}) {
+                            list {
+                                id
+                                appStudioSettings
+                            }
+                        }
+                    }`),
+                ).rejects.toThrow(/Missing record ID/);
+            });
+        });
+
+        describe('explorer studio', () => {
+            test('Should auto-populate workspaces based on all existing libraries', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${EXPLORER_STUDIO_APPLICATION}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                // Use only libraries created in this test file to avoid conflicts with other libraries created in other tests
+                const appStudioSettingsTestLibrariesIds = [
+                    allowedLibId,
+                    deniedLibId,
+                    noWorkspaceTitleLibId,
+                    withLibraryPanelsLibId,
+                    withoutLibraryPanelsLibId,
+                ];
+
+                const app = res.data.data.applications.list[0];
+
+                expect(app.appStudioSettings.workspaces).toEqual(
+                    expect.arrayContaining(
+                        appStudioSettingsTestLibrariesIds.map(libraryId =>
+                            expect.objectContaining({
+                                id: `${libraryId}_workspace`,
+                                type: 'library',
+                                libraryId,
+                            }),
+                        ),
+                    ),
+                );
+            });
+
+            test('Should auto-populate explorerProps for library system panels', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${EXPLORER_STUDIO_APPLICATION}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                const appWithoutOverrideLibraryPanels = app.appStudioSettings.libraries[allowedLibId].libraryPanels[0];
+
+                expect(appWithoutOverrideLibraryPanels.explorerProps).toMatchObject({
+                    showSearch: true,
+                    showFilters: true,
+                    showSorts: appWithoutOverrideLibraryPanels.explorerProps.showSorts,
+                    showAttributeLabels: appWithoutOverrideLibraryPanels.explorerProps.showAttributeLabels,
+                    freezeView: appWithoutOverrideLibraryPanels.explorerProps.freezeView,
+                });
+            });
+        });
+
+        describe('libraries panels', () => {
+            test('Should return libraries system panels based on workspaces for a given application if panels are not overridden', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${withoutLibraryPanelsAppId}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                const libraries = app.appStudioSettings.libraries;
+
+                for (const libraryId of [withoutLibraryPanelsLibId, allowedLibId]) {
+                    expect(libraries[libraryId]).toMatchObject({
+                        libraryPanels: [
+                            {
+                                id: `${libraryId}_list`,
+                                type: 'explorer',
+                                actions: [
+                                    {
+                                        where: 'popup',
+                                        what: 'record',
+                                        icon: 'fa-pen',
+                                        label: {en: 'Edit', fr: 'Éditer'},
+                                        onRowClick: true,
+                                    },
+                                ],
+                            },
+                        ],
+                        recordPanels: [
+                            {
+                                id: `${libraryId}_edition`,
+                                type: 'editionForm',
+                                formId: 'edition',
+                            },
+                            {
+                                id: `${libraryId}_creation`,
+                                type: 'creationForm',
+                                formId: 'creation',
+                                isStandalone: true,
+                            },
+                        ],
+                    });
+                }
+            });
+
+            test('Should return libraries panels based on workspaces and library recordsPanels for a given application if panels are overridden', async () => {
+                const res = await makeGraphQlCall(`{
+                    applications(filters: {id: "${librariesPanelsAppId}"}) {
+                        list {
+                            id
+                            appStudioSettings
+                        }
+                    }
+                }`);
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+
+                const app = res.data.data.applications.list[0];
+                const libraries = app.appStudioSettings.libraries;
+
+                expect(libraries[withLibraryPanelsLibId]).toMatchObject({
+                    libraryPanels: [
+                        {
+                            id: `${withLibraryPanelsLibId}_list`,
+                            type: 'explorer',
+                            actions: [
+                                {
+                                    where: 'slider',
+                                    what: 'record',
+                                    icon: 'fa-pen',
+                                    label: {en: 'Edit with custom label', fr: 'Éditer avec un label personnalisé'},
+                                    onRowClick: true,
+                                },
+                            ],
+                        },
+                    ],
+                    recordPanels: [
+                        {
+                            id: `${withLibraryPanelsLibId}_edition`,
+                            type: 'editionForm',
+                            formId: 'editionFormIdOverride',
+                        },
+                        {
+                            id: `${withLibraryPanelsLibId}_creation`,
+                            type: 'creationForm',
+                            formId: 'creationFormIdOverride',
+                            isStandalone: true,
+                        },
+                        {
+                            id: `${withLibraryPanelsLibId}_link_to_other_library`,
+                            type: 'explorer',
+                            libraryId: withoutLibraryPanelsLibId,
+                        },
+                    ],
+                });
+
+                // Not defined in application workspace but defined in library (id: withLibraryPanelsLibId) system panels
+                expect(libraries[withoutLibraryPanelsLibId]).toMatchObject({
+                    libraryPanels: [
+                        {
+                            id: `${withoutLibraryPanelsLibId}_list`,
+                            type: 'explorer',
+                            actions: [
+                                {
+                                    where: 'popup',
+                                    what: 'record',
+                                    icon: 'fa-pen',
+                                    label: {en: 'Edit', fr: 'Éditer'},
+                                    onRowClick: true,
+                                },
+                            ],
+                        },
+                    ],
+                    recordPanels: [
+                        {
+                            id: `${withoutLibraryPanelsLibId}_edition`,
+                            type: 'editionForm',
+                            formId: 'edition',
+                        },
+                        {
+                            id: `${withoutLibraryPanelsLibId}_creation`,
+                            type: 'creationForm',
+                            formId: 'creation',
+                            isStandalone: true,
+                        },
+                    ],
+                });
+            });
         });
     });
 });
