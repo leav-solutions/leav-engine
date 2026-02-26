@@ -21,6 +21,25 @@ describe('Trees', () => {
     const attrTreeName = 'trees_attribute_test_tree';
 
     describe('Tree operations', () => {
+        beforeAll(async () => {
+            await gqlSaveTree(testTreeName2, 'Test tree 2', ['users_groups']);
+
+            await makeGraphQlCall(
+                `mutation {
+                    savePermission(
+                        permission: {
+                            type: tree,
+                            applyTo: "${testTreeName2}",
+                            usersGroup: null,
+                            actions: [
+                                {name: access_tree, allowed: false},
+                            ]
+                        }
+                    ) { type }
+                }`,
+            );
+        });
+
         test('Create Tree', async () => {
             const res = await makeGraphQlCall(`mutation {
             saveTree(
@@ -44,25 +63,42 @@ describe('Trees', () => {
             expect(res.data.data.saveTree.id).toBe(testTreeName);
             expect(res.data.data.saveTree.permissions.access_tree).toBeDefined();
             expect(res.data.errors).toBeUndefined();
-
-            // Create another one for tests
-            await gqlSaveTree(testTreeName2, 'Test tree 2', ['users_groups']);
         });
 
         test('Get Trees list', async () => {
             const res = await makeGraphQlCall(`{
-            trees {
-                list {
-                    id
-                    libraries {
-                        library { id }
+                trees {
+                    list {
+                        id
+                        libraries {
+                            library { id }
+                        }
                     }
                 }
-            }
-        }`);
+            }`);
 
             expect(res.status).toBe(200);
             expect(res.data.data.trees.list.length).toBeGreaterThanOrEqual(3);
+            expect(res.data.errors).toBeUndefined();
+        });
+
+        test('Should not access trees with non access permission', async () => {
+            const res = await makeGraphQlCall(
+                `{
+                trees {
+                    list {
+                        id
+                        libraries {
+                            library { id }
+                        }
+                    }
+                }
+            }`,
+                {user: e2eGuestUser()},
+            );
+
+            expect(res.status).toBe(200);
+            expect(res.data.data.trees.list.find(t => t.id === testTreeName2)).toBeUndefined();
             expect(res.data.errors).toBeUndefined();
         });
 
@@ -156,7 +192,6 @@ describe('Trees', () => {
                             {name: access_tree, allowed: false},
                             {name: edit_children, allowed: false},
                             {name: detach, allowed: false},
-                            
                         ]
                     }
                 ) { type }
@@ -247,6 +282,21 @@ describe('Trees', () => {
                         id
                     }
                 }`,
+                    {user: e2eGuestUser()},
+                ),
+            ).rejects.toThrow(/Action forbidden/);
+        });
+
+        test('Should not have the permission to get tree content', async () => {
+            await expect(
+                makeGraphQlCall(
+                    `
+                {
+                    treeContent(treeId: "${testTreeName}") {
+                        id
+                    }
+                }
+            `,
                     {user: e2eGuestUser()},
                 ),
             ).rejects.toThrow(/Action forbidden/);
@@ -353,6 +403,21 @@ describe('Trees', () => {
                     nodeId: "${nodeRecord5}"
                 )
             }`,
+                    {user: e2eGuestUser()},
+                ),
+            ).rejects.toThrow(/Action forbidden/);
+        });
+
+        test('Should not have the permission to get record by nodeId', async () => {
+            await expect(
+                makeGraphQlCall(
+                    `
+                {
+                    getRecordByNodeId(treeId: "${testTreeName}", nodeId: "${nodeRecord1}") {
+                       id
+                    }
+                }
+            `,
                     {user: e2eGuestUser()},
                 ),
             ).rejects.toThrow(/Action forbidden/);

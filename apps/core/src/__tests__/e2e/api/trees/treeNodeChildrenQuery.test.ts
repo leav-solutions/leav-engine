@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    e2eGuestUser,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlAddElemToTree,
@@ -49,6 +50,23 @@ describe('Trees', () => {
         recordNode2 = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId2});
         recordNode3 = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId3}, recordNode1, 1);
         recordNode4 = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId4}, recordNode1, 0);
+
+        await makeGraphQlCall(
+            `mutation {
+                    savePermission(
+                        permission: {
+                            type: tree,
+                            applyTo: "${testTreeName}",
+                            usersGroup: "${e2eNonAdminGroupId()}",
+                            actions: [
+                                {name: access_tree, allowed: true},
+                                {name: edit_children, allowed: true},
+                                {name: detach, allowed: true},
+                            ]
+                        }
+                    ) { type }
+                }`,
+        );
     });
 
     test('Get Trees node children', async () => {
@@ -80,6 +98,39 @@ describe('Trees', () => {
         expect(res.data.data.record1Children.list).toHaveLength(2);
         expect(res.data.data.record1Children.list[0].id).toBe(recordNode4);
         expect(res.data.data.record1Children.list[1].id).toBe(recordNode3);
+    });
+
+    test('Should not have the permission to get tree node children', async () => {
+        await makeGraphQlCall(
+            `mutation {
+                    savePermission(
+                        permission: {
+                            type: tree,
+                            applyTo: "${testTreeName}",
+                            usersGroup: null,
+                            actions: [
+                                {name: access_tree, allowed: false},
+                            ]
+                        }
+                    ) { type }
+                }`,
+        );
+
+        await expect(
+            makeGraphQlCall(
+                `
+                {
+                    treeNodeChildren(treeId: "${testTreeName}") {
+                        totalCount
+                        list {
+                            id
+                        }
+                    }
+                }
+            `,
+                {user: e2eGuestUser()},
+            ),
+        ).rejects.toThrow(/Action forbidden/);
     });
 
     test('Get Trees node children with pagination', async () => {
