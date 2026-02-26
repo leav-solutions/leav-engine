@@ -13,6 +13,7 @@ import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} f
 import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
 import _ from 'lodash';
+import {type IQueryInfos} from '_types/queryInfos';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -22,7 +23,14 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export type IAttributeSimpleLinkRepo = IAttributeTypeRepo<AttributeTypes.SIMPLE_LINK>;
+export type IAttributeSimpleLinkRepo = IAttributeTypeRepo<AttributeTypes.SIMPLE_LINK> & {
+    deleteAllLinkValueTo(
+        library: string,
+        attribute: IAttribute,
+        linkedRecordId: string,
+        ctx: IQueryInfos,
+    ): Promise<void>;
+};
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
@@ -282,6 +290,25 @@ export default function ({
                         ? [{value: null, count: recordIds.length - countOccurrences}]
                         : [],
                 );
+        },
+        async deleteAllLinkValueTo(
+            library: string,
+            attribute: IAttribute,
+            linkedRecordId: string,
+            ctx: IQueryInfos,
+        ): Promise<void> {
+            const libCollec = dbService.db.collection(library);
+
+            const query = aql`
+                FOR rec IN ${libCollec}
+                    // Keep only record with linked value
+                    FILTER rec.${attribute.id} == ${linkedRecordId}
+                    
+                    // Set the attribute value to null for all records linking to the given linkedRecordId
+                    UPDATE rec WITH { ${attribute.id}: null } IN ${libCollec} OPTIONS { keepNull: false }
+            `;
+
+            await dbService.execute({query, ctx});
         },
         sortQueryPart({attributes, order}) {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);

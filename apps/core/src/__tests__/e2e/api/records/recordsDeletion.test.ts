@@ -1,27 +1,65 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {AttributeTypes} from '../../../../_types/attribute';
 import {gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 
 describe('Records deletion', () => {
     const testLibName = 'record_deletion_library_test';
+    const testAnotherLibName = 'record_deletion_another_library_test';
+    const testAnotherLinkAttribute = 'record_deletion_another_link_attribute';
 
     let recordId1;
     let recordId2;
     let recordId3;
+    let recordId4;
+    let linkRecordId1;
+    let linkRecordId2;
+    let linkRecordId3;
 
     beforeAll(async () => {
         await gqlSaveLibrary(testLibName, 'Test Lib');
+
+        await makeGraphQlCall(`mutation {
+            saveAttribute(
+                attribute: {
+                    id: "${testAnotherLinkAttribute}",
+                    type: ${AttributeTypes.SIMPLE_LINK},
+                    linked_library: "${testLibName}",
+                    label: {en: "Link to delete record"},
+                    multiple_values: false
+                }
+            ) { id }
+        }`);
+        await gqlSaveLibrary(testAnotherLibName, 'Test Another Lib', [testAnotherLinkAttribute]);
 
         const resCrea = await makeGraphQlCall(`mutation {
             r1: createRecord(library: "${testLibName}") { record {id} }
             r2: createRecord(library: "${testLibName}") { record {id} }
             r3: createRecord(library: "${testLibName}") { record {id} }
+            r4: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
         recordId1 = resCrea.data.data.r1.record.id;
         recordId2 = resCrea.data.data.r2.record.id;
         recordId3 = resCrea.data.data.r3.record.id;
+        recordId4 = resCrea.data.data.r4.record.id;
+
+        const resLinkRecord = await makeGraphQlCall(`mutation {
+            c1: createRecord(library: "${testAnotherLibName}", data: { values: [
+                { attribute: "${testAnotherLinkAttribute}", payload: "${recordId1}"}
+            ]}) { record {id} },
+            c2: createRecord(library: "${testAnotherLibName}", data: { values: [
+                { attribute: "${testAnotherLinkAttribute}", payload: "${recordId3}"}
+            ]}) { record {id} },
+            c3: createRecord(library: "${testAnotherLibName}", data: { values: [
+                { attribute: "${testAnotherLinkAttribute}", payload: "${recordId4}"}
+            ]}) { record {id} },
+        }`);
+
+        linkRecordId1 = resLinkRecord.data.data.c1.record.id;
+        linkRecordId2 = resLinkRecord.data.data.c2.record.id;
+        linkRecordId3 = resLinkRecord.data.data.c3.record.id;
     });
 
     test('Deactivate and purge records', async () => {
@@ -33,7 +71,7 @@ describe('Records deletion', () => {
                 }
             }
         }`);
-        expect(resFind.data.data.records.list.length).toBe(3);
+        expect(resFind.data.data.records.list.length).toBe(4);
 
         // Deactivate records by IDs
         await makeGraphQlCall(`mutation {
@@ -62,7 +100,7 @@ describe('Records deletion', () => {
                 }
             }
         }`);
-        expect(resFindAfterDeactivation.data.data.records.list.length).toBe(0);
+        expect(resFindAfterDeactivation.data.data.records.list.length).toBe(1);
 
         // Check they're found if explicit filter is specified
         const resFindAfterDeactivationWithFilter = await makeGraphQlCall(`{
@@ -96,6 +134,48 @@ describe('Records deletion', () => {
                 }
             }
         }`);
-        expect(resFindAfterPurge.data.data.records.list.length).toBe(0);
+        expect(resFindAfterPurge.data.data.records.list.length).toBe(1);
+
+        // Should have remove simple link that pointed to deleted record
+        const resLinkedRecord = await makeGraphQlCall(`query {
+                records(
+                    library: "${testAnotherLibName}",
+                ) {
+                    list {
+                        id
+                        property (attribute: "${testAnotherLinkAttribute}") {
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+        }`);
+
+        expect(resLinkedRecord.data.data.records.list.length).toBe(3);
+        expect(resLinkedRecord.data.data.records.list).toEqual(
+            expect.arrayContaining([
+                {
+                    id: linkRecordId1,
+                    property: [],
+                },
+                {
+                    id: linkRecordId2,
+                    property: [],
+                },
+                {
+                    id: linkRecordId3,
+                    property: [
+                        expect.objectContaining({
+                            payload: {
+                                id: recordId4,
+                            },
+                        }),
+                    ],
+                },
+            ]),
+        );
     });
 });

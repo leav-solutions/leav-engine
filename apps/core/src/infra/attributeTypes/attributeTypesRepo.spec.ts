@@ -27,7 +27,8 @@ describe('AttributeTypesRepo', () => {
 
             const attrRepo = attributeTypesRepo({
                 'core.infra.attributeTypes.attributeSimple': mockAttrSimpleRepo as IAttributeSimpleRepo,
-                'core.infra.attributeTypes.attributeSimpleLink': mockAttrSimpleLinkRepo as IAttributeSimpleLinkRepo,
+                'core.infra.attributeTypes.attributeSimpleLink':
+                    mockAttrSimpleLinkRepo as unknown as IAttributeSimpleLinkRepo,
                 'core.infra.attributeTypes.attributeAdvanced': mockAttrAdvRepo as IAttributeAdvancedRepo,
                 'core.infra.attributeTypes.attributeAdvancedLink': mockAttrAdvLinkRepo as IAttributeAdvancedLinkRepo,
                 'core.infra.attributeTypes.attributeTree': mockAttrTreeRepo as IAttributeTreeRepo,

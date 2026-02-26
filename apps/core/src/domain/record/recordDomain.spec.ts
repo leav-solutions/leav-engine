@@ -436,14 +436,6 @@ describe('RecordDomain', () => {
                 }),
             };
 
-            const mockValueRepo: Mockify<IValueRepo> = {
-                deleteAllValuesByRecord: global.__mockPromise(),
-            };
-
-            const mockTreeRepo: Mockify<ITreeRepo> = {
-                getTrees: global.__mockPromise({list: []}),
-            };
-
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([]),
                 getAttributeProperties: global.__mockPromise(mockAttrSimple),
@@ -451,10 +443,6 @@ describe('RecordDomain', () => {
 
             const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
                 getLibraryPermission: global.__mockPromise(true),
-            };
-
-            const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
-                getRecordPermission: global.__mockPromise(true),
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -475,14 +463,6 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
-                }),
-                'core.domain.record.helpers.deleteRecord': deleteRecordHelper({
-                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                    'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
-                    'core.infra.record': mockRecRepo as IRecordRepo,
-                    'core.infra.tree': mockTreeRepo as ITreeRepo,
-                    'core.infra.value': mockValueRepo as IValueRepo,
                 }),
             });
             jest.spyOn(recDomain, 'activateNewRecord');
@@ -507,7 +487,6 @@ describe('RecordDomain', () => {
             expect(mockValueDomain.saveValueBatch).toHaveBeenCalledTimes(1);
             expect(recDomain.activateNewRecord).toHaveBeenCalledTimes(0);
             expect(recDomain.deleteRecord).toHaveBeenCalledTimes(1);
-            expect(mockRecRepo.deleteRecord).toHaveBeenCalledTimes(1);
             expect(res.record).toBe(null);
             expect(res.valuesErrors).toHaveLength(1);
             expect(res.valuesErrors).toEqual([
@@ -550,59 +529,6 @@ describe('RecordDomain', () => {
 
             expect(updatedRecord).toMatchObject(updatedRecordData);
         });
-    });
-
-    describe('deleteRecord', () => {
-        const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
-
-        test('Should delete an record and return deleted record', async function () {
-            const recRepo = {
-                deleteRecord: global.__mockPromise(recordData),
-            } satisfies Mockify<IRecordRepo>;
-
-            const recordPermDomain: Mockify<IRecordPermissionDomain> = {
-                getRecordPermission: global.__mockPromise(true),
-            };
-
-            const mockValueRepo: Mockify<IValueRepo> = {
-                deleteAllValuesByRecord: global.__mockPromise(),
-            };
-
-            const mockTreeRepo: Mockify<ITreeRepo> = {
-                getTrees: global.__mockPromise({totalCount: 0, list: [mockTree]}),
-                getNodesByRecord: global.__mockPromise(['1', '2', '3']),
-                deleteElement: jest.fn(),
-            };
-
-            const recDomain = recordDomain({
-                ...depsBase,
-                config: mockConfig as Config.IConfig,
-                'core.domain.record.helpers.deleteRecord': deleteRecordHelper({
-                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                    'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo,
-                    'core.infra.tree': mockTreeRepo as ITreeRepo,
-                    'core.infra.value': mockValueRepo as IValueRepo,
-                }),
-            });
-
-            await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
-
-            expect(recRepo.deleteRecord.mock.calls.length).toBe(1);
-            expect(mockValueRepo.deleteAllValuesByRecord).toBeCalled();
-            expect(mockTreeRepo.getTrees).toBeCalled();
-            expect(mockTreeRepo.getNodesByRecord).toBeCalled();
-            expect(mockTreeRepo.deleteElement).toBeCalledTimes(3);
-        });
-
-        // TODO: handle unknown record?
-        // test('Should throw if unknown record', async function() {
-        //     const mockLibRepo = {deleteRecord: global.__mockPromise(recordData)};
-        //     const recDomain = recordDomain(mockLibRepo);
-
-        //     await expect(recDomain.deleteRecord(recordData.id)).rejects.toThrow();
-        // });
     });
 
     describe('getRecordIdentity', () => {
