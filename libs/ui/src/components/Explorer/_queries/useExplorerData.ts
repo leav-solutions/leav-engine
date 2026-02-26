@@ -214,29 +214,30 @@ export const useExplorerData = ({
     }, [libraryData, linkData]);
 
     const ids = memoizedData?.records.map(record => record.itemId);
-    const {data: updatedData} = useGetRecordUpdatesSubscription({libraries: [libraryId], records: ids}, !libraryId);
+    const {data: updatedData} = useGetRecordUpdatesSubscription(
+        {libraries: [libraryId], records: ids},
+        !libraryId || !ids || ids.length === 0,
+    );
 
-    // TOTO: change to useMemo, and use updatedData to update memoizedData with new Data. Good luck !
+    // TODO: change to useMemo, and use updatedData to update memoizedData with new Data. Good luck !
     useEffect(() => {
-        if (updatedData && memoizedData) {
-            if (isLibrary) {
-                //fetching updated record will update cache data, and all will be updated automatically
-                fetchLibraryRecord({
-                    variables: {
-                        libraryId,
-                        attributeIds,
-                        filters: [
-                            {
-                                field: 'id',
-                                condition: AttributeConditionFilter.EQUAL,
-                                value: updatedData.recordUpdate.record.id,
-                            },
-                        ],
-                    },
-                });
-            }
+        if (updatedData && memoizedData && isLibrary) {
+            fetchLibraryRecord({
+                variables: {
+                    libraryId,
+                    attributeIds,
+                    filters: [
+                        {
+                            field: 'id',
+                            condition: AttributeConditionFilter.EQUAL,
+                            value: updatedData.recordUpdate.record.id,
+                        },
+                    ],
+                },
+                fetchPolicy: 'network-only',
+            });
         }
-    }, [updatedData, memoizedData]);
+    }, [updatedData]);
 
     return {
         data: memoizedData,
