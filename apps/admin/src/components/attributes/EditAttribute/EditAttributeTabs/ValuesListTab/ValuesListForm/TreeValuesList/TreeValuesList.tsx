@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {type TreeItem} from 'react-sortable-tree';
+import {type TreeItem} from '@nosferatu500/react-sortable-tree';
 import {Button, Icon, List} from 'semantic-ui-react';
 import {type RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
 import {type ITreeValuesList} from '../../../../../../../_types/attributes';

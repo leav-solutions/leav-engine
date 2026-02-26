@@ -11,15 +11,11 @@ interface IALCConnectorsProps {
     isDragging?: boolean;
 }
 
-interface IConnectorContainer {
-    isDragging: boolean;
-}
-
 interface IConnector {
-    iColor: number[];
+    $iColor: number[];
 }
 
-const ConnectorsContainer = styled.div<IConnectorContainer>`
+const ConnectorsContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -29,28 +25,24 @@ const ConnectorsContainer = styled.div<IConnectorContainer>`
 `;
 
 const Connector = styled.div<IConnector>`
-    color: ${props => (props.iColor[2] > 200 && props.iColor[1] < 170 ? '#ffffff' : '#000000')};
-    background-color: ${props => 'rgb(' + props.iColor[0] + ',' + props.iColor[1] + ',' + props.iColor[2] + ')'};
+    color: ${props => (props.$iColor[2] > 200 && props.$iColor[1] < 170 ? '#ffffff' : '#000000')};
+    background-color: ${props => 'rgb(' + props.$iColor[0] + ',' + props.$iColor[1] + ',' + props.$iColor[2] + ')'};
     flex-grow: 1;
     text-align: center;
 `;
 
-function ALCConnectors({inputs, dictionnary, isDragging}: IALCConnectorsProps): JSX.Element {
+function ALCConnectors({inputs, dictionnary}: IALCConnectorsProps): JSX.Element {
     const allInputs = Object.keys(dictionnary);
 
     const renderInput = (input: string, i: number) => {
         if (inputs) {
             const color = inputs.includes(input) ? dictionnary[input] : [205, 205, 205];
-            return <Connector key={i} iColor={color} title={input} />;
+            return <Connector key={i} $iColor={color} title={input} />;
         }
         return undefined;
     };
 
-    return (
-        <ConnectorsContainer isDragging={!!isDragging}>
-            {allInputs && allInputs.map((input, i) => renderInput(input, i))}
-        </ConnectorsContainer>
-    );
+    return <ConnectorsContainer>{allInputs && allInputs.map((input, i) => renderInput(input, i))}</ConnectorsContainer>;
 }
 
 export default ALCConnectors;

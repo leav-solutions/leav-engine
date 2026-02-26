@@ -71,7 +71,7 @@ describe('InfosForm', () => {
         );
 
         const labelInput = screen.getByRole('textbox', {name: 'label.fr'});
-        userEvent.type(labelInput, 'labelfr');
+        await userEvent.type(labelInput, 'labelfr');
 
         expect(screen.getByRole('textbox', {name: 'id'})).toHaveValue('labelfr');
     });

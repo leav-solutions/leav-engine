@@ -16,8 +16,8 @@ interface IDependenciesEditorProps {
     onMove: (libraryId: string, parentFrom: string, parentTo: string) => void;
 }
 
-const TreeRoot = styled.div<{isOver: boolean}>`
-    background: ${props => (props.isOver ? '#f5f5f5' : '#FFF')};
+const TreeRoot = styled.div<{$isOver: boolean}>`
+    background: ${props => (props.$isOver ? '#f5f5f5' : '#FFF')};
     border: 2px dashed #ccc;
     border-radius: 0.25rem;
     padding: 1rem;
@@ -53,7 +53,7 @@ function DependenciesEditor({tree, onMove, readOnly}: IDependenciesEditorProps):
     const rootLibraries = tree.libraries.filter(treeLibrary => treeLibrary.settings.allowedAtRoot);
 
     return (
-        <TreeRoot ref={drop} isOver={isOver} data-testid="dependencies-editor-root">
+        <TreeRoot ref={drop} $isOver={isOver} data-testid="dependencies-editor-root">
             <Header size="small">{t('trees.root')}</Header>
             {rootLibraries.length ? (
                 rootLibraries.map(rootLibrary => (

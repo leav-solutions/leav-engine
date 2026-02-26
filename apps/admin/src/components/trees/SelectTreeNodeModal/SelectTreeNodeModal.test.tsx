@@ -78,7 +78,7 @@ describe('SelectTreeNodeModal', () => {
             apolloMocks: mocks,
         });
 
-        userEvent.click(await screen.findByTestId('select_tree_node_close_btn'));
+        await userEvent.click(await screen.findByTestId('select_tree_node_close_btn'));
 
         expect(onClose).toHaveBeenCalled();
     });

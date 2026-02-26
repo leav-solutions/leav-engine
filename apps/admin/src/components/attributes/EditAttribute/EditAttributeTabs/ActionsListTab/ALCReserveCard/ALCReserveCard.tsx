@@ -45,6 +45,7 @@ function ALCReserveCard({
     const [internalWidth, setWidth] = useState(null);
 
     const [, drag, preview] = useDrag({
+        type: itemTypes.ACTION,
         item: {
             type: itemTypes.ACTION,
             id,

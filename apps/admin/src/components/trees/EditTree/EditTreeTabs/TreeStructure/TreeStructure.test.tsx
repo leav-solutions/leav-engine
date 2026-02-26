@@ -56,23 +56,23 @@ describe('TreeStructure', () => {
         expect(within(dependenciesEditor).getByText('Test Lib 2')).toBeInTheDocument();
         expect(within(dependenciesEditor).queryByText('Test Lib 3')).not.toBeInTheDocument();
 
-        // Expend "Test Lib" dependencies to see all libraries
+        // Expand "Test Lib" dependencies to see all libraries
         const testLibLabel = within(dependenciesEditor).getByText('Test Lib');
-        userEvent.click(testLibLabel);
+        await userEvent.click(testLibLabel);
 
         const testLibWrapper = screen.getAllByTestId('dependencies-library-item-test_lib')[0];
-        const testLibAllowedChildren = within(testLibWrapper).getByTestId('allowed-children');
+        const testLibAllowedChildren = await within(testLibWrapper).findByTestId('allowed-children');
         for (const treeLibrary of tree.libraries) {
             expect(within(testLibAllowedChildren).getByText(treeLibrary.library.label.fr)).toBeInTheDocument();
         }
-        userEvent.click(testLibLabel); // Collapse "Test Lib" dependencies
+        await userEvent.click(testLibLabel); // Collapse "Test Lib" dependencies
 
         // Expand "Test Lib 2" dependencies to see "Test Lib 3"
-        userEvent.click(within(dependenciesEditor).getByText('Test Lib 2'));
+        await userEvent.click(within(dependenciesEditor).getByText('Test Lib 2'));
         expect(within(dependenciesEditor).getByText('Test Lib 3')).toBeInTheDocument();
 
-        // Expend "Test Lib 3" dependencies to see "no children allowed"
-        userEvent.click(within(dependenciesEditor).getByText('Test Lib 3'));
+        // Expand "Test Lib 3" dependencies to see "no children allowed"
+        await userEvent.click(within(dependenciesEditor).getByText('Test Lib 3'));
         expect(within(dependenciesEditor).getByText(/no_children_allowed/)).toBeInTheDocument();
     });
 

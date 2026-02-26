@@ -4,15 +4,14 @@
 import styled from 'styled-components';
 
 interface IHiddenDiv {
-    extend: boolean;
-    hover: boolean;
+    $extend: boolean;
+    $hover: boolean;
 }
 
 interface IActionRow {
-    opacity: number;
-    marginTop: string | undefined;
-    index: number | undefined;
-    isDragging: boolean | undefined;
+    $opacity: number;
+    $marginTop: string | undefined;
+    $isDragging: boolean | undefined;
 }
 
 //////////////////// ALCContainer
@@ -76,7 +75,7 @@ export const ListContent = styled.div`
 `;
 
 export const HiddenDiv = styled.div<IHiddenDiv>`
-    min-height: ${props => (props.extend && props.hover ? '50px' : '0px')};
+    min-height: ${props => (props.$extend && props.$hover ? '50px' : '0px')};
     flex-grow: 1;
     height: 'auto';
 `;
@@ -97,12 +96,12 @@ export const ALCPlaceholder = styled.div`
 //////////////////// ALCCard
 
 export const ActionRow = styled.div<IActionRow>`
-    background-color: ${props => (props.isDragging ? '#dddddd' : '#f9fafb')};
+    background-color: ${props => (props.$isDragging ? '#dddddd' : '#f9fafb')};
     border-style: solid;
     border-color: #dddddd;
     border-width: 0 2px 0 2px;
     border-radius: 3px;
-    opacity: ${props => props.opacity};
-    margin-top: ${props => props.marginTop};
+    opacity: ${props => props.$opacity};
+    margin-top: ${props => props.$marginTop};
     cursor: move;
 `;

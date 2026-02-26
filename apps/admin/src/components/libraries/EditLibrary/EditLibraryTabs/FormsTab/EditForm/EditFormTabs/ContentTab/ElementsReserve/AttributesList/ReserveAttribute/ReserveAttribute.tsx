@@ -86,24 +86,26 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
 
     const [{isDragging}, drag] = useDrag<
         IFormBuilderDragObject<IFormElement>,
-        IFormBuilderDragObject<IFormElement>,
+        {containerId: string},
         {isDragging: boolean}
     >({
+        type: DraggableElementTypes.ATTRIBUTE,
         item: {type: DraggableElementTypes.ATTRIBUTE, element: _getElement(), index: -1},
         collect: monitor => ({
             isDragging: !!monitor.isDragging(),
         }),
         canDrag: !readonly,
-        end: (dropResult, monitor) => {
+        end: (_draggedItem, monitor) => {
             if (monitor.didDrop()) {
                 // Item has already been added, don't do anything
                 if (typeof monitor.getItem().dropAtPos !== 'undefined') {
                     return;
                 }
 
+                const dropResult = monitor.getDropResult();
                 const position = {
                     order: monitor.getItem().dropAtPos?.order || 0,
-                    containerId: monitor.getDropResult().containerId,
+                    containerId: dropResult?.containerId ?? defaultContainerId,
                 };
 
                 dispatch({

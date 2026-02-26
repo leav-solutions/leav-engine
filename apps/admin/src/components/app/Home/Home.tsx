@@ -30,9 +30,9 @@ const HeaderWrapper = styled.div`
     grid-area: header;
 `;
 
-const HomeWrapper = styled.div<{menuWidth: string}>`
+const HomeWrapper = styled.div<{$menuWidth: string}>`
     display: grid;
-    grid-template-columns: ${({menuWidth}) => menuWidth} 1fr;
+    grid-template-columns: ${({$menuWidth}) => $menuWidth} 1fr;
     grid-template-rows: ${headerHeight} 1fr;
     grid-template-areas:
         'header header'
@@ -50,7 +50,7 @@ function Home(): JSX.Element {
 
     return (
         <Router basename={APP_BASE_URL}>
-            <HomeWrapper menuWidth={menuWidth}>
+            <HomeWrapper $menuWidth={menuWidth}>
                 <HeaderWrapper>
                     <Header />
                 </HeaderWrapper>

@@ -7,11 +7,7 @@ import Loading from 'components/shared/Loading';
 import useLang from 'hooks/useLang';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-    type NodeData,
-    type OnDragPreviousAndNextLocation,
-    SortableTreeWithoutDndContext as SortableTree,
-} from 'react-sortable-tree';
+import {SortableTreeWithoutDndContext as SortableTree} from '@nosferatu500/react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {activeItemColor} from 'themingVar';
@@ -28,14 +24,14 @@ import {
     type TreeChangeHandler,
 } from '../_types';
 
-const Wrapper = styled.div<{compact: boolean}>`
+const Wrapper = styled.div<{$compact: boolean}>`
     /** Overrides some SortableTree CSS rules **/
     .rst__rowContents {
         padding: 0;
         background: transparent;
         height: 100%;
         ${props =>
-            props.compact
+            props.$compact
                 ? `
         min-width: 130px;
         border: none;
@@ -69,7 +65,7 @@ const Wrapper = styled.div<{compact: boolean}>`
     }
 
     ${props =>
-        props.compact
+        props.$compact
             ? `
     .rst__collapseButton,
     .rst__expandButton {
@@ -226,7 +222,7 @@ const TreeExplorerView = ({
                                             parent: rowInfo.parentNode?.id ?? fakeRootId,
                                             library: rowInfo.node.record.whoAmI.library?.id,
                                             recordId: rowInfo.node.record.whoAmI.id,
-                                            path: rowInfo.path as string[],
+                                            path: rowInfo.path as unknown as string[],
                                         })}
                                     />
                                     <Dropdown.Item
@@ -245,7 +241,7 @@ const TreeExplorerView = ({
                                     text={localizedLabel(lib.library.label, availableLanguages)}
                                     onClick={_handleOpenAddElementModal(
                                         rowInfo.node.id,
-                                        rowInfo.path as string[],
+                                        rowInfo.path as unknown as string[],
                                         lib.library.id,
                                     )}
                                     label={
@@ -266,7 +262,7 @@ const TreeExplorerView = ({
         };
     };
 
-    const canDrop = (d: OnDragPreviousAndNextLocation & NodeData) => d.nextParent !== null;
+    const canDrop = (d: {nextParent: unknown}) => d.nextParent !== null;
 
     const orTxt = t('admin.or');
 
@@ -274,16 +270,21 @@ const TreeExplorerView = ({
         scaffoldBlockPxWidth: compact ? 25 : 35,
         rowHeight: compact ? 35 : 50,
         slideRegionSize: compact ? 30 : 50,
+        style: undefined, // Required by react-sortable-tree but we don't need it
+        innerStyle: undefined, // Required by react-sortable-tree but we don't need it
+        treeNodeRenderer: undefined, // Required by react-sortable-tree but we don't need it
+        nodeContentRenderer: undefined, // Required by react-sortable-tree but we don't need it
+        placeholderRenderer: undefined, // Required by react-sortable-tree but we don't need it
     };
 
     return (
-        <Wrapper className="grow height100" compact={compact}>
+        <Wrapper className="grow height100" $compact={compact}>
             {!treeData?.length ? (
                 <Loading withDimmer />
             ) : (
                 <SortableTree
                     data-test-id="sortable-tree"
-                    canDrag={!readOnly}
+                    canDrag={() => !readOnly}
                     canDrop={canDrop}
                     treeData={treeData}
                     onChange={onTreeChange}

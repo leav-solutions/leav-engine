@@ -101,7 +101,7 @@ function ExpirationSelector({onChange, label, value, ...dropdownProps}: Dropdown
                 </>
             )}
             {!isSelectorVisible && (
-                <Button onClick={_handleEditExpirationChange} size="small" basic>
+                <Button type="button" onClick={_handleEditExpirationChange} size="small" basic>
                     {t('api_keys.edit_expiration')}
                 </Button>
             )}

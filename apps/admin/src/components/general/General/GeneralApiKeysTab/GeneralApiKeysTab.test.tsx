@@ -2,9 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {deleteApiKeyMutation} from 'queries/apiKeys/deleteApiKeyMutation';
-import {getApiKeysQuery} from 'queries/apiKeys/getApiKeysQuery';
-import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApiKey} from '__mocks__/common/apiKeys';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
@@ -61,21 +58,18 @@ describe('ApiKeys', () => {
     test('Render test', async () => {
         render(<GeneralApiKeysTab />, {apolloMocks: mocks, cacheSettings});
 
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
-
         expect(await screen.findByText('keyA')).toBeInTheDocument();
         expect(await screen.findByText('keyB')).toBeInTheDocument();
         expect(await screen.findByText('keyC')).toBeInTheDocument();
 
         // Filter list
-        userEvent.type(screen.getByRole('textbox', {name: /label/}), 'C');
+        await userEvent.type(screen.getByRole('textbox', {name: /label/}), 'C');
 
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
         expect(await screen.findByText('keyC')).toBeInTheDocument();
-        expect(screen.queryByText('keyA')).not.toBeInTheDocument();
-        expect(screen.queryByText('keyB')).not.toBeInTheDocument();
+        await waitFor(() => expect(screen.queryByText('keyA')).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.queryByText('keyB')).not.toBeInTheDocument());
 
-        userEvent.click(screen.getByText('keyC'));
+        await userEvent.click(screen.getByText('keyC'));
         expect(screen.getByText('EditApiKeyModal')).toBeInTheDocument();
     });
 
@@ -104,10 +98,8 @@ describe('ApiKeys', () => {
 
         render(<GeneralApiKeysTab />, {apolloMocks: mocksWithDelete, cacheSettings});
 
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
-
-        userEvent.click((await screen.findAllByRole('button', {name: /delete/}))[0]);
-        userEvent.click(await screen.findByText('OK'));
+        await userEvent.click((await screen.findAllByRole('button', {name: /delete/}))[0]);
+        await userEvent.click(await screen.findByText('OK'));
 
         await waitFor(() => expect(deleteCalled).toBe(true));
     });

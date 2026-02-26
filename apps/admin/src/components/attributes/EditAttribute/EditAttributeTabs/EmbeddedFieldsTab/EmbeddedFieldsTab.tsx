@@ -6,14 +6,12 @@ import {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import SortableTree, {
     addNodeUnderParent,
-    type ExtendedNodeData,
-    type OnDragStateChangedData,
-    type OnVisibilityToggleData,
     removeNodeAtPath,
+    type NodeData,
     type TreeIndex,
     type TreeItem,
     type TreeNode,
-} from 'react-sortable-tree';
+} from '@nosferatu500/react-sortable-tree';
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
@@ -168,7 +166,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         setTreeItems(newTreeData);
     };
 
-    const _onVisibilityToggle = ({node}: OnVisibilityToggleData) => {
+    const _onVisibilityToggle = ({node}: {node: TreeItem}) => {
         setFlatItems(items =>
             items.map(item => {
                 if (item.id === node.id) {
@@ -179,8 +177,8 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         );
     };
 
-    const _manageRowHeight = (info: ExtendedNodeData | any): number => {
-        const item = flatItems.find(e => e.id === info.node.id);
+    const _manageRowHeight = (_treeIndex: number, node: TreeItem, _path: unknown[]): number => {
+        const item = flatItems.find(e => e.id === node.id);
         const displayForm = item ? item.displayForm : false;
 
         if (displayForm) {
@@ -189,9 +187,9 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         return 60;
     };
 
-    const _getNodeKey = ({treeIndex}: TreeNode & TreeIndex) => treeIndex;
+    const _getNodeKey = ({treeIndex}: TreeNode & TreeIndex) => String(treeIndex);
 
-    const _genNodeProps = (info: ExtendedNodeData) => {
+    const _genNodeProps = (info: NodeData) => {
         const expend = () => {
             setFlatItems(items =>
                 items.map(item => {
@@ -305,7 +303,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         setIsVirtualized(false);
     };
 
-    const _handleDrop = async ({isDragging}: OnDragStateChangedData) => {
+    const _handleDrop = async ({isDragging}: {isDragging: boolean}) => {
         if (!isDragging) {
             const variables = _getNewAttribute(treeItems[0], formValues);
 
@@ -340,7 +338,6 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                     getNodeKey={_getNodeKey}
                     generateNodeProps={_genNodeProps}
                     onDragStateChanged={_handleDrop}
-                    isVirtualized={isVirtualized}
                 />
             </div>
             <div>

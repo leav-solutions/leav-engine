@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {type NodeData} from 'react-sortable-tree';
+import {type NodeData} from '@nosferatu500/react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
 import {type ITreeNodeData} from '_types/trees';
 import Loading from '../../shared/Loading';

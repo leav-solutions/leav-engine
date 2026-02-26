@@ -162,6 +162,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
         IFormBuilderDragObject<IFormElement>,
         {isDragging: boolean}
     >({
+        type: DraggableElementTypes.ATTRIBUTE,
         item: {
             type: DraggableElementTypes.ATTRIBUTE,
             element,

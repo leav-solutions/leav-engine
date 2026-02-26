@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import * as useLang from 'hooks/useLang';
 import {BrowserRouter} from 'react-router-dom-v5';
 import {AvailableLanguage} from '_gqlTypes';
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';
 
 const mockLogout = jest.fn();
@@ -17,31 +17,25 @@ describe('UserPanel', () => {
     beforeEach(() => jest.clearAllMocks());
 
     test('Should display some menu items', async () => {
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <UserPanel visible onHide={jest.fn()} />
-                </BrowserRouter>,
-            );
-        });
+        render(
+            <BrowserRouter>
+                <UserPanel visible onHide={jest.fn()} />
+            </BrowserRouter>,
+        );
 
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThanOrEqual(1);
     });
 
     test('On click on logout, log out and redirect to home', async () => {
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <UserPanel visible onHide={jest.fn()} />
-                </BrowserRouter>,
-            );
-        });
+        render(
+            <BrowserRouter>
+                <UserPanel visible onHide={jest.fn()} />
+            </BrowserRouter>,
+        );
 
         const logoutLink = screen.getByRole('menuitem', {name: /logout/});
 
-        await act(async () => {
-            userEvent.click(logoutLink);
-        });
+        await userEvent.click(logoutLink);
 
         expect(mockLogout).toHaveBeenCalled();
     });
@@ -55,20 +49,16 @@ describe('UserPanel', () => {
             setLang: mockUpdateLang,
         }));
 
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <UserPanel visible onHide={jest.fn()} />
-                </BrowserRouter>,
-            );
-        });
+        render(
+            <BrowserRouter>
+                <UserPanel visible onHide={jest.fn()} />
+            </BrowserRouter>,
+        );
 
         expect(screen.getByRole('button', {name: /🇫🇷/})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /🇬🇧/})).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.click(screen.getByRole('button', {name: /🇫🇷/}));
-        });
+        await userEvent.click(screen.getByRole('button', {name: /🇫🇷/}));
 
         expect(mockUpdateLang).toHaveBeenCalled();
     });

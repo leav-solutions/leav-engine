@@ -6,7 +6,7 @@
 // import {mockTree} from '__mocks__/trees';
 // import TreeExplorerView from './TreeExplorerView';
 
-// jest.mock('react-sortable-tree', () => ({
+// jest.mock('@nosferatu500/react-sortable-tree', () => ({
 // SortableTreeWithoutDndContext() {
 // return <div>MOCK TestComponent</div>;
 // },

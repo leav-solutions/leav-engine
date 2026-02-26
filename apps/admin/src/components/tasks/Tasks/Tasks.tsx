@@ -4,7 +4,7 @@
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {addTask, deleteTasks} from 'reduxStore/tasks/tasks';
+import {addTask, addTasks, deleteTasks} from 'reduxStore/tasks/tasks';
 import {Button, Header, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
@@ -51,18 +51,23 @@ const Tasks = (): JSX.Element => {
     const [inProgressTasks, setInProgressTasks] = useState<GET_TASKS_tasks_list[]>([]);
     const [completedTasks, setCompletedTasks] = useState<GET_TASKS_tasks_list[]>([]);
 
-    const {loading, error} = useGetTasksQuery({
+    const {
+        loading,
+        error,
+        data: tasksData,
+    } = useGetTasksQuery({
         skip: !userData,
-        onCompleted: tasksData => {
-            for (const task of tasksData.tasks.list) {
-                dispatch(addTask(task as GET_TASKS_tasks_list));
-            }
-        },
     });
 
+    useEffect(() => {
+        if (tasksData) {
+            dispatch(addTasks(tasksData.tasks.list as GET_TASKS_tasks_list[]));
+        }
+    }, [tasksData]);
+
     useSubTasksUpdateSubscription({
-        onSubscriptionData: subData => {
-            const task = {...subData.subscriptionData.data.task};
+        onData: subData => {
+            const task = {...subData.data.data.task};
             dispatch(addTask(task as GET_TASKS_tasks_list));
         },
     });

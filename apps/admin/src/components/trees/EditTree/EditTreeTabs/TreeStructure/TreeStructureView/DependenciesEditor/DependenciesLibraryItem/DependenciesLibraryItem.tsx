@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import {type GET_TREES_trees_list, type GET_TREES_trees_list_libraries} from '_gqlTypes/GET_TREES';
 import {type IDndDropResult, type IDndLibraryItem, LIBRARY_DND_TYPE} from '../../../_types';
 
-const LibraryItemWrapper = styled.div<{isOver: boolean}>`
+const LibraryItemWrapper = styled.div<{$isOver: boolean}>`
     border: 1px solid #ddd;
     border-radius: 0.25rem;
     margin: 0.25rem 0 1rem 0;
@@ -19,7 +19,7 @@ const LibraryItemWrapper = styled.div<{isOver: boolean}>`
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     cursor: grab;
     width: 100%;
-    background-color: ${props => (props.isOver ? '#f5f5f5' : '#FFF')};
+    background-color: ${props => (props.$isOver ? '#f5f5f5' : '#FFF')};
     position: relative;
 `;
 
@@ -76,6 +76,7 @@ function DependenciesLibraryItem({
     };
 
     const [, drag] = useDrag<IDndLibraryItem, IDndDropResult, {}>({
+        type: LIBRARY_DND_TYPE,
         item: {
             type: LIBRARY_DND_TYPE,
             from: parentItemId,
@@ -126,7 +127,7 @@ function DependenciesLibraryItem({
         <LibraryItemWrapper
             key={libraryItem.library.id}
             ref={drag}
-            isOver={isOverElement}
+            $isOver={isOverElement}
             data-testid={`dependencies-library-item-${libraryItem.library.id}`}
         >
             <div ref={drop}>

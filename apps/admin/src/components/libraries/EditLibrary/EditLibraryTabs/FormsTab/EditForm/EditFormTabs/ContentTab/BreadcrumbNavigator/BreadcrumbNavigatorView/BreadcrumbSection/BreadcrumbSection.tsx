@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
-import {type NodeData} from 'react-sortable-tree';
+import {type NodeData} from '@nosferatu500/react-sortable-tree';
 import {Breadcrumb, Icon, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';

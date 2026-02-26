@@ -7,7 +7,7 @@ import {GraphQLClient} from 'graphql-request';
 import {type Client as GraphqlWsClient, createClient as createGraphqlWsClient} from 'graphql-ws';
 import axios, {type AxiosResponse} from 'axios';
 import FormData from 'form-data';
-import jwt, {type Algorithm} from 'jsonwebtoken';
+import jwt, {type SignOptions, type Algorithm} from 'jsonwebtoken';
 import {getSdk} from '../_gqlTypes';
 import {type ActionsListConfig} from '_types/actionsList';
 import {type ITreeElement} from '_types/tree';
@@ -56,7 +56,7 @@ const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
             conf.auth.key,
             {
                 algorithm: conf.auth.algorithm as Algorithm,
-                expiresIn: conf.auth.tokenExpiration,
+                expiresIn: conf.auth.tokenExpiration as SignOptions['expiresIn'],
             },
         );
     },

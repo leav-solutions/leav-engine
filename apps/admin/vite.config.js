@@ -4,7 +4,6 @@
 /** @type {import('vite').UserConfig} */
 
 import react from '@vitejs/plugin-react';
-import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
@@ -20,8 +19,6 @@ export default () => {
                 {find: 'themingVar', replacement: path.resolve(__dirname, './src/themingVar')},
                 {find: '../../theme.config', replacement: path.resolve(__dirname, './src/semantic-ui/theme.config')},
                 {find: 'semantic-ui/site', replacement: path.resolve(__dirname, './src/semantic-ui/site')},
-                {find: 'react', replacement: path.resolve(__dirname, './node_modules/react')},
-                {find: 'react-dom', replacement: path.resolve(__dirname, './node_modules/react-dom')},
             ],
         },
         plugins: [
@@ -30,28 +27,7 @@ export default () => {
                 transformIndexHtml: true,
             }),
             devIndexHtmlReplaceVarsPlugin(),
-            reactVirtualized(),
         ],
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/admin',
     });
 };
-
-// This is a hack to fix a bug in react-virtualized, used by react-sortable-tree.
-// More details here: https://github.com/bvaughn/react-virtualized/issues/1632
-export function reactVirtualized() {
-    const WRONG_CODE = 'import { bpfrpt_proptype_WindowScroller } from "../WindowScroller.js";';
-    return {
-        name: 'flat:react-virtualized',
-        configResolved() {
-            const file = require
-                .resolve('react-virtualized')
-                .replace(
-                    path.join('dist', 'commonjs', 'index.js'),
-                    path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js'),
-                );
-            const code = fs.readFileSync(file, 'utf-8');
-            const modified = code.replace(WRONG_CODE, '');
-            fs.writeFileSync(file, modified);
-        },
-    };
-}

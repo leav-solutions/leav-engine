@@ -18,7 +18,7 @@ describe('SimplisticButton', () => {
         expect(screen.getByRole('button')).toBeInTheDocument();
         expect(screen.getByText('Some child')).toBeInTheDocument();
 
-        userEvent.click(screen.getByRole('button'));
+        await userEvent.click(screen.getByRole('button'));
         expect(_handleClick).toHaveBeenCalledTimes(1);
     });
 });

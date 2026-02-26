@@ -211,7 +211,7 @@ function ALCList({
                 ) : (
                     <ALCPlaceholder>Slide Actions Here</ALCPlaceholder>
                 )}
-                <HiddenDiv ref={dropOut} extend={currentIndex === -1} hover={collectedProps.hovered} />
+                <HiddenDiv ref={dropOut} $extend={currentIndex === -1} $hover={collectedProps.hovered} />
                 <div style={{width: '100%', padding: '0 1px'}}>
                     <Connector inputs={outType[currentActionListName]} dictionnary={colorTypeDictionnary} />
                 </div>

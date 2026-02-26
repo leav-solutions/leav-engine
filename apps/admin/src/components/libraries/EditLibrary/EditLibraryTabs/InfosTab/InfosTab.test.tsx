@@ -3,8 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import {LibraryBehavior, GetLibrariesDocument, GetViewsDocument, SaveLibraryDocument} from '_gqlTypes';
-import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
+import {
+    GetLibByIdDocument,
+    LibraryBehavior,
+    GetLibrariesDocument,
+    GetViewsDocument,
+    SaveLibraryDocument,
+} from '_gqlTypes';
+import {fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import InfosTab from './InfosTab';
 
@@ -25,6 +31,32 @@ describe('InfosTab', () => {
     };
 
     const commonMocks = [
+        {
+            request: {
+                query: GetLibByIdDocument,
+                variables: {id: 'mon_libelle'},
+            },
+            result: {
+                data: {
+                    libraries: {
+                        list: [{...mockLibrary, id: 'mon_libelle'}],
+                    },
+                },
+            },
+        },
+        {
+            request: {
+                query: GetLibByIdDocument,
+                variables: {id: 'my_new_label'},
+            },
+            result: {
+                data: {
+                    libraries: {
+                        list: [{...mockLibrary, id: 'my_new_label'}],
+                    },
+                },
+            },
+        },
         {
             request: {
                 query: GetViewsDocument,
@@ -79,10 +111,8 @@ describe('InfosTab', () => {
             },
         ];
 
-        await act(async () => {
-            render(<InfosTab library={mockLibrary} readonly={false} />, {
-                apolloMocks: mocks,
-            });
+        render(<InfosTab library={mockLibrary} readonly={false} />, {
+            apolloMocks: mocks,
         });
 
         expect(screen.getByRole('textbox', {name: /id/})).toBeInTheDocument();
@@ -93,11 +123,9 @@ describe('InfosTab', () => {
 
         const firstLabeLInput = screen.getAllByRole('textbox', {name: /label/})[0];
 
-        userEvent.clear(firstLabeLInput);
-        userEvent.type(firstLabeLInput, 'My new label');
-        await act(async () => {
-            fireEvent.blur(firstLabeLInput);
-        });
+        await userEvent.clear(firstLabeLInput);
+        await userEvent.type(firstLabeLInput, 'My new label');
+        fireEvent.blur(firstLabeLInput);
 
         await waitFor(() => expect(saveCalled).toBe(true));
     });
@@ -131,45 +159,35 @@ describe('InfosTab', () => {
             },
         ];
 
-        await act(async () => {
-            render(<InfosTab library={mockLibrary} readonly={false} />, {
-                apolloMocks: mocks as Array<MockedResponse<Record<string, any>>>,
-            });
+        render(<InfosTab library={mockLibrary} readonly={false} />, {
+            apolloMocks: mocks as Array<MockedResponse<Record<string, any>>>,
         });
 
         const firstLabeLInput = screen.getAllByRole('textbox', {name: /label/})[0];
 
-        userEvent.clear(firstLabeLInput);
-        userEvent.type(firstLabeLInput, 'My new label');
-        await act(async () => {
-            fireEvent.blur(firstLabeLInput);
-        });
+        await userEvent.clear(firstLabeLInput);
+        await userEvent.type(firstLabeLInput, 'My new label');
+        fireEvent.blur(firstLabeLInput);
 
         expect(await screen.findByText(/invalid id/)).toBeInTheDocument();
     });
 
     test('Render form for new library', async () => {
-        await act(async () => {
-            render(<InfosTab library={null} readonly={false} />, {
-                apolloMocks: commonMocks,
-            });
+        render(<InfosTab library={null} readonly={false} />, {
+            apolloMocks: commonMocks,
         });
 
         expect(screen.getByRole('textbox', {name: /id/})).not.toBeDisabled();
     });
 
     test('Autofill ID with label on new lib', async () => {
-        await act(async () => {
-            render(<InfosTab library={null} readonly={false} />, {
-                apolloMocks: commonMocks,
-            });
+        render(<InfosTab library={null} readonly={false} />, {
+            apolloMocks: commonMocks,
         });
 
         const labelFrInput = screen.getByRole('textbox', {name: 'label.fr'});
 
-        await act(async () => {
-            await userEvent.type(labelFrInput, 'Mon libellé', {delay: 1});
-        });
+        await userEvent.type(labelFrInput, 'Mon libellé', {delay: 1});
 
         expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('mon_libelle');
     });

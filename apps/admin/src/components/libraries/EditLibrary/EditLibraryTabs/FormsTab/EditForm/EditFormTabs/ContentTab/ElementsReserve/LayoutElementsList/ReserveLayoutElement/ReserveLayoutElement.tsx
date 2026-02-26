@@ -36,9 +36,10 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
 
     const [{isDragging}, drag] = useDrag<
         IFormBuilderDragObject<IFormElement>,
-        IFormBuilderDragObject<IFormElement>,
+        {containerId: string},
         {isDragging: boolean}
     >({
+        type: DraggableElementTypes.RESERVE_LAYOUT_ELEMENT,
         item: {
             type: DraggableElementTypes.RESERVE_LAYOUT_ELEMENT,
             element: formElement,
@@ -55,9 +56,10 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
                     return;
                 }
 
+                const dropResult = monitor.getDropResult();
                 const position = {
                     order: monitor.getItem().dropAtPos?.order || 0,
-                    containerId: monitor.getDropResult().containerId,
+                    containerId: dropResult?.containerId ?? defaultContainerId,
                 };
 
                 dispatch({

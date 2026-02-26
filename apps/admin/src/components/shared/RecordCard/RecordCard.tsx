@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
-import styled, {type CSSObject} from 'styled-components';
+import {type CSSProperties} from 'react';
+import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
@@ -10,21 +10,19 @@ import RecordPreview from '../RecordPreview';
 
 interface IRecordCardProps {
     record: RecordIdentity_whoAmI;
-    style?: CSSObject;
+    style?: CSSProperties;
     withLibrary?: boolean;
     withPreview?: boolean;
 }
 
 interface IWrapperProps {
-    recordColor: string | null;
-    style?: CSSObject;
+    $recordColor: string | null;
 }
 
 const Wrapper = styled.div<IWrapperProps>`
-    border-left: 5px solid ${props => props.recordColor || 'transparent'};
+    border-left: 5px solid ${props => props.$recordColor || 'transparent'};
     display: flex;
     flex-direction: row;
-    ${props => props.style}
 `;
 Wrapper.displayName = 'Wrapper';
 
@@ -52,7 +50,7 @@ const LibLabel = styled.div`
 const RecordCard = ({record, style, withLibrary = true, withPreview = true}: IRecordCardProps): JSX.Element => {
     const availableLanguages = useLang().lang;
     return (
-        <Wrapper recordColor={record.color} style={style} className="ui fluid">
+        <Wrapper $recordColor={record.color} style={style} className="ui fluid">
             {withPreview && (
                 <PreviewWrapper className="ui">
                     <RecordPreview

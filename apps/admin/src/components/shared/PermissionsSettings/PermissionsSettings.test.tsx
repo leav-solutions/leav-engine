@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import {type GET_LIB_BY_ID_libraries_list_permissions_conf} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, PermissionsRelation, GetAttributesDocument} from '_gqlTypes';
-import {act, render, screen, within} from '_tests/testUtils';
+import {render, screen, within} from '_tests/testUtils';
 import {mockAttrTree} from '__mocks__/attributes';
 import PermissionsSettings from './PermissionsSettings';
 
@@ -28,9 +28,7 @@ describe('PermissionsSettings', () => {
     };
 
     const _showPopup = async () => {
-        await act(async () => {
-            userEvent.click(screen.getByText('permissions_settings.title'));
-        });
+        await userEvent.click(screen.getByText('permissions_settings.title'));
     };
 
     const _handleChangeSettings = jest.fn();
@@ -97,14 +95,14 @@ describe('PermissionsSettings', () => {
 
         await _showPopup();
 
-        userEvent.click(screen.getByRole('button', {name: /add/}));
+        await userEvent.click(screen.getByRole('button', {name: /add/}));
 
         const attributeSelectionList = await screen.findByRole('list', {name: /attribute-selector-list/});
         expect(attributeSelectionList).toBeInTheDocument();
 
         const loadedAttribute = await within(attributeSelectionList).findByText('Attribut 3');
         expect(loadedAttribute).toBeInTheDocument();
-        userEvent.click(loadedAttribute);
+        await userEvent.click(loadedAttribute);
 
         expect(_handleChangeSettings).toHaveBeenCalled();
     });
@@ -120,7 +118,7 @@ describe('PermissionsSettings', () => {
 
         await _showPopup();
 
-        userEvent.click(screen.getAllByRole('button', {name: /remove/})[0]);
+        await userEvent.click(screen.getAllByRole('button', {name: /remove/})[0]);
         expect(_handleChangeSettings).toHaveBeenCalledWith({
             ...permissionsSettings,
             permissionTreeAttributes: [permissionsSettings.permissionTreeAttributes[1].id],
@@ -138,9 +136,7 @@ describe('PermissionsSettings', () => {
 
         await _showPopup();
 
-        await act(async () => {
-            userEvent.click(screen.getByRole('button', {name: /operator_or/}));
-        });
+        await userEvent.click(screen.getByRole('button', {name: /operator_or/}));
 
         expect(_handleChangeSettings).toHaveBeenCalledWith({
             permissionTreeAttributes: permissionsSettings.permissionTreeAttributes.map(a => a.id),

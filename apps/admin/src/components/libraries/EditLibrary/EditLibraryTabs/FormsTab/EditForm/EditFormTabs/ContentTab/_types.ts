@@ -1,7 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type DragObjectWithType} from 'react-dnd';
+/** Base type for drag objects - DragObjectWithType was removed in react-dnd v14 */
+interface IDragObjectWithType {
+    type: string | symbol;
+}
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {type FormElementTypes} from '_gqlTypes';
 import {type IKeyValue} from '../../../../../../../../_types/shared';
@@ -93,7 +96,7 @@ export interface IFormElementPos {
     containerId: string;
 }
 
-export interface IFormBuilderDragObject<T extends IUIElement | IFormElement> extends DragObjectWithType {
+export interface IFormBuilderDragObject<T extends IUIElement | IFormElement> extends IDragObjectWithType {
     type: DraggableElementTypes;
     element: T;
     index: number;
