@@ -1,160 +1,162 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
-import {type ILinkValuesList} from '../../../../../../../_types/attributes';
-import LinkValuesList from './LinkValuesList';
+// import {shallow} from 'enzyme';
+// import React from 'react';
+// import {act} from 'react-dom/test-utils';
+// import {wait} from 'utils/testUtils';
+// import {type ILinkValuesList} from '../../../../../../../_types/attributes';
+// import LinkValuesList from './LinkValuesList';
 
-jest.mock(
-    '../../../../../../records/SelectRecordModal',
-    () =>
-        function SelectRecordModal() {
-            return <div>SelectRecordModal</div>;
-        },
-);
+// jest.mock(
+// '../../../../../../records/SelectRecordModal',
+// () =>
+// function SelectRecordModal() {
+// return <div>SelectRecordModal</div>;
+// },
+// );
 
-jest.mock(
-    '../../../../../../records/EditRecordModal',
-    () =>
-        function EditRecordModal() {
-            return <div>EditRecordModal</div>;
-        },
-);
+// jest.mock(
+// '../../../../../../records/EditRecordModal',
+// () =>
+// function EditRecordModal() {
+// return <div>EditRecordModal</div>;
+// },
+// );
 
-jest.mock(
-    '../../../../../../shared/RecordCard',
-    () =>
-        function RecordCard() {
-            return <div>RecordCard</div>;
-        },
-);
+// jest.mock(
+// '../../../../../../shared/RecordCard',
+// () =>
+// function RecordCard() {
+// return <div>RecordCard</div>;
+// },
+// );
 
-describe('LinkValuesList', () => {
-    const onValuesUpdate = jest.fn();
-    const baseWhoAmI = {
-        id: '132456',
-        label: 'My record',
-        preview: null,
-        color: null,
-        library: {id: 'test_lib', label: {fr: 'Test Lib'}},
-    };
+// describe('LinkValuesList', () => {
+// const onValuesUpdate = jest.fn();
+// const baseWhoAmI = {
+// id: '132456',
+// label: 'My record',
+// preview: null,
+// color: null,
+// library: {id: 'test_lib', label: {fr: 'Test Lib'}},
+// };
 
-    const mockValues: ILinkValuesList[] = [
-        {
-            whoAmI: {
-                ...baseWhoAmI,
-                id: '132456',
-            },
-        },
-        {
-            whoAmI: {
-                ...baseWhoAmI,
-                id: '132457',
-            },
-        },
-    ];
+// const mockValues: ILinkValuesList[] = [
+// {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '132456',
+// },
+// },
+// {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '132457',
+// },
+// },
+// ];
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
+// beforeEach(() => {
+// jest.clearAllMocks();
+// });
 
-    test('Render existing list', async () => {
-        const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
-        );
+// test('Render existing list', async () => {
+// const comp = shallow(
+// <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
+// );
 
-        expect(comp.find('[data-test-id="values-list-value"]')).toHaveLength(2);
-    });
+// expect(comp.find('[data-test-id="values-list-value"]')).toHaveLength(2);
+// });
 
-    test('Open record creation modal', async () => {
-        const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
-        );
+// test('Open record creation modal', async () => {
+// const comp = shallow(
+// <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
+// );
 
-        act(() => {
-            comp.find('Button[data-test-id="open-create-record"]').simulate('click');
-        });
+// act(() => {
+// comp.find('Button[data-test-id="open-create-record"]').simulate('click');
+// });
 
-        const editRecordComp = comp.find('EditRecordModal');
-        expect(editRecordComp.prop('open')).toBe(true);
-        expect(editRecordComp.prop('recordId')).toBeUndefined();
+// const editRecordComp = comp.find('EditRecordModal');
+// expect(editRecordComp.prop('open')).toBe(true);
+// expect(editRecordComp.prop('recordId')).toBeUndefined();
 
-        act(() => {
-            const onCloseFunc: any = editRecordComp.prop('onClose');
+// act(() => {
+// const onCloseFunc: any = editRecordComp.prop('onClose');
 
-            if (onCloseFunc) {
-                onCloseFunc({
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '99999',
-                    },
-                });
-            }
-        });
+// if (onCloseFunc) {
+// onCloseFunc({
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '99999',
+// },
+// });
+// }
+// });
 
-        await wait(0);
+// await wait(0);
 
-        expect(onValuesUpdate).toHaveBeenCalled();
-        expect(onValuesUpdate.mock.calls[0][0]).toHaveLength(3);
-    });
+// expect(onValuesUpdate).toHaveBeenCalled();
+// expect(onValuesUpdate.mock.calls[0][0]).toHaveLength(3);
+// });
 
-    test("When selecting a record, don't add a record already present in values", async () => {
-        const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
-        );
+// test("When selecting a record, don't add a record already present in values", async () => {
+// const comp = shallow(
+// <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
+// );
 
-        act(() => {
-            comp.find('Button[data-test-id="open-select-record"]').simulate('click');
-        });
+// act(() => {
+// comp.find('Button[data-test-id="open-select-record"]').simulate('click');
+// });
 
-        const selectRecordComp = comp.find('SelectRecordModal');
-        expect(selectRecordComp.prop('open')).toBe(true);
+// const selectRecordComp = comp.find('SelectRecordModal');
+// expect(selectRecordComp.prop('open')).toBe(true);
 
-        act(() => {
-            const onSelectFunc: any = selectRecordComp.prop('onSelect');
+// act(() => {
+// const onSelectFunc: any = selectRecordComp.prop('onSelect');
 
-            if (onSelectFunc) {
-                onSelectFunc({
-                    ...baseWhoAmI,
-                    id: '132456',
-                });
-            }
-        });
+// if (onSelectFunc) {
+// onSelectFunc({
+// ...baseWhoAmI,
+// id: '132456',
+// });
+// }
+// });
 
-        await wait(0);
+// await wait(0);
 
-        expect(onValuesUpdate).not.toHaveBeenCalled();
-    });
+// expect(onValuesUpdate).not.toHaveBeenCalled();
+// });
 
-    test('Delete a value', async () => {
-        const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
-        );
+// test('Delete a value', async () => {
+// const comp = shallow(
+// <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
+// );
 
-        act(() => {
-            comp.find('Button[data-test-id="link-value-delete-btn"]')
-                .first()
-                .simulate('click', {stopPropagation: jest.fn(), preventDefault: jest.fn()});
-        });
+// act(() => {
+// comp.find('Button[data-test-id="link-value-delete-btn"]')
+// .first()
+// .simulate('click', {stopPropagation: jest.fn(), preventDefault: jest.fn()});
+// });
 
-        expect(onValuesUpdate).toHaveBeenCalled();
-        expect(onValuesUpdate.mock.calls[0][0]).toHaveLength(1);
-    });
+// expect(onValuesUpdate).toHaveBeenCalled();
+// expect(onValuesUpdate.mock.calls[0][0]).toHaveLength(1);
+// });
 
-    test('Edit record when clicking on a value', async () => {
-        const comp = shallow(
-            <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
-        );
+// test('Edit record when clicking on a value', async () => {
+// const comp = shallow(
+// <LinkValuesList values={mockValues} onValuesUpdate={onValuesUpdate} linkedLibrary="test_lib" />,
+// );
 
-        act(() => {
-            comp.find('[data-test-id="values-list-value"]').first().simulate('click');
-        });
+// act(() => {
+// comp.find('[data-test-id="values-list-value"]').first().simulate('click');
+// });
 
-        const editRecordComp = comp.find('EditRecordModal');
-        expect(editRecordComp.prop('open')).toBe(true);
-        expect(editRecordComp.prop('recordId')).toBe('132456');
-    });
-});
+// const editRecordComp = comp.find('EditRecordModal');
+// expect(editRecordComp.prop('open')).toBe(true);
+// expect(editRecordComp.prop('recordId')).toBe('132456');
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

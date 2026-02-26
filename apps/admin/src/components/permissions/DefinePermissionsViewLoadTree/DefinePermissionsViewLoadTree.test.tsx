@@ -1,23 +1,25 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/client/testing';
-import {render} from 'enzyme';
-import React from 'react';
-import DefinePermissionsViewLoadTree from './DefinePermissionsViewLoadTree';
+// import {MockedProvider} from '@apollo/client/testing';
+// import {render} from 'enzyme';
+// import React from 'react';
+// import DefinePermissionsViewLoadTree from './DefinePermissionsViewLoadTree';
 
-jest.mock('../../../hooks/useLang');
+// jest.mock('../../../hooks/useLang');
 
-describe('DefinePermissionsViewLoadTree', () => {
-    test('Snapshot test', async () => {
-        const onClick = jest.fn();
-        const selectedNode = null;
-        const comp = render(
-            <MockedProvider>
-                <DefinePermissionsViewLoadTree treeId="test_tree" onClick={onClick} selectedNode={selectedNode} />
-            </MockedProvider>,
-        );
+// describe('DefinePermissionsViewLoadTree', () => {
+// test('Snapshot test', async () => {
+// const onClick = jest.fn();
+// const selectedNode = null;
+// const comp = render(
+// <MockedProvider>
+// <DefinePermissionsViewLoadTree treeId="test_tree" onClick={onClick} selectedNode={selectedNode} />
+// </MockedProvider>,
+// );
 
-        expect(comp).toMatchSnapshot();
-    });
-});
+// expect(comp).toMatchSnapshot();
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

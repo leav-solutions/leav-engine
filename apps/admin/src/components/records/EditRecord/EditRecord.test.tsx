@@ -1,140 +1,142 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
-import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
-import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
-import {mockLibrary} from '../../../__mocks__/libraries';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import EditRecord from './EditRecord';
-import {GetLibByIdDocument} from '_gqlTypes';
+// import {mount} from 'enzyme';
+// import {act} from 'react-dom/test-utils';
+// import {wait} from 'utils/testUtils';
+// import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
+// import {mockLibrary} from '../../../__mocks__/libraries';
+// import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
+// import EditRecord from './EditRecord';
+// import {GetLibByIdDocument} from '_gqlTypes';
 
-jest.mock(
-    './EditRecordForm',
-    () =>
-        function RecordEditionForm() {
-            return <div>Edit form container</div>;
-        },
-);
+// jest.mock(
+// './EditRecordForm',
+// () =>
+// function RecordEditionForm() {
+// return <div>Edit form container</div>;
+// },
+// );
 
-describe('EditRecord', () => {
-    test('Loading and success state', async () => {
-        const mocks = [
-            {
-                request: {
-                    query: GetLibByIdDocument,
-                    variables: {id: ['products']},
-                },
-                result: {
-                    data: {
-                        libraries: {
-                            __typename: 'LibrariesList',
-                            totalCount: 1,
-                            list: [
-                                {
-                                    ...mockLibrary,
-                                },
-                            ],
-                        },
-                    },
-                },
-            },
-        ];
+// describe('EditRecord', () => {
+// test('Loading and success state', async () => {
+// const mocks = [
+// {
+// request: {
+// query: GetLibByIdDocument,
+// variables: {id: ['products']},
+// },
+// result: {
+// data: {
+// libraries: {
+// __typename: 'LibrariesList',
+// totalCount: 1,
+// list: [
+// {
+// ...mockLibrary,
+// },
+// ],
+// },
+// },
+// },
+// },
+// ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <EditRecord library="products" recordId="12345" />
-                </MockedProviderWithFragments>,
-            );
-        });
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProviderWithFragments mocks={mocks} addTypename>
+// <EditRecord library="products" recordId="12345" />
+// </MockedProviderWithFragments>,
+// );
+// });
 
-        expect(comp.find('Loading')).toHaveLength(1);
+// expect(comp.find('Loading')).toHaveLength(1);
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
 
-        const formContainer = comp.find('RecordEditionForm');
-        expect(formContainer).toHaveLength(1);
-        const attributes = formContainer.prop('library').attributes;
-        expect(attributes).toHaveLength(2);
-    });
+// const formContainer = comp.find('RecordEditionForm');
+// expect(formContainer).toHaveLength(1);
+// const attributes = formContainer.prop('library').attributes;
+// expect(attributes).toHaveLength(2);
+// });
 
-    test('Error state', async () => {
-        const mocks = [
-            {
-                request: {
-                    query: GetLibByIdDocument,
-                    variables: {id: ['products']},
-                },
-                error: new Error('Boom!'),
-            },
-        ];
+// test('Error state', async () => {
+// const mocks = [
+// {
+// request: {
+// query: GetLibByIdDocument,
+// variables: {id: ['products']},
+// },
+// error: new Error('Boom!'),
+// },
+// ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <EditRecord library="products" recordId="12345" />
-                </MockedProviderWithFragments>,
-            );
-        });
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProviderWithFragments mocks={mocks} addTypename>
+// <EditRecord library="products" recordId="12345" />
+// </MockedProviderWithFragments>,
+// );
+// });
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
 
-        expect(comp.find('.error')).toHaveLength(1);
-    });
+// expect(comp.find('.error')).toHaveLength(1);
+// });
 
-    test('Retrieve label updates', async () => {
-        const mocks = [
-            {
-                request: {
-                    query: GetLibByIdDocument,
-                    variables: {id: ['products']},
-                },
-                result: {
-                    data: {
-                        libraries: {
-                            __typename: 'LibrariesList',
-                            totalCount: 1,
-                            list: [
-                                {
-                                    ...mockLibrary,
-                                },
-                            ],
-                        },
-                    },
-                },
-            },
-        ];
+// test('Retrieve label updates', async () => {
+// const mocks = [
+// {
+// request: {
+// query: GetLibByIdDocument,
+// variables: {id: ['products']},
+// },
+// result: {
+// data: {
+// libraries: {
+// __typename: 'LibrariesList',
+// totalCount: 1,
+// list: [
+// {
+// ...mockLibrary,
+// },
+// ],
+// },
+// },
+// },
+// },
+// ];
 
-        const onLabelUpdate = jest.fn();
+// const onLabelUpdate = jest.fn();
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <EditRecord library="products" recordId="12345" onIdentityUpdate={onLabelUpdate} />
-                </MockedProviderWithFragments>,
-            );
-        });
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProviderWithFragments mocks={mocks} addTypename>
+// <EditRecord library="products" recordId="12345" onIdentityUpdate={onLabelUpdate} />
+// </MockedProviderWithFragments>,
+// );
+// });
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
 
-        const labelUpdateFunc = comp.find('RecordEditionForm').prop('onIdentityUpdate');
+// const labelUpdateFunc = comp.find('RecordEditionForm').prop('onIdentityUpdate');
 
-        labelUpdateFunc();
+// labelUpdateFunc();
 
-        expect(onLabelUpdate).toHaveBeenCalled();
-    });
-});
+// expect(onLabelUpdate).toHaveBeenCalled();
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

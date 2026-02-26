@@ -1,83 +1,85 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
-import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {mockLibrary} from '../../../../../__mocks__/libraries';
-import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
-import NavigatorTab from './NavigatorTab';
+// import {mount} from 'enzyme';
+// import React from 'react';
+// import {act} from 'react-dom/test-utils';
+// import {mockLibrary} from '../../../../../__mocks__/libraries';
+// import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
+// import NavigatorTab from './NavigatorTab';
 
-const wait = () =>
-    new Promise((res, rej) => {
-        setTimeout(res, 0);
-    });
+// const wait = () =>
+// new Promise((res, rej) => {
+// setTimeout(res, 0);
+// });
 
-jest.mock(
-    '../../../../navigator/Navigator',
-    () =>
-        function Navigator(props) {
-            return <div>MOCK Navigator</div>;
-        },
-);
+// jest.mock(
+// '../../../../navigator/Navigator',
+// () =>
+// function Navigator(props) {
+// return <div>MOCK Navigator</div>;
+// },
+// );
 
-jest.mock(
-    '../../../../records/EditRecordModal',
-    () =>
-        function EditRecordModal(props) {
-            return <div>MOCK EditRecordModal</div>;
-        },
-);
+// jest.mock(
+// '../../../../records/EditRecordModal',
+// () =>
+// function EditRecordModal(props) {
+// return <div>MOCK EditRecordModal</div>;
+// },
+// );
 
-const mockRecord = {
-    color: null,
-    id: '1',
-    label: null,
-    library: mockLibrary,
-    preview: null,
-    __typename: '',
-};
+// const mockRecord = {
+// color: null,
+// id: '1',
+// label: null,
+// library: mockLibrary,
+// preview: null,
+// __typename: '',
+// };
 
-describe('EditableNavigator', () => {
-    test('renders the navigator', async () => {
-        const comp = mount(
-            <MockedLangContextProvider>
-                <NavigatorTab library={mockLibrary} />
-            </MockedLangContextProvider>,
-        );
+// describe('EditableNavigator', () => {
+// test('renders the navigator', async () => {
+// const comp = mount(
+// <MockedLangContextProvider>
+// <NavigatorTab library={mockLibrary} />
+// </MockedLangContextProvider>,
+// );
 
-        await act(async () => {
-            await wait();
-        });
+// await act(async () => {
+// await wait();
+// });
 
-        comp.update();
-        const navigator = comp.find('Navigator');
-        expect(navigator.length).toBe(1);
-    });
+// comp.update();
+// const navigator = comp.find('Navigator');
+// expect(navigator.length).toBe(1);
+// });
 
-    test('renders the Edit Record Modal when a record is set', async () => {
-        const comp = mount(
-            <MockedLangContextProvider>
-                <NavigatorTab library={mockLibrary} />
-            </MockedLangContextProvider>,
-        );
+// test('renders the Edit Record Modal when a record is set', async () => {
+// const comp = mount(
+// <MockedLangContextProvider>
+// <NavigatorTab library={mockLibrary} />
+// </MockedLangContextProvider>,
+// );
 
-        await act(async () => {
-            await wait();
-        });
-        comp.update();
+// await act(async () => {
+// await wait();
+// });
+// comp.update();
 
-        const navigator = comp.find('Navigator');
-        const setRecord = navigator.prop('onEditRecordClick');
+// const navigator = comp.find('Navigator');
+// const setRecord = navigator.prop('onEditRecordClick');
 
-        await act(async () => {
-            if (typeof setRecord === 'function') {
-                setRecord(mockRecord);
-            }
-        });
-        comp.update();
+// await act(async () => {
+// if (typeof setRecord === 'function') {
+// setRecord(mockRecord);
+// }
+// });
+// comp.update();
 
-        const editModal = comp.find('EditRecordModal');
-        expect(editModal.length).toBe(1);
-    });
-});
+// const editModal = comp.find('EditRecordModal');
+// expect(editModal.length).toBe(1);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

@@ -1,34 +1,36 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
-import React from 'react';
-import useUserData from '.';
-import MockedUserContextProvider from '../../__mocks__/MockedUserContextProvider';
+// import {mount} from 'enzyme';
+// import React from 'react';
+// import useUserData from '.';
+// import MockedUserContextProvider from '../../__mocks__/MockedUserContextProvider';
 
-describe('useUserData', () => {
-    const CompWithUserData = () => {
-        const userData = useUserData();
+// describe('useUserData', () => {
+// const CompWithUserData = () => {
+// const userData = useUserData();
 
-        return <div className="userId">{userData.id}</div>;
-    };
+// return <div className="userId">{userData.id}</div>;
+// };
 
-    test('Return user data from context', async () => {
-        const comp = mount(
-            <MockedUserContextProvider>
-                <CompWithUserData />
-            </MockedUserContextProvider>,
-        );
+// test('Return user data from context', async () => {
+// const comp = mount(
+// <MockedUserContextProvider>
+// <CompWithUserData />
+// </MockedUserContextProvider>,
+// );
 
-        expect(comp.find('div.userId').text()).toBe('1');
-    });
+// expect(comp.find('div.userId').text()).toBe('1');
+// });
 
-    test('Throw if no context provided', async () => {
-        // Prevent Error about a missing context type from appearing in the console.
-        const errorLogger = console.error;
-        console.error = jest.fn();
-        expect(() => mount(<CompWithUserData />)).toThrow();
+// test('Throw if no context provided', async () => {
+// Prevent Error about a missing context type from appearing in the console.
+// const errorLogger = console.error;
+// console.error = jest.fn();
+// expect(() => mount(<CompWithUserData />)).toThrow();
 
-        console.error = errorLogger;
-    });
-});
+// console.error = errorLogger;
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

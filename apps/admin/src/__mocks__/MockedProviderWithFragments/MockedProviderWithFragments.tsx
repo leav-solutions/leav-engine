@@ -17,7 +17,7 @@ function MockedProviderWithFragments({
     // Set a new cache for each test to avoid fetching data in cache and not in provided mocks
     const mockCache = new InMemoryCache(cacheSettings);
     return (
-        <MockedProvider cache={mockCache} addTypename {...props}>
+        <MockedProvider cache={mockCache} {...props}>
             {children as ReactElement}
         </MockedProvider>
     );

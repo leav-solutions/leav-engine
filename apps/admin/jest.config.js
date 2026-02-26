@@ -23,7 +23,7 @@ module.exports = {
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
         '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}],
     },
-    transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks)/)'],
+    transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks|react-dnd-test-backend)/)'],
     testRegex: '.test.(tsx)$',
     moduleNameMapper: {
         ...commonModuleNameMapper,

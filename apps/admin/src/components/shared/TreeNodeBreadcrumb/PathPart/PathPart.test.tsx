@@ -1,79 +1,81 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import React from 'react';
-import PathPart from './PathPart';
+// import {shallow} from 'enzyme';
+// import React from 'react';
+// import PathPart from './PathPart';
 
-jest.mock(
-    '../../RecordCard',
-    () =>
-        function RecordCard({record}) {
-            return <div data-test-id={`record_card_${record.id}`} />;
-        },
-);
+// jest.mock(
+// '../../RecordCard',
+// () =>
+// function RecordCard({record}) {
+// return <div data-test-id={`record_card_${record.id}`} />;
+// },
+// );
 
-describe('PathPart', () => {
-    const record = {
-        id: '1',
-        library: {
-            id: 'test_lib',
-            label: {
-                fr: 'Test Lib',
-            },
-        },
-        label: 'TestLabel',
-        color: null,
-        preview: null,
-    };
+// describe('PathPart', () => {
+// const record = {
+// id: '1',
+// library: {
+// id: 'test_lib',
+// label: {
+// fr: 'Test Lib',
+// },
+// },
+// label: 'TestLabel',
+// color: null,
+// preview: null,
+// };
 
-    test('Display element record card', async () => {
-        const comp = shallow(<PathPart record={record} />);
+// test('Display element record card', async () => {
+// const comp = shallow(<PathPart record={record} />);
 
-        expect(comp.find('RecordCard')).toHaveLength(1);
-    });
+// expect(comp.find('RecordCard')).toHaveLength(1);
+// });
 
-    test('Show actions menu', async () => {
-        const actions = [
-            {
-                text: 'Some action',
-                icon: 'trash',
-                action: jest.fn(),
-                displayFilter: () => true,
-            },
-            {
-                text: 'Some action 2',
-                icon: 'trash',
-                action: jest.fn(),
-                displayFilter: () => true,
-            },
-        ];
+// test('Show actions menu', async () => {
+// const actions = [
+// {
+// text: 'Some action',
+// icon: 'trash',
+// action: jest.fn(),
+// displayFilter: () => true,
+// },
+// {
+// text: 'Some action 2',
+// icon: 'trash',
+// action: jest.fn(),
+// displayFilter: () => true,
+// },
+// ];
 
-        const comp = shallow(<PathPart record={record} actions={actions} />);
-        comp.find('[data-test-id="path_part_wrapper"]').simulate('mouseEnter');
+// const comp = shallow(<PathPart record={record} actions={actions} />);
+// comp.find('[data-test-id="path_part_wrapper"]').simulate('mouseEnter');
 
-        expect(comp.find('DropdownItem')).toHaveLength(2);
-    });
+// expect(comp.find('DropdownItem')).toHaveLength(2);
+// });
 
-    test('Filter actions menu', async () => {
-        const actions = [
-            {
-                text: 'Some action',
-                icon: 'trash',
-                action: jest.fn(),
-                displayFilter: r => r.id !== '1',
-            },
-            {
-                text: 'Some action 2',
-                icon: 'trash',
-                action: jest.fn(),
-                displayFilter: () => true,
-            },
-        ];
+// test('Filter actions menu', async () => {
+// const actions = [
+// {
+// text: 'Some action',
+// icon: 'trash',
+// action: jest.fn(),
+// displayFilter: r => r.id !== '1',
+// },
+// {
+// text: 'Some action 2',
+// icon: 'trash',
+// action: jest.fn(),
+// displayFilter: () => true,
+// },
+// ];
 
-        const comp = shallow(<PathPart record={record} actions={actions} />);
-        comp.find('[data-test-id="path_part_wrapper"]').simulate('mouseEnter');
+// const comp = shallow(<PathPart record={record} actions={actions} />);
+// comp.find('[data-test-id="path_part_wrapper"]').simulate('mouseEnter');
 
-        expect(comp.find('DropdownItem')).toHaveLength(1);
-    });
-});
+// expect(comp.find('DropdownItem')).toHaveLength(1);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

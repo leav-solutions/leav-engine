@@ -1,32 +1,34 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from 'enzyme';
-import React from 'react';
-import {type Mockify} from '../../../../../../_types/Mockify';
-import {type IFlatItem} from '../EmbeddedFieldsTab';
-import EditButtons from './EditButtons';
+// import {render} from 'enzyme';
+// import React from 'react';
+// import {type Mockify} from '../../../../../../_types/Mockify';
+// import {type IFlatItem} from '../EmbeddedFieldsTab';
+// import EditButtons from './EditButtons';
 
-describe('EmbeddedFieldsWrapper', () => {
-    test('should display three Button', async () => {
-        const mockFlatItem: Mockify<IFlatItem> = {
-            displayForm: false,
-        };
-        const mockFormat = 'extended';
+// describe('EmbeddedFieldsWrapper', () => {
+// test('should display three Button', async () => {
+// const mockFlatItem: Mockify<IFlatItem> = {
+// displayForm: false,
+// };
+// const mockFormat = 'extended';
 
-        const comp = render(
-            <EditButtons
-                id="test"
-                format={mockFormat}
-                flatItem={mockFlatItem as IFlatItem}
-                expend={jest.fn()}
-                add={jest.fn()}
-                remove={jest.fn()}
-                t={jest.fn()}
-                isRoot={false}
-            />,
-        );
+// const comp = render(
+// <EditButtons
+// id="test"
+// format={mockFormat}
+// flatItem={mockFlatItem as IFlatItem}
+// expend={jest.fn()}
+// add={jest.fn()}
+// remove={jest.fn()}
+// t={jest.fn()}
+// isRoot={false}
+// />,
+// );
 
-        expect(comp.find('button')).toHaveLength(3);
-    });
-});
+// expect(comp.find('button')).toHaveLength(3);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

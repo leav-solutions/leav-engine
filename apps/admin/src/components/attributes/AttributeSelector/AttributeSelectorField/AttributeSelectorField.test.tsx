@@ -1,25 +1,27 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import React from 'react';
-import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
-import AttributeSelectorField from './AttributeSelectorField';
+// import {shallow} from 'enzyme';
+// import React from 'react';
+// import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
+// import AttributeSelectorField from './AttributeSelectorField';
 
-jest.mock('../../../../utils/utils', () => ({
-    formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr),
-    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr']),
-}));
+// jest.mock('../../../../utils/utils', () => ({
+// formatIDString: jest.fn().mockImplementation(s => s),
+// localizedLabel: jest.fn().mockImplementation(l => l.fr),
+// getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr']),
+// }));
 
-jest.mock('../../../../hooks/useLang');
+// jest.mock('../../../../hooks/useLang');
 
-describe('AttributesSelectorField', () => {
-    test('Render dropdown with attributes', async () => {
-        const attributes = [mockAttrAdv, mockAttrSimple];
+// describe('AttributesSelectorField', () => {
+// test('Render dropdown with attributes', async () => {
+// const attributes = [mockAttrAdv, mockAttrSimple];
 
-        const comp = shallow(<AttributeSelectorField attributes={attributes} />);
+// const comp = shallow(<AttributeSelectorField attributes={attributes} />);
 
-        expect(comp.find('FormDropdown').prop('options')).toHaveLength(2);
-    });
-});
+// expect(comp.find('FormDropdown').prop('options')).toHaveLength(2);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

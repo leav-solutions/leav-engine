@@ -1,33 +1,35 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
-import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
-import EditRecordModal from './EditRecordModal';
+// import {mount} from 'enzyme';
+// import React from 'react';
+// import {act} from 'react-dom/test-utils';
+// import {wait} from 'utils/testUtils';
+// import EditRecordModal from './EditRecordModal';
 
-jest.mock(
-    '../EditRecord/EditRecord',
-    () =>
-        function EditRecordComp() {
-            return <div>Edit record</div>;
-        },
-);
+// jest.mock(
+// '../EditRecord/EditRecord',
+// () =>
+// function EditRecordComp() {
+// return <div>Edit record</div>;
+// },
+// );
 
-describe('EditRecordModal', () => {
-    const onClose = jest.fn();
-    test('Open and close modal', async () => {
-        const comp = mount(<EditRecordModal open library="test_lib" onClose={onClose} />);
+// describe('EditRecordModal', () => {
+// const onClose = jest.fn();
+// test('Open and close modal', async () => {
+// const comp = mount(<EditRecordModal open library="test_lib" onClose={onClose} />);
 
-        expect(comp.find('Modal').prop('open')).toBe(true);
+// expect(comp.find('Modal').prop('open')).toBe(true);
 
-        act(() => {
-            comp.find('Button.close-button').simulate('click');
-        });
+// act(() => {
+// comp.find('Button.close-button').simulate('click');
+// });
 
-        await wait(0);
+// await wait(0);
 
-        expect(onClose).toHaveBeenCalled();
-    });
-});
+// expect(onClose).toHaveBeenCalled();
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');
