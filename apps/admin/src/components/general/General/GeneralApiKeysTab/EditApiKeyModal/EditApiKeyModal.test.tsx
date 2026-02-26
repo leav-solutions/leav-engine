@@ -3,9 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen} from '_tests/testUtils';
 import {mockApiKey} from '__mocks__/common/apiKeys';
 import EditApiKeyModal from './EditApiKeyModal';
+import {SaveApiKeyDocument} from '_gqlTypes';
 
 jest.mock(
     'components/shared/RecordSelector',
@@ -17,8 +18,17 @@ jest.mock(
 
 describe('EditApiKeyModal', () => {
     test('Render form', async () => {
-        await act(async () => {
-            render(<EditApiKeyModal apiKey={{...mockApiKey, expiresAt: null}} onClose={jest.fn()} />);
+        const saveApiKeyMock = {
+            request: {query: SaveApiKeyDocument},
+            result: {
+                data: {
+                    saveApiKey: {...mockApiKey, expiresAt: null},
+                },
+            },
+        };
+
+        render(<EditApiKeyModal apiKey={{...mockApiKey, expiresAt: null}} onClose={jest.fn()} />, {
+            apolloMocks: [saveApiKeyMock],
         });
 
         expect(screen.getByText(mockApiKey.label)).toBeInTheDocument();
@@ -26,12 +36,9 @@ describe('EditApiKeyModal', () => {
         expect(screen.getByText(/never/)).toBeInTheDocument();
 
         // Edit expiration date
-        userEvent.click(screen.getByText(/edit_expiration/));
-        const dropdown = screen.getByRole('listbox');
-        expect(dropdown).toBeInTheDocument();
-
-        userEvent.click(dropdown);
-        userEvent.click(screen.getByRole('option', {name: /custom/}));
+        await userEvent.click(screen.getByText(/edit_expiration/));
+        const customOption = await screen.findByText(/custom/);
+        await userEvent.click(customOption);
 
         expect(screen.getByTestId('custom-date-input')).toBeInTheDocument();
     });

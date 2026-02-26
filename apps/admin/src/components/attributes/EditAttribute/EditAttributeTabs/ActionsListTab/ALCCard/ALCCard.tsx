@@ -63,6 +63,7 @@ function ALCCard({
     //////////////////// DRAG AND DROP
 
     const [{isDragging}, drag, preview] = useDrag({
+        type: itemTypes.ACTION,
         item: {
             type: itemTypes.ACTION,
             id,
@@ -152,7 +153,7 @@ function ALCCard({
     function renderListCard(listAction: IAction) {
         return (
             <Card fluid>
-                <Connector inputs={inputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
+                <Connector inputs={inputs} dictionnary={colorTypeDictionnary} />
                 <Card.Content>
                     <ActionRow
                         ref={node => {
@@ -164,10 +165,9 @@ function ALCCard({
                             }
                             return drag(drop(node));
                         }}
-                        opacity={opacity}
-                        marginTop={marginTop}
-                        index={index}
-                        isDragging={isDragging}
+                        $opacity={opacity}
+                        $marginTop={marginTop}
+                        $isDragging={isDragging}
                     >
                         <h3>{listAction.name}</h3>
                         <p>{listAction.description}</p>

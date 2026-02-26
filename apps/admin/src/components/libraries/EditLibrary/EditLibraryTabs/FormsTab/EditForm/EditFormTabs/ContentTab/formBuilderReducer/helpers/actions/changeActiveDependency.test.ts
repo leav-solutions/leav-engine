@@ -4,7 +4,7 @@
 import {formBuilderReducer} from '../..';
 import {FormElementTypes} from '_gqlTypes';
 import {UIElementTypes} from '../../../_types';
-import {layoutElements} from '../../../uiElements/__mocks__';
+import {layoutElements} from '../../../uiElements/__mocks__/uiElements';
 import {formElem1, formElem2, formElem3, formElem4, mockInitialState} from '../../_fixtures/fixtures';
 import {FormBuilderActionTypes, defaultContainerId} from '../../formBuilderReducer';
 

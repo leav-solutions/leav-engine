@@ -7,7 +7,7 @@ import {type IUserDomain} from 'domain/user/userDomain';
 import {type IValueDomain} from 'domain/value/valueDomain';
 import {type CookieOptions, type NextFunction, type Request, type Response} from 'express';
 import useragent from 'express-useragent';
-import jwt, {type Algorithm} from 'jsonwebtoken';
+import jwt, {type Algorithm, type SignOptions} from 'jsonwebtoken';
 import ms from 'ms';
 import {type IConfig} from '_types/config';
 import {type IAppGraphQLSchema} from '_types/graphql';
@@ -101,7 +101,7 @@ export default function ({
             config.auth.key,
             {
                 algorithm: config.auth.algorithm as Algorithm,
-                expiresIn: String(config.auth.tokenExpiration),
+                expiresIn: config.auth.tokenExpiration as SignOptions['expiresIn'],
             },
         );
     };
@@ -109,7 +109,7 @@ export default function ({
     const _generateRefreshToken = (payload: ISessionPayload) =>
         jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
-            expiresIn: String(config.auth.refreshTokenExpiration),
+            expiresIn: config.auth.refreshTokenExpiration as SignOptions['expiresIn'],
             jwtid: crypto.randomUUID(),
         });
 
@@ -481,7 +481,7 @@ export default function ({
                             config.auth.key,
                             {
                                 algorithm: config.auth.algorithm as Algorithm,
-                                expiresIn: String(config.auth.resetPasswordExpiration),
+                                expiresIn: config.auth.resetPasswordExpiration as SignOptions['expiresIn'],
                             },
                         );
 

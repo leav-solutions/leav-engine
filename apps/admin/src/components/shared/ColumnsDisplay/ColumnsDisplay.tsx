@@ -10,7 +10,7 @@ interface IColumnsDisplayProps {
 }
 
 interface IColumnProps {
-    columnsNumber: number;
+    $columnsNumber: number;
 }
 
 const Wrapper = styled.div`
@@ -27,7 +27,7 @@ const Column = styled.div<IColumnProps>`
     display: flex;
     text-align: center;
     border-right: 1px solid #999999;
-    width: ${props => 100 / props.columnsNumber + '%'};
+    width: ${props => 100 / props.$columnsNumber + '%'};
 
     &:first-child {
         padding-left: 0;
@@ -43,7 +43,7 @@ function ColumnsDisplay({columnsContent, columnsNumber}: IColumnsDisplayProps): 
     return (
         <Wrapper>
             {columnsContent.map((c, i) => (
-                <Column columnsNumber={columnsNumber} key={i}>
+                <Column $columnsNumber={columnsNumber} key={i}>
                     {c}
                 </Column>
             ))}

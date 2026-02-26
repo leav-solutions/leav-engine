@@ -370,7 +370,7 @@ function InfosForm({
                             aria-label="character_limit"
                             onChange={_handleChange}
                             onBlur={_handleBlur}
-                            value={values.character_limit}
+                            value={values.character_limit ?? ''}
                         />
                     </FormFieldWrapper>
                 )}

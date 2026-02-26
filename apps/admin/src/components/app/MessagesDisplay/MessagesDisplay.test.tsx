@@ -62,9 +62,7 @@ describe('MessagesDisplay', () => {
         // Close btn has no role defined (thanks Semantic!) so we have to find it by class
         const closeIcon = messageElem.getElementsByClassName('close')[0];
 
-        await act(async () => {
-            userEvent.click(closeIcon);
-        });
+        await userEvent.click(closeIcon);
 
         expect(mockRemoveMessage).toHaveBeenCalled();
     });

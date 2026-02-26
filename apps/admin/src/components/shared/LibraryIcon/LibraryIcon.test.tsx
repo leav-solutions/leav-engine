@@ -34,9 +34,10 @@ describe('LibraryIcon', () => {
             },
         };
 
-        render(<LibraryIcon library={mockLibrary} />);
+        const {container} = render(<LibraryIcon library={mockLibrary} />);
 
-        expect(screen.getByRole('img')).toHaveAttribute('src', 'path/to/file.png');
+        const img = container.querySelector('img');
+        expect(img).toHaveAttribute('src', 'path/to/file.png');
     });
 
     test('Display generic icon if no icon defined on library', async () => {

@@ -24,13 +24,13 @@ const ItemContent = styled.div`
     grid-gap: 1rem;
 `;
 
-const ToggleButton = styled.div<{isCollapsed: boolean; width: string}>`
+const ToggleButton = styled.div<{$isCollapsed: boolean; width: string}>`
     position: fixed;
     bottom: 0;
     left: 0;
     width: ${props => props.width};
     transition: width 0.3s;
-    text-align: ${props => (props.isCollapsed ? 'center' : 'right')};
+    text-align: ${props => (props.$isCollapsed ? 'center' : 'right')};
     padding: 0.5rem;
     cursor: pointer;
     font-size: 0.6rem;
@@ -75,7 +75,7 @@ const AppMenu = ({isCollapsed, onToggle, width}: IAppMenuProps): JSX.Element => 
                     ))}
                 </Menu.Menu>
             </StyledMenu>
-            <ToggleButton onClick={onToggle} width={width} isCollapsed={isCollapsed}>
+            <ToggleButton onClick={onToggle} width={width} $isCollapsed={isCollapsed}>
                 <Icon name={toggleIcon} size="big" />
             </ToggleButton>
         </>

@@ -45,28 +45,22 @@ jest.mock('react-router-v5', () => ({
 
 describe('General', () => {
     test('Render test', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <General />
-                </MemoryRouter>,
-            );
-        });
+        render(
+            <MemoryRouter>
+                <General />
+            </MemoryRouter>,
+        );
 
         expect(screen.getByText('GeneralInfosTab')).toBeInTheDocument();
 
         const adminTabLink = screen.getByText(/admin_permissions/);
         const apiKeysTabLink = screen.getByText(/api_keys/);
 
-        await act(async () => {
-            userEvent.click(adminTabLink);
-        });
+        await userEvent.click(adminTabLink);
 
         expect(screen.getByText('GeneralAdminPermissionsTab')).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.click(apiKeysTabLink);
-        });
+        await userEvent.click(apiKeysTabLink);
 
         expect(screen.getByText('GeneralApiKeysTab')).toBeInTheDocument();
     });

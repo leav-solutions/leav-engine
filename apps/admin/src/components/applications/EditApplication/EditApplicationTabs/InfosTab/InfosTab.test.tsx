@@ -9,7 +9,7 @@ import {
     GetApplicationModulesDocument,
     SaveApplicationDocument,
 } from '_gqlTypes';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {act, fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
@@ -87,14 +87,17 @@ describe('InfosTab', () => {
         expect(screen.getAllByRole('textbox', {name: /label/})).toHaveLength(2);
         expect(screen.getAllByRole('textbox', {name: /description/})).toHaveLength(2);
 
-        // Select a module
+        // Select a module - wait for modules to load (Apollo mock is async)
         const moduleSelector = screen.getByRole('combobox', {name: /module/});
         expect(moduleSelector).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.click(moduleSelector);
-            userEvent.click(await within(moduleSelector).findByText(/admin/));
+        await waitFor(() => {
+            expect(moduleSelector).not.toHaveAttribute('aria-busy', 'true');
         });
+
+        await userEvent.click(moduleSelector);
+        const adminOption = await within(moduleSelector).findByText(/admin/);
+        await userEvent.click(adminOption);
 
         await waitFor(() => expect(saveCalled).toBe(true));
     });
@@ -199,14 +202,23 @@ describe('InfosTab', () => {
             );
         });
 
-        userEvent.type(screen.getByRole('textbox', {name: /label.fr/}), 'MyApp');
-        userEvent.type(screen.getByRole('textbox', {name: /endpoint/}), 'my-app');
+        const labelFrInput = screen.getByRole('textbox', {name: /label\.fr/});
+        const endpointInput = screen.getByRole('textbox', {name: /endpoint/});
 
-        // Select a module
-        userEvent.click(screen.getByRole('combobox', {name: /module/}));
-        userEvent.click(await screen.findByText(mockApplicationsModules[0].description));
+        fireEvent.change(labelFrInput, {target: {value: 'MyApp'}});
+        fireEvent.change(endpointInput, {target: {value: 'my-app'}});
 
-        userEvent.click(screen.getByRole('button', {name: /submit/}));
+        // Select a module - wait for modules to load
+        const moduleSelector = screen.getByRole('combobox', {name: /module/});
+        await waitFor(() => {
+            expect(moduleSelector).not.toHaveAttribute('aria-busy', 'true');
+        });
+
+        await userEvent.click(moduleSelector);
+        const adminOption = await screen.findByText(mockApplicationsModules[0].description);
+        await userEvent.click(adminOption);
+
+        await userEvent.click(screen.getByRole('button', {name: /submit/}));
 
         await waitFor(() => expect(saveCalled).toBe(true));
     });

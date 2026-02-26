@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {type TreeItem} from 'react-sortable-tree';
+import {type TreeItem} from '@nosferatu500/react-sortable-tree';
 import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';

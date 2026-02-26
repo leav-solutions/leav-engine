@@ -2,13 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
-import {render, screen} from '@testing-library/react';
-import React from 'react';
+import {render, screen} from '_tests/testUtils';
 import {mockFormFull} from '../../../../../../../__mocks__/forms';
 import {EditFormContext} from '../hooks/useEditFormContext';
 import EditFormTabs from './EditFormTabs';
-
-jest.mock('../../../../../../../hooks/useLang');
 
 jest.mock(
     './InfosTab',
@@ -46,7 +43,7 @@ describe('EditFormTabs', () => {
     });
 
     test('Display form edition for new form', async () => {
-        const comp = render(
+        render(
             <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false, setForm: jest.fn()}}>
                 <EditFormTabs />
             </EditFormContext.Provider>,

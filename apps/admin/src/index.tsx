@@ -4,10 +4,9 @@
 import ApolloHandler from 'components/app/ApolloHandler';
 import App from 'components/app/App';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import 'fomantic-ui-less/semantic.less';
 import {Suspense, useEffect, useState} from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from 'reduxStore/store';
 import {Loader} from 'semantic-ui-react';
@@ -16,8 +15,7 @@ import useAppLang from './hooks/useAppLang';
 import i18n from './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
-
-// import {AntApp} from 'aristid-ds';
+import {KitApp} from 'aristid-ds';
 
 export function Index() {
     const {lang, loading, error} = useAppLang();
@@ -35,18 +33,26 @@ export function Index() {
     }
 
     if (loading) {
-        return <Loading />;
+        return <Loader active inline="centered" style={{margin: '15rem auto'}} />;
     }
+
+    const localeByLang = {
+        fr: 'frFR',
+        en: 'enUS',
+    };
 
     return (
         i18nIsInitialized && (
             <Suspense fallback={<Loader active inline="centered" style={{margin: '15rem auto'}} />}>
                 <ReduxProvider store={store}>
                     <ApolloHandler>
-                        {/* TODO UPDATE REACT AND TEST */}
-                        {/* <AntApp> */}
-                        <App />
-                        {/* </AntApp> */}
+                        <KitApp
+                            locale={{
+                                locale: localeByLang[lang],
+                            }}
+                        >
+                            <App />
+                        </KitApp>
                     </ApolloHandler>
                 </ReduxProvider>
             </Suspense>
@@ -54,6 +60,6 @@ export function Index() {
     );
 }
 
-ReactDOM.render(<Index />, document.getElementById('root') as HTMLElement);
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<Index />);
 
 registerServiceWorker();

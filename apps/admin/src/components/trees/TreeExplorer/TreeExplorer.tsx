@@ -12,8 +12,14 @@ import {type ITreeNode, type ITreeNodeData, fakeRootId} from '_types/trees';
 import {type ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
 import React, {useState} from 'react';
-import {addNodeUnderParent, changeNodeAtPath, find, getNodeAtPath, removeNodeAtPath} from 'react-sortable-tree';
-import 'react-sortable-tree/style.css';
+import {
+    addNodeUnderParent,
+    changeNodeAtPath,
+    find,
+    getNodeAtPath,
+    removeNodeAtPath,
+} from '@nosferatu500/react-sortable-tree';
+import '@nosferatu500/react-sortable-tree/style.css';
 import {Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
@@ -138,7 +144,11 @@ const TreeExplorer = ({
 
         // Update tree node with fetched data
         // We must get fresh node data from in case its state has changed during loading (expand/collapse...)
-        const nodeToUpdate = getNodeAtPath({treeData, path: path!, getNodeKey: getTreeNodeKey}) as ITreeNodeData;
+        const nodeToUpdate = getNodeAtPath({
+            treeData,
+            path: path! as number[],
+            getNodeKey: getTreeNodeKey,
+        }) as ITreeNodeData;
 
         let newTreeData;
         if (!withPath) {
@@ -175,14 +185,16 @@ const TreeExplorer = ({
         const parentTo = parentNode !== null && parentNode.id !== fakeRootId ? parentNode.id : null;
 
         // Get new element position
-        let position = moveData.treeIndex;
+        let position = moveData.nextTreeIndex;
         if (parentNode !== null) {
             const parentNodeAtPath = getNodeAtPath({
                 treeData,
                 path: moveData.nextPath.slice(0, -1),
                 getNodeKey: getTreeNodeKey,
             });
-            position = parentNodeAtPath ? moveData.treeIndex - parentNodeAtPath.treeIndex - 1 : moveData.treeIndex;
+            position = parentNodeAtPath
+                ? moveData.nextTreeIndex - parentNodeAtPath.treeIndex - 1
+                : moveData.nextTreeIndex;
         }
 
         try {
@@ -202,7 +214,7 @@ const TreeExplorer = ({
             if (siblings?.length) {
                 await Promise.all(
                     (siblings as ITreeItem[]).map((s, i) =>
-                        getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
+                        getTreeNodeKey({node: s}) !== getTreeNodeKey({node: moveData.node}) // Skip moved element
                             ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
                                   mutation: moveTreeElementQuery,
                                   variables: {
@@ -244,7 +256,12 @@ const TreeExplorer = ({
     };
 
     const _mergeNode = (nodeData: ITreeNode, path: Array<string | number>): ITreeNode[] =>
-        changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey}) as ITreeNode[];
+        changeNodeAtPath({
+            treeData,
+            path: path as number[],
+            newNode: nodeData,
+            getNodeKey: getTreeNodeKey,
+        }) as ITreeNode[];
 
     const _handleClickNode: ClickNodeHandler = nodeData => {
         // Add all parents details on selected node

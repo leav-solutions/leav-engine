@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {type i18n} from 'i18next';
-import {type TreeNode} from 'react-sortable-tree';
+import {type TreeNode} from '@nosferatu500/react-sortable-tree';
 import {mockAttrAdv, mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree} from '../__mocks__/attributes';
 import {type IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {PermissionsActions} from '_gqlTypes';

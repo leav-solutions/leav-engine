@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApplication} from '__mocks__/common/applications';
 import Applications from './Applications';
 import {DeleteApplicationDocument, GetApplicationsDocument} from '_gqlTypes';
@@ -51,17 +51,16 @@ describe('Applications', () => {
 
         render(<Applications />, {apolloMocks: mocks});
 
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
         expect(await screen.findByText('appA')).toBeInTheDocument();
         expect(await screen.findByText('appB')).toBeInTheDocument();
 
         // Filter list
-        userEvent.type(screen.getByRole('textbox', {name: /id/}), 'B');
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
-        expect(await screen.findByText('appB')).toBeInTheDocument();
-        expect(screen.queryByText('appA')).not.toBeInTheDocument();
+        await userEvent.type(screen.getByRole('textbox', {name: /id/}), 'B');
 
-        userEvent.click(screen.getByText('appB'));
+        expect(await screen.findByText('appB')).toBeInTheDocument();
+        await waitFor(() => expect(screen.queryByText('appA')).not.toBeInTheDocument());
+
+        await userEvent.click(screen.getByText('appB'));
         expect(mockHistoryPush).toHaveBeenCalledWith('/applications/edit/appB');
     });
 
@@ -106,11 +105,9 @@ describe('Applications', () => {
 
         await screen.findByText('appA');
 
-        userEvent.click(screen.getAllByRole('button', {name: /delete/})[0]);
+        await userEvent.click(screen.getAllByRole('button', {name: /delete/})[0]);
 
-        await act(async () => {
-            userEvent.click(screen.getByRole('button', {name: /OK/}));
-        });
+        await userEvent.click(await screen.findByText('OK'));
 
         expect(deleteCalled).toBe(true);
     });

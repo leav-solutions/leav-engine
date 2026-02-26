@@ -180,7 +180,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
                     </Form.Group>
                 </FormBody>
                 <FormFooter>
-                    <Button className="close-button" onClick={_handleClose}>
+                    <Button type="button" className="close-button" onClick={_handleClose}>
                         <Icon name="cancel" /> {t('admin.close')}
                     </Button>
                     {isNewKey && (

@@ -5,7 +5,7 @@ import {gql, type ApolloCache, type StoreObject} from '@apollo/client';
 import {type FormikErrors, type FormikTouched} from 'formik';
 import {type i18n} from 'i18next';
 import get from 'lodash/get';
-import {type TreeNode} from 'react-sortable-tree';
+import {type TreeNode} from '@nosferatu500/react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {

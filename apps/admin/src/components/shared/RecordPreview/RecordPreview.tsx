@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMemo} from 'react';
+import {type CSSProperties, useMemo} from 'react';
 import {Image} from 'semantic-ui-react';
-import styled, {type CSSObject} from 'styled-components';
+import styled from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../utils/utils';
 import {getInitials} from '@leav/utils';
 
@@ -11,21 +11,20 @@ interface IRecordPreviewProps {
     label: string;
     color: string | null;
     image: string | null;
-    style?: CSSObject;
+    style?: CSSProperties;
 }
 
 interface IGeneratedPreviewProps {
-    bgColor: string;
-    fontColor: string;
-    style?: CSSObject;
+    $bgColor: string;
+    $fontColor: string;
+    style?: CSSProperties;
 }
 
 const previewSize = '2.5rem';
 
 const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
-    ${props => props.style || ''}
-    background-color: ${props => props.bgColor};
-    color: ${props => props.fontColor};
+    background-color: ${props => props.$bgColor};
+    color: ${props => props.$fontColor};
     font-size: 1.1em;
     height: ${previewSize};
     width: ${previewSize};
@@ -72,7 +71,7 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
 
     return useMemo(
         () => (
-            <GeneratedPreview className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
+            <GeneratedPreview className="initial" $bgColor={bgColor} $fontColor={fontColor} style={style}>
                 {initials}
             </GeneratedPreview>
         ),

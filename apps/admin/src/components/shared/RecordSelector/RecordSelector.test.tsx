@@ -28,9 +28,9 @@ describe('RecordSelector', () => {
         const selectBtn = await screen.findByRole('button', {name: /select/});
         expect(selectBtn).toBeInTheDocument();
 
-        userEvent.click(selectBtn);
+        await userEvent.click(selectBtn);
 
-        expect(screen.getByText('SelectRecordModal')).toBeInTheDocument();
+        expect(await screen.findByText('SelectRecordModal')).toBeInTheDocument();
     });
 
     test('Display and change existing record', async () => {
@@ -42,12 +42,12 @@ describe('RecordSelector', () => {
         const recordLabel = screen.getByText(mockRecord.label);
         expect(recordLabel).toBeInTheDocument();
 
-        userEvent.hover(recordLabel);
+        await userEvent.hover(recordLabel);
 
         const exchangeBtn = screen.getByRole('button', {name: /exchange/, hidden: true});
-        userEvent.click(exchangeBtn);
+        await userEvent.click(exchangeBtn);
 
-        expect(screen.getByText('SelectRecordModal')).toBeInTheDocument();
+        expect(await screen.findByText('SelectRecordModal')).toBeInTheDocument();
     });
 
     test('Delete existing file', async () => {
@@ -60,11 +60,11 @@ describe('RecordSelector', () => {
         const recordLabel = screen.getByText(mockRecord.label);
         expect(recordLabel).toBeInTheDocument();
 
-        userEvent.hover(recordLabel);
+        await userEvent.hover(recordLabel);
 
         const deleteBtn = screen.getByRole('button', {name: /delete/, hidden: true});
-        userEvent.click(deleteBtn);
-        userEvent.click(screen.getByRole('button', {name: /submit/}));
+        await userEvent.click(deleteBtn);
+        await userEvent.click(await screen.findByText('admin.submit'));
 
         expect(mockOnChange).toHaveBeenCalled();
     });
@@ -87,7 +87,7 @@ describe('RecordSelector', () => {
         const recordLabel = screen.getByText(mockRecord.label);
         expect(recordLabel).toBeInTheDocument();
 
-        userEvent.hover(recordLabel);
+        await userEvent.hover(recordLabel);
 
         expect(screen.queryByRole('button', {name: /delete/, hidden: true})).not.toBeInTheDocument();
     });

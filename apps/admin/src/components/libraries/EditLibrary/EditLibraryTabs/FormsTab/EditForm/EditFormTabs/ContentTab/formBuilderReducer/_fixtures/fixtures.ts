@@ -7,7 +7,7 @@ import {
 } from '../../../../../../../../../../_gqlTypes/GET_FORM';
 import {FormElementTypes} from '_gqlTypes';
 import {FieldTypes, type IFormElement, UIElementTypes} from '../../_types';
-import {formElements, layoutElements} from '../../uiElements/__mocks__';
+import {formElements, layoutElements} from '../../uiElements/__mocks__/uiElements';
 import {type IFormBuilderState, defaultContainerId, defaultDepAttribute, defaultDepValue} from '../formBuilderReducer';
 
 const commonFieldData1 = {

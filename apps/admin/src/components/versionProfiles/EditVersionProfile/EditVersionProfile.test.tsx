@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {type match} from 'react-router-dom-v5';
-import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
+import {fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {type Mockify} from '_types/Mockify';
 import {mockAttrAdv} from '__mocks__/attributes';
 import {mockRecord} from '__mocks__/common/records';
@@ -12,6 +12,7 @@ import * as useUserData from '../../../hooks/useUserData';
 import EditVersionProfile, {type IEditVersionProfileMatchParams} from './EditVersionProfile';
 import {
     GetAttributesDocument,
+    GetTreesDocument,
     GetVersionProfileByIdDocument,
     GetVersionProfilesDocument,
     SaveAttributeDocument,
@@ -44,6 +45,19 @@ describe('EditVersionProfile', () => {
         params: {},
     };
 
+    const getTreesMock = {
+        request: {query: GetTreesDocument},
+        result: {
+            data: {
+                trees: {
+                    __typename: 'TreesList',
+                    totalCount: 0,
+                    list: [],
+                },
+            },
+        },
+    };
+
     const mocks = [
         {
             request: {
@@ -68,6 +82,7 @@ describe('EditVersionProfile', () => {
                 },
             },
         },
+        getTreesMock,
     ];
 
     beforeEach(() => jest.clearAllMocks());
@@ -141,9 +156,7 @@ describe('EditVersionProfile', () => {
     test('Autofill ID with label on new attribute', async () => {
         render(<EditVersionProfile match={mockMatchNoId as MatchType} />, {apolloMocks: mocks});
 
-        await act(async () => {
-            await userEvent.type(screen.getByRole('textbox', {name: 'label.fr'}), 'labelfr', {delay: 5});
-        });
+        await userEvent.type(screen.getByRole('textbox', {name: 'label.fr'}), 'labelfr', {delay: 5});
 
         expect(screen.getByRole('textbox', {name: 'id'})).toHaveValue('labelfr');
     });
@@ -175,10 +188,8 @@ describe('EditVersionProfile', () => {
 
         render(<EditVersionProfile match={mockMatchNoId as MatchType} />, {apolloMocks: mocksWithIdCheck});
 
-        await act(async () => {
-            await userEvent.type(screen.getByRole('textbox', {name: 'id'}), 'a', {delay: 5});
-            fireEvent.blur(screen.getByRole('textbox', {name: 'id'}));
-        });
+        await userEvent.type(screen.getByRole('textbox', {name: 'id'}), 'a', {delay: 5});
+        fireEvent.blur(screen.getByRole('textbox', {name: 'id'}));
 
         expect(await screen.findByText(/validation_errors.id_exists/)).toBeInTheDocument();
     });
@@ -217,6 +228,7 @@ describe('EditVersionProfile', () => {
                     },
                 },
             },
+            getTreesMock,
         ];
         test('Display list of linked attributes', async () => {
             render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithLinkedAttributes});
@@ -270,8 +282,8 @@ describe('EditVersionProfile', () => {
 
             await waitFor(() => expect(screen.getAllByRole('button', {name: /unlink/})).toBeTruthy());
 
-            userEvent.click(screen.getAllByRole('button', {name: /unlink/})[0]);
-            userEvent.click(await screen.getByRole('button', {name: /OK/}));
+            await userEvent.click(screen.getAllByRole('button', {name: /unlink/})[0]);
+            await userEvent.click(await screen.findByText('OK'));
 
             await waitFor(() => expect(saveAttributeCalled).toBe(true));
         });

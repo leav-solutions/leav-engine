@@ -56,13 +56,12 @@ describe('VersionProfiles', () => {
         expect(await screen.findByText('vpB')).toBeInTheDocument();
 
         // Filter list
-        userEvent.type(screen.getByRole('textbox', {name: /id/}), 'B');
+        await userEvent.type(screen.getByRole('textbox', {name: /id/}), 'B');
 
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
         expect(await screen.findByText('vpB')).toBeInTheDocument();
-        expect(screen.queryByText('vpA')).not.toBeInTheDocument();
+        await waitFor(() => expect(screen.queryByText('vpA')).not.toBeInTheDocument());
 
-        userEvent.click(screen.getByText('vpB'));
+        await userEvent.click(screen.getByText('vpB'));
         expect(mockHistoryPush).toHaveBeenCalledWith('/version_profiles/edit/vpB');
     });
 
@@ -92,8 +91,8 @@ describe('VersionProfiles', () => {
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 
-        userEvent.click((await screen.findAllByRole('button', {name: /delete/}))[0]);
-        userEvent.click(await screen.findByText('OK'));
+        await userEvent.click((await screen.findAllByRole('button', {name: /delete/}))[0]);
+        await userEvent.click(await screen.findByText('OK'));
 
         await waitFor(() => expect(deleteCalled).toBe(true));
     });

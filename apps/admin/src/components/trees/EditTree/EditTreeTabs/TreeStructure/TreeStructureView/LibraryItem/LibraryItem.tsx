@@ -45,6 +45,7 @@ function LibraryItem({treeLibrary, readOnly, onMove}: ILibraryItemProps): JSX.El
     const {t} = useTranslation();
 
     const [, drag] = useDrag<IDndLibraryItem, IDndDropResult, {}>({
+        type: 'library',
         item: {
             type: 'library',
             from: null,
