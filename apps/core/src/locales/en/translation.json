@@ -91,7 +91,7 @@
         "UNKNOWN_FORM": "Unknown form",
         "UNKNOWN_LIBRARIES": "Unknown libraries : {{libraries}}",
         "UNKNOWN_LIBRARY_ATTRIBUTE": "This library does not use this attribute",
-        "UNKNOWN_LIBRARY": "Unknown library",
+        "UNKNOWN_LIBRARY": "Unknown library: {{library}}",
         "UNKNOWN_LINKED_RECORD": "Unknown record {{record}} in library {{library}}",
         "UNKNOWN_METADATA_FIELDS": "Unknown metadata fields : {{fields}}",
         "UNKNOWN_NODE": "Unknown node",

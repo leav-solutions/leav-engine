@@ -27,6 +27,7 @@ import {
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import {type IRecordInCreationBypassHelper} from './helpers/recordInCreationBypass';
+import {type IUtils} from 'utils/utils';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;
@@ -52,6 +53,7 @@ export interface IRecordPermissionDomainDeps {
     'core.infra.value': IValueRepo;
     'core.infra.tree': ITreeRepo;
     'core.infra.record': IRecordRepo;
+    'core.utils': IUtils;
 }
 
 export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDomain {
@@ -65,6 +67,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
         'core.infra.value': valueRepo,
         'core.infra.tree': treeRepo,
         'core.infra.record': recordRepo,
+        'core.utils': utils,
     } = deps;
 
     return {
@@ -112,7 +115,11 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
             const libProps = await getCoreEntityById<ILibrary>('library', library, ctx);
 
             if (!libProps) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+                throw utils.generateExplicitValidationError(
+                    'library',
+                    {msg: Errors.UNKNOWN_LIBRARY, vars: {library}},
+                    ctx.lang,
+                );
             }
 
             if (

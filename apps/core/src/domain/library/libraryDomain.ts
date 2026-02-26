@@ -14,7 +14,7 @@ import {difference, intersection, union} from 'lodash';
 import {type IUtils} from 'utils/utils';
 import {type IAttribute} from '_types/attribute';
 import {type IConfig} from '_types/config';
-import {type ErrorFieldDetail} from '_types/errors';
+import {Errors, type ErrorFieldDetail} from '../../_types/errors';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '_types/shared';
 import {systemPreviewsSettings} from '../filesManager/_constants';
@@ -22,7 +22,6 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
-import {Errors} from '../../_types/errors';
 import {type ILibrary, LibraryBehavior} from '../../_types/library';
 import {type IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
@@ -122,7 +121,11 @@ export default function ({
             const lib = await getCoreEntityById<ILibrary>('library', id, ctx);
 
             if (!lib) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+                throw utils.generateExplicitValidationError(
+                    'library',
+                    {msg: Errors.UNKNOWN_LIBRARY, vars: {library: id}},
+                    ctx.lang,
+                );
             }
 
             return lib;

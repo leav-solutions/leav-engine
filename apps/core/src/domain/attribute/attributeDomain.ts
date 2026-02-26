@@ -33,6 +33,7 @@ import getPermissionCachePatternKey from '../permission/helpers/getPermissionCac
 import getAllowedInputTypes, {getActionsListToSave, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
 import {ActionsListEvents} from '../../_types/actionsList';
+import {type IValidateHelper} from 'domain/helpers/validate';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -75,6 +76,7 @@ export interface IAttributeDomainDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.helpers.validate': IValidateHelper;
     'core.infra.form': IFormRepo;
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
@@ -90,6 +92,7 @@ export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.versionProfile': versionProfileDomain,
     'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.helpers.validate': validateHelper,
     'core.infra.form': formRepo,
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
@@ -124,11 +127,7 @@ export default function ({
 
     const _getLibraryAttributes = async (libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]> => {
         const _execute = async () => {
-            const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
-
-            if (!libs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
+            await validateHelper.validateLibrary(libraryId, ctx);
 
             return attributeRepo.getLibraryAttributes({libraryId, ctx});
         };
@@ -155,10 +154,7 @@ export default function ({
             checkDependency,
             ctx,
         }: IGetCoreFormAttributesParams): Promise<IAttribute[]> {
-            const library = await getCoreEntityById('library', libraryId, ctx);
-            if (!library) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
+            await validateHelper.validateLibrary(libraryId, ctx);
 
             const form = (
                 await formRepo.getForms({
@@ -190,11 +186,7 @@ export default function ({
             return attributeRepo.getAttributeLibraries({attributeId, ctx});
         },
         async getLibraryFullTextAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
-            const library = await getCoreEntityById('library', libraryId, ctx);
-
-            if (!library) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
+            await validateHelper.validateLibrary(libraryId, ctx);
 
             return attributeRepo.getLibraryFullTextAttributes({libraryId, ctx});
         },

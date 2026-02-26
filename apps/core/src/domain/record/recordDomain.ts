@@ -572,11 +572,7 @@ export default function ({
     };
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
-        const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
-
-        if (!lib) {
-            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-        }
+        const lib = await validateHelper.validateLibrary(record.library, ctx);
 
         const conf = lib.recordIdentityConf || {};
         const valuesOptions: IValuesOptions = {
