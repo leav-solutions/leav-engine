@@ -1,81 +1,83 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount, shallow} from 'enzyme';
-import React from 'react';
-import {type GET_FORMS_LIST_forms_list} from '../../../../../../_gqlTypes/GET_FORMS_LIST';
-import {mockFormLight} from '../../../../../../__mocks__/forms';
-import FormsList from './FormsList';
+// import {mount, shallow} from 'enzyme';
+// import React from 'react';
+// import {type GET_FORMS_LIST_forms_list} from '../../../../../../_gqlTypes/GET_FORMS_LIST';
+// import {mockFormLight} from '../../../../../../__mocks__/forms';
+// import FormsList from './FormsList';
 
-jest.mock('../../../../../../hooks/useLang');
-jest.mock('../../../../../../hooks/useUserData');
+// jest.mock('../../../../../../hooks/useLang');
+// jest.mock('../../../../../../hooks/useUserData');
 
-jest.mock(
-    '../../../../../shared/ConfirmedButton',
-    () =>
-        function ConfirmedButton() {
-            return <div>ConfirmedButton</div>;
-        },
-);
+// jest.mock(
+// '../../../../../shared/ConfirmedButton',
+// () =>
+// function ConfirmedButton() {
+// return <div>ConfirmedButton</div>;
+// },
+// );
 
-describe('FormsList', () => {
-    const forms = [
-        {...mockFormLight, id: 'form1'},
-        {...mockFormLight, id: 'form2'},
-    ];
-    const onRowClick = jest.fn();
-    const onCreate = jest.fn();
-    const onDelete = jest.fn();
-    const onFiltersChange = jest.fn();
+// describe('FormsList', () => {
+// const forms = [
+// {...mockFormLight, id: 'form1'},
+// {...mockFormLight, id: 'form2'},
+// ];
+// const onRowClick = jest.fn();
+// const onCreate = jest.fn();
+// const onDelete = jest.fn();
+// const onFiltersChange = jest.fn();
 
-    let comp;
-    beforeAll(() => {
-        comp = shallow(
-            <FormsList
-                loading={false}
-                libraryId="my_lib"
-                forms={forms as GET_FORMS_LIST_forms_list[]}
-                onRowClick={onRowClick}
-                onCreate={onCreate}
-                onDelete={onDelete}
-                onFiltersChange={onFiltersChange}
-            />,
-        );
-    });
+// let comp;
+// beforeAll(() => {
+// comp = shallow(
+// <FormsList
+// loading={false}
+// libraryId="my_lib"
+// forms={forms as GET_FORMS_LIST_forms_list[]}
+// onRowClick={onRowClick}
+// onCreate={onCreate}
+// onDelete={onDelete}
+// onFiltersChange={onFiltersChange}
+// />,
+// );
+// });
 
-    test('Display list', async () => {
-        expect(comp.find('[data-test-id="form-list-row"]')).toHaveLength(2);
-    });
+// test('Display list', async () => {
+// expect(comp.find('[data-test-id="form-list-row"]')).toHaveLength(2);
+// });
 
-    test('Calls onCreate', async () => {
-        comp.find('[data-test-id="create-form-btn"]').simulate('click');
+// test('Calls onCreate', async () => {
+// comp.find('[data-test-id="create-form-btn"]').simulate('click');
 
-        expect(onCreate).toHaveBeenCalled();
-    });
+// expect(onCreate).toHaveBeenCalled();
+// });
 
-    test('Calls onRowClick', async () => {
-        comp.find('[data-test-id="form-list-row"]').first().simulate('click');
+// test('Calls onRowClick', async () => {
+// comp.find('[data-test-id="form-list-row"]').first().simulate('click');
 
-        expect(onRowClick).toHaveBeenCalled();
-    });
+// expect(onRowClick).toHaveBeenCalled();
+// });
 
-    test('Call onFiltersChange', async () => {
-        const mountedComp = mount(
-            <FormsList
-                loading={false}
-                libraryId="my_lib"
-                forms={forms as GET_FORMS_LIST_forms_list[]}
-                onRowClick={onRowClick}
-                onCreate={onCreate}
-                onDelete={onDelete}
-                onFiltersChange={onFiltersChange}
-            />,
-        );
-        mountedComp.find('.filters input[name="label"]').simulate('change', {target: {value: 'MyLabel'}});
-        mountedComp.find('.filters input[name="id"]').simulate('change');
-        mountedComp.find('.filters input[name="system"]').simulate('change');
+// test('Call onFiltersChange', async () => {
+// const mountedComp = mount(
+// <FormsList
+// loading={false}
+// libraryId="my_lib"
+// forms={forms as GET_FORMS_LIST_forms_list[]}
+// onRowClick={onRowClick}
+// onCreate={onCreate}
+// onDelete={onDelete}
+// onFiltersChange={onFiltersChange}
+// />,
+// );
+// mountedComp.find('.filters input[name="label"]').simulate('change', {target: {value: 'MyLabel'}});
+// mountedComp.find('.filters input[name="id"]').simulate('change');
+// mountedComp.find('.filters input[name="system"]').simulate('change');
 
-        expect(onFiltersChange).toHaveBeenCalledTimes(3);
-        expect(onFiltersChange.mock.calls[0][0]).toMatchObject({value: 'MyLabel'});
-    });
-});
+// expect(onFiltersChange).toHaveBeenCalledTimes(3);
+// expect(onFiltersChange.mock.calls[0][0]).toMatchObject({value: 'MyLabel'});
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

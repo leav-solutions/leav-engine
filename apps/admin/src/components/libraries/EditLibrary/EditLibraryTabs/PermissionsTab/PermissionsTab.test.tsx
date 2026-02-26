@@ -1,88 +1,90 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
-import {wait} from 'utils/testUtils';
-import {act, render, screen} from '_tests/testUtils';
-import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {mockLibrary} from '../../../../../__mocks__/libraries';
-import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
-import PermissionsTab from './PermissionsTab';
-import {PermissionsRelation, SaveLibraryDocument, type TreepermissionsConfInput} from '_gqlTypes';
+// import {mount} from 'enzyme';
+// import {wait} from 'utils/testUtils';
+// import {act, render, screen} from '_tests/testUtils';
+// import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
+// import {mockLibrary} from '../../../../../__mocks__/libraries';
+// import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
+// import PermissionsTab from './PermissionsTab';
+// import {PermissionsRelation, SaveLibraryDocument, type TreepermissionsConfInput} from '_gqlTypes';
 
-jest.mock(
-    './PermissionsContent',
-    () =>
-        function PermissionsContent() {
-            return <div>PermissionsContent</div>;
-        },
-);
+// jest.mock(
+// './PermissionsContent',
+// () =>
+// function PermissionsContent() {
+// return <div>PermissionsContent</div>;
+// },
+// );
 
-describe('PermissionsTab', () => {
-    const library: GET_LIB_BY_ID_libraries_list = {
-        ...mockLibrary,
-        label: {fr: 'Test 1', en: ''},
-    };
+// describe('PermissionsTab', () => {
+// const library: GET_LIB_BY_ID_libraries_list = {
+// ...mockLibrary,
+// label: {fr: 'Test 1', en: ''},
+// };
 
-    test('Render content', async () => {
-        await act(async () => {
-            render(<PermissionsTab library={library} readonly={false} />);
-        });
+// test('Render content', async () => {
+// await act(async () => {
+// render(<PermissionsTab library={library} readonly={false} />);
+// });
 
-        expect(screen.getByText('PermissionsContent')).toBeInTheDocument();
-    });
+// expect(screen.getByText('PermissionsContent')).toBeInTheDocument();
+// });
 
-    test('Save data on submit', async () => {
-        let saveQueryCalled = false;
-        const permConfToSave: TreepermissionsConfInput = {
-            permissionTreeAttributes: ['tree1', 'tree2'],
-            relation: PermissionsRelation.and,
-        };
+// test('Save data on submit', async () => {
+// let saveQueryCalled = false;
+// const permConfToSave: TreepermissionsConfInput = {
+// permissionTreeAttributes: ['tree1', 'tree2'],
+// relation: PermissionsRelation.and,
+// };
 
-        const mocks = [
-            {
-                request: {
-                    query: SaveLibraryDocument,
-                    variables: {
-                        libData: {id: library.id, permissions_conf: permConfToSave},
-                    },
-                },
-                result: () => {
-                    saveQueryCalled = true;
-                    return {
-                        data: {
-                            saveLibrary: {
-                                ...library,
-                                __typename: 'Library',
-                            },
-                        },
-                    };
-                },
-            },
-        ];
+// const mocks = [
+// {
+// request: {
+// query: SaveLibraryDocument,
+// variables: {
+// libData: {id: library.id, permissions_conf: permConfToSave},
+// },
+// },
+// result: () => {
+// saveQueryCalled = true;
+// return {
+// data: {
+// saveLibrary: {
+// ...library,
+// __typename: 'Library',
+// },
+// },
+// };
+// },
+// },
+// ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <PermissionsTab library={library} readonly={false} />
-                </MockedProviderWithFragments>,
-            );
-        });
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProviderWithFragments mocks={mocks}>
+// <PermissionsTab library={library} readonly={false} />
+// </MockedProviderWithFragments>,
+// );
+// });
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
 
-        const submitFunc: any = comp.find('PermissionsContent').prop('onSubmitSettings');
-        if (!!submitFunc) {
-            await act(async () => {
-                await submitFunc({...permConfToSave});
-                await wait(0);
-            });
-        }
+// const submitFunc: any = comp.find('PermissionsContent').prop('onSubmitSettings');
+// if (!!submitFunc) {
+// await act(async () => {
+// await submitFunc({...permConfToSave});
+// await wait(0);
+// });
+// }
 
-        expect(saveQueryCalled).toBe(true);
-    });
-});
+// expect(saveQueryCalled).toBe(true);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

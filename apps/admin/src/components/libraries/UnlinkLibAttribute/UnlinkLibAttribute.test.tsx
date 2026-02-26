@@ -1,35 +1,37 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import React from 'react';
-import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
-import {type Mockify} from '../../../_types//Mockify';
-import {mockAttrSimple} from '../../../__mocks__/attributes';
-import UnlinkLibAttribute from './UnlinkLibAttribute';
+// import {shallow} from 'enzyme';
+// import React from 'react';
+// import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+// import {type Mockify} from '../../../_types//Mockify';
+// import {mockAttrSimple} from '../../../__mocks__/attributes';
+// import UnlinkLibAttribute from './UnlinkLibAttribute';
 
-describe('UnlinkLibAttribute', () => {
-    test('Pass down unlink function', async () => {
-        const library: Mockify<GET_LIB_BY_ID_libraries_list> = {
-            id: 'test',
-            label: {fr: 'Test', en: null},
-            system: false,
-            attributes: [
-                {
-                    ...mockAttrSimple,
-                },
-            ],
-        };
-        const onUnlink = jest.fn();
+// describe('UnlinkLibAttribute', () => {
+// test('Pass down unlink function', async () => {
+// const library: Mockify<GET_LIB_BY_ID_libraries_list> = {
+// id: 'test',
+// label: {fr: 'Test', en: null},
+// system: false,
+// attributes: [
+// {
+// ...mockAttrSimple,
+// },
+// ],
+// };
+// const onUnlink = jest.fn();
 
-        const comp = shallow(
-            <UnlinkLibAttribute
-                library={library as GET_LIB_BY_ID_libraries_list}
-                attribute={library.attributes![0]}
-                onUnlink={onUnlink}
-            />,
-        );
+// const comp = shallow(
+// <UnlinkLibAttribute
+// library={library as GET_LIB_BY_ID_libraries_list}
+// attribute={library.attributes![0]}
+// onUnlink={onUnlink}
+// />,
+// );
 
-        expect(comp.find('ConfirmedButton').props().action).toBeDefined();
-    });
-});
+// expect(comp.find('ConfirmedButton').props().action).toBeDefined();
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

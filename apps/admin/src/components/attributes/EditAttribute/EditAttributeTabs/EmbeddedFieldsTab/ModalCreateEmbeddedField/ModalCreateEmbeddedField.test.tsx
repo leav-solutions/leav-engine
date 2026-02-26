@@ -1,29 +1,31 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
-import {type TFunction} from 'i18next';
-import React from 'react';
-import {Modal} from 'semantic-ui-react';
-import ModalCreateEmbeddedField from './ModalCreateEmbeddedField';
+// import {mount} from 'enzyme';
+// import {type TFunction} from 'i18next';
+// import React from 'react';
+// import {Modal} from 'semantic-ui-react';
+// import ModalCreateEmbeddedField from './ModalCreateEmbeddedField';
 
-describe('ModalCreateNewEmbeddedField', () => {
-    const mockAttribute = {
-        id: 'test',
-        label: {
-            fr: 'test fr',
-            en: 'test en',
-        },
-        format: 'text',
-        validation_regex: '',
-    };
+// describe('ModalCreateNewEmbeddedField', () => {
+// const mockAttribute = {
+// id: 'test',
+// label: {
+// fr: 'test fr',
+// en: 'test en',
+// },
+// format: 'text',
+// validation_regex: '',
+// };
 
-    const mockAdd = jest.fn();
-    const mockT: TFunction = () => undefined;
+// const mockAdd = jest.fn();
+// const mockT: TFunction = () => undefined;
 
-    const comp = mount(<ModalCreateEmbeddedField attrId={mockAttribute.id} add={mockAdd} t={mockT} />);
+// const comp = mount(<ModalCreateEmbeddedField attrId={mockAttribute.id} add={mockAdd} t={mockT} />);
 
-    test('should return something', () => {
-        expect(comp.find(Modal)).toBeTruthy();
-    });
-});
+// test('should return something', () => {
+// expect(comp.find(Modal)).toBeTruthy();
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

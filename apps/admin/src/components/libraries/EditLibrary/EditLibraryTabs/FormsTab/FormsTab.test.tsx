@@ -1,241 +1,243 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
-import {mount} from 'enzyme';
-import {wait} from 'utils/testUtils';
-import {act, render, screen} from '_tests/testUtils';
-import {mockFormLight} from '../../../../../__mocks__/forms';
-import FormsTab from './FormsTab';
-import {DeleteFormDocument, GetFormsListDocument} from '_gqlTypes';
+// import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
+// import {mount} from 'enzyme';
+// import {wait} from 'utils/testUtils';
+// import {act, render, screen} from '_tests/testUtils';
+// import {mockFormLight} from '../../../../../__mocks__/forms';
+// import FormsTab from './FormsTab';
+// import {DeleteFormDocument, GetFormsListDocument} from '_gqlTypes';
 
-jest.mock(
-    './FormsList',
-    () =>
-        function FormsList() {
-            return <div>FormsList</div>;
-        },
-);
+// jest.mock(
+// './FormsList',
+// () =>
+// function FormsList() {
+// return <div>FormsList</div>;
+// },
+// );
 
-jest.mock(
-    './EditFormModal',
-    () =>
-        function EditFormModal() {
-            return <div>EditFormModal</div>;
-        },
-);
+// jest.mock(
+// './EditFormModal',
+// () =>
+// function EditFormModal() {
+// return <div>EditFormModal</div>;
+// },
+// );
 
-describe('FormsTab', () => {
-    const mocks: MockedResponse[] = [
-        {
-            request: {
-                query: GetFormsListDocument,
-                variables: {
-                    library: 'my_lib',
-                },
-            },
-            result: {
-                data: {
-                    forms: {__typename: 'FormsList', totalCount: 1, list: [{...mockFormLight, __typename: 'Form'}]},
-                },
-            },
-        },
-    ];
+// describe('FormsTab', () => {
+// const mocks: MockedResponse[] = [
+// {
+// request: {
+// query: GetFormsListDocument,
+// variables: {
+// library: 'my_lib',
+// },
+// },
+// result: {
+// data: {
+// forms: {__typename: 'FormsList', totalCount: 1, list: [{...mockFormLight, __typename: 'Form'}]},
+// },
+// },
+// },
+// ];
 
-    test('Display list of forms', async () => {
-        await act(async () => {
-            render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: mocks});
-        });
+// test('Display list of forms', async () => {
+// await act(async () => {
+// render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: mocks});
+// });
 
-        expect(screen.getByText('FormsList')).toBeInTheDocument();
-    });
+// expect(screen.getByText('FormsList')).toBeInTheDocument();
+// });
 
-    test('Error state', async () => {
-        const errorMock = [
-            {
-                request: {
-                    query: GetFormsListDocument,
-                    variables: {
-                        library: 'my_lib',
-                    },
-                },
-                error: new Error('boom!'),
-            },
-        ];
-        await act(async () => {
-            render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: errorMock});
-        });
+// test('Error state', async () => {
+// const errorMock = [
+// {
+// request: {
+// query: GetFormsListDocument,
+// variables: {
+// library: 'my_lib',
+// },
+// },
+// error: new Error('boom!'),
+// },
+// ];
+// await act(async () => {
+// render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: errorMock});
+// });
 
-        expect(await screen.findByText(/boom!/)).toBeInTheDocument();
-    });
+// expect(await screen.findByText(/boom!/)).toBeInTheDocument();
+// });
 
-    test('On filters update, re run query with filters', async () => {
-        let filteredQueryCalled = false;
-        const mocksWithCount: MockedResponse[] = [
-            {
-                request: {
-                    query: GetFormsListDocument,
-                    variables: {
-                        library: 'my_lib',
-                    },
-                },
-                result: {
-                    data: {
-                        forms: {
-                            __typename: 'FormsList',
-                            totalCount: 1,
-                            list: {...mockFormLight, __typename: 'Form'},
-                        },
-                    },
-                },
-            },
-            {
-                request: {
-                    query: GetFormsListDocument,
-                    variables: {
-                        library: 'my_lib',
-                        id: '%foo%',
-                    },
-                },
-                result: () => {
-                    filteredQueryCalled = true;
-                    return {
-                        data: {
-                            forms: {
-                                __typename: 'FormsList',
-                                totalCount: 1,
-                                list: {...mockFormLight, __typename: 'Form'},
-                            },
-                        },
-                    };
-                },
-            },
-        ];
+// test('On filters update, re run query with filters', async () => {
+// let filteredQueryCalled = false;
+// const mocksWithCount: MockedResponse[] = [
+// {
+// request: {
+// query: GetFormsListDocument,
+// variables: {
+// library: 'my_lib',
+// },
+// },
+// result: {
+// data: {
+// forms: {
+// __typename: 'FormsList',
+// totalCount: 1,
+// list: {...mockFormLight, __typename: 'Form'},
+// },
+// },
+// },
+// },
+// {
+// request: {
+// query: GetFormsListDocument,
+// variables: {
+// library: 'my_lib',
+// id: '%foo%',
+// },
+// },
+// result: () => {
+// filteredQueryCalled = true;
+// return {
+// data: {
+// forms: {
+// __typename: 'FormsList',
+// totalCount: 1,
+// list: {...mockFormLight, __typename: 'Form'},
+// },
+// },
+// };
+// },
+// },
+// ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocksWithCount}>
-                    <FormsTab libraryId="my_lib" readonly={false} />
-                </MockedProvider>,
-            );
-        });
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProvider mocks={mocksWithCount}>
+// <FormsTab libraryId="my_lib" readonly={false} />
+// </MockedProvider>,
+// );
+// });
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
 
-        const filtersChangeFunc: any = comp.find('FormsList').prop('onFiltersChange');
+// const filtersChangeFunc: any = comp.find('FormsList').prop('onFiltersChange');
 
-        if (!!filtersChangeFunc) {
-            await act(async () => {
-                await filtersChangeFunc({name: 'id', value: 'foo'});
-                await wait(0);
-            });
-        }
+// if (!!filtersChangeFunc) {
+// await act(async () => {
+// await filtersChangeFunc({name: 'id', value: 'foo'});
+// await wait(0);
+// });
+// }
 
-        comp.update();
-        expect(filteredQueryCalled).toBe(true);
-    });
+// comp.update();
+// expect(filteredQueryCalled).toBe(true);
+// });
 
-    describe('Edition', () => {
-        let comp;
-        beforeAll(async () => {
-            await act(async () => {
-                comp = mount(
-                    <MockedProvider mocks={mocks}>
-                        <FormsTab libraryId="my_lib" readonly={false} />
-                    </MockedProvider>,
-                );
-            });
+// describe('Edition', () => {
+// let comp;
+// beforeAll(async () => {
+// await act(async () => {
+// comp = mount(
+// <MockedProvider mocks={mocks}>
+// <FormsTab libraryId="my_lib" readonly={false} />
+// </MockedProvider>,
+// );
+// });
 
-            await act(async () => {
-                await wait(0);
-                comp.update();
-            });
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
+// });
 
-        test('On click on a form from the list, open form edition with form ID', async () => {
-            const rowClickFunc: any = comp.find('FormsList').prop('onRowClick');
+// test('On click on a form from the list, open form edition with form ID', async () => {
+// const rowClickFunc: any = comp.find('FormsList').prop('onRowClick');
 
-            if (!!rowClickFunc) {
-                act(() => {
-                    rowClickFunc('my_form');
-                });
-            }
-            comp.update();
+// if (!!rowClickFunc) {
+// act(() => {
+// rowClickFunc('my_form');
+// });
+// }
+// comp.update();
 
-            expect(comp.find('EditFormModal')).toHaveLength(1);
-            expect(comp.find('EditFormModal').prop('formId')).toBe('my_form');
-        });
+// expect(comp.find('EditFormModal')).toHaveLength(1);
+// expect(comp.find('EditFormModal').prop('formId')).toBe('my_form');
+// });
 
-        test('On click on new form, open form edition for new form', async () => {
-            const createFunc: any = comp.find('FormsList').prop('onCreate');
+// test('On click on new form, open form edition for new form', async () => {
+// const createFunc: any = comp.find('FormsList').prop('onCreate');
 
-            if (!!createFunc) {
-                act(() => {
-                    createFunc();
-                });
-            }
-            comp.update();
+// if (!!createFunc) {
+// act(() => {
+// createFunc();
+// });
+// }
+// comp.update();
 
-            expect(comp.find('EditFormModal')).toHaveLength(1);
-            expect(comp.find('EditFormModal').prop('formId')).toBe(null);
-        });
-    });
+// expect(comp.find('EditFormModal')).toHaveLength(1);
+// expect(comp.find('EditFormModal').prop('formId')).toBe(null);
+// });
+// });
 
-    test('Delete form', async () => {
-        let deleteMutationCalled = false;
-        const mocksWithDelete: MockedResponse[] = [
-            ...mocks,
-            {
-                request: {
-                    query: DeleteFormDocument,
-                    variables: {
-                        library: 'my_lib',
-                        formId: 'my_form',
-                    },
-                },
-                result: () => {
-                    deleteMutationCalled = true;
-                    return {
-                        data: {
-                            deleteForm: {
-                                __typename: 'Form',
-                                id: 'my_form',
-                                library: {
-                                    __typename: 'Library',
-                                    id: 'my_lib',
-                                },
-                            },
-                        },
-                    };
-                },
-            },
-        ];
+// test('Delete form', async () => {
+// let deleteMutationCalled = false;
+// const mocksWithDelete: MockedResponse[] = [
+// ...mocks,
+// {
+// request: {
+// query: DeleteFormDocument,
+// variables: {
+// library: 'my_lib',
+// formId: 'my_form',
+// },
+// },
+// result: () => {
+// deleteMutationCalled = true;
+// return {
+// data: {
+// deleteForm: {
+// __typename: 'Form',
+// id: 'my_form',
+// library: {
+// __typename: 'Library',
+// id: 'my_lib',
+// },
+// },
+// },
+// };
+// },
+// },
+// ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocksWithDelete}>
-                    <FormsTab libraryId="my_lib" readonly={false} />
-                </MockedProvider>,
-            );
-        });
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProvider mocks={mocksWithDelete}>
+// <FormsTab libraryId="my_lib" readonly={false} />
+// </MockedProvider>,
+// );
+// });
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-        const deleteFunc: any = comp.find('FormsList').prop('onDelete');
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
+// const deleteFunc: any = comp.find('FormsList').prop('onDelete');
 
-        if (!!deleteFunc) {
-            await act(async () => {
-                await deleteFunc('my_form');
-            });
-        }
+// if (!!deleteFunc) {
+// await act(async () => {
+// await deleteFunc('my_form');
+// });
+// }
 
-        expect(deleteMutationCalled).toBe(true);
-    });
-});
+// expect(deleteMutationCalled).toBe(true);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

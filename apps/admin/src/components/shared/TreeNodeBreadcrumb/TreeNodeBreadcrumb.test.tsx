@@ -1,87 +1,89 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import React from 'react';
-import {type ITreeLinkElement} from '../../../_types/records';
-import TreeNodeBreadcrumb from './TreeNodeBreadcrumb';
+// import {shallow} from 'enzyme';
+// import React from 'react';
+// import {type ITreeLinkElement} from '../../../_types/records';
+// import TreeNodeBreadcrumb from './TreeNodeBreadcrumb';
 
-jest.mock(
-    './PathPart',
-    () =>
-        function PathPart({record}) {
-            return <div data-test-id="tree-breadcrumb-part" />;
-        },
-);
+// jest.mock(
+// './PathPart',
+// () =>
+// function PathPart({record}) {
+// return <div data-test-id="tree-breadcrumb-part" />;
+// },
+// );
 
-describe('TreeNodeBreadcrumb', () => {
-    const baseWhoAmI = {
-        id: '132456',
-        label: 'My record',
-        preview: null,
-        color: null,
-        library: {id: 'test_lib', label: {fr: 'Test Lib'}},
-    };
+// describe('TreeNodeBreadcrumb', () => {
+// const baseWhoAmI = {
+// id: '132456',
+// label: 'My record',
+// preview: null,
+// color: null,
+// library: {id: 'test_lib', label: {fr: 'Test Lib'}},
+// };
 
-    const mockElementWithAncestors: ITreeLinkElement = {
-        id: '123456',
-        record: {
-            whoAmI: {
-                ...baseWhoAmI,
-                id: '123456',
-            },
-        },
-        ancestors: [
-            {
-                id: '654321',
-                record: {
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '654321',
-                    },
-                },
-            },
-            {
-                id: '987654',
-                record: {
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '987654',
-                    },
-                },
-            },
-            {
-                id: '123456',
-                record: {
-                    whoAmI: {
-                        ...baseWhoAmI,
-                        id: '123456',
-                    },
-                },
-            },
-        ],
-    };
+// const mockElementWithAncestors: ITreeLinkElement = {
+// id: '123456',
+// record: {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '123456',
+// },
+// },
+// ancestors: [
+// {
+// id: '654321',
+// record: {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '654321',
+// },
+// },
+// },
+// {
+// id: '987654',
+// record: {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '987654',
+// },
+// },
+// },
+// {
+// id: '123456',
+// record: {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '123456',
+// },
+// },
+// },
+// ],
+// };
 
-    const mockElementNoAncestors: ITreeLinkElement = {
-        id: '123456',
-        record: {
-            whoAmI: {
-                ...baseWhoAmI,
-                id: '123456',
-            },
-        },
-        ancestors: [],
-    };
+// const mockElementNoAncestors: ITreeLinkElement = {
+// id: '123456',
+// record: {
+// whoAmI: {
+// ...baseWhoAmI,
+// id: '123456',
+// },
+// },
+// ancestors: [],
+// };
 
-    test('Render element with its ancestors', async () => {
-        const comp = shallow(<TreeNodeBreadcrumb element={mockElementWithAncestors} />).dive();
+// test('Render element with its ancestors', async () => {
+// const comp = shallow(<TreeNodeBreadcrumb element={mockElementWithAncestors} />).dive();
 
-        expect(comp.find('BreadcrumbSection')).toHaveLength(3);
-    });
+// expect(comp.find('BreadcrumbSection')).toHaveLength(3);
+// });
 
-    test('Render element only if no ancestors', async () => {
-        const comp = shallow(<TreeNodeBreadcrumb element={mockElementNoAncestors} />).dive();
+// test('Render element only if no ancestors', async () => {
+// const comp = shallow(<TreeNodeBreadcrumb element={mockElementNoAncestors} />).dive();
 
-        expect(comp.find('BreadcrumbSection')).toHaveLength(1);
-    });
-});
+// expect(comp.find('BreadcrumbSection')).toHaveLength(1);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

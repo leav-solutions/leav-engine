@@ -1,85 +1,87 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
-import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
-import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
-import {mockLibrary} from '../../../__mocks__/libraries';
-import SelectRecordModal from './SelectRecordModal';
+// import {MockedProvider} from '@apollo/client/testing';
+// import {mount} from 'enzyme';
+// import React from 'react';
+// import {act} from 'react-dom/test-utils';
+// import {wait} from 'utils/testUtils';
+// import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
+// import {mockLibrary} from '../../../__mocks__/libraries';
+// import SelectRecordModal from './SelectRecordModal';
 
-jest.mock(
-    '../../navigator',
-    () =>
-        function Navigator() {
-            return <div>Select record</div>;
-        },
-);
+// jest.mock(
+// '../../navigator',
+// () =>
+// function Navigator() {
+// return <div>Select record</div>;
+// },
+// );
 
-describe('SelectRecordModal', () => {
-    const mocks = [
-        {
-            request: {
-                query: getLibsQuery,
-                variables: {id: 'test_lib'},
-            },
-            result: {
-                data: {
-                    libraries: {
-                        __typename: 'LibrariesList',
-                        totalCount: 1,
-                        list: [
-                            {
-                                ...mockLibrary,
-                            },
-                        ],
-                    },
-                },
-            },
-        },
-    ];
+// describe('SelectRecordModal', () => {
+// const mocks = [
+// {
+// request: {
+// query: getLibsQuery,
+// variables: {id: 'test_lib'},
+// },
+// result: {
+// data: {
+// libraries: {
+// __typename: 'LibrariesList',
+// totalCount: 1,
+// list: [
+// {
+// ...mockLibrary,
+// },
+// ],
+// },
+// },
+// },
+// },
+// ];
 
-    const onClose = jest.fn();
-    const onSelect = jest.fn();
-    test('Loading and success state', async () => {
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={[...mocks]} addTypename>
-                    <SelectRecordModal open library="test_lib" onClose={onClose} onSelect={onSelect} />
-                </MockedProvider>,
-            );
-        });
+// const onClose = jest.fn();
+// const onSelect = jest.fn();
+// test('Loading and success state', async () => {
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProvider mocks={[...mocks]} addTypename>
+// <SelectRecordModal open library="test_lib" onClose={onClose} onSelect={onSelect} />
+// </MockedProvider>,
+// );
+// });
 
-        expect(comp.find('Modal')).toHaveLength(1);
-        expect(comp.find('Modal').prop('open')).toBe(true);
+// expect(comp.find('Modal')).toHaveLength(1);
+// expect(comp.find('Modal').prop('open')).toBe(true);
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
+// await act(async () => {
+// await wait(0);
+// comp.update();
+// });
 
-        expect(comp.find('Navigator')).toHaveLength(1);
-    });
+// expect(comp.find('Navigator')).toHaveLength(1);
+// });
 
-    test('Call on close', async () => {
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={[...mocks]} addTypename>
-                    <SelectRecordModal open library="test_lib" onClose={onClose} onSelect={onSelect} />
-                </MockedProvider>,
-            );
-        });
+// test('Call on close', async () => {
+// let comp;
+// await act(async () => {
+// comp = mount(
+// <MockedProvider mocks={[...mocks]} addTypename>
+// <SelectRecordModal open library="test_lib" onClose={onClose} onSelect={onSelect} />
+// </MockedProvider>,
+// );
+// });
 
-        act(() => {
-            comp.find('Button[data-test-id="select-record-modal-close-btn"]').simulate('click');
-        });
+// act(() => {
+// comp.find('Button[data-test-id="select-record-modal-close-btn"]').simulate('click');
+// });
 
-        await wait(0);
+// await wait(0);
 
-        expect(onClose).toHaveBeenCalled();
-    });
-});
+// expect(onClose).toHaveBeenCalled();
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');

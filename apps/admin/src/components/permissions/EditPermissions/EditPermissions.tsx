@@ -37,7 +37,10 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         error: errorActions,
         data: dataActions,
     } = useGetPermissionsActionsQuery({
-        variables: {type: permParams.type, applyOn: permParams.applyTo},
+        variables: {
+            type: permParams.type,
+            ...(permParams.applyTo != null && {applyOn: permParams.applyTo}),
+        },
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true,
     });
@@ -93,6 +96,3 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
 };
 
 export default EditPermissions;
-function useSavePermissionsMutation<T, U>(savePermissionsQuery: any): [any] {
-    throw new Error('Function not implemented.');
-}

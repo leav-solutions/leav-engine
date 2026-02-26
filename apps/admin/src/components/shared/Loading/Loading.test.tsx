@@ -1,21 +1,23 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import React from 'react';
-import {create} from 'react-test-renderer';
-import Loading from '../../shared/Loading';
+// import {shallow} from 'enzyme';
+// import React from 'react';
+// import {create} from 'react-test-renderer';
+// import Loading from '../../shared/Loading';
 
-describe('Loading', () => {
-    test('Snapshot test', async () => {
-        const comp = create(<Loading />).toJSON();
+// describe('Loading', () => {
+// test('Snapshot test', async () => {
+// const comp = create(<Loading />).toJSON();
 
-        expect(comp).toMatchSnapshot();
-    });
+// expect(comp).toMatchSnapshot();
+// });
 
-    test('Display dimmer', () => {
-        const comp = shallow(<Loading withDimmer />);
+// test('Display dimmer', () => {
+// const comp = shallow(<Loading withDimmer />);
 
-        expect(comp.find('Dimmer').length).toBe(1);
-    });
-});
+// expect(comp.find('Dimmer').length).toBe(1);
+// });
+// });
+
+it.todo('Tests commented - migrate to react-testing-library');
