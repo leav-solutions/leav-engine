@@ -5874,49 +5874,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.1"
-  checksum: 10/9f0ece2ada614348271bede64e3392937aca3ffad7bea0c94a982f1fc36297a586908248e32afb2ab6148f9edac863d9f67ed025d7b3636c2edb2ae79a9b90d5
+"@fortawesome/fontawesome-common-types@npm:7.2.0":
+  version: 7.2.0
+  resolution: "@fortawesome/fontawesome-common-types@npm:7.2.0"
+  checksum: 10/db10ca0b4ceed3226a477a7d424ae1ccb2d65cf0dd868bdc767978a6234b2d30b85197b1f4665e8b6333bdc05a204ed6d154844261e071679c5af6b1d2ebbf06
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-svg-core@npm:^6.4.2":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.1"
+"@fortawesome/fontawesome-svg-core@npm:^7.1.0":
+  version: 7.2.0
+  resolution: "@fortawesome/fontawesome-svg-core@npm:7.2.0"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.5.1"
-  checksum: 10/65adbce67d430d94d1f4b10b44ceb73cce38e44b6513968fd1f7bc7ecb279a6945e8e6328e7845940516b2694b50dca31cd7563e16ebc8110fca14dc7bdfafff
+    "@fortawesome/fontawesome-common-types": "npm:7.2.0"
+  checksum: 10/2f02236e58ca8506a18eb6ff26be8e9ad74e3cd4621db26d89dbc268e7a5245dbc269ca35ac81b92af6442eaef6b9ab44ee837f819fe94ea95462539ad02037c
   languageName: node
   linkType: hard
 
-"@fortawesome/free-regular-svg-icons@npm:^6.4.2":
-  version: 6.5.1
-  resolution: "@fortawesome/free-regular-svg-icons@npm:6.5.1"
+"@fortawesome/free-regular-svg-icons@npm:^7.1.0":
+  version: 7.2.0
+  resolution: "@fortawesome/free-regular-svg-icons@npm:7.2.0"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.5.1"
-  checksum: 10/58a9f4dcf5b08c1fad4f4353cb4c280f3a1919f3c7fe3b9b411d24f82b1e75a1edc12f5521721f8b01c3d080e6f12953353ceb3876d045f214f3a1ff1357a29d
+    "@fortawesome/fontawesome-common-types": "npm:7.2.0"
+  checksum: 10/83c76583714af9264464541420a30e4c630f768acb2cde7beb9a9cad8c48f0e832c457f589391a200fd0e528a0fdaa09d38016daf42604edc8985f6157ea78ae
   languageName: node
   linkType: hard
 
-"@fortawesome/free-solid-svg-icons@npm:^6.4.2":
-  version: 6.5.1
-  resolution: "@fortawesome/free-solid-svg-icons@npm:6.5.1"
+"@fortawesome/free-solid-svg-icons@npm:^7.1.0":
+  version: 7.2.0
+  resolution: "@fortawesome/free-solid-svg-icons@npm:7.2.0"
   dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:6.5.1"
-  checksum: 10/0d70064bfcde97f62240b58d25cd719c863e09c5b4fce612c26823e006fc09559203eed47ba4e318dcdfbd040cf745cf4186ba0fb79148e2f9db5879c14661bd
+    "@fortawesome/fontawesome-common-types": "npm:7.2.0"
+  checksum: 10/640f690e04f40e14c37a2602a3c88793b7b63a250951b591a356aa143ce65d30b16449e4dbd33a50e6c90d2538958360cde0ebd657396f99f0b3ae34df496cfe
   languageName: node
   linkType: hard
 
-"@fortawesome/react-fontawesome@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@fortawesome/react-fontawesome@npm:0.2.0"
-  dependencies:
-    prop-types: "npm:^15.8.1"
+"@fortawesome/react-fontawesome@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@fortawesome/react-fontawesome@npm:3.2.0"
   peerDependencies:
-    "@fortawesome/fontawesome-svg-core": ~1 || ~6
-    react: ">=16.3"
-  checksum: 10/9b574daaf4413ae202dc8e4ff500726ea58d0a5cf6bdca9ad992f57956625f3750596852fd511600ed5b547025fc8af1cf6cf5a25a807b5c0f49af24b3e00efe
+    "@fortawesome/fontawesome-svg-core": ~6 || ~7
+    react: ^18.0.0 || ^19.0.0
+  checksum: 10/2493746e00db4a7fb001f3f098d0456fa6351186c6b1856af6916ac444bbabead8f2cc3a9da0c7f6684a9c7beff34bdbbcdd3845d68f20de320c796c62112117
   languageName: node
   linkType: hard
 
@@ -8392,7 +8390,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@types/react-table": "npm:7.7.20"
     "@uidotdev/usehooks": "npm:2.4.1"
-    aristid-ds: "npm:15.0.0-6a7cc18"
+    aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
     dayjs: "npm:^1.11.13"
     dompurify: "npm:3.2.4"
@@ -8421,7 +8419,7 @@ __metadata:
     zod: "npm:3.25.76"
   peerDependencies:
     "@apollo/client": ">=3.8.1"
-    aristid-ds: 15.0.0-6a7cc18
+    aristid-ds: 15.2.0-efdeb96
     i18next: ">=22.5.1"
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -11830,7 +11828,7 @@ __metadata:
     "@types/styled-components": "npm:4.4.3"
     "@types/testing-library__jest-dom": "npm:5.14.9"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.0.0-6a7cc18"
+    aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:30.2.0"
     cross-fetch: "npm:3.2.0"
     dayjs: "npm:1.11.19"
@@ -12304,7 +12302,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.0.0-6a7cc18"
+    aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
     browserslist: "npm:4.28.1"
     classnames: "npm:2.5.1"
@@ -12445,18 +12443,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:15.0.0-6a7cc18":
-  version: 15.0.0-6a7cc18
-  resolution: "aristid-ds@npm:15.0.0-6a7cc18"
+"aristid-ds@npm:15.2.0-efdeb96":
+  version: 15.2.0-efdeb96
+  resolution: "aristid-ds@npm:15.2.0-efdeb96"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
     "@dnd-kit/sortable": "npm:^8.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"
-    "@fortawesome/fontawesome-svg-core": "npm:^6.4.2"
-    "@fortawesome/free-regular-svg-icons": "npm:^6.4.2"
-    "@fortawesome/free-solid-svg-icons": "npm:^6.4.2"
-    "@fortawesome/react-fontawesome": "npm:^0.2.0"
+    "@fortawesome/fontawesome-svg-core": "npm:^7.1.0"
+    "@fortawesome/free-regular-svg-icons": "npm:^7.1.0"
+    "@fortawesome/free-solid-svg-icons": "npm:^7.1.0"
+    "@fortawesome/react-fontawesome": "npm:^3.2.0"
     "@sass-fairy/string": "npm:^1.3.0"
     "@tiptap/core": "npm:2.27.1"
     "@tiptap/extension-character-count": "npm:2.27.1"
@@ -12495,7 +12493,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10/51276fd771008d00a35080c3c6aab42fd426765867cc89c4efb28185e180252e4204bc9b93fa55a0759310ed0c55a9e7edc540e1ea4c897d545b70d09c561dbb
+  checksum: 10/ac59c4459134e617ef9a01a36331c9528f2acedc395bf83d221c3915aea32c435ae6849929a099a76fefc48934412795482790e7c7b91dfe5251d586d1701705
   languageName: node
   linkType: hard
 
@@ -15105,7 +15103,7 @@ __metadata:
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.1.4"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:15.0.0-6a7cc18"
+    aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
     dayjs: "npm:1.11.19"
     graphql: "npm:16.12.0"
@@ -22246,7 +22244,7 @@ __metadata:
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.0.0-6a7cc18"
+    aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
     graphql: "npm:15.0.0"
     i18next: "npm:22.5.1"
@@ -23964,7 +23962,7 @@ __metadata:
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.0.0-6a7cc18"
+    aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
     cross-fetch: "npm:3.2.0"
     graphql: "npm:16.12.0"
