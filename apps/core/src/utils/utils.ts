@@ -18,7 +18,16 @@ import {type IConfig} from '_types/config';
 import {type ErrorFieldDetail, type ErrorFieldDetailMessage, Errors, type IExtendedErrorMsg} from '../_types/errors';
 import {type ILibrary, type ILibraryPreviewsSettings, type LibraryBehavior} from '_types/library';
 import {type ISystemTranslation} from '_types/systemTranslation';
-import {type IValue} from '_types/value';
+import {
+    type ILinkValue,
+    type ISaveLinkValue,
+    type ISaveStandardValue,
+    type ISaveTreeValue,
+    type ISaveValue,
+    type IStandardBaseValue,
+    type ITreeValue,
+    type IValue,
+} from '_types/value';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../_types/attribute';
@@ -143,7 +152,7 @@ export interface IUtils {
     getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
     previewsSettingsToVersions(previewsSettings: ILibraryPreviewsSettings[]): IPreviewVersion[];
-    areValuesIdentical(value1: IValue, value2: IValue): boolean;
+    areValuesIdentical(attribute: IAttribute, value: IValue, saveValue: ISaveValue): boolean;
 }
 
 export interface IUtilsDeps {
@@ -152,6 +161,14 @@ export interface IUtilsDeps {
 }
 
 export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+    const isStandardAttribute = (attribute: IAttribute): boolean =>
+        attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
+
+    const isLinkAttribute = (attribute: IAttribute): boolean =>
+        attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
+
+    const isTreeAttribute = (attribute: IAttribute): boolean => attribute.type === AttributeTypes.TREE;
+
     return {
         fileExists: async (path: string): Promise<boolean> => {
             try {
@@ -271,15 +288,9 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         dateToTimestamp(d) {
             return dayjs(d).unix();
         },
-        isStandardAttribute(attribute) {
-            return attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
-        },
-        isLinkAttribute(attribute) {
-            return attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
-        },
-        isTreeAttribute(attribute) {
-            return attribute.type === AttributeTypes.TREE;
-        },
+        isStandardAttribute,
+        isLinkAttribute,
+        isTreeAttribute,
         decomposeValueEdgeDestination(value) {
             const [library, id]: [string, string] = value.split('/') as [string, string];
 
@@ -385,13 +396,21 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         previewsSettingsToVersions(previewsSettings) {
             return previewsSettings.map(settings => settings.versions);
         },
-        areValuesIdentical(value1, value2) {
-            const isValue1MetadataEmpty = !value1?.metadata || Object.keys(value1?.metadata).length === 0;
-            const isValue2MetadataEmpty = !value2?.metadata || Object.keys(value2?.metadata).length === 0;
+        areValuesIdentical(attribute: IAttribute, value: IValue, saveValue: ISaveValue): boolean {
+            const isValueMetadataEmpty = !value?.metadata || Object.keys(value?.metadata).length === 0;
+            const isSaveValueMetadataEmpty = !saveValue?.metadata || Object.keys(saveValue?.metadata).length === 0;
 
-            const isValueIdentical = value1?.payload === value2?.payload;
+            let isValueIdentical: boolean;
+            if (isStandardAttribute(attribute)) {
+                isValueIdentical = (value as IStandardBaseValue).payload === (saveValue as ISaveStandardValue).payload;
+            } else if (isLinkAttribute(attribute)) {
+                isValueIdentical = (value as ILinkValue).payload?.id === (saveValue as ISaveLinkValue).payload;
+            } else if (isTreeAttribute(attribute)) {
+                isValueIdentical = (value as ITreeValue).payload?.id === (saveValue as ISaveTreeValue).payload;
+            }
+
             const isMetadataIdentical =
-                (isValue1MetadataEmpty && isValue2MetadataEmpty) || isEqual(value1?.metadata, value2?.metadata);
+                (isValueMetadataEmpty && isSaveValueMetadataEmpty) || isEqual(value?.metadata, saveValue?.metadata);
 
             return isValueIdentical && isMetadataIdentical;
         },

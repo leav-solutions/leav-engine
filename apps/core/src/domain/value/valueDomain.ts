@@ -721,11 +721,16 @@ const valueDomain = function ({
             ctx,
         });
 
-        const valueBeforeToCheck =
-            utils.isLinkAttribute(attribute) || utils.isTreeAttribute(attribute)
-                ? {...valueBefore, value: valueBefore?.payload?.id}
-                : valueBefore;
-        const areValuesIdentical = utils.areValuesIdentical(valueBeforeToCheck, value);
+        let areValuesIdentical: boolean = false;
+
+        if (valueBefore !== undefined) {
+            const valueBeforeToCheck =
+                utils.isLinkAttribute(attribute) || utils.isTreeAttribute(attribute)
+                    ? {...valueBefore, value: valueBefore?.payload?.id}
+                    : valueBefore;
+
+            areValuesIdentical = utils.areValuesIdentical(attribute, valueBeforeToCheck, value);
+        }
 
         // If values are identical, don't save it again. Consider DB value as saved value
         let savedValue: IValue;
