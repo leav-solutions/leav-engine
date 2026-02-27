@@ -333,11 +333,12 @@ export default function ({
                 }>
             >({query, ctx});
 
+            const recordIdToValuesMap = new Map(treeElements.map(e => [e.recordId, e.values]));
             return recordIds.map(recordId => {
-                const record = treeElements.find(r => r.recordId === recordId);
+                const record = recordIdToValuesMap.get(recordId);
                 return (
-                    record?.values
-                        .map(r => {
+                    record
+                        ?.map(r => {
                             const treeValue = _buildTreeValue(
                                 attribute.linked_tree,
                                 r.id,
