@@ -55,6 +55,7 @@ import {type CreateRecordHelper} from 'domain/record/helpers/createRecord';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
 import {type FindRecordsHelper} from 'domain/record/helpers/findRecords';
+import areValuesIdentical from './helpers/areValuesIdentical';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -721,20 +722,11 @@ const valueDomain = function ({
             ctx,
         });
 
-        let areValuesIdentical: boolean = false;
+        const identicalValue = valueBefore !== undefined ? areValuesIdentical(attribute, valueBefore, value) : false;
 
-        if (valueBefore !== undefined) {
-            const valueBeforeToCheck =
-                utils.isLinkAttribute(attribute) || utils.isTreeAttribute(attribute)
-                    ? {...valueBefore, value: valueBefore?.payload?.id}
-                    : valueBefore;
-
-            areValuesIdentical = utils.areValuesIdentical(attribute, valueBeforeToCheck, value);
-        }
-
-        // If values are identical, don't save it again. Consider DB value as saved value
+        // If value is identical, don't save it again. Consider DB value as saved value
         let savedValue: IValue;
-        if (areValuesIdentical) {
+        if (identicalValue) {
             savedValue = valueBefore;
         } else {
             value = valueBefore?.id_value ? {...value, id_value: valueBefore.id_value} : value;
@@ -770,9 +762,7 @@ const valueDomain = function ({
                     `Error executing post-save actions on attribute ${attribute.id} record ${record.id}: ${error.stack}`,
                 );
             }
-        }
 
-        if (!areValuesIdentical) {
             await eventsManager.sendDatabaseEvent<EventAction.VALUE_SAVE>(
                 {
                     action: EventAction.VALUE_SAVE,
@@ -798,7 +788,7 @@ const valueDomain = function ({
 
         const processedValues = await _runActionsListAndFormatValue(library, attribute, savedValue, ctx, record);
 
-        return {values: processedValues, areValuesIdentical};
+        return {values: processedValues, identicalValue};
     };
 
     const _runActionsListAndFormatValue = async (
@@ -959,10 +949,10 @@ const valueDomain = function ({
             }),
         );
 
-        const {allSavedValues, areValuesIdentical} = await preparedValues.reduce(
+        const {allSavedValues, identicalValues} = await preparedValues.reduce(
             async (promiseAcc, valueToSave) => {
                 const acc = await promiseAcc;
-                const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
+                const {values: savedValues, identicalValue} = await _executeSaveValue(
                     library,
                     record,
                     attributeProps,
@@ -970,17 +960,17 @@ const valueDomain = function ({
                     ctx,
                 );
 
-                if (!identicalValues) {
-                    acc.areValuesIdentical = false;
+                if (!identicalValue) {
+                    acc.identicalValues = false;
                 }
 
                 acc.allSavedValues.push(...savedValues);
                 return acc;
             },
-            Promise.resolve({allSavedValues: [], areValuesIdentical: true}),
+            Promise.resolve({allSavedValues: [], identicalValues: true}),
         );
 
-        if (!areValuesIdentical) {
+        if (!identicalValues) {
             await updateRecordLastModif(library, recordId, ctx);
             allSavedValues.forEach(savedValue => {
                 sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);

@@ -430,22 +430,6 @@ export async function gqlGetValue(libraryId: string, recordId: string, attribute
     return result.data.data.records.list[0]?.properties[0]?.values;
 }
 
-export async function gqlGetRecord(libraryId: string, recordId: string): Promise<any> {
-    const result = await makeGraphQlCall(`{
-         records(
-             library: "${libraryId}",
-             filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
-         ) {
-             list {
-                id
-                modified_at
-             }
-         }
-     }`);
-
-    return result.data.data.records.list[0];
-}
-
 export async function gqlSaveValue(attributeId: string, libraryId: string, recordId: string, value: string | number) {
     await makeGraphQlCall(
         `mutation {

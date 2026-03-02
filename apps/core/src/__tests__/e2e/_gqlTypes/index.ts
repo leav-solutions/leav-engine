@@ -1076,6 +1076,14 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { me?: { id: string } | null };
 
+export type GetRecordQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['String']['input'];
+}>;
+
+
+export type GetRecordQuery = { records: { list: Array<{ id: string, modified_at: number }> } };
+
 
 export const SaveApiKeyDocument = gql`
     mutation SaveApiKey($apiKey: ApiKeyInput!) {
@@ -1119,6 +1127,19 @@ export const MeDocument = gql`
   }
 }
     `;
+export const GetRecordDocument = gql`
+    query GetRecord($libraryId: ID!, $recordId: String!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      id
+      modified_at
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 
@@ -1138,6 +1159,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     Me(variables?: MeQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MeQuery>({ document: MeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Me', 'query', variables);
+    },
+    GetRecord(variables: GetRecordQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordQuery>({ document: GetRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecord', 'query', variables);
     }
   };
 }

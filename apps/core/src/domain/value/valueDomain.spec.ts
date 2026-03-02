@@ -117,7 +117,6 @@ describe('ValueDomain', () => {
         isStandardAttribute: jest.fn(() => true),
         isLinkAttribute: jest.fn(() => false),
         isTreeAttribute: jest.fn(() => false),
-        areValuesIdentical: jest.fn(() => false),
     };
 
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
@@ -906,7 +905,6 @@ describe('ValueDomain', () => {
 
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                areValuesIdentical: jest.fn(() => true),
             };
 
             const valDomain = valueDomain({
@@ -1328,7 +1326,7 @@ describe('ValueDomain', () => {
                 ctx,
             });
 
-            expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
+            expect(mockValRepo.updateValue.mock.calls.length).toBe(0); // identical values
             expect(mockValRepo.createValue.mock.calls.length).toBe(2);
 
             expect(res).toStrictEqual({
@@ -1359,9 +1357,6 @@ describe('ValueDomain', () => {
         test('Should ignore values that are identical to DB value', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                areValuesIdentical: jest.fn().mockImplementation(
-                    (val1, val2) => val2?.payload === 'identical', // Consider values for test_attr as identical
-                ),
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 }),
