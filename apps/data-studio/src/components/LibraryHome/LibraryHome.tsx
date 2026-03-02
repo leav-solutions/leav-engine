@@ -161,7 +161,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         defaultViewSettings={{enableConfigureView: true}}
                         defaultActionsForItem={['remove', 'activate']}
                         defaultPrimaryActions={['create']}
-                        defaultMassActions={['export', 'editAttribute', 'deactivate']}
+                        defaultMassActions={['export', 'editAttribute', 'deactivate', 'generatePreviews']}
                         itemActions={[
                             {
                                 label: t('explorer.edit-item'),

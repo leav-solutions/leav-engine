@@ -44,6 +44,7 @@ import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
 import {useExportMassAction} from './actions-mass/useExportMassAction';
 import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
+import {useGeneratePreviewsMassAction} from './actions-mass/useGeneratePreviewsMassAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -82,7 +83,7 @@ export interface IExplorerProps {
     emptyPlaceholder?: ReactNode;
     defaultActionsForItem?: Array<'replaceLink' | 'remove' | 'activate'>;
     defaultPrimaryActions?: Array<'create'>;
-    defaultMassActions?: Array<'deactivate' | 'export' | 'editAttribute'>;
+    defaultMassActions?: Array<'deactivate' | 'export' | 'editAttribute' | 'generatePreviews'>;
     defaultViewSettings?: DefaultViewSettings;
     defaultCallbacks?: {
         item?: {
@@ -104,6 +105,7 @@ export interface IExplorerProps {
         mass?: {
             deactivate?: IMassActions['callback'];
             export?: IMassActions['callback'];
+            generatePreviews?: IMassActions['callback'];
         };
     };
     showCreateOnNoResultOnly?: boolean;
@@ -160,7 +162,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             ignoreViewByDefault = false,
             defaultActionsForItem = ['replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
-            defaultMassActions = ['deactivate', 'editAttribute', 'export'],
+            defaultMassActions = ['deactivate', 'editAttribute', 'export', 'generatePreviews'],
             defaultCallbacks,
             defaultViewSettings,
             joinLibraryContext,
@@ -272,6 +274,13 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
+        const {generatePreviewsMassAction, GeneratePreviewsModal} = useGeneratePreviewsMassAction({
+            isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('generatePreviews'),
+            store: {view},
+            totalCount: totalCountFiltered,
+            onGeneratePreviews: defaultCallbacks?.mass?.generatePreviews,
+        });
+
         const {exportMassAction, ExportModal} = useExportMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('export'),
             store: {view, dispatch: viewSettingsDispatch},
@@ -319,6 +328,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             totalCountLibrary,
             allVisibleKeys,
             massActions: [
+                generatePreviewsMassAction,
                 exportMassAction,
                 editAttributeMassAction,
                 deactivateMassAction,
@@ -432,6 +442,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                         {linkModal}
                         {editAttributeMassActionModal}
                         {ExportModal}
+                        {GeneratePreviewsModal}
                     </ViewSettingsContext.Provider>
                 </FiltersContext.Provider>
                 <KitSnackBarProvider id={massActionSnackbarId} />
