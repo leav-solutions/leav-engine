@@ -8382,7 +8382,7 @@ __metadata:
     "@testing-library/react-hooks": "npm:8.0.1"
     "@testing-library/user-event": "npm:14.6.1"
     "@total-typescript/ts-reset": "npm:0.6.1"
-    "@types/dompurify": "npm:3.0.3"
+    "@types/dompurify": "npm:3.2.0"
     "@types/jest": "npm:29.5.14"
     "@types/lodash.isequal": "npm:^4"
     "@types/object-path": "npm:0.11.4"
@@ -8393,7 +8393,7 @@ __metadata:
     aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
     dayjs: "npm:^1.11.13"
-    dompurify: "npm:3.2.4"
+    dompurify: "npm:3.3.1"
     graphql: "npm:16.12.0"
     html-react-parser: "npm:4.2.10"
     i18next: "npm:22.5.1"
@@ -10407,12 +10407,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dompurify@npm:3.0.3":
-  version: 3.0.3
-  resolution: "@types/dompurify@npm:3.0.3"
+"@types/dompurify@npm:3.2.0":
+  version: 3.2.0
+  resolution: "@types/dompurify@npm:3.2.0"
   dependencies:
-    "@types/trusted-types": "npm:*"
-  checksum: 10/949a6affdd050be30b9a8eb53ae4b47c2d641e4f8665312507a7cf64760953d77f30aee379388f62789c6d7cf290269284cc65ff2ceadcc1eaa4c8583d3f53d8
+    dompurify: "npm:*"
+  checksum: 10/0194dd9024e76e856f3373e8b080c7a5ac9910543ac1ee85db45277efbbea820b2f27fe22c8a6f02bb51833e0a8540d732be0d11d156efd16cb0b97f88e41ebf
   languageName: node
   linkType: hard
 
@@ -11175,13 +11175,6 @@ __metadata:
   version: 1.3.5
   resolution: "@types/triple-beam@npm:1.3.5"
   checksum: 10/519b6a1b30d4571965c9706ad5400a200b94e4050feca3e7856e3ea7ac00ec9903e32e9a10e2762d0f7e472d5d03e5f4b29c16c0bd8c1f77c8876c683b2231f1
-  languageName: node
-  linkType: hard
-
-"@types/trusted-types@npm:*":
-  version: 2.0.4
-  resolution: "@types/trusted-types@npm:2.0.4"
-  checksum: 10/5256c4576cd1c90d33ddd9cc9cbd4f202b39c98cbe8b7f74963298f9eb2159c285ea5c25a6181b4c594d8d75641765bff85d72c2d251ad076e6529ce0eeedd1c
   languageName: node
   linkType: hard
 
@@ -15659,15 +15652,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.2.4":
-  version: 3.2.4
-  resolution: "dompurify@npm:3.2.4"
+"dompurify@npm:*, dompurify@npm:3.3.1":
+  version: 3.3.1
+  resolution: "dompurify@npm:3.3.1"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/98570c53385518a2f9b617f796926338856acfdd3369c88b5905bddf96bd7d391bf8a5433127155e0046e6faa2bfb767185fcd571b865dfabe624c099e2537f5
+  checksum: 10/f71cca489e628591165d16e8cf4fa4f0d3e2ee48db4d73e9d2c5bedc6f915c92f9e9f101f8c4ba790bec0cdffe7f4e1747f5e31c69dc53ce7ae20a81ff6b0022
   languageName: node
   linkType: hard
 
