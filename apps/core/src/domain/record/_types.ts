@@ -40,3 +40,11 @@ export interface ICreateRecordResult {
     record?: IRecord;
     valuesErrors?: ICreateRecordValueError[];
 }
+
+export interface IDuplicateRecordValueError extends ICreateRecordValueError {
+    originalId?: string;
+}
+
+export interface IDuplicateRecordResult extends ICreateRecordResult {
+    valuesErrors?: IDuplicateRecordValueError[];
+}
