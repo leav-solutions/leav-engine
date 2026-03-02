@@ -34,7 +34,12 @@ import {type TreePath} from '../../_types/tree';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import {isRecordWithId, type SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
-import {type ICreateRecordResult, type ICreateRecordValueError, type IFindRecordParams} from './_types';
+import {
+    type IDuplicateRecordResult,
+    type ICreateRecordResult,
+    type ICreateRecordValueError,
+    type IFindRecordParams,
+} from './_types';
 import {type IFormRepo} from 'infra/form/formRepo';
 import {type DeleteRecordHelper} from './helpers/deleteRecord';
 import {type CreateRecordHelper} from './helpers/createRecord';
@@ -143,7 +148,7 @@ export interface IRecordDomain {
         recordIds: string[];
         duplicateRules?: IDuplicateRecordRules;
         ctx: IQueryInfos;
-    }): Promise<ICreateRecordResult[]>;
+    }): Promise<IDuplicateRecordResult[]>;
 }
 
 export interface IRecordDomainDeps {
@@ -1058,14 +1063,14 @@ export default function ({
          * @param {string[]} params.recordIds - The IDs of the records to duplicate.
          * @param {IDuplicateRecordRules} [params.duplicateRules] - Rules specifying which attributes to duplicate and override.
          * @param {IQueryInfos} params.ctx - Context information for the operation.
-         * @returns {Promise<ICreateRecordResult[]>} An array of results for each duplicated record, including errors if any.
+         * @returns {Promise<IDuplicateRecordResult[]>} An array of results for each duplicated record, including errors if any.
          *
          * Edge cases:
          * - If no attributes are provided in `duplicateRules`, new records will be created without duplicated values.
          * - If an attribute has no value in the source record and no overrideValue, it will not be duplicated for that record.
          * - If a recordId does not exist, it will be skipped.
          */
-        async duplicateRecords({libraryId, recordIds, duplicateRules, ctx}): Promise<ICreateRecordResult[]> {
+        async duplicateRecords({libraryId, recordIds, duplicateRules, ctx}): Promise<IDuplicateRecordResult[]> {
             const attributesToDuplicate = duplicateRules?.attributesToDuplicate || [];
 
             try {
@@ -1157,13 +1162,14 @@ export default function ({
                 return duplicatedRecords;
             } catch (error) {
                 logger.error(`Error in duplicateRecords: ${error.stack}`);
-                return recordIds.map(() => ({
+                return recordIds.map(recordId => ({
                     record: null,
                     valuesErrors: [
                         {
                             type: error?.type ?? ErrorTypes.INTERNAL_ERROR,
                             attribute: error?.attribute ?? null,
                             message: error && typeof error.message === 'string' ? error.message : String(error),
+                            originalId: recordId,
                         },
                     ],
                 }));
