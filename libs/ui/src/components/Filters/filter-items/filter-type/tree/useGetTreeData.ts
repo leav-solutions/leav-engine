@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLazyQuery} from '@apollo/client';
 import {useEffect, useState} from 'react';
-import {useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery} from '_ui/_gqlTypes';
-import {defaultPaginationPageSize} from '_ui/constants';
+import {type GetTreeContentQueryQuery, type GetTreeContentQueryQueryVariables} from '_ui/_gqlTypes';
+import {getTreeContentQuery} from '_ui/_queries/trees/getTreeContentQuery';
 
 export interface ITreeNode {
     title: string;
@@ -21,61 +22,28 @@ interface IUseGetTreeDataProps {
     libraryId: string;
 }
 
+const _toTreeNode = (
+    node: GetTreeContentQueryQuery['treeContent'][number] & {
+        children?: Array<GetTreeContentQueryQuery['treeContent'][number]>;
+    },
+): ITreeNode => ({
+    title: node.record.whoAmI.label ?? node.record.whoAmI.id,
+    id: node.id,
+    key: node.id,
+    children: (node.children ?? []).map(_toTreeNode),
+    accessRecordByDefaultPermission: node.accessRecordByDefaultPermission ?? undefined,
+    libraryId: node.record.whoAmI.library.id,
+    recordId: node.record.id,
+});
+
 export const useGetTreeData = ({treeId, attributeId, libraryId}: IUseGetTreeDataProps) => {
-    const [loadTreeContent] = useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery();
+    const [loadTreeContent] = useLazyQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(
+        getTreeContentQuery(),
+    );
+
     const [treeData, setTreeData] = useState<ITreeNode[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-
-    const _fetchChildrenPage = async (parentNodeKey: string | null, offset: number) => {
-        const {data} = await loadTreeContent({
-            variables: {
-                treeId,
-                node: parentNodeKey,
-                pagination: {offset, limit: defaultPaginationPageSize},
-                accessRecordByDefaultPermission: {
-                    attributeId,
-                    libraryId,
-                },
-            },
-        });
-
-        const {list, totalCount} = data?.treeNodeChildren ?? {list: [], totalCount: 0};
-
-        const nodes = await Promise.all(
-            list.map(async node => {
-                const children = node.childrenCount ? await _fetchAllChildren(node.id) : [];
-
-                return {
-                    title: node.record.whoAmI.label || node.record.whoAmI.id,
-                    id: node.id,
-                    key: node.id,
-                    children,
-                    accessRecordByDefaultPermission: node.accessRecordByDefaultPermission,
-                    libraryId: node.record.whoAmI.library.id,
-                    recordId: node.record.id,
-                };
-            }),
-        );
-
-        return {nodes, totalCount};
-    };
-
-    const _fetchAllChildren = async (
-        parentNodeKey: string | null,
-        offset = 0,
-        accumulated: ITreeNode[] = [],
-    ): Promise<ITreeNode[]> => {
-        const {nodes, totalCount} = await _fetchChildrenPage(parentNodeKey, offset);
-        const allNodes = [...accumulated, ...nodes];
-
-        const nextOffset = offset + defaultPaginationPageSize;
-        if (nextOffset < totalCount) {
-            return _fetchAllChildren(parentNodeKey, nextOffset, allNodes);
-        }
-
-        return allNodes;
-    };
 
     useEffect(() => {
         if (!treeId) {
@@ -88,8 +56,17 @@ export const useGetTreeData = ({treeId, attributeId, libraryId}: IUseGetTreeData
             setIsLoading(true);
             setError(null);
             try {
-                const children = await _fetchAllChildren(null);
-                setTreeData(children);
+                const {data} = await loadTreeContent({
+                    variables: {
+                        treeId,
+                        accessRecordByDefaultPermission: {
+                            attributeId,
+                            libraryId,
+                        },
+                    },
+                });
+
+                setTreeData((data?.treeContent ?? []).map(node => _toTreeNode(node)));
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('Failed to load tree'));
             } finally {
