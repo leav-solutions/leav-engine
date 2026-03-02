@@ -10882,12 +10882,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.10.13, @types/node@npm:^24.0.3":
-  version: 24.10.13
-  resolution: "@types/node@npm:24.10.13"
+"@types/node@npm:24.11.0":
+  version: 24.11.0
+  resolution: "@types/node@npm:24.11.0"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10/c779d14cf17758a9d603e0c0978c8045bd070e259617ec16f4ddac419ec11aac0e0cf2bb013dab008fdbd2f46c39f82397884662bbdfabeb19bef0079679ea48
+  checksum: 10/d2f4f898c6a0f14980e55c697904fb58681729fc46b4e264d5f64dc391b23da73c9b422cfffbca28c045e6e8eca72dab5f28ed633faa95398ef1528af5398382
   languageName: node
   linkType: hard
 
@@ -10909,6 +10909,15 @@ __metadata:
   version: 16.18.58
   resolution: "@types/node@npm:16.18.58"
   checksum: 10/57c5618eb3c8ac0e14adf665811980f4780d2b7bed6f830438d199147279949e1395fd9019b77346935257a9700c2afff60d357f67d373a4f8dcff4319d769ab
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^24.0.3":
+  version: 24.10.13
+  resolution: "@types/node@npm:24.10.13"
+  dependencies:
+    undici-types: "npm:~7.16.0"
+  checksum: 10/c779d14cf17758a9d603e0c0978c8045bd070e259617ec16f4ddac419ec11aac0e0cf2bb013dab008fdbd2f46c39f82397884662bbdfabeb19bef0079679ea48
   languageName: node
   linkType: hard
 
@@ -11808,7 +11817,7 @@ __metadata:
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
     "@types/lodash": "npm:4.17.23"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     "@types/node-fetch": "npm:2.1.4"
     "@types/react": "npm:16.14.69"
     "@types/react-dom": "npm:16.9.25"
@@ -12290,7 +12299,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@types/styled-components": "npm:5.1.36"
@@ -12773,7 +12782,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:24.9.1"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
@@ -14655,7 +14664,7 @@ __metadata:
     "@types/jsonwebtoken": "npm:9.0.10"
     "@types/lodash": "npm:4.17.23"
     "@types/ms": "npm:0.7.34"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     "@types/nodemailer": "npm:6.4.23"
     "@types/ws": "npm:8.5.3"
     add-filename-increment: "npm:1.0.0"
@@ -15084,7 +15093,7 @@ __metadata:
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:27.5.2"
     "@types/lodash": "npm:4.17.23"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     "@types/object-path": "npm:0.11.4"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
@@ -22232,7 +22241,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.4"
@@ -23966,7 +23975,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.4"
@@ -24131,7 +24140,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     amqplib: "npm:0.10.9"
     fast-xml-parser: "npm:5.2.5"
     jest: "npm:29.7.0"
@@ -27871,7 +27880,7 @@ __metadata:
     "@types/amqplib": "npm:0.10.8"
     "@types/jest": "npm:29.5.14"
     "@types/joi": "npm:14.3.4"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.11.0"
     amqplib: "npm:0.10.9"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
