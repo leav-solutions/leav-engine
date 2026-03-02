@@ -669,7 +669,8 @@
         "previews_generation_failed_only": "Only if previous generation failed",
         "previews_generation_success": "Previews generation started",
         "previews_generation_nothing_to_do": "No preview to generate",
-        "previews_generation_select_all": "All versions"
+        "previews_generation_select_all": "All versions",
+        "conditional_processing": "Conditional processing"
     },
     "menu-selection": {
         "nb-selected": "Selection {{nbSelected}} / {{total}}",
@@ -782,7 +783,9 @@
                 "select_page_other": "Select visible items ({{count, number}})",
                 "select_all": "Select all items ({{count, number}})",
                 "deselect_all": "Deselect all items"
-            }
+            },
+            "generate_previews": "Generate previews",
+            "generate_previews_error_description": "An error occurred while generating previews. Please contact an administrator."
         },
         "export_profile_modal": {
             "title": "Export",
@@ -794,6 +797,10 @@
             "empty_columns": "(empty column)",
             "export_button": "Export",
             "error_title": "Export profile error"
+        },
+        "generate_previews_modal": {
+            "title": "Generate previews",
+            "generate_button": "Generate"
         },
         "add-existing-item": "Add existing item",
         "activate_item_one": "Activate this item?",

@@ -22,7 +22,7 @@
         "@apollo/link-error": "2.0.0-beta.3",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
-        "aristid-ds": "15.0.0-6a7cc18",
+        "aristid-ds": "15.2.0-efdeb96",
         "cross-fetch": "3.2.0",
         "graphql": "16.12.0",
         "graphql-ws": "5.12.0",

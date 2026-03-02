@@ -669,7 +669,8 @@
         "previews_generation_failed_only": "Seulement si la précédente génération a échoué",
         "previews_generation_success": "La génération des aperçus a bien été lancée",
         "previews_generation_nothing_to_do": "Aucun aperçu à générer",
-        "previews_generation_select_all": "Toutes les versions"
+        "previews_generation_select_all": "Toutes les versions",
+        "conditional_processing": "Traitement conditionnel"
     },
     "menu-selection": {
         "nb-selected": "Sélection {{nbSelected}} / {{total}}",
@@ -782,7 +783,9 @@
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",
                 "select_all": "Tout sélectionner ({{count, number}})",
                 "deselect_all": "Tout désélectionner"
-            }
+            },
+            "generate_previews": "Générer les aperçus",
+            "generate_previews_error_description": "Une erreur est survenue lors de la génération des aperçus. Veuillez contacter un administrateur."
         },
         "export_profile_modal": {
             "title": "Export",
@@ -794,6 +797,10 @@
             "empty_columns": "(colonne vide)",
             "export_button": "Exporter",
             "error_title": "Erreur de profil d'export"
+        },
+        "generate_previews_modal": {
+            "title": "Générer les aperçus",
+            "generate_button": "Générer"
         },
         "add-existing-item": "Ajouter un élément existant",
         "activate_item_one": "Activer cet élément ?",

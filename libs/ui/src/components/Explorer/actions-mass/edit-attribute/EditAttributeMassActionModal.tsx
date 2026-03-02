@@ -51,13 +51,14 @@ export const EditAttributeMassActionModal: FunctionComponent<{
             }
             footer={
                 <>
-                    <KitButton icon={<FontAwesomeIcon icon={faXmark} />} onClick={onCancelButtonClick}>
+                    <KitButton size="m" icon={<FontAwesomeIcon icon={faXmark} />} onClick={onCancelButtonClick}>
                         {t('global.cancel')}
                     </KitButton>
                     <KitButton
                         type="primary"
                         disabled={disableOkButton}
                         onClick={onOkButtonClick}
+                        size="m"
                         icon={<FontAwesomeIcon icon={faCheck} />}
                     >
                         {t('global.edit')}
