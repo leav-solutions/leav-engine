@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "1.9.0-3",
+    "version": "1.9.0-6",
     "description": "",
     "scripts": {
         "start": "node .",
