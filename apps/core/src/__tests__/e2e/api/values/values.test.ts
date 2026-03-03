@@ -5,8 +5,7 @@ import {AttributeCondition} from '../../../../_types/record';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {ActionsListEvents} from '../../../../_types/actionsList';
 import {
-    e2eGuestUser,
-    getSdkWithUser,
+    guestUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlGetValue,
@@ -19,7 +18,6 @@ import {
 import {type ILinkValue} from '_types/value';
 
 describe('Values', () => {
-    const guestUserSdk = getSdkWithUser(e2eGuestUser());
     const getRecord = async (libraryId: string, recordId: string) =>
         (
             await guestUserSdk.GetRecord({
@@ -334,6 +332,18 @@ describe('Values', () => {
         expect(res.data.data.saveValue[0].payload.record.id).toBe(treeElemId);
     });
 
+    test('Should update modified_at property of record on save tree value', async () => {
+        await gqlSaveValueBis(attrTreeName, testLibName, recordId, {payload: nodeTreeElem});
+        const beforeRecord = await getRecord(testLibName, recordId);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // wait 1,5s to be sure modified_at would be different if updated
+        await gqlSaveValueBis(attrTreeName, testLibName, recordId, {payload: nodeTreeElem2});
+        const afterRecord = await getRecord(testLibName, recordId);
+
+        expect(beforeRecord.modified_at).toBeDefined();
+        expect(afterRecord.modified_at).toBeDefined();
+        expect(beforeRecord.modified_at < afterRecord.modified_at).toBeTruthy();
+    });
+
     test('Should not update value on tree link attribute if payload is the same', async () => {
         await gqlSaveValueBis(attrTreeName, testLibName, recordId, {payload: nodeTreeElem});
         const beforeRecord = await getRecord(testLibName, recordId);
@@ -402,6 +412,18 @@ describe('Values', () => {
         expect(res.data.data.saveValue[0].id_value).toBeNull();
         expect(res.data.data.saveValue[0].attribute?.permissions.edit_value).toBeDefined();
         expect(res.data.data.saveValue[0].payload).toBe('TEST VAL');
+    });
+
+    test('Should update modified_at property of record on save simple value', async () => {
+        await gqlSaveValueBis(attrSimpleNameWithFormat, testLibName, recordId, {payload: 'TEST MODIFIED AT BEFORE'});
+        const beforeRecord = await getRecord(testLibName, recordId);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // wait 1,5s to be sure modified_at would be different if updated
+        await gqlSaveValueBis(attrSimpleNameWithFormat, testLibName, recordId, {payload: 'TEST MODIFIED AT AFTER'});
+        const afterRecord = await getRecord(testLibName, recordId);
+
+        expect(beforeRecord.modified_at).toBeDefined();
+        expect(afterRecord.modified_at).toBeDefined();
+        expect(beforeRecord.modified_at < afterRecord.modified_at).toBeTruthy();
     });
 
     test('Should not update value on simple attribute if payload is the same', async () => {
@@ -556,6 +578,18 @@ describe('Values', () => {
         expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
     });
 
+    test('Should update modified_at property of record on save simple link value', async () => {
+        await gqlSaveValueBis(attrSimpleLinkName, testLibName, recordId, {payload: recordIdLinked});
+        const beforeRecord = await getRecord(testLibName, recordId);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // wait 1,5s to be sure modified_at would be different if updated
+        await gqlSaveValueBis(attrSimpleLinkName, testLibName, recordId, {payload: recordIdLinked2});
+        const afterRecord = await getRecord(testLibName, recordId);
+
+        expect(beforeRecord.modified_at).toBeDefined();
+        expect(afterRecord.modified_at).toBeDefined();
+        expect(beforeRecord.modified_at < afterRecord.modified_at).toBeTruthy();
+    });
+
     test('Should not update value on simple link attribute if payload is the same', async () => {
         await gqlSaveValueBis(attrSimpleLinkName, testLibName, recordId, {payload: recordIdLinked});
         const beforeRecord = await getRecord(testLibName, recordId);
@@ -589,6 +623,18 @@ describe('Values', () => {
         expect(res.data.data.saveValue[0].payload).toBe('TEST VAL ADV');
 
         advValueId = res.data.data.saveValue[0].id_value;
+    });
+
+    test('Should update modified_at property of record on save advanced value', async () => {
+        await gqlSaveValueBis(attrAdvancedName, testLibName, recordId, {payload: 'TEST MODIFIED AT BEFORE'});
+        const beforeRecord = await getRecord(testLibName, recordId);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // wait 1,5s to be sure modified_at would be different if updated
+        await gqlSaveValueBis(attrAdvancedName, testLibName, recordId, {payload: 'TEST MODIFIED AT AFTER'});
+        const afterRecord = await getRecord(testLibName, recordId);
+
+        expect(beforeRecord.modified_at).toBeDefined();
+        expect(afterRecord.modified_at).toBeDefined();
+        expect(beforeRecord.modified_at < afterRecord.modified_at).toBeTruthy();
     });
 
     test('Should not update value on advanced attribute if payload is the same', async () => {
@@ -650,6 +696,18 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
         expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
+    });
+
+    test('Should update modified_at property of record on save advanced link value', async () => {
+        await gqlSaveValueBis(attrAdvancedLinkName, testLibName, recordId, {payload: recordIdLinked});
+        const beforeRecord = await getRecord(testLibName, recordId);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // wait 1,5s to be sure modified_at would be different if updated
+        await gqlSaveValueBis(attrAdvancedLinkName, testLibName, recordId, {payload: recordIdLinked2});
+        const afterRecord = await getRecord(testLibName, recordId);
+
+        expect(beforeRecord.modified_at).toBeDefined();
+        expect(afterRecord.modified_at).toBeDefined();
+        expect(beforeRecord.modified_at < afterRecord.modified_at).toBeTruthy();
     });
 
     test('Should not update value on advanced link attribute if payload is the same', async () => {

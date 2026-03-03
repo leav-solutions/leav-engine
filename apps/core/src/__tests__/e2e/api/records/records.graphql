@@ -1,8 +1,5 @@
 query GetRecord($libraryId: ID!, $recordId: String!) {
-    records(
-        library: $libraryId
-        filters: [{ field: "id", condition: EQUAL, value: $recordId }]
-    ) {
+    records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
         list {
             id
             modified_at
