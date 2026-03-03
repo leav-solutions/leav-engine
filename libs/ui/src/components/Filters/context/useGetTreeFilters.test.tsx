@@ -308,9 +308,7 @@ describe('useGetTreeFilters', () => {
                 },
             });
 
-            const {result} = renderHook(() =>
-                useGetTreeFilters({libraryId: mockLibraryId, skip: false}),
-            );
+            const {result} = renderHook(() => useGetTreeFilters({libraryId: mockLibraryId, skip: false}));
 
             await waitFor(() => {
                 expect(result.current.loading).toBe(false);
