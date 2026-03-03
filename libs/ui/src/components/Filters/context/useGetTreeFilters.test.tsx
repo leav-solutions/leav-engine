@@ -1,14 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLazyQuery} from '@apollo/client';
 import {renderHook, waitFor} from '@testing-library/react';
+import {useGetLibraryByIdQuery} from '_ui/_gqlTypes';
 import {useGetTreeFilters} from './useGetTreeFilters';
-import {useGetLibraryByIdQuery, useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery} from '_ui/_gqlTypes';
+
+jest.mock('@apollo/client', () => ({
+    ...jest.requireActual('@apollo/client'),
+    useLazyQuery: jest.fn(),
+}));
 
 jest.mock('_ui/_gqlTypes', () => ({
     ...jest.requireActual('_ui/_gqlTypes'),
     useGetLibraryByIdQuery: jest.fn(),
-    useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery: jest.fn(),
 }));
 
 describe('useGetTreeFilters', () => {
@@ -40,66 +45,63 @@ describe('useGetTreeFilters', () => {
 
     const mockTreeResponse1 = {
         data: {
-            treeNodeChildren: {
-                list: [
-                    {
-                        id: 'node1',
-                        childrenCount: 0,
-                        accessRecordByDefaultPermission: true,
-                        record: {
+            treeContent: [
+                {
+                    id: 'node1',
+                    childrenCount: 0,
+                    accessRecordByDefaultPermission: true,
+                    record: {
+                        id: 'record1',
+                        whoAmI: {
                             id: 'record1',
-                            whoAmI: {
-                                library: {id: 'lib1'},
-                                label: 'Record 1',
-                            },
+                            library: {id: 'lib1'},
+                            label: 'Record 1',
                         },
                     },
-                    {
-                        id: 'node2',
-                        childrenCount: 0,
-                        accessRecordByDefaultPermission: false,
-                        record: {
+                    children: [],
+                },
+                {
+                    id: 'node2',
+                    childrenCount: 0,
+                    accessRecordByDefaultPermission: false,
+                    record: {
+                        id: 'record2',
+                        whoAmI: {
                             id: 'record2',
-                            whoAmI: {
-                                library: {id: 'lib1'},
-                                label: 'Record 2',
-                            },
+                            library: {id: 'lib1'},
+                            label: 'Record 2',
                         },
                     },
-                ],
-                totalCount: 2,
-            },
+                    children: [],
+                },
+            ],
         },
     };
 
     const mockTreeResponse2 = {
         data: {
-            treeNodeChildren: {
-                list: [
-                    {
-                        id: 'node3',
-                        childrenCount: 0,
-                        accessRecordByDefaultPermission: true,
-                        record: {
+            treeContent: [
+                {
+                    id: 'node3',
+                    childrenCount: 0,
+                    accessRecordByDefaultPermission: true,
+                    record: {
+                        id: 'record3',
+                        whoAmI: {
                             id: 'record3',
-                            whoAmI: {
-                                library: {id: 'lib2'},
-                                label: 'Record 3',
-                            },
+                            library: {id: 'lib2'},
+                            label: 'Record 3',
                         },
                     },
-                ],
-                totalCount: 1,
-            },
+                    children: [],
+                },
+            ],
         },
     };
 
     beforeEach(() => {
         jest.clearAllMocks();
-        (useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery as jest.Mock).mockReturnValue([
-            mockLoadTreeContent,
-            {},
-        ]);
+        (useLazyQuery as jest.Mock).mockReturnValue([mockLoadTreeContent, {}]);
     });
 
     describe('Initial state', () => {
@@ -195,8 +197,6 @@ describe('useGetTreeFilters', () => {
             expect(mockLoadTreeContent).toHaveBeenCalledWith({
                 variables: {
                     treeId: 'tree1',
-                    node: null,
-                    pagination: {offset: 0, limit: 20},
                     accessRecordByDefaultPermission: {
                         attributeId: 'attribute1',
                         libraryId: mockLibraryId,
@@ -206,8 +206,6 @@ describe('useGetTreeFilters', () => {
             expect(mockLoadTreeContent).toHaveBeenCalledWith({
                 variables: {
                     treeId: 'tree2',
-                    node: null,
-                    pagination: {offset: 0, limit: 20},
                     accessRecordByDefaultPermission: {
                         attributeId: 'attribute2',
                         libraryId: mockLibraryId,
@@ -243,7 +241,7 @@ describe('useGetTreeFilters', () => {
 
             mockLoadTreeContent
                 .mockResolvedValueOnce(mockTreeResponse1)
-                .mockResolvedValueOnce({data: {treeNodeChildren: {list: [], totalCount: 0}}});
+                .mockResolvedValueOnce({data: {treeContent: []}});
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -258,6 +256,68 @@ describe('useGetTreeFilters', () => {
 
             expect(result.current.data.attribute1).toHaveLength(1);
             expect(result.current.data.attribute1[0].nodeId).toBe('node1');
+        });
+
+        test('should traverse nested children and flatten accessible nodes', async () => {
+            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+                data: {
+                    libraries: {
+                        list: [
+                            {
+                                id: mockLibraryId,
+                                permissions_conf: {
+                                    permissionTreeAttributes: [{id: 'attribute1'}],
+                                },
+                                attributes: [{id: 'attribute1', linked_tree: {id: 'tree1'}}],
+                            },
+                        ],
+                    },
+                },
+                loading: false,
+            });
+
+            mockLoadTreeContent.mockResolvedValueOnce({
+                data: {
+                    treeContent: [
+                        {
+                            id: 'node1',
+                            accessRecordByDefaultPermission: true,
+                            record: {id: 'record1', whoAmI: {id: 'record1', library: {id: 'lib1'}, label: 'Root'}},
+                            children: [
+                                {
+                                    id: 'node2',
+                                    accessRecordByDefaultPermission: false,
+                                    record: {
+                                        id: 'record2',
+                                        whoAmI: {id: 'record2', library: {id: 'lib1'}, label: 'Child no access'},
+                                    },
+                                    children: [],
+                                },
+                                {
+                                    id: 'node3',
+                                    accessRecordByDefaultPermission: true,
+                                    record: {
+                                        id: 'record3',
+                                        whoAmI: {id: 'record3', library: {id: 'lib1'}, label: 'Child with access'},
+                                    },
+                                    children: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            });
+
+            const {result} = renderHook(() => useGetTreeFilters({libraryId: mockLibraryId, skip: false}));
+
+            await waitFor(() => {
+                expect(result.current.loading).toBe(false);
+            });
+
+            expect(result.current.data.attribute1).toEqual([
+                {nodeId: 'node1', libraryId: 'lib1', value: 'record1', label: 'Root'},
+                {nodeId: 'node3', libraryId: 'lib1', value: 'record3', label: 'Child with access'},
+            ]);
         });
 
         test('should handle empty tree attributes', async () => {
@@ -323,15 +383,15 @@ describe('useGetTreeFilters', () => {
             expect(result.current.data).toEqual({});
         });
 
-        test('should handle empty tree node list', async () => {
+        test('should handle empty tree content', async () => {
             (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
             });
 
             mockLoadTreeContent
-                .mockResolvedValueOnce({data: {treeNodeChildren: {list: [], totalCount: 0}}})
-                .mockResolvedValueOnce({data: {treeNodeChildren: {list: [], totalCount: 0}}});
+                .mockResolvedValueOnce({data: {treeContent: []}})
+                .mockResolvedValueOnce({data: {treeContent: []}});
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({

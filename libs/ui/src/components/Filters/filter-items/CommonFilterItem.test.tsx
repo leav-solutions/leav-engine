@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import * as apolloClient from '@apollo/client';
 import {render, screen, within, waitFor} from '_ui/_tests/testUtils';
 import {CommonFilterItem} from './CommonFilterItem';
 import * as gqlTypes from '_ui/_gqlTypes';
@@ -571,47 +572,43 @@ describe('CommonFilterItem', () => {
             );
 
             const mockResultFromChild = {
-                treeNodeChildren: {
-                    totalCount: 1,
-                    list: [
-                        {
+                treeContent: [
+                    {
+                        id: 'my_first_child',
+                        accessRecordByDefaultPermission: true,
+                        record: {
                             id: 'my_first_child',
-                            accessRecordByDefaultPermission: true,
-                            record: {
+                            whoAmI: {
                                 id: 'my_first_child',
-                                whoAmI: {
-                                    label: 'Emile',
-                                    library: {
-                                        id: 'tree_library',
-                                    },
+                                label: 'Emile',
+                                library: {
+                                    id: 'tree_library',
                                 },
                             },
                         },
-                        {
+                        children: [],
+                    },
+                    {
+                        id: 'my_second_child',
+                        accessRecordByDefaultPermission: true,
+                        record: {
                             id: 'my_second_child',
-                            accessRecordByDefaultPermission: true,
-                            record: {
+                            whoAmI: {
                                 id: 'my_second_child',
-                                whoAmI: {
-                                    label: 'Jules',
-                                    library: {
-                                        id: 'tree_library',
-                                    },
+                                label: 'Jules',
+                                library: {
+                                    id: 'tree_library',
                                 },
                             },
                         },
-                    ],
-                },
+                        children: [],
+                    },
+                ],
             };
 
-            const mockResult: Mockify<gqlTypes.TreeNodeChildrenQueryResult> = {
-                called: true,
-                loading: false,
-            };
-
-            jest.spyOn(gqlTypes, 'useGetTreeNodeChildrenWithAccessByDefaultPermissionQueryLazyQuery').mockReturnValue([
-                jest.fn().mockImplementation(() => ({data: mockResultFromChild})),
-                mockResult as gqlTypes.TreeNodeChildrenQueryResult,
+            jest.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
+                jest.fn().mockResolvedValue({data: mockResultFromChild}),
+                {} as ReturnType<typeof apolloClient.useLazyQuery>[1],
             ]);
 
             const filter: UIFilter = {
