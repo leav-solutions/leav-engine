@@ -150,6 +150,53 @@ export default function ({
         return ancestors.map(n => ({...n, treeId}));
     };
 
+    const _nodesDependentValuesPermissionFilter = async (
+        nodes: ITreeNode[],
+        action: AttributeDependentValuesPermissionsActions,
+        libraryId: string,
+        attributeId: string,
+        recordId: string,
+        ctx: IQueryInfos,
+    ): Promise<ITreeNode[]> => {
+        const permissionsFilter = await Promise.all(
+            nodes.map(node =>
+                attributeDependentValuesPermissionDomain.getAttributeDependentValuesPermission({
+                    action,
+                    attributeId,
+                    recordLibrary: libraryId,
+                    recordId,
+                    valueNodeId: node.id,
+                    ctx,
+                }),
+            ),
+        );
+
+        return nodes.filter((_treeNode, i) => permissionsFilter[i]);
+    };
+
+    const _nodesAsRecordValuePermissionFilter = async (
+        nodes: ITreeNode[],
+        action: RecordPermissionsActions,
+        libraryId: string,
+        attributeId: string,
+        ctx: IQueryInfos,
+    ): Promise<ITreeNode[]> => {
+        const permissionsFilter = await Promise.all(
+            nodes.map(node =>
+                recordPermissionDomain.evaluateTreeValueRecordPermission({
+                    action,
+                    libraryId,
+                    attributeId,
+                    nodeId: node.id,
+                    ctx,
+                }),
+            ),
+        );
+
+        // Apply permissions filter to nodes list
+        return nodes.filter((_treeNode, i) => permissionsFilter[i]);
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -238,7 +285,8 @@ export default function ({
                         ancestors: [TreeNode!],
                         children: [TreeNode!],
                         linkedRecords(attribute: ID): [Record!],
-                        permissions: TreeNodePermissions!
+                        permissions: TreeNodePermissions!,
+                        accessRecordByDefaultPermission: Boolean
                     }
 
                     type TreeNodeLight {
@@ -334,7 +382,12 @@ export default function ({
                         # Retrieve tree content.
                         # If startAt is specified, it returns this element's children. Otherwise, it starts
                         # from tree root
-                        treeContent(treeId: ID!, startAt: ID): [TreeNode!]!
+                        treeContent(
+                            treeId: ID!, startAt: ID,
+                            childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput,
+                            accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput,
+                            dependentValuesPermissionFilter: DependentValuesPermissionFilterInput
+                         ): [TreeNode!]!
 
                         # Retrieve direct children of a node. If node is not specified, retrieves root children
                         # childrenAsRecordValuePermissionFilter is used to filter children by record permission if setted as value of a tree attribute
@@ -398,7 +451,30 @@ export default function ({
                         },
                         async treeContent(
                             _,
-                            {treeId, startAt}: {treeId: string; startAt: string},
+                            {
+                                treeId,
+                                startAt,
+                                childrenAsRecordValuePermissionFilter,
+                                accessRecordByDefaultPermission,
+                                dependentValuesPermissionFilter,
+                            }: {
+                                treeId: string;
+                                startAt: string;
+                                childrenAsRecordValuePermissionFilter?: {
+                                    libraryId: string;
+                                    attributeId: string;
+                                    action: RecordPermissionsActions;
+                                };
+                                accessRecordByDefaultPermission?: {
+                                    libraryId: string;
+                                    attributeId: string;
+                                };
+                                dependentValuesPermissionFilter?: {
+                                    libraryId: string;
+                                    recordId: string;
+                                    attributeId: string;
+                                };
+                            },
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo,
                         ): Promise<ITreeNode[]> {
@@ -408,18 +484,49 @@ export default function ({
                             const hasChildrenCount = !!fields.find(f => f.name === 'childrenCount');
                             const depth = _getChildrenDepth(fields, 1);
 
-                            return (
-                                await treeDomain.getTreeContent({
-                                    treeId,
-                                    startingNode: startAt,
-                                    depth,
-                                    childrenCount: hasChildrenCount,
-                                    ctx,
-                                })
-                            ).map(node => ({
-                                ...node,
+                            const treeContent = await treeDomain.getTreeContent({
                                 treeId,
-                            }));
+                                startingNode: startAt,
+                                depth,
+                                childrenCount: hasChildrenCount,
+                                ctx,
+                            });
+
+                            const _iteratesOnNodesAndChildren = async (nodes: ITreeNode[]): Promise<ITreeNode[]> => {
+                                if (childrenAsRecordValuePermissionFilter) {
+                                    nodes = await _nodesAsRecordValuePermissionFilter(
+                                        nodes,
+                                        childrenAsRecordValuePermissionFilter.action,
+                                        childrenAsRecordValuePermissionFilter.libraryId,
+                                        childrenAsRecordValuePermissionFilter.attributeId,
+                                        ctx,
+                                    );
+                                }
+
+                                if (dependentValuesPermissionFilter) {
+                                    nodes = await _nodesDependentValuesPermissionFilter(
+                                        nodes,
+                                        AttributeDependentValuesPermissionsActions.SET_VALUE,
+                                        dependentValuesPermissionFilter.libraryId,
+                                        dependentValuesPermissionFilter.attributeId,
+                                        dependentValuesPermissionFilter.recordId,
+                                        ctx,
+                                    );
+                                }
+
+                                return Promise.all(
+                                    nodes.map(async node => ({
+                                        ...node,
+                                        treeId, // for resolvers
+                                        accessRecordByDefaultPermission, // for accessRecordByDefaultPermission resolver
+                                        ...(node.children?.length && {
+                                            children: await _iteratesOnNodesAndChildren(node.children),
+                                        }),
+                                    })),
+                                );
+                            };
+
+                            return _iteratesOnNodesAndChildren(treeContent);
                         },
                         async treeNodeChildren(
                             _,
@@ -470,39 +577,26 @@ export default function ({
                             });
 
                             if (childrenAsRecordValuePermissionFilter) {
-                                const permissionsFilter = await Promise.all(
-                                    children.list.map(treeNode =>
-                                        recordPermissionDomain.evaluateTreeValueRecordPermission({
-                                            action: childrenAsRecordValuePermissionFilter.action,
-                                            libraryId: childrenAsRecordValuePermissionFilter.libraryId,
-                                            attributeId: childrenAsRecordValuePermissionFilter.attributeId,
-                                            nodeId: treeNode.id,
-                                            ctx,
-                                        }),
-                                    ),
+                                children.list = await _nodesAsRecordValuePermissionFilter(
+                                    children.list,
+                                    childrenAsRecordValuePermissionFilter.action,
+                                    childrenAsRecordValuePermissionFilter.libraryId,
+                                    childrenAsRecordValuePermissionFilter.attributeId,
+                                    ctx,
                                 );
-
-                                // Apply permissions filter to children list
-                                children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
                                 // FIXME : should be the total totalCount regarding permissions https://aristid.atlassian.net/browse/LEAVC-323
                                 // children.totalCount = children.list.length;
                             }
 
                             if (dependentValuesPermissionFilter) {
-                                const permissionsFilter = await Promise.all(
-                                    children.list.map(treeNode =>
-                                        attributeDependentValuesPermissionDomain.getAttributeDependentValuesPermission({
-                                            action: AttributeDependentValuesPermissionsActions.SET_VALUE,
-                                            attributeId: dependentValuesPermissionFilter.attributeId,
-                                            recordLibrary: dependentValuesPermissionFilter.libraryId,
-                                            recordId: dependentValuesPermissionFilter.recordId,
-                                            valueNodeId: treeNode.id,
-                                            ctx,
-                                        }),
-                                    ),
+                                children.list = await _nodesDependentValuesPermissionFilter(
+                                    children.list,
+                                    AttributeDependentValuesPermissionsActions.SET_VALUE,
+                                    dependentValuesPermissionFilter.libraryId,
+                                    dependentValuesPermissionFilter.attributeId,
+                                    dependentValuesPermissionFilter.recordId,
+                                    ctx,
                                 );
-
-                                children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
                             }
 
                             return {
@@ -749,6 +843,26 @@ export default function ({
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
                         },
+                        accessRecordByDefaultPermission: (
+                            treeNode: ITreeNode & {
+                                treeId?: string;
+                                accessRecordByDefaultPermission?: {
+                                    libraryId: string;
+                                    attributeId: string;
+                                };
+                            },
+                            _,
+                            ctx: IQueryInfos,
+                        ): Promise<boolean | null> =>
+                            treeNode.accessRecordByDefaultPermission !== undefined
+                                ? recordPermissionDomain.evaluateTreeValueRecordPermission({
+                                      action: RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
+                                      libraryId: treeNode.accessRecordByDefaultPermission.libraryId,
+                                      attributeId: treeNode.accessRecordByDefaultPermission.attributeId,
+                                      nodeId: treeNode.id,
+                                      ctx,
+                                  })
+                                : null,
                     },
                     TreeNodeLight: {
                         permissions: (
@@ -788,14 +902,16 @@ export default function ({
                             },
                             _,
                             ctx: IQueryInfos,
-                        ): Promise<boolean> =>
-                            recordPermissionDomain.evaluateTreeValueRecordPermission({
-                                action: RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
-                                libraryId: treeNode.accessRecordByDefaultPermission.libraryId,
-                                attributeId: treeNode.accessRecordByDefaultPermission.attributeId,
-                                nodeId: treeNode.id,
-                                ctx,
-                            }),
+                        ): Promise<boolean | null> =>
+                            treeNode.accessRecordByDefaultPermission !== undefined
+                                ? recordPermissionDomain.evaluateTreeValueRecordPermission({
+                                      action: RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
+                                      libraryId: treeNode.accessRecordByDefaultPermission.libraryId,
+                                      attributeId: treeNode.accessRecordByDefaultPermission.attributeId,
+                                      nodeId: treeNode.id,
+                                      ctx,
+                                  })
+                                : null,
                     },
                 },
             };
