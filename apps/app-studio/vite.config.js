@@ -10,19 +10,42 @@ import {browserslistToTargets} from 'lightningcss';
 import browserslist from 'browserslist';
 import packageJson from './package.json';
 
+export const devIndexApplyApplicationBaseUrl = () => ({
+    name: 'dev-index-apply-application-base-url',
+    enforce: 'pre',
+    apply: 'serve', // uniquement en dev
+    transformIndexHtml(html, ctx) {
+        const urlObj = new URL(ctx.originalUrl, 'http://localhost');
+        const endpoint = urlObj.searchParams.get('endpoint');
+        return endpoint
+            ? html.replace(/{{APPLICATION_BASE_URL}}/g, process.env.APPLICATION_BASE_URL || `/app/${endpoint}`)
+            : html;
+    },
+});
+
+const _commonConfig = commonConfig(__dirname);
+
 export default () =>
     defineConfig({
-        ...commonConfig(__dirname),
+        ..._commonConfig,
         plugins: [
             dynamicBase({
                 transformIndexHtml: true,
             }),
+            devIndexApplyApplicationBaseUrl(), // should be before devIndexHtmlReplaceVarsPlugin to ensure APPLICATION_BASE_URL is correctly replaced in index.html
             devIndexHtmlReplaceVarsPlugin(),
         ],
         css: {
             transformer: 'lightningcss',
             lightningcss: {
                 targets: browserslistToTargets(browserslist(packageJson.browserslist.production)),
+            },
+        },
+        server: {
+            ..._commonConfig.server,
+            proxy: {
+                '/app/explorer-studio': `http://localhost:${_commonConfig.server.port}/app/app-studio?endpoint=explorer-studio`,
+                '/app/home': `http://localhost:${_commonConfig.server.port}/app/app-studio?endpoint=home`,
             },
         },
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/app-studio',

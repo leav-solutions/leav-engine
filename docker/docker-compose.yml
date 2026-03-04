@@ -390,7 +390,7 @@ services:
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/app-studio`)) || Host(`app-studio.leav.localhost`)
+      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) && (PathPrefix(`/app/app-studio`) || PathPrefix(`/app/explorer-studio`) || PathPrefix(`/app/home`))) || Host(`app-studio.leav.localhost`)
       - traefik.http.services.app-studio.loadbalancer.server.port=3000
       - traefik.http.routers.app-studio.entrypoints=web
     environment:
