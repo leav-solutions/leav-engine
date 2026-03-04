@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ApolloError} from '@apollo/client';
 import {objectToNameValueArray, type Override} from '@leav/utils';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {type IValueVersion} from '_ui/types/values';
 import {
     type RecordFormElementFragment,
@@ -102,7 +102,7 @@ const useGetRecordForm = ({
               }))
         : null;
 
-    const {loading, error, refetch} = useRecordFormQuery({
+    const {loading, error, data, refetch} = useRecordFormQuery({
         fetchPolicy: 'no-cache',
         notifyOnNetworkStatusChange: true,
         variables: {
@@ -111,31 +111,35 @@ const useGetRecordForm = ({
             formId,
             version: requestVersion,
         },
-        onCompleted: data => {
-            // Transform result to format values version to a more convenient object
-            const recordFormFormatted: IRecordForm = {
-                ...data.recordForm,
-                elements: data.recordForm.elements.map(
-                    (element): RecordFormElement => ({
-                        ...element,
-                        values: (element?.values ?? []).map(value => ({
-                            ...value,
-                            version: arrayValueVersionToObject(value.version ?? []),
-                            metadata: (value.metadata ?? []).map(metadata => ({
-                                ...metadata,
-                                value: {
-                                    ...metadata.value,
-                                    version: arrayValueVersionToObject(metadata.value?.version ?? []),
-                                },
-                            })),
-                        })),
-                    }),
-                ),
-            };
-
-            setRecordForm(recordFormFormatted);
-        },
     });
+
+    useEffect(() => {
+        if (!data?.recordForm) {
+            return;
+        }
+
+        const recordFormFormatted: IRecordForm = {
+            ...data.recordForm,
+            elements: data.recordForm.elements.map(
+                (element): RecordFormElement => ({
+                    ...element,
+                    values: (element?.values ?? []).map(value => ({
+                        ...value,
+                        version: arrayValueVersionToObject(value.version ?? []),
+                        metadata: (value.metadata ?? []).map(metadata => ({
+                            ...metadata,
+                            value: {
+                                ...metadata.value,
+                                version: arrayValueVersionToObject(metadata.value?.version ?? []),
+                            },
+                        })),
+                    })),
+                }),
+            ),
+        };
+
+        setRecordForm(recordFormFormatted);
+    }, [data]);
 
     const refetchRecordForm = () =>
         refetch({
