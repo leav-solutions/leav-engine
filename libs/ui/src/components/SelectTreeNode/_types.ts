@@ -7,7 +7,6 @@ import {type ITreeNodeWithRecord} from '_ui/types';
 
 export interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;
-    paginationOffset: number;
     children: ITreeMapElement[];
     parents?: string[];
     isShowMore?: boolean;
