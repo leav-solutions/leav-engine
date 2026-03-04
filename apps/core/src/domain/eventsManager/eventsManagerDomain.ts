@@ -15,7 +15,7 @@ import {type IDbPayloadInternal} from '_types/events';
 import * as crypto from 'node:crypto';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent<DBPayloadAction extends EventAction>(
+    sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
         payload: IDbPayloadInternal<DBPayloadAction>,
         ctx: IQueryInfos,
     ): Promise<void>;
@@ -135,7 +135,7 @@ export default function ({
 
             await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
         },
-        sendDatabaseEvent<DBPayloadAction extends EventAction>(
+        sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
             payload: IDbPayloadInternal<DBPayloadAction>,
             ctx: IQueryInfos,
         ) {

@@ -22,7 +22,7 @@ interface IDeps {
     'fakeplugin.domain': IFakeDomain;
 }
 
-enum FakePluginActions {
+export enum FakePluginActions {
     FAKE_PLUGIN_ACTION = 'fakeplugin_FAKE_PLUGIN_ACTION',
     FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2',
 }
@@ -120,7 +120,7 @@ export default function ({
                                     func: {
                                         path: 'fakeplugin.domain',
                                         name: 'execWorker',
-                                        args: {fromTask: taskName},
+                                        args: {ctx, fromTask: taskName},
                                     },
                                     role: {
                                         type: FakePluginTaskType.FAKE_TYPE,
