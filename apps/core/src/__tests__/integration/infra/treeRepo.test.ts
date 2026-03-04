@@ -190,6 +190,80 @@ describe('treeRepo', () => {
                     );
                 });
 
+                it('sort with moveElement should should return elements in the correct order', async () => {
+                    await treeRepo.moveElement({
+                        treeId,
+                        nodeId: element1.id,
+                        parentTo: null,
+                        order: 0,
+                        ctx,
+                    });
+                    await treeRepo.moveElement({
+                        treeId,
+                        nodeId: element2.id,
+                        parentTo: null,
+                        order: 1,
+                        ctx,
+                    });
+
+                    const elements = await treeRepo.getTreeContent({
+                        treeId,
+                        ctx,
+                    });
+
+                    expect(elements).toEqual([
+                        {
+                            id: element1.id,
+                            order: 0,
+                            record: record1,
+                            children: [],
+                        },
+                        {
+                            id: element2.id,
+                            order: 1,
+                            record: record2,
+                            children: [],
+                        },
+                    ]);
+                });
+
+                it('reverse sort with moveElement should should return elements in the correct order', async () => {
+                    await treeRepo.moveElement({
+                        treeId,
+                        nodeId: element1.id,
+                        parentTo: null,
+                        order: 1,
+                        ctx,
+                    });
+                    await treeRepo.moveElement({
+                        treeId,
+                        nodeId: element2.id,
+                        parentTo: null,
+                        order: 0,
+                        ctx,
+                    });
+
+                    const elements = await treeRepo.getTreeContent({
+                        treeId,
+                        ctx,
+                    });
+
+                    expect(elements).toEqual([
+                        {
+                            id: element2.id,
+                            order: 0,
+                            record: record2,
+                            children: [],
+                        },
+                        {
+                            id: element1.id,
+                            order: 1,
+                            record: record1,
+                            children: [],
+                        },
+                    ]);
+                });
+
                 it('getRecordByNodeId should return the record for a node id', async () => {
                     const recordByNodeId = await treeRepo.getRecordByNodeId({
                         treeId,
