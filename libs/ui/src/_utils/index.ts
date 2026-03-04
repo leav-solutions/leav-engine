@@ -5,12 +5,12 @@ import {gql} from '@apollo/client';
 import {type IDateRangeValue, isTypeLink, objectToNameValueArray, omit, type WithTypename} from '@leav/utils';
 import {type TFunction} from 'i18next';
 import {type SyntheticEvent} from 'react';
-import {defaultLinkAttributeFilterFormat} from '_ui/components/LibraryItemsList/constants';
 import {PreviewSize} from '_ui/constants';
 import {type IAttribute} from '_ui/types/search';
 import {type IValueVersion} from '_ui/types/values';
 import {type IView} from '_ui/types/views';
 import {
+    AttributeFormat,
     AttributeType,
     type PermissionsActions,
     type RecordFilterInput,
@@ -160,7 +160,7 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
                 attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === splitKey[1],
             );
 
-            return {...linkedAttribute, parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat}};
+            return {...linkedAttribute, parentAttribute: {...rootAttribute, format: AttributeFormat.text}};
         }
 
         return rootAttribute;
@@ -171,7 +171,7 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
 
         if (!libraryId && !linkedTreeAttribute) {
             // Only root attribute => search on tree
-            return {...rootAttribute, format: defaultLinkAttributeFilterFormat};
+            return {...rootAttribute, format: AttributeFormat.text};
         } else if (libraryId && !linkedTreeAttribute) {
             return rootAttribute;
         }

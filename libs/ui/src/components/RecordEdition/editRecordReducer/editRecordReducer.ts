@@ -12,7 +12,7 @@ import {
     type RecordFormElementsValueStandardValue,
     type RecordFormElementsValueTreeValue,
 } from '_ui/hooks/useGetRecordForm';
-import {TypeGuards} from '_ui/components/LibraryItemsList/LibraryItemsListTable/Cell/typeGuards';
+import {isRecordFormElementsValueLinkValue, isRecordFormElementsValuesTreeValue} from '_ui/_utils/typeguards';
 
 export interface IRecordPropertyWithAttribute {
     attribute: RecordFormAttributeFragment;
@@ -175,18 +175,20 @@ const editRecordReducer = (
                     : state.sidebarDefaultHidden
                       ? EditRecordSidebarContentTypeMap.NONE
                       : EditRecordSidebarContentTypeMap.SUMMARY;
+
+            const attribute = action.attribute ?? state.activeAttribute?.attribute ?? null;
             return {
                 ...state,
                 activeAttribute: {
-                    attribute: action.attribute ?? state.activeAttribute?.attribute ?? null,
+                    attribute,
                     globalValues: action.values
                         ?.filter(value => !value.isCalculated && !value.isInherited)
                         .map(value => {
-                            if (TypeGuards.isRecordFormElementsValuesLinkValue(value)) {
+                            if (isRecordFormElementsValueLinkValue(value, attribute)) {
                                 return value.linkValue.whoAmI.label ?? value.linkValue.whoAmI.id;
                             }
 
-                            if (TypeGuards.isRecordFormElementsValuesTreeValue(value)) {
+                            if (isRecordFormElementsValuesTreeValue(value, attribute)) {
                                 return value.treeValue.record.whoAmI.label ?? value.treeValue.record.whoAmI.id;
                             }
 
@@ -196,14 +198,14 @@ const editRecordReducer = (
                         action.values
                             ?.filter(value => value.isCalculated || value.isInherited)
                             .map(calculatedOrInheritedValue => {
-                                if (TypeGuards.isRecordFormElementsValuesLinkValue(calculatedOrInheritedValue)) {
+                                if (isRecordFormElementsValueLinkValue(calculatedOrInheritedValue, attribute)) {
                                     return (
                                         calculatedOrInheritedValue.linkValue.whoAmI.label ??
                                         calculatedOrInheritedValue.linkValue.whoAmI.id
                                     );
                                 }
 
-                                if (TypeGuards.isRecordFormElementsValuesTreeValue(calculatedOrInheritedValue)) {
+                                if (isRecordFormElementsValuesTreeValue(calculatedOrInheritedValue, attribute)) {
                                     return (
                                         calculatedOrInheritedValue.treeValue.record.whoAmI.label ??
                                         calculatedOrInheritedValue.treeValue.record.whoAmI.id

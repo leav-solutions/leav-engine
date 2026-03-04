@@ -2,10 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export * from './AttributePicker';
-export * from './AttributesSelectionList';
 export * from './BasicButton';
 export * from './CreateDirectory';
-export * from './DeactivateRecordsModal';
 export * from './Dimmer';
 export * from './EditApplication';
 export * from './EditAttributeModal';
@@ -23,7 +21,6 @@ export * from './FloatingMenu';
 export * from './ImageLoading';
 export * from './ImageMissing';
 export * from './ImportModal';
-export * from './LibraryItemsList';
 export * from './LibraryPicker';
 export * from './List';
 export * from './Loading';

@@ -86,7 +86,7 @@ describe('Sidebar', () => {
             expect(screen.getByRole('menu')).toBeInTheDocument();
         });
 
-        expect(screen.getByRole('menuitem', {name: /library/})).toBeInTheDocument();
+        expect(screen.getByRole('menuitem', {name: /explorer/})).toBeInTheDocument();
         expect(screen.getByRole('menuitem', {name: /tree/})).toBeInTheDocument();
     });
 });

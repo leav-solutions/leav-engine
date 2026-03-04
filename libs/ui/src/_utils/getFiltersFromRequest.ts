@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {isTypeLink} from '@leav/utils';
-import {defaultLinkAttributeFilterFormat} from '_ui/components/LibraryItemsList/constants';
 import {
     AttributeConditionFilter,
     FilterType,
@@ -14,7 +13,7 @@ import {
     type IFilterTree,
     TreeConditionFilter,
 } from '_ui/types/search';
-import {AttributeType, RecordFilterCondition, type RecordFilterInput} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition, type RecordFilterInput} from '_ui/_gqlTypes';
 
 const _isConditionWithNoValue = (condition: RecordFilterCondition): boolean =>
     condition === RecordFilterCondition.IS_EMPTY ||
@@ -72,7 +71,7 @@ export const getFiltersFromRequest = (
 
                         (filter as IFilterAttribute).attribute = {
                             ...linkedAttribute,
-                            parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat},
+                            parentAttribute: {...rootAttribute, format: AttributeFormat.text},
                         };
                     } else {
                         (filter as IFilterAttribute).attribute = rootAttribute;
@@ -86,14 +85,14 @@ export const getFiltersFromRequest = (
                         // Only root attribute => search on tree
                         (filter as IFilterAttribute).attribute = {
                             ...rootAttribute,
-                            format: defaultLinkAttributeFilterFormat,
+                            format: AttributeFormat.text,
                         };
                     } else if (libraryId && !linkedTreeAttribute) {
                         // Search on tree library
                         filter.type = FilterType.LIBRARY;
                         (filter as IFilterLibrary).parentAttribute = {
                             ...rootAttribute,
-                            format: defaultLinkAttributeFilterFormat,
+                            format: AttributeFormat.text,
                         };
                         (filter as IFilterLibrary).library = {
                             id: libraryId,
@@ -118,7 +117,7 @@ export const getFiltersFromRequest = (
                                           .library.label
                                     : null,
                             },
-                            parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat},
+                            parentAttribute: {...rootAttribute, format: AttributeFormat.text},
                         };
                     }
                 }

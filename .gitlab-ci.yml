@@ -239,11 +239,11 @@ libs/ui-unit-tests/explorer:
         - *new_lib_installed_changes
         - libs/ui/**/*
 
-libs/ui-unit-tests/record-edition/library-items-list:
+libs/ui-unit-tests/record-edition:
   stage: test
   script:
     - yarn workspaces focus @leav/ui
-    - yarn workspace @leav/ui run test:ci --testPathPattern="src/components/RecordEdition|src/components/LibraryItemsList"
+    - yarn workspace @leav/ui run test:ci --testPathPattern="src/components/RecordEdition"
   cache:
     <<: *yarn_cache
   rules:
@@ -259,7 +259,7 @@ libs/ui-unit-tests/rest:
   stage: test
   script:
     - yarn workspaces focus @leav/ui
-    - yarn workspace @leav/ui run test:ci --testPathIgnorePatterns="src/components/RecordEdition|src/components/LibraryItemsList|src/components/Explorer"
+    - yarn workspace @leav/ui run test:ci --testPathIgnorePatterns="src/components/RecordEdition|src/components/Explorer"
   cache:
     <<: *yarn_cache
   rules:
