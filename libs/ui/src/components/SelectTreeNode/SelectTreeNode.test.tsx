@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import * as apolloClient from '@apollo/client';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {SelectTreeNode} from './SelectTreeNode';
@@ -13,72 +13,54 @@ describe('SelectTreeNode', () => {
     });
 
     test('Render tree and navigate', async () => {
-        const mockResultFromRoot = {
-            treeNodeChildren: {
-                totalCount: 1,
-                list: [
-                    {
+        const mockTreeContent: Array<
+            gqlTypes.GetTreeContentQueryQuery['treeContent'][number] & {
+                children?: Array<gqlTypes.GetTreeContentQueryQuery['treeContent'][number]>;
+            }
+        > = [
+            {
+                id: 'id1',
+                record: {
+                    id: 'id1',
+                    active: null,
+                    whoAmI: {
                         id: 'id1',
-                        record: {
-                            id: 'id1',
-                            active: true,
-                            whoAmI: {
-                                id: 'id1',
-                                label: 'label1',
-                                color: null,
-                                library: {
-                                    id: 'categories',
-                                    label: {fr: 'Catégories'},
-                                    behavior: gqlTypes.LibraryBehavior.standard,
-                                    __typename: 'Library',
-                                },
-                                preview: null,
-                                __typename: 'RecordIdentity',
-                            },
-                            __typename: 'Categorie',
+                        label: 'label1',
+                        color: null,
+                        library: {
+                            id: 'categories',
+                            label: {fr: 'Catégories'},
                         },
-                        childrenCount: 1,
+                        preview: null,
                     },
-                ],
-            },
-        };
-
-        const mockResultFromChild = {
-            treeNodeChildren: {
-                totalCount: 1,
-                list: [
+                },
+                childrenCount: 1,
+                children: [
                     {
                         id: 'id2',
                         record: {
                             id: 'id2',
-                            active: true,
+                            active: null,
                             whoAmI: {
-                                __typename: 'RecordIdentity',
                                 id: 'id2',
                                 label: 'label2',
                                 color: null,
                                 library: {
                                     id: 'categories',
                                     label: {fr: 'Catégories'},
-                                    behavior: gqlTypes.LibraryBehavior.standard,
-                                    __typename: 'Library',
                                 },
                                 preview: null,
                             },
-                            __typename: 'Categorie',
                         },
                         childrenCount: 0,
-                        __typename: 'TreeNode',
+                        accessRecordByDefaultPermission: null,
+                        permissions: null,
                     },
                 ],
+                accessRecordByDefaultPermission: null,
+                permissions: null,
             },
-        };
-
-        const mockResult: Mockify<gqlTypes.TreeNodeChildrenQueryResult> = {
-            called: true,
-            loading: false,
-            error: null,
-        };
+        ];
 
         jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue({
             data: {
@@ -91,16 +73,16 @@ describe('SelectTreeNode', () => {
             error: null,
         } as gqlTypes.TreeDataQueryQueryHookResult);
 
-        jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
-            jest
-                .fn()
-                .mockImplementation(({variables}) =>
-                    variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild},
-                ),
-            mockResult as gqlTypes.TreeNodeChildrenQueryResult,
-        ]);
+        jest.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
+            jest.fn().mockResolvedValue({
+                data: {
+                    treeContent: mockTreeContent,
+                },
+            }),
+            {} as apolloClient.QueryResult,
+        ] as unknown as ReturnType<typeof apolloClient.useLazyQuery>);
 
-        render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} loadRecursively={false} />);
+        render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} />);
 
         await waitFor(() => screen.getByText('Tree Label'));
         expect(screen.getByText('Tree Label')).toBeInTheDocument();

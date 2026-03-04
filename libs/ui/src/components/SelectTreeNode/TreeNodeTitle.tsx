@@ -23,7 +23,6 @@ const TreeNodeLineSection = styled.div`
 interface ITreeNodeTitleProps {
     checkable: boolean;
     disabledNodes: string[];
-    loadRecursively: boolean;
     node: ITreeMapElement;
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     selectedNodes: string[];
@@ -33,7 +32,6 @@ interface ITreeNodeTitleProps {
 export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     checkable,
     disabledNodes,
-    loadRecursively,
     node,
     onSelect,
     selectedNodes,
@@ -66,7 +64,7 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
                 <KitTypography.Text size="fontSize5" disabled={isDisabled}>
                     {node.title}
                 </KitTypography.Text>
-                <SelectedChildrenCount node={node} selectedNodes={selectedNodes} loadRecursively={loadRecursively} />
+                <SelectedChildrenCount node={node} selectedNodes={selectedNodes} />
             </TreeNodeLineSection>
             <TreeNodeLineSection>
                 {showSelectChildrenButton && node.children.length > 0 && hover && (
@@ -90,13 +88,7 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
 const SelectedChildrenCount: FunctionComponent<{
     node: ITreeMapElement;
     selectedNodes: string[];
-    loadRecursively: boolean;
-}> = ({node, selectedNodes, loadRecursively}) => {
-    // it can work only if all children are loaded
-    if (!loadRecursively) {
-        return null;
-    }
-
+}> = ({node, selectedNodes}) => {
     const selectedChildrenCount = countSelectedNodes(node, selectedNodes);
 
     return selectedChildrenCount > 0 ? (

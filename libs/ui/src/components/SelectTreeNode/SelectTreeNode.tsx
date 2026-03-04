@@ -28,8 +28,6 @@ interface ISelectTreeNodeProps {
     checkStrictly?: boolean;
     checkable?: boolean;
     canSelectRoot?: boolean;
-    loadRecursively?: boolean;
-    noPagination?: boolean;
     showSelectChildrenButton?: boolean;
 }
 
@@ -46,8 +44,6 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     checkStrictly = true,
     checkable = false,
     canSelectRoot = false,
-    loadRecursively = true,
-    noPagination = false,
     showSelectChildrenButton = false,
 }) => {
     const {lang} = useLang();
@@ -82,8 +78,6 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
             disabledNodes={disabledNodes}
             canSelectRoot={canSelectRoot}
             selectableLibraries={selectableLibraries}
-            loadRecursively={loadRecursively}
-            noPagination={noPagination}
             showSelectChildrenButton={showSelectChildrenButton}
         />
     );
