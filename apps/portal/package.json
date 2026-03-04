@@ -1,7 +1,7 @@
 {
     "name": "portal",
     "description": "Portal application for LEAV.",
-    "version": "1.9.0-8",
+    "version": "1.9.0-9",
     "private": true,
     "stableVersion": "0.1.0",
     "scripts": {
