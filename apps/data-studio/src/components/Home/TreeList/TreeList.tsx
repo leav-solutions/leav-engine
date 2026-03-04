@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
+import {useApolloClient, useQuery} from '@apollo/client';
 import {ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {Table} from 'antd';
 import {type ColumnsType} from 'antd/lib/table';
@@ -44,16 +44,13 @@ interface IListItem {
 }
 
 function TreeList(): JSX.Element {
+    const client = useApolloClient();
     const {t} = useTranslation();
     const {lang} = useLang();
 
     const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_TREES_KEY]},
-    });
-
-    const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
-        ignoreResults: true,
     });
 
     if (treesLoading || userDataQuery.loading) {
@@ -95,7 +92,8 @@ function TreeList(): JSX.Element {
                 const _handleFavoriteToggle = async (wasFavorite: boolean) => {
                     const {id} = item;
 
-                    await updateFavoritesMutation({
+                    await client.mutate<SAVE_USER_DATA, SAVE_USER_DATAVariables>({
+                        mutation: saveUserData,
                         variables: {
                             key: FAVORITE_TREES_KEY,
                             value: wasFavorite ? favoriteIds.filter(e => e !== id) : favoriteIds.concat([id]),
