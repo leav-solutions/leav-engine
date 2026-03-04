@@ -29,6 +29,7 @@ import {
 import {type IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
 import DataLoader from 'dataloader';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
+import {logger} from '@leav/logger';
 
 export interface ITreeRepo {
     createTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
@@ -570,6 +571,17 @@ export default function ({
                 }
                 destination.push(treeNode);
             }
+
+            function sortTreeNodes(nodes: ITreeNode[]) {
+                nodes.sort((a, b) => a.order - b.order);
+                nodes.forEach(node => {
+                    if (node.children?.length) {
+                        sortTreeNodes(node.children);
+                    }
+                });
+            }
+
+            sortTreeNodes(treeContent);
 
             return treeContent;
         },
