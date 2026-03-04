@@ -4,14 +4,13 @@
 import {
     type IRecordForm,
     type RecordFormElementAttribute,
-    type RecordFormElementsValue,
-    type RecordFormElementsValueLinkValue,
     type RecordFormElementsValueStandardValue,
 } from '_ui/hooks/useGetRecordForm';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {type IDateRangeValue} from '@leav/utils';
 import {type Store} from 'antd/lib/form/interface';
 import dayjs from 'dayjs';
+import {isRecordFormElementsValueLinkValue, isRecordFormElementsValueLinkValues} from '_ui/_utils/typeguards';
 
 const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
     (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
@@ -22,19 +21,6 @@ const getInheritedValue = values => values.find(value => value.isInherited);
 
 const getUserInputValue = values =>
     values.find(value => !value.isInherited && !value.isCalculated && value.raw_payload !== null);
-
-const isRecordFormElementsValueLinkValue = (
-    value: RecordFormElementsValue,
-    attribute: RecordFormElementAttribute,
-): value is RecordFormElementsValueLinkValue =>
-    attribute.type === AttributeType.simple_link ||
-    (attribute.type === AttributeType.advanced_link && attribute.multiple_values === false);
-
-const isRecordFormElementsValueLinkValues = (
-    values: RecordFormElementsValue[],
-    attribute: RecordFormElementAttribute,
-): values is RecordFormElementsValueLinkValue[] =>
-    attribute.type === AttributeType.advanced_link && attribute.multiple_values === true;
 
 const isRecordFormElementsMultipleValues = (attribute: RecordFormElementAttribute) =>
     attribute.type === AttributeType.advanced && attribute.multiple_values === true;

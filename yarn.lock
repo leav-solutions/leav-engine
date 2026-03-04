@@ -8385,10 +8385,8 @@ __metadata:
     "@types/dompurify": "npm:3.2.0"
     "@types/jest": "npm:29.5.14"
     "@types/lodash.isequal": "npm:^4"
-    "@types/object-path": "npm:0.11.4"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
-    "@types/react-table": "npm:7.7.20"
     "@uidotdev/usehooks": "npm:2.4.1"
     aristid-ds: "npm:15.2.0-efdeb96"
     babel-jest: "npm:29.7.0"
@@ -8402,14 +8400,11 @@ __metadata:
     jest-environment-jsdom: "npm:29.7.0"
     jest-styled-components: "npm:7.2.0"
     lodash.isequal: "npm:4.5.0"
-    object-path: "npm:0.11.8"
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     react-i18next: "npm:12"
     react-markdown: "npm:5.0.3"
     react-router-dom: "npm:6.22.0"
-    react-table: "npm:7.8.0"
-    react-table-sticky: "npm:1.1.3"
     styled-components: "npm:6.0.8"
     ts-jest: "npm:29.4.6"
     tsc-alias: "npm:1.8.16"
@@ -10928,7 +10923,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/object-path@npm:0.11.4, @types/object-path@npm:^0.11.1":
+"@types/object-path@npm:^0.11.1":
   version: 0.11.4
   resolution: "@types/object-path@npm:0.11.4"
   checksum: 10/7f1f5cb18b651d21e7861da176d8f87526c936ed949a8126a2692195cbe65734ed1a1a22c06a24a54afe1890483a3d6b074b402ebfca7a7567c1c287b588f563
@@ -10987,15 +10982,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-resizable@npm:1.7.4":
-  version: 1.7.4
-  resolution: "@types/react-resizable@npm:1.7.4"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10/d665bb2ddf830b9f841be21204cee119602b3d983537a94ccbad40deb7cd602e04742e3e013009bbb27c2d0fe72441b29ed48bc75f7e482cfb25eaf45f281dc9
-  languageName: node
-  linkType: hard
-
 "@types/react-router-dom-v5@npm:@types/react-router-dom@5.3.3, @types/react-router-dom@npm:5.3.3":
   version: 5.3.3
   resolution: "@types/react-router-dom@npm:5.3.3"
@@ -11034,15 +11020,6 @@ __metadata:
     "@types/draft-js": "npm:*"
     "@types/react": "npm:*"
   checksum: 10/1ce0771765cf815628470d4a19ba968946411a4cc2a4f93b9b2535382c9b3d1c1fa5e7a99545718d82bc31c10542dfeafc6c2933777faaf38e39c9479ef3ced2
-  languageName: node
-  linkType: hard
-
-"@types/react-table@npm:7.7.20":
-  version: 7.7.20
-  resolution: "@types/react-table@npm:7.7.20"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10/adf86958dd5b2e044d23fc7896f758b5ec59987891b41e9b02d935d666e999a518b0bdd8ba5bd60d644f20147de0ec3cf5f6a12b75516f1fad43fb3b4fd8361f
   languageName: node
   linkType: hard
 
@@ -15083,15 +15060,11 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
-    "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:27.5.2"
     "@types/lodash": "npm:4.17.24"
     "@types/node": "npm:24.11.0"
-    "@types/object-path": "npm:0.11.4"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
-    "@types/react-resizable": "npm:1.7.4"
-    "@types/react-table": "npm:7.7.20"
     "@types/redux-mock-store": "npm:1.5.0"
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.1.4"
@@ -15109,14 +15082,11 @@ __metadata:
     jest-fetch-mock: "npm:3.0.3"
     jest-styled-components: "npm:7.2.0"
     lodash: "npm:4.17.23"
-    object-path: "npm:0.11.8"
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     react-i18next: "npm:12"
     react-redux: "npm:7.2.9"
     react-router-dom: "npm:6.22.0"
-    react-table: "npm:7.8.0"
-    react-table-sticky: "npm:1.1.3"
     redux-mock-store: "npm:1.5.5"
     styled-components: "npm:6.0.8"
     ts-jest: "npm:29.4.6"
@@ -15126,7 +15096,6 @@ __metadata:
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.3.0"
     vite-plugin-svgr: "npm:4.5.0"
-    xlsx: "npm:0.18.5"
   languageName: unknown
   linkType: soft
 
@@ -23225,7 +23194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-path@npm:0.11.8, object-path@npm:^0.11.8":
+"object-path@npm:^0.11.8":
   version: 0.11.8
   resolution: "object-path@npm:0.11.8"
   checksum: 10/cbc41515ff97aa7515bd93a3d93d5b7307c95413345d83c66c60b7618429cfc935ff4049192c96701eeeb33a78678b15ee97b5fe0857e9eca4fcd7507dfafd36
@@ -25713,22 +25682,6 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 10/ea5807cbc36c069fa1e76109b0df77fb008b5657740bd14ee78026ba06cdf4b7f93e7518c0bbb5a54c0f3b850dd29318ffea7015a04724ea3e2f0981abfdeff2
-  languageName: node
-  linkType: hard
-
-"react-table-sticky@npm:1.1.3":
-  version: 1.1.3
-  resolution: "react-table-sticky@npm:1.1.3"
-  checksum: 10/0c863532801cfc43a7056e7d9db6bd1738a6028ffb7fe7b71142dec5a3e307ed73793852b4b4c17b3aba4b77873e58e04bc6fe9b34191ea5cd338ebd3852f943
-  languageName: node
-  linkType: hard
-
-"react-table@npm:7.8.0":
-  version: 7.8.0
-  resolution: "react-table@npm:7.8.0"
-  peerDependencies:
-    react: ^16.8.3 || ^17.0.0-0 || ^18.0.0
-  checksum: 10/0c87db8f8823f8eca7a5521d406fa0c75d79972d47768f0c8347af3fa51f9856eea449186a0e2db2effc54d1d74a4e3477855cdbe9adf836d7dfac3a6ec5cdbf
   languageName: node
   linkType: hard
 

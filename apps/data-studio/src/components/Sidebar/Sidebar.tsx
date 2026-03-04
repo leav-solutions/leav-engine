@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined, TableOutlined} from '@ant-design/icons';
+import {StarFilled, StarOutlined, TableOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
@@ -16,10 +16,9 @@ import {useActiveTree} from 'hooks/useActiveTree';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
-import {useNavigate, useSearchParams} from 'react-router-dom';
-import {useAppSelector} from 'reduxStore/store';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
+import {getExplorerLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
@@ -70,9 +69,7 @@ const FavoriteStarSpan = styled.span<{$isFavorite: boolean}>`
 `;
 
 enum MenuType {
-    DATA_STUDIO = 'data-studio',
     TREE = 'tree',
-    SETTINGS = 'settings',
     EXPLORER = 'explorer-library',
 }
 
@@ -80,12 +77,9 @@ const Sidebar: FunctionComponent = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
 
-    const [params] = useSearchParams();
-
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
     const navigate = useNavigate();
-    const {activePanel} = useAppSelector(state => state);
 
     const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
     const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
@@ -155,15 +149,6 @@ const Sidebar: FunctionComponent = () => {
 
     const _goTo = (url: string) => navigate(url);
 
-    const _goToActiveLibrary = () => {
-        if (!activeLibrary?.id) {
-            return;
-        }
-
-        setMenuSelected([MenuType.DATA_STUDIO]);
-        _goTo(getLibraryLink(activeLibrary.id));
-    };
-
     const _goToExplorerOnActiveLibrary = () => {
         if (!activeLibrary?.id) {
             return;
@@ -180,11 +165,6 @@ const Sidebar: FunctionComponent = () => {
 
         setMenuSelected([MenuType.TREE]);
         _goTo(getTreeLink(activeTree.id));
-    };
-
-    const _goToSettings = () => {
-        setMenuSelected([MenuType.SETTINGS]);
-        _goTo('/settings');
     };
 
     const _handleClickHome = () => _goTo('/');
@@ -232,9 +212,7 @@ const Sidebar: FunctionComponent = () => {
                                     <LinkSpan
                                         onClick={() => {
                                             setMenuSelected([menuType]);
-                                            return menuType === MenuType.DATA_STUDIO
-                                                ? _goTo(getLibraryLink(lib.id))
-                                                : _goTo(getExplorerLibraryLink(lib.id));
+                                            return _goTo(getExplorerLibraryLink(lib.id));
                                         }}
                                     >
                                         {localizedTranslation(lib.label, lang)}
@@ -321,19 +299,6 @@ const Sidebar: FunctionComponent = () => {
             key: MenuType.TREE,
             onTitleClick: _goToActiveTree,
             children: treesMenuItems,
-        },
-        {
-            key: MenuType.DATA_STUDIO,
-            icon: <DatabaseOutlined onClick={_goToActiveLibrary} />,
-            label: !!activeLibrary?.name ? activeLibrary.name : t('sidebar.library'),
-            onTitleClick: _goToActiveLibrary,
-            children: libsMenuItems(MenuType.DATA_STUDIO),
-        },
-        {
-            key: MenuType.SETTINGS,
-            icon: <SettingOutlined />,
-            label: t('app_settings.title'),
-            onClick: _goToSettings,
         },
     ];
 
