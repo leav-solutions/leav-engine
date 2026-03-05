@@ -5,7 +5,6 @@ import fs from 'fs';
 import {type i18n} from 'i18next';
 import camelCase from 'lodash/camelCase';
 import flow from 'lodash/flow';
-import isEqual from 'lodash/isEqual';
 import mergeWith from 'lodash/mergeWith';
 import partialRight from 'lodash/partialRight';
 import trimEnd from 'lodash/trimEnd';
@@ -18,7 +17,6 @@ import {type IConfig} from '_types/config';
 import {type ErrorFieldDetail, type ErrorFieldDetailMessage, Errors, type IExtendedErrorMsg} from '../_types/errors';
 import {type ILibrary, type ILibraryPreviewsSettings, type LibraryBehavior} from '_types/library';
 import {type ISystemTranslation} from '_types/systemTranslation';
-import {type IValue} from '_types/value';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../_types/attribute';
@@ -143,7 +141,6 @@ export interface IUtils {
     getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
     previewsSettingsToVersions(previewsSettings: ILibraryPreviewsSettings[]): IPreviewVersion[];
-    areValuesIdentical(value1: IValue, value2: IValue): boolean;
 }
 
 export interface IUtilsDeps {
@@ -152,6 +149,14 @@ export interface IUtilsDeps {
 }
 
 export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+    const isStandardAttribute = (attribute: IAttribute): boolean =>
+        attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
+
+    const isLinkAttribute = (attribute: IAttribute): boolean =>
+        attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
+
+    const isTreeAttribute = (attribute: IAttribute): boolean => attribute.type === AttributeTypes.TREE;
+
     return {
         fileExists: async (path: string): Promise<boolean> => {
             try {
@@ -271,15 +276,9 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         dateToTimestamp(d) {
             return dayjs(d).unix();
         },
-        isStandardAttribute(attribute) {
-            return attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
-        },
-        isLinkAttribute(attribute) {
-            return attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
-        },
-        isTreeAttribute(attribute) {
-            return attribute.type === AttributeTypes.TREE;
-        },
+        isStandardAttribute,
+        isLinkAttribute,
+        isTreeAttribute,
         decomposeValueEdgeDestination(value) {
             const [library, id]: [string, string] = value.split('/') as [string, string];
 
@@ -384,16 +383,6 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         },
         previewsSettingsToVersions(previewsSettings) {
             return previewsSettings.map(settings => settings.versions);
-        },
-        areValuesIdentical(value1, value2) {
-            const isValue1MetadataEmpty = !value1?.metadata || Object.keys(value1?.metadata).length === 0;
-            const isValue2MetadataEmpty = !value2?.metadata || Object.keys(value2?.metadata).length === 0;
-
-            const isValueIdentical = value1?.payload === value2?.payload;
-            const isMetadataIdentical =
-                (isValue1MetadataEmpty && isValue2MetadataEmpty) || isEqual(value1?.metadata, value2?.metadata);
-
-            return isValueIdentical && isMetadataIdentical;
         },
     };
 }
