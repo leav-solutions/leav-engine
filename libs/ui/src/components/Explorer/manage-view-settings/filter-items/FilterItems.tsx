@@ -113,9 +113,12 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     };
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
-        const indexFrom = activeFilters.findIndex(({field}) => field === String(draggedElement.id));
-        const indexTo = activeFilters.findIndex(({field}) => field === String(dropTarget?.id));
-
+        const indexFrom = activeFilters.findIndex(({field}) =>
+            Array.isArray(field) ? field.includes(String(draggedElement.id)) : field === String(draggedElement.id),
+        );
+        const indexTo = activeFilters.findIndex(({field}) =>
+            Array.isArray(field) ? field.includes(String(dropTarget?.id)) : field === String(dropTarget?.id),
+        );
         if (!dropTarget || indexFrom === indexTo || indexTo === -1) {
             return;
         }
