@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery} from '@apollo/client';
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {KitTree} from 'aristid-ds';
 import {Spin} from 'antd';
@@ -9,13 +8,13 @@ import {type ITreeNodeWithRecord} from '_ui/types';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type DependentValuesPermissionFilterInput,
-    type GetTreeContentQueryQuery,
-    type GetTreeContentQueryQueryVariables,
+    type TreeContentDataQueryQuery,
 } from '_ui/_gqlTypes';
-import {getTreeContentQuery} from '_ui/_queries/trees/getTreeContentQuery';
 import {ErrorDisplay} from '../../index';
 import {TreeNodeTitle} from './TreeNodeTitle';
 import {_isObjectSelection, type ITreeMap, type ITreeMapElement} from './_types';
+import {useLazyQuery} from '@apollo/client';
+import {treeContentDataQuery} from './_queries/treeContentDataQuery';
 
 interface ISelectTreeNodeContentProps {
     treeData: {id: string; label: string};
@@ -33,8 +32,8 @@ interface ISelectTreeNodeContentProps {
     showSelectChildrenButton?: boolean;
 }
 
-type TreeContentNode = GetTreeContentQueryQuery['treeContent'][number] & {
-    children?: Array<GetTreeContentQueryQuery['treeContent'][number]>;
+type TreeContentNode = TreeContentDataQueryQuery['treeContent'][number] & {
+    children?: Array<TreeContentDataQueryQuery['treeContent'][number]>;
 };
 
 const _toTreeMapElement = (node: TreeContentNode, parents: string[], disabledNodes: string[]): ITreeMapElement => {
@@ -96,9 +95,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const [loadTreeContent] = useLazyQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(
-        getTreeContentQuery(),
-    );
+    const [loadTreeContent] = useLazyQuery(treeContentDataQuery());
 
     useEffect(() => {
         const fetchTreeContent = async () => {
@@ -109,7 +106,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : undefined,
                     variables: {
                         treeId: tree.id,
-                        startAt: null,
                         childrenAsRecordValuePermissionFilter,
                         dependentValuesPermissionFilter,
                     },

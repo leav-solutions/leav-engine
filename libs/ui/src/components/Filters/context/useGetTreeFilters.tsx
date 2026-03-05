@@ -2,14 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
-import {
-    type GetTreeContentQueryQuery,
-    type GetTreeContentQueryQueryVariables,
-    type TreeAttributeDetailsFragment,
-    useGetLibraryByIdQuery,
-} from '_ui/_gqlTypes';
-import {getTreeContentQuery} from '_ui/_queries/trees/getTreeContentQuery';
+import {type TreeAttributeDetailsFragment, useGetLibraryByIdQuery, type TreeFiltersDataQueryQuery} from '_ui/_gqlTypes';
 import {useEffect, useState} from 'react';
+import {treeFiltersDataQuery} from '../_queries/treeFiltersDataQuery';
 
 interface ITreeNode {
     nodeId: string;
@@ -24,8 +19,8 @@ export interface ITreeFilters {
 
 const _flattenNodes = (
     nodes: Array<
-        GetTreeContentQueryQuery['treeContent'][number] & {
-            children?: Array<GetTreeContentQueryQuery['treeContent'][number]>;
+        TreeFiltersDataQueryQuery['treeContent'][number] & {
+            children?: Array<TreeFiltersDataQueryQuery['treeContent'][number]>;
         }
     >,
 ): ITreeNode[] =>
@@ -46,9 +41,7 @@ const _flattenNodes = (
 export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: boolean}) => {
     const [treeFilters, setTreeFilters] = useState<ITreeFilters>({});
     const [treeFiltersLoading, setTreeFiltersLoading] = useState(true);
-    const [loadTreeContent] = useLazyQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(
-        getTreeContentQuery(),
-    );
+    const [loadTreeFilters] = useLazyQuery(treeFiltersDataQuery());
 
     const {data: libraryData, loading: libraryLoading} = useGetLibraryByIdQuery({
         variables: {
@@ -75,7 +68,7 @@ export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: b
 
             const treeResponse = await Promise.all(
                 treeAttributesWithExtendedPermissions.map(async attribute => {
-                    const {data} = await loadTreeContent({
+                    const {data} = await loadTreeFilters({
                         variables: {
                             treeId: attribute.treeId,
                             accessRecordByDefaultPermission: {
@@ -106,7 +99,7 @@ export const useGetTreeFilters = ({libraryId, skip}: {libraryId: string; skip: b
         };
 
         fetchTreeFilters();
-    }, [skip, libraryId, libraryLoading, libraryData, loadTreeContent]);
+    }, [skip, libraryId, libraryLoading, libraryData, loadTreeFilters]);
 
     return {
         data: treeFilters,

@@ -14,24 +14,20 @@ describe('SelectTreeNode', () => {
 
     test('Render tree and navigate', async () => {
         const mockTreeContent: Array<
-            gqlTypes.GetTreeContentQueryQuery['treeContent'][number] & {
-                children?: Array<gqlTypes.GetTreeContentQueryQuery['treeContent'][number]>;
+            gqlTypes.TreeContentDataQueryQuery['treeContent'][number] & {
+                children?: Array<gqlTypes.TreeContentDataQueryQuery['treeContent'][number]>;
             }
         > = [
             {
                 id: 'id1',
                 record: {
                     id: 'id1',
-                    active: null,
                     whoAmI: {
                         id: 'id1',
                         label: 'label1',
-                        color: null,
                         library: {
                             id: 'categories',
-                            label: {fr: 'Catégories'},
                         },
-                        preview: null,
                     },
                 },
                 childrenCount: 1,
@@ -40,25 +36,17 @@ describe('SelectTreeNode', () => {
                         id: 'id2',
                         record: {
                             id: 'id2',
-                            active: null,
                             whoAmI: {
                                 id: 'id2',
                                 label: 'label2',
-                                color: null,
                                 library: {
                                     id: 'categories',
-                                    label: {fr: 'Catégories'},
                                 },
-                                preview: null,
                             },
                         },
                         childrenCount: 0,
-                        accessRecordByDefaultPermission: null,
-                        permissions: null,
                     },
                 ],
-                accessRecordByDefaultPermission: null,
-                permissions: null,
             },
         ];
 

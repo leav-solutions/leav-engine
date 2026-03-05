@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery} from '@apollo/client';
 import {useEffect, useState} from 'react';
-import {type GetTreeContentQueryQuery, type GetTreeContentQueryQueryVariables} from '_ui/_gqlTypes';
-import {getTreeContentQuery} from '_ui/_queries/trees/getTreeContentQuery';
+import {type FilterTreeDataQueryQuery} from '_ui/_gqlTypes';
+import {filterTreeDataQuery} from './_queries/filterTreeDataQuery';
+import {useLazyQuery} from '@apollo/client';
 
 export interface ITreeNode {
     title: string;
@@ -23,8 +23,8 @@ interface IUseGetTreeDataProps {
 }
 
 const _toTreeNode = (
-    node: GetTreeContentQueryQuery['treeContent'][number] & {
-        children?: Array<GetTreeContentQueryQuery['treeContent'][number]>;
+    node: FilterTreeDataQueryQuery['treeContent'][number] & {
+        children?: Array<FilterTreeDataQueryQuery['treeContent'][number]>;
     },
 ): ITreeNode => ({
     title: node.record.whoAmI.label ?? node.record.whoAmI.id,
@@ -37,9 +37,7 @@ const _toTreeNode = (
 });
 
 export const useGetTreeData = ({treeId, attributeId, libraryId}: IUseGetTreeDataProps) => {
-    const [loadTreeContent] = useLazyQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(
-        getTreeContentQuery(),
-    );
+    const [loadFilterTreeData] = useLazyQuery(filterTreeDataQuery());
 
     const [treeData, setTreeData] = useState<ITreeNode[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +54,7 @@ export const useGetTreeData = ({treeId, attributeId, libraryId}: IUseGetTreeData
             setIsLoading(true);
             setError(null);
             try {
-                const {data} = await loadTreeContent({
+                const {data} = await loadFilterTreeData({
                     variables: {
                         treeId,
                         accessRecordByDefaultPermission: {
