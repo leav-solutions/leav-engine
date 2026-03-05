@@ -193,13 +193,16 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         return <ErrorDisplay message={error.message} />;
     }
 
+    const defaultExpandedKeys =
+        selectedNodes.length && !showSelectChildrenButton ? [...selectedNodes, tree.id] : [tree.id];
+
     return (
         <KitTree
             checkStrictly={checkStrictly}
             treeData={[treeMap[rootNode.key]]}
             multiple={multiple}
             checkable={checkable}
-            defaultExpandedKeys={selectedNodes.length > 0 ? [...selectedNodes, tree.id] : [tree.id]}
+            defaultExpandedKeys={defaultExpandedKeys}
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
             titleRender={node => (
