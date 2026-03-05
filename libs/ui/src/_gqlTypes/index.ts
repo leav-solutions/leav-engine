@@ -1707,17 +1707,6 @@ export type GetTreeByIdQueryVariables = Exact<{
 
 export type GetTreeByIdQuery = { trees?: { list: Array<{ id: string, label?: any | null, behavior: TreeBehavior, system: boolean, libraries: Array<{ library: { id: string, label?: any | null }, settings: { allowMultiplePositions: boolean, allowedAtRoot: boolean, allowedChildren: Array<string> } }> }> } | null };
 
-export type GetTreeContentQueryQueryVariables = Exact<{
-  treeId: Scalars['ID']['input'];
-  startAt?: InputMaybe<Scalars['ID']['input']>;
-  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
-  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
-  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
-}>;
-
-
-export type GetTreeContentQueryQuery = { treeContent: Array<{ id: string, order?: number | null, childrenCount?: number | null, accessRecordByDefaultPermission?: boolean | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> };
-
 export type GetTreeLibrariesQueryVariables = Exact<{
   treeId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
   library?: InputMaybe<Scalars['String']['input']>;
@@ -1974,6 +1963,15 @@ export type UpdateViewMutationVariables = Exact<{
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
+export type TreeFiltersDataQueryQueryVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  startAt?: InputMaybe<Scalars['ID']['input']>;
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
+}>;
+
+
+export type TreeFiltersDataQueryQuery = { treeContent: Array<{ id: string, accessRecordByDefaultPermission?: boolean | null, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> };
+
 export type SmartFilterListValuesQueryVariables = Exact<{
   library: Scalars['ID']['input'];
   attribute: Scalars['ID']['input'];
@@ -1982,6 +1980,15 @@ export type SmartFilterListValuesQueryVariables = Exact<{
 
 
 export type SmartFilterListValuesQuery = { listDistinctValues?: Array<{ count: number, value?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> | null };
+
+export type FilterTreeDataQueryQueryVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  startAt?: InputMaybe<Scalars['ID']['input']>;
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
+}>;
+
+
+export type FilterTreeDataQueryQuery = { treeContent: Array<{ id: string, accessRecordByDefaultPermission?: boolean | null, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> };
 
 export type NotificationSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -2000,6 +2007,16 @@ export type GetRecordHistoryQuery = { logs?: { total: number, logs: Array<{ acti
           | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }
           | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null }
          | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
+
+export type TreeContentDataQueryQueryVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  startAt?: InputMaybe<Scalars['ID']['input']>;
+  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
+  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
+}>;
+
+
+export type TreeContentDataQueryQuery = { treeContent: Array<{ id: string, childrenCount?: number | null, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -4786,75 +4803,6 @@ export type GetTreeByIdQueryHookResult = ReturnType<typeof useGetTreeByIdQuery>;
 export type GetTreeByIdLazyQueryHookResult = ReturnType<typeof useGetTreeByIdLazyQuery>;
 export type GetTreeByIdSuspenseQueryHookResult = ReturnType<typeof useGetTreeByIdSuspenseQuery>;
 export type GetTreeByIdQueryResult = Apollo.QueryResult<GetTreeByIdQuery, GetTreeByIdQueryVariables>;
-export const GetTreeContentQueryDocument = gql`
-    query GetTreeContentQuery($treeId: ID!, $startAt: ID, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
-  treeContent(
-    treeId: $treeId
-    startAt: $startAt
-    childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
-    dependentValuesPermissionFilter: $dependentValuesPermissionFilter
-    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
-  ) {
-    id
-    order
-    childrenCount
-    record {
-      ...RecordIdentity
-      active: property(attribute: "active") {
-        ... on Value {
-          value
-        }
-      }
-    }
-    permissions {
-      access_tree
-      detach
-      edit_children
-    }
-    accessRecordByDefaultPermission
-  }
-}
-    ${RecordIdentityFragmentDoc}`;
-
-/**
- * __useGetTreeContentQueryQuery__
- *
- * To run a query within a React component, call `useGetTreeContentQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTreeContentQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTreeContentQueryQuery({
- *   variables: {
- *      treeId: // value for 'treeId'
- *      startAt: // value for 'startAt'
- *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
- *      dependentValuesPermissionFilter: // value for 'dependentValuesPermissionFilter'
- *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
- *   },
- * });
- */
-export function useGetTreeContentQueryQuery(baseOptions: Apollo.QueryHookOptions<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables> & ({ variables: GetTreeContentQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(GetTreeContentQueryDocument, options);
-      }
-export function useGetTreeContentQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(GetTreeContentQueryDocument, options);
-        }
-// @ts-ignore
-export function useGetTreeContentQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>;
-export function useGetTreeContentQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeContentQueryQuery | undefined, GetTreeContentQueryQueryVariables>;
-export function useGetTreeContentQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>(GetTreeContentQueryDocument, options);
-        }
-export type GetTreeContentQueryQueryHookResult = ReturnType<typeof useGetTreeContentQueryQuery>;
-export type GetTreeContentQueryLazyQueryHookResult = ReturnType<typeof useGetTreeContentQueryLazyQuery>;
-export type GetTreeContentQuerySuspenseQueryHookResult = ReturnType<typeof useGetTreeContentQuerySuspenseQuery>;
-export type GetTreeContentQueryQueryResult = Apollo.QueryResult<GetTreeContentQueryQuery, GetTreeContentQueryQueryVariables>;
 export const GetTreeLibrariesDocument = gql`
     query GET_TREE_LIBRARIES($treeId: [ID!], $library: String) {
   trees(filters: {id: $treeId, library: $library}) {
@@ -6132,6 +6080,66 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
+export const TreeFiltersDataQueryDocument = gql`
+    query TreeFiltersDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
+  treeContent(
+    treeId: $treeId
+    startAt: $startAt
+    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
+  ) {
+    id
+    record {
+      id
+      whoAmI {
+        id
+        label
+        library {
+          id
+        }
+      }
+    }
+    accessRecordByDefaultPermission
+  }
+}
+    `;
+
+/**
+ * __useTreeFiltersDataQueryQuery__
+ *
+ * To run a query within a React component, call `useTreeFiltersDataQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTreeFiltersDataQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTreeFiltersDataQueryQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      startAt: // value for 'startAt'
+ *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
+ *   },
+ * });
+ */
+export function useTreeFiltersDataQueryQuery(baseOptions: Apollo.QueryHookOptions<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables> & ({ variables: TreeFiltersDataQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>(TreeFiltersDataQueryDocument, options);
+      }
+export function useTreeFiltersDataQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>(TreeFiltersDataQueryDocument, options);
+        }
+// @ts-ignore
+export function useTreeFiltersDataQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>;
+export function useTreeFiltersDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<TreeFiltersDataQueryQuery | undefined, TreeFiltersDataQueryQueryVariables>;
+export function useTreeFiltersDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>(TreeFiltersDataQueryDocument, options);
+        }
+export type TreeFiltersDataQueryQueryHookResult = ReturnType<typeof useTreeFiltersDataQueryQuery>;
+export type TreeFiltersDataQueryLazyQueryHookResult = ReturnType<typeof useTreeFiltersDataQueryLazyQuery>;
+export type TreeFiltersDataQuerySuspenseQueryHookResult = ReturnType<typeof useTreeFiltersDataQuerySuspenseQuery>;
+export type TreeFiltersDataQueryQueryResult = Apollo.QueryResult<TreeFiltersDataQueryQuery, TreeFiltersDataQueryQueryVariables>;
 export const SmartFilterListValuesDocument = gql`
     query SmartFilterListValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
   listDistinctValues(
@@ -6186,6 +6194,66 @@ export type SmartFilterListValuesQueryHookResult = ReturnType<typeof useSmartFil
 export type SmartFilterListValuesLazyQueryHookResult = ReturnType<typeof useSmartFilterListValuesLazyQuery>;
 export type SmartFilterListValuesSuspenseQueryHookResult = ReturnType<typeof useSmartFilterListValuesSuspenseQuery>;
 export type SmartFilterListValuesQueryResult = Apollo.QueryResult<SmartFilterListValuesQuery, SmartFilterListValuesQueryVariables>;
+export const FilterTreeDataQueryDocument = gql`
+    query FilterTreeDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
+  treeContent(
+    treeId: $treeId
+    startAt: $startAt
+    accessRecordByDefaultPermission: $accessRecordByDefaultPermission
+  ) {
+    id
+    record {
+      id
+      whoAmI {
+        id
+        label
+        library {
+          id
+        }
+      }
+    }
+    accessRecordByDefaultPermission
+  }
+}
+    `;
+
+/**
+ * __useFilterTreeDataQueryQuery__
+ *
+ * To run a query within a React component, call `useFilterTreeDataQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFilterTreeDataQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFilterTreeDataQueryQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      startAt: // value for 'startAt'
+ *      accessRecordByDefaultPermission: // value for 'accessRecordByDefaultPermission'
+ *   },
+ * });
+ */
+export function useFilterTreeDataQueryQuery(baseOptions: Apollo.QueryHookOptions<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables> & ({ variables: FilterTreeDataQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>(FilterTreeDataQueryDocument, options);
+      }
+export function useFilterTreeDataQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>(FilterTreeDataQueryDocument, options);
+        }
+// @ts-ignore
+export function useFilterTreeDataQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>;
+export function useFilterTreeDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<FilterTreeDataQueryQuery | undefined, FilterTreeDataQueryQueryVariables>;
+export function useFilterTreeDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>(FilterTreeDataQueryDocument, options);
+        }
+export type FilterTreeDataQueryQueryHookResult = ReturnType<typeof useFilterTreeDataQueryQuery>;
+export type FilterTreeDataQueryLazyQueryHookResult = ReturnType<typeof useFilterTreeDataQueryLazyQuery>;
+export type FilterTreeDataQuerySuspenseQueryHookResult = ReturnType<typeof useFilterTreeDataQuerySuspenseQuery>;
+export type FilterTreeDataQueryQueryResult = Apollo.QueryResult<FilterTreeDataQueryQuery, FilterTreeDataQueryQueryVariables>;
 export const NotificationDocument = gql`
     subscription Notification {
   notification {
@@ -6279,6 +6347,68 @@ export type GetRecordHistoryQueryHookResult = ReturnType<typeof useGetRecordHist
 export type GetRecordHistoryLazyQueryHookResult = ReturnType<typeof useGetRecordHistoryLazyQuery>;
 export type GetRecordHistorySuspenseQueryHookResult = ReturnType<typeof useGetRecordHistorySuspenseQuery>;
 export type GetRecordHistoryQueryResult = Apollo.QueryResult<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>;
+export const TreeContentDataQueryDocument = gql`
+    query TreeContentDataQuery($treeId: ID!, $startAt: ID, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput) {
+  treeContent(
+    treeId: $treeId
+    startAt: $startAt
+    childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+    dependentValuesPermissionFilter: $dependentValuesPermissionFilter
+  ) {
+    id
+    childrenCount
+    record {
+      id
+      whoAmI {
+        id
+        label
+        library {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTreeContentDataQueryQuery__
+ *
+ * To run a query within a React component, call `useTreeContentDataQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTreeContentDataQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTreeContentDataQueryQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      startAt: // value for 'startAt'
+ *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
+ *      dependentValuesPermissionFilter: // value for 'dependentValuesPermissionFilter'
+ *   },
+ * });
+ */
+export function useTreeContentDataQueryQuery(baseOptions: Apollo.QueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables> & ({ variables: TreeContentDataQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>(TreeContentDataQueryDocument, options);
+      }
+export function useTreeContentDataQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>(TreeContentDataQueryDocument, options);
+        }
+// @ts-ignore
+export function useTreeContentDataQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>;
+export function useTreeContentDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<TreeContentDataQueryQuery | undefined, TreeContentDataQueryQueryVariables>;
+export function useTreeContentDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>(TreeContentDataQueryDocument, options);
+        }
+export type TreeContentDataQueryQueryHookResult = ReturnType<typeof useTreeContentDataQueryQuery>;
+export type TreeContentDataQueryLazyQueryHookResult = ReturnType<typeof useTreeContentDataQueryLazyQuery>;
+export type TreeContentDataQuerySuspenseQueryHookResult = ReturnType<typeof useTreeContentDataQuerySuspenseQuery>;
+export type TreeContentDataQueryQueryResult = Apollo.QueryResult<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {
