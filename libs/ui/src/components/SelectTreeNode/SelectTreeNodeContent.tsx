@@ -95,7 +95,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const [loadTreeContent] = useLazyQuery(treeContentDataQuery());
+    const [loadTreeContent] = useLazyQuery(treeContentDataQuery(), {
+        fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : undefined,
+    });
 
     useEffect(() => {
         const fetchTreeContent = async () => {
@@ -103,7 +105,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             setError(null);
             try {
                 const {data} = await loadTreeContent({
-                    fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : undefined,
                     variables: {
                         treeId: tree.id,
                         childrenAsRecordValuePermissionFilter,
