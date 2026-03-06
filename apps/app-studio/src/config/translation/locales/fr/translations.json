@@ -12,6 +12,11 @@
         "delete_all": "Tout supprimer",
         "home_page": "page d'accueil"
     },
+    "workspaces_navigation_menu": {
+        "shortcuts": "Raccourcis",
+        "search_placeholder": "Rechercher...",
+        "no_results": "Aucun résultat"
+    },
     "display_mode": {
         "select_display": "Sélection d'affichage",
         "lateral_panel": "Panneau latéral",

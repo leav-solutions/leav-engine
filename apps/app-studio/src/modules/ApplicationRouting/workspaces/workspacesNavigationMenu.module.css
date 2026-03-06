@@ -1,0 +1,7 @@
+.workspacesNavigationMenu {
+    /* Center the text of "No results" when the search is empty */
+    :global(.kit-side-menu-item-title):has(:global(.ant-typography.ant-typography-disabled)) {
+        width: 100%;
+        text-align: center;
+    }
+}
