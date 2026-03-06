@@ -573,7 +573,14 @@ export default function ({
             }
 
             function sortTreeNodes(nodes: ITreeNode[]) {
-                nodes.sort((a, b) => a.order - b.order);
+                nodes.sort((a, b) => {
+                    if (a.order === b.order) {
+                        return a.id.localeCompare(b.id);
+                    }
+
+                    return a.order - b.order;
+                });
+
                 nodes.forEach(node => {
                     if (node.children?.length) {
                         sortTreeNodes(node.children);

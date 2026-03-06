@@ -172,22 +172,20 @@ describe('treeRepo', () => {
                     });
 
                     expect(elements).toHaveLength(2);
-                    expect(elements).toEqual(
-                        expect.arrayContaining([
-                            {
-                                id: element1.id,
-                                order: element1.order,
-                                record: record1,
-                                children: [],
-                            },
-                            {
-                                id: element2.id,
-                                order: element2.order,
-                                record: record2,
-                                children: [],
-                            },
-                        ]),
-                    );
+                    expect(elements).toEqual([
+                        {
+                            id: element1.id,
+                            order: element1.order,
+                            record: record1,
+                            children: [],
+                        },
+                        {
+                            id: element2.id,
+                            order: element2.order,
+                            record: record2,
+                            children: [],
+                        },
+                    ]);
                 });
 
                 it('sort with moveElement should should return elements in the correct order', async () => {

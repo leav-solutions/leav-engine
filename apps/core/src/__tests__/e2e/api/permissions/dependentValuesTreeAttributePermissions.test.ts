@@ -252,6 +252,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     expect(treeChildren).toHaveLength(2);
                     expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
                 });
+
+                it('treeContent with dependentValuesPermissionFilter should not contain node2', async () => {
+                    const treeContent = await getTreeContentWithDependentValuesFilter();
+                    expect(treeContent).toHaveLength(2);
+                    expect(treeContent).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
+                });
             });
 
             describe('attribute is required', () => {
@@ -555,6 +561,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                     const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
                     expect(treeChildren).toHaveLength(1);
                     expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode2Id}]));
+                });
+
+                it('treeContent with dependentValuesPermissionFilter should only contain node2', async () => {
+                    const treeContent = await getTreeContentWithDependentValuesFilter();
+                    expect(treeContent).toHaveLength(1);
+                    expect(treeContent).toEqual(expect.arrayContaining([{id: treeNode2Id}]));
                 });
             });
 
@@ -1064,6 +1076,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         expect(treeChildren).toHaveLength(2);
                         expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
                     });
+
+                    it('treeContent with dependentValuesPermissionFilter should not contain node2', async () => {
+                        const treeContent = await getTreeContentWithDependentValuesFilter();
+                        expect(treeContent).toHaveLength(2);
+                        expect(treeContent).toEqual(expect.arrayContaining([{id: treeNode1Id}, {id: treeNode3Id}]));
+                    });
                 });
             });
 
@@ -1132,9 +1150,14 @@ describe('DependentValuesTreeAttributePermissions', () => {
                         expect(values[0].payload.id).toBe(treeNode1Id);
                     });
 
-                    it('treeNodeChildren with dependentValuesPermissionFilter should any node', async () => {
+                    it('treeNodeChildren with dependentValuesPermissionFilter should not contain any node', async () => {
                         const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
                         expect(treeChildren).toHaveLength(0);
+                    });
+
+                    it('treeContent with dependentValuesPermissionFilter should not contain any node', async () => {
+                        const treeContent = await getTreeContentWithDependentValuesFilter();
+                        expect(treeContent).toHaveLength(0);
                     });
 
                     it('Inherit permission from tree target', async () => {
@@ -1233,6 +1256,12 @@ describe('DependentValuesTreeAttributePermissions', () => {
                             const treeChildren = await getTreeNodeChildrenWithDependentValuesFilter();
                             expect(treeChildren).toHaveLength(1);
                             expect(treeChildren).toEqual(expect.arrayContaining([{id: treeNode2Id}]));
+                        });
+
+                        it('treeContent with dependentValuesPermissionFilter should contains only node2', async () => {
+                            const treeContent = await getTreeContentWithDependentValuesFilter();
+                            expect(treeContent).toHaveLength(1);
+                            expect(treeContent).toEqual(expect.arrayContaining([{id: treeNode2Id}]));
                         });
                     });
                 });
@@ -1456,6 +1485,28 @@ describe('DependentValuesTreeAttributePermissions', () => {
         );
 
         return res.data.data.treeNodeChildren.list;
+    };
+
+    const getTreeContentWithDependentValuesFilter = async (): Promise<Array<{id: string}>> => {
+        const res = await makeGraphQlCall(
+            `{
+                treeContent(
+                    treeId: "${testTreeName}",
+                    dependentValuesPermissionFilter: {
+                        libraryId: "${testLibraryName}",
+                        attributeId: "${testAttrName}",
+                        recordId: "${recordId}"
+                    }
+                ) {
+                  id
+                }
+            }`,
+            {
+                user: e2eNonAdminUser(),
+            },
+        );
+
+        return res.data.data.treeContent;
     };
 
     const getAttributeWithTreeValues = async (): Promise<{
