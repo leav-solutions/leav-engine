@@ -21,8 +21,8 @@ type OnlyObject<T> = T extends object ? T : never;
  * Maybe move all DBPayloadData types in @leav/utils type to allow event consumers outside core to use them
  * without having to redeclare them. For now before and after are any in @leav/utils
  */
-export interface IDbPayloadInternal<DBPayloadAction extends EventAction> extends IDbPayload {
-    action: DBPayloadAction;
+export interface IDbPayloadInternal<DBPayloadAction extends EventAction | unknown> extends IDbPayload {
+    action: DBPayloadAction extends EventAction ? DBPayloadAction : string;
     before?: OnlyObject<IDBPayloadData<DBPayloadAction>>; // Value before the event
     after?: OnlyObject<IDBPayloadData<DBPayloadAction>>; // Value after the event
 }
@@ -51,6 +51,9 @@ interface IDBPayloadDataMap {
     [EventAction.PERMISSION_SAVE]: IPermission;
 }
 
-export type IDBPayloadData<DBPayloadAction extends EventAction> = DBPayloadAction extends keyof IDBPayloadDataMap
-    ? IDBPayloadDataMap[DBPayloadAction]
-    : never;
+export type IDBPayloadData<DBPayloadAction extends EventAction | unknown> =
+    DBPayloadAction extends keyof IDBPayloadDataMap
+        ? IDBPayloadDataMap[DBPayloadAction]
+        : DBPayloadAction extends string
+          ? object
+          : never;
