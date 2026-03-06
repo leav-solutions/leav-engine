@@ -2,16 +2,44 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isDevEnv} from '_ui/_utils/isDevEnv';
+import {GLOBAL_BASE_URL} from '_ui/constants';
 
 export default function useRedirectToLogin() {
+    const redirectToLogin = () => {
+        if (isDevEnv()) {
+            return window.location.replace(
+                `${window.location.origin}${GLOBAL_BASE_URL}/app/login/?dest=${encodeURIComponent(window.location.toString())}`,
+            );
+        }
+        return window.location.reload();
+    };
+
+    // Avoid multiple simultaneous auth checks by sharing the same promise
+    let authCheckPromise: Promise<void> | null = null;
+
     return {
-        redirectToLogin: async () => {
-            if (isDevEnv()) {
-                return window.location.replace(
-                    `${window.location.origin}/app/login/?dest=${encodeURIComponent(window.location.toString())}`,
-                );
+        redirectToLogin,
+        checkAuthOrRedirectToLogin: async () => {
+            if (!authCheckPromise) {
+                authCheckPromise = (async () => {
+                    try {
+                        const res = await fetch(`${GLOBAL_BASE_URL}/auth/login-checker`, {
+                            method: 'POST',
+                        });
+                        if (!res.ok) {
+                            throw new Error(res.statusText, {cause: res});
+                        }
+                    } catch (e) {
+                        console.error('An error occurred while checking authentication, redirecting to login...', {
+                            error: e,
+                        });
+                        redirectToLogin();
+                    } finally {
+                        authCheckPromise = null;
+                    }
+                })();
             }
-            return window.location.reload();
+            return authCheckPromise;
         },
     };
 }

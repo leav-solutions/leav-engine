@@ -3,7 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCode, createClient} from 'graphql-ws';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
-import {ApolloClient, from, HttpLink, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
+import {
+    ApolloClient,
+    from,
+    HttpLink,
+    InMemoryCache,
+    type Observable,
+    type ServerError,
+    split,
+    gql,
+} from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {type NextLink, type Operation} from '@apollo/client/link/core';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -13,12 +22,13 @@ import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 export const useInitApollo = (
     unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>,
 ) => {
-    const {redirectToLogin} = useRedirectToLogin();
+    const {checkAuthOrRedirectToLogin} = useRedirectToLogin();
     const errorLink = onError(({graphQLErrors, networkError, operation, forward, response}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
         ) {
+            console.info('Authentication error detected, redirecting to login...');
             return unauthorizedHandler(forward, operation);
         }
 
@@ -44,9 +54,8 @@ export const useInitApollo = (
             retryAttempts: Infinity,
             shouldRetry: err => {
                 if (err instanceof CloseEvent && err.code === CloseCode.Forbidden) {
-                    console.info('WebSocket connection forbidden, redirect to login...');
-                    redirectToLogin();
-                    return false;
+                    console.info('WebSocket connection forbidden, check auth or redirecting to login...');
+                    checkAuthOrRedirectToLogin();
                 }
                 return true;
             },

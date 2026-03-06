@@ -18,7 +18,7 @@ import {GraphQLError} from 'graphql';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import {type ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
-import {createServer} from 'http';
+import {createServer, type IncomingHttpHeaders} from 'http';
 import {type IUtils} from 'utils/utils';
 import {type ILogger} from '@leav/logger';
 import {WebSocketServer} from 'ws';
@@ -200,25 +200,18 @@ export default function ({
                     onConnect: async ctx => {
                         // Check auth
                         try {
-                            // Recreate headers object from rawHeaders array
-                            const headers: Record<string, string> = ctx.extra.request.rawHeaders.reduce(
-                                (prev, curr, i, arr) => (!(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev),
-                                {},
-                            );
-
+                            const headers: IncomingHttpHeaders = ctx.extra.request.headers;
+                            const accessToken = _extractAccessTokenFromCookiesString(headers.cookie || '');
+                            // Not possible to set cookie on websocket connection,
+                            // so let front refresh access token using refresh token if access token is not provided with other query
                             const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
-                            const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
 
                             const payload = await authApp.validateRequestToken(
                                 {
                                     apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
-                                    cookies: cookieIncluded
-                                        ? {
-                                              [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
-                                                  headers.Cookie,
-                                              ),
-                                          }
-                                        : null,
+                                    cookies: {
+                                        [ACCESS_TOKEN_COOKIE_NAME]: accessToken,
+                                    },
                                     headers,
                                 },
                                 null,
