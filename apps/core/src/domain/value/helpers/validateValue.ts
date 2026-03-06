@@ -68,8 +68,8 @@ const _validateTreeLinkedRecord = async (
     if (typeof value.payload !== 'string') {
         throw new Error('Tree attribute value must be a string representing the linked node ID.');
     }
-    const nodeId = value.payload;
 
+    const nodeId = value.payload;
     const isElementInTree = await deps.treeRepo.isNodePresent({
         treeId: attribute.linked_tree,
         nodeId,
@@ -79,7 +79,7 @@ const _validateTreeLinkedRecord = async (
     if (!isElementInTree) {
         return {
             isValid: false,
-            reason: {msg: Errors.ELEMENT_NOT_IN_TREE, vars: {element: value.payload, tree: attribute.linked_tree}},
+            reason: {msg: Errors.NODE_NOT_IN_TREE, vars: {nodeId: value.payload, treeId: attribute.linked_tree}},
         };
     }
 
@@ -119,8 +119,8 @@ const _validateVersion = async (
 
             if (!isPresent) {
                 errors[treeName] = {
-                    msg: Errors.ELEMENT_NOT_IN_TREE,
-                    vars: {element: value.version[treeName], tree: treeName},
+                    msg: Errors.NODE_NOT_IN_TREE,
+                    vars: {nodeId: value.version[treeName], treeId: treeName},
                 };
             }
         }

@@ -175,9 +175,10 @@ export default function ({
         const isMatch = Array.isArray(value.payload);
 
         if (isMatch) {
+            const filterLibrary = attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library;
             const recordsList = await recordDomain.find({
                 params: {
-                    library: attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library,
+                    library: filterLibrary,
                     filters: _matchesToFilters(value.payload as IMatch[]),
                 },
                 ctx,
@@ -187,18 +188,38 @@ export default function ({
 
             // if value is undefined, it means that we have no record for this match
             if (typeof value.payload === 'undefined') {
-                throw new Error('No record found for match');
+                throw new ValidationError({
+                    record: {
+                        msg: Errors.RECORD_NOT_FOUND_FOR_IMPORT_MATCH,
+                        vars: {match: JSON.stringify({library: filterLibrary, filters: value.payload})},
+                    },
+                });
             }
 
             if (attribute.type === AttributeTypes.TREE) {
-                const node = await treeDomain.getNodesByRecord({
-                    treeId: attribute.linked_tree,
-                    record: {
-                        id: value.payload,
-                        library: value.library,
-                    },
-                    ctx,
-                });
+                const node = (
+                    await treeDomain.getNodesByRecord({
+                        treeId: attribute.linked_tree,
+                        record: {
+                            id: value.payload,
+                            library: value.library,
+                        },
+                        ctx,
+                    })
+                )[0];
+
+                if (node === undefined) {
+                    throw new ValidationError({
+                        node: {
+                            msg: Errors.RECORD_NOT_IN_TREE,
+                            vars: {
+                                treeId: attribute.linked_tree,
+                                recordId: value.payload,
+                                libraryId: value.library,
+                            },
+                        },
+                    });
+                }
 
                 value.payload = node[0];
             }
@@ -225,20 +246,40 @@ export default function ({
             const recordIdFound = recordsList.list[0]?.id;
 
             if (!recordIdFound) {
-                logger.warn(`No record found for match ${JSON.stringify(v.element)}`);
-                return acc;
+                throw new ValidationError({
+                    record: {
+                        msg: Errors.RECORD_NOT_FOUND_FOR_IMPORT_MATCH,
+                        vars: {match: JSON.stringify({filters: v.element, library: v.library})},
+                    },
+                });
             }
 
-            const treeNode = await treeDomain.getNodesByRecord({
-                treeId: v.treeId,
-                record: {
-                    id: recordIdFound,
-                    library: v.library,
-                },
-                ctx,
-            });
+            const treeNode = (
+                await treeDomain.getNodesByRecord({
+                    treeId: v.treeId,
+                    record: {
+                        id: recordIdFound,
+                        library: v.library,
+                    },
+                    ctx,
+                })
+            )[0];
 
-            acc[v.treeId] = treeNode[0];
+            if (treeNode === undefined) {
+                throw new ValidationError({
+                    node: {
+                        msg: Errors.RECORD_NOT_IN_TREE,
+                        vars: {
+                            treeId: v.treeId,
+                            recordId: recordIdFound,
+                            libraryId: v.library,
+                        },
+                    },
+                });
+            }
+
+            acc[v.treeId] = treeNode;
+
             return acc;
         }, Promise.resolve({}));
 
@@ -412,7 +453,7 @@ export default function ({
     ) => {
         if (action === Action.UPDATE) {
             if (!elements.length) {
-                throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
+                throw new ValidationError<IAttribute>({id: Errors.MISSING_IMPORT_ELEMENTS});
             }
 
             for (const e of elements) {
@@ -934,7 +975,12 @@ export default function ({
 
                         // cannot update the record if not found
                         if (!recordFound && importMode === ImportMode.UPDATE) {
-                            throw new ValidationError({element: Errors.MISSING_ELEMENTS});
+                            throw new ValidationError({
+                                record: {
+                                    msg: Errors.RECORD_NOT_FOUND_FOR_IMPORT_MATCH,
+                                    vars: {match: JSON.stringify({library: element.library, matches: element.matches})},
+                                },
+                            });
                         }
 
                         // cannot add a found record
@@ -1031,7 +1077,7 @@ export default function ({
                         }
 
                         if (typeof parent === 'undefined' && !recordIds.length) {
-                            throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
+                            throw new ValidationError<IAttribute>({id: Errors.MISSING_IMPORT_ELEMENTS});
                         }
 
                         await _updateTaskProgress(
