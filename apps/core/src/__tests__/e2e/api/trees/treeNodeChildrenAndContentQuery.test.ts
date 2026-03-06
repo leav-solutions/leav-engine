@@ -165,8 +165,39 @@ describe('Trees', () => {
         expect(res.data.data.rootChildrenPage2.list[0].id).toBe(recordNode2);
     });
 
-    test('Get Trees node children with filters "childrenAsRecordValuePermissionFilter" filter', async () => {
-        await makeGraphQlCall(`mutation {
+    describe('Trees node children and content queries with permissions filters', () => {
+        beforeEach(async () => {
+            await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: ${PermissionTypes.RECORD},
+                        applyTo: "${testLibName}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode1}"
+                        },
+                        actions: [
+                            {name: ${RecordPermissionsActions.CREATE_RECORD}, allowed: true}
+                        ]
+                    }
+                ) {
+                    type
+                    applyTo
+                    usersGroup
+                    permissionTreeTarget {
+                        tree
+                        nodeId
+                    }
+                    actions {
+                        allowed
+                        name
+                    }
+                }
+            }`);
+        });
+
+        test('Get Trees node children with filters "childrenAsRecordValuePermissionFilter" filter', async () => {
+            await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
                         type: ${PermissionTypes.RECORD},
@@ -194,8 +225,8 @@ describe('Trees', () => {
                 }
             }`);
 
-        const res = await makeGraphQlCall(
-            `{
+            const res = await makeGraphQlCall(
+                `{
             rootChildren: treeNodeChildren(
                 treeId: "${testTreeName}",
                 childrenAsRecordValuePermissionFilter: {
@@ -210,21 +241,73 @@ describe('Trees', () => {
                 }
               }
         }`,
-            {
-                user: e2eNonAdminUser(),
-            },
-        );
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
 
-        expect(res.data.data.rootChildren.totalCount).toBe(2);
-        expect(res.data.data.rootChildren.list).toHaveLength(1);
-        expect(res.data.data.rootChildren.list[0].id).toBe(recordNode2);
-    });
+            expect(res.data.data.rootChildren.totalCount).toBe(2);
+            expect(res.data.data.rootChildren.list).toHaveLength(1);
+            expect(res.data.data.rootChildren.list[0].id).toBe(recordNode2);
+        });
 
-    test('Get Trees node children with accessRecordByDefaultPermission', async () => {
-        await makeGraphQlCall(`mutation {
+        test('Get Tree content with filters "childrenAsRecordValuePermissionFilter" filter', async () => {
+            await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: ${PermissionTypes.RECORD},
+                        applyTo: "${testLibName}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode3}"
+                        },
+                        actions: [
+                            {name: ${RecordPermissionsActions.CREATE_RECORD}, allowed: false}
+                        ]
+                    }
+                ) {
+                    type
+                }
+            }`);
+
+            const res = await makeGraphQlCall(
+                `{
+            content: treeContent(
+                treeId: "${testTreeName}",
+                childrenAsRecordValuePermissionFilter: {
+                    action: ${RecordPermissionsActions.CREATE_RECORD},
+                    libraryId: "${testLibName}",
+                    attributeId: "${treeAttributeId}"
+                }
+            ) {
+                id
+                children {
+                    id
+                }
+              }
+        }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.content).toHaveLength(2);
+            expect(res.data.data.content[0].id).toBe(recordNode1);
+            expect(res.data.data.content[1].id).toBe(recordNode2);
+
+            expect(res.data.data.content[0].children).toHaveLength(1);
+            expect(res.data.data.content[0].children[0]).toMatchObject({
+                id: recordNode4,
+            });
+        });
+
+        test('Get Trees node children with accessRecordByDefaultPermission', async () => {
+            await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
                         type: ${PermissionTypes.RECORD},
@@ -252,8 +335,8 @@ describe('Trees', () => {
                 }
             }`);
 
-        const res = await makeGraphQlCall(
-            `{
+            const res = await makeGraphQlCall(
+                `{
             rootChildren: treeNodeChildren(
                 treeId: "${testTreeName}",
                 accessRecordByDefaultPermission: {
@@ -268,22 +351,98 @@ describe('Trees', () => {
                 }
               }
         }`,
-            {
-                user: e2eNonAdminUser(),
-            },
-        );
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
 
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.rootChildren.totalCount).toBe(2);
-        expect(res.data.data.rootChildren.list).toHaveLength(2);
-        expect(res.data.data.rootChildren.list[0]).toMatchObject({
-            id: recordNode1,
-            accessRecordByDefaultPermission: false,
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.rootChildren.totalCount).toBe(2);
+            expect(res.data.data.rootChildren.list).toHaveLength(2);
+            expect(res.data.data.rootChildren.list[0]).toMatchObject({
+                id: recordNode1,
+                accessRecordByDefaultPermission: false,
+            });
+            expect(res.data.data.rootChildren.list[1]).toMatchObject({
+                id: recordNode2,
+                accessRecordByDefaultPermission: true,
+            });
         });
-        expect(res.data.data.rootChildren.list[1]).toMatchObject({
-            id: recordNode2,
-            accessRecordByDefaultPermission: true,
+
+        test('Get tree content with accessRecordByDefaultPermission', async () => {
+            await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: ${PermissionTypes.RECORD},
+                        applyTo: "${testLibName}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode1}"
+                        },
+                        actions: [
+                            {name: ${RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT}, allowed: false}
+                        ]
+                    }
+                ) {
+                    type
+                    applyTo
+                    usersGroup
+                    permissionTreeTarget {
+                        tree
+                        nodeId
+                    }
+                    actions {
+                        allowed
+                        name
+                    }
+                }
+            }`);
+
+            const res = await makeGraphQlCall(
+                `{
+            content: treeContent(
+                treeId: "${testTreeName}",
+                accessRecordByDefaultPermission: {
+                    libraryId: "${testLibName}",
+                    attributeId: "${treeAttributeId}"
+                }
+            ) {
+                id
+                accessRecordByDefaultPermission
+                children {
+                    id
+                    accessRecordByDefaultPermission
+                }
+              }
+        }`,
+                {
+                    user: e2eNonAdminUser(),
+                },
+            );
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.content).toHaveLength(2);
+
+            expect(res.data.data.content[0]).toMatchObject({
+                id: recordNode1,
+                accessRecordByDefaultPermission: false,
+            });
+            expect(res.data.data.content[1]).toMatchObject({
+                id: recordNode2,
+                accessRecordByDefaultPermission: true,
+            });
+
+            expect(res.data.data.content[0].children).toHaveLength(2);
+            expect(res.data.data.content[0].children[0]).toMatchObject({
+                id: recordNode4,
+                accessRecordByDefaultPermission: false,
+            });
+            expect(res.data.data.content[0].children[1]).toMatchObject({
+                id: recordNode3,
+                accessRecordByDefaultPermission: false,
+            });
         });
     });
 });
