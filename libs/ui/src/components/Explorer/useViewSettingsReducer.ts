@@ -60,19 +60,26 @@ export const useViewSettingsReducer = (
     /**
      * On `entrypoint.type === 'link'`, we need to get the library id from the link attribute to get views et set up `<Explorer />`
      */
-    useExplorerLinkAttributeQuery({
+    const {data: linkAttributeData} = useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
             id: (entrypoint as IEntrypointLink).linkAttributeId,
         },
-        onCompleted: data => {
-            const attributeData = data?.attributes?.list?.[0];
-            if (!attributeData) {
-                throw new Error('Unknown link attribute');
-            }
-            setLibraryId(isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
-        },
     });
+
+    useEffect(() => {
+        if (entrypoint.type !== 'link') {
+            return;
+        }
+
+        const attributeData = linkAttributeData?.attributes?.list?.[0];
+
+        if (!attributeData) {
+            return;
+        }
+
+        setLibraryId(isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
+    }, [entrypoint, linkAttributeData]);
 
     const {
         /**

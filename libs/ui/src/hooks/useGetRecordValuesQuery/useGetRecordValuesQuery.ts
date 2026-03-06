@@ -4,7 +4,7 @@
 
 import {type ApolloQueryResult, type QueryResult, useQuery} from '@apollo/client';
 import {type Override} from '@leav/utils';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {RecordFilterCondition, type RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
 import {
     getRecordColumnsValues,
@@ -54,11 +54,16 @@ export const useGetRecordValuesQuery = (
             filters: _recordIdsToQueryFilters(recordIds),
         },
         skip: skip || !libraryId || !columns.length || !recordIds.length,
-        onCompleted: data => {
-            const cleanData: IColumnsValuesByRecord = _convertQueryResult(data);
-            setQueryData(cleanData);
-        },
     });
+
+    useEffect(() => {
+        if (!query.data) {
+            return;
+        }
+
+        const cleanData: IColumnsValuesByRecord = _convertQueryResult(query.data);
+        setQueryData(cleanData);
+    }, [query.data]);
 
     const customRefetch = async (refetchRecordIds: string[]) => {
         const customVariables = {
@@ -68,7 +73,7 @@ export const useGetRecordValuesQuery = (
         const refetchData = await query.refetch(customVariables);
 
         const cleanData: IColumnsValuesByRecord = _convertQueryResult(refetchData.data);
-        setQueryData({...queryData, ...cleanData});
+        setQueryData(prev => ({...(prev ?? {}), ...cleanData}));
 
         return refetchData;
     };
