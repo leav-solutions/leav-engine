@@ -61,6 +61,12 @@ export const iframePanelSchema = z.object({
     iframeSource: z.string(),
     viewId: z.string().optional(),
     isSelfContaining: z.boolean().optional(),
+    popupProps: z
+        .object({
+            width: z.string().optional(),
+            height: z.string().optional(),
+        })
+        .optional(),
 });
 
 const editionPanelSchema = z.object({

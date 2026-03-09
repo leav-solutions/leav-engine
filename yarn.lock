@@ -8251,7 +8251,7 @@ __metadata:
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@uidotdev/usehooks": "npm:2.4.1"
-    aristid-ds: "npm:15.2.0-efdeb96"
+    aristid-ds: "npm:15.2.0-bc3380f"
     babel-jest: "npm:29.7.0"
     dayjs: "npm:^1.11.13"
     dompurify: "npm:3.3.2"
@@ -11661,7 +11661,7 @@ __metadata:
     "@types/styled-components": "npm:4.4.3"
     "@types/testing-library__jest-dom": "npm:5.14.9"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.2.0-efdeb96"
+    aristid-ds: "npm:15.2.0-bc3380f"
     babel-jest: "npm:30.2.0"
     cross-fetch: "npm:3.2.0"
     dayjs: "npm:1.11.19"
@@ -12135,7 +12135,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.2.0-efdeb96"
+    aristid-ds: "npm:15.2.0-bc3380f"
     babel-jest: "npm:29.7.0"
     browserslist: "npm:4.28.1"
     classnames: "npm:2.5.1"
@@ -12276,9 +12276,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:15.2.0-efdeb96":
-  version: 15.2.0-efdeb96
-  resolution: "aristid-ds@npm:15.2.0-efdeb96"
+"aristid-ds@npm:15.2.0-bc3380f":
+  version: 15.2.0-bc3380f
+  resolution: "aristid-ds@npm:15.2.0-bc3380f"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -12326,7 +12326,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10/ac59c4459134e617ef9a01a36331c9528f2acedc395bf83d221c3915aea32c435ae6849929a099a76fefc48934412795482790e7c7b91dfe5251d586d1701705
+  checksum: 10/5cc758c25457c93227ef695046b9fa1a5a13de60fde1a50c31c8d42658a2f34935745ae44558469c11c17b5a87ffebf7afbb09c341f67f54932e7d344e99b0b7
   languageName: node
   linkType: hard
 
@@ -14948,7 +14948,7 @@ __metadata:
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.1.4"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:15.2.0-efdeb96"
+    aristid-ds: "npm:15.2.0-bc3380f"
     babel-jest: "npm:29.7.0"
     dayjs: "npm:1.11.19"
     graphql: "npm:16.12.0"
@@ -22104,7 +22104,7 @@ __metadata:
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.2.0-efdeb96"
+    aristid-ds: "npm:15.2.0-bc3380f"
     babel-jest: "npm:29.7.0"
     graphql: "npm:15.0.0"
     i18next: "npm:22.5.1"
@@ -23831,7 +23831,7 @@ __metadata:
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.1.4"
-    aristid-ds: "npm:15.2.0-efdeb96"
+    aristid-ds: "npm:15.2.0-bc3380f"
     babel-jest: "npm:29.7.0"
     cross-fetch: "npm:3.2.0"
     graphql: "npm:16.12.0"

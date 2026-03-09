@@ -93,6 +93,17 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                   height: undefined, // We override the height so the modal is fullscreen
               }
             : {};
+        const popupProps = {
+            useChildrenOnly: undefined,
+            width: isCreationFormPanel ? 'revert-layer' : '70vw', // Use revert-layer to inherit the width from the popupCreationOverlay (as modal use html with style attribute)
+            height: isCreationFormPanel ? 'revert-layer' : '70vh', // Use revert-layer to inherit the height from the popupCreationOverlay (as modal use html with style attribute)
+        };
+
+        if (currentPanel.type === 'custom' && currentPanel.popupProps) {
+            popupProps.width = currentPanel.popupProps.width ?? popupProps.width;
+            popupProps.height = currentPanel.popupProps.height ?? popupProps.height;
+            popupProps.useChildrenOnly = currentPanel.isSelfContaining ?? undefined;
+        }
 
         // TODO: We might need to handle a isSelfContainingPanel case like in the slider case.
         return (
@@ -122,6 +133,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                         })}
                     />
                 }
+                {...popupProps}
                 {...fullpageModalProps}
             >
                 <div className={popupContent} ref={explorerContainerRef}>
