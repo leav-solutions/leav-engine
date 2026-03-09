@@ -34,16 +34,23 @@ const StyledList = styled.ul`
     color: var(--general-utilities-text-primary);
 `;
 
-const visibleListTitle = 'visibleListTitle';
-const invisibleListTitle = 'invisibleListTitle';
+const visibleListTitleId = 'visibleListTitle';
+const invisibleListTitleId = 'invisibleListTitle';
 
 interface ISelectVisibleAttributesProps {
     libraryId: string;
+    mainTitle: string;
+    visibleListTitle: string;
+    invisibleListTitle: string;
 }
 
-export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributesProps> = ({libraryId}) => {
+export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributesProps> = ({
+    libraryId,
+    mainTitle,
+    visibleListTitle,
+    invisibleListTitle,
+}) => {
     const {t} = useSharedTranslation();
-
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -80,10 +87,10 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
 
     return (
         <div>
-            <KitTypography.Title level="h4">{t('explorer.columns')}</KitTypography.Title>
+            <KitTypography.Title level="h4">{mainTitle}</KitTypography.Title>
             <KitInput placeholder={String(t('global.search'))} onChange={onSearchChanged} allowClear />
-            <StyledListTitle id={visibleListTitle}>{t('explorer.visible-columns')}</StyledListTitle>
-            <StyledList aria-labelledby={visibleListTitle}>
+            <StyledListTitle id={visibleListTitleId}>{visibleListTitle}</StyledListTitle>
+            <StyledList aria-labelledby={visibleListTitleId}>
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
                     <SortableContext items={orderedVisibleColumns} strategy={verticalListSortingStrategy}>
                         <ColumnItem itemId="" title={t('record_edition.whoAmI')} visible={false} locked />
@@ -102,8 +109,8 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
                     </SortableContext>
                 </DndContext>
             </StyledList>
-            <StyledListTitle id={invisibleListTitle}>{t('explorer.invisible-columns')}</StyledListTitle>
-            <StyledList aria-labelledby={invisibleListTitle}>
+            <StyledListTitle id={invisibleListTitleId}>{invisibleListTitle}</StyledListTitle>
+            <StyledList aria-labelledby={invisibleListTitleId}>
                 {searchFilteredColumnsIds
                     .filter(columnId => !orderedVisibleColumns.includes(columnId))
                     .map(columnId => (
