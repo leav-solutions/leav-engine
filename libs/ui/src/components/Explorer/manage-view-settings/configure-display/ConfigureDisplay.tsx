@@ -8,6 +8,7 @@ import {ViewSettingsActionTypes} from './../store-view-settings/viewSettingsRedu
 import {useViewSettingsContext} from './../store-view-settings/useViewSettingsContext';
 import {SelectVisibleAttributes} from './attributes/SelectVisibleAttributes';
 import {SelectViewType} from './view-type/SelectViewType';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const StyledWrapperDiv = styled.div`
     display: flex;
@@ -25,8 +26,12 @@ interface IConfigureDisplayProps {
 
 export const ConfigureDisplay: FunctionComponent<IConfigureDisplayProps> = ({libraryId}) => {
     const {view, dispatch} = useViewSettingsContext();
+    const {t} = useSharedTranslation();
 
     const _handleViewTypeChange: RadioGroupProps['onChange'] = event => {
+        dispatch({
+            type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS,
+        });
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_VIEW_TYPE,
             payload: {
@@ -38,7 +43,22 @@ export const ConfigureDisplay: FunctionComponent<IConfigureDisplayProps> = ({lib
     return (
         <StyledWrapperDiv>
             <SelectViewType value={view.viewType} onChange={_handleViewTypeChange} />
-            {view.viewType === 'table' && <SelectVisibleAttributes libraryId={libraryId} />}
+            {view.viewType === 'table' && (
+                <SelectVisibleAttributes
+                    mainTitle={t('explorer.columns')}
+                    visibleListTitle={t('explorer.visible-columns')}
+                    invisibleListTitle={t('explorer.invisible-columns')}
+                    libraryId={libraryId}
+                />
+            )}
+            {view.viewType === 'timeline' && (
+                <SelectVisibleAttributes
+                    mainTitle={t('explorer.available-attributes-for-users')}
+                    visibleListTitle={t('explorer.visible-attributes')}
+                    invisibleListTitle={t('explorer.invisible-attributes')}
+                    libraryId={libraryId}
+                />
+            )}
         </StyledWrapperDiv>
     );
 };
