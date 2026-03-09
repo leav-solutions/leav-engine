@@ -204,7 +204,6 @@ describe('Export', () => {
                         break;
                     case AttributeFormats.BOOLEAN:
                         await gqlSaveValue(attrId, exportLibName, recordId1, 'true');
-                        await gqlSaveValue(attrId, exportLibName, recordId2, 'true');
                         break;
                     case AttributeFormats.COLOR:
                         await gqlSaveValue(attrId, exportLibName, recordId1, '#FF5733');
@@ -519,7 +518,7 @@ describe('Export', () => {
                         '1761837010063',
                         '{"to":550238400,"from":550065600}',
                         MASKED_VALUE,
-                        'true',
+                        'false',
                         '#FF5733',
                         'Je mets ici un texte avec <&> de la mise en page Pour voir ce que ca fait ',
                     ],
@@ -529,7 +528,7 @@ describe('Export', () => {
                         '1761837010063',
                         '{"to":550238400,"from":550065600}',
                         MASKED_VALUE,
-                        'true',
+                        'true', // if a boolean is undefined it should be exported as false
                         '#FF5733',
                         "C'est un rich text",
                     ],
