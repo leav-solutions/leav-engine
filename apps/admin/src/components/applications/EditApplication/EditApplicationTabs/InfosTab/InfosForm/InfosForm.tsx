@@ -274,7 +274,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                                 fluid
                                 selection
                                 width="4"
-                                disabled={isReadOnly}
+                                disabled={!isNewApp || isReadOnly}
                                 name="module"
                                 aria-label="id"
                                 onChange={_handleChangeWithSubmit}
