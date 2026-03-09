@@ -194,6 +194,13 @@ export async function gqlSaveLibrary(
         saveLibrary(library: {
             id: "${id}",
             label: {en: "${label}"},
+            recordIdentityConf: {
+                label: "label",
+                subLabel: "label",
+                preview: null,
+                color: null,
+                treeColorPreview: null,
+            },
             attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
             ${settings ? `settings: ${settings}` : ''}
         }) { id }

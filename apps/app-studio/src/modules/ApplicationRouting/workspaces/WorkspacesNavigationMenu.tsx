@@ -41,10 +41,12 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
                 .filter(_filterWorkspacesOnSearchValue)
                 .map(recordWorkspace => {
                     const recordWorkspaceTitle = localizedTranslation(recordWorkspace.title, lang);
+                    const recordWorkspaceSubTitle = localizedTranslation(recordWorkspace.subTitle, lang);
+
                     return {
                         key: recordWorkspace.id,
                         type: 'default',
-                        title: <KitIdCard title={recordWorkspaceTitle} />,
+                        title: <KitIdCard title={recordWorkspaceTitle} description={recordWorkspaceSubTitle} />,
                         tooltip: recordWorkspaceTitle,
                         icon: <KitAvatar size="s" label={recordWorkspaceTitle} shape="square" />,
                         onClick: () => {
