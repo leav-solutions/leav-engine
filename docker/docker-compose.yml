@@ -154,6 +154,15 @@ x-env-build-core: &env-build-core
   context: ../apps/core
   dockerfile: ../../docker/DOCKERFILES/CORE/Dockerfile
 
+# Healthcheck for Vite dev server (front-end apps)
+x-healthcheck-vite: &healthcheck-vite
+  test: ["CMD-SHELL", "nc -z localhost 3000 || exit 1"]
+  start_period: 30s
+  start_interval: 3s
+  interval: 30s
+  timeout: 2s
+  retries: 30
+
 # Healthcheck with libs/monitoring-server module
 x-healthcheck-localhost-44444: &healthcheck-localhost-44444
   test: ["CMD-SHELL", "nc -z localhost 44444 || exit 1"]
@@ -354,6 +363,7 @@ services:
       - *volume-shared-modules
       - *mount_point-yarn_releases
     working_dir: *dir-admin
+    healthcheck: *healthcheck-vite
     depends_on:
       core:
         condition: service_healthy
@@ -380,8 +390,11 @@ services:
       - *volume-data_studio-modules
       - *mount_point-yarn_releases
     working_dir: *dir-data_studio
+    healthcheck: *healthcheck-vite
     depends_on:
       core:
+        condition: service_healthy
+      admin:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
@@ -406,8 +419,11 @@ services:
       - *volume-app_studio-modules
       - *mount_point-yarn_releases
     working_dir: *dir-app_studio
+    healthcheck: *healthcheck-vite
     depends_on:
       core:
+        condition: service_healthy
+      data-studio:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
@@ -432,8 +448,11 @@ services:
       - *volume-login-modules
       - *mount_point-yarn_releases
     working_dir: *dir-login
+    healthcheck: *healthcheck-vite
     depends_on:
       core:
+        condition: service_healthy
+      app-studio:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
@@ -460,8 +479,11 @@ services:
       - *volume-portal-modules
       - *mount_point-yarn_releases
     working_dir: *dir-portal
+    healthcheck: *healthcheck-vite
     depends_on:
       core:
+        condition: service_healthy
+      login:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
