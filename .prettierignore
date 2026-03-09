@@ -1,3 +1,4 @@
 **/_gqlTypes/*
 **/__generated__/*
 **/dist/*
+yarn.lock
