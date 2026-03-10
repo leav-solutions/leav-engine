@@ -42,7 +42,7 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import canSaveRecordValue from './helpers/canSaveRecordValue';
+import canSaveRecordValue, {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from './helpers/canSaveRecordValue';
 import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import postSaveValue from './helpers/postSaveValue';
@@ -518,6 +518,12 @@ const valueDomain = function ({
     };
 
     const _executeDeleteValue = async ({library, recordId, attribute, value, skipActions, ctx}: IDeleteValueParams) => {
+        if (IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(attribute)) {
+            throw new ValidationError<IValue>({
+                attribute: {msg: Errors.IMMUTABLE_CORE_SYSTEM_ATTRIBUTE, vars: {attribute}},
+            });
+        }
+
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.EDIT_RECORD,

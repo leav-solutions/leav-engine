@@ -75,8 +75,34 @@ const _canSaveMetadata = async (
     };
 };
 
+export const IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS = [
+    'root_key',
+    'hash',
+    'file_path',
+    'file_name',
+    'inode',
+    'files_previews',
+    'files_previews_status',
+    'file_size',
+];
+export const IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS = [
+    'id',
+    'created_by',
+    'created_at',
+    'modified_by',
+    'modified_at',
+];
+export const IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS = [
+    ...IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS,
+    ...IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS,
+];
+
 export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecordValueRes> => {
     const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
+
+    if (IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(attributeProps.id)) {
+        return {canSave: false, reason: Errors.IMMUTABLE_CORE_SYSTEM_ATTRIBUTE};
+    }
 
     const valueExists = doesValueExist(value, attributeProps);
 
