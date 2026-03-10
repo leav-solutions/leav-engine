@@ -121,11 +121,13 @@ export default function ({
                         ctx,
                     );
 
-                    const recordLabel = (await recordProperties.getLabel?.()) ?? workspace.recordId;
-                    const recordSubTitle = (await recordProperties.getSubLabel?.()) ?? null;
-
+                    const rawRecordLabel = (await recordProperties.getLabel?.()) ?? workspace.recordId;
+                    const recordLabel = rawRecordLabel !== null ? String(rawRecordLabel) : null;
                     const title =
                         workspace.title ?? Object.fromEntries(config.lang.available.map(lang => [lang, recordLabel]));
+
+                    const rawRecordSubTitle = (await recordProperties.getSubLabel?.()) ?? null;
+                    const recordSubTitle = rawRecordSubTitle !== null ? String(rawRecordSubTitle) : null;
                     const subTitle =
                         workspace.subTitle ??
                         (recordSubTitle
