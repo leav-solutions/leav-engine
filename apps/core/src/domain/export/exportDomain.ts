@@ -127,14 +127,14 @@ export default function ({
                 ...v,
                 payload: JSON.stringify(v.payload),
             }));
-        }
-
-        if (attribute.format === AttributeFormats.RICH_TEXT) {
+        } else if (attribute.format === AttributeFormats.RICH_TEXT) {
             values = values.map(v => ({
                 ...v,
                 // Remove HTML tags and decode HTML entities for export
                 payload: v.payload ? decodeTipTapHtmlEntities(v.payload.replace(/<\/?[^>]+(>|$)/g, '')) : '',
             }));
+        } else if (attribute.format === AttributeFormats.BOOLEAN) {
+            values = values.length ? values : [{payload: false}]; // we want to export false value if there is no value for a boolean attribute
         }
 
         return values;
