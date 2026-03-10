@@ -14495,7 +14495,7 @@ __metadata:
     cors: "npm:2.8.6"
     dataloader: "npm:2.2.3"
     dayjs: "npm:1.11.19"
-    exceljs: "npm:4.2.0"
+    exceljs: "npm:4.4.0"
     exiftool-vendored: "npm:29.1.0"
     express: "npm:4.22.1"
     express-useragent: "npm:1.0.15"
@@ -16677,20 +16677,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exceljs@npm:4.2.0":
-  version: 4.2.0
-  resolution: "exceljs@npm:4.2.0"
+"exceljs@npm:4.4.0":
+  version: 4.4.0
+  resolution: "exceljs@npm:4.4.0"
   dependencies:
     archiver: "npm:^5.0.0"
     dayjs: "npm:^1.8.34"
     fast-csv: "npm:^4.3.1"
-    jszip: "npm:^3.5.0"
+    jszip: "npm:^3.10.1"
     readable-stream: "npm:^3.6.0"
     saxes: "npm:^5.0.1"
     tmp: "npm:^0.2.0"
     unzipper: "npm:^0.10.11"
     uuid: "npm:^8.3.0"
-  checksum: 10/60ee4a097c5850af906f72043a821f60890a9c048458637ff82feab8287705218f74535aeb96e9e8972eb57b806f4126b241afecae06cd4f64394206c6548ddd
+  checksum: 10/2d310146130b2af25b9a553185062a4095f6fee9a931c18a22b8dccd8a244056f3d2766f44227b9a43c0f52d651d05c5c96291fd38b8ed0a0322afab683fd80c
   languageName: node
   linkType: hard
 
@@ -21285,15 +21285,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jszip@npm:^3.5.0":
-  version: 3.9.1
-  resolution: "jszip@npm:3.9.1"
+"jszip@npm:^3.10.1":
+  version: 3.10.1
+  resolution: "jszip@npm:3.10.1"
   dependencies:
     lie: "npm:~3.3.0"
     pako: "npm:~1.0.2"
     readable-stream: "npm:~2.3.6"
-    set-immediate-shim: "npm:~1.0.1"
-  checksum: 10/a8e1960e459e2f0c0a0f5b255af873a0a696c0ac6cbcfbb614f2c0eda31a485968c28bd175f25ed151166721d82b08e473056989968638f6451f06a9f81c487c
+    setimmediate: "npm:^1.0.5"
+  checksum: 10/bfbfbb9b0a27121330ac46ab9cdb3b4812433faa9ba4a54742c87ca441e31a6194ff70ae12acefa5fe25406c432290e68003900541d948a169b23d30c34dd984
   languageName: node
   linkType: hard
 
@@ -26530,13 +26530,6 @@ __metadata:
     functions-have-names: "npm:^1.2.3"
     has-property-descriptors: "npm:^1.0.2"
   checksum: 10/c7614154a53ebf8c0428a6c40a3b0b47dac30587c1a19703d1b75f003803f73cdfa6a93474a9ba678fa565ef5fbddc2fae79bca03b7d22ab5fd5163dbe571a74
-  languageName: node
-  linkType: hard
-
-"set-immediate-shim@npm:~1.0.1":
-  version: 1.0.1
-  resolution: "set-immediate-shim@npm:1.0.1"
-  checksum: 10/98c4d6778c98363436690a340077142ef11c1a8c8c6a78118242340c8e82bb2d66a1563707ef3f5455e7ff5cbee21c87e898b333cf3e7ed241bab12d19e9eab1
   languageName: node
   linkType: hard
 
