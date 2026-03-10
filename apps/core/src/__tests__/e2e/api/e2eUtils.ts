@@ -185,6 +185,13 @@ export async function gqlSaveLibrary(
     label: string,
     additionalAttributes: string[] = [],
     settings?: string,
+    recordIdentityConf?: {
+        label: string;
+        subLabel?: string;
+        preview?: string;
+        color?: string;
+        treeColorPreview?: string;
+    },
 ) {
     const baseAttributes = ['id', 'modified_by', 'modified_at', 'created_by', 'created_at'];
     const libAttributes = baseAttributes.concat(additionalAttributes);
@@ -194,13 +201,13 @@ export async function gqlSaveLibrary(
         saveLibrary(library: {
             id: "${id}",
             label: {en: "${label}"},
-            recordIdentityConf: {
-                label: "label",
-                subLabel: "label",
-                preview: null,
-                color: null,
-                treeColorPreview: null,
-            },
+            ${
+                recordIdentityConf
+                    ? `recordIdentityConf: {${Object.entries(recordIdentityConf)
+                          .map(([k, v]) => `${k}: "${v}"`)
+                          .join(', ')}}`
+                    : ''
+            }
             attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
             ${settings ? `settings: ${settings}` : ''}
         }) { id }

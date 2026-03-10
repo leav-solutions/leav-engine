@@ -7,13 +7,11 @@ import {
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlCreateRecord,
-    gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveValue,
     makeGraphQlCall,
 } from '../e2eUtils';
 import ms from 'ms';
-import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {EXPLORER_STUDIO_APPLICATION} from '../../../../_constants/globalSettings';
 
 /**
@@ -279,13 +277,16 @@ describe('Applications', () => {
 
         beforeAll(async () => {
             // Create libraries
-            await gqlSaveLibrary(allowedLibId, 'Allowed Library', ['label']);
-            await gqlSaveLibrary(deniedLibId, 'Denied Library', ['label']);
-            await gqlSaveLibrary(noWorkspaceTitleLibId, 'No Workspace Title Library', ['label']);
+            await gqlSaveLibrary(allowedLibId, 'Allowed Library');
+            await gqlSaveLibrary(deniedLibId, 'Denied Library');
+            await gqlSaveLibrary(noWorkspaceTitleLibId, 'No Workspace Title Library', ['label'], '', {
+                label: 'label',
+                subLabel: 'label',
+            });
             await gqlSaveLibrary(
                 withLibraryPanelsLibId,
                 'Library with panels',
-                ['label'],
+                [],
                 toGraphQLObject({
                     applications: {
                         [librariesPanelsAppId]: {
@@ -329,7 +330,7 @@ describe('Applications', () => {
                     },
                 }),
             );
-            await gqlSaveLibrary(withoutLibraryPanelsLibId, 'Library without panels', ['label']);
+            await gqlSaveLibrary(withoutLibraryPanelsLibId, 'Library without panels');
 
             // Create records
             allowedRecordId = await gqlCreateRecord(allowedLibId);
