@@ -450,7 +450,7 @@ const valueDomain = function ({
         ctx: IQueryInfos,
     ): Promise<string | void> => {
         const errorType: Errors = validationErrors[attributeProps.id]?.msg;
-        if (errorType === Errors.UNKNOWN_LINKED_RECORD || errorType === Errors.ELEMENT_NOT_IN_TREE) {
+        if (errorType === Errors.UNKNOWN_LINKED_RECORD || errorType === Errors.NODE_NOT_IN_TREE) {
             return ifLibraryJoinLinkAttribute(
                 attributeProps,
                 async (joinLibId: string, joinAttributeProps: IAttribute) => {
