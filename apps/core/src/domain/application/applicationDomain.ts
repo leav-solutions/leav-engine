@@ -169,6 +169,13 @@ export default function ({
                       ...defaultParams,
                       ...appProps,
                       ...applicationData,
+                      // If existing app, we don't allow to change type and module as it could break the app
+                      ...(isExistingApp
+                          ? {
+                                type: appProps.type,
+                                module: appProps.module,
+                            }
+                          : {}),
                   }
                 : {...defaultParams, ...applicationData};
 
