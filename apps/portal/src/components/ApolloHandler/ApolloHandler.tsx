@@ -25,7 +25,7 @@ import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
 const ApolloHandler: FunctionComponent = ({children}) => {
     const {t} = useTranslation();
-    const {redirectToLogin} = useRedirectToLogin();
+    const {checkAuthOrRedirectToLogin} = useRedirectToLogin();
 
     const wsLink = useMemo(
         () =>
@@ -35,9 +35,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
                     retryAttempts: Infinity,
                     shouldRetry: err => {
                         if (err instanceof CloseEvent && err.code === CloseCode.Forbidden) {
-                            console.info('WebSocket connection forbidden, redirecting to login...');
-                            redirectToLogin();
-                            return false;
+                            console.info('WebSocket connection forbidden, check auth or redirecting to login...');
+                            checkAuthOrRedirectToLogin();
                         }
                         return true;
                     },
@@ -64,7 +63,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             return new Observable(observer => {
                 (async () => {
                     try {
-                        redirectToLogin();
+                        await checkAuthOrRedirectToLogin();
 
                         // Retry last failed request
                         forward(operation).subscribe({

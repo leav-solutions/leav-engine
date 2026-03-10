@@ -6,14 +6,14 @@ import {Observable} from '@apollo/client';
 import {type NextLink, type Operation} from '@apollo/client/link/core';
 
 export const useInitAuth = () => {
-    const {redirectToLogin} = useRedirectToLogin();
+    const {checkAuthOrRedirectToLogin} = useRedirectToLogin();
 
     return {
         unauthorizedHandler: (forward: NextLink, operation: Operation) =>
             new Observable(observer => {
                 (async () => {
                     try {
-                        redirectToLogin();
+                        await checkAuthOrRedirectToLogin();
 
                         // Retry the last failed request
                         forward(operation).subscribe({
