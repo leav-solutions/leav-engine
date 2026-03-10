@@ -61,47 +61,86 @@ describe('Applications', () => {
         });
     });
 
-    test('Create application', async () => {
-        const res = await makeGraphQlCall(`mutation {
+    describe('Save application', () => {
+        test('Should create application if it does not exist', async () => {
+            const res = await makeGraphQlCall(`mutation {
                 saveApplication(application: {
                     id: "test_app",
                     label: {en: "Test app"},
                     endpoint: "my-app",
-                    module: "data-studio"
+                    module: "data-studio",
+                    type: internal
                 }) {
                     id
                     label
                     endpoint
                     module
+                    type
                     permissions {
                         access_application
                     }
                 }
             }`);
 
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
 
-        expect(res.data.data.saveApplication.id).toBe('test_app');
-        expect(res.data.data.saveApplication.module).toBe('data-studio');
-        expect(res.data.data.saveApplication.permissions.access_application).toBeDefined();
+            expect(res.data.data.saveApplication.id).toBe('test_app');
+            expect(res.data.data.saveApplication.module).toBe('data-studio');
+            expect(res.data.data.saveApplication.type).toBe('internal');
+            expect(res.data.data.saveApplication.permissions.access_application).toBeDefined();
 
-        // Check if new app is in applications list
-        const appsRes = await makeGraphQlCall(`{
-            applications {
-                list {
-                    id
-                    permissions {access_application}
+            // Check if new app is in applications list
+            const appsRes = await makeGraphQlCall(`{
+                applications {
+                    list {
+                        id
+                        permissions {access_application}
+                    }
                 }
-            }
-        }`);
+            }`);
 
-        expect(appsRes.status).toBe(200);
-        expect(appsRes.data.errors).toBeUndefined();
+            expect(appsRes.status).toBe(200);
+            expect(appsRes.data.errors).toBeUndefined();
 
-        const testAppRes = appsRes.data.data.applications.list.find(app => app.id === 'test_app');
-        expect(testAppRes).toBeDefined();
-        expect(testAppRes.permissions.access_application).toBeDefined();
+            const testAppRes = appsRes.data.data.applications.list.find(app => app.id === 'test_app');
+            expect(testAppRes).toBeDefined();
+            expect(testAppRes.permissions.access_application).toBeDefined();
+        });
+
+        test('Should update application if it exists', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "test_app",
+                    label: {en: "Test app updated"},
+                }) {
+                    id
+                    label
+                }
+            }`);
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+
+            expect(res.data.data.saveApplication.id).toBe('test_app');
+            expect(res.data.data.saveApplication.label.en).toBe('Test app updated');
+        });
+
+        test('Should not allow to change type and module of an existing application', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveApplication(application: {
+                    id: "test_app",
+                    label: {en: "Test app updated"},
+                    type: external,
+                    module: "app-studio",
+                }) {
+                    module
+                    type
+                }
+            }`);
+            expect(res.status).toBe(200);
+            expect(res.data.data.saveApplication.module).toBe('data-studio');
+            expect(res.data.data.saveApplication.type).toBe('internal');
+        });
     });
 
     test('Get applications list', async () => {
