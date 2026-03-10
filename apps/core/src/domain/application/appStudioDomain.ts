@@ -90,10 +90,6 @@ export default function ({
     ) =>
         Promise.all(
             workspaces.map(async workspace => {
-                if (workspace.title) {
-                    return workspace;
-                }
-
                 if (!workspace.libraryId) {
                     throw new ValidationError<IApplication>({
                         id: {msg: Errors.APP_STUDIO_WORKSPACE_LIBRARY_ID_REQUIRED, vars: {workspaceId: workspace.id}},
@@ -101,11 +97,12 @@ export default function ({
                 }
 
                 if (workspace.type === 'library' || !workspace.type) {
-                    const libraryProperties = await libraryDomain.getLibraryProperties(workspace.libraryId, ctx);
+                    const title =
+                        workspace.title ?? (await libraryDomain.getLibraryProperties(workspace.libraryId, ctx)).label;
 
                     return {
                         ...workspace,
-                        title: libraryProperties.label,
+                        title,
                     };
                 }
 
@@ -125,12 +122,24 @@ export default function ({
                     );
 
                     const recordLabel = (await recordProperties.getLabel?.()) ?? workspace.recordId;
+                    const recordSubTitle = (await recordProperties.getSubLabel?.()) ?? null;
+
+                    const title =
+                        workspace.title ?? Object.fromEntries(config.lang.available.map(lang => [lang, recordLabel]));
+                    const subTitle =
+                        workspace.subTitle ??
+                        (recordSubTitle
+                            ? Object.fromEntries(config.lang.available.map(lang => [lang, recordSubTitle]))
+                            : undefined);
 
                     return {
                         ...workspace,
-                        title: Object.fromEntries(config.lang.available.map(lang => [lang, recordLabel])),
+                        title,
+                        subTitle,
                     };
                 }
+
+                return workspace;
             }),
         );
 

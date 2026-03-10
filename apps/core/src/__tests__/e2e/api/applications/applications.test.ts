@@ -3,7 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
 import {getConfig} from '../../../../config';
-import {e2eNonAdminGroupId, e2eNonAdminUser, gqlCreateRecord, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {
+    e2eNonAdminGroupId,
+    e2eNonAdminUser,
+    gqlCreateRecord,
+    gqlSaveLibrary,
+    gqlSaveValue,
+    makeGraphQlCall,
+} from '../e2eUtils';
 import ms from 'ms';
 import {EXPLORER_STUDIO_APPLICATION} from '../../../../_constants/globalSettings';
 
@@ -188,7 +195,7 @@ describe('Applications', () => {
             await gqlSaveLibrary(
                 libraryIdWithPanels,
                 'Library with panels',
-                [],
+                ['label'],
                 toGraphQLObject({
                     applications: {
                         [appIdToDelete]: {
@@ -272,7 +279,10 @@ describe('Applications', () => {
             // Create libraries
             await gqlSaveLibrary(allowedLibId, 'Allowed Library');
             await gqlSaveLibrary(deniedLibId, 'Denied Library');
-            await gqlSaveLibrary(noWorkspaceTitleLibId, 'No Workspace Title Library');
+            await gqlSaveLibrary(noWorkspaceTitleLibId, 'No Workspace Title Library', ['label'], '', {
+                label: 'label',
+                subLabel: 'label',
+            });
             await gqlSaveLibrary(
                 withLibraryPanelsLibId,
                 'Library with panels',
@@ -326,6 +336,9 @@ describe('Applications', () => {
             allowedRecordId = await gqlCreateRecord(allowedLibId);
             deniedRecordId = await gqlCreateRecord(deniedLibId);
             noWorkspaceTitleRecordId = await gqlCreateRecord(noWorkspaceTitleLibId);
+
+            // Set label value on noWorkspaceTitleRecord for subTitle resolution
+            await gqlSaveValue('label', noWorkspaceTitleLibId, noWorkspaceTitleRecordId, 'Record sub label');
 
             // Set library permissions: allow access to allowedLib, deny access to deniedLib
             await makeGraphQlCall(`mutation {
@@ -427,6 +440,13 @@ describe('Applications', () => {
                             libraryId: noWorkspaceTitleLibId,
                             recordId: noWorkspaceTitleRecordId,
                             title: {en: 'Record title'},
+                        },
+                        {
+                            id: 'ws-record-with-subtitle',
+                            type: 'record',
+                            libraryId: noWorkspaceTitleLibId,
+                            recordId: noWorkspaceTitleRecordId,
+                            subTitle: {en: 'Custom sub title'},
                         },
                         {id: 'ws-library-no-title', type: 'library', libraryId: noWorkspaceTitleLibId},
                         {
@@ -643,9 +663,50 @@ describe('Applications', () => {
                 expect(app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-library-no-title')?.title).toEqual({
                     en: 'No Workspace Title Library',
                 });
-                expect(app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-record-no-title')?.title).toEqual({
-                    en: noWorkspaceTitleRecordId,
-                    fr: noWorkspaceTitleRecordId,
+                expect(
+                    app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-record-no-title')?.title,
+                ).toMatchObject({
+                    en: 'Record sub label',
+                });
+            });
+
+            describe('For workspace record', () => {
+                test('Should return workspace subtitles if provided', async () => {
+                    const res = await makeGraphQlCall(`{
+                        applications(filters: {id: "${workspacesTitlesAppId}"}) {
+                            list {
+                                id
+                                appStudioSettings
+                            }
+                        }
+                    }`);
+
+                    expect(res.status).toBe(200);
+                    expect(res.data.errors).toBeUndefined();
+
+                    const app = res.data.data.applications.list[0];
+                    expect(
+                        app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-record-with-subtitle')?.subTitle,
+                    ).toEqual({en: 'Custom sub title'});
+                });
+
+                test('Should return workspace subtitles if not provided', async () => {
+                    const res = await makeGraphQlCall(`{
+                        applications(filters: {id: "${workspacesTitlesAppId}"}) {
+                            list {
+                                id
+                                appStudioSettings
+                            }
+                        }
+                    }`);
+
+                    expect(res.status).toBe(200);
+                    expect(res.data.errors).toBeUndefined();
+
+                    const app = res.data.data.applications.list[0];
+                    expect(
+                        app.appStudioSettings.workspaces.find(ws => ws.id === 'ws-record-no-title')?.subTitle,
+                    ).toMatchObject({en: 'Record sub label'});
                 });
             });
 
