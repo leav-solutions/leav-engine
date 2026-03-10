@@ -238,7 +238,6 @@ export default function ({
                         recordId: targetRecord.id,
                         library: targetRecord.library,
                         values: [...valuesToRemove, ...valuesToAdd],
-                        skipReadonly: true,
                         skipPermission: true,
                         ctx,
                     });

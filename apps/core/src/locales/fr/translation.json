@@ -66,7 +66,6 @@
         "PREVIEWS_SETTINGS_DUPLICATE_NAMES": "Doublons détectés dans les noms d'aperçus: {{duplicates}}",
         "PREVIEWS_SETTINGS_NOT_ALLOWED": "Impossible de configurer des aperçus sur une bibliothèque de comportement autre que 'fichiers'",
         "PROTECTED_ENDPOINT": "Ce chemin n'est pas autorisé: {{endpoint}}",
-        "READONLY_ATTRIBUTE": "L'attribut {{attribute}} est en lecture seule",
         "RECORD_NOT_FOUND_FOR_IMPORT_MATCH": "Record introuvable pour la correspondance d'import : {{match}}",
         "REQUIRED_ATTRIBUTE": "L'attribut {{attribute}} est requis",
         "REQUIRED_ATTRIBUTE_FORMAT": "Format d'attribut non spécifié",

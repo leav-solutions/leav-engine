@@ -66,7 +66,6 @@
         "PREVIEWS_SETTINGS_DUPLICATE_NAMES": "Duplicates found in versions names: {{duplicates}}",
         "PREVIEWS_SETTINGS_NOT_ALLOWED": "Cannot define previews settings on a library of behavior different than 'files'",
         "PROTECTED_ENDPOINT": "This endpoint is not allowed: {{endpoint}}",
-        "READONLY_ATTRIBUTE": "Attribute {{attribute}} is readonly",
         "RECORD_NOT_FOUND_FOR_IMPORT_MATCH": "Record not found for import match: {{match}}",
         "REQUIRED_ATTRIBUTE": "Attribute {{attribute}} is required",
         "REQUIRED_ATTRIBUTE_FORMAT": "Attribute's format must be specified",

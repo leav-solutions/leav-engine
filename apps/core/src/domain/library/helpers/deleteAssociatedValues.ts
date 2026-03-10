@@ -56,7 +56,6 @@ export default function ({
                                 attribute: a.id,
                                 value: v,
                                 skipActions: true,
-                                skipReadonly: true,
                                 ctx,
                             });
                         }
@@ -66,7 +65,6 @@ export default function ({
                             recordId: r.id,
                             attribute: a.id,
                             skipActions: true,
-                            skipReadonly: true,
                             ctx,
                         });
                     }
