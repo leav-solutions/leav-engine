@@ -1,7 +1,7 @@
 {
     "name": "admin",
     "description": "Administration",
-    "version": "1.9.0",
+    "version": "1.10.0",
     "icons": [
         {
             "src": "favicon-leav.svg",
