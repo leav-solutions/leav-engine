@@ -11,7 +11,7 @@ export const RedirectToFirstRecordPanelAllowedInCompactMode: FunctionComponent =
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
 
-    const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
+    const {currentPanel, libraryId} = retrievePanelDetails({application, recordPanelId, panelId});
 
     if (!currentPanel) {
         console.error(`Current panel not found for record panel with id ${recordPanelId}`);
@@ -23,14 +23,12 @@ export const RedirectToFirstRecordPanelAllowedInCompactMode: FunctionComponent =
         return <>{children}</>;
     }
 
-    const workspace = application.workspaces.find(({id}) => id === workspaceId);
-
-    if (!workspace) {
-        console.error(`Workspace not found for record panel with id ${recordPanelId}`);
+    if (!libraryId) {
+        console.error(`Library not found for panel with id ${recordPanelId}`);
         return <Navigate replace to={AbsolutePaths.notFound} />;
     }
 
-    const firstRecordPanelAllowedInCompactMode = application.libraries[workspace.libraryId].recordPanels.find(
+    const firstRecordPanelAllowedInCompactMode = application.libraries[libraryId].recordPanels.find(
         panel => !panel.hideInCompactMode,
     );
 

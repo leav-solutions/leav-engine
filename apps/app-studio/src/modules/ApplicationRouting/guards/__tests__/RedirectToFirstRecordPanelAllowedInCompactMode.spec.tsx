@@ -219,7 +219,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
         consoleErrorSpy.mockRestore();
     });
 
-    it('should redirect to not found when workspace is not found', () => {
+    it('should redirect to not found when library is not found', () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
 
         spyUseParams.mockReturnValue({
@@ -229,12 +229,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
             where,
             recordPanelId: currentRecordPanelId,
         });
-        spyUseApplicationSettingsContext.mockReturnValue([
-            {
-                workspaces: [],
-                libraries: application.libraries,
-            } as Application,
-        ] as any);
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
         spyRetrievePanelDetails.mockReturnValue({
             currentPanel: {
                 id: currentRecordPanelId,
@@ -242,7 +237,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
                 formId: 'edition',
                 hideInCompactMode: true,
             },
-            libraryId: 'map',
+            libraryId: null,
             panelType: 'recordPanels',
         });
 
@@ -252,9 +247,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
             </RedirectToFirstRecordPanelAllowedInCompactMode>,
         );
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-            `Workspace not found for record panel with id ${currentRecordPanelId}`,
-        );
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`Library not found for panel with id ${currentRecordPanelId}`);
         expect(spyNavigate).toHaveBeenCalledTimes(1);
         expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/not-found'}, {});
 
