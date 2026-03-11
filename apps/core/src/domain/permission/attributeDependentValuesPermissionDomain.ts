@@ -16,7 +16,6 @@ import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGrou
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {type IAttribute} from '_types/attribute';
 import {type TreePath} from '_types/tree';
-import {type IConfig} from '_types/config';
 
 export interface IAttributeDependentValuesPermissionDomain {
     getAttributeDependentValuesPermission(params: {
@@ -51,7 +50,6 @@ export interface IRecordAttributePermissionDomainDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.value': IValueRepo;
-    config: IConfig;
 }
 
 export default function (deps: IRecordAttributePermissionDomainDeps): IAttributeDependentValuesPermissionDomain {
@@ -60,7 +58,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
         'core.domain.attribute': attributeDomain,
         'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
         'core.infra.value': valueRepo,
-        config,
     } = deps;
 
     return {
@@ -72,11 +69,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
             valueNodeId: string;
             ctx: IQueryInfos;
         }): Promise<boolean> {
-            // Temporary allow disable that permission check in case of bug will still in dev/recette
-            if (!config.permissions.enableAttributeDependentValuesPermissions) {
-                return true;
-            }
-
             const {action, attributeId, recordLibrary, recordId, valueNodeId, ctx} = params;
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
 
@@ -130,11 +122,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
             dependenciesTreeTargets: IPermissionsDependenciesTreeTarget[];
             ctx: IQueryInfos;
         }): Promise<boolean> {
-            // Temporary allow disable that permission check in case of bug will still in dev/recette
-            if (!config.permissions.enableAttributeDependentValuesPermissions) {
-                return true;
-            }
-
             const {action, attributeId, userGroupId, permissionTreeTarget, dependenciesTreeTargets, ctx} = params;
             if (!dependenciesTreeTargets || dependenciesTreeTargets.length === 0) {
                 throw new Error(
@@ -209,11 +196,6 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
             ctx: IQueryInfos;
         }): Promise<Array<{nodeId: string | null}>> {
             const {action, attributeId, targetValue, allValues, ctx} = params;
-
-            // Temporary allow disable that permission check in case of bug will still in dev/recette
-            if (!config.permissions.enableAttributeDependentValuesPermissions) {
-                return allValues;
-            }
 
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
 
