@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
 import {type ICalculationVariable} from 'domain/helpers/calculations/calculationVariable';
-import {Parser} from 'hot-formula-parser';
 import {DetailedCellError, HyperFormula} from 'hyperformula';
 import {type IValue} from '_types/value';
 import {
@@ -12,7 +11,6 @@ import {
     type ActionsListValueType,
     type IActionsListContext,
     type IActionsListFunction,
-    ActionsListEvents,
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 import {type IConfig} from '_types/config';
@@ -95,7 +93,7 @@ export default function ({
         errors: [],
     });
 
-    const debug = config.actions.excel.debug ?? false;
+    const debug = config.actions?.excel?.debug ?? false;
     const actionWithHyperformula: IActionsListFunction<ActionParams>['action'] = async (values, params, ctx) => {
         const {Formula: formula, ['Return only calculated value']: returnOnlyCalculatedValue} = params;
 
@@ -153,51 +151,6 @@ export default function ({
         };
     };
 
-    const actionWithHotFormulaParser: IActionsListFunction<ActionParams>['action'] = async (values, params, ctx) => {
-        const {Formula: formula, ['Return only calculated value']: returnOnlyCalculatedValue} = params;
-
-        const finalFormula = await _replaceVariables(
-            formula,
-            ctx,
-            values.map(v => v.payload),
-        );
-
-        const parser = new Parser();
-
-        const {error, result} = parser.parse(finalFormula);
-
-        if (error) {
-            debug && logger.debug(`Excel calculation with hot-formula-parser error: ${finalFormula} => ${error}`);
-            return {
-                values,
-                errors: [
-                    {
-                        errorType: Errors.EXCEL_CALCULATION_ERROR,
-                        attributeValue: null,
-                        message: `Error: ${error} in formula: -- ${finalFormula} --`,
-                    },
-                ],
-            };
-        }
-        debug && logger.debug(`Excel calculation with hot-formula-parser: ${finalFormula} => ${result}`);
-
-        const finalResult: IValue = {
-            id_value: null,
-            isCalculated: true,
-            modified_at: null,
-            modified_by: null,
-            created_at: null,
-            created_by: null,
-            payload: String(result),
-            raw_payload: String(result),
-        };
-
-        return {
-            values: returnOnlyCalculatedValue === 'true' ? [finalResult] : [...values, finalResult],
-            errors: [],
-        };
-    };
-
     return {
         id: 'excelCalculation',
         name: 'Excel calculation',
@@ -229,6 +182,6 @@ export default function ({
                 helper_value: 'false',
             },
         ],
-        action: config.actions.excel.useNewHyperformula ? actionWithHyperformula : actionWithHotFormulaParser,
+        action: actionWithHyperformula,
     };
 }

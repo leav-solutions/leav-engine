@@ -6999,18 +6999,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@handsontable/formulajs@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@handsontable/formulajs@npm:2.0.2"
-  dependencies:
-    bessel: "npm:^1.0.2"
-    jstat: "npm:^1.9.2"
-  bin:
-    implementation-stats: ./bin/implementation-stats
-  checksum: 10/88bb6bad13f958568b2c7dfa97bc44f82218b1599ef58fc7863b8c2aad11000517a5057a6745bf7be86e0cc4df16e1eeef3753046cdd455a8acbdc2200315fa1
-  languageName: node
-  linkType: hard
-
 "@hapi/address@npm:^5.1.1":
   version: 5.1.1
   resolution: "@hapi/address@npm:5.1.1"
@@ -13015,13 +13003,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bessel@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "bessel@npm:1.0.2"
-  checksum: 10/ca7d97b2da4c59ec79de348789920c0033819bc761ff3599854d8a626f7971e899310f8d069cbe0d0837196fbc2554234383a5ce30ca6445a514bd2a8aecf481
-  languageName: node
-  linkType: hard
-
 "big-integer@npm:^1.6.17":
   version: 1.6.51
   resolution: "big-integer@npm:1.6.51"
@@ -14506,7 +14487,6 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-ws: "npm:5.10.0"
     handlebars: "npm:4.7.8"
-    hot-formula-parser: "npm:4.0.0"
     hyperformula: "npm:3.1.1"
     i18next: "npm:22.5.1"
     i18next-fs-backend: "npm:2.1.2"
@@ -18263,16 +18243,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-formula-parser@npm:4.0.0":
-  version: 4.0.0
-  resolution: "hot-formula-parser@npm:4.0.0"
-  dependencies:
-    "@handsontable/formulajs": "npm:^2.0.2"
-    tiny-emitter: "npm:^2.1.0"
-  checksum: 10/2daa3ea538e4d73b0f2b2964f5eee1e8487a3b05cd93456dc813085c597c06cf8ab700889c1d4da84cd7f14d22ca0ee79ed103bdba39720711c38610fdd6a8fb
-  languageName: node
-  linkType: hard
-
 "hpagent@npm:^1.2.0":
   version: 1.2.0
   resolution: "hpagent@npm:1.2.0"
@@ -21255,13 +21225,6 @@ __metadata:
     ms: "npm:^2.1.1"
     semver: "npm:^7.5.4"
   checksum: 10/a67a276db41fbfb458ebdc4938d5d7b01d4743e16bda0f25ac01996fe5b5819d66656153f6cfce19b4680b79ae9f9ca185965defc22e77e0abddf443573238d6
-  languageName: node
-  linkType: hard
-
-"jstat@npm:^1.9.2":
-  version: 1.9.5
-  resolution: "jstat@npm:1.9.5"
-  checksum: 10/c1457c194470c172d4cdad03aa1243ef8730e5550d175516d26190d91e2949b542cc69a1e209bf3eb6c05e13a266709fe6071637d92ef891748803525987f6aa
   languageName: node
   linkType: hard
 
