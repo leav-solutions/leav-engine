@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useGetRecordValuesQuery} from '../../../../hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {type IRecordIdentityWhoAmI} from '../../../../types/records';
-import {KitAlert, KitButton, KitEmpty, KitError, KitSkeleton, KitTabs} from 'aristid-ds';
+import {KitAlert, KitButton, KitDivider, KitEmpty, KitError, KitSkeleton, KitTabs, KitTypography} from 'aristid-ds';
 import {RecordInformations} from './RecordInformations/RecordInformations';
 import {type FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -64,29 +64,13 @@ export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) 
         );
     }
 
-    const recordData = data?.[record?.id];
-
     return (
         <StyledDivContentWrapper>
-            <KitTabs
-                items={[
-                    {
-                        key: 'informations',
-                        label: t('record_summary.informations'),
-                        tabContent: <RecordInformations record={record} recordData={recordData} />,
-                    },
-                    {
-                        key: 'chat',
-                        label: t('record_summary.chat'),
-                        disabled: true,
-                    },
-                    {
-                        key: 'history',
-                        label: t('record_summary.history'),
-                        tabContent: <RecordHistory record={record} />,
-                    },
-                ]}
-            />
+            <KitTypography.Text weight="bold">{t('record_summary.informations')}</KitTypography.Text>
+            <RecordInformations record={record} recordData={data?.[record?.id]} />
+            <KitDivider />
+            <KitTypography.Text weight="bold">{t('record_summary.history')}</KitTypography.Text>
+            {record && <RecordHistory record={record} />}
         </StyledDivContentWrapper>
     );
 };

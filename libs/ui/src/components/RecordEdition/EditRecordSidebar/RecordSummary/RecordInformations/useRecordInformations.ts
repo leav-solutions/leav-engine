@@ -8,14 +8,25 @@ import {
     type IRecordColumnValueStandard,
 } from '_ui/_queries/records/getRecordColumnsValues';
 import {type IRecordIdentityWhoAmI} from '_ui/types';
+import {localizedTranslation} from '@leav/utils';
+import {useLang} from '_ui/hooks';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 
 export const useRecordInformations = (record: IRecordIdentityWhoAmI, recordData: GetRecordColumnsValuesRecord) => {
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
+    const {state} = useEditRecordReducer();
 
     const recordInformations = [
         {
             title: t('record_summary.id_entity'),
             value: record?.id ?? '-',
+        },
+        {
+            title: t('record_summary.library'),
+            value: t('record_summary.entity', {
+                entity: localizedTranslation(state.libraryLabel, lang),
+            }),
         },
     ];
 

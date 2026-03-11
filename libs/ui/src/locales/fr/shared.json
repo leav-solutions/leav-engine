@@ -498,8 +498,8 @@
             "select_an_option": "Sélectionner une option"
         },
         "replace-by-existing-item": "Remplacer par un élément existant",
-        "open_sidebar": "Ouvrir le panneau latéral",
-        "close_sidebar": "Fermer le panneau latéral"
+        "open_sidebar": "Afficher les informations",
+        "close_sidebar": "Masquer les informations"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",
@@ -510,15 +510,13 @@
         "created_at_value": "{{date}} par {{user}}",
         "modified_at": "Modifié le",
         "modified_at_value": "{{date}} par {{user}}",
-        "new_record": "Nouvel élément",
         "id_entity": "Identifiant entité",
         "creation": "Création",
         "last_modification": "Dernière modification",
         "date_by_user": "Le {{date}} par {{user}}",
-        "open_preview_modal": "Ouvrir la modale d'aperçu",
         "informations": "Informations",
-        "chat": "Chat",
         "history": "Historique",
+        "entity": "{{entity}}",
         "entity_overview": "Fiche {{entity}}",
         "attribute": "Attribut",
         "attribute_format": "Format de l'attribut",

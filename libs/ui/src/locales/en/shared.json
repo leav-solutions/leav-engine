@@ -498,8 +498,8 @@
             "select_an_option": "Select an option"
         },
         "replace-by-existing-item": "Replace by an existing item",
-        "open_sidebar": "Open sidebar",
-        "close_sidebar": "Close sidebar"
+        "open_sidebar": "Show informations",
+        "close_sidebar": "Hide informations"
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",
@@ -510,15 +510,13 @@
         "created_at_value": "{{date}} by {{user}}",
         "modified_at": "Modified on",
         "modified_at_value": "{{date}} by {{user}}",
-        "new_record": "New record",
         "id_entity": "Entity identifier",
         "creation": "Creation",
         "last_modification": "Last modification",
         "date_by_user": "{{date}} by {{user}}",
-        "open_preview_modal": "Open preview modal",
         "informations": "Informations",
-        "chat": "Chat",
         "history": "History",
+        "entity": "{{entity}}",
         "entity_overview": "{{entity}} overview",
         "attribute": "Attribute",
         "attribute_format": "Attribute format",

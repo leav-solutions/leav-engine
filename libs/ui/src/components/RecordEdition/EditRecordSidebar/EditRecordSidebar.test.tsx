@@ -78,8 +78,6 @@ describe('EditRecordSidebar', () => {
         },
     };
 
-    const mockHandleMetadataSubmit = jest.fn();
-
     it("shouldn't display sidebar content if none", async () => {
         render(<EditRecordReducerContext.Provider value={mockReducerWithoutValue}></EditRecordReducerContext.Provider>);
 
@@ -92,7 +90,7 @@ describe('EditRecordSidebar', () => {
 
         render(
             <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
-                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} sidebarContainer={sidebarContainer} />
+                <EditRecordSidebar sidebarContainer={sidebarContainer} />
             </EditRecordReducerContext.Provider>,
         );
 
@@ -103,12 +101,13 @@ describe('EditRecordSidebar', () => {
         it('should display record summary', async () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar />
                 </EditRecordReducerContext.Provider>,
             );
 
             expect(screen.getByText('Informations')).toBeInTheDocument();
-            expect(screen.getByText('record_label')).toBeInTheDocument();
+            expect(screen.getByText('record_summary.informations')).toBeInTheDocument();
+            expect(screen.getByText('record_summary.history')).toBeInTheDocument();
         });
 
         it('should display record summary with new record', async () => {
@@ -119,12 +118,11 @@ describe('EditRecordSidebar', () => {
 
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithoutRecord}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar />
                 </EditRecordReducerContext.Provider>,
             );
 
             expect(screen.getByText('Informations')).toBeInTheDocument();
-            expect(screen.getByText(/new_record/)).toBeInTheDocument();
         });
     });
 
@@ -133,7 +131,7 @@ describe('EditRecordSidebar', () => {
             const {attribute} = mockReducerWithValue.state.activeAttribute;
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar />
                 </EditRecordReducerContext.Provider>,
             );
 

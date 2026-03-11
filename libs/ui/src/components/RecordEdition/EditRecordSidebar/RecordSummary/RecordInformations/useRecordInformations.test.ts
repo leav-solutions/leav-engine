@@ -11,12 +11,14 @@ jest.mock('_ui/hooks/useSharedTranslation', () => ({
     useSharedTranslation: jest.fn(),
 }));
 
+jest.mock('_ui/hooks/useLang');
+
 describe('useRecordInformations', () => {
     beforeEach(() => {
         (useSharedTranslation as jest.Mock).mockReturnValue({t: jest.fn(key => key)});
     });
 
-    it('should return record id', () => {
+    it('should return record id and library name', () => {
         const recordData = {};
 
         const {result} = renderHook(() =>
@@ -24,10 +26,8 @@ describe('useRecordInformations', () => {
         );
 
         expect(result.current).toEqual([
-            {
-                title: 'record_summary.id_entity',
-                value: mockRecord.id,
-            },
+            {title: 'record_summary.id_entity', value: mockRecord.id},
+            {title: 'record_summary.library', value: 'record_summary.entity'},
         ]);
     });
 
@@ -35,10 +35,8 @@ describe('useRecordInformations', () => {
         const {result} = renderHook(() => useRecordInformations(null, null));
 
         expect(result.current).toEqual([
-            {
-                title: 'record_summary.id_entity',
-                value: '-',
-            },
+            {title: 'record_summary.id_entity', value: '-'},
+            {title: 'record_summary.library', value: 'record_summary.entity'},
         ]);
     });
 
@@ -53,14 +51,9 @@ describe('useRecordInformations', () => {
         );
 
         expect(result.current).toEqual([
-            {
-                title: 'record_summary.id_entity',
-                value: mockRecord.id,
-            },
-            {
-                title: 'record_summary.creation',
-                value: 'record_summary.date_by_user',
-            },
+            {title: 'record_summary.id_entity', value: mockRecord.id},
+            {title: 'record_summary.library', value: 'record_summary.entity'},
+            {title: 'record_summary.creation', value: 'record_summary.date_by_user'},
         ]);
     });
 
@@ -75,14 +68,9 @@ describe('useRecordInformations', () => {
         );
 
         expect(result.current).toEqual([
-            {
-                title: 'record_summary.id_entity',
-                value: mockRecord.id,
-            },
-            {
-                title: 'record_summary.last_modification',
-                value: 'record_summary.date_by_user',
-            },
+            {title: 'record_summary.id_entity', value: mockRecord.id},
+            {title: 'record_summary.library', value: 'record_summary.entity'},
+            {title: 'record_summary.last_modification', value: 'record_summary.date_by_user'},
         ]);
     });
 });
