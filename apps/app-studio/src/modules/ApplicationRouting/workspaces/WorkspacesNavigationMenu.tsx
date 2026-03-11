@@ -15,6 +15,7 @@ import {faThumbtack} from '@fortawesome/free-solid-svg-icons';
 import {useTranslation} from 'react-i18next';
 import {type Application} from '../types';
 import {workspacesNavigationMenu} from './workspacesNavigationMenu.module.css';
+import {MIN_WORKSPACES_TO_SHOW_SEARCH} from '../../../constants';
 
 export const WorkspacesNavigationMenu: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
@@ -24,6 +25,10 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
     const {t} = useTranslation();
 
     const [searchWorkspaceValue, setSearchWorkspaceValue] = useState('');
+
+    const initialWorkspaceCount = useMemo(() => (application?.workspaces ?? []).length, [application?.workspaces]);
+
+    const showSearch = initialWorkspaceCount >= MIN_WORKSPACES_TO_SHOW_SEARCH || !!searchWorkspaceValue;
 
     const navigate = useNavigate();
 
@@ -127,14 +132,18 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
             <KitSideMenu
                 className={workspacesNavigationMenu}
                 open={isMenuOpen}
-                showSearch
-                autoCompleteOptions={{
-                    placeholder: t('workspaces_navigation_menu.search_placeholder'),
-                    allowClear: true,
-                    onChange: value => {
-                        setSearchWorkspaceValue(value);
-                    },
-                }}
+                showSearch={showSearch}
+                autoCompleteOptions={
+                    showSearch
+                        ? {
+                              placeholder: t('workspaces_navigation_menu.search_placeholder'),
+                              allowClear: true,
+                              onChange: value => {
+                                  setSearchWorkspaceValue(value);
+                              },
+                          }
+                        : undefined
+                }
                 onOpenChanged={handleToggleMenu}
                 defaultActiveItemKey={workspaceId}
                 items={sideMenuItems}
