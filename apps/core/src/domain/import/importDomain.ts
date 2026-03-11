@@ -75,8 +75,8 @@ export interface IImportExcelParams {
 
 interface IImportDataParams {
     filename: string;
+    fromExcel?: boolean;
     ctx: IQueryInfos;
-    excelMapping?: IExcelMapping;
 }
 
 interface IImportConfigParams {
@@ -91,10 +91,6 @@ export interface IImportDomain {
     importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string | undefined>;
     importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string>;
     importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
-}
-
-interface IExcelMapping {
-    [elementIndex: number]: {sheet: number; line: number};
 }
 
 interface ICachedData {
@@ -857,7 +853,7 @@ export default function ({
             return undefined;
         },
         async importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string> {
-            const {filename, ctx, excelMapping} = params;
+            const {filename, fromExcel, ctx} = params;
 
             if (typeof task?.id === 'undefined') {
                 const newTaskId = crypto.randomUUID();
@@ -902,10 +898,10 @@ export default function ({
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;
 
-            const _getExcelPos = (elementIndex: number): string => {
-                if (excelMapping) {
-                    const sheet = excelMapping[elementIndex]?.sheet + 1 || translator.t('errors.unknown', {lng: lang});
-                    const line = excelMapping[elementIndex]?.line + 1 || translator.t('errors.unknown', {lng: lang});
+            const _getExcelPos = (element: IElement): string => {
+                if (element.excelMapping) {
+                    const sheet = element.excelMapping.sheet + 1 || translator.t('errors.unknown', {lng: lang});
+                    const line = element.excelMapping.line + 1 || translator.t('errors.unknown', {lng: lang});
 
                     return translator.t('import.excel_pos', {lng: lang, sheet, line});
                 }
@@ -955,7 +951,7 @@ export default function ({
             let lastCacheIndex: number;
 
             let action: ImportAction;
-            const stats: Stat = excelMapping ? {} : {elements: {created: 0, updated: 0, ignored: 0}, trees: 0};
+            const stats: Stat = fromExcel ? {} : {elements: {created: 0, updated: 0, ignored: 0}, trees: 0};
 
             await _getStoredFileData(
                 filename,
@@ -1033,8 +1029,8 @@ export default function ({
 
                         // update import stats
                         if (element.data.length) {
-                            if (excelMapping) {
-                                const sheetIndex = excelMapping[index]?.sheet;
+                            if (element.excelMapping) {
+                                const sheetIndex = element.excelMapping.sheet;
                                 stats[sheetIndex] = stats[sheetIndex] || {elements: {}};
                                 stats[sheetIndex].elements[action] = stats[sheetIndex].elements[action] + 1 || 1;
                             } else {
@@ -1053,8 +1049,8 @@ export default function ({
                             throw e;
                         }
 
-                        const pos = excelMapping
-                            ? _getExcelPos(index)
+                        const pos = element.excelMapping
+                            ? _getExcelPos(element)
                             : translator.t('import.element_pos', {lng: lang, index});
 
                         await _writeReport(reportFilePath, pos, e, lang);
@@ -1089,9 +1085,7 @@ export default function ({
                         );
                         await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
 
-                        if (!excelMapping) {
-                            (stats as IStat).trees += 1;
-                        }
+                        (stats as IStat).trees += 1;
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                             logger.error(`Error importing tree at index ${index} during task ${task.id}: ${e.stack}`);
@@ -1124,8 +1118,8 @@ export default function ({
                         };
 
                         await _treatElement(data.element, data.recordIds, cacheParams, progress, ctx);
-                        if (excelMapping) {
-                            const sheetIndex = excelMapping[cacheKey]?.sheet;
+                        if (data.element.excelMapping) {
+                            const sheetIndex = data.element.excelMapping.sheet;
                             stats[sheetIndex] = stats[sheetIndex] || {};
                             stats[sheetIndex].links = stats[sheetIndex].links + data.element.data.length || 1;
                         }
@@ -1138,8 +1132,8 @@ export default function ({
                         }
 
                         // cacheKey is equal to element index here
-                        const pos = excelMapping
-                            ? _getExcelPos(cacheKey)
+                        const pos = data.element.excelMapping
+                            ? _getExcelPos(data.element)
                             : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
                         await _writeReport(reportFilePath, pos, e, lang);
@@ -1204,8 +1198,6 @@ export default function ({
             await writeLine(header);
 
             let firstElementWritten = false;
-            let elementIndex = 0;
-            const excelMapping: IExcelMapping = {};
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer as unknown as ExcelJS.Buffer);
 
@@ -1360,18 +1352,20 @@ export default function ({
                             ];
                         }
 
-                        const element = {
+                        const element: IElement = {
                             library,
                             matches,
                             mode,
                             data: [...elementData, ...elementLinks],
+                            excelMapping: {
+                                sheet: indexSheet,
+                                line: indexLine + 1, // +1 because we removed the first line
+                            },
                         };
 
                         // Adding element to JSON file.
                         // Add comma if not first element
                         await writeLine((firstElementWritten ? ',' : '') + JSON.stringify(element));
-
-                        excelMapping[elementIndex++] = {sheet: indexSheet, line: indexLine + 1}; // +1 because we removed the first line
 
                         firstElementWritten = true;
                     }
@@ -1386,7 +1380,7 @@ export default function ({
             await utils.deleteFile(`${config.import.directory}/${filename}`);
 
             return this.importData(
-                {filename: JSONFilename, ctx, excelMapping},
+                {filename: JSONFilename, fromExcel: true, ctx},
                 {
                     ...(!!startAt && {startAt}),
                     // Delete remaining import file.
