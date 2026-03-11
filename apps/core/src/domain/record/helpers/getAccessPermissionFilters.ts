@@ -35,17 +35,12 @@ export type IGetAccessPermissions = (
     params: {
         groupsIds: string[][];
         library: string;
-        existingFiltersOnTreeIds: string[];
         deps: IAccessPermissionFilterDeps;
-        ignoreAccessRecordByDefaultPermission?: boolean;
     },
     ctx: IQueryInfos,
 ) => Promise<IGetAccessPermissionsValue[]>;
 
-const getAccessPermissionsFilters: IGetAccessPermissions = async (
-    {groupsIds, library, existingFiltersOnTreeIds, deps, ignoreAccessRecordByDefaultPermission = false},
-    ctx,
-) => {
+const getAccessPermissionsFilters: IGetAccessPermissions = async ({groupsIds, library, deps}, ctx) => {
     const {
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.tree': treeRepo,
@@ -173,21 +168,6 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (
             treeContent,
             RecordPermissionsActions.ACCESS_RECORD,
         );
-
-        // ignoreAccessRecordByDefaultPermission is temporary, all datas are loaded for Bryntum, we expect to change this behavior
-        if (!ignoreAccessRecordByDefaultPermission && !existingFiltersOnTreeIds.includes(treeId)) {
-            const nodesIdByPermissionByDefault = await _getNodesIdByPermission(
-                treeId,
-                treeContent,
-                RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT,
-            );
-
-            nodesIdByPermission.true = _.intersection(nodesIdByPermission.true, nodesIdByPermissionByDefault.true);
-            nodesIdByPermission.false = _.difference(
-                _.union(nodesIdByPermission.false, nodesIdByPermissionByDefault.false),
-                nodesIdByPermission.true,
-            );
-        }
 
         result.push({
             treeId,

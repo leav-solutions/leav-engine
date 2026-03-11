@@ -195,6 +195,7 @@ export type ApplicationInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   module?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ApplicationType>;
 };
 
@@ -380,6 +381,16 @@ export type CampaignToUpdateDates = {
   endDate: Scalars['String']['input'];
   id: Scalars['String']['input'];
   startDate: Scalars['String']['input'];
+};
+
+export type CampaignsFraming = {
+  computed?: Maybe<CampaignsFramingComputed>;
+  id: Scalars['String']['output'];
+};
+
+export type CampaignsFramingComputed = {
+  framing?: Maybe<Scalars['JSONObject']['output']>;
+  results?: Maybe<Scalars['JSONObject']['output']>;
 };
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
@@ -975,14 +986,15 @@ export type MapValueInput = {
   before?: InputMaybe<Scalars['ID']['input']>;
 };
 
-export type MoveThematicResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematic?: Maybe<MoveThematicResultThematic>;
-};
-
 export type MoveThematicResultThematic = {
   id: Scalars['ID']['output'];
   id_value: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
+};
+
+export type MoveThematicsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematics?: Maybe<Array<MoveThematicResultThematic>>;
 };
 
 export enum MultiDisplayOption {
@@ -1019,13 +1031,14 @@ export type Mutation = {
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
   initRenewCampaigns: Scalars['String']['output'];
-  moveOrCopyCampaignThematic: MoveThematicResult;
+  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
   removeCampaigns: RemoveCampaignsResult;
+  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1085,6 +1098,7 @@ export type MutationCreateEmptyRecordArgs = {
 export type MutationCreateRecordArgs = {
   data?: InputMaybe<CreateRecordDataInput>;
   library: Scalars['ID']['input'];
+  skipActivate?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -1202,10 +1216,9 @@ export type MutationInitRenewCampaignsArgs = {
 };
 
 
-export type MutationMoveOrCopyCampaignThematicArgs = {
-  fromCampaignId: Scalars['String']['input'];
+export type MutationMoveOrCopyCampaignThematicsArgs = {
   moveThematic: Scalars['Boolean']['input'];
-  thematicId: Scalars['String']['input'];
+  thematics: Array<ThematicToRenew>;
   toCampaignId: Scalars['String']['input'];
 };
 
@@ -1233,6 +1246,11 @@ export type MutationPurgeRecordArgs = {
 
 export type MutationRemoveCampaignsArgs = {
   campaignsIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationRemoveStructureItemsArgs = {
+  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1560,6 +1578,7 @@ export type Query = {
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
+  framingCampaigns: Array<CampaignsFraming>;
   framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
@@ -1628,6 +1647,14 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
+};
+
+
+export type QueryFramingCampaignsArgs = {
+  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  pacID: Scalars['String']['input'];
+  searchFilter?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1716,7 +1743,6 @@ export type QueryRecordFormArgs = {
 
 export type QueryRecordsArgs = {
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
-  ignoreAccessRecordByDefaultPermission?: InputMaybe<Scalars['Boolean']['input']>;
   library: Scalars['ID']['input'];
   multipleSort?: InputMaybe<Array<RecordSortInput>>;
   pagination?: InputMaybe<RecordsPagination>;
@@ -1734,6 +1760,9 @@ export type QueryTasksArgs = {
 
 
 export type QueryTreeContentArgs = {
+  accessRecordByDefaultPermission?: InputMaybe<AccessRecordByDefaultPermissionInput>;
+  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
+  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
   startAt?: InputMaybe<Scalars['ID']['input']>;
   treeId: Scalars['ID']['input'];
 };
@@ -1994,45 +2023,16 @@ export type ReportFramingAttributeFilterValueItemInput = {
   rawValue: Scalars['String']['input'];
 };
 
-export type ReportFramingCampaignInput = {
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
-  thematics: Array<ReportFramingThematicInput>;
-};
-
-export type ReportFramingCategoryInput = {
-  categoryId: Scalars['String']['input'];
-  children: Array<ReportFramingCategoryInput>;
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type ReportFramingContentInput = {
-  campaigns: Array<ReportFramingCampaignInput>;
   filters?: InputMaybe<ReportFramingFiltersInput>;
 };
 
 export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
   attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
   search?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ReportFramingItemInput = {
-  columnId: Scalars['String']['input'];
-  referenceValue?: InputMaybe<Scalars['Int']['input']>;
-  value?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ReportFramingThematicInput = {
-  categories: Array<ReportFramingCategoryInput>;
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SaveCampaignsDatesResult = {
@@ -2266,6 +2266,11 @@ export type TasksList = {
   totalCount: Scalars['Int']['output'];
 };
 
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
+
 export type Tree = {
   behavior: TreeBehavior;
   defaultElement?: Maybe<TreeNode>;
@@ -2409,6 +2414,7 @@ export type TreeLibrarySettingsInput = {
 };
 
 export type TreeNode = {
+  accessRecordByDefaultPermission?: Maybe<Scalars['Boolean']['output']>;
   ancestors?: Maybe<Array<TreeNode>>;
   children?: Maybe<Array<TreeNode>>;
   childrenCount?: Maybe<Scalars['Int']['output']>;
@@ -2759,6 +2765,11 @@ export type RemoveCampaignsResult = {
   values: Array<Scalars['ID']['output']>;
 };
 
+export type RemoveStructureItemsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
 export type SaveValueBatchResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   values?: Maybe<Array<GenericValue>>;
@@ -2791,7 +2802,6 @@ export type GetLibraryNameQuery = { libraries?: { list: Array<{ label?: any | nu
 export type GetRecordIdCardQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
   libraryId: Scalars['ID']['input'];
-  ignoreAccessRecordByDefaultPermission: Scalars['Boolean']['input'];
 }>;
 
 
@@ -3070,11 +3080,10 @@ export type GetLibraryNameLazyQueryHookResult = ReturnType<typeof useGetLibraryN
 export type GetLibraryNameSuspenseQueryHookResult = ReturnType<typeof useGetLibraryNameSuspenseQuery>;
 export type GetLibraryNameQueryResult = Apollo.QueryResult<GetLibraryNameQuery, GetLibraryNameQueryVariables>;
 export const GetRecordIdCardDocument = gql`
-    query GetRecordIdCard($id: String, $libraryId: ID!, $ignoreAccessRecordByDefaultPermission: Boolean!) {
+    query GetRecordIdCard($id: String, $libraryId: ID!) {
   records(
     library: $libraryId
     filters: [{field: "id", condition: EQUAL, value: $id}]
-    ignoreAccessRecordByDefaultPermission: $ignoreAccessRecordByDefaultPermission
   ) {
     list {
       id
@@ -3108,7 +3117,6 @@ export const GetRecordIdCardDocument = gql`
  *   variables: {
  *      id: // value for 'id'
  *      libraryId: // value for 'libraryId'
- *      ignoreAccessRecordByDefaultPermission: // value for 'ignoreAccessRecordByDefaultPermission'
  *   },
  * });
  */

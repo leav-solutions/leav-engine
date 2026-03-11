@@ -109,7 +109,6 @@ export interface IFindRecordsHelperDeps {
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.infra.permission': IPermissionRepo;
-    config: IConfig;
 }
 
 export default function ({
@@ -124,7 +123,6 @@ export default function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
     'core.infra.permission': permissionRepo,
     'core.utils': utils,
-    config,
 }: IFindRecordsHelperDeps): FindRecordsHelper {
     const _isNumericCondition = (condition: AttributeCondition): boolean =>
         condition === AttributeCondition.VALUES_COUNT_EQUAL ||
@@ -210,15 +208,7 @@ export default function ({
     };
 
     return async ({params, ctx}) => {
-        const {
-            library,
-            sort,
-            pagination,
-            withCount,
-            retrieveInactive = false,
-            ignorePermissions = false,
-            ignoreAccessRecordByDefaultPermission = false,
-        } = params;
+        const {library, sort, pagination, withCount, retrieveInactive = false, ignorePermissions = false} = params;
         const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
         const fullFilters: IRecordFilterOption[] = [];
         let fullSort: IRecordSort[] = [];
@@ -365,24 +355,16 @@ export default function ({
                 groupsWithAncestorsId.push(ancestorsId);
             }
 
-            const existingFiltersOnTreeIds = fullFilters
-                .filter(f => f.attributes?.[0] && utils.isTreeAttribute(f.attributes[0]))
-                .map(f => f.attributes?.[0].linked_tree);
-
             accessPermissionFilters = await getAccessPermissionFilters(
                 {
                     groupsIds: groupsWithAncestorsId,
                     library,
-                    existingFiltersOnTreeIds,
                     deps: {
                         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
                         'core.infra.tree': treeRepo,
                         'core.infra.permission': permissionRepo,
                         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
                     },
-                    ignoreAccessRecordByDefaultPermission: config.permissions.enableAccessRecordByDefaultBackendFilter
-                        ? ignoreAccessRecordByDefaultPermission
-                        : true,
                 },
                 ctx,
             );

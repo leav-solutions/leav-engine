@@ -31,7 +31,6 @@ const depsBase: ToAny<IFindRecordsHelperDeps> = {
     'core.utils': jest.fn(),
     'core.infra.permission': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
-    config: {permissions: {enableAccessRecordByDefaultBackendFilter: false}} as IConfig,
 };
 
 describe('findRecordsHelper', () => {

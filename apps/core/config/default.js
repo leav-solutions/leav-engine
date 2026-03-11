@@ -149,10 +149,6 @@ module.exports = {
             },
         },
         enableCache: envToBool(process.env.PERMISSIONS_ENABLE_CACHE, true),
-        enableAccessRecordByDefaultBackendFilter: envToBool(
-            process.env.PERMISSIONS_ENABLE_ACCESS_RECORD_BY_DEFAULT_BACKEND_FILTER,
-            false,
-        ),
     },
     amqp: {
         connOpt: {
