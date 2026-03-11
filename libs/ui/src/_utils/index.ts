@@ -77,11 +77,6 @@ export const setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
 
 export const getTreeRecordKey = (record: RecordIdentityFragment): string => `${record.whoAmI.library.id}/${record.id}`;
 
-export const getValueVersionLabel = (version: IValueVersion) =>
-    Object.values(version ?? {})
-        .map(v => v.label)
-        .join(' / ');
-
 export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): string =>
     t('record_edition.date_range_value', {
         ...value,

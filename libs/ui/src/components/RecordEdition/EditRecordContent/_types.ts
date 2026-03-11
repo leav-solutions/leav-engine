@@ -140,25 +140,6 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
 
 export type StandardValueTypes = AnyPrimitive;
 
-export enum VersionFieldScope {
-    INHERITED = 'INHERITED', // inherited values
-    CURRENT = 'CURRENT', // values of "current" version, eg. the version selected in the form
-}
-
-export interface ICommonFieldsReducerState<ValuesType, RecordFormAttributeFragmentType = RecordFormAttributeFragment> {
-    record: IRecordIdentityWhoAmI;
-    formElement: FormElement<IRequiredFieldsSettings>;
-    attribute: RecordFormAttributeFragmentType;
-    isReadOnly: boolean;
-    activeScope: VersionFieldScope;
-    values: {
-        [scope in VersionFieldScope]: {
-            version: IValueVersion;
-            values: ValuesType;
-        } | null;
-    };
-}
-
 export interface IProvidedByAntFormItem<
     InputFieldProps extends {value?: unknown; onChange?: unknown},
     AntNotifier extends {onChange?: unknown} = InputFieldProps,

@@ -6,7 +6,6 @@ import {type FunctionComponent, useState} from 'react';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
-import {type ILinkFieldState} from '../../../reducers/linkFieldReducer/linkFieldReducer';
 import {AntForm} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
@@ -24,8 +23,6 @@ import {useUnlinkAllRecords} from '../unlink-all-records/useUnlinkAllRecords';
 import {Wrapper} from '../shared/Wrapper';
 import {InputExtraAlignLeft} from '../shared/InputExtraAlignLeft';
 import {InputWrapper} from '../shared/InputWrapper';
-
-export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 
 export const LinkFieldExplorer: FunctionComponent<LinkFieldProps> = ({
     element,
