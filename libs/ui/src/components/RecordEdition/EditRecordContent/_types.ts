@@ -106,12 +106,6 @@ export type DeleteMultipleValuesFunc = (
     version: IValueVersion,
 ) => Promise<ISubmitMultipleResult>;
 
-export type MetadataSubmitValueFunc = (
-    value: RecordProperty,
-    attribute: RecordFormAttributeFragment,
-    metadata: IKeyValue<AnyPrimitive>,
-) => Promise<ISubmitMultipleResult>;
-
 export interface ISubmittedValueBase {
     attribute: RecordFormAttributeFragment;
     idValue: string;

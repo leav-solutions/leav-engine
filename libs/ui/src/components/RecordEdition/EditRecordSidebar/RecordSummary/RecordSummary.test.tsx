@@ -30,11 +30,10 @@ describe('RecordSummary', () => {
         useGetRecordValuesQueryMock.mockClear();
     });
 
-    it('Should display three tabs: informations, chat and history', async () => {
+    it('Should display sections informations and history', async () => {
         render(<RecordSummary record={mockRecord} />);
 
         expect(screen.getByText('record_summary.informations')).toBeInTheDocument();
-        expect(screen.getByText('record_summary.chat')).toBeInTheDocument();
         expect(screen.getByText('record_summary.history')).toBeInTheDocument();
     });
 

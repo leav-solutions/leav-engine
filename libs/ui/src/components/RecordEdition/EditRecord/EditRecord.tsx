@@ -13,11 +13,6 @@ import {
     type RecordIdentityFragment,
     useActivateNewRecordMutation,
 } from '../../../_gqlTypes';
-import {
-    type IRecordPropertyLink,
-    type IRecordPropertyStandard,
-    type IRecordPropertyTree,
-} from '../../../_queries/records/getRecordPropertiesQuery';
 import {ErrorBoundary} from '../../ErrorBoundary';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import EditRecordContent from '../EditRecordContent';
@@ -29,7 +24,6 @@ import {
     type ISubmittedValueStandard,
     type ISubmittedValueTree,
     type IValueToSubmit,
-    type MetadataSubmitValueFunc,
     type SubmitValueFunc,
 } from '../EditRecordContent/_types';
 import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
@@ -178,35 +172,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             true, // deleteEmpty
         );
 
-    const _handleMetadataSubmit: MetadataSubmitValueFunc = (value, attribute, metadata) => {
-        let valueContent;
-        switch (attribute.type) {
-            case AttributeType.simple:
-            case AttributeType.advanced:
-                valueContent = (value as IRecordPropertyStandard).raw_payload;
-                break;
-            case AttributeType.advanced_link:
-            case AttributeType.simple_link:
-                valueContent = (value as IRecordPropertyLink).linkValue;
-                break;
-            case AttributeType.tree:
-                valueContent = (value as IRecordPropertyTree).treeValue;
-                break;
-        }
-
-        return _handleValueSubmit(
-            [
-                {
-                    idValue: value.id_value,
-                    attribute,
-                    value: valueContent,
-                    metadata,
-                },
-            ],
-            null,
-        );
-    };
-
     /**
      * Submit the whole record: create record and batch save all stored values
      */
@@ -288,12 +253,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
                         )}
                     </Content>
-                    {!forceDisableSidebarInAppStudio && (
-                        <EditRecordSidebar
-                            onMetadataSubmit={_handleMetadataSubmit}
-                            sidebarContainer={sidebarContainer}
-                        />
-                    )}
+                    {!forceDisableSidebarInAppStudio && <EditRecordSidebar sidebarContainer={sidebarContainer} />}
                 </Container>
             </EditRecordReducerContext.Provider>
         </ErrorBoundary>
