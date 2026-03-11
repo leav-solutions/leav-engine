@@ -44,6 +44,69 @@ const mockApplicationWithRecordsAndLibrariesWorkspaces: Application = {
     libraries: {},
 };
 
+const mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces: Application = {
+    workspaces: [
+        ...mockApplicationWithRecordsAndLibrariesWorkspaces.workspaces,
+        {
+            id: 'record3',
+            type: 'record',
+            title: {fr: 'record3', en: 'record3'},
+            recordId: '3',
+            libraryId: 'test3',
+        },
+        {
+            id: 'record4',
+            type: 'record',
+            title: {fr: 'record4', en: 'record4'},
+            recordId: '4',
+            libraryId: 'test4',
+        },
+        {
+            id: 'record5',
+            type: 'record',
+            title: {fr: 'record5', en: 'record5'},
+            recordId: '5',
+            libraryId: 'test5',
+        },
+        {
+            id: 'record6',
+            type: 'record',
+            title: {fr: 'record6', en: 'record6'},
+            recordId: '6',
+            libraryId: 'test6',
+        },
+        {
+            id: 'record7',
+            type: 'record',
+            title: {fr: 'record7', en: 'record7'},
+            recordId: '7',
+            libraryId: 'test7',
+        },
+        {
+            id: 'record8',
+            type: 'record',
+            title: {fr: 'record8', en: 'record8'},
+            recordId: '8',
+            libraryId: 'test8',
+        },
+        {
+            id: 'record9',
+            type: 'record',
+            title: {fr: 'record9', en: 'record9'},
+            recordId: '9',
+            libraryId: 'test9',
+        },
+        {
+            id: 'record10',
+            type: 'record',
+            title: {fr: 'record10', en: 'record10'},
+            recordId: '10',
+            libraryId: 'test10',
+        },
+    ],
+    libraries: {},
+};
+
 describe('WorkspacesNavigationMenu component', () => {
     const renderWithTheme: typeof render = component => render(<InitTheme>{component}</InitTheme>);
     const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
@@ -133,8 +196,18 @@ describe('WorkspacesNavigationMenu component', () => {
     });
 
     describe('searching workspaces', () => {
-        it('should render only workspaces of type record with group item when searching for records', async () => {
+        it('should not render search input when there are less than 10 workspaces', () => {
             spyUseApplicationSettingsContext.mockReturnValue([mockApplicationWithRecordsAndLibrariesWorkspaces] as any);
+
+            renderWithTheme(<WorkspacesNavigationMenu />);
+
+            expect(screen.queryByPlaceholderText(/search/i)).not.toBeInTheDocument();
+        });
+
+        it('should render only workspaces of type record with group item when searching for records', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([
+                mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces,
+            ] as any);
 
             renderWithTheme(<WorkspacesNavigationMenu />);
 
@@ -144,16 +217,26 @@ describe('WorkspacesNavigationMenu component', () => {
                 await user.type(searchInput, 'record');
             });
 
-            expect(screen.getAllByRole('listitem')).toHaveLength(3);
+            expect(screen.getAllByRole('listitem')).toHaveLength(11); // 10 records + 1 shortcuts
             expect(screen.getByText('workspaces_navigation_menu.shortcuts')).toBeInTheDocument();
             expect(screen.getByText('record1')).toBeInTheDocument();
             expect(screen.getByText('record2')).toBeInTheDocument();
+            expect(screen.getByText('record3')).toBeInTheDocument();
+            expect(screen.getByText('record4')).toBeInTheDocument();
+            expect(screen.getByText('record5')).toBeInTheDocument();
+            expect(screen.getByText('record6')).toBeInTheDocument();
+            expect(screen.getByText('record7')).toBeInTheDocument();
+            expect(screen.getByText('record8')).toBeInTheDocument();
+            expect(screen.getByText('record9')).toBeInTheDocument();
+            expect(screen.getByText('record10')).toBeInTheDocument();
             expect(screen.queryByText('library1')).not.toBeInTheDocument();
             expect(screen.queryByText('library2')).not.toBeInTheDocument();
         });
 
         it('should render only workspaces of type library without separator when searching for libraries', async () => {
-            spyUseApplicationSettingsContext.mockReturnValue([mockApplicationWithRecordsAndLibrariesWorkspaces] as any);
+            spyUseApplicationSettingsContext.mockReturnValue([
+                mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces,
+            ] as any);
 
             renderWithTheme(<WorkspacesNavigationMenu />);
 
@@ -175,7 +258,7 @@ describe('WorkspacesNavigationMenu component', () => {
             spyUseApplicationSettingsContext.mockReturnValue([
                 {
                     workspaces: [
-                        ...mockApplicationWithRecordsAndLibrariesWorkspaces.workspaces,
+                        ...mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces.workspaces,
                         {
                             id: 'recordLibrary3',
                             type: 'library',
@@ -193,17 +276,27 @@ describe('WorkspacesNavigationMenu component', () => {
                 await user.type(searchInput, 'record');
             });
 
-            expect(screen.getAllByRole('listitem')).toHaveLength(5); // 2 records + 1 libraries + 1 shortcuts + 1 separator
+            expect(screen.getAllByRole('listitem')).toHaveLength(13); // 10 records + 1 library + 1 shortcuts + 1 separator
             expect(screen.getByText('workspaces_navigation_menu.shortcuts')).toBeInTheDocument();
             expect(screen.getByText('record1')).toBeInTheDocument();
             expect(screen.getByText('record2')).toBeInTheDocument();
+            expect(screen.getByText('record3')).toBeInTheDocument();
+            expect(screen.getByText('record4')).toBeInTheDocument();
+            expect(screen.getByText('record5')).toBeInTheDocument();
+            expect(screen.getByText('record6')).toBeInTheDocument();
+            expect(screen.getByText('record7')).toBeInTheDocument();
+            expect(screen.getByText('record8')).toBeInTheDocument();
+            expect(screen.getByText('record9')).toBeInTheDocument();
+            expect(screen.getByText('record10')).toBeInTheDocument();
             expect(screen.getByText('recordLibrary3')).toBeInTheDocument();
             expect(screen.queryByText('library1')).not.toBeInTheDocument();
             expect(screen.queryByText('library2')).not.toBeInTheDocument();
         });
 
         it('should render workspaces without being case sensitive', async () => {
-            spyUseApplicationSettingsContext.mockReturnValue([mockApplicationWithRecordsAndLibrariesWorkspaces] as any);
+            spyUseApplicationSettingsContext.mockReturnValue([
+                mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces,
+            ] as any);
 
             renderWithTheme(<WorkspacesNavigationMenu />);
 
@@ -215,17 +308,27 @@ describe('WorkspacesNavigationMenu component', () => {
 
             expect(screen.getByText('record1')).toBeInTheDocument();
             expect(screen.getByText('record2')).toBeInTheDocument();
+            expect(screen.queryByText('record3')).toBeInTheDocument();
+            expect(screen.queryByText('record4')).toBeInTheDocument();
+            expect(screen.queryByText('record5')).toBeInTheDocument();
+            expect(screen.queryByText('record6')).toBeInTheDocument();
+            expect(screen.queryByText('record7')).toBeInTheDocument();
+            expect(screen.queryByText('record8')).toBeInTheDocument();
+            expect(screen.queryByText('record9')).toBeInTheDocument();
+            expect(screen.queryByText('record10')).toBeInTheDocument();
         });
 
         it('should render no results when no workspaces are found', async () => {
-            spyUseApplicationSettingsContext.mockReturnValue([mockApplicationWithRecordsAndLibrariesWorkspaces] as any);
+            spyUseApplicationSettingsContext.mockReturnValue([
+                mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces,
+            ] as any);
 
             renderWithTheme(<WorkspacesNavigationMenu />);
 
             const searchInput = screen.getByPlaceholderText(/search/i);
 
             await act(async () => {
-                await user.type(searchInput, 'record3');
+                await user.type(searchInput, 'record30');
             });
 
             expect(screen.getAllByRole('listitem')).toHaveLength(1);
