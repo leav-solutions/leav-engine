@@ -89,7 +89,7 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
     const groupShortcutItems: ComponentProps<typeof KitSideMenu>['items'][number] = {
         type: 'group',
         title: t('workspaces_navigation_menu.shortcuts'),
-        icon: <FontAwesomeIcon className="group-shortcut-icon" icon={faThumbtack} size="sm" />,
+        icon: <FontAwesomeIcon icon={faThumbtack} size="sm" />,
     };
 
     const separatorItem: ComponentProps<typeof KitSideMenu>['items'][number] = {
@@ -133,13 +133,13 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
                 className={workspacesNavigationMenu}
                 open={isMenuOpen}
                 showSearch={showSearch}
-                autoCompleteOptions={
+                searchOptions={
                     showSearch
                         ? {
                               placeholder: t('workspaces_navigation_menu.search_placeholder'),
                               allowClear: true,
                               onChange: value => {
-                                  setSearchWorkspaceValue(value);
+                                  setSearchWorkspaceValue(value.target.value);
                               },
                           }
                         : undefined
