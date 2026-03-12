@@ -22,9 +22,4 @@ module.exports = {
     bugsnag: {
         releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'development',
     },
-    actions: {
-        excel: {
-            useNewHyperformula: envToBool(process.env.ACTIONS_EXCEL_USE_NEW_HYPERFORMULA, true),
-        },
-    },
 };

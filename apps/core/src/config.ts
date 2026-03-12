@@ -145,7 +145,6 @@ export const validateConfig = (conf: IConfig) => {
         }),
         actions: Joi.object().keys({
             excel: {
-                useNewHyperformula: Joi.boolean().required(),
                 debug: Joi.boolean().required(),
             },
         }),
