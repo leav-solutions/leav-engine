@@ -4,8 +4,4 @@
         width: 100%;
         text-align: center;
     }
-
-    li:has(:global(.group-shortcut-icon)) {
-        margin-bottom: calc(var(--general-spacing-xs) * 1px);
-    }
 }
