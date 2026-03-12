@@ -70,6 +70,12 @@ function useMenuItems({size}: IUseMenuItemsProps): IMenuItem[] {
             protected: true,
         },
         {
+            id: 'logs',
+            label: t('logs.title'),
+            icon: <Icon name="history" style={{fontSize: `calc(${iconSize[size]} - 2px)`}} />,
+            protected: true,
+        },
+        {
             id: 'general',
             label: t('general.title'),
             icon: <AiOutlineSetting size={iconSize[size]} />,

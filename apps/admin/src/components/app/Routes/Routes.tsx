@@ -7,6 +7,7 @@ import ProtectedRoute from 'components/shared/ProtectedRoute';
 import React, {Suspense} from 'react';
 import {Route} from 'react-router-dom-v5';
 import {PermissionsActions} from '_gqlTypes';
+import {History} from '../../../modules/history/History';
 
 const Dashboard = React.lazy(() => import('../Dashboard'));
 const General = React.lazy(() => import('components/general/General'));
@@ -91,6 +92,12 @@ function Routes(): JSX.Element {
                     permissions={[PermissionsActions.admin_access_tasks]}
                     path="/tasks"
                     component={Tasks}
+                    exact
+                />
+                <ProtectedRoute
+                    permissions={[PermissionsActions.admin_access_logs]}
+                    path="/logs"
+                    component={History}
                     exact
                 />
             </Suspense>

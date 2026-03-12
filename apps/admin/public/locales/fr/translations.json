@@ -275,7 +275,8 @@
             "application": "Application",
             "version_profiles": "Profils de version",
             "api_keys": "Clés API",
-            "plugins": "Plugins"
+            "plugins": "Plugins",
+            "logs": "Historique"
         }
     },
     "login": {
@@ -490,5 +491,8 @@
         "key_display_warning": "Attention, cette clé ne sera affichée qu'une seule fois. Si vous la perdez, vous devrez en créer une nouvelle.",
         "copy_key": "Copier la clé",
         "copy_success": "Clé copiée"
+    },
+    "logs": {
+        "title": "Historique"
     }
 }
