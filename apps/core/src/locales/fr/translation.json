@@ -170,6 +170,7 @@
         "admin_access_tasks": "Accéder aux tâches",
         "admin_delete_task": "Supprimer une tâche",
         "admin_cancel_task": "Annuler une tâche",
+        "admin_access_logs": "Accéder à l'historique",
         "admin_access_attributes": "Accéder aux attributs",
         "admin_create_attribute": "Créer un attribut",
         "admin_edit_attribute": "Éditer un attribut",
