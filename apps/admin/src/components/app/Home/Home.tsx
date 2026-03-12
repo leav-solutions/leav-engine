@@ -4,7 +4,7 @@
 import useLocalStorage from 'hooks/useLocalStorage';
 import styled from 'styled-components';
 import {greyBackground} from 'themingVar';
-import AppMenu from '../AppMenu';
+import {NavigationMenu} from '../../../modules/navigation-menu/NavigationMenu';
 import Header from '../Header';
 import {InitAdminRouter} from '../../../modules/routes/InitAdminRouter';
 
@@ -52,7 +52,7 @@ function Home(): JSX.Element {
                 <Header />
             </HeaderWrapper>
             <LeftCol>
-                <AppMenu isCollapsed={isMenuCollapsed} onToggle={_handleToggleMenu} width={menuWidth} />
+                <NavigationMenu isCollapsed={isMenuCollapsed} onToggle={_handleToggleMenu} width={menuWidth} />
             </LeftCol>
             <Content className="content flex-col" style={{overflowX: 'scroll'}}>
                 <InitAdminRouter />

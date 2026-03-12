@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '_tests/testUtils';
-import AppMenu from './AppMenu';
+import {NavigationMenu} from './NavigationMenu';
 
-describe('AppMenu', () => {
+describe('NavigationMenu', () => {
     test('Render menu', async () => {
         await act(async () => {
-            render(<AppMenu isCollapsed={false} onToggle={jest.fn()} width="42px" />);
+            render(<NavigationMenu isCollapsed={false} onToggle={jest.fn()} width="42px" />);
         });
 
         expect(screen.getByText(/libraries/)).toBeInTheDocument();

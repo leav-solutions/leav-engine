@@ -19,13 +19,11 @@ jest.mock(
         },
 );
 
-jest.mock(
-    '../AppMenu',
-    () =>
-        function AppMenu() {
-            return <div>AppMenu</div>;
-        },
-);
+jest.mock('../../../modules/navigation-menu/NavigationMenu', () => ({
+    NavigationMenu: function NavigationMenu() {
+        return <div>NavigationMenu</div>;
+    },
+}));
 
 jest.mock('../../../constants', () => ({
     APP_BASE_URL: '',
@@ -38,7 +36,7 @@ describe('Home', () => {
         });
 
         expect(screen.getByText('Header')).toBeInTheDocument();
-        expect(screen.getByText('AppMenu')).toBeInTheDocument();
+        expect(screen.getByText('NavigationMenu')).toBeInTheDocument();
         expect(screen.getByText('Routes')).toBeInTheDocument();
     });
 });

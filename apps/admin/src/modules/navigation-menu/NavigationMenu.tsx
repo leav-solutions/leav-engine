@@ -42,13 +42,13 @@ const ItemLabel = styled.span`
     text-overflow: ellipsis;
 `;
 
-interface IAppMenuProps {
+interface INavigationMenuProps {
     isCollapsed: boolean;
     onToggle: () => void;
     width: string;
 }
 
-const AppMenu = ({isCollapsed, onToggle, width}: IAppMenuProps): JSX.Element => {
+export const NavigationMenu = ({isCollapsed, onToggle, width}: INavigationMenuProps) => {
     const menuItems = useMenuItems({size: 'small'});
     const toggleIcon = isCollapsed ? 'angle double right' : 'angle double left';
 
@@ -81,5 +81,3 @@ const AppMenu = ({isCollapsed, onToggle, width}: IAppMenuProps): JSX.Element => 
         </>
     );
 };
-
-export default AppMenu;
