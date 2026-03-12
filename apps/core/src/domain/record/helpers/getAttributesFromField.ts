@@ -87,11 +87,11 @@ const getAttributesFromField = async (params: {
         case AttributeTypes.SIMPLE_LINK:
         case AttributeTypes.ADVANCED_LINK: {
             // filter string is: <link attribute>.<child attribute>
-            let [, childAttribute] = fields;
+            const [, ...subFields] = fields;
 
             // If we have not selected a sub-attribute on a link attribute, force search on label
-            if (!childAttribute) {
-                childAttribute = await _getLabelOrIdAttribute(mainAttribute.linked_library);
+            if (!subFields.length) {
+                subFields.push(await _getLabelOrIdAttribute(mainAttribute.linked_library));
             }
 
             // Check if child attribute is really linked to library
@@ -100,7 +100,7 @@ const getAttributesFromField = async (params: {
                 ctx,
             );
 
-            if (!attrLinkedLibraryAttributes.find(a => a.id === childAttribute)) {
+            if (!attrLinkedLibraryAttributes.find(a => a.id === subFields[0])) {
                 throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
             }
 
@@ -109,7 +109,7 @@ const getAttributesFromField = async (params: {
             const subChildAttributes =
                 condition !== AttributeCondition.IS_EMPTY && condition !== AttributeCondition.IS_NOT_EMPTY
                     ? await getAttributesFromField({
-                          field: childAttribute,
+                          field: subFields.join('.'),
                           visitedLibraries,
                           condition,
                           deps,
@@ -122,8 +122,9 @@ const getAttributesFromField = async (params: {
         }
         case AttributeTypes.TREE: {
             // filter string is: <tree attribute>.<tree library>.<child attribute>
-            const [, treeLibrary, childAttribute] = fields;
-            if (!treeLibrary && !childAttribute) {
+            const [, treeLibrary, ...subFields] = fields;
+
+            if (!treeLibrary && !subFields.length) {
                 // Get libraries linked to tree
                 const linkedTree = await treeRepo.getTrees({
                     params: {filters: {id: mainAttribute.linked_tree}},
@@ -161,7 +162,7 @@ const getAttributesFromField = async (params: {
                         // Ignore error, we just won't use this attribute for search
                     }
                 }
-            } else if (treeLibrary && !childAttribute) {
+            } else if (treeLibrary && !subFields.length) {
                 const libProps = (
                     await libraryRepo.getLibraries({
                         params: {filters: {id: treeLibrary}},
@@ -187,13 +188,18 @@ const getAttributesFromField = async (params: {
                 // Check if child attribute really exists
                 const treeLibraryAttributes = await attributeDomain.getLibraryAttributes(treeLibrary, ctx);
 
-                if (!treeLibraryAttributes.find(a => a.id === childAttribute)) {
+                if (!treeLibraryAttributes.find(a => a.id === subFields[0])) {
                     throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
                 }
 
                 // Calling this function recursively will handle the case where child attribute is a link
                 // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
-                const subChildAttributes = await getAttributesFromField({field: childAttribute, condition, deps, ctx});
+                const subChildAttributes = await getAttributesFromField({
+                    field: subFields.join('.'),
+                    condition,
+                    deps,
+                    ctx,
+                });
                 attributes = [...attributes, ...subChildAttributes];
             }
 

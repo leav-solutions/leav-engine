@@ -344,9 +344,10 @@ export default function ({
                   : attributes[1];
 
             const baseIdentifier = `l${parentIdentifier}`;
+            const parentIdentifierLiteral = literal(parentIdentifier);
             const baseIdentifierLiteral = literal(baseIdentifier);
             const retrieveValue = aql`FOR ${baseIdentifierLiteral} IN ${linkedLibCollec}
-                    FILTER TO_STRING(r.${attributes[0].id}) == ${baseIdentifierLiteral}._key`;
+                    FILTER TO_STRING(${parentIdentifierLiteral}.${attributes[0].id}) == ${baseIdentifierLiteral}._key`;
 
             const linkedValueQueryPart = attributes[1]
                 ? attributes[1]._repo.filterValueQueryPart([...attributes].splice(1), filter, baseIdentifier)
