@@ -52,6 +52,10 @@ export interface IElement {
     matches: IMatch[];
     mode: ImportMode;
     data: IData[];
+    excelMapping?: {
+        sheet: number;
+        line: number;
+    };
 }
 
 export interface ITree {

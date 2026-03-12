@@ -118,6 +118,21 @@
                     "items": {
                         "$ref": "#/definitions/data"
                     }
+                },
+                "excelMapping": {
+                    "type": "object",
+                    "description": "Excel position of the element for error reporting",
+                    "properties": {
+                        "sheet": {
+                            "type": "integer",
+                            "description": "Sheet number (0-based)"
+                        },
+                        "line": {
+                            "type": "integer",
+                            "description": "Line number (0-based)"
+                        }
+                    },
+                    "required": ["sheet", "line"]
                 }
             },
             "required": ["library", "matches", "data"]
