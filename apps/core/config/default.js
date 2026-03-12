@@ -138,10 +138,6 @@ module.exports = {
             process.env.PERMISSIONS_ENABLE_ACCESS_RECORD_BY_DEFAULT_BACKEND_FILTER,
             false,
         ),
-        enableAttributeDependentValuesPermissions: envToBool(
-            process.env.PERMISSIONS_ENABLE_ATTRIBUTE_DEPENDENT_VALUES_PERMISSIONS,
-            true,
-        ),
     },
     amqp: {
         connOpt: {

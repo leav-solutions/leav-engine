@@ -73,11 +73,7 @@ function EditAttributeTabs({
             attribute.type,
         );
 
-        // Remove feature toggle with https://aristid.atlassian.net/browse/LEAVC-552
-        const isDependenciesAllowed =
-            applicationData.currentApp.settings?.enableAttributeDependentValuesPermissions &&
-            attribute.type === AttributeType.tree &&
-            !attribute.multiple_values;
+        const isDependenciesAllowed = attribute.type === AttributeType.tree && !attribute.multiple_values;
 
         const isFormatExtended = attribute.format === 'extended';
 
