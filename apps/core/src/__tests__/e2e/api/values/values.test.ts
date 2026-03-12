@@ -16,6 +16,10 @@ import {
     makeGraphQlCall,
 } from '../e2eUtils';
 import {type ILinkValue} from '_types/value';
+import {
+    IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS,
+    IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS,
+} from '../../../../domain/value/helpers/canSaveRecordValue';
 
 describe('Values', () => {
     const getRecord = async (libraryId: string, recordId: string) =>
@@ -304,6 +308,24 @@ describe('Values', () => {
         // Add element to tree
         nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});
         nodeTreeElem2 = await gqlAddElemToTree(treeName, {id: treeElemId2, library: treeLibName});
+    });
+
+    test('Should not be able to edit common immutables attributes', async () => {
+        for (const immutableAttributeId of IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS) {
+            await expect(
+                gqlSaveValueBis(immutableAttributeId, testLibName, recordId, {payload: 'test'}),
+            ).rejects.toThrow(/is an immutable core system attribute and cannot be edited/);
+        }
+    });
+
+    test('Should not be able to edit files immutables attributes', async () => {
+        const fileRecord = await gqlCreateRecord('files');
+
+        for (const immutableAttributeId of IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS) {
+            await expect(gqlSaveValueBis(immutableAttributeId, 'files', fileRecord, {payload: 'test'})).rejects.toThrow(
+                /is an immutable core system attribute and cannot be edited/,
+            );
+        }
     });
 
     test('Save value tree', async () => {

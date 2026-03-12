@@ -42,7 +42,7 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import canSaveRecordValue from './helpers/canSaveRecordValue';
+import canSaveRecordValue, {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from './helpers/canSaveRecordValue';
 import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import postSaveValue from './helpers/postSaveValue';
@@ -110,7 +110,6 @@ export interface IValueDomain {
         recordId: string;
         attribute: string;
         value: ISaveValue;
-        skipReadonly?: boolean;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
@@ -127,7 +126,6 @@ export interface IValueDomain {
         ctx: IQueryInfos;
         keepEmpty?: boolean;
         skipPermission?: boolean;
-        skipReadonly?: boolean;
     }): Promise<ISaveBatchValueResult>;
 
     deleteValue(params: IDeleteValueParams): Promise<IValue[]>;
@@ -519,15 +517,13 @@ const valueDomain = function ({
         }
     };
 
-    const _executeDeleteValue = async ({
-        library,
-        recordId,
-        attribute,
-        value,
-        skipReadonly,
-        skipActions,
-        ctx,
-    }: IDeleteValueParams) => {
+    const _executeDeleteValue = async ({library, recordId, attribute, value, skipActions, ctx}: IDeleteValueParams) => {
+        if (IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(attribute)) {
+            throw new ValidationError<IValue>({
+                attribute: {msg: Errors.IMMUTABLE_CORE_SYSTEM_ATTRIBUTE, vars: {attribute}},
+            });
+        }
+
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.EDIT_RECORD,
@@ -604,11 +600,7 @@ const valueDomain = function ({
                 ctx,
             );
 
-            if (!skipReadonly && attributeProps.readonly) {
-                throw new ValidationError<IValue>({
-                    [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}},
-                });
-            } else if (attributeProps.required && !inCreationBypass && deletingLastValue) {
+            if (attributeProps.required && !inCreationBypass && deletingLastValue) {
                 throw new ValidationError<IValue>({
                     [attribute]: {
                         msg: Errors.REQUIRED_ATTRIBUTE,
@@ -855,19 +847,12 @@ const valueDomain = function ({
         recordId,
         attribute,
         value,
-        skipReadonly,
         ctx,
     }): Promise<IValue[]> => {
         await validate.validateLibrary(library, ctx);
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
         await validate.validateLibraryAttribute(library, attribute, ctx);
         const record = await validate.validateRecord(library, recordId, ctx);
-
-        if (!skipReadonly && attributeProps.readonly) {
-            throw new ValidationError<IValue>({
-                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}},
-            });
-        }
 
         const valueChecksParams = {
             attributeProps,
@@ -896,7 +881,7 @@ const valueDomain = function ({
 
         if (!canSave) {
             if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+                throw new ValidationError<IValue>({attribute: {msg: forbiddenSaveReason, vars: {attribute}}});
             }
 
             throw new PermissionError(
@@ -1184,7 +1169,6 @@ const valueDomain = function ({
             ctx,
             keepEmpty = false,
             skipPermission = false,
-            skipReadonly = false,
         }): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
 
@@ -1207,7 +1191,6 @@ const valueDomain = function ({
                                 value,
                                 recordId,
                                 attribute: value.attribute,
-                                skipReadonly,
                                 ctx,
                             });
 
@@ -1225,12 +1208,6 @@ const valueDomain = function ({
                             value,
                             keepEmpty,
                         };
-
-                        if (!skipReadonly && attributeProps.readonly) {
-                            throw new ValidationError<IValue>({
-                                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}},
-                            });
-                        }
 
                         // Check permissions
                         if (!skipPermission) {
@@ -1304,7 +1281,6 @@ const valueDomain = function ({
                                           value: valueToSave,
                                           recordId,
                                           attribute: valueToSave.attribute,
-                                          skipReadonly,
                                           ctx,
                                       })
                                     : (await _executeSaveValue(library, record, attributeProps, valueToSave, ctx))
@@ -1358,10 +1334,10 @@ const valueDomain = function ({
 
             return saveRes;
         },
-        async deleteValue({library, recordId, attribute, value, skipReadonly, skipActions, ctx}) {
+        async deleteValue({library, recordId, attribute, value, skipActions, ctx}) {
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
-            return _executeDeleteValue({library, recordId, attribute, value, skipReadonly, skipActions, ctx});
+            return _executeDeleteValue({library, recordId, attribute, value, skipActions, ctx});
         },
         formatValue: _formatValue,
         async listDistinctValues({libraryId, attributeId, recordFilters, options, ctx}) {

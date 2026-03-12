@@ -109,7 +109,7 @@
         "type": "Type",
         "format": "Format",
         "isSystem": "System",
-        "readonly": "Readonly",
+        "readonly": "Read-only in the interface",
         "required": "Required",
         "unique": "Unique",
         "character_limit": "Character limit",
