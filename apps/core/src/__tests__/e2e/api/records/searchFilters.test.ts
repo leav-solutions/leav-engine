@@ -11,6 +11,7 @@ import {
     gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
+    gqlSaveValueBis,
     makeGraphQlCall,
     toCleanJSON,
 } from '../e2eUtils';
@@ -39,6 +40,10 @@ describe('searchFilters', () => {
     let linkedRecordId2;
     let linkedRecordId3;
 
+    let deepLinkedRecordId1;
+    let deepLinkedRecordId2;
+    let deepLinkedRecordId3;
+
     let treeRecordId1;
     let treeRecordId2;
     let treeRecordId3;
@@ -48,6 +53,7 @@ describe('searchFilters', () => {
     const libraryForOperatorsId = 'search_filters_library_for_operators_id';
 
     const linkedLibraryId = 'search_filters_linked_library_id';
+    const deepLinkedLibraryId = 'search_filters_deep_linked_library_id';
 
     const treeId = 'search_filters_tree_id';
     const treeLibraryId = 'search_filters_tree_library_id';
@@ -66,6 +72,8 @@ describe('searchFilters', () => {
     const simpleLinkAttributeId = 'search_filter_simple_link_attribute_id';
     const advancedLinkAttributeId = 'search_filter_advanced_link_attribute_id';
     const advancedLinkMultivalAttributeId = 'search_filter_advanced_link_multival_attribute_id';
+    const simpleDeepLinkAttributeId = 'search_filter_simple_deep_link_attribute_id';
+    const advancedDeepLinkAttributeId = 'search_filter_advanced_deep_link_attribute_id';
     const treeAttributeId = 'search_filter_tree_attribute_id';
     const treeMultivalAttributeId = 'search_filter_tree_multival_attribute_id';
     const dateRangeAttributeId = 'search_filter_date_range_attribute_id';
@@ -131,10 +139,22 @@ describe('searchFilters', () => {
                 linkedLibrary: linkedLibraryId,
             },
             {
+                id: simpleDeepLinkAttributeId,
+                type: AttributeTypes.SIMPLE_LINK,
+                label: 'deepLinkAttributeId',
+                linkedLibrary: deepLinkedLibraryId,
+            },
+            {
                 id: advancedLinkAttributeId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'advancedLinkAttributeId',
                 linkedLibrary: linkedLibraryId,
+            },
+            {
+                id: advancedDeepLinkAttributeId,
+                type: AttributeTypes.ADVANCED_LINK,
+                label: 'advancedDeepLinkAttributeId',
+                linkedLibrary: deepLinkedLibraryId,
             },
             {
                 id: advancedLinkMultivalAttributeId,
@@ -179,6 +199,23 @@ describe('searchFilters', () => {
         await gqlSaveTree(treeId, 'Tree', [treeLibraryId]);
 
         await gqlSaveLibrary(
+            deepLinkedLibraryId,
+            'Test lib',
+            attributesToCreate
+                .map(a => a.id)
+                .filter(
+                    id =>
+                        ![
+                            simpleLinkAttributeId,
+                            advancedLinkAttributeId,
+                            advancedLinkMultivalAttributeId,
+                            simpleDeepLinkAttributeId,
+                            advancedDeepLinkAttributeId,
+                        ].includes(id),
+                ),
+        );
+
+        await gqlSaveLibrary(
             linkedLibraryId,
             'Test lib',
             attributesToCreate
@@ -208,6 +245,10 @@ describe('searchFilters', () => {
         recordIdForOperators2 = await gqlCreateRecord(libraryForOperatorsId);
         recordIdForOperators3 = await gqlCreateRecord(libraryForOperatorsId);
 
+        deepLinkedRecordId1 = await gqlCreateRecord(deepLinkedLibraryId);
+        deepLinkedRecordId2 = await gqlCreateRecord(deepLinkedLibraryId);
+        deepLinkedRecordId3 = await gqlCreateRecord(deepLinkedLibraryId);
+
         linkedRecordId1 = await gqlCreateRecord(linkedLibraryId);
         linkedRecordId2 = await gqlCreateRecord(linkedLibraryId);
         linkedRecordId3 = await gqlCreateRecord(linkedLibraryId);
@@ -224,6 +265,9 @@ describe('searchFilters', () => {
         recordDateIdTomorrow = await gqlCreateRecord(libraryDateId);
         recordDateIdNextMonth = await gqlCreateRecord(libraryDateId);
         recordDateIdLastMonth = await gqlCreateRecord(libraryDateId);
+
+        await gqlSaveValue(textAttributeId, deepLinkedLibraryId, deepLinkedRecordId1, 'deepLinkedRecordId1');
+        await gqlSaveValue(textAttributeId, deepLinkedLibraryId, deepLinkedRecordId2, 'deepLinkedRecordId2');
     });
 
     describe('Filters conditions', () => {
@@ -1218,12 +1262,177 @@ describe('searchFilters', () => {
                     expect(res.data.data.records.list[2].id).toBe(recordId1);
                 });
             });
+
+            describe('Deep simple link attribute', () => {
+                beforeAll(async () => {
+                    await gqlSaveValueBis(simpleDeepLinkAttributeId, linkedLibraryId, linkedRecordId1, {
+                        payload: deepLinkedRecordId1,
+                    });
+                    await gqlSaveValueBis(simpleDeepLinkAttributeId, linkedLibraryId, linkedRecordId2, {
+                        payload: deepLinkedRecordId2,
+                    });
+                });
+
+                test('Equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${simpleLinkAttributeId}.${simpleDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId1);
+                });
+
+                test('Not equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${simpleLinkAttributeId}.${simpleDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.NOT_EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
+                });
+
+                test('Contains on label', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${simpleLinkAttributeId}.${simpleDeepLinkAttributeId}.${textAttributeId}",
+                                condition: ${AttributeCondition.CONTAINS},
+                                value: "deepLinkedRecordId"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(2);
+                    expect(res.data.data.records.list).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({id: recordId1}),
+                            expect.objectContaining({id: recordId2}),
+                        ]),
+                    );
+                });
+            });
+
+            describe('Deep advanced link attribute', () => {
+                beforeAll(async () => {
+                    await gqlSaveValueBis(advancedDeepLinkAttributeId, linkedLibraryId, linkedRecordId1, {
+                        payload: deepLinkedRecordId1,
+                    });
+                    await gqlSaveValueBis(advancedDeepLinkAttributeId, linkedLibraryId, linkedRecordId2, {
+                        payload: deepLinkedRecordId2,
+                    });
+                });
+
+                test('Equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${simpleLinkAttributeId}.${advancedDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId1);
+                });
+
+                test('Not equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${simpleLinkAttributeId}.${advancedDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.NOT_EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
+                });
+
+                test('Contains on label', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${simpleLinkAttributeId}.${advancedDeepLinkAttributeId}.${textAttributeId}",
+                                condition: ${AttributeCondition.CONTAINS},
+                                value: "deepLinkedRecordId"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(2);
+                    expect(res.data.data.records.list).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({id: recordId1}),
+                            expect.objectContaining({id: recordId2}),
+                        ]),
+                    );
+                });
+            });
         });
 
         describe('Advanced link attribute', () => {
             beforeAll(async () => {
                 await gqlSaveValue(advancedLinkAttributeId, libraryId, recordId1, linkedRecordId1);
                 await gqlSaveValue(advancedLinkAttributeId, libraryId, recordId2, linkedRecordId2);
+            });
+
+            test('Equal on id', async () => {
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${libraryId}",
+                        filters: [{
+                            field: "${advancedLinkAttributeId}.id",
+                            condition: ${AttributeCondition.EQUAL},
+                            value: "${linkedRecordId1}"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Contains', async () => {
@@ -1339,6 +1548,79 @@ describe('searchFilters', () => {
                 expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
+            describe('Deep simple link attribute', () => {
+                beforeAll(async () => {
+                    await gqlSaveValueBis(simpleDeepLinkAttributeId, linkedLibraryId, linkedRecordId1, {
+                        payload: deepLinkedRecordId1,
+                    });
+                    await gqlSaveValueBis(simpleDeepLinkAttributeId, linkedLibraryId, linkedRecordId2, {
+                        payload: deepLinkedRecordId2,
+                    });
+                });
+
+                test('Equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${advancedLinkAttributeId}.${simpleDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId1);
+                });
+
+                test('Not equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${advancedLinkAttributeId}.${simpleDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.NOT_EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
+                });
+
+                test('Contains on label', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${advancedLinkAttributeId}.${simpleDeepLinkAttributeId}.${textAttributeId}",
+                                condition: ${AttributeCondition.CONTAINS},
+                                value: "deepLinkedRecordId"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(2);
+                    expect(res.data.data.records.list).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({id: recordId1}),
+                            expect.objectContaining({id: recordId2}),
+                        ]),
+                    );
+                });
+            });
+
             describe('Values count', () => {
                 beforeAll(async () => {
                     await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId1, linkedRecordId1);
@@ -1423,6 +1705,25 @@ describe('searchFilters', () => {
 
                 await gqlSaveValue(treeAttributeId, libraryId, recordId1, nodeTreeRecordId1);
                 await gqlSaveValue(treeAttributeId, libraryId, recordId2, nodeTreeRecordId2);
+            });
+
+            test('Equal on id', async () => {
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${libraryId}",
+                        filters: [{
+                            field: "${treeAttributeId}.${treeLibraryId}.id",
+                            condition: ${AttributeCondition.EQUAL},
+                            value: "${treeRecordId1}"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Contains', async () => {
@@ -1524,7 +1825,7 @@ describe('searchFilters', () => {
                     records(
                         library: "${libraryId}",
                         filters: [{
-                            field: "${advancedLinkAttributeId}",
+                            field: "${treeAttributeId}",
                             condition: ${AttributeCondition.IS_NOT_EMPTY}
                         }]) {
                             list {id}
@@ -1536,6 +1837,79 @@ describe('searchFilters', () => {
                 expect(res.data.data.records.list.length).toBe(2);
                 expect(res.data.data.records.list[0].id).toBe(recordId2);
                 expect(res.data.data.records.list[1].id).toBe(recordId1);
+            });
+
+            describe('Deep simple link attribute', () => {
+                beforeAll(async () => {
+                    await gqlSaveValueBis(simpleDeepLinkAttributeId, treeLibraryId, treeRecordId1, {
+                        payload: deepLinkedRecordId1,
+                    });
+                    await gqlSaveValueBis(simpleDeepLinkAttributeId, treeLibraryId, treeRecordId2, {
+                        payload: deepLinkedRecordId2,
+                    });
+                });
+
+                test('Equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${treeAttributeId}.${treeLibraryId}.${simpleDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId1);
+                });
+
+                test('Not equal on id', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${treeAttributeId}.${treeLibraryId}.${simpleDeepLinkAttributeId}.id",
+                                condition: ${AttributeCondition.NOT_EQUAL},
+                                value: "${deepLinkedRecordId1}"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
+                });
+
+                test('Contains on label', async () => {
+                    const res = await makeGraphQlCall(`{
+                        records(
+                            library: "${libraryId}",
+                            filters: [{
+                                field: "${treeAttributeId}.${treeLibraryId}.${simpleDeepLinkAttributeId}.${textAttributeId}",
+                                condition: ${AttributeCondition.CONTAINS},
+                                value: "deepLinkedRecordId"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data.records.list.length).toBe(2);
+                    expect(res.data.data.records.list).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({id: recordId1}),
+                            expect.objectContaining({id: recordId2}),
+                        ]),
+                    );
+                });
             });
 
             describe('Values count', () => {
