@@ -221,7 +221,7 @@ export default function ({
                     });
                 }
 
-                value.payload = node[0];
+                value.payload = node;
             }
         }
 
