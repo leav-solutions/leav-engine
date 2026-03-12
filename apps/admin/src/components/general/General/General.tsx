@@ -4,7 +4,7 @@
 import useUserData from 'hooks/useUserData';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useLocation} from 'react-router-dom-v5';
+import {useNavigate, useLocation} from 'react-router-dom';
 import {Header, Icon, Tab, type TabProps} from 'semantic-ui-react';
 import {PermissionsActions} from '_gqlTypes';
 import GeneralAdminPermissionsTab from './GeneralAdminPermissionsTab';
@@ -17,7 +17,7 @@ function General(): JSX.Element {
     const {t} = useTranslation();
     const userData = useUserData();
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const panes = [
         {
@@ -88,7 +88,7 @@ function General(): JSX.Element {
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
-            history?.push(`#${data.panes[data.activeIndex].key}`);
+            navigate(`#${data.panes[data.activeIndex].key}`);
         }
     };
     return (

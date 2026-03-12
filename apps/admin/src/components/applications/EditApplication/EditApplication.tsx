@@ -5,28 +5,21 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import EditApplicationContext from 'context/EditApplicationContext';
 import {useTranslation} from 'react-i18next';
-import {type match} from 'react-router-dom-v5';
+import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import EditApplicationTabs from './EditApplicationTabs';
 import {useGetApplicationByIdQuery} from '_gqlTypes';
 import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-
-export interface IEditApplicationMatchParams {
-    id: string;
-}
-
-interface IEditApplicationProps {
-    match?: match<IEditApplicationMatchParams>;
-}
 
 const Wrapper = styled.div`
     display: grid;
     grid-template-rows: auto 1fr;
 `;
 
-function EditApplication({match: routerMatch}: IEditApplicationProps): JSX.Element {
+function EditApplication(): JSX.Element {
+    const routerMatch = useParams();
     const {t} = useTranslation();
-    const appId = routerMatch.params?.id ?? null;
+    const appId = routerMatch?.id ?? null;
     const isNewApp = !appId;
 
     const {loading, error, data} = useGetApplicationByIdQuery({

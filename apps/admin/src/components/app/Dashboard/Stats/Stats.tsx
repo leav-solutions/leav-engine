@@ -6,7 +6,7 @@ import Loading from 'components/shared/Loading';
 import useMenuItems from 'hooks/useMenuItems';
 import {type IMenuItem} from 'hooks/useMenuItems/useMenuItems';
 import {useTranslation} from 'react-i18next';
-import {useHistory} from 'react-router-dom-v5';
+import {useNavigate} from 'react-router-dom';
 import {Statistic} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {useGetStatsQuery} from '_gqlTypes';
@@ -53,7 +53,7 @@ function Stats(): JSX.Element {
     const {loading, error, data} = useGetStatsQuery();
     const {t} = useTranslation();
     const menuItems = useMenuItems({size: 'small'});
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const itemsByKey: {[key: string]: IMenuItem} = menuItems.reduce((acc, item) => {
         acc[item.id] = item;
@@ -91,7 +91,7 @@ function Stats(): JSX.Element {
     ];
 
     const _handleItemClick = (route: string) => () => {
-        history.push(`/${route}`);
+        navigate(`/${route}`);
     };
 
     return (

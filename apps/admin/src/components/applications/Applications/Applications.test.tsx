@@ -7,12 +7,10 @@ import {mockApplication} from '__mocks__/common/applications';
 import Applications from './Applications';
 import {DeleteApplicationDocument, GetApplicationsDocument} from '_gqlTypes';
 
-const mockHistoryPush = jest.fn();
-jest.mock('react-router-dom-v5', () => ({
-    ...jest.requireActual('react-router-v5'),
-    useHistory: () => ({
-        push: mockHistoryPush,
-    }),
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => mockNavigate,
 }));
 
 describe('Applications', () => {
@@ -61,7 +59,7 @@ describe('Applications', () => {
         await waitFor(() => expect(screen.queryByText('appA')).not.toBeInTheDocument());
 
         await userEvent.click(screen.getByText('appB'));
-        expect(mockHistoryPush).toHaveBeenCalledWith('/applications/edit/appB');
+        expect(mockNavigate).toHaveBeenCalledWith('/applications/edit/appB');
     });
 
     test('Can delete an application', async () => {

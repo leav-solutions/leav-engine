@@ -6,7 +6,7 @@ import useUserData from 'hooks/useUserData';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
-import {Link, useHistory} from 'react-router-dom-v5';
+import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {addWildcardToFilters} from 'utils';
@@ -23,7 +23,7 @@ function VersionProfiles(): JSX.Element {
     const {t} = useTranslation();
     const [filters, setFilters] = useState<VersionProfilesFiltersInput>({});
     const userData = useUserData();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const {loading, error, data} = useGetVersionProfilesQuery({
         variables: {filters: {...addWildcardToFilters(filters, ['label', 'id'])}},
@@ -36,7 +36,7 @@ function VersionProfiles(): JSX.Element {
         });
     };
 
-    const _handleRowClick = versionProfile => history.push('/version_profiles/edit/' + versionProfile.id);
+    const _handleRowClick = versionProfile => navigate('/version_profiles/edit/' + versionProfile.id);
 
     if (error) {
         return <ErrorDisplay message={error.message} />;

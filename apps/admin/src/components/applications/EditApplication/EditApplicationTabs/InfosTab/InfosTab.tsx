@@ -4,7 +4,7 @@
 import {useApolloClient} from '@apollo/client';
 import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import {useHistory} from 'react-router-v5';
+import {useNavigate} from 'react-router-dom';
 import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {type IFormError} from '_types/errors';
 import InfosForm from './InfosForm';
@@ -14,7 +14,7 @@ import {useSaveApplicationMutation} from '_gqlTypes';
 function InfosTab(): JSX.Element {
     const apolloClient = useApolloClient();
     const {application} = useEditApplicationContext();
-    const history = useHistory();
+    const navigate = useNavigate();
     const isNewApp = !application;
 
     const [saveApplication, {error, loading}] = useSaveApplicationMutation({
@@ -23,7 +23,7 @@ function InfosTab(): JSX.Element {
         onCompleted: res => {
             if (isNewApp) {
                 // Redirect to new app editing
-                history.push(`/applications/edit/${res.saveApplication.id}`);
+                navigate(`/applications/edit/${res.saveApplication.id}`);
             }
         },
         update: cache => {

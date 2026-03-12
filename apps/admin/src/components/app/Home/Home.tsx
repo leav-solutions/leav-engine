@@ -2,13 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useLocalStorage from 'hooks/useLocalStorage';
-import {BrowserRouter as Router} from 'react-router-dom-v5';
 import styled from 'styled-components';
 import {greyBackground} from 'themingVar';
-import {APP_BASE_URL} from '../../../constants';
 import AppMenu from '../AppMenu';
 import Header from '../Header';
-import Routes from '../Routes';
+import {InitAdminRouter} from '../../../modules/routes/InitAdminRouter';
 
 const headerHeight = '3rem';
 const LeftCol = styled.div`
@@ -49,19 +47,17 @@ function Home(): JSX.Element {
     };
 
     return (
-        <Router basename={APP_BASE_URL}>
-            <HomeWrapper $menuWidth={menuWidth}>
-                <HeaderWrapper>
-                    <Header />
-                </HeaderWrapper>
-                <LeftCol>
-                    <AppMenu isCollapsed={isMenuCollapsed} onToggle={_handleToggleMenu} width={menuWidth} />
-                </LeftCol>
-                <Content className="content flex-col" style={{overflowX: 'scroll'}}>
-                    <Routes />
-                </Content>
-            </HomeWrapper>
-        </Router>
+        <HomeWrapper $menuWidth={menuWidth}>
+            <HeaderWrapper>
+                <Header />
+            </HeaderWrapper>
+            <LeftCol>
+                <AppMenu isCollapsed={isMenuCollapsed} onToggle={_handleToggleMenu} width={menuWidth} />
+            </LeftCol>
+            <Content className="content flex-col" style={{overflowX: 'scroll'}}>
+                <InitAdminRouter />
+            </Content>
+        </HomeWrapper>
     );
 }
 

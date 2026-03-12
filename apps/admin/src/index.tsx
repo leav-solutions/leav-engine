@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ApolloHandler from 'components/app/ApolloHandler';
 import App from 'components/app/App';
+import {InitRouting} from './config/router/InitRouting';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import 'fomantic-ui-less/semantic.less';
 import {Suspense, useEffect, useState} from 'react';
@@ -41,18 +42,21 @@ export function Index() {
         en: 'enUS',
     };
 
+    //TODO: Later like in app-studio, index should be used to init the network, translation, user, theme,notifications subscription, routing, application setting provider, document title, guard access, layout and application router with proper hooks (in config folder) to do that
     return (
         i18nIsInitialized && (
             <Suspense fallback={<Loader active inline="centered" style={{margin: '15rem auto'}} />}>
                 <ReduxProvider store={store}>
                     <ApolloHandler>
-                        <KitApp
-                            locale={{
-                                locale: localeByLang[lang],
-                            }}
-                        >
-                            <App />
-                        </KitApp>
+                        <InitRouting>
+                            <KitApp
+                                locale={{
+                                    locale: localeByLang[lang],
+                                }}
+                            >
+                                <App />
+                            </KitApp>
+                        </InitRouting>
                     </ApolloHandler>
                 </ReduxProvider>
             </Suspense>

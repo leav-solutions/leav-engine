@@ -3,17 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {useMemo} from 'react';
-import {type match} from 'react-router-dom-v5';
+import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {type AttributeType, useGetAttributeByIdQuery} from '_gqlTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
 import {type AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';
-
-export interface IEditAttributeMatchParams {
-    id: string;
-}
 
 export type OnAttributePostSaveFunc = (attrData: AttributeInfosFormValues) => void;
 
@@ -23,21 +19,15 @@ const Wrapper = styled.div`
 `;
 
 interface IEditAttributeProps {
-    match?: match<IEditAttributeMatchParams>;
     redirectAfterCreate?: boolean;
     attributeId?: string | null;
     onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
 }
 
-function EditAttribute({
-    match: routeMatch,
-    attributeId,
-    onPostSave,
-    forcedType,
-    redirectAfterCreate,
-}: IEditAttributeProps): JSX.Element {
-    const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
+function EditAttribute({attributeId, onPostSave, forcedType, redirectAfterCreate}: IEditAttributeProps): JSX.Element {
+    const routeMatch = useParams();
+    const attrId = typeof attributeId !== 'undefined' ? attributeId : (routeMatch?.id ?? '');
 
     const {loading, error, data} = useGetAttributeByIdQuery({
         variables: {id: attrId},

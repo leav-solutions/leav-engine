@@ -4,7 +4,7 @@
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Link, useHistory} from 'react-router-dom-v5';
+import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters} from '../../../utils/utils';
@@ -17,7 +17,7 @@ const Applications = (): JSX.Element => {
     const {t} = useTranslation();
     const [filters, setFilters] = useState<ApplicationsFiltersInput>({});
     const userData = useUserData();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const {loading, error, data} = useGetApplicationsQuery({
         variables: {filters: {...addWildcardToFilters(filters, ['label', 'id', 'endpoint'])}},
@@ -37,7 +37,7 @@ const Applications = (): JSX.Element => {
         });
     };
 
-    const _onRowClick = application => history.push('/applications/edit/' + application.id);
+    const _onRowClick = application => navigate('/applications/edit/' + application.id);
 
     if (error) {
         return <ErrorDisplay message={error.message} />;

@@ -2,11 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {type History} from 'history';
-import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockTree} from '__mocks__/trees';
-import {type Mockify} from '../../../_types//Mockify';
 import Trees from './Trees';
 import {GetTreesDocument} from '_gqlTypes';
 
@@ -20,8 +17,6 @@ jest.mock(
 
 describe('Trees', () => {
     test('Snapshot test', async () => {
-        const mockHistory: Mockify<History> = {};
-
         const mocks: MockedResponse[] = [
             {
                 request: {
@@ -39,12 +34,7 @@ describe('Trees', () => {
         ];
 
         await act(async () => {
-            render(
-                <Router>
-                    <Trees history={mockHistory as History} />
-                </Router>,
-                {apolloMocks: mocks},
-            );
+            render(<Trees />, {apolloMocks: mocks});
         });
 
         expect(await waitFor(() => screen.getByText('TreesList'))).toBeInTheDocument();

@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
-import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineDatabase} from 'react-icons/ai';
-import {Link} from 'react-router-dom-v5';
+import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
@@ -21,12 +20,9 @@ const Title = styled(Header)`
     gap: 0.5rem;
 `;
 
-interface ILibrariesProps {
-    history: History;
-}
-
-const Libraries = ({history}: ILibrariesProps): JSX.Element => {
+const Libraries = (): JSX.Element => {
     const {t} = useTranslation();
+    const navigate = useNavigate();
     const userData = useUserData();
     const applicationData = useCurrentApplicationContext();
 
@@ -48,7 +44,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
             [filterElem.name]: newElemState,
         });
     };
-    const onRowClick = library => history.push('/libraries/edit/' + library.id);
+    const onRowClick = library => navigate('/libraries/edit/' + library.id);
     const libraries = (data?.libraries?.list ?? []).filter(lib => isLibraryInApp(applicationData.currentApp, lib.id));
 
     return (

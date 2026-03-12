@@ -4,23 +4,16 @@
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import useUserData from 'hooks/useUserData';
 import {useTranslation} from 'react-i18next';
-import {type match} from 'react-router-dom-v5';
+import {useParams} from 'react-router-dom';
 import {PermissionsActions, useGetLibByIdQuery} from '_gqlTypes';
 import {ErrorDisplayTypes} from '_types/errors';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
 
-export interface IEditLibraryMatchParams {
-    id: string;
-}
-
-interface IEditLibraryProps {
-    match?: match<IEditLibraryMatchParams>;
-}
-
-const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
-    const libraryId = routeMatch.params.id;
+const EditLibrary = (): JSX.Element => {
+    const routeMatch = useParams();
+    const libraryId = routeMatch.id;
     const isNewLib = !libraryId;
     const userData = useUserData();
     const {t} = useTranslation();

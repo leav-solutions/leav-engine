@@ -6,13 +6,10 @@ import {PermissionsActions, useGetTreeByIdQuery} from '_gqlTypes';
 import Loading from '../../shared/Loading';
 import EditTreeTabs from './EditTreeTabs';
 import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
+import {useParams} from 'react-router-dom';
 
-interface IEditTreeProps {
-    match: any;
-}
-
-const EditTree = ({match}: IEditTreeProps): JSX.Element => {
-    const treeId = match.params.id;
+const EditTree = (): JSX.Element => {
+    const {id: treeId} = useParams();
     const userData = useUserData();
 
     const {loading, error, data} = useGetTreeByIdQuery({

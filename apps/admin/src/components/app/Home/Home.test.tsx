@@ -5,13 +5,11 @@ import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import Home from './Home';
 
-jest.mock(
-    '../Routes',
-    () =>
-        function Routes() {
-            return <div>Routes</div>;
-        },
-);
+jest.mock('../../../modules/routes/InitAdminRouter', () => ({
+    InitAdminRouter: function InitAdminRouter() {
+        return <div>Routes</div>;
+    },
+}));
 
 jest.mock(
     '../Header',

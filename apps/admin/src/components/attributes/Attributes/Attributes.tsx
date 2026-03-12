@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ApolloError} from '@apollo/client';
-import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BiSpreadsheet} from 'react-icons/bi';
-import {Link} from 'react-router-dom-v5';
+import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
@@ -23,10 +22,6 @@ const Title = styled(Header)`
     gap: 0.5rem;
 `;
 
-interface IAttributesProps {
-    history: History;
-}
-
 interface IAttributesFilters {
     id?: string;
     label?: string;
@@ -34,9 +29,9 @@ interface IAttributesFilters {
     isSystem?: boolean;
 }
 
-const Attributes = (props: IAttributesProps): JSX.Element => {
+const Attributes = (): JSX.Element => {
     const {t} = useTranslation();
-    const {history} = props;
+    const navigate = useNavigate();
     const [filters, setFilters] = useState<IAttributesFilters>({});
     const userData = useUserData();
     const [deleteError, setDeleteError] = useState<ApolloError | null>(null);
@@ -61,7 +56,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
         setDeleteError(null);
     };
 
-    const _onRowClick = attribute => history.push('/attributes/edit/' + attribute.id);
+    const _onRowClick = attribute => navigate('/attributes/edit/' + attribute.id);
 
     return (
         <div>

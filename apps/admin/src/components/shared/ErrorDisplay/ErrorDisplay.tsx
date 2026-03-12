@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory} from 'react-router-v5';
+import {useNavigate} from 'react-router-dom';
 import {Button, Icon, Message, type MessageSizeProp, type SemanticICONS} from 'semantic-ui-react';
 import {ErrorDisplayTypes} from '_types/errors';
 
@@ -32,9 +32,9 @@ function ErrorDisplay({
     size,
 }: IErrorDisplayProps): JSX.Element {
     const {t} = useTranslation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
-    const _handleBackHomeClick = () => history.replace('/');
+    const _handleBackHomeClick = () => navigate('/', {replace: true});
 
     const errorByType: IErrorByType = {
         [ErrorDisplayTypes.ERROR]: {

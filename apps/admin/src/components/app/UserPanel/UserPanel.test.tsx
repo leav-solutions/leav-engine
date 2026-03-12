@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import * as useLang from 'hooks/useLang';
-import {BrowserRouter} from 'react-router-dom-v5';
 import {AvailableLanguage} from '_gqlTypes';
 import {render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';
@@ -17,21 +16,13 @@ describe('UserPanel', () => {
     beforeEach(() => jest.clearAllMocks());
 
     test('Should display some menu items', async () => {
-        render(
-            <BrowserRouter>
-                <UserPanel visible onHide={jest.fn()} />
-            </BrowserRouter>,
-        );
+        render(<UserPanel visible onHide={jest.fn()} />);
 
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThanOrEqual(1);
     });
 
     test('On click on logout, log out and redirect to home', async () => {
-        render(
-            <BrowserRouter>
-                <UserPanel visible onHide={jest.fn()} />
-            </BrowserRouter>,
-        );
+        render(<UserPanel visible onHide={jest.fn()} />);
 
         const logoutLink = screen.getByRole('menuitem', {name: /logout/});
 
@@ -49,11 +40,7 @@ describe('UserPanel', () => {
             setLang: mockUpdateLang,
         }));
 
-        render(
-            <BrowserRouter>
-                <UserPanel visible onHide={jest.fn()} />
-            </BrowserRouter>,
-        );
+        render(<UserPanel visible onHide={jest.fn()} />);
 
         expect(screen.getByRole('button', {name: /🇫🇷/})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /🇬🇧/})).toBeInTheDocument();
