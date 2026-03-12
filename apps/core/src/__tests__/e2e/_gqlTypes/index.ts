@@ -351,6 +351,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -738,6 +749,7 @@ export type SaveValueBulkMappingInput = {
 
 export type SaveValueBulkMappingValueInput = {
   after?: InputMaybe<Scalars['ID']['input']>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
   before?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -1056,6 +1068,13 @@ export type SaveAttributeMutationVariables = Exact<{
 
 export type SaveAttributeMutation = { saveAttribute: { id: string } };
 
+export type GetLinkAttributeSmartFilterQueryVariables = Exact<{
+  filters?: InputMaybe<AttributesFiltersInput>;
+}>;
+
+
+export type GetLinkAttributeSmartFilterQuery = { attributes?: { list: Array<{ smart_filter?: { enable: boolean, through?: { id: string } | null } | null }> } | null };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1244,6 +1263,22 @@ export const SaveAttributeDocument = gql`
     mutation SaveAttribute($attribute: AttributeInput) {
   saveAttribute(attribute: $attribute) {
     id
+  }
+}
+    `;
+export const GetLinkAttributeSmartFilterDocument = gql`
+    query getLinkAttributeSmartFilter($filters: AttributesFiltersInput) {
+  attributes(filters: $filters) {
+    list {
+      ... on LinkAttribute {
+        smart_filter {
+          enable
+          through {
+            id
+          }
+        }
+      }
+    }
   }
 }
     `;
@@ -1453,6 +1488,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     SaveAttribute(variables?: SaveAttributeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveAttributeMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SaveAttributeMutation>({ document: SaveAttributeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveAttribute', 'mutation', variables);
+    },
+    getLinkAttributeSmartFilter(variables?: GetLinkAttributeSmartFilterQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetLinkAttributeSmartFilterQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetLinkAttributeSmartFilterQuery>({ document: GetLinkAttributeSmartFilterDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'getLinkAttributeSmartFilter', 'query', variables);
     },
     Me(variables?: MeQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MeQuery>({ document: MeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Me', 'query', variables);

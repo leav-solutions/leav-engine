@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import {AttributeFormat, type AttributeInput, AttributeType, LibraryBehavior, type LibraryInput} from '../../_gqlTypes';
+import {adminUserSdk, makeGraphQlCall} from '../e2eUtils';
 
 describe('Attributes', () => {
     const testAttrName = 'test_attribute';
@@ -257,5 +258,93 @@ describe('Attributes', () => {
         expect(res2.data.data.saveAttribute.values_list.allowFreeEntry).toBe(false);
         expect(res2.data.data.saveAttribute.values_list.allowListUpdate).toBe(false);
         expect(res2.data.data.saveAttribute.values_list.values).toEqual([]);
+    });
+
+    describe('With join library through link', () => {
+        const targetLibrary: LibraryInput = {
+            id: 'test_attribute_target_library',
+        };
+
+        const mandatoryAttribute: AttributeInput = {
+            id: 'test_attribute_on_target_library_mandatory_attr',
+            type: AttributeType.simple_link,
+            format: AttributeFormat.text,
+            label: {fr: 'Test attr', en: 'Test attr en'},
+            linked_library: targetLibrary.id,
+        };
+
+        const joinLibrary: LibraryInput = {
+            id: 'test_attribute_join_library',
+            behavior: LibraryBehavior.join,
+            attributes: [mandatoryAttribute.id],
+            mandatoryAttribute: mandatoryAttribute.id,
+        };
+
+        const joinAttributeSmartFilter: AttributeInput = {
+            id: 'test_attribute_with_smart_filter_on_join_library_link',
+            type: AttributeType.advanced_link,
+            format: AttributeFormat.text,
+            label: {fr: 'Test attr', en: 'Test attr en'},
+            linked_library: joinLibrary.id,
+        };
+
+        beforeAll(async () => {
+            await adminUserSdk.SaveLibrary({
+                library: targetLibrary,
+            });
+            await adminUserSdk.SaveAttribute({
+                attribute: mandatoryAttribute,
+            });
+            await adminUserSdk.SaveLibrary({
+                library: joinLibrary,
+            });
+        });
+        test('Attribute without smart_filter', async () => {
+            await adminUserSdk.SaveAttribute({
+                attribute: joinAttributeSmartFilter,
+            });
+
+            const attr = await adminUserSdk.getLinkAttributeSmartFilter({
+                filters: {
+                    id: joinAttributeSmartFilter.id,
+                },
+            });
+
+            expect(attr.attributes.list).toHaveLength(1);
+            expect(attr.attributes.list[0]).toEqual(
+                expect.objectContaining({
+                    smart_filter: null,
+                }),
+            );
+        });
+
+        test('Attribute with smart_filter should return through mandatory attribute', async () => {
+            await adminUserSdk.SaveAttribute({
+                attribute: {
+                    ...joinAttributeSmartFilter,
+                    smart_filter: {
+                        enable: true,
+                    },
+                },
+            });
+
+            const attr = await adminUserSdk.getLinkAttributeSmartFilter({
+                filters: {
+                    id: joinAttributeSmartFilter.id,
+                },
+            });
+
+            expect(attr.attributes.list).toHaveLength(1);
+            expect(attr.attributes.list[0]).toEqual(
+                expect.objectContaining({
+                    smart_filter: {
+                        enable: true,
+                        through: {
+                            id: mandatoryAttribute.id,
+                        },
+                    },
+                }),
+            );
+        });
     });
 });
