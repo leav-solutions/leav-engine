@@ -4,11 +4,10 @@
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
-import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RiNodeTree} from 'react-icons/ri';
-import {Link} from 'react-router-dom-v5';
+import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
@@ -23,12 +22,9 @@ const Title = styled(Header)`
     gap: 0.5rem;
 `;
 
-interface ITreesProps {
-    history: History;
-}
-
-const Trees = ({history}: ITreesProps): JSX.Element => {
+const Trees = (): JSX.Element => {
     const {t} = useTranslation();
+    const navigate = useNavigate();
     const applicationData = useCurrentApplicationContext();
 
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
@@ -51,7 +47,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
         });
     };
 
-    const _handleRowClick = (tree: GET_TREES_trees_list) => history.push('/trees/edit/' + tree.id);
+    const _handleRowClick = (tree: GET_TREES_trees_list) => navigate('/trees/edit/' + tree.id);
     const trees = (data?.trees?.list ?? []).filter(tree => isTreeInApp(applicationData.currentApp, tree.id));
 
     return (

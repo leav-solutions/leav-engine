@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useHistory} from 'react-router-dom-v5';
+import {useNavigate} from 'react-router-dom';
 import {clearCacheForQuery} from '../../../../../utils';
 import {type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
@@ -14,7 +14,7 @@ interface ITreeInfosTabProps {
 }
 
 function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
-    const history = useHistory();
+    const navigate = useNavigate();
     const isNewTree = !tree;
     const [saveTree] = useSaveTreeMutation({
         update: async cache => {
@@ -41,7 +41,7 @@ function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
         });
 
         if (isNewTree) {
-            history.replace({pathname: '/trees/edit/' + treeData.id});
+            navigate('/trees/edit/' + treeData.id, {replace: true});
         }
     };
 

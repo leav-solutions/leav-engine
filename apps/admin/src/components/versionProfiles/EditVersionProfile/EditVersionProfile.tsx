@@ -10,7 +10,7 @@ import useUserData from 'hooks/useUserData';
 import omit from 'lodash/omit';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import {useTranslation} from 'react-i18next';
-import {type match, useHistory} from 'react-router-v5';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
@@ -24,26 +24,19 @@ import {type IFormError} from '_types/errors';
 import InfoForm from './InfoForm';
 import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 
-export interface IEditVersionProfileMatchParams {
-    id?: string;
-}
-
-interface IEditVersionProfileProps {
-    match?: match<IEditVersionProfileMatchParams>;
-}
-
 const Wrapper = styled.div`
     display: grid;
     grid-template-rows: auto 1fr;
 `;
 
-function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX.Element {
+function EditVersionProfile(): JSX.Element {
     const apolloClient = useApolloClient();
-    const history = useHistory();
+    const navigate = useNavigate();
     const {t} = useTranslation();
     const {lang} = useLang();
     const userData = useUserData();
-    const profileId = routerMatch.params?.id ?? null;
+    const routerMatch = useParams();
+    const profileId = routerMatch?.id ?? null;
     const isNewProfile = !profileId;
 
     const {loading, error, data} = useGetVersionProfileByIdQuery({
@@ -56,7 +49,7 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
         onCompleted: res => {
             if (isNewProfile) {
                 // Redirect to new app editing
-                history.push(`/version_profiles/edit/${res.saveVersionProfile.id}`);
+                navigate(`/version_profiles/edit/${res.saveVersionProfile.id}`);
             }
         },
         update: cache => {

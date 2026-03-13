@@ -2,11 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {type History} from 'history';
-import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
-import {type Mockify} from '../../../_types/Mockify';
 import Attributes from './Attributes';
 import {GetAttributesDocument} from '_gqlTypes';
 
@@ -20,8 +17,6 @@ jest.mock(
 
 describe('Attributes', () => {
     test('Snapshot test', async () => {
-        const mockHistory: Mockify<History> = {};
-
         const mocks: MockedResponse[] = [
             {
                 request: {
@@ -38,12 +33,7 @@ describe('Attributes', () => {
         ];
 
         await act(async () => {
-            render(
-                <Router>
-                    <Attributes history={mockHistory as History} />
-                </Router>,
-                {apolloMocks: mocks},
-            );
+            render(<Attributes />, {apolloMocks: mocks});
         });
 
         expect(screen.getByText('AttributesList')).toBeInTheDocument();

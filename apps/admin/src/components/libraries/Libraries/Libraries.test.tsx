@@ -2,11 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {type History} from 'history';
-import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
-import {type Mockify} from '../../../_types//Mockify';
 import Libraries from './Libraries';
 import {GetLibrariesDocument} from '_gqlTypes';
 
@@ -17,10 +14,9 @@ jest.mock(
             return <div>LibrariesList</div>;
         },
 );
+
 describe('Libraries', () => {
     test('Snapshot test', async () => {
-        const mockHistory: Mockify<History> = {};
-
         const mocks: MockedResponse[] = [
             {
                 request: {
@@ -37,12 +33,7 @@ describe('Libraries', () => {
         ];
 
         await act(async () => {
-            render(
-                <Router>
-                    <Libraries history={mockHistory as History} />
-                </Router>,
-                {apolloMocks: mocks},
-            );
+            render(<Libraries />, {apolloMocks: mocks});
         });
 
         expect(screen.getByText('LibrariesList')).toBeInTheDocument();

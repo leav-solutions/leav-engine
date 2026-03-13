@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {MemoryRouter} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import General from './General';
 
@@ -38,18 +37,14 @@ jest.mock(
         },
 );
 
-jest.mock('react-router-v5', () => ({
-    ...jest.requireActual('react-router-v5'),
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
     useLocation: () => ({hash: ''}),
 }));
 
 describe('General', () => {
     test('Render test', async () => {
-        render(
-            <MemoryRouter>
-                <General />
-            </MemoryRouter>,
-        );
+        render(<General />);
 
         expect(screen.getByText('GeneralInfosTab')).toBeInTheDocument();
 

@@ -7,12 +7,10 @@ import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import VersionProfiles from './VersionProfiles';
 import {DeleteVersionProfileDocument, GetVersionProfilesDocument} from '_gqlTypes';
 
-const mockHistoryPush = jest.fn();
-jest.mock('react-router-dom-v5', () => ({
-    ...jest.requireActual('react-router-dom-v5'),
-    useHistory: () => ({
-        push: mockHistoryPush,
-    }),
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => mockNavigate,
 }));
 
 describe('VersionProfiles', () => {
@@ -62,7 +60,7 @@ describe('VersionProfiles', () => {
         await waitFor(() => expect(screen.queryByText('vpA')).not.toBeInTheDocument());
 
         await userEvent.click(screen.getByText('vpB'));
-        expect(mockHistoryPush).toHaveBeenCalledWith('/version_profiles/edit/vpB');
+        expect(mockNavigate).toHaveBeenCalledWith('/version_profiles/edit/vpB');
     });
 
     test('Can delete a profile', async () => {

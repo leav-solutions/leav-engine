@@ -5,7 +5,7 @@ import {type InMemoryCacheConfig} from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
 import {render, type RenderOptions, type RenderResult} from '@testing-library/react';
 import {type ReactElement} from 'react';
-import {type MemoryRouterProps} from 'react-router-v5';
+import {type MemoryRouterProps} from 'react-router-dom';
 import {type RootState} from 'reduxStore/store';
 import {TestProviders} from './TestProviders';
 

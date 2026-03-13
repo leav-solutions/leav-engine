@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useLocation} from 'react-router-dom-v5';
+import {useNavigate, useLocation} from 'react-router-dom';
 import {Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {
@@ -45,7 +45,7 @@ function EditAttributeTabs({
 }: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const applicationData = useCurrentApplicationContext();
     const headerLabel =
@@ -162,7 +162,7 @@ function EditAttributeTabs({
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
-            history?.push(`#${data.panes[data.activeIndex].key}`);
+            navigate(`#${data.panes[data.activeIndex].key}`);
         }
     };
 

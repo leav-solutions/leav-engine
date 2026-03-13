@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import LibraryIcon from 'components/shared/LibraryIcon';
-import {type Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineFileSearch} from 'react-icons/ai';
-import {useHistory, useLocation} from 'react-router-dom-v5';
+import {useNavigate, useLocation} from 'react-router-dom';
 import {Button, Grid, Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
@@ -28,12 +27,11 @@ Title.displayName = 'Title';
 interface IEditLibraryTabsProps {
     library: GET_LIB_BY_ID_libraries_list | null;
     readOnly: boolean;
-    location?: Location;
 }
 
 const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Element => {
     const {t} = useTranslation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const isCreationMode = library === null;
 
@@ -112,7 +110,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
-            history?.push(`#${data.panes[data.activeIndex].key}`);
+            navigate(`#${data.panes[data.activeIndex].key}`);
         }
     };
 

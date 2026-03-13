@@ -1,11 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type match} from 'react-router-dom-v5';
 import {render, screen} from '_tests/testUtils';
-import {type Mockify} from '_types/Mockify';
 import {mockApplicationDetails} from '__mocks__/common/applications';
-import EditApplication, {type IEditApplicationMatchParams} from './EditApplication';
+import EditApplication from './EditApplication';
 import {GetApplicationByIdDocument} from '_gqlTypes';
 
 jest.mock(
@@ -32,18 +30,16 @@ jest.mock(
         },
 );
 
-jest.mock('react-router-v5', () => ({
-    ...jest.requireActual('react-router-v5'),
+const mockUseParams = jest.fn().mockReturnValue({id: mockApplicationDetails.id});
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
     useLocation: () => ({hash: ''}),
+    useParams: () => mockUseParams(),
 }));
 
 describe('EditApplication', () => {
-    type MatchType = match<IEditApplicationMatchParams>;
     test('Edit existing app', async () => {
-        const mockMatch: Mockify<MatchType> = {
-            params: {id: mockApplicationDetails.id},
-        };
-
         const mocks = [
             {
                 request: {
@@ -62,12 +58,7 @@ describe('EditApplication', () => {
             },
         ];
 
-        render(<EditApplication match={mockMatch as MatchType} />, {
-            apolloMocks: mocks,
-            routerProps: {
-                initialEntries: [`/applications/edit/${mockApplicationDetails.id}`],
-            },
-        });
+        render(<EditApplication />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 
@@ -78,11 +69,9 @@ describe('EditApplication', () => {
     });
 
     test('Edit new app', async () => {
-        const mockMatch: Mockify<MatchType> = {
-            params: {id: null},
-        };
+        mockUseParams.mockReturnValueOnce({id: undefined});
 
-        render(<EditApplication match={mockMatch as MatchType} />);
+        render(<EditApplication />);
 
         expect(screen.getByText(/applications.new/)).toBeInTheDocument();
         expect(screen.getByText('InfosTab')).toBeInTheDocument();
@@ -90,10 +79,6 @@ describe('EditApplication', () => {
     });
 
     test('Display a link to open app', async () => {
-        const mockMatch: Mockify<MatchType> = {
-            params: {id: mockApplicationDetails.id},
-        };
-
         const mocks = [
             {
                 request: {
@@ -112,7 +97,7 @@ describe('EditApplication', () => {
             },
         ];
 
-        render(<EditApplication match={mockMatch as MatchType} />, {apolloMocks: mocks});
+        render(<EditApplication />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 

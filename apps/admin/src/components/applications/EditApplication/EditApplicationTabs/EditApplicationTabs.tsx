@@ -7,7 +7,7 @@ import {useEditApplicationContext} from 'context/EditApplicationContext';
 import useLang from 'hooks/useLang';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useLocation} from 'react-router-dom-v5';
+import {useNavigate, useLocation} from 'react-router-dom';
 import {Header, Icon, Tab, type TabProps} from 'semantic-ui-react';
 import InfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
@@ -19,7 +19,7 @@ function EditApplicationTabs(): JSX.Element {
     const {lang} = useLang();
     const isNewApp = !application;
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     // Retrieve active tab from URL
     const tabName = location.hash.replace('#', '');
@@ -62,7 +62,7 @@ function EditApplicationTabs(): JSX.Element {
     const _handleTabChange = (_, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
-            history.replace(`#${data.panes[data.activeIndex].key}`);
+            navigate(`#${data.panes[data.activeIndex].key}`, {replace: true});
         }
     };
 

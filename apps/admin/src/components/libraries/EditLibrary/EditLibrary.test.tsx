@@ -14,6 +14,13 @@ jest.mock(
         },
 );
 
+const mockUseParams = jest.fn().mockReturnValue({id: 'test'});
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: () => mockUseParams(),
+}));
+
 describe('EditLibrary', () => {
     test('Render tabs when editing library', async () => {
         const mocks = [
@@ -37,8 +44,8 @@ describe('EditLibrary', () => {
                 },
             },
         ];
-        const mockMatch: any = {params: {id: 'test'}};
-        render(<EditLibrary match={mockMatch} />, {apolloMocks: mocks});
+
+        render(<EditLibrary />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 
@@ -46,15 +53,17 @@ describe('EditLibrary', () => {
     });
 
     test('Render tabs when creating library', async () => {
-        const mockMatch: any = {params: {}};
-        render(<EditLibrary match={mockMatch} />);
+        mockUseParams.mockReturnValueOnce({id: undefined});
+
+        render(<EditLibrary />);
 
         expect(screen.getByText('EditLibraryTabs')).toBeInTheDocument();
     });
 
     test('Display error if not allowed to create', async () => {
-        const mockMatch: any = {params: {}};
-        render(<EditLibrary match={mockMatch} />, {
+        mockUseParams.mockReturnValueOnce({id: undefined});
+
+        render(<EditLibrary />, {
             userPermissions: {[PermissionsActions.admin_create_library]: false},
         });
 
@@ -79,8 +88,8 @@ describe('EditLibrary', () => {
                 },
             },
         ];
-        const mockMatch: any = {params: {id: 'test'}};
-        render(<EditLibrary match={mockMatch} />, {apolloMocks: mocks});
+
+        render(<EditLibrary />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 

@@ -21,12 +21,10 @@ jest.mock(
         },
 );
 
-const mockHistoryPush = jest.fn();
-jest.mock('react-router-dom-v5', () => ({
-    ...jest.requireActual('react-router-v5'),
-    useHistory: () => ({
-        push: mockHistoryPush,
-    }),
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => mockNavigate,
 }));
 
 describe('InfosTab', () => {
