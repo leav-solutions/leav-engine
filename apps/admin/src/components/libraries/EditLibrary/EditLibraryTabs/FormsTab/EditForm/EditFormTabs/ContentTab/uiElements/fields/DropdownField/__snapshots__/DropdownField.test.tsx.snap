@@ -5,6 +5,11 @@ exports[`DropdownField Snapshot test 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
+      <div
+        class="aristid-ds-toaster"
+        data-rht-toaster=""
+        style="position: fixed; z-index: 9999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
+      />
       <label />
       <div
         aria-expanded="false"
@@ -23,6 +28,11 @@ exports[`DropdownField Snapshot test 1`] = `
     </div>
   </body>,
   "container": <div>
+    <div
+      class="aristid-ds-toaster"
+      data-rht-toaster=""
+      style="position: fixed; z-index: 9999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
+    />
     <label />
     <div
       aria-expanded="false"
