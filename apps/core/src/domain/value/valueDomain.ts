@@ -50,7 +50,6 @@ import postDeleteValue from './helpers/postDeleteValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {type IDeleteValueParams, type IRunActionListParams} from './_types';
-import {type DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 import {type CreateRecordHelper} from 'domain/record/helpers/createRecord';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
@@ -187,7 +186,6 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
-    'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.record.helpers.findRecords': FindRecordsHelper;
     'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
@@ -216,7 +214,6 @@ const valueDomain = function ({
     'core.domain.record.helpers.createRecord': createRecordHelper,
     'core.domain.record.helpers.findRecords': findRecordsHelper,
     'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
-    'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
@@ -458,9 +455,6 @@ const valueDomain = function ({
                         active: true,
                     });
 
-                    logger.debug(
-                        `Created join record ${joinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`,
-                    );
                     await saveValue({
                         library: joinLibId,
                         recordId: joinRecord.id,
@@ -490,10 +484,13 @@ const valueDomain = function ({
             async (joinLibId: string) => {
                 await Promise.all(
                     deletedValues.map(async deletedValue => {
-                        const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                        logger.debug(
-                            `Deleted join record ${deleteJoinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`,
-                        );
+                        await saveValue({
+                            library: joinLibId,
+                            recordId: deletedValue.payload.id,
+                            attribute: 'active',
+                            value: {payload: false},
+                            ctx,
+                        });
                     }),
                 );
             },

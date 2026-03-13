@@ -271,7 +271,7 @@ describe('JoinLibraries', () => {
                     }));
                 });
 
-                it('deleteValue campaign_structure_items should delete join structure_item records', async () => {
+                it('deleteValue campaign_structure_items should deactivate join structure_item records', async () => {
                     const res = await makeGraphQlCall(`mutation {
                         deleteValue(
                             library: "${libCampaign}",
@@ -297,7 +297,8 @@ describe('JoinLibraries', () => {
                     expect(res.data.data.deleteValue[0].payload.id).toBe(campaignStructureItems[0].id);
 
                     const structureItems0 = await getStructureItemsRecords(campaignStructureItems[0].id);
-                    expect(structureItems0).toHaveLength(0); // should be deleted
+                    expect(structureItems0).toHaveLength(1); // should be deactivated
+                    expect(structureItems0[0].active).toBe(false);
 
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
@@ -305,7 +306,7 @@ describe('JoinLibraries', () => {
                     );
                 });
 
-                it('saveValueBatch deleteEmpty campaign_structure_items should delete join structure_item records', async () => {
+                it('saveValueBatch deleteEmpty campaign_structure_items should deactivate join structure_item records', async () => {
                     const res = await makeGraphQlCall(`mutation {
                         saveValueBatch(
                             library: "${libCampaign}",
@@ -342,10 +343,12 @@ describe('JoinLibraries', () => {
                     expect(res.data.data.saveValueBatch.values[1].payload.id).toBe(campaignStructureItems[2].id);
 
                     const structureItems0 = await getStructureItemsRecords(campaignStructureItems[0].id);
-                    expect(structureItems0).toHaveLength(0); // should be deleted
+                    expect(structureItems0).toHaveLength(1); // should be deactivated
+                    expect(structureItems0[0].active).toBe(false);
 
                     const structureItems2 = await getStructureItemsRecords(campaignStructureItems[2].id);
-                    expect(structureItems2).toHaveLength(0); // should be deleted
+                    expect(structureItems2).toHaveLength(1); // should be deactivated
+                    expect(structureItems2[0].active).toBe(false);
 
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property).toHaveLength(1);
@@ -673,7 +676,7 @@ describe('JoinLibraries', () => {
                     }));
                 });
 
-                it('deleteValue campaign_structure_items should delete join structure_item records', async () => {
+                it('deleteValue campaign_structure_items should deactivate join structure_item records', async () => {
                     const res = await makeGraphQlCall(`mutation {
                         deleteValue(
                             library: "${libCampaign}",
@@ -699,7 +702,8 @@ describe('JoinLibraries', () => {
                     expect(res.data.data.deleteValue[0].payload.id).toBe(campaignStructureItems[0].id);
 
                     const structureItems0 = await getStructureItemsRecords(campaignStructureItems[0].id);
-                    expect(structureItems0).toHaveLength(0); // should be deleted
+                    expect(structureItems0).toHaveLength(1); // should be deactivated
+                    expect(structureItems0[0].active).toBe(false);
 
                     const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
                     expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
@@ -713,7 +717,8 @@ describe('JoinLibraries', () => {
             const res = await makeGraphQlCall(`query {
                 records(
                     library: "${libStructureItem}",
-                    filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${structureItemId}" }]
+                    filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${structureItemId}" }],
+                    retrieveInactive: true
                 ) {
                     list {
                         id
@@ -722,6 +727,7 @@ describe('JoinLibraries', () => {
                                 id
                             }
                         }
+                        active
                         property (attribute: "${attrStructureItemThematic}") {
                             id_value
                             ... on LinkValue {
