@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import useMenuItems from 'hooks/useMenuItems';
-import {type IMenuItem} from 'hooks/useMenuItems/useMenuItems';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import {Statistic} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {useGetStatsQuery} from '_gqlTypes';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faBook, faRectangleList, faFolderTree, faBorderAll} from '@fortawesome/free-solid-svg-icons';
 
 const StatsGroup = styled(Statistic.Group)`
     && {
@@ -52,13 +52,7 @@ const StatLabel = styled(Statistic.Label)`
 function Stats(): JSX.Element {
     const {loading, error, data} = useGetStatsQuery();
     const {t} = useTranslation();
-    const menuItems = useMenuItems({size: 'small'});
     const navigate = useNavigate();
-
-    const itemsByKey: {[key: string]: IMenuItem} = menuItems.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-    }, {});
 
     if (loading) {
         return <Loading />;
@@ -73,20 +67,25 @@ function Stats(): JSX.Element {
             label: t('libraries.title'),
             route: 'libraries',
             value: data?.libraries?.totalCount ?? 0,
-            icon: itemsByKey.libraries.icon,
+            icon: <FontAwesomeIcon icon={faBook} />,
         },
         {
             label: t('attributes.title'),
             route: 'attributes',
             value: data?.attributes?.totalCount ?? 0,
-            icon: itemsByKey.attributes.icon,
+            icon: <FontAwesomeIcon icon={faRectangleList} />,
         },
-        {label: t('trees.title'), route: 'trees', value: data?.trees?.totalCount ?? 0, icon: itemsByKey.trees.icon},
+        {
+            label: t('trees.title'),
+            route: 'trees',
+            value: data?.trees?.totalCount ?? 0,
+            icon: <FontAwesomeIcon icon={faFolderTree} />,
+        },
         {
             label: t('applications.title'),
             route: 'applications',
             value: data?.applications?.totalCount ?? 0,
-            icon: itemsByKey.applications.icon,
+            icon: <FontAwesomeIcon icon={faBorderAll} />,
         },
     ];
 

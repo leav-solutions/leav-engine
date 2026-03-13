@@ -6,6 +6,11 @@ exports[`EncryptedField Snapshot test 1`] = `
   "baseElement": <body>
     <div>
       <div
+        class="aristid-ds-toaster"
+        data-rht-toaster=""
+        style="position: fixed; z-index: 9999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
+      />
+      <div
         class="ui labeled input"
       >
         <div
@@ -20,6 +25,11 @@ exports[`EncryptedField Snapshot test 1`] = `
     </div>
   </body>,
   "container": <div>
+    <div
+      class="aristid-ds-toaster"
+      data-rht-toaster=""
+      style="position: fixed; z-index: 9999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
+    />
     <div
       class="ui labeled input"
     >

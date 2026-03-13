@@ -3,19 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useLocalStorage from 'hooks/useLocalStorage';
 import styled from 'styled-components';
-import {greyBackground} from 'themingVar';
-import AppMenu from '../AppMenu';
+import {NavigationMenu} from '../../../modules/navigation-menu/NavigationMenu';
 import Header from '../Header';
 import {InitAdminRouter} from '../../../modules/routes/InitAdminRouter';
 
 const headerHeight = '3rem';
-const LeftCol = styled.div`
-    grid-area: sidebar;
-    height: calc(100vh - ${headerHeight});
-    position: relative;
-    border-right: 1px solid #ddd;
-    background: ${greyBackground};
-`;
 
 const Content = styled.div`
     grid-area: content;
@@ -28,9 +20,9 @@ const HeaderWrapper = styled.div`
     grid-area: header;
 `;
 
-const HomeWrapper = styled.div<{$menuWidth: string}>`
+const HomeWrapper = styled.div`
     display: grid;
-    grid-template-columns: ${({$menuWidth}) => $menuWidth} 1fr;
+    grid-template-columns: auto 1fr;
     grid-template-rows: ${headerHeight} 1fr;
     grid-template-areas:
         'header header'
@@ -40,21 +32,18 @@ const HomeWrapper = styled.div<{$menuWidth: string}>`
 
 function Home(): JSX.Element {
     const [isMenuCollapsed, setMenuCollapsed] = useLocalStorage('menu_collapsed', false);
-    const menuWidth = isMenuCollapsed ? '4.3rem' : '18rem';
 
     const _handleToggleMenu = () => {
         setMenuCollapsed(!isMenuCollapsed);
     };
 
     return (
-        <HomeWrapper $menuWidth={menuWidth}>
+        <HomeWrapper>
             <HeaderWrapper>
                 <Header />
             </HeaderWrapper>
-            <LeftCol>
-                <AppMenu isCollapsed={isMenuCollapsed} onToggle={_handleToggleMenu} width={menuWidth} />
-            </LeftCol>
-            <Content className="content flex-col" style={{overflowX: 'scroll'}}>
+            <NavigationMenu isOpen={!isMenuCollapsed} onOpenChanged={_handleToggleMenu} />
+            <Content className="content flex-col" style={{overflowX: 'auto'}}>
                 <InitAdminRouter />
             </Content>
         </HomeWrapper>

@@ -14,6 +14,7 @@ import {type InMemoryCacheConfig} from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
 import {type RootState} from 'reduxStore/store';
 import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {KitApp} from 'aristid-ds';
 
 interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
@@ -48,7 +49,9 @@ export const TestProviders = ({
                 <MockedLangContextProvider>
                     <MockedUserContextProvider permissions={userPermissions}>
                         <ApplicationContext.Provider value={appContextData}>
-                            <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
+                            <KitApp>
+                                <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
+                            </KitApp>
                         </ApplicationContext.Provider>
                     </MockedUserContextProvider>
                 </MockedLangContextProvider>
