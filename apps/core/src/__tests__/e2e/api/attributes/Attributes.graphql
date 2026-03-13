@@ -1,0 +1,5 @@
+mutation SaveAttribute($attribute: AttributeInput) {
+    saveAttribute(attribute: $attribute) {
+        id
+    }
+}

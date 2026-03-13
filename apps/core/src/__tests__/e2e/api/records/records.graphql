@@ -1,8 +1,35 @@
+# TODO rename GetRecordById (and maybe more specific if test dedicated to this query)
 query GetRecord($libraryId: ID!, $recordId: String!) {
     records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
         list {
             id
             modified_at
         }
+    }
+}
+
+mutation CreateRecord($library: ID!, $data: CreateRecordDataInput) {
+    createRecord(library: $library, data: $data) {
+        valuesErrors {
+            attribute
+            input
+            message
+            type
+        }
+        record {
+            id
+        }
+    }
+}
+
+mutation DeleteRecord($id: ID, $library: ID) {
+    deleteRecord(id: $id, library: $library) {
+        id
+    }
+}
+
+mutation PurgeInactiveRecords($libraryId: String!) {
+    purgeInactiveRecords(libraryId: $libraryId) {
+        id
     }
 }

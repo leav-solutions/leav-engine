@@ -1,0 +1,44 @@
+fragment SaveValuePayload on Value {
+    id_value
+    payload
+}
+
+fragment SaveLinkValuePayload on LinkValue {
+    id_value
+    linkPayload: payload {
+        id
+    }
+}
+
+fragment SaveTreeValuePayload on TreeValue {
+    id_value
+    treePayload: payload {
+        id
+    }
+}
+
+mutation SaveValueBatch($library: ID, $recordId: ID, $values: [ValueBatchInput], $deleteEmpty: Boolean) {
+    saveValueBatch(library: $library, recordId: $recordId, values: $values, deleteEmpty: $deleteEmpty) {
+        errors {
+            type
+            message
+            input
+            attribute
+        }
+        values {
+            id_value
+            ...SaveValuePayload
+            ...SaveLinkValuePayload
+            ...SaveTreeValuePayload
+        }
+    }
+}
+
+mutation DeleteValue($library: ID!, $recordId: ID!, $attribute: ID!, $value: ValueInput) {
+    deleteValue(library: $library, recordId: $recordId, attribute: $attribute, value: $value) {
+        id_value
+        ...SaveValuePayload
+        ...SaveLinkValuePayload
+        ...SaveTreeValuePayload
+    }
+}

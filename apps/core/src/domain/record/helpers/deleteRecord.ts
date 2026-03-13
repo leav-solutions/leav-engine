@@ -6,7 +6,6 @@ import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomai
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {RecordPermissionsActions} from '../../../_types/permissions';
 import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
-import {type IValidateHelper} from 'domain/helpers/validate';
 import PermissionError from '../../../errors/PermissionError';
 import {EventAction} from '@leav/utils';
 import {type IRecordRepo} from 'infra/record/recordRepo';
@@ -16,15 +15,18 @@ import {type IRecord} from '../../../_types/record';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {AttributeTypes} from '../../../_types/attribute';
 import {type IAttributeSimpleLinkRepo} from 'infra/attributeTypes/attributeSimpleLinkRepo';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 
 interface IDeps {
-    'core.domain.helpers.validate': IValidateHelper;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.value': IValueDomain;
     'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeSimpleLinkRepo;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
     'core.infra.value': IValueRepo;
@@ -32,17 +34,16 @@ interface IDeps {
 
 export default function ({
     'core.domain.eventsManager': eventsManager,
-    'core.domain.helpers.validate': validateHelper,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.value': valueDomain,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo,
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo,
 }: IDeps): DeleteRecordHelper {
     return async (library, id, ctx) => {
-        await validateHelper.validateLibrary(library, ctx);
-
         // Check permission
         const canDelete = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.DELETE_RECORD,
@@ -53,6 +54,33 @@ export default function ({
 
         if (!canDelete) {
             throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
+        }
+
+        const libAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
+
+        for (const attribute of libAttributes) {
+            // delete linked join record to avoid orphans, this will deactivate them and will be purge too after with cron purge task
+            await ifLibraryJoinLinkAttribute(
+                attribute,
+                async (joinLibId: string) => {
+                    const linkValues = await valueDomain.getValues({
+                        library,
+                        recordId: id,
+                        attribute: attribute.id,
+                        ctx,
+                    });
+                    for (const linkValue of linkValues) {
+                        await valueDomain.saveValue({
+                            library: joinLibId,
+                            recordId: linkValue.payload.id,
+                            attribute: 'active',
+                            value: {payload: false},
+                            ctx,
+                        });
+                    }
+                },
+                ctx,
+            );
         }
 
         // delete simple link that point to the record to delete
