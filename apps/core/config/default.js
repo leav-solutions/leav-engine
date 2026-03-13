@@ -42,6 +42,22 @@ module.exports = {
             getValues: {
                 enableCache: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_ENABLE_CACHE, false), // keep for test for now, may be remove in future
                 useBatch: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_USE_BATCH, true), // for rollback compatibility, keep it true
+                maxBatchSize: envToNumber(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_MAX_BATCH_SIZE, 500),
+            },
+        },
+        recordRepo: {
+            getRecord: {
+                maxBatchSize: envToNumber(process.env.DATA_LOADERS_RECORD_REPO_GET_RECORD_MAX_BATCH_SIZE, 500),
+            },
+        },
+        treeRepo: {
+            getRecordByNodeId: {
+                maxBatchSize: envToNumber(process.env.DATA_LOADERS_TREE_REPO_GET_RECORD_BY_NODE_ID_MAX_BATCH_SIZE, 500),
+            },
+        },
+        cacheService: {
+            ramCache: {
+                maxBatchSize: envToNumber(process.env.DATA_LOADERS_CACHE_SERVICE_RAM_CACHE_MAX_BATCH_SIZE, 1000),
             },
         },
     },

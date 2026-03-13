@@ -7,6 +7,7 @@ import {type GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPa
 import {type IDbDocument, type IExecuteWithCount} from 'infra/db/_types';
 import {type GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 import {type IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '_types/config';
 import {
     CursorDirection,
     type ICursorPaginationParams,
@@ -87,6 +88,7 @@ export interface IRecordRepoDeps {
     'core.infra.record.helpers.getSearchVariableName': GetSearchVariableName;
     'core.infra.record.helpers.filterTypes': IFilterTypesHelper;
     'core.infra.indexation.helpers.getSearchQuery': GetSearchQuery;
+    config?: IConfig;
 }
 
 type GetRecordDataLoader = DataLoader<string, IRecord>;
@@ -101,6 +103,7 @@ export default function ({
     'core.infra.record.helpers.filterTypes': filterTypesHelper,
     'core.infra.indexation.helpers.getSearchQuery': getSearchQuery,
     'core.infra.attribute': attributeRepo,
+    config,
 }: IRecordRepoDeps): IRecordRepo {
     const _isOffsetPagination = (
         pagination: IPaginationParams | ICursorPaginationParams,
@@ -130,6 +133,7 @@ export default function ({
 
     const computeGetRecordDataLoaderKey = (libraryId: string): string => `recordRepo.getRecord-${libraryId}`;
 
+    const maxBatchSizeGetRecordDataLoaders = config?.dataLoaders.recordRepo.getRecord?.maxBatchSize;
     const getRecordDataLoader = (libraryId: string, ctx: IQueryInfos): GetRecordDataLoader => {
         const dataLoaderKey = computeGetRecordDataLoaderKey(libraryId);
         return getOrCreateDataLoaderInCtx<GetRecordDataLoader>(
@@ -145,6 +149,7 @@ export default function ({
                         }),
                     {
                         cache: false, // May be experiment later with caching
+                        maxBatchSize: maxBatchSizeGetRecordDataLoaders,
                     },
                 ),
         );

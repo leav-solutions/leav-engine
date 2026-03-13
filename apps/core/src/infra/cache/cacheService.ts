@@ -4,6 +4,7 @@
 
 import DataLoader from 'dataloader';
 import {type IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '_types/config';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 import {nextTick} from 'process';
 import ramService from './ramService';
@@ -38,6 +39,7 @@ export interface ICacheService {
 interface ICacheServiceDeps {
     'core.infra.redis': IRedis;
     'core.infra.cache.diskService': ICacheService;
+    config: IConfig;
 }
 
 export enum ECacheType {
@@ -50,6 +52,7 @@ type RamCacheDataLoader = DataLoader<string, unknown>;
 export default function ({
     'core.infra.redis': redis,
     'core.infra.cache.diskService': diskService,
+    config,
 }: ICacheServiceDeps): ICachesService {
     const _ramService = ramService(redis.cache);
 
@@ -61,6 +64,7 @@ export default function ({
      * Use dataloader instead on simple Map to synchronise async request for same key,
      * and sometimes mutualize redis mget.
      */
+    const maxBatchSizeRamCacheDataLoaders = config?.dataLoaders.cacheService.ramCache?.maxBatchSize;
     function getRamCacheDataLoader(ctx: IQueryInfos): RamCacheDataLoader {
         return getOrCreateDataLoaderInCtx<RamCacheDataLoader>(
             ctx,
@@ -73,6 +77,7 @@ export default function ({
                         ),
                     {
                         cache: true,
+                        maxBatchSize: maxBatchSizeRamCacheDataLoaders,
                     },
                 ),
         );

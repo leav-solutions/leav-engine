@@ -84,6 +84,22 @@ export const validateConfig = (conf: IConfig) => {
                 getValues: Joi.object().keys({
                     enableCache: Joi.boolean().required(),
                     useBatch: Joi.boolean().required(),
+                    maxBatchSize: Joi.number().optional(),
+                }),
+            }),
+            recordRepo: Joi.object().keys({
+                getRecord: Joi.object().keys({
+                    maxBatchSize: Joi.number().optional(),
+                }),
+            }),
+            treeRepo: Joi.object().keys({
+                getRecordByNodeId: Joi.object().keys({
+                    maxBatchSize: Joi.number().optional(),
+                }),
+            }),
+            cacheService: Joi.object().keys({
+                ramCache: Joi.object().keys({
+                    maxBatchSize: Joi.number().optional(),
                 }),
             }),
         }),

@@ -7,6 +7,7 @@ import {type IList, type IPaginationParams} from '_types/list';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IRecord} from '_types/record';
 import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IConfig} from '_types/config';
 import {
     type IGetCoreTreesParams,
     type ITree,
@@ -29,7 +30,6 @@ import {
 import {type IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
 import DataLoader from 'dataloader';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
-import {logger} from '@leav/logger';
 
 export interface ITreeRepo {
     createTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
@@ -171,13 +171,16 @@ type RecordByNodeIdDataLoader = DataLoader<string, IRecord>;
 export interface ITreeRepoDeps {
     'core.infra.db.dbService': IDbService;
     'core.infra.db.dbUtils': IDbUtils;
+    config: IConfig;
 }
 export default function ({
     'core.infra.db.dbService': dbService,
     'core.infra.db.dbUtils': dbUtils,
+    config,
 }: ITreeRepoDeps): ITreeRepo {
     const computeGetRecordByNodeIdDataLoaderKey = (treeId: string): string => `treeRepo.getRecordByNodeId-${treeId}`;
 
+    const maxBatchSizeGetRecordDataLoaders = config?.dataLoaders?.recordRepo?.getRecord?.maxBatchSize;
     const getRecordByNodeIdDataLoader = (treeId: string, ctx: IQueryInfos): RecordByNodeIdDataLoader => {
         const dataLoaderKey = computeGetRecordByNodeIdDataLoaderKey(treeId);
 
@@ -194,6 +197,7 @@ export default function ({
                         }),
                     {
                         cache: false,
+                        maxBatchSize: maxBatchSizeGetRecordDataLoaders,
                     },
                 ),
         );

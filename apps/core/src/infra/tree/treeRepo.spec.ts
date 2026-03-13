@@ -8,10 +8,13 @@ import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {type IDbUtils} from '../db/dbUtils';
 import treeRepo, {type ITreeRepoDeps, TREES_COLLECTION_NAME} from './treeRepo';
 import {type ToAny} from 'utils/utils';
+import {type IConfig} from '_types/config';
 
+const config = {} as IConfig;
 const depsBase: ToAny<ITreeRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
     'core.infra.db.dbUtils': jest.fn(),
+    config,
 };
 
 describe('TreeRepo', () => {
@@ -56,6 +59,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const createdTree = await repo.createTree({
@@ -90,6 +94,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const updatedTree = await repo.updateTree({
@@ -125,6 +130,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const trees = await repo.getTrees({ctx});
@@ -158,6 +164,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             await repo.deleteTree({id: 'test_tree', ctx});
@@ -563,6 +570,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const treeContent = await repo.getTreeContent({
@@ -678,6 +686,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const treeContent = await repo.getTreeContent({
@@ -732,6 +741,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
             await repo.getTreeContent({
                 treeId: 'test_tree',
@@ -791,6 +801,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const values = await repo.getElementChildren({
@@ -876,6 +887,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const values = await repo.getElementAncestors({
@@ -966,6 +978,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const values = await repo.getLinkedRecords({
@@ -1032,6 +1045,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                config,
             });
 
             const record = await repo.getRecordByNodeId({
