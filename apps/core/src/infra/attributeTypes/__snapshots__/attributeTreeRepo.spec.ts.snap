@@ -62,11 +62,13 @@ exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve 
                 FOR rv, re IN 1 OUTBOUND r._id
                     @@value0
                     FILTER re.attribute == @value1
-                    LET rRecord = DOCUMENT(
-                        rv.libraryId,
-                        rv.recordId
-                        )
-                         LET rlinkVal = () RETURN rlinkVal )",
+                         
+                        LET rRecord = DOCUMENT(
+                                rv.libraryId,
+                                rv.recordId
+                                )
+                        LET rlinkVal = ()
+                        RETURN rlinkVal )",
 }
 `;
 
