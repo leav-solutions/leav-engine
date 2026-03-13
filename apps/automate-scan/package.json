@@ -6,8 +6,8 @@
     "scripts": {
         "start": "node .",
         "start:watch": "npm run start:dev",
-        "start:dev": "tsx watch --clear-screen=false ./src ",
-        "start:watch:test": "NODE_ENV=test tsx watch --clear-screen=false src/",
+        "start:dev": "tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' ./src ",
+        "start:watch:test": "NODE_ENV=test tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' src/",
         "dev": "npm run start:watch",
         "build": "tsc -b tsconfig.build.json",
         "test": "jest -c jest-unit-config.json",
