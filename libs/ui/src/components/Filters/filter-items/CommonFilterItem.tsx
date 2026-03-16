@@ -41,12 +41,16 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         return filter.formattedValue ? [...filterValues, filter.formattedValue] : filterValues;
     }
 
-    if (Array.isArray(filter.value)) {
-        return [...filterValues, ...filter.value];
-    } else if (filter.value) {
-        return [...filterValues, filter.value];
+    const valuesList = filter.attribute.valuesList;
+    if (!valuesList || !('linkedValues' in valuesList) || !filter.value) {
+        return filterValues;
     }
-    return filterValues;
+
+    const valuesFilter = Array.isArray(filter.value) ? filter.value : [filter.value];
+    const labels = (valuesList.linkedValues ?? [])
+        .filter(val => valuesFilter.includes(val?.id))
+        .map(val => val?.whoAmI?.label ?? '');
+    return [...filterValues, ...labels];
 };
 
 export interface ICommonFilterProps {
