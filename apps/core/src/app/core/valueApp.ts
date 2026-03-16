@@ -19,11 +19,12 @@ import {
     type IValueVersion,
 } from '../../_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {AttributeCondition, type IRecord} from '../../_types/record';
+import {AttributeCondition, type IRecord, type IRecordFilterLight} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
 import {type IPurgeMultipleValuesTask} from '../../domain/value/tasks/purgeMultipleValues';
+import {type ITreeNode} from '../../_types/tree';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
@@ -248,9 +249,14 @@ export default function ({
                         metadata: [ValueMetadataInput]
                     }
 
-                    input MapValueInput {
+                    input SaveValueBulkMappingValueInput {
                         before: ID,
                         after: ID
+                    }
+                    
+                    input SaveValueBulkMappingInput {
+                        dependenciesFilters: [RecordFilterInput],
+                        values: [SaveValueBulkMappingValueInput!]!
                     }
 
                     interface GenericDistinctValues {
@@ -268,7 +274,7 @@ export default function ({
                     }
 
                     extend type Query {
-                        listDistinctValues(
+                        listDistinctValues(                     
                             library: ID!,
                             """ Attribute should be tree or link """
                             attribute: ID!,
@@ -280,7 +286,7 @@ export default function ({
 
                     extend type Mutation {
                         # Save one value
-                        saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): [GenericValue!]!
+                        saveValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput!): [GenericValue!]!
 
                         # Save values for several attributes at once.
                         # If deleteEmpty is true, empty values will be deleted
@@ -294,7 +300,7 @@ export default function ({
                         ): saveValueBatchResult!
 
                         """ Save values in bulk for all records matching the filters """
-                        saveValueBulk(libraryId: ID!, recordsFilters: [RecordFilterInput]!, attributeId: ID!, mapValues: [MapValueInput!]!): ID!
+                        saveValueBulk(libraryId: ID!, recordsFilters: [RecordFilterInput], attributeId: ID!, mapping: [SaveValueBulkMappingInput!]!): ID!
 
                         """ The returned values are the deleted ones """ 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
@@ -345,14 +351,30 @@ export default function ({
                         },
                         async saveValueBulk(
                             _: never,
-                            {libraryId, recordsFilters, attributeId, mapValues},
+                            {
+                                libraryId,
+                                recordsFilters,
+                                attributeId,
+                                mapping,
+                            }: {
+                                libraryId: string;
+                                recordsFilters?: IRecordFilterLight[];
+                                attributeId: string;
+                                mapping: Array<{
+                                    dependenciesFilters?: IRecordFilterLight[];
+                                    values: Array<{
+                                        before: ITreeNode['id'] | null;
+                                        after: ITreeNode['id'] | null;
+                                    }>;
+                                }>;
+                            },
                             ctx: IQueryInfos,
                         ): Promise<string> {
                             return saveValueBulkTask.saveValueBulk({
                                 libraryId,
                                 recordsFilters,
                                 attributeId,
-                                mapValues,
+                                mapping,
                                 ctx,
                             });
                         },

@@ -277,7 +277,7 @@
         "save_value_bulk_complete_title": "Modification en masse terminée avec succès",
         "save_value_bulk_error_title": "La modification en masse a rencontré une erreur",
         "save_value_bulk_error_message": "Votre demande de modification en masse du {{date}} a échoué. Veuillez contacter votre administrateur.",
-        "save_value_bulk_complete_message": "L’opération s'est terminée avec succès. {{number}}/{{total}} éléments ont été mis à jour ; les autres n’ont pas été modifiés car vous ne disposez pas des permissions nécessaires. L’affichage actuel peut ne pas refléter ces changements : rafraîchissez la page si nécessaire.",
+        "save_value_bulk_complete_message": "L’opération s'est terminée avec succès. {{number}}/{{total}} éléments ont été traités ; les autres ne l'ont pas été car vous ne disposez pas des permissions nécessaires. L’affichage actuel peut ne pas refléter ces changements : rafraîchissez la page si nécessaire.",
         "discussion_comment_mention_title": "Vous avez été mentionné dans un commentaire",
         "discussion_comment_mention_link_label": "Voir le commentaire",
         "discussion_comment_mention_message_with_record_label": "Vous avez été mentionné par {{author}} dans un commentaire sur {{recordLabel}}. Cliquez sur le lien ci-dessous pour voir le commentaire.",

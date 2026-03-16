@@ -213,18 +213,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -504,11 +492,6 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']['input']>;
-  before?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -725,56 +708,14 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+export type SaveValueBulkMappingInput = {
+  dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  values: Array<SaveValueBulkMappingValueInput>;
 };
 
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingCampaignInput = {
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
-  thematics: Array<ReportFramingThematicInput>;
-};
-
-export type ReportFramingCategoryInput = {
-  categoryId: Scalars['String']['input'];
-  children: Array<ReportFramingCategoryInput>;
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ReportFramingContentInput = {
-  campaigns: Array<ReportFramingCampaignInput>;
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ReportFramingItemInput = {
-  columnId: Scalars['String']['input'];
-  referenceValue?: InputMaybe<Scalars['Int']['input']>;
-  value?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ReportFramingThematicInput = {
-  categories: Array<ReportFramingCategoryInput>;
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
+export type SaveValueBulkMappingValueInput = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SheetInput = {
@@ -852,12 +793,10 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -1795,7 +1734,7 @@ export type SaveValueBulkMutationVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   recordsFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
   attributeId: Scalars['ID']['input'];
-  mapValues: Array<MapValueInput> | MapValueInput;
+  mapping: Array<SaveValueBulkMappingInput> | SaveValueBulkMappingInput;
 }>;
 
 
@@ -5207,12 +5146,12 @@ export type SaveValueBatchMutationHookResult = ReturnType<typeof useSaveValueBat
 export type SaveValueBatchMutationResult = Apollo.MutationResult<SaveValueBatchMutation>;
 export type SaveValueBatchMutationOptions = Apollo.BaseMutationOptions<SaveValueBatchMutation, SaveValueBatchMutationVariables>;
 export const SaveValueBulkDocument = gql`
-    mutation SAVE_VALUE_BULK($libraryId: ID!, $recordsFilters: [RecordFilterInput]!, $attributeId: ID!, $mapValues: [MapValueInput!]!) {
+    mutation SAVE_VALUE_BULK($libraryId: ID!, $recordsFilters: [RecordFilterInput]!, $attributeId: ID!, $mapping: [SaveValueBulkMappingInput!]!) {
   saveValueBulk(
     libraryId: $libraryId
     recordsFilters: $recordsFilters
     attributeId: $attributeId
-    mapValues: $mapValues
+    mapping: $mapping
   )
 }
     `;
@@ -5234,7 +5173,7 @@ export type SaveValueBulkMutationFn = Apollo.MutationFunction<SaveValueBulkMutat
  *      libraryId: // value for 'libraryId'
  *      recordsFilters: // value for 'recordsFilters'
  *      attributeId: // value for 'attributeId'
- *      mapValues: // value for 'mapValues'
+ *      mapping: // value for 'mapping'
  *   },
  * });
  */

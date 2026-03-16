@@ -5,12 +5,12 @@ import {type IValidateHelper} from '../../helpers/validate';
 import {type IValueDomain} from '../valueDomain';
 import {type i18n} from 'i18next';
 import type * as Config from '../../../_types/config';
-import {type ITreeValue} from '../../../_types/value';
+import {type ITreeValue, type IValue} from '../../../_types/value';
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeTypes} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type IRecordFilterLight} from '../../../_types/record';
+import {type IRecordFilterLight, Operator} from '../../../_types/record';
 import {type ITreeNode} from '../../../_types/tree';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type FindRecordsHelper} from '../../record/helpers/findRecords';
@@ -24,9 +24,15 @@ import {logger} from '@leav/logger';
 
 export interface ISaveValueBulkParams {
     libraryId: string;
-    recordsFilters: IRecordFilterLight[];
+    recordsFilters?: IRecordFilterLight[];
     attributeId: string;
-    mapValues: Array<{before: ITreeNode['id'] | null; after: ITreeNode['id'] | null}>;
+    mapping: Array<{
+        dependenciesFilters?: IRecordFilterLight[];
+        values: Array<{
+            before: ITreeNode['id'] | null;
+            after: ITreeNode['id'] | null;
+        }>;
+    }>;
     ctx: IQueryInfos;
 }
 
@@ -56,7 +62,7 @@ export default function ({
     translator,
 }: ISaveValueBulkTaskDeps): ISaveValueBulkTask {
     const saveValueBulk = async (params: ISaveValueBulkParams, task?: ITaskFuncParams): Promise<string> => {
-        const {libraryId, recordsFilters, attributeId, mapValues, ctx} = params;
+        const {libraryId, recordsFilters = [], attributeId, mapping, ctx} = params;
 
         await validate.validateLibrary(libraryId, ctx);
         await validate.validateLibraryAttribute(libraryId, attributeId, ctx);
@@ -111,62 +117,99 @@ export default function ({
         logger.debug(`Starting save value bulk on "${libraryId}" with task id "${task.id}"`);
 
         try {
-            const records = await findRecordsHelper({
-                params: {
-                    library: libraryId,
-                    filters: recordsFilters,
-                },
-                ctx,
-            });
+            let treatedNumber = 0;
+            let recordsNumber = 0;
 
-            const mapValuesMap = new Map(mapValues.map(({before, after}) => [before, after]));
-            let successNumber = 0;
+            const operations: Array<() => Promise<IValue[]>> = [];
 
             await Promise.all(
-                records.list.map(async record => {
-                    try {
-                        const value = (
-                            await valueDomain.getRecordFieldValue({
-                                library: libraryId,
-                                record,
-                                attributeId,
-                                ctx,
-                            })
-                        )[0] as ITreeValue;
+                mapping.map(async ({dependenciesFilters = [], values}) => {
+                    const records = await findRecordsHelper({
+                        params: {
+                            library: libraryId,
+                            filters: [
+                                ...(recordsFilters.length > 0
+                                    ? [
+                                          {operator: Operator.OPEN_BRACKET},
+                                          ...recordsFilters,
+                                          {operator: Operator.CLOSE_BRACKET},
+                                          ...(dependenciesFilters.length > 0
+                                              ? [{operator: Operator.AND}, ...dependenciesFilters]
+                                              : []),
+                                          // TODO: add values before filters
+                                      ]
+                                    : dependenciesFilters),
+                            ],
+                        },
+                        ctx,
+                    });
 
-                        if (!mapValuesMap.has(value?.payload?.id ?? null)) {
-                            return;
-                        }
+                    recordsNumber += records.list.length;
+                    const valuesMap = new Map(values.map(({before, after}) => [before, after]));
 
-                        const newValue = mapValuesMap.get(value?.payload?.id ?? null);
+                    await Promise.all(
+                        records.list.map(async record => {
+                            try {
+                                const value = (
+                                    await valueDomain.getRecordFieldValue({
+                                        library: libraryId,
+                                        record,
+                                        attributeId,
+                                        ctx,
+                                    })
+                                )[0] as ITreeValue;
 
-                        if (newValue !== null && newValue !== undefined) {
-                            await valueDomain.saveValue({
-                                library: libraryId,
-                                recordId: record.id,
-                                attribute: attributeId,
-                                value: {
-                                    payload: newValue,
-                                    ...(value && {id_value: value.id_value}),
-                                },
-                                ctx,
-                            });
-                        } else {
-                            await valueDomain.deleteValue({
-                                library: libraryId,
-                                recordId: record.id,
-                                attribute: attributeId,
-                                value: {id_value: value.id_value},
-                                ctx,
-                            });
-                        }
+                                if (!valuesMap.has(value?.payload?.id ?? null)) {
+                                    treatedNumber++;
+                                    return;
+                                }
 
-                        successNumber++;
-                    } catch (error) {
-                        if (!(error instanceof PermissionError)) {
-                            throw error;
-                        }
-                    }
+                                const newValue = valuesMap.get(value?.payload?.id ?? null) as ITreeNode['id'];
+
+                                if (newValue !== null && newValue !== undefined) {
+                                    operations.push(() =>
+                                        valueDomain.saveValue({
+                                            library: libraryId,
+                                            recordId: record.id,
+                                            attribute: attributeId,
+                                            value: {
+                                                payload: newValue,
+                                                ...(value && {id_value: value.id_value}),
+                                            },
+                                            ctx,
+                                        }),
+                                    );
+                                } else {
+                                    operations.push(() =>
+                                        valueDomain.deleteValue({
+                                            library: libraryId,
+                                            recordId: record.id,
+                                            attribute: attributeId,
+                                            value: {id_value: value.id_value},
+                                            ctx,
+                                        }),
+                                    );
+                                }
+                            } catch (error) {
+                                if (!(error instanceof PermissionError)) {
+                                    throw error;
+                                }
+                            }
+                        }),
+                    );
+
+                    await Promise.all(
+                        operations.map(async operation => {
+                            try {
+                                await operation();
+                                treatedNumber++;
+                            } catch (error) {
+                                if (!(error instanceof PermissionError)) {
+                                    throw error;
+                                }
+                            }
+                        }),
+                    );
                 }),
             );
 
@@ -180,9 +223,9 @@ export default function ({
                         message: translator.t('notifications.save_value_bulk_complete_message', {
                             lng: ctx.lang,
                             interpolation: {escapeValue: false},
-                            number: successNumber,
+                            number: treatedNumber,
                             date: new Date().toLocaleString(ctx.lang),
-                            total: records.list.length,
+                            total: recordsNumber,
                         }),
                     },
                     metadata: {

@@ -44,7 +44,9 @@ export const useEditAttributeMassAction = ({
     const [selectedAttribute, setSelectedAttribute] = useState<AttributeDetailsFragment | undefined>(undefined);
     const [massSelectionFilter, setMassSelectionFilter] = useState<RecordFilterInput[]>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [editionMapping, setEditionMapping] = useState<Array<{before: string | null; after: string | null}>>([]);
+    const [editionMapping, setEditionMapping] = useState<
+        Array<{values: Array<{before: string | null; after: string | null}>}>
+    >([]);
 
     const editableAttributes = useListEditableAttributeHook({libraryId: view.libraryId});
     const valuesOccurrences = useCountValuesOccurrencesHook({
@@ -80,13 +82,13 @@ export const useEditAttributeMassAction = ({
         setEditionMapping([]);
     };
 
-    const isMappingCompleted = useMemo(
-        () =>
-            valuesOccurrences.noValueCount === 0
-                ? editionMapping.length === valuesOccurrences.occurrences.length
-                : editionMapping.length === valuesOccurrences.occurrences.length + 1, // for undefined values
-        [editionMapping, valuesOccurrences],
-    );
+    const isMappingCompleted = useMemo(() => {
+        const editionMappingValuesLength = editionMapping.reduce((acc, curr) => acc + curr.values.length, 0);
+
+        return valuesOccurrences.noValueCount === 0
+            ? editionMappingValuesLength === valuesOccurrences.occurrences.length
+            : editionMappingValuesLength + 1; // for undefined values
+    }, [editionMapping, valuesOccurrences]);
 
     const bulkCounter = useMemo(
         () => (view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length),
@@ -103,7 +105,7 @@ export const useEditAttributeMassAction = ({
                     libraryId: view.libraryId,
                     recordsFilters: massSelectionFilter,
                     attributeId: selectedAttribute.id,
-                    mapValues: editionMapping,
+                    mapping: editionMapping,
                 },
             });
 
@@ -153,9 +155,13 @@ export const useEditAttributeMassAction = ({
                         selectedAttribute={selectedAttribute}
                         valuesOccurrences={valuesOccurrences}
                         setAttributeMapping={(before, after) => {
-                            setEditionMapping(
-                                editionMapping.filter(mapping => mapping.before !== before).concat([{before, after}]),
-                            );
+                            setEditionMapping([
+                                {
+                                    values: (editionMapping[0]?.values ?? [])
+                                        .filter(value => value.before !== before)
+                                        .concat([{before, after}]),
+                                },
+                            ]);
                         }}
                     />
                 )}

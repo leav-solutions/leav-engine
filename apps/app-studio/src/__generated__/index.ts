@@ -371,28 +371,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignsFraming = {
-  computed?: Maybe<CampaignsFramingComputed>;
-  id: Scalars['String']['output'];
-};
-
-export type CampaignsFramingComputed = {
-  framing?: Maybe<Scalars['JSONObject']['output']>;
-  results?: Maybe<Scalars['JSONObject']['output']>;
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -874,7 +852,7 @@ export type Log = {
   time: Scalars['Int']['output'];
   topic?: Maybe<LogTopic>;
   trigger?: Maybe<Scalars['String']['output']>;
-  user: Record;
+  user: LogUser;
 };
 
 export enum LogAction {
@@ -909,6 +887,10 @@ export enum LogAction {
   VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
 }
 
+export type LogApplication = Application | LogUnknownApplicationEntity;
+
+export type LogAttribute = LinkAttribute | LogUnknownEntity | StandardAttribute | TreeAttribute;
+
 export type LogData = {
   asString?: Maybe<Scalars['String']['output']>;
   raw?: Maybe<Scalars['Any']['output']>;
@@ -929,6 +911,10 @@ export type LogFilterTimeInput = {
   to?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type LogLibrary = Library | LogUnknownEntity;
+
+export type LogRecord = LogUnknownEntity | Record;
+
 export type LogSortInput = {
   field: LogSortableField;
   order: SortOrder;
@@ -945,14 +931,14 @@ export enum LogSortableField {
 
 export type LogTopic = {
   apiKey?: Maybe<Scalars['String']['output']>;
-  application?: Maybe<Application>;
-  attribute?: Maybe<Attribute>;
+  application?: Maybe<LogApplication>;
+  attribute?: Maybe<LogAttribute>;
   filename?: Maybe<Scalars['String']['output']>;
-  library?: Maybe<Library>;
+  library?: Maybe<LogLibrary>;
   permission?: Maybe<PermissionTopic>;
-  profile?: Maybe<VersionProfile>;
-  record?: Maybe<Record>;
-  tree?: Maybe<Tree>;
+  profile?: Maybe<LogVersionProfile>;
+  record?: Maybe<LogRecord>;
+  tree?: Maybe<LogTree>;
 };
 
 export type LogTopicFilterInput = {
@@ -976,25 +962,30 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type LogTree = LogUnknownEntity | Tree;
+
+export type LogUnknownApplicationEntity = {
+  id: Scalars['ID']['output'];
+  label: Scalars['SystemTranslation']['output'];
+};
+
+export type LogUnknownEntity = {
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
+};
+
+export type LogUnknownStringEntity = {
+  id: Scalars['String']['output'];
+  label?: Maybe<Scalars['SystemTranslation']['output']>;
+};
+
+export type LogUser = LogUnknownEntity | Record;
+
+export type LogVersionProfile = LogUnknownStringEntity | VersionProfile;
+
 export type Logs = {
   logs: Array<Log>;
   total: Scalars['Int']['output'];
-};
-
-export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']['input']>;
-  before?: InputMaybe<Scalars['ID']['input']>;
-};
-
-export type MoveThematicResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  originalId: Scalars['ID']['output'];
-};
-
-export type MoveThematicsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematics?: Maybe<Array<MoveThematicResultThematic>>;
 };
 
 export enum MultiDisplayOption {
@@ -1030,15 +1021,11 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
-  initRenewCampaigns: Scalars['String']['output'];
-  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
-  removeCampaigns: RemoveCampaignsResult;
-  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1058,7 +1045,6 @@ export type Mutation = {
   treeAddElement: TreeNode;
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
-  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   upload: Array<UploadData>;
 };
@@ -1208,21 +1194,6 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationInitRenewCampaignsArgs = {
-  campaigns: Array<CampaignToRenew>;
-  fromPacId: Scalars['String']['input'];
-  redirectUrl: Scalars['String']['input'];
-  toPacId: Scalars['String']['input'];
-};
-
-
-export type MutationMoveOrCopyCampaignThematicsArgs = {
-  moveThematic: Scalars['Boolean']['input'];
-  thematics: Array<ThematicToRenew>;
-  toCampaignId: Scalars['String']['input'];
-};
-
-
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1241,16 +1212,6 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
-};
-
-
-export type MutationRemoveCampaignsArgs = {
-  campaignsIds: Array<Scalars['ID']['input']>;
-};
-
-
-export type MutationRemoveStructureItemsArgs = {
-  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1302,10 +1263,10 @@ export type MutationSaveUserDataArgs = {
 
 
 export type MutationSaveValueArgs = {
-  attribute?: InputMaybe<Scalars['ID']['input']>;
-  library?: InputMaybe<Scalars['ID']['input']>;
-  recordId?: InputMaybe<Scalars['ID']['input']>;
-  value?: InputMaybe<ValueInput>;
+  attribute: Scalars['ID']['input'];
+  library: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
+  value: ValueInput;
 };
 
 
@@ -1321,8 +1282,8 @@ export type MutationSaveValueBatchArgs = {
 export type MutationSaveValueBulkArgs = {
   attributeId: Scalars['ID']['input'];
   libraryId: Scalars['ID']['input'];
-  mapValues: Array<MapValueInput>;
-  recordsFilters: Array<InputMaybe<RecordFilterInput>>;
+  mapping: Array<SaveValueBulkMappingInput>;
+  recordsFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
 };
 
 
@@ -1356,11 +1317,6 @@ export type MutationTreeMoveElementArgs = {
   order?: InputMaybe<Scalars['Int']['input']>;
   parentTo?: InputMaybe<Scalars['ID']['input']>;
   treeId: Scalars['ID']['input'];
-};
-
-
-export type MutationUpdateCampaignsDatesArgs = {
-  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1498,6 +1454,7 @@ export enum PermissionsActions {
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_list_plugins = 'admin_list_plugins',
+  admin_manage_automation = 'admin_manage_automation',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -1578,8 +1535,6 @@ export type Query = {
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
-  framingCampaigns: Array<CampaignsFraming>;
-  framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
@@ -1647,21 +1602,6 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
-};
-
-
-export type QueryFramingCampaignsArgs = {
-  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
-  pacID: Scalars['String']['input'];
-  searchFilter?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryFramingReportArgs = {
-  content?: InputMaybe<ReportFramingContentInput>;
-  pacID: Scalars['String']['input'];
-  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2006,39 +1946,14 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
-export type RenewCampaignResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  thematic_id: Scalars['ID']['output'];
+export type SaveValueBulkMappingInput = {
+  dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  values: Array<SaveValueBulkMappingValueInput>;
 };
 
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID']['output'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
+export type SaveValueBulkMappingValueInput = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SheetInput = {
@@ -2252,23 +2167,16 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -2584,6 +2492,7 @@ export type Value = GenericValue & {
 export type ValueBatchError = {
   attribute: Scalars['String']['output'];
   input?: Maybe<Scalars['String']['output']>;
+  library?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   type: Scalars['String']['output'];
 };
@@ -2679,6 +2588,7 @@ export enum VersionProfilesSortableFields {
 }
 
 export type View = {
+  /**  The whoAmI column will never be included in attributes because is already hard-coded to be present */
   attributes?: Maybe<Array<Attribute>>;
   color?: Maybe<Scalars['String']['output']>;
   created_at: Scalars['Int']['output'];
@@ -2706,6 +2616,7 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -2720,6 +2631,7 @@ export type ViewInput = {
 };
 
 export type ViewInputPartial = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -2758,16 +2670,6 @@ export type ViewValuesVersionInput = {
 export type ViewsList = {
   list: Array<View>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type RemoveCampaignsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
-export type RemoveStructureItemsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
 };
 
 export type SaveValueBatchResult = {
