@@ -183,6 +183,7 @@ export default function ({
 
     const enableGetValueDataLoadersCache = config?.dataLoaders.valueRepo.getValues.enableCache ?? false;
     const useBatchGetValueDataLoaders = config?.dataLoaders.valueRepo.getValues.useBatch ?? true;
+    const maxBatchSizeGetValueDataLoaders = config?.dataLoaders.valueRepo.getValues.maxBatchSize;
     const getValuesDataLoader = (
         libraryId: string,
         attribute: IAttributeWithRevLink,
@@ -220,6 +221,7 @@ export default function ({
                     },
                     {
                         cache: enableGetValueDataLoadersCache,
+                        maxBatchSize: maxBatchSizeGetValueDataLoaders,
                     },
                 ),
         );

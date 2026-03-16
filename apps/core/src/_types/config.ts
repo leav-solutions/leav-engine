@@ -278,6 +278,15 @@ export interface IImport {
     delayTaskExecMs: number;
 }
 
+interface ICommonDataLoaderConfig {
+    /**
+     * Split batch in multiple batch if number of keys to load is superior to this value.
+     * Too low value can cause performance issue, to many arangodb or redis requeste, too high value can cause memory, performance and availability issue.
+     * Adjust according to your use case and data size
+     */
+    maxBatchSize?: number;
+}
+
 /**
  * Data loaders configuration for performances
  */
@@ -300,7 +309,19 @@ export interface IDataLoaders {
              * Temporary, to be removed in future
              */
             useBatch: boolean;
-        };
+        } & ICommonDataLoaderConfig;
+    };
+
+    recordRepo: {
+        getRecord: ICommonDataLoaderConfig;
+    };
+
+    treeRepo: {
+        getRecordByNodeId: ICommonDataLoaderConfig;
+    };
+
+    cacheService: {
+        ramCache: ICommonDataLoaderConfig;
     };
 }
 
