@@ -6,6 +6,7 @@ import {useGetThreadQuery} from '../../../__generated__';
 export const useThreads = (recordId: string, libraryId: string) => {
     const {data, loading} = useGetThreadQuery({
         variables: {libraryId, recordId},
+        fetchPolicy: 'network-only', // make sure we fetch fresh data at each flap opening, otherwise the status won't refresh (https://aristid.atlassian.net/browse/AMONT-890)
     });
     const record = data?.records.list?.[0];
     const editRecordPermission = record?.permissions.edit_record ?? false;
