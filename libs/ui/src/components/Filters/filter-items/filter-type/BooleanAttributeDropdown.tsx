@@ -17,6 +17,12 @@ const TreeNodeTitleContainer = styled.div`
     justify-content: space-between;
 `;
 
+const KitTreeStyled = styled(KitTree)`
+    .ant-tree-title {
+        width: 100% !important;
+    }
+`;
+
 const CheckIcon = styled(FontAwesomeIcon)`
     color: var(--general-utilities-text-blue);
     font-size: calc(var(--general-typography-fontSize7) * 1px);
@@ -65,7 +71,7 @@ export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
     );
 
     return (
-        <KitTree
+        <KitTreeStyled
             treeData={valuesOptions}
             selectedKeys={[filter.value]}
             titleRender={node => <TreeNodeTitle node={node as ITreeMapElement} />}

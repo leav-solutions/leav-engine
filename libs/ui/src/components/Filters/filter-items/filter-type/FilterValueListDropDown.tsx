@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type FunctionComponent, type KeyboardEvent, useMemo, useState} from 'react';
-import {KitInput} from 'aristid-ds';
+import {type FunctionComponent, type KeyboardEvent, type MouseEvent, useMemo, useState} from 'react';
+import {KitCheckbox, KitInput} from 'aristid-ds';
 import styled from 'styled-components';
 import {RecordFilterCondition} from '_ui/_gqlTypes';
 import {
@@ -13,7 +13,7 @@ import {
     type UIFilter,
 } from '../../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {EmptyValueCheckbox} from '../shared/EmptyValueCheckbox';
 
 interface IFilterValueListDropDownProps {
@@ -31,30 +31,15 @@ const OptionRow = styled.div<{$selected: boolean}>`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 calc(var(--general-spacing-xs) * 1px);
+    padding: 0 calc(var(--general-spacing-s) * 1px);
     height: 36px;
     border-radius: calc(var(--general-spacing-xs) * 1px);
     cursor: pointer;
     background: ${props => (props.$selected ? 'var(--general-utilities-main-light)' : 'transparent')};
     color: var(--general-utilities-text-primary);
-
     &:hover {
         background: var(--general-utilities-main-light);
     }
-`;
-
-const RightIcon = styled(FontAwesomeIcon)<{$visible: boolean}>`
-    color: var(--general-utilities-main-default);
-    opacity: ${props => (props.$visible ? 1 : 0)};
-    transition: opacity 0.12s ease-in-out;
-`;
-
-const Label = styled.div`
-    flex: 1;
-    min-width: 0; /* allow flex child to shrink for ellipsis */
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 `;
 
 export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDownProps> = ({filter, onFilterChange}) => {
@@ -134,11 +119,16 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
         return options.filter(o => specials.has(o.value) || getOptionLabelText(o.label).toLowerCase().includes(st));
     }, [options, searchText]);
 
-    const onKeyToggle = (e: KeyboardEvent<HTMLDivElement>, value: string) => {
+    const onKeyToggle = (e: KeyboardEvent<HTMLElement>, value: string) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             _handleToggle(value);
         }
+    };
+
+    const onClickOptionRow = (e: MouseEvent<HTMLDivElement>, value: string) => {
+        e.preventDefault();
+        _handleToggle(value);
     };
 
     return (
@@ -161,11 +151,12 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
                             role="button"
                             aria-pressed={selected}
                             tabIndex={0}
-                            onClick={() => _handleToggle(opt.value)}
+                            onClick={e => onClickOptionRow(e, opt.value)}
                             onKeyDown={e => onKeyToggle(e, opt.value)}
                         >
-                            <Label>{opt.label}</Label>
-                            <RightIcon $visible={selected} icon={faCheck} />
+                            <KitCheckbox checked={selected} aria-label={opt.label}>
+                                {opt.label}
+                            </KitCheckbox>
                         </OptionRow>
                     );
                 })}
