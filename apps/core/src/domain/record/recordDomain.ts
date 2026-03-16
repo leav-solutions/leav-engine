@@ -20,7 +20,7 @@ import {TypeGuards} from '../../utils';
 import {AttributeFormats} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {type ILibrary, LibraryBehavior} from '../../_types/library';
-import {RecordPermissionsActions} from '../../_types/permissions';
+import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -861,7 +861,7 @@ export default function ({
                 return {record: createdRecord, valuesErrors: null};
             } catch (error) {
                 logger.error(`Error in createRecord: ${error.stack}`);
-                if (createdRecord.id) {
+                if (createdRecord?.id) {
                     await this.deleteRecord({library, id: createdRecord.id, ctx}).catch(err => {
                         logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
                     });
@@ -872,6 +872,11 @@ export default function ({
                         {
                             type: error?.type ?? ErrorTypes.INTERNAL_ERROR,
                             attribute: null,
+                            library:
+                                error?.type === ErrorTypes.PERMISSION_ERROR &&
+                                error?.action === LibraryPermissionsActions.CREATE_RECORD
+                                    ? library
+                                    : undefined,
                             message: error && typeof error.message === 'string' ? error.message : String(error),
                         },
                     ],
@@ -1147,15 +1152,26 @@ export default function ({
                         if (valuesErrorsByRecordId.has(recordId)) {
                             return {
                                 record: null,
-                                valuesErrors: valuesErrorsByRecordId.get(recordId),
+                                valuesErrors: valuesErrorsByRecordId.get(recordId).map(err => ({
+                                    ...err,
+                                    originalId: recordId,
+                                })),
                             };
                         }
-                        return this.createRecord({
+                        const createdRecord = await this.createRecord({
                             library: libraryId,
                             values,
                             verifyRequiredAttributes: true,
                             ctx,
                         });
+
+                        if (createdRecord.valuesErrors) {
+                            createdRecord.valuesErrors = createdRecord.valuesErrors.map(err => ({
+                                ...err,
+                                originalId: recordId,
+                            }));
+                        }
+                        return createdRecord;
                     }),
                 );
 
@@ -1168,6 +1184,7 @@ export default function ({
                         {
                             type: error?.type ?? ErrorTypes.INTERNAL_ERROR,
                             attribute: error?.attribute ?? null,
+                            library: error?.library,
                             message: error && typeof error.message === 'string' ? error.message : String(error),
                             originalId: recordId,
                         },

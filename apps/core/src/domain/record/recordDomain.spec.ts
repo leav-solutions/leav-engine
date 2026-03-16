@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Errors} from '../../_types/errors';
+import {Errors, ErrorTypes} from '../../_types/errors';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type IValidateHelper} from 'domain/helpers/validate';
@@ -36,6 +36,7 @@ import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
 import {type IFormRepo} from 'infra/form/formRepo';
 import mockLogger from '../../__tests__/mockers/logger';
+import {LibraryPermissionsActions} from '../../_types/permissions';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
@@ -491,6 +492,86 @@ describe('RecordDomain', () => {
             expect(res.valuesErrors).toHaveLength(1);
             expect(res.valuesErrors).toEqual([
                 {attribute: undefined, message: 'bad values', type: undefined},
+            ] as ICreateRecordValueError[]);
+        });
+
+        test('Should return errors if no library permission', async () => {
+            const createdRecordData = {
+                id: '222435651',
+                library: 'test',
+                created_at: 1519303348,
+                modified_at: 1519303348,
+            };
+
+            const mockRecRepo: Mockify<IRecordRepo> = {
+                createRecord: global.__mockPromise(createdRecordData),
+                deleteRecord: global.__mockPromise(createdRecordData),
+                find: global.__mockPromise({
+                    totalCount: 1,
+                    list: [createdRecordData],
+                }),
+            };
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getLibraryFullTextAttributes: global.__mockPromise([]),
+                getAttributeProperties: global.__mockPromise(mockAttrSimple),
+            };
+
+            const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
+                getLibraryPermission: global.__mockPromise(false),
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValueBatch: global.__mockPromise({errors: [{message: 'bad values'}]}),
+            };
+
+            const recDomain = recordDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.infra.record': mockRecRepo as IRecordRepo,
+                'core.utils': mockUtils as IUtils,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': mockRecRepo as IRecordRepo,
+                }),
+            });
+            jest.spyOn(recDomain, 'activateNewRecord');
+            jest.spyOn(recDomain, 'deleteRecord');
+
+            const res = await recDomain.createRecord({
+                library: 'test',
+                values: [
+                    {
+                        attribute: 'some_attribute',
+                        payload: 'some_value',
+                    },
+                    {
+                        attribute: 'other_attribute',
+                        payload: 'some other value',
+                    },
+                ],
+                ctx,
+            });
+
+            expect(mockRecRepo.createRecord).not.toHaveBeenCalled();
+            expect(mockValueDomain.saveValueBatch).not.toHaveBeenCalled();
+            expect(recDomain.activateNewRecord).not.toHaveBeenCalled();
+            expect(recDomain.deleteRecord).not.toHaveBeenCalled();
+            expect(res.record).toBe(null);
+            expect(res.valuesErrors).toHaveLength(1);
+            expect(res.valuesErrors).toEqual([
+                {
+                    attribute: null,
+                    library: 'test',
+                    message: 'Action forbidden',
+                    type: ErrorTypes.PERMISSION_ERROR,
+                },
             ] as ICreateRecordValueError[]);
         });
     });
