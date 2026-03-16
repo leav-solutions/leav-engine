@@ -57,7 +57,7 @@
         "husky": "6.0.0",
         "jest-watch-typeahead": "2.2.2",
         "license-check-and-add": "3.0.5",
-        "lint-staged": "16.3.2"
+        "lint-staged": "16.4.0"
     },
     "resolutions": {
         "nwsapi": "2.2.7",
