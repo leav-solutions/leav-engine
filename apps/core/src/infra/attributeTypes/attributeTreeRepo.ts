@@ -510,37 +510,35 @@ export default function ({
                     `;
             }
 
-            const linked = !attributes[1]
-                ? {id: '_key', format: AttributeFormats.TEXT}
-                : attributes[1].id === 'id'
-                  ? {...attributes[1], id: '_key'}
-                  : attributes[1];
-
             const linkValueIdentifier = literal(`${parentIdentifier}linkVal`);
             const recordIdentifierStr = parentIdentifier + 'Record';
             const recordIdentifier = literal(recordIdentifierStr);
             const eIdentifier = literal(parentIdentifier + 'e');
-            const returnValue = aql`RETURN ${linkValueIdentifier}`;
             const retrieveValue = aql`
                 FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${literal(parentIdentifier)}._id
                     ${valuesLinksCollec}
                     FILTER ${eIdentifier}.attribute == ${attributes[0].id}
-                    LET ${recordIdentifier} = DOCUMENT(
-                        ${vIdentifier}.${literal(NODE_LIBRARY_ID_FIELD)},
-                        ${vIdentifier}.${literal(NODE_RECORD_ID_FIELD)}
-                        )
                         `;
 
+            // Filter on link record attribute
             const linkValueQuery = attributes[1]
-                ? aql`LET ${literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
-                      [...attributes].splice(1),
-                      filter,
-                      recordIdentifierStr,
-                  )})`
+                ? attributes[1].id === 'id'
+                    ? aql`RETURN ${vIdentifier}.${literal(NODE_RECORD_ID_FIELD)}` // No need to fetch document to just get its id (_key)
+                    : aql`
+                        LET ${recordIdentifier} = DOCUMENT(
+                                ${vIdentifier}.${literal(NODE_LIBRARY_ID_FIELD)},
+                                ${vIdentifier}.${literal(NODE_RECORD_ID_FIELD)}
+                                )
+                        LET ${literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
+                            [...attributes].splice(1),
+                            filter,
+                            recordIdentifierStr,
+                        )})
+                        RETURN ${linkValueIdentifier}`
                 : null;
-            const linkedValue = join([literal('FLATTEN('), retrieveValue, linkValueQuery, returnValue, literal(')')]);
+            const linkedValue = join([literal('FLATTEN('), retrieveValue, linkValueQuery, literal(')')]);
 
-            return linked.format !== AttributeFormats.EXTENDED
+            return attributes[1]?.format !== AttributeFormats.EXTENDED
                 ? linkedValue
                 : _getExtendedFilterPart(attributes, linkedValue);
         },
