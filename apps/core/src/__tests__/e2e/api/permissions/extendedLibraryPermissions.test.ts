@@ -422,15 +422,6 @@ describe('ExtendedLibraryPermissions', () => {
             expect(records[0].id).toBe(record2Id);
         });
 
-        it('record should get both records when ignoreAccessRecordByDefaultPermission is true', async () => {
-            const records = await getLibRecords({ignoreAccessRecordByDefaultPermission: true});
-
-            expect(records.length).toBe(2);
-            const ids = records.map(r => r.id);
-            expect(ids).toContain(record1Id);
-            expect(ids).toContain(record2Id);
-        });
-
         describe('except current user group (admin)', () => {
             beforeAll(async () => {
                 await makeGraphQlCall(
@@ -525,37 +516,14 @@ describe('ExtendedLibraryPermissions', () => {
                 expect(records.length).toBe(1);
                 expect(records[0].id).toBe(record2Id);
             });
-
-            it('non admin user should get both records when ignoreAccessRecordByDefaultPermission is true', async () => {
-                const records = await getLibRecords({
-                    options: {
-                        user: e2eGuestUser(),
-                    },
-                    ignoreAccessRecordByDefaultPermission: true,
-                });
-
-                expect(records.length).toBe(2);
-                const ids = records.map(r => r.id);
-                expect(ids).toContain(record1Id);
-                expect(ids).toContain(record2Id);
-            });
         });
     });
 
-    async function getLibRecords({
-        filters,
-        options,
-        ignoreAccessRecordByDefaultPermission,
-    }: {
-        filters?: string;
-        options?: IMakeGraphQlCallOptions;
-        ignoreAccessRecordByDefaultPermission?: boolean;
-    }) {
+    async function getLibRecords({filters, options}: {filters?: string; options?: IMakeGraphQlCallOptions}) {
         const query = `query {
             records(
                 library: "${libName}",
                 filters: ${filters ?? '[]'},
-                ignoreAccessRecordByDefaultPermission: ${ignoreAccessRecordByDefaultPermission ?? false}
             ) {
                 list {
                     id
