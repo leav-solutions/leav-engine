@@ -20,17 +20,15 @@ export const useExplorerCountData = ({
     skip?: boolean;
 }) => {
     const isLibrary = entrypoint.type === 'library';
-    const activeFilters = prepareFiltersForRequest(filters.filter(f => f.field === 'active'));
-    const defaultPreparedFilters = prepareFiltersForRequest(defaultFilters);
-
-    const appliedFilters: RecordFilterInput[] = [...activeFilters, ...defaultPreparedFilters];
+    const activeFilter = filters.find(f => f.field === 'active');
+    const preparedFilters = prepareFiltersForRequest(activeFilter ? [...defaultFilters, activeFilter] : defaultFilters);
 
     const {data: countData, refetch: refetchCount} = useExplorerLibraryCountDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
         variables: {
             libraryId,
-            filters: appliedFilters,
+            filters: preparedFilters,
         },
     });
 
