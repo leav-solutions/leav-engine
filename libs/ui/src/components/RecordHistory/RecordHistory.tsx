@@ -16,12 +16,15 @@ import {RecordHistoryLogEntry} from './RecordHistoryLogEntry';
 interface IRecordHistoryProps {
     record: IRecordIdentityWhoAmI;
     attributeId?: string;
+    noScroll?: boolean;
 }
 
-const StyledDivContentWrapper = styled.div`
+const StyledDivContentWrapper = styled.div<{
+    $scrollable?: boolean;
+}>`
     margin-top: calc(var(--general-spacing-xs) * 1px);
     flex: 1 1 0;
-    overflow-y: auto;
+    overflow-y: ${props => (props.$scrollable ? 'auto' : 'unset')};
 `;
 
 // TODO: This component should be moved to /apps/app-studio/src/modules/information-and-history/record-history/ when he will no longer be used by RecordSummary and ValuesSummary (those components will be removed in the future)
@@ -30,7 +33,7 @@ const StyledDivContentWrapper = styled.div`
 // - remove usage of styled-components
 // - instead of a record we could receive a recordId and a libraryId directly
 // - remove styling of StyledDivContentWrapper that will no longer be necessary
-export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, attributeId}) => {
+export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, attributeId, noScroll}) => {
     const {t} = useSharedTranslation();
     const [showAllHistory, setShowAllHistory] = useState<boolean>(false);
     const {loading, inError, logs, total, hasMore, fetchMore} = useFetchRecordHistory({
@@ -60,8 +63,8 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
     }
 
     return (
-        <StyledDivContentWrapper>
-            <RecordHistoryGoUpButton>
+        <StyledDivContentWrapper $scrollable={!noScroll}>
+            <RecordHistoryGoUpButton disabled={noScroll}>
                 <KitSpace size="s" direction="vertical">
                     {showAllHistory && (
                         <>

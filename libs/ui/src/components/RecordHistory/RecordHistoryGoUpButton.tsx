@@ -17,9 +17,10 @@ const StyledKitButtonGoUp = styled(KitButton)`
 
 interface IRecordHistoryGoUpButtonProps {
     children: ReactNode;
+    disabled?: boolean;
 }
 
-export const RecordHistoryGoUpButton: React.FC<IRecordHistoryGoUpButtonProps> = ({children}) => {
+export const RecordHistoryGoUpButton: React.FC<IRecordHistoryGoUpButtonProps> = ({disabled, children}) => {
     // cannot use detectScrollTopRef because it is not a ref to div but to a customRef to a callback
     const scrollTopRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +29,9 @@ export const RecordHistoryGoUpButton: React.FC<IRecordHistoryGoUpButtonProps> = 
     const [detectScrollTopRef, detectScrollTopEntry] = useIntersectionObserver<HTMLDivElement>({threshold: 0});
     const showGoUpButton = !detectScrollTopEntry?.isIntersecting;
 
-    return (
+    return disabled ? (
+        <>{children}</>
+    ) : (
         <div ref={scrollTopRef}>
             <div ref={detectScrollTopRef} />
             {children}

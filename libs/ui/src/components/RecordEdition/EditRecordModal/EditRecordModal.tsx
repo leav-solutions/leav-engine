@@ -242,6 +242,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                     formElementId={formElementId.current}
                     record={currentRecord}
                     library={library}
+                    scrollAllRecordSummary
                     onCreate={_handleCreate}
                     valuesVersion={valuesVersion}
                     showSidebar={showSidebar}

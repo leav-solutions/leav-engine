@@ -11,9 +11,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRotateRight} from '@fortawesome/free-solid-svg-icons';
 import {RecordHistory} from '../../../RecordHistory/RecordHistory';
 import styled from 'styled-components';
+import RecordHistoryGoUpButton from '_ui/components/RecordHistory/RecordHistoryGoUpButton';
 
 interface IRecordSummaryProps {
     record: IRecordIdentityWhoAmI | null;
+    scrollAll?: boolean;
 }
 
 const StyledDivContentWrapper = styled.div`
@@ -22,7 +24,7 @@ const StyledDivContentWrapper = styled.div`
     height: 100%;
 `;
 
-export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) => {
+export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record, scrollAll}) => {
     const {t} = useSharedTranslation();
     const {loading, error, data, refetch} = useGetRecordValuesQuery(
         record?.library?.id,
@@ -66,11 +68,13 @@ export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) 
 
     return (
         <StyledDivContentWrapper>
-            <KitTypography.Text weight="bold">{t('record_summary.informations')}</KitTypography.Text>
-            <RecordInformations record={record} recordData={data?.[record?.id]} />
-            <KitDivider />
-            <KitTypography.Text weight="bold">{t('record_summary.history')}</KitTypography.Text>
-            {record && <RecordHistory record={record} />}
+            <RecordHistoryGoUpButton disabled={!scrollAll}>
+                <KitTypography.Text weight="bold">{t('record_summary.informations')}</KitTypography.Text>
+                <RecordInformations record={record} recordData={data?.[record?.id]} />
+                <KitDivider />
+                <KitTypography.Text weight="bold">{t('record_summary.history')}</KitTypography.Text>
+                {record && <RecordHistory record={record} noScroll={scrollAll} />}
+            </RecordHistoryGoUpButton>
         </StyledDivContentWrapper>
     );
 };

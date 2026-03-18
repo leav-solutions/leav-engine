@@ -19,6 +19,7 @@ import {localizedTranslation} from '@leav/utils';
 
 interface IEditRecordSidebarProps {
     sidebarContainer?: HTMLElement;
+    scrollAllRecordSummary?: boolean;
 }
 
 const StyledDivContentWrapper = styled.div`
@@ -28,7 +29,7 @@ const StyledDivContentWrapper = styled.div`
     height: 100%;
 `;
 
-const _getRecordSidebarContent = (state: IEditRecordReducerState) => {
+const _getRecordSidebarContent = (state: IEditRecordReducerState, scrollAllRecordSummary: boolean = false) => {
     // TODO: ValuesVersions should be removed or refactored later
     switch (state.sidebarContent) {
         case 'none':
@@ -48,7 +49,7 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState) => {
         case 'valuesVersions':
             return <ValuesVersions />;
         default:
-            return <RecordSummary record={state.record} />;
+            return <RecordSummary record={state.record} scrollAll={scrollAllRecordSummary} />;
     }
 };
 
@@ -62,7 +63,10 @@ const StyledKitSidePanel = styled(KitSidePanel)<{$hideBoxShadow: boolean; $isOpe
     display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
 `;
 
-export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({sidebarContainer}) => {
+export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
+    sidebarContainer,
+    scrollAllRecordSummary,
+}) => {
     const {lang} = useLang();
     const {state} = useEditRecordReducer();
     const sidePanelRef = useRef<KitSidePanelRef | null>(null);
@@ -81,7 +85,7 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({s
             $hideBoxShadow={!sidebarContainer}
             $isOpen={state.isOpenSidebar}
         >
-            {_getRecordSidebarContent(state)}
+            {_getRecordSidebarContent(state, scrollAllRecordSummary)}
         </StyledKitSidePanel>
     );
 
