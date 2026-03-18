@@ -15,7 +15,7 @@ const GridContent = styled(Modal.Content)`
 `;
 
 interface IEditAttributeModalProps {
-    attribute: string;
+    attribute?: string;
     open: boolean;
     onClose: () => void;
     onPostSave?: OnAttributePostSaveFunc;
@@ -45,7 +45,7 @@ function EditAttributeModal({
         >
             <GridContent scrolling>
                 <EditAttribute
-                    attributeId={attribute}
+                    attributeId={attribute ?? null}
                     onPostSave={onPostSave}
                     redirectAfterCreate={redirectAfterCreate}
                 />
