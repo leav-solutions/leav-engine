@@ -45,6 +45,7 @@ interface IEditRecordProps {
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecord
+    scrollAllRecordSummary?: boolean;
     enableSidebar?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecord
     sidebarContainer?: HTMLElement; // TODO: Should be removed when sidebar is fully removed from EditRecord
     forceDisableSidebarInAppStudio?: boolean; // TODO: Should be removed when sidebar is fully removed from EditRecord
@@ -82,6 +83,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     valuesVersion,
     enableSidebar = false,
     showSidebar = false,
+    scrollAllRecordSummary = false,
     sidebarContainer,
     forceDisableSidebarInAppStudio = false,
     containerStyle,
@@ -253,7 +255,12 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
                         )}
                     </Content>
-                    {!forceDisableSidebarInAppStudio && <EditRecordSidebar sidebarContainer={sidebarContainer} />}
+                    {!forceDisableSidebarInAppStudio && (
+                        <EditRecordSidebar
+                            sidebarContainer={sidebarContainer}
+                            scrollAllRecordSummary={scrollAllRecordSummary}
+                        />
+                    )}
                 </Container>
             </EditRecordReducerContext.Provider>
         </ErrorBoundary>
