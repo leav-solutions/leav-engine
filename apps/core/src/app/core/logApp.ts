@@ -17,10 +17,10 @@ import {type IAppGraphQLSchema} from '_types/graphql';
 import {EventAction} from '@leav/utils';
 import {type IDBPayloadData} from '_types/events';
 import {type IFormatLogValueHelper} from 'domain/value/helpers/formatLogValue';
-import {AttributeCondition} from '_types/record';
+import {AttributeCondition} from '../../_types/record';
 import {type i18n} from 'i18next';
 import {type IRecordDomain} from 'domain/record/recordDomain';
-import {AttributeTypes} from '_types/attribute';
+import {AttributeTypes} from '../../_types/attribute';
 import {type IConfig} from '_types/config';
 
 export type ICoreLogApp = IAppModule & IGraphqlAppModule;
