@@ -33,12 +33,13 @@ const OptionRow = styled.div<{$selected: boolean}>`
     justify-content: space-between;
     padding: 0 calc(var(--general-spacing-s) * 1px);
     height: 36px;
+    border: 1px solid transparent;
     border-radius: calc(var(--general-spacing-xs) * 1px);
     cursor: pointer;
     background: ${props => (props.$selected ? 'var(--general-utilities-main-light)' : 'transparent')};
     color: var(--general-utilities-text-primary);
     &:hover {
-        background: var(--general-utilities-main-light);
+        border: 1px solid var(--general-utilities-main-default);
     }
 `;
 
