@@ -1185,7 +1185,7 @@ const valueDomain = function ({
                 ): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
-                        if (value.payload === null && !keepEmpty) {
+                        if (value.payload == null && !keepEmpty) {
                             const deletedValues = await _executeDeleteValue({
                                 library,
                                 value,
