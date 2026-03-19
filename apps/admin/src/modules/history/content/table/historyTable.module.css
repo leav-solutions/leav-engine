@@ -1,0 +1,4 @@
+.historyTableContainer {
+    flex: 1 1 min-content;
+    overflow: hidden;
+}

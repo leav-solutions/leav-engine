@@ -1293,15 +1293,22 @@ export type LibraryAttributeLinkFragment = { linked_library?: { id: string, labe
 
 export type RecordHistoryLogEntryFragment = { action?: LogAction | null, time: number, topic?: { attribute?:
       | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }
+      | { id: string, label?: any | null }
       | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null }
-     | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null };
+     | null } | null, user:
+    | { id: string, label?: any | null }
+    | { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }
+  , before?: { asString?: string | null } | null, after?: { asString?: string | null } | null };
 
 export type RecordHistoryLogAttributeLinkAttributeTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
+
+export type RecordHistoryLogAttributeLogUnknownEntityFragment = Record<PropertyKey, never>;
 
 export type RecordHistoryLogAttributeStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null };
 
 export type RecordHistoryLogAttributeFragment =
   | RecordHistoryLogAttributeLinkAttributeTreeAttributeFragment
+  | RecordHistoryLogAttributeLogUnknownEntityFragment
   | RecordHistoryLogAttributeStandardAttributeFragment
 ;
 
@@ -2005,8 +2012,12 @@ export type GetRecordHistoryQueryVariables = Exact<{
 
 export type GetRecordHistoryQuery = { logs?: { total: number, logs: Array<{ action?: LogAction | null, time: number, topic?: { attribute?:
           | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }
+          | { id: string, label?: any | null }
           | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, embedded_fields?: Array<{ id: string, label?: any | null } | null> | null }
-         | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
+         | null } | null, user:
+        | { id: string, label?: any | null }
+        | { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }
+      , before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
 
 export type TreeContentDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -2846,17 +2857,31 @@ export const LibraryAttributeFragmentDoc = gql`
 }
     ${LibraryAttributeLinkFragmentDoc}`;
 export const RecordHistoryLogAttributeFragmentDoc = gql`
-    fragment RecordHistoryLogAttribute on Attribute {
-  id
-  label
-  type
-  format
-  multiple_values
+    fragment RecordHistoryLogAttribute on LogAttribute {
   ... on StandardAttribute {
+    id
+    label
+    type
+    format
+    multiple_values
     embedded_fields {
       id
       label
     }
+  }
+  ... on LinkAttribute {
+    id
+    label
+    type
+    format
+    multiple_values
+  }
+  ... on TreeAttribute {
+    id
+    label
+    type
+    format
+    multiple_values
   }
 }
     `;
@@ -2867,23 +2892,33 @@ export const RecordHistoryLogEntryFragmentDoc = gql`
   topic {
     attribute {
       ...RecordHistoryLogAttribute
+      ... on LogUnknownEntity {
+        id
+        label
+      }
     }
   }
   user {
-    id
-    whoAmI {
+    ... on Record {
       id
-      library {
+      whoAmI {
         id
-      }
-    }
-    properties(attributeIds: ["email"]) {
-      attributeId
-      values {
-        ... on Value {
-          payload
+        library {
+          id
         }
       }
+      properties(attributeIds: ["email"]) {
+        attributeId
+        values {
+          ... on Value {
+            payload
+          }
+        }
+      }
+    }
+    ... on LogUnknownEntity {
+      id
+      label
     }
   }
   before {

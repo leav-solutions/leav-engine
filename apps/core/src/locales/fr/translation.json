@@ -222,6 +222,13 @@
         "date_range": "Du {{from}} au {{to}}"
     },
     "logs": {
+        "unknown_attribute": "Attribut inconnu ({{id}})",
+        "unknown_library": "Bibliothèque inconnu ({{id}})",
+        "unknown_record": "Élément inconnu ({{id}})",
+        "unknown_user": "Utilisateur inconnu ({{id}})",
+        "unknown_tree": "Arbre inconnu ({{id}})",
+        "unknown_version_profile": "Profil de version inconnu ({{id}})",
+        "unknown_application": "Application inconnu ({{id}})",
         "unknown_value": "Valeur inconnue"
     },
     "tasks": {

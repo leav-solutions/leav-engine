@@ -1,0 +1,10 @@
+.historyContentContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--general-utilities-light);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    box-shadow: var(--general-utilities-shadow-light);
+    padding: calc(var(--general-spacing-s) * 1px);
+}

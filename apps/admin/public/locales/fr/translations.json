@@ -29,7 +29,8 @@
         "choose-lang": "Langue",
         "permissions": "Permissions",
         "document_title": "LEAV Engine - {{appLabel}}",
-        "search_placeholder": "Rechercher..."
+        "search_placeholder": "Rechercher...",
+        "home_page": "Page d'accueil"
     },
     "dashboard": {
         "title": "Bienvenue sur l'interface d'administration"
@@ -493,6 +494,31 @@
         "copy_success": "Clé copiée"
     },
     "logs": {
-        "title": "Historique"
+        "title": "Historique",
+        "description": "Consultez l’historique avec les informations associées",
+        "table": {
+            "column": {
+                "date": "Date",
+                "user": "Utilisateur",
+                "action": "Action",
+                "object": "Objet",
+                "entity": "Entité",
+                "details": "Détails",
+                "before": "Avant",
+                "after": "Après",
+                "query_id": "Query ID"
+            },
+            "cell": {
+                "copy": "Copier",
+                "copy_success": "{{cellName}} copié dans le presse-papiers"
+            }
+        }
+    },
+    "error": {
+        "title": "Erreur de chargement des données",
+        "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",
+        "page_does_not_exist": "Cette page n'existe pas ...",
+        "page_does_not_seem_to_exist_anymore": "Cette page ne semble pas ou plus exister.",
+        "resume_navigation": "Reprenez votre navigation en retournant à la"
     }
 }

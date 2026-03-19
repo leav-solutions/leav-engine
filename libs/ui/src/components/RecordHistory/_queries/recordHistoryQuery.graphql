@@ -1,14 +1,28 @@
-fragment RecordHistoryLogAttribute on Attribute {
-    id
-    label
-    type
-    format
-    multiple_values
+fragment RecordHistoryLogAttribute on LogAttribute {
     ... on StandardAttribute {
+        id
+        label
+        type
+        format
+        multiple_values
         embedded_fields {
             id
             label
         }
+    }
+    ... on LinkAttribute {
+        id
+        label
+        type
+        format
+        multiple_values
+    }
+    ... on TreeAttribute {
+        id
+        label
+        type
+        format
+        multiple_values
     }
 }
 
@@ -18,24 +32,34 @@ fragment RecordHistoryLogEntry on Log {
     topic {
         attribute {
             ...RecordHistoryLogAttribute
+            ... on LogUnknownEntity {
+                id
+                label
+            }
         }
     }
     user {
-        id
-        whoAmI {
-            # Don't know why, but frontend need that to load record !
+        ... on Record {
             id
-            library {
+            whoAmI {
+                # Don't know why, but frontend need that to load record !
                 id
-            }
-        }
-        properties(attributeIds: ["email"]) {
-            attributeId
-            values {
-                ... on Value {
-                    payload
+                library {
+                    id
                 }
             }
+            properties(attributeIds: ["email"]) {
+                attributeId
+                values {
+                    ... on Value {
+                        payload
+                    }
+                }
+            }
+        }
+        ... on LogUnknownEntity {
+            id
+            label
         }
     }
     before {

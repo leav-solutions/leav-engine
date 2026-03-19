@@ -17,6 +17,11 @@ import {type IAppGraphQLSchema} from '_types/graphql';
 import {EventAction} from '@leav/utils';
 import {type IDBPayloadData} from '_types/events';
 import {type IFormatLogValueHelper} from 'domain/value/helpers/formatLogValue';
+import {AttributeCondition} from '_types/record';
+import {type i18n} from 'i18next';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {AttributeTypes} from '_types/attribute';
+import {type IConfig} from '_types/config';
 
 export type ICoreLogApp = IAppModule & IGraphqlAppModule;
 
@@ -29,6 +34,9 @@ interface IDeps {
     'core.domain.value.helpers.formatLogValue': IFormatLogValueHelper;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.domain.application': IApplicationDomain;
+    'core.domain.record': IRecordDomain;
+    translator: i18n;
+    config: IConfig;
 }
 
 export default function ({
@@ -40,9 +48,15 @@ export default function ({
     'core.domain.value.helpers.formatLogValue': formatLogValue,
     'core.domain.versionProfile': versionProfileDomain,
     'core.domain.application': applicationDomain,
+    'core.domain.record': recordDomain,
+    translator,
+    config,
 }: IDeps): ICoreLogApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            const toSystemTranslation = (key: string, id: string) =>
+                Object.fromEntries(config.lang.available.map(lang => [lang, translator.t(key, {lng: lang, id})]));
+
             const baseSchema = {
                 typeDefs: `
                     enum LogAction {
@@ -54,15 +68,38 @@ export default function ({
                         applyTo: Any
                     }
 
+                    type LogUnknownEntity {
+                        id: ID!
+                        label: SystemTranslation
+                    }
+
+                    type LogUnknownStringEntity {
+                        id: String!
+                        label: SystemTranslation
+                    }
+
+                    type LogUnknownApplicationEntity {
+                        id: ID!
+                        label: SystemTranslation!
+                    }
+
+                    union LogRecord = Record | LogUnknownEntity
+                    union LogUser = Record | LogUnknownEntity
+                    union LogLibrary = Library | LogUnknownEntity
+                    union LogAttribute = StandardAttribute | LinkAttribute | TreeAttribute | LogUnknownEntity
+                    union LogTree = Tree | LogUnknownEntity
+                    union LogVersionProfile = VersionProfile | LogUnknownStringEntity
+                    union LogApplication = Application | LogUnknownApplicationEntity
+
                     type LogTopic {
-                        record: Record
-                        library: Library
-                        attribute: Attribute
-                        tree: Tree
-                        profile: VersionProfile
+                        record: LogRecord
+                        library: LogLibrary
+                        attribute: LogAttribute
+                        tree: LogTree
+                        profile: LogVersionProfile
                         permission: PermissionTopic
                         apiKey: String
-                        application: Application
+                        application: LogApplication
                         filename: String
                     }
 
@@ -73,7 +110,7 @@ export default function ({
 
                     type Log {
                         time: Int!
-                        user: Record!
+                        user: LogUser!
                         queryId: String!
                         instanceId: String!
                         trigger: String
@@ -163,34 +200,194 @@ export default function ({
                         },
                     },
                     Log: {
-                        user: async (log: Log, _, ctx: IQueryInfos) => ({
-                            id: log.userId,
-                            library: USERS_LIBRARY,
-                        }),
+                        user: async (log: Log, _, ctx: IQueryInfos) => {
+                            try {
+                                const result = await recordDomain.find({
+                                    params: {
+                                        filters: [
+                                            {
+                                                field: 'id',
+                                                value: log.userId,
+                                                condition: AttributeCondition.EQUAL,
+                                            },
+                                        ],
+                                        library: USERS_LIBRARY,
+                                        retrieveInactive: true,
+                                    },
+                                    ctx,
+                                });
+
+                                if (result.list.length === 0) {
+                                    return {
+                                        _isUnknown: true,
+                                        id: log.userId,
+                                        label: toSystemTranslation('logs.unknown_user', log.userId),
+                                    };
+                                }
+
+                                return result.list[0];
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: log.userId,
+                                    label: toSystemTranslation('logs.unknown_user', log.userId),
+                                };
+                            }
+                        },
                         time: (log: Log) => Math.trunc(log.time / 1000),
                         before: (log: Log): ILogData => (log.before ? {...log, rawData: log.before} : null),
                         after: (log: Log): ILogData => (log.after ? {...log, rawData: log.after} : null),
                     },
+                    LogUnknownEntity: {
+                        __isTypeOf: (obj: {_isUnknown?: boolean}) => obj._isUnknown === true,
+                    },
+                    LogUnknownStringEntity: {
+                        __isTypeOf: (obj: {_isUnknown?: boolean}) => obj._isUnknown === true,
+                    },
+                    LogUnknownApplicationEntity: {
+                        __isTypeOf: (obj: {_isUnknown?: boolean}) => obj._isUnknown === true,
+                    },
+                    LogRecord: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) =>
+                            obj._isUnknown ? 'LogUnknownEntity' : 'Record',
+                    },
+                    LogUser: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) =>
+                            obj._isUnknown ? 'LogUnknownEntity' : 'Record',
+                    },
+                    LogLibrary: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) =>
+                            obj._isUnknown ? 'LogUnknownEntity' : 'Library',
+                    },
+                    LogAttribute: {
+                        __resolveType: (obj: {_isUnknown?: boolean; type?: AttributeTypes}) => {
+                            if (obj._isUnknown) {
+                                return 'LogUnknownEntity';
+                            }
+                            switch (obj.type) {
+                                case AttributeTypes.SIMPLE_LINK:
+                                case AttributeTypes.ADVANCED_LINK:
+                                    return 'LinkAttribute';
+                                case AttributeTypes.TREE:
+                                    return 'TreeAttribute';
+                                default:
+                                    return 'StandardAttribute';
+                            }
+                        },
+                    },
+                    LogTree: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) => (obj._isUnknown ? 'LogUnknownEntity' : 'Tree'),
+                    },
+                    LogVersionProfile: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) =>
+                            obj._isUnknown ? 'LogUnknownStringEntity' : 'VersionProfile',
+                    },
+                    LogApplication: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) =>
+                            obj._isUnknown ? 'LogUnknownApplicationEntity' : 'Application',
+                    },
                     LogTopic: {
-                        record: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.record
-                                ? {
-                                      id: topic.record.id,
-                                      library: topic.record.libraryId,
-                                  }
-                                : null,
-                        library: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.library ? libraryDomain.getLibraryProperties(topic.library, ctx) : null,
-                        attribute: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.attribute
-                                ? attributeDomain.getAttributeProperties({id: topic.attribute, ctx}).catch(() => null)
-                                : null,
-                        tree: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.tree ? treeDomain.getTreeProperties(topic.tree, ctx) : null,
-                        profile: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.profile
-                                ? versionProfileDomain.getVersionProfileProperties({id: topic.profile, ctx})
-                                : null,
+                        record: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.record) {
+                                return null;
+                            }
+
+                            try {
+                                const result = await recordDomain.find({
+                                    params: {
+                                        filters: [
+                                            {
+                                                field: 'id',
+                                                value: topic.record.id,
+                                                condition: AttributeCondition.EQUAL,
+                                            },
+                                        ],
+                                        library: topic.record.libraryId,
+                                        retrieveInactive: true,
+                                    },
+                                    ctx,
+                                });
+
+                                if (result.list.length === 0) {
+                                    return {
+                                        _isUnknown: true,
+                                        id: topic.record.id,
+                                        label: toSystemTranslation('logs.unknown_record', topic.record.id),
+                                    };
+                                }
+
+                                return result.list[0];
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.record.id,
+                                    label: toSystemTranslation('logs.unknown_record', topic.record.id),
+                                };
+                            }
+                        },
+                        library: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.library) {
+                                return null;
+                            }
+                            try {
+                                const result = await libraryDomain.getLibraryProperties(topic.library, ctx);
+                                return result;
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.library,
+                                    label: toSystemTranslation('logs.unknown_library', topic.library),
+                                };
+                            }
+                        },
+                        attribute: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.attribute) {
+                                return null;
+                            }
+                            try {
+                                const result = await attributeDomain.getAttributeProperties({id: topic.attribute, ctx});
+                                return result;
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.attribute,
+                                    label: toSystemTranslation('logs.unknown_attribute', topic.attribute),
+                                };
+                            }
+                        },
+                        tree: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.tree) {
+                                return null;
+                            }
+                            try {
+                                const result = await treeDomain.getTreeProperties(topic.tree, ctx);
+                                return result;
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.tree,
+                                    label: toSystemTranslation('logs.unknown_tree', topic.tree),
+                                };
+                            }
+                        },
+                        profile: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.profile) {
+                                return null;
+                            }
+                            try {
+                                const result = await versionProfileDomain.getVersionProfileProperties({
+                                    id: topic.profile,
+                                    ctx,
+                                });
+                                return result;
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.profile,
+                                    label: toSystemTranslation('logs.unknown_version_profile', topic.profile),
+                                };
+                            }
+                        },
                         permission: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
                             topic.permission
                                 ? {
@@ -198,10 +395,30 @@ export default function ({
                                       applyTo: topic.permission.applyTo,
                                   }
                                 : null,
-                        application: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.application
-                                ? applicationDomain.getApplicationProperties({id: topic.application, ctx})
-                                : null,
+                        application: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.application) {
+                                return null;
+                            }
+                            try {
+                                const result = await applicationDomain.getApplicationProperties({
+                                    id: topic.application,
+                                    ctx,
+                                });
+                                return (
+                                    result ?? {
+                                        _isUnknown: true,
+                                        id: topic.application,
+                                        label: toSystemTranslation('logs.unknown_application', topic.application),
+                                    }
+                                );
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.application,
+                                    label: toSystemTranslation('logs.unknown_application', topic.application),
+                                };
+                            }
+                        },
                     },
                     LogData: {
                         raw: (logData: ILogData) => logData.rawData || null,

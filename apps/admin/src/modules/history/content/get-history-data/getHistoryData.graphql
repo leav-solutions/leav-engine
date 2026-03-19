@@ -1,0 +1,106 @@
+query GetHistoryData($sort: LogSortInput, $pagination: Pagination) {
+    logs(sort: $sort, pagination: $pagination) {
+        total
+        logs {
+            time
+            user {
+                ... on Record {
+                    id
+                    email: property(attribute: "email") {
+                        ... on Value {
+                            payload
+                        }
+                    }
+                }
+                ... on LogUnknownEntity {
+                    id
+                    label
+                }
+            }
+            action
+            topic {
+                apiKey
+                attribute {
+                    ... on StandardAttribute {
+                        id
+                        label
+                    }
+                    ... on LinkAttribute {
+                        id
+                        label
+                    }
+                    ... on TreeAttribute {
+                        id
+                        label
+                    }
+                    ... on LogUnknownEntity {
+                        id
+                        label
+                    }
+                }
+                filename
+                library {
+                    ... on Library {
+                        id
+                        label
+                    }
+                    ... on LogUnknownEntity {
+                        id
+                        label
+                    }
+                }
+                permission {
+                    type
+                    applyTo
+                }
+                profile {
+                    ... on VersionProfile {
+                        id
+                    }
+                    ... on LogUnknownStringEntity {
+                        id
+                    }
+                }
+                record {
+                    ... on Record {
+                        id
+                        whoAmI {
+                            label
+                        }
+                    }
+                    ... on LogUnknownEntity {
+                        id
+                        label
+                    }
+                }
+                tree {
+                    ... on Tree {
+                        id
+                        label
+                    }
+                    ... on LogUnknownEntity {
+                        id
+                        label
+                    }
+                }
+                application {
+                    ... on Application {
+                        id
+                        label
+                    }
+                    ... on LogUnknownApplicationEntity {
+                        id
+                        label
+                    }
+                }
+            }
+            after {
+                asString
+            }
+            before {
+                asString
+            }
+            queryId
+        }
+    }
+}

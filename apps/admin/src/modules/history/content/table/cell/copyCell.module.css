@@ -1,0 +1,15 @@
+.copyCellIcon {
+    position: absolute;
+    right: calc(var(--general-spacing-xs) * 1px);
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0;
+}
+
+:global(tr:hover) .copyCellIcon,
+:global(tr:focus-visible) .copyCellIcon,
+.copyCellIcon:hover,
+.copyCellIcon:focus {
+    opacity: 1;
+}
