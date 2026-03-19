@@ -19,6 +19,7 @@ import VersionProfiles from 'components/versionProfiles/VersionProfiles';
 import EditVersionProfile from 'components/versionProfiles/EditVersionProfile';
 import Tasks from 'components/tasks/Tasks';
 import {History} from '../history/History';
+import {NotFound} from '../not-found/NotFound';
 
 // Note:
 // - For historic routes, we don't use the children routes feature as they don't have an <Outlet/> and are not nested
@@ -94,5 +95,9 @@ export const adminRoutes: RouteObject[] = [
     {
         path: AdminAbsolutePaths.logs,
         element: <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={History} />,
+    },
+    {
+        path: AdminAbsolutePaths.notFound,
+        element: <NotFound />,
     },
 ];

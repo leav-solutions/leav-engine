@@ -3,7 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {act, render, screen} from '_tests/testUtils';
+import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {NavigationMenu} from './NavigationMenu';
+
+const NavigateOnMount = ({to}: {to: string}) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+        navigate(to);
+    }, []);
+    return null;
+};
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -56,5 +66,20 @@ describe('NavigationMenu', () => {
         menuItems.forEach(item => {
             expect(item).not.toHaveClass('active');
         });
+    });
+
+    test('Should keep last valid active menu item when current route is not-found', async () => {
+        await act(async () => {
+            render(
+                <>
+                    <NavigationMenu isOpen={true} onOpenChanged={jest.fn()} />
+                    <NavigateOnMount to="/not-found" />
+                </>,
+                {routerProps: {initialEntries: ['/libraries']}},
+            );
+        });
+
+        const librariesItem = screen.getByText(/libraries/).closest('[data-role="menuitem"]');
+        expect(librariesItem).toHaveClass('active');
     });
 });

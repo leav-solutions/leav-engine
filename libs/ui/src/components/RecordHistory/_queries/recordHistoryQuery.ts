@@ -12,13 +12,31 @@ export interface IEmbeddedField {
 
 export const recordHistoryLogAttributeFragment = (depthEmbeddedFields: number) => `
     attribute {
-        id
-        label
-        type
-        format
-        multiple_values
         ... on StandardAttribute {
+            id
+            label
+            type
+            format
+            multiple_values
             ${getEmbeddedFields(depthEmbeddedFields)}
+        }
+        ... on LinkAttribute {
+            id
+            label
+            type
+            format
+            multiple_values
+        }
+        ... on TreeAttribute {
+            id
+            label
+            type
+            format
+            multiple_values
+        }
+        ... on LogUnknownEntity {
+            id
+            label
         }
     }
 `;
@@ -31,20 +49,26 @@ const RecordHistoryLogEntryFragment = (depthAttributeEmbeddedFields: number) => 
             ${recordHistoryLogAttributeFragment(depthAttributeEmbeddedFields)}
         }
         user {
-            id
-            whoAmI { # Don't know why, but frontend need that to load record !
+            ... on Record {
                 id
-                library {
+                whoAmI { # Don't know why, but frontend need that to load record !
                     id
-                }
-            }
-            properties(attributeIds: ["email"]) {
-                attributeId
-                values {
-                ... on Value {
-                        payload
+                    library {
+                        id
                     }
                 }
+                properties(attributeIds: ["email"]) {
+                    attributeId
+                    values {
+                        ... on Value {
+                            payload
+                        }
+                    }
+                }
+            }
+            ... on LogUnknownEntity {
+                id
+                label
             }
         }
         before {

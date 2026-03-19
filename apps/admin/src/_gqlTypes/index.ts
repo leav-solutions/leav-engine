@@ -1123,6 +1123,20 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, defaultView?: { id: string } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
+export type GetHistoryDataQueryVariables = Exact<{
+  sort?: InputMaybe<LogSortInput>;
+  pagination?: InputMaybe<Pagination>;
+}>;
+
+
+export type GetHistoryDataQuery = { logs?: { total: number, logs: Array<{ time: number, action?: LogAction | null, queryId: string, user:
+        | { id: string, label?: any | null }
+        | { id: string, email: Array<{ payload?: any | null }> }
+      , topic?: { apiKey?: string | null, filename?: string | null, attribute?: { id: string, label?: any | null } | null, library?: { id: string, label?: any | null } | null, permission?: { type: string, applyTo?: any | null } | null, profile?: { id: string } | null, record?:
+          | { id: string, label?: any | null }
+          | { id: string, whoAmI: { label?: string | null } }
+         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null } | null, after?: { asString?: string | null } | null, before?: { asString?: string | null } | null }> } | null };
+
 export type DeleteApiKeyMutationVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -2103,6 +2117,151 @@ export const ValueDetailsExtendedFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
+export const GetHistoryDataDocument = gql`
+    query GetHistoryData($sort: LogSortInput, $pagination: Pagination) {
+  logs(sort: $sort, pagination: $pagination) {
+    total
+    logs {
+      time
+      user {
+        ... on Record {
+          id
+          email: property(attribute: "email") {
+            ... on Value {
+              payload
+            }
+          }
+        }
+        ... on LogUnknownEntity {
+          id
+          label
+        }
+      }
+      action
+      topic {
+        apiKey
+        attribute {
+          ... on StandardAttribute {
+            id
+            label
+          }
+          ... on LinkAttribute {
+            id
+            label
+          }
+          ... on TreeAttribute {
+            id
+            label
+          }
+          ... on LogUnknownEntity {
+            id
+            label
+          }
+        }
+        filename
+        library {
+          ... on Library {
+            id
+            label
+          }
+          ... on LogUnknownEntity {
+            id
+            label
+          }
+        }
+        permission {
+          type
+          applyTo
+        }
+        profile {
+          ... on VersionProfile {
+            id
+          }
+          ... on LogUnknownStringEntity {
+            id
+          }
+        }
+        record {
+          ... on Record {
+            id
+            whoAmI {
+              label
+            }
+          }
+          ... on LogUnknownEntity {
+            id
+            label
+          }
+        }
+        tree {
+          ... on Tree {
+            id
+            label
+          }
+          ... on LogUnknownEntity {
+            id
+            label
+          }
+        }
+        application {
+          ... on Application {
+            id
+            label
+          }
+          ... on LogUnknownApplicationEntity {
+            id
+            label
+          }
+        }
+      }
+      after {
+        asString
+      }
+      before {
+        asString
+      }
+      queryId
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetHistoryDataQuery__
+ *
+ * To run a query within a React component, call `useGetHistoryDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetHistoryDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetHistoryDataQuery({
+ *   variables: {
+ *      sort: // value for 'sort'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetHistoryDataQuery(baseOptions?: Apollo.QueryHookOptions<GetHistoryDataQuery, GetHistoryDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetHistoryDataQuery, GetHistoryDataQueryVariables>(GetHistoryDataDocument, options);
+      }
+export function useGetHistoryDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetHistoryDataQuery, GetHistoryDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetHistoryDataQuery, GetHistoryDataQueryVariables>(GetHistoryDataDocument, options);
+        }
+// @ts-ignore
+export function useGetHistoryDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetHistoryDataQuery, GetHistoryDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetHistoryDataQuery, GetHistoryDataQueryVariables>;
+export function useGetHistoryDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetHistoryDataQuery, GetHistoryDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetHistoryDataQuery | undefined, GetHistoryDataQueryVariables>;
+export function useGetHistoryDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetHistoryDataQuery, GetHistoryDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetHistoryDataQuery, GetHistoryDataQueryVariables>(GetHistoryDataDocument, options);
+        }
+export type GetHistoryDataQueryHookResult = ReturnType<typeof useGetHistoryDataQuery>;
+export type GetHistoryDataLazyQueryHookResult = ReturnType<typeof useGetHistoryDataLazyQuery>;
+export type GetHistoryDataSuspenseQueryHookResult = ReturnType<typeof useGetHistoryDataSuspenseQuery>;
+export type GetHistoryDataQueryResult = Apollo.QueryResult<GetHistoryDataQuery, GetHistoryDataQueryVariables>;
 export const DeleteApiKeyDocument = gql`
     mutation DELETE_API_KEY($id: String!) {
   deleteApiKey(id: $id) {

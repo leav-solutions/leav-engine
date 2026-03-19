@@ -1,0 +1,9 @@
+.historyContainer {
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    gap: calc(var(--general-spacing-s) * 1px);
+}

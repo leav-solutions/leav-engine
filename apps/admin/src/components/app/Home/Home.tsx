@@ -11,9 +11,10 @@ const headerHeight = '3rem';
 
 const Content = styled.div`
     grid-area: content;
-    padding: 20px;
     height: calc(100vh - ${headerHeight});
     overflow-y: auto;
+    padding: calc(var(--general-spacing-m) * 1px);
+    background-color: var(--general-colors-primary-50);
 `;
 
 const HeaderWrapper = styled.div`

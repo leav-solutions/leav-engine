@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSideMenu} from 'aristid-ds';
 import {useGetNavigationMenuItems} from './useGetNavigationMenuItems';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useActiveMenuItemKey} from './useActiveMenuItemKey';
+import {useNavigate} from 'react-router-dom';
 
 interface INavigationMenuProps {
     isOpen: boolean;
@@ -13,8 +14,7 @@ interface INavigationMenuProps {
 export const NavigationMenu = ({isOpen, onOpenChanged}: INavigationMenuProps) => {
     const menuItems = useGetNavigationMenuItems();
     const navigate = useNavigate();
-    const {pathname} = useLocation();
-    const activeItemKey = pathname.split('/').filter(Boolean)[0] ?? '';
+    const activeItemKey = useActiveMenuItemKey();
 
     const _handleMenuItemClick = (itemKey: string) => {
         navigate(`/${itemKey}`);

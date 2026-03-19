@@ -222,6 +222,13 @@
         "previews_status": "Preview status"
     },
     "logs": {
+        "unknown_attribute": "Unknown attribute ({{id}})",
+        "unknown_library": "Unknown library ({{id}})",
+        "unknown_record": "Unknown record ({{id}})",
+        "unknown_user": "Unknown user ({{id}})",
+        "unknown_tree": "Unknown tree ({{id}})",
+        "unknown_version_profile": "Unknown version profile ({{id}})",
+        "unknown_application": "Unknown application ({{id}})",
         "unknown_value": "Unknown value"
     },
     "tasks": {

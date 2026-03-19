@@ -11,6 +11,7 @@ export const AdminAbsolutePaths = {
     version_profiles: '/version_profiles',
     tasks: '/tasks',
     logs: '/logs',
+    notFound: '/not-found',
 };
 
 export const AdminUnreachablePaths = {

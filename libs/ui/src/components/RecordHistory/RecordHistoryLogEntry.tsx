@@ -36,9 +36,11 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     const hasValue = (value: LogEntryData) => value != null && 'asString' in value && value.asString != null;
     const hasBefore = hasValue(before);
     const hasAfter = hasValue(after);
+    const isKnownAttribute = (attr: typeof attribute): attr is Extract<typeof attribute, {multiple_values: boolean}> =>
+        attr != null && 'multiple_values' in attr;
 
     const getUserString = () => {
-        const email = user?.properties[0]?.values[0]?.payload;
+        const email = user && 'properties' in user ? user.properties[0]?.values[0]?.payload : null;
         return email ? (
             <StyledLinkButton type="link" href={`mailto:${email}`}>
                 {email}
@@ -49,7 +51,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     };
     const getDateString = () => dayjs.unix(time).format('DD/MM/YYYY HH:mm:ss'); // Maybe use https://day.js.org/docs/en/display/format#localized-formats if needed
     const getActionString = () => {
-        if (attribute?.multiple_values) {
+        if (isKnownAttribute(attribute) && attribute.multiple_values) {
             if (!hasBefore && hasAfter) {
                 return t('record_history.action.value_add');
             }
@@ -64,7 +66,10 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
         localizedTranslation(attribute?.label, lang) || attribute?.id || t('record_history.unknown_attribute');
 
     const formatValue = (logData: LogEntryData) => {
-        if (attribute?.format === AttributeFormat.rich_text || attribute?.format === AttributeFormat.extended) {
+        if (
+            isKnownAttribute(attribute) &&
+            (attribute.format === AttributeFormat.rich_text || attribute.format === AttributeFormat.extended)
+        ) {
             return (
                 <KitTypography.AdvancedParagraph size="fontSize5" ellipsis={{rows: 4, expandable: true}}>
                     {logData.asString}
@@ -77,7 +82,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
     const formatValueChange = () => {
         const noValue = <KitTypography.Text size="fontSize5">{t('record_history.no_value')}</KitTypography.Text>;
 
-        if (attribute?.format === AttributeFormat.extended) {
+        if (isKnownAttribute(attribute) && attribute.format === AttributeFormat.extended) {
             const diffs = getExtendedAttributeDiffs(
                 hasValue(before) ? JSON.parse(before.asString) : undefined,
                 hasValue(after) ? JSON.parse(after.asString) : undefined,
@@ -106,7 +111,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
             ));
         }
 
-        if (attribute?.multiple_values) {
+        if (isKnownAttribute(attribute) && attribute.multiple_values) {
             const uniqValue = !hasBefore && hasAfter ? after : hasBefore && !hasAfter ? before : null;
 
             if (uniqValue != null) {
