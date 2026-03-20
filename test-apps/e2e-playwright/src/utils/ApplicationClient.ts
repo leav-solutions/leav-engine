@@ -7,7 +7,7 @@ import {GenericClient} from './GenericClient';
 export class ApplicationClient extends GenericClient {
     public async createApplication(applicationName: string): Promise<void> {
         const payload: ApplicationInput = {
-            id: applicationName,
+            id: applicationName.replace(/-/g, '_'),
             label: {
                 en: applicationName + ' (en)',
                 fr: applicationName + ' (fr)',
