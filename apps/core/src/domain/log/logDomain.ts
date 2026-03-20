@@ -4,7 +4,7 @@
 import {type ILogRepo} from 'infra/log/logRepo';
 import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, Log} from '_types/log';
 import {type IQueryInfos} from '_types/queryInfos';
-import {AdminPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
 import {type IPermissionDomain} from 'domain/permission/permissionDomain';
 import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
@@ -41,10 +41,12 @@ export default function ({
                     throw new PermissionError(RecordPermissionsActions.ACCESS_RECORD);
                 }
             } else {
-                // For any other request not related to a specific record
-                // For now, do not allow non-admin users to access logs
-                // Later, if a user interface can display logs, maybe add a permission to be setup in admin panel, like others
-                const canAccessAllLogs = permissionDomain.isAdminOrSystemUser(ctx);
+                const canAccessAllLogs = await permissionDomain.isAllowed({
+                    type: PermissionTypes.ADMIN,
+                    action: AdminPermissionsActions.ACCESS_LOGS,
+                    ctx,
+                });
+
                 if (!canAccessAllLogs) {
                     throw new PermissionError(AdminPermissionsActions.ACCESS_LOGS);
                 }

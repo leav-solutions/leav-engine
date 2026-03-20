@@ -14,7 +14,7 @@ describe('logDomain', () => {
         getLogs: jest.fn(),
     };
     const mockPermissionDomain: Mockify<IPermissionDomain> = {
-        isAdminOrSystemUser: jest.fn(),
+        isAllowed: jest.fn(),
     };
     const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
         getRecordPermission: jest.fn(),
@@ -33,7 +33,7 @@ describe('logDomain', () => {
 
     describe('getLogs', () => {
         test('Get logs from repo allow for admin user', async () => {
-            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(true);
+            mockPermissionDomain.isAllowed.mockResolvedValue(true);
             const logs = await _logDomain.getLogs(
                 {},
                 {
@@ -44,11 +44,11 @@ describe('logDomain', () => {
 
             expect(logs).toEqual([mockLog]);
             expect(mockLogRepo.getLogs).toHaveBeenCalled();
-            expect(mockPermissionDomain.isAdminOrSystemUser).toHaveBeenCalled();
+            expect(mockPermissionDomain.isAllowed).toHaveBeenCalled();
         });
 
         test('Reject get logs for non admin user', async () => {
-            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(false);
+            mockPermissionDomain.isAllowed.mockResolvedValue(false);
             await expect(
                 _logDomain.getLogs(
                     {},
@@ -60,11 +60,10 @@ describe('logDomain', () => {
             ).rejects.toThrow('Action forbidden');
 
             expect(mockLogRepo.getLogs).not.toHaveBeenCalled();
-            expect(mockPermissionDomain.isAdminOrSystemUser).toHaveBeenCalled();
+            expect(mockPermissionDomain.isAllowed).toHaveBeenCalled();
         });
 
         test('Get logs for a record from repo allow if user can access this record', async () => {
-            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(false);
             mockRecordPermissionDomain.getRecordPermission.mockResolvedValue(true);
             const logs = await _logDomain.getLogs(
                 {
@@ -85,7 +84,7 @@ describe('logDomain', () => {
 
             expect(logs).toEqual([mockLog]);
             expect(mockLogRepo.getLogs).toHaveBeenCalled();
-            expect(mockPermissionDomain.isAdminOrSystemUser).not.toHaveBeenCalled();
+            expect(mockPermissionDomain.isAllowed).not.toHaveBeenCalled();
             expect(mockRecordPermissionDomain.getRecordPermission).toHaveBeenCalled();
         });
     });
