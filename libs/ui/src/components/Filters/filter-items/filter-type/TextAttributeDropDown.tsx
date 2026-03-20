@@ -1,18 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
-import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
 `;
+
+const DEBOUNCE_DELAY = 300;
+const MIN_SEARCH_LENGTH = 3;
 
 export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
@@ -20,36 +22,43 @@ export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
     selectDropDownRef,
 }) => {
     const {t} = useSharedTranslation();
-
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
-    const [inputValue, setInputValue] = useState(filter.value || '');
-    const debouncedInputValue = useDebouncedValue(inputValue, 300);
+    // Local state drives the input display, decoupled from filter.value which only updates after MIN_SEARCH_LENGTH chars
+    const [inputValue, setInputValue] = useState(filter.value ?? '');
+    // Ref to the pending debounce timer so we can cancel it on external resets
+    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        setInputValue(filter.value || '');
+        // When filter.value is reset externally (e.g. RESET_FILTER), cancel any pending debounce first
+        // to prevent it from dispatching a stale value that would overwrite the reset
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+        setInputValue(filter.value ?? '');
     }, [filter.value]);
-
-    // Only apply onFilterChange when the input is empty or there are more than 2 characters
-    useEffect(() => {
-        const valueToApply = debouncedInputValue;
-
-        if (valueToApply.length === 0 && filter.value !== null) {
-            onFilterChange({...filter, value: null});
-            return;
-        }
-
-        if (valueToApply.length >= 3 && filter.value !== valueToApply) {
-            onFilterChange({...filter, value: valueToApply});
-        }
-    }, [debouncedInputValue, onFilterChange, filter]);
 
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
         onFilterChange({...filter, condition});
     };
 
     const _onInputChanged: ComponentProps<typeof KitInput>['onChange'] = event => {
-        const newInputValue = event.target.value;
-        setInputValue(newInputValue);
+        const newValue = event.target.value;
+        setInputValue(newValue);
+
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+
+        if (newValue.length === 0) {
+            onFilterChange({...filter, value: null});
+            return;
+        }
+
+        if (newValue.length >= MIN_SEARCH_LENGTH) {
+            debounceTimerRef.current = setTimeout(() => {
+                onFilterChange({...filter, value: newValue});
+            }, DEBOUNCE_DELAY);
+        }
     };
 
     const showSearch =
