@@ -30,6 +30,10 @@ workflow:
   if: $CI_PIPELINE_SOURCE == "merge_request_event"
   when: on_success
 
+.schedule_e2e_playwright: &schedule_e2e_playwright
+  if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "develop" && $SCHEDULED_ACTION == "e2e-playwright"
+  when: on_success
+
 .new_lib_installed_changes: &new_lib_installed_changes yarn.lock
 
 variables:
@@ -726,9 +730,14 @@ e2e-playwright:
       when: never
     - *no_tag_rule
     - *no_duplicate_rule
+    - *schedule_e2e_playwright
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       allow_failure: true # To make job optional in MR pipelines
       when: manual
+    - if: $CI_COMMIT_BRANCH == "develop"
+      allow_failure: true # To make job optional for now
+      when: manual
+
 ## E2E tests
 ##########
 
