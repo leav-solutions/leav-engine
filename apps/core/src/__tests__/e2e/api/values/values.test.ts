@@ -972,7 +972,7 @@ describe('Values', () => {
                             {
                                 attribute: "${attrAdvancedReverseLinkName}",
                                 id_value: null,
-                                value: "${recordIdAdvancedLink}"
+                                payload: "${recordIdAdvancedLink}"
                             },
                         ]
                     ) {
@@ -1054,6 +1054,40 @@ describe('Values', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.data.data.deleteValue[0].id_value).toBe(advancedReverseLinkValueId);
                 expect(res.data.data.deleteValue[0].payload.id).toBe(recordIdAdvancedLink);
+
+                expect(await getAdvancedLinkFromRecord(recordIdAdvancedLink)).toHaveLength(0);
+            });
+
+            test('Delete value with saveValueBatch should remove advanced link from linked record', async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    saveValueBatch(
+                            library: "${testLibName}",
+                            recordId: "${recordIdReverseLink}",
+                            deleteEmpty: true,
+                            values: [
+                                {
+                                    attribute: "${attrAdvancedReverseLinkName}",
+                                    id_value: "${advancedReverseLinkValueId}",
+                                },
+                            ]
+                        ) {
+                            values {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }`);
+
+                expect(res.status).toBe(200);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.saveValueBatch.values).toHaveLength(1);
+                expect(res.data.data.saveValueBatch.values[0].id_value).toBe(advancedReverseLinkValueId);
+                expect(res.data.data.saveValueBatch.values[0].payload.id).toBe(recordIdAdvancedLink);
 
                 expect(await getAdvancedLinkFromRecord(recordIdAdvancedLink)).toHaveLength(0);
             });
@@ -1182,7 +1216,7 @@ describe('Values', () => {
                             {
                                 attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
                                 id_value: null,
-                                value: "${recordIdSimpleLink}"
+                                payload: "${recordIdSimpleLink}"
                             },
                         ]
                     ) {
@@ -1265,6 +1299,41 @@ describe('Values', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.data.data.deleteValue[0].id_value).toBe(advancedReverseSimpleLinkValueId);
                 expect(res.data.data.deleteValue[0].payload.id).toBe(recordIdSimpleLink);
+
+                expect(await getSimpleLinkLinkedRecord(recordIdSimpleLink, true)).toBeUndefined();
+                expect(await getReverseLinkFromRecord(recordIdReverseLink)).toHaveLength(0);
+            });
+
+            test('Delete value with saveValueBatch should remove simple link from linked record and deactivate linked record', async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    saveValueBatch(
+                            library: "${testLibName}",
+                            recordId: "${recordIdReverseLink}",
+                            deleteEmpty: true,
+                            values: [
+                                {
+                                    attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                                    id_value: "${advancedReverseSimpleLinkValueId}",
+                                },
+                            ]
+                        ) {
+                            values {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }`);
+
+                expect(res.status).toBe(200);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.saveValueBatch.values).toHaveLength(1);
+                expect(res.data.data.saveValueBatch.values[0].id_value).toBe(advancedReverseSimpleLinkValueId);
+                expect(res.data.data.saveValueBatch.values[0].payload.id).toBe(recordIdSimpleLink);
 
                 expect(await getSimpleLinkLinkedRecord(recordIdSimpleLink, true)).toBeUndefined();
                 expect(await getReverseLinkFromRecord(recordIdReverseLink)).toHaveLength(0);

@@ -315,12 +315,10 @@ describe('JoinLibraries', () => {
                                 {
                                     attribute: "${attrCampaignStructureItems}",
                                     id_value: "${campaignStructureItems[0].id_value}",
-                                    value: null
                                 },
                                 {
                                     attribute: "${attrCampaignStructureItems}",
                                     id_value: "${campaignStructureItems[2].id_value}",
-                                    value: null
                                 }
                             ]
                         ) {
