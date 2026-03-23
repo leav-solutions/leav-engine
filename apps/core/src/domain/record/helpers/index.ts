@@ -4,5 +4,4 @@
 export {default as createRecord} from './createRecord';
 export {default as deleteRecord} from './deleteRecord';
 export {default as sendRecordUpdateEvent} from './sendRecordUpdateEvent';
-export {default as getAccessPermissionFilters} from './getAccessPermissionFilters';
 export {default as findRecords} from './findRecords';
