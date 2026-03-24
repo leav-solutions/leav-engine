@@ -16,6 +16,8 @@ import {SelectAllCheckbox} from '../../shared/SelectAllCheckbox';
 import {buildFlattenTree} from './utils/buildFlattenTreeMap';
 import {getSelectAllState} from './utils/getSelectAllState';
 import {filterTreeByPermission} from './utils/filterTreeByPermission';
+import {countSelectedTreeChildren} from './utils/countSelectedTreeChildren';
+import {FilterTreeNodeTitle} from '../../shared/FilterTreeNodeTitle';
 
 const ScrollableContent = styled.div`
     max-height: 182px; /* Equal to 5.5 nodes of KitTree */
@@ -141,6 +143,22 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
         checkable: true,
         checkStrictly: true,
         multiple: true,
+        titleRender(node) {
+            const nodeData = node as EventDataNode<ITreeNode>;
+
+            // TODO: countSelectedTreeChildren is computed here because the tree is split into two sub-trees
+            // (visibleByDefaultTree / hiddenByDefaultTree) which reshapes the `children` field.
+            // Once the dual-tree is removed and a single tree is used, this calculation can be
+            // moved closer to the data fetching (e.g. in _toTreeNode in useGetTreeData).
+            const selectedChildrenCount = countSelectedTreeChildren(nodeData, selectedNodesIds);
+
+            return (
+                <FilterTreeNodeTitle
+                    title={nodeData.title}
+                    count={selectedChildrenCount > 0 ? selectedChildrenCount : undefined}
+                />
+            );
+        },
         onExpand: expandedKeys => {
             setExpandedNodeIdsFromUser(expandedKeys);
         },
