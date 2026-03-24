@@ -1,0 +1,26 @@
+query GetRecordsLinkValuesProperty(
+    $library: ID!
+    $filters: [RecordFilterInput]
+    $retrieveInactive: Boolean
+    $attribute: ID!
+) {
+    records(library: $library, filters: $filters, retrieveInactive: $retrieveInactive) {
+        list {
+            id
+            whoAmI {
+                library {
+                    id
+                }
+            }
+            active
+            property(attribute: $attribute) {
+                id_value
+                ... on LinkValue {
+                    linkPayload: payload {
+                        id
+                    }
+                }
+            }
+        }
+    }
+}
