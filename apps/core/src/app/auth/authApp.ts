@@ -15,7 +15,12 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
-import {ACCESS_TOKEN_COOKIE_NAME, type ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
+import {
+    ACCESS_TOKEN_COOKIE_NAME,
+    type AuthPostOidcLoginCallback,
+    type ITokenUserData,
+    REFRESH_TOKEN_COOKIE_NAME,
+} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type IRequestWithContext} from '../../_types/express';
@@ -30,6 +35,7 @@ import {type IServerRouteAppModule} from 'interface/server';
 import {adminsGroupId, systemUserId} from '../../_constants/users';
 import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
 import {type ISessionRepo} from '../../infra/session/sessionRepo';
+import {type IExtensionPoints} from '../../_types/extensionPoints';
 import * as crypto from 'node:crypto';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
@@ -38,6 +44,7 @@ export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
         res: Response<unknown>,
     ): Promise<ITokenUserData>;
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
+    extensionPoints?: IExtensionPoints;
 }
 
 const SESSION_CACHE_HEADER = 'session';
@@ -85,6 +92,8 @@ export default function ({
     'core.infra.session': sessionRepo,
     config,
 }: IAuthAppDeps): IAuthApp {
+    const postOidcLoginCallbacks: AuthPostOidcLoginCallback[] = [];
+
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groups = await valueDomain.getValues({
             library: 'users',
@@ -309,6 +318,10 @@ export default function ({
                                     ctx: systemCtx,
                                 });
                             }
+                        }
+
+                        for (const callback of postOidcLoginCallbacks) {
+                            await callback(user, decodedAccessToken, systemCtx);
                         }
 
                         await oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
@@ -695,6 +708,11 @@ export default function ({
             config.auth.debugLog && logger.debug('Redirecting to OIDC login url', {oidcLoginUrl});
 
             return res.redirect(oidcLoginUrl);
+        },
+        extensionPoints: {
+            registerAuthPostOidcLoginCallback: (callback: AuthPostOidcLoginCallback) => {
+                postOidcLoginCallbacks.push(callback);
+            },
         },
     };
 }

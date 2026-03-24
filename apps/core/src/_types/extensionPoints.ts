@@ -5,6 +5,7 @@ import {type IActionsListFunction} from './actionsList';
 import {type IAppGraphQLSchema} from './graphql';
 import {type PermissionTypes} from './permissions';
 import {type PluginRegisterRoute} from './endpoint';
+import {type AuthPostOidcLoginCallback} from './auth';
 
 export interface IExtensionPoints {
     [name: string]: (...args: any[]) => void;
@@ -33,4 +34,11 @@ export interface IExtensionPointsFunctions extends IExtensionPoints {
      * @param {PluginRegisterRoute[]} routes - list of routes to register
      */
     registerRoutes: (routes: PluginRegisterRoute[]) => void;
+
+    /**
+     * Method to register a callback to be executed after a successful OIDC login.
+     *
+     * Useful to change user settings or to log some information after the user is authenticated but before the session is created.
+     */
+    registerAuthPostOidcLoginCallback: (callback: AuthPostOidcLoginCallback) => void;
 }
