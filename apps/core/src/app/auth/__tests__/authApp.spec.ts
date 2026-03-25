@@ -41,6 +41,10 @@ const depsBase: ToAny<IAuthAppDeps> = {
 };
 
 describe('authApp', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     describe('auth/authenticate', () => {
         it('Should set new access and refresh token', async () => {
             // GIVEN
@@ -533,6 +537,8 @@ describe('authApp', () => {
     });
 
     describe('auth/oidc/verify/*', () => {
+        const postOidcLoginCallback = jest.fn();
+
         it('Should respond 401 when oidc not enable', async () => {
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
@@ -544,6 +550,7 @@ describe('authApp', () => {
                 ...depsBase,
                 config: mockConfig as IConfig,
             });
+            authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
             const expressMock = {
                 get: jest.fn(),
                 post: jest.fn(),
@@ -560,6 +567,7 @@ describe('authApp', () => {
             const result = await verifyHandler(request, response);
 
             expect(result).toEqual(401);
+            expect(postOidcLoginCallback).not.toHaveBeenCalled();
         });
 
         it('Should redirect user to oidc login url when user exists and is token is valid', async () => {
@@ -611,6 +619,7 @@ describe('authApp', () => {
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
                 config: mockConfig as IConfig,
             });
+            authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
 
             const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
@@ -619,10 +628,11 @@ describe('authApp', () => {
             )[1];
 
             // Mock jwt.decode calls for id_token then access_token
+            const decodedAccessToken = {resource_access: {client: {roles: []}}};
             const decodeSpy = jest.spyOn(jwt, 'decode');
             decodeSpy
                 .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
-                .mockImplementationOnce(() => ({resource_access: {client: {roles: []}}}) as any);
+                .mockImplementationOnce(() => decodedAccessToken as any);
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
@@ -641,6 +651,11 @@ describe('authApp', () => {
             // Assert
             expect(mockRecordDomain.createRecord).not.toHaveBeenCalled();
             expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
+            expect(postOidcLoginCallback).toHaveBeenCalledWith(
+                expect.objectContaining({id: 'existing-user-id', email: 'user@example.com'}),
+                decodedAccessToken,
+                expect.objectContaining({userId: '2'}),
+            );
         });
 
         it('Should respond 401 when a user not found and oidc enable and auto-provisioning disable', async () => {
@@ -675,6 +690,7 @@ describe('authApp', () => {
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
                 config: mockConfig as IConfig,
             });
+            authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
 
             // Mock jwt.decode calls for id_token then access_token
             const decodeSpy = jest.spyOn(jwt, 'decode');
@@ -703,6 +719,7 @@ describe('authApp', () => {
             // Act
             const resultReqPromise = new Promise((resolve, reject) => verifyHandler(request, response, reject));
             await expect(resultReqPromise).rejects.toEqual(new Error('Invalid user'));
+            expect(postOidcLoginCallback).not.toHaveBeenCalled();
         });
 
         it('Should auto provision a user when not found (no admin role)', async () => {
@@ -750,6 +767,7 @@ describe('authApp', () => {
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
                 config: mockConfig as IConfig,
             });
+            authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
 
             const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
@@ -758,10 +776,11 @@ describe('authApp', () => {
             )[1];
 
             // Mock jwt.decode calls for id_token then access_token
+            const decodedAccessToken = {resource_access: {client: {roles: []}}};
             const decodeSpy = jest.spyOn(jwt, 'decode');
             decodeSpy
                 .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
-                .mockImplementationOnce(() => ({resource_access: {client: {roles: []}}}) as any);
+                .mockImplementationOnce(() => decodedAccessToken as any);
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
@@ -789,6 +808,11 @@ describe('authApp', () => {
             });
             expect((mockValueDomain as any).saveValue).not.toHaveBeenCalled();
             expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
+            expect(postOidcLoginCallback).toHaveBeenCalledWith(
+                expect.objectContaining({id: 'new-user-id', email: 'user@example.com'}),
+                decodedAccessToken,
+                expect.objectContaining({userId: '2'}),
+            );
         });
 
         it('Should add user to admin group when token contains admin role', async () => {
