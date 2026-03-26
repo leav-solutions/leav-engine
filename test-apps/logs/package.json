@@ -1,6 +1,6 @@
 {
     "name": "logs",
-    "version": "1.11.0",
+    "version": "1.12.0",
     "description": "Integration testing of the backend of app logs managing",
     "scripts": {
         "start": "jest"
