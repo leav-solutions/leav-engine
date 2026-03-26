@@ -1,0 +1,10 @@
+.filterDropdownFooterContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.filterDropdownFooterDivider {
+    margin-top: 0;
+    margin-bottom: calc(var(--general-spacing-xs) * 1px);
+}

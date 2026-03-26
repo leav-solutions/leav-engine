@@ -1,5 +1,5 @@
-query GetHistoryData($sort: LogSortInput, $pagination: Pagination) {
-    logs(sort: $sort, pagination: $pagination) {
+query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
+    logs(filters: $filters, sort: $sort, pagination: $pagination) {
         total
         logs {
             time

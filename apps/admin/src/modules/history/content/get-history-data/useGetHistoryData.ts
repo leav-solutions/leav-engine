@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {LogSortableField, SortOrder, useGetHistoryDataQuery} from '_gqlTypes';
+import {type LogFilterInput, LogSortableField, SortOrder, useGetHistoryDataQuery} from '_gqlTypes';
 import {mapLogsToHistoryData} from './mapLogsToHistoryData';
 import useLang from 'hooks/useLang';
 
@@ -21,13 +21,15 @@ export type HistoryData = {
 export type HistoryPaginationParams = {
     currentPage: number;
     pageSize: number;
+    filters?: LogFilterInput;
 };
 
-export const useGetHistoryData = ({currentPage, pageSize}: HistoryPaginationParams) => {
+export const useGetHistoryData = ({currentPage, pageSize, filters}: HistoryPaginationParams) => {
     const {lang} = useLang();
     const {data, loading, error} = useGetHistoryDataQuery({
         fetchPolicy: 'no-cache',
         variables: {
+            filters,
             sort: {
                 field: LogSortableField.time,
                 order: SortOrder.desc,

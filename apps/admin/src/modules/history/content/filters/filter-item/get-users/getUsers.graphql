@@ -1,0 +1,12 @@
+query GetUsers {
+    records(library: "users") {
+        list {
+            id
+            email: property(attribute: "email") {
+                ... on Value {
+                    payload
+                }
+            }
+        }
+    }
+}

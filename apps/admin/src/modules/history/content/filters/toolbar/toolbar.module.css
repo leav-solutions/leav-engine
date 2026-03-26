@@ -1,0 +1,36 @@
+.toolbarContainer {
+    background-color: var(--general-colors-neutral-white);
+    border-top-left-radius: calc(var(--general-border-radius-s) * 1px);
+    border-top-right-radius: calc(var(--general-border-radius-s) * 1px);
+}
+
+.toolbar {
+    --toolbar-height: 24px;
+
+    min-height: var(--toolbar-height);
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-xs) * 1px)
+        calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-s) * 1px);
+    background-color: var(--general-utilities-neutral-light);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+
+    :global(.ant-divider) {
+        height: var(--toolbar-height);
+        margin-inline: calc(var(--general-spacing-xxs) * 1px);
+    }
+}
+
+.leftContent,
+.rightContent {
+    display: flex;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+    align-items: center;
+}
+
+.leftContent {
+    flex-wrap: wrap;
+    align-self: center;
+}

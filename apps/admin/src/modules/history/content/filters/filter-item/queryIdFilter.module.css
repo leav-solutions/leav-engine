@@ -1,0 +1,5 @@
+.filterItemContainer {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+}

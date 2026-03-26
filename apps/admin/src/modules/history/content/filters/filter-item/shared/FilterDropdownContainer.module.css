@@ -1,0 +1,8 @@
+.filterDropdownContainer {
+    --filter-dropdown-min-width: 327px;
+
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    min-width: var(--filter-dropdown-min-width);
+}

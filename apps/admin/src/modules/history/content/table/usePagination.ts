@@ -19,10 +19,15 @@ export const usePagination = () => {
         setCurrentPage(DEFAULT_CURRENT_PAGE);
     };
 
+    const resetPage = () => {
+        setCurrentPage(DEFAULT_CURRENT_PAGE);
+    };
+
     return {
         currentPage,
         pageSize,
         handlePageChange,
         handlePageSizeChange,
+        resetPage,
     };
 };
