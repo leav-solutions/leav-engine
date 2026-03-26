@@ -29,10 +29,6 @@ const StyledActionsList = styled.div`
     margin-left: calc(var(--general-spacing-xs) * 1px);
 `;
 
-const StyledIdCard = styled.div`
-    flex: 1;
-`;
-
 type ResolvedItemActionProp<T> = T extends (item: IItemData) => infer R ? R : T;
 
 const resolveItemActionProp = <T extends IItemAction[keyof IItemAction]>(
@@ -69,9 +65,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
 
     return (
         <StyledTableNameCellContainer ref={containerRef}>
-            <StyledIdCard>
-                <IdCard item={item.whoAmI} />
-            </StyledIdCard>
+            <IdCard item={item.whoAmI} />
             <StyledActionsList className="actions-list">
                 {itemsActionsWithCallbackToDisplay.map(
                     ({label, icon, isDanger, callback, disabled, useItemDeletePermission}, actionIndex) => {

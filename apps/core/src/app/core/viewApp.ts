@@ -81,6 +81,7 @@ export default function ({
                         sort: [RecordSort!],
                         display: ViewDisplay!,
                         valuesVersions: [ViewValuesVersion!],
+                        """ The whoAmI column will never be included in attributes because is already hard-coded to be present"""
                         attributes: [Attribute!]
                     }
 
@@ -95,6 +96,7 @@ export default function ({
                         filters: [RecordFilterInput!],
                         sort: [RecordSortInput!],
                         valuesVersions: [ViewValuesVersionInput!],
+                        """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
                         attributes: [String!]
                     }
 
@@ -109,6 +111,7 @@ export default function ({
                         filters: [RecordFilterInput!],
                         sort: [RecordSortInput!],
                         valuesVersions: [ViewValuesVersionInput!],
+                        """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
                         attributes: [String!]
                     }
 
