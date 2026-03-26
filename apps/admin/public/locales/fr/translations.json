@@ -531,11 +531,11 @@
                 "before": "Avant",
                 "after": "Après",
                 "query_id": "Query ID"
-            },
-            "cell": {
-                "copy": "Copier",
-                "copy_success": "{{cellName}} copié dans le presse-papiers"
             }
+        },
+        "copy_button": {
+            "copy": "Copier",
+            "copy_success": "{{title}} copié dans le presse-papiers"
         }
     },
     "error": {

@@ -531,11 +531,11 @@
                 "before": "Before",
                 "after": "After",
                 "query_id": "Query ID"
-            },
-            "cell": {
-                "copy": "Copy",
-                "copy_success": "{{cellName}} copied to clipboard"
             }
+        },
+        "copy_button": {
+            "copy": "Copy",
+            "copy_success": "{{title}} copied to clipboard"
         }
     },
     "error": {
