@@ -7,9 +7,11 @@ import {FakePluginActions} from '..';
 import {type IEventsManagerDomain} from '../../../../../../domain/eventsManager/eventsManagerDomain';
 
 export interface IFakeDomain {
-    execWorker({fromTask}: {fromTask: string}): void;
+    execWorker({fromTask, ctx}: {fromTask: string; ctx: IQueryInfos}): Promise<void>;
+    execCronTask(): Promise<void>;
     startPlugin(): void;
     getPluginStarted(): boolean;
+    getCronTaskExecuted(): boolean;
 }
 
 interface IDeps {
@@ -18,6 +20,7 @@ interface IDeps {
 
 export default function ({'core.domain.eventsManager': eventsManagerDomain}: IDeps): IFakeDomain {
     let pluginStarted: boolean = false;
+    let cronTaskExecuted: boolean = false;
 
     return {
         async execWorker({fromTask, ctx}: {fromTask: string; ctx: IQueryInfos}): Promise<void> {
@@ -33,11 +36,17 @@ export default function ({'core.domain.eventsManager': eventsManagerDomain}: IDe
                 ctx,
             );
         },
+        async execCronTask(): Promise<void> {
+            cronTaskExecuted = true;
+        },
         startPlugin(): void {
             pluginStarted = true;
         },
         getPluginStarted(): boolean {
             return pluginStarted;
+        },
+        getCronTaskExecuted(): boolean {
+            return cronTaskExecuted;
         },
     };
 }
