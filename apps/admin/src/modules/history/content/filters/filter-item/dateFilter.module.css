@@ -1,0 +1,37 @@
+.filterDropdownContainer {
+    padding-bottom: 0px;
+}
+
+.rangePickerInput {
+    width: 366px;
+}
+
+.dateFilterDivider {
+    margin-top: calc(var(--general-spacing-xs) * 1px);
+    margin-bottom: calc(var(--general-spacing-xs) * 1px);
+}
+
+.rangePickerDropdownContainer {
+    :global(.ant-picker-dropdown) {
+        position: initial;
+        padding: 0;
+
+        :global(.ant-picker-panel-container) {
+            box-shadow: none;
+        }
+
+        :global(.ant-picker-footer) {
+            padding: calc(var(--general-spacing-xs) * 1px) 0;
+
+            :global(.ant-picker-footer-extra) {
+                padding: 0;
+                padding-left: calc(var(--general-spacing-xs) * 1px);
+
+                /* Reset button selector */
+                & > div {
+                    align-items: center;
+                }
+            }
+        }
+    }
+}

@@ -7,4 +7,5 @@
     border-radius: calc(var(--general-border-radius-s) * 1px);
     box-shadow: var(--general-utilities-shadow-light);
     padding: calc(var(--general-spacing-s) * 1px);
+    gap: calc(var(--general-spacing-s) * 1px);
 }

@@ -8,6 +8,7 @@
         "close": "Fermer",
         "add": "Ajouter",
         "remove": "Supprimer",
+        "reset": "Réinitialiser",
         "loading": "Chargement...",
         "forbidden_route": "Accès interdit",
         "validation_errors": {
@@ -30,6 +31,7 @@
         "permissions": "Permissions",
         "document_title": "LEAV Engine - {{appLabel}}",
         "search_placeholder": "Rechercher...",
+        "search": "Rechercher",
         "home_page": "Page d'accueil"
     },
     "dashboard": {
@@ -496,6 +498,28 @@
     "logs": {
         "title": "Historique",
         "description": "Consultez l’historique avec les informations associées",
+        "toolbar": {
+            "elements_one": "élément",
+            "elements_other": "éléments"
+        },
+        "filters": {
+            "date": {
+                "label": "Date",
+                "today": "Aujourd’hui",
+                "last_hour": "Dernière heure",
+                "last_7_days": "7 derniers jours",
+                "last_30_days": "30 derniers jours"
+            },
+            "user": {
+                "label": "Utilisateur"
+            },
+            "action": {
+                "label": "Action"
+            },
+            "query_id": {
+                "label": "Query ID"
+            }
+        },
         "table": {
             "column": {
                 "date": "Date",

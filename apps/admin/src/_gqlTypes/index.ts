@@ -107,6 +107,7 @@ export type ApplicationInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   module?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ApplicationType>;
 };
 
@@ -735,45 +736,16 @@ export type ReportFramingAttributeFilterValueItemInput = {
   rawValue: Scalars['String']['input'];
 };
 
-export type ReportFramingCampaignInput = {
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
-  thematics: Array<ReportFramingThematicInput>;
-};
-
-export type ReportFramingCategoryInput = {
-  categoryId: Scalars['String']['input'];
-  children: Array<ReportFramingCategoryInput>;
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type ReportFramingContentInput = {
-  campaigns: Array<ReportFramingCampaignInput>;
   filters?: InputMaybe<ReportFramingFiltersInput>;
 };
 
 export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
   attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
   search?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ReportFramingItemInput = {
-  columnId: Scalars['String']['input'];
-  referenceValue?: InputMaybe<Scalars['Int']['input']>;
-  value?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ReportFramingThematicInput = {
-  categories: Array<ReportFramingCategoryInput>;
-  computedFraming?: InputMaybe<Array<ReportFramingItemInput>>;
-  framing?: InputMaybe<Array<ReportFramingItemInput>>;
-  id: Scalars['String']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SheetInput = {
@@ -859,6 +831,11 @@ export enum TaskType {
   RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1123,7 +1100,13 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, defaultView?: { id: string } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
+export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = { records: { list: Array<{ id: string, email: Array<{ payload?: any | null }> }> } };
+
 export type GetHistoryDataQueryVariables = Exact<{
+  filters?: InputMaybe<LogFilterInput>;
   sort?: InputMaybe<LogSortInput>;
   pagination?: InputMaybe<Pagination>;
 }>;
@@ -2117,9 +2100,58 @@ export const ValueDetailsExtendedFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
+export const GetUsersDocument = gql`
+    query GetUsers {
+  records(library: "users") {
+    list {
+      id
+      email: property(attribute: "email") {
+        ... on Value {
+          payload
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+      }
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+// @ts-ignore
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery | undefined, GetUsersQueryVariables>;
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const GetHistoryDataDocument = gql`
-    query GetHistoryData($sort: LogSortInput, $pagination: Pagination) {
-  logs(sort: $sort, pagination: $pagination) {
+    query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
+  logs(filters: $filters, sort: $sort, pagination: $pagination) {
     total
     logs {
       time
@@ -2238,6 +2270,7 @@ export const GetHistoryDataDocument = gql`
  * @example
  * const { data, loading, error } = useGetHistoryDataQuery({
  *   variables: {
+ *      filters: // value for 'filters'
  *      sort: // value for 'sort'
  *      pagination: // value for 'pagination'
  *   },
