@@ -60,7 +60,7 @@
         "lint-staged": "16.4.0"
     },
     "resolutions": {
-        "nwsapi": "2.2.23",
+        "nwsapi": "2.2.7",
         "fs-capacitor": "6.2.0",
         "data-studio:babel-jest": "26",
         "data-studio:jest": "26.6.0",
