@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {mount} from 'enzyme';
-// import {wait} from 'utils/testUtils';
-// import {act, render, screen} from '_tests/testUtils';
+// import {wait} from '../../../../../utils/testUtils';
+// import {act, render, screen} from '../../../../../_tests/testUtils';
 // import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 // import {mockLibrary} from '../../../../../__mocks__/libraries';
 // import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 // import PermissionsTab from './PermissionsTab';
-// import {PermissionsRelation, SaveLibraryDocument, type TreepermissionsConfInput} from '_gqlTypes';
+// import {PermissionsRelation, SaveLibraryDocument, type TreepermissionsConfInput} from '../../../../../_gqlTypes';
 
 // jest.mock(
 // './PermissionsContent',

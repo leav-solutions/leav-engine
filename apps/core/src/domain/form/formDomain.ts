@@ -2,22 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes} from '@leav/utils';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
-import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IValidateHelper} from '../helpers/validate';
+import {type ILibraryDomain} from '../library/libraryDomain';
+import {type IAttributePermissionDomain} from '../permission/attributePermissionDomain';
+import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type ITreeDomain} from '../tree/treeDomain';
 import {type i18n} from 'i18next';
-import {type IFormRepo} from 'infra/form/formRepo';
+import {type IFormRepo} from '../../infra/form/formRepo';
 import {difference} from 'lodash';
 import omit from 'lodash/omit';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IGetCoreEntitiesParams} from '_types/shared';
-import {type IValueVersion} from '_types/value';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
+import {type IValueVersion} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';

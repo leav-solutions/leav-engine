@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {type INotification, type INotificationChannel, NotificationChannels} from '../../../_types/notification';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
 import {type IPubSubNotificationData, TriggerNames} from '../../../_types/eventsManager';
 
 export interface INotificationByWebSocketChannelDeps {

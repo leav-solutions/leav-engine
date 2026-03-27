@@ -10,7 +10,7 @@ import {
     type IStandardBaseValue,
     type ITreeValue,
     type IValue,
-} from '_types/value';
+} from '../../../_types/value';
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import isEqual from 'lodash/isEqual';
 

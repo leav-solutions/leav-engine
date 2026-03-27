@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IUtils} from 'utils/utils';
-import {type ILinkBaseValue, type IDistinctValue, type ILinkValue, type IValueEdge} from '_types/value';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IUtils} from '../../utils/utils';
+import {type ILinkBaseValue, type IDistinctValue, type ILinkValue, type IValueEdge} from '../../_types/value';
 import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
@@ -13,7 +13,7 @@ import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
-import {type IDbDocument, type IDbEdge} from 'infra/db/_types';
+import {type IDbDocument, type IDbEdge} from '../db/_types';
 import {type EdgeCollection} from 'arangojs/collection';
 
 interface ISavedValueResult {

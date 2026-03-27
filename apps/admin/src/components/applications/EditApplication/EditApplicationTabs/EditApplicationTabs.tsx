@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import GridTab from 'components/shared/GridTab';
-import {useEditApplicationContext} from 'context/EditApplicationContext';
-import useLang from 'hooks/useLang';
+import GridTab from '../../../shared/GridTab';
+import {useEditApplicationContext} from '../../../../context/EditApplicationContext';
+import useLang from '../../../../hooks/useLang';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useLocation} from 'react-router-dom';

@@ -10,9 +10,9 @@ import {CollectionType} from 'arangojs/collection';
 import {type CursorStats} from 'arangojs/cursor';
 import {type CreateViewOptions, type View} from 'arangojs/view';
 import {createHash} from 'crypto';
-import {type IUtils} from 'utils/utils';
-import {type IConfig} from '_types/config';
-import {type IDbProfiler} from '_types/dbProfiler';
+import {type IUtils} from '../../utils/utils';
+import {type IConfig} from '../../_types/config';
+import {type IDbProfiler} from '../../_types/dbProfiler';
 import {ARANGODB_HTTP_CONFLICT_CODE, ARANGODB_WRITEWRITE_CONFLICT_CODE} from './_constants';
 import {type IDbDocument, type IExecute, type IExecuteWithCount} from './_types';
 

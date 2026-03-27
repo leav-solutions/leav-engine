@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook, waitFor} from '@testing-library/react';
-import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes';
-import {mockRecord} from '__mocks__/common/record';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
+import {getTreeLibraries} from '../../graphQL/queries/trees/getTreeLibraries';
+import {LibraryBehavior, TreeBehavior} from '../../_gqlTypes';
+import {mockRecord} from '../../__mocks__/common/record';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useTreeLibraryAllowedAsChild} from '.';
 
 describe('useTreeLibraryAllowedAsChild', () => {

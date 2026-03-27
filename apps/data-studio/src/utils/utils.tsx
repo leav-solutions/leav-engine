@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {type IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
-import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {LibraryBehavior, TaskStatus} from '_gqlTypes';
-import {type RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {type IActiveTree} from '../graphQL/queries/cache/activeTree/getActiveTreeQuery';
+import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '../_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {type GET_TASKS_tasks_list} from '../_gqlTypes/GET_TASKS';
+import {LibraryBehavior, TaskStatus} from '../_gqlTypes';
+import {type RecordIdentity} from '../_gqlTypes/RecordIdentity';
 import {type AvailableLanguage, type IApplicationSettings, type IInfo, InfoPriority} from '../_types/types';
 
 export function getFileUrl(filepath: string) {

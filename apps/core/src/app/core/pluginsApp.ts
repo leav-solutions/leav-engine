@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IPluginsDomain} from 'domain/plugins/pluginsDomain';
-import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IPluginsDomain} from '../../domain/plugins/pluginsDomain';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IPluginInfos} from '../../_types/plugin';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {type IAppModule} from '_types/shared';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type IAppModule} from '../../_types/shared';
 import {type IQueryInfos} from '../../_types/queryInfos';
 
 export interface ICorePluginsApp extends IGraphqlAppModule, IAppModule {

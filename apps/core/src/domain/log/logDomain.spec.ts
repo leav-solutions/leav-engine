@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ILogRepo} from 'infra/log/logRepo';
+import {type ILogRepo} from '../../infra/log/logRepo';
 import {mockLog} from '../../__tests__/mocks/log';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import logDomain from './logDomain';
 import {adminUserId} from '../../_constants/users';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
+import {type IPermissionDomain} from '../permission/permissionDomain';
+import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 
 describe('logDomain', () => {
     const mockLogRepo: Mockify<ILogRepo> = {

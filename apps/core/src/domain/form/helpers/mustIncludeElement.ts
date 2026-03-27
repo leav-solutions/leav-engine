@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type IFormDependentElements} from '_types/forms';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type ITreeValue} from '_types/value';
+import {type IRecordDomain} from '../../record/recordDomain';
+import {type ITreeDomain} from '../../tree/treeDomain';
+import {type IFormDependentElements} from '../../../_types/forms';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type ITreeValue} from '../../../_types/value';
 
 /**
  * Check if element must be included in form based on dependencies

@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {RecordPermissionsActions} from '../../../_types/permissions';
-import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
+import {type IRecordPermissionDomain} from '../../permission/recordPermissionDomain';
 import PermissionError from '../../../errors/PermissionError';
 import {EventAction} from '@leav/utils';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IRecordRepo} from '../../../infra/record/recordRepo';
+import {type ITreeRepo} from '../../../infra/tree/treeRepo';
+import {type IValueRepo} from '../../../infra/value/valueRepo';
 import {type IRecord} from '../../../_types/record';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {AttributeTypes} from '../../../_types/attribute';
-import {type IAttributeSimpleLinkRepo} from 'infra/attributeTypes/attributeSimpleLinkRepo';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
+import {type IAttributeSimpleLinkRepo} from '../../../infra/attributeTypes/attributeSimpleLinkRepo';
+import {type IValueDomain} from '../../value/valueDomain';
+import {type IfLibraryJoinLinkAttribute} from '../../attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 

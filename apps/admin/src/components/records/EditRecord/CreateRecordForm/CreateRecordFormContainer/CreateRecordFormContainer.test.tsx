@@ -9,7 +9,7 @@
 // import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 // import {mockLibrary} from '../../../../../__mocks__/libraries';
 // import CreateRecordFormContainer from './CreateRecordFormContainer';
-// import {CreateRecordDocument, SaveValueBatchDocument} from '_gqlTypes';
+// import {CreateRecordDocument, SaveValueBatchDocument} from '../../../../../_gqlTypes';
 
 // jest.mock(
 // '../CreateRecordForm',

@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import * as useLang from 'hooks/useLang';
-import {AvailableLanguage} from '_gqlTypes';
-import {render, screen} from '_tests/testUtils';
+import * as useLang from '../../../hooks/useLang';
+import {AvailableLanguage} from '../../../_gqlTypes';
+import {render, screen} from '../../../_tests/testUtils';
 import UserPanel from './UserPanel';
 
 const mockLogout = jest.fn();
-jest.mock('hooks/useAuth', () => () => ({
+jest.mock('../../../hooks/useAuth', () => () => ({
     logout: mockLogout,
 }));
 

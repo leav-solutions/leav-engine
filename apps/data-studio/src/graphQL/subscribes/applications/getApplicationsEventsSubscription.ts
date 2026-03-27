@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {applicationDetailsFragment} from 'graphQL/queries/applications/applicationDetailsFragment';
+import {applicationDetailsFragment} from '../../queries/applications/applicationDetailsFragment';
 
 export const getApplicationsEventsSubscription = gql`
     ${applicationDetailsFragment}

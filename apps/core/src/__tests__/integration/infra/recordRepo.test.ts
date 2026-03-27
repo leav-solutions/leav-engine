@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {IQueryInfos} from '_types/queryInfos';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type IRecordRepo} from 'infra/record/recordRepo';
+// import {IQueryInfos} from '../../../_types/queryInfos';
+import {type ILibraryRepo} from '../../../infra/library/libraryRepo';
+import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {AttributeTypes} from '../../../_types/attribute';
 import {AttributeCondition, Operator, type IRecord} from '../../../_types/record';
 import {getLibraryRepo, getRecordRepo} from './integrationTestRepoUtils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 
 // Partial tests, to be completed !
 // TODO - find, many cases with all kind of filters on attributes

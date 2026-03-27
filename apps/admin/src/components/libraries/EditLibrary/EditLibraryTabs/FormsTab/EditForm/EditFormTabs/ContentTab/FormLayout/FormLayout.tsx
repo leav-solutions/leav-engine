@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Sidebar} from 'semantic-ui-react';
-import {FormElementTypes} from '_gqlTypes';
+import {FormElementTypes} from '../../../../../../../../../_gqlTypes';
 import {defaultContainerId} from '../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 import {layoutElements} from '../uiElements';

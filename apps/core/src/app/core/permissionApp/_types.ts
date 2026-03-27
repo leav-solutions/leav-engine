@@ -6,7 +6,7 @@ import {
     type IPermissionsTreeTarget,
     type PermissionsActions,
     type PermissionTypes,
-} from '_types/permissions';
+} from '../../../_types/permissions';
 
 export interface IInheritedPermissionsQueryParams {
     type: PermissionTypes;

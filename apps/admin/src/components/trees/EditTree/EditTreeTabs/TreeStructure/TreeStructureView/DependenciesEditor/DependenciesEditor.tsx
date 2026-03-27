@@ -6,7 +6,7 @@ import {useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Header} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type GET_TREES_trees_list} from '../../../../../../../_gqlTypes/GET_TREES';
 import {type IDndDropResult, type IDndLibraryItem, LIBRARY_DND_TYPE, ROOT_ID} from '../../_types';
 import DependenciesLibraryItem from './DependenciesLibraryItem';
 

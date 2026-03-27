@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {mount} from 'enzyme';
 // import {act} from 'react-dom/test-utils';
-// import {wait} from 'utils/testUtils';
+// import {wait} from '../../../utils/testUtils';
 // import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 // import {mockLibrary} from '../../../__mocks__/libraries';
 // import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 // import EditRecord from './EditRecord';
-// import {GetLibByIdDocument} from '_gqlTypes';
+// import {GetLibByIdDocument} from '../../../_gqlTypes';
 
 // jest.mock(
 // './EditRecordForm',

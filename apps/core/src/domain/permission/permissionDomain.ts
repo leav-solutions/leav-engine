@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type i18n} from 'i18next';
-import {type IPermissionRepo} from 'infra/permission/permissionRepo';
-import {type IConfig} from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IPermissionRepo} from '../../infra/permission/permissionRepo';
+import {type IConfig} from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {adminUserId, systemUserId} from '../../_constants/users';

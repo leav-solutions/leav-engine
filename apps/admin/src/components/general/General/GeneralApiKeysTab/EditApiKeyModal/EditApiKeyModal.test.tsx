@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import {render, screen} from '_tests/testUtils';
-import {mockApiKey} from '__mocks__/common/apiKeys';
+import {render, screen} from '../../../../../_tests/testUtils';
+import {mockApiKey} from '../../../../../__mocks__/common/apiKeys';
 import EditApiKeyModal from './EditApiKeyModal';
-import {SaveApiKeyDocument} from '_gqlTypes';
+import {SaveApiKeyDocument} from '../../../../../_gqlTypes';
 
 jest.mock(
-    'components/shared/RecordSelector',
+    '../../../../shared/RecordSelector',
     () =>
         function RecordSelector() {
             return <div>RecordSelector</div>;

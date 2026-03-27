@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {act} from 'react-dom/test-utils';
-import {fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
-import {mockLibrary} from '__mocks__/libraries';
-import {AttributeType, GetLibrariesWithAttributesDocument, SaveLibraryAttributesDocument} from '_gqlTypes';
+import {fireEvent, render, screen, waitFor, within} from '../../../../../../_tests/testUtils';
+import {mockLibrary} from '../../../../../../__mocks__/libraries';
+import {AttributeType, GetLibrariesWithAttributesDocument, SaveLibraryAttributesDocument} from '../../../../../../_gqlTypes';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 import InfosForm from './InfosForm';
 
@@ -19,7 +19,7 @@ jest.mock('../../../../../../utils', () => ({
 jest.mock('../../../../../../hooks/useLang');
 
 jest.mock(
-    'components/versionProfiles/VersionProfilesSelector',
+    '../../../../../versionProfiles/VersionProfilesSelector',
     () =>
         function VersionProfilesSelector() {
             return <div>VersionProfilesSelector</div>;

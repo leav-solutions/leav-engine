@@ -2,24 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
-import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type InitQueryContextFunc} from '../helpers/initQueryContext';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import express, {Express, type NextFunction, type Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
 
 // eslint-disable-next-line import/extensions
 import {type FileUpload} from 'graphql-upload/Upload.mjs';
-import {type IConfig} from '_types/config';
-import {type IRequestWithContext} from '_types/express';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IRecord, type IRecordFilterLight} from '_types/record';
+import {type IConfig} from '../../_types/config';
+import {type IRequestWithContext} from '../../_types/express';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IRecord, type IRecordFilterLight} from '../../_types/record';
 import {type IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
 import {TriggerNames} from '../../_types/eventsManager';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {type IServerRouteAppModule} from 'interface/server';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type IServerRouteAppModule} from '../../interface/server';
 
 export interface IFilesManagerApp extends IGraphqlAppModule, IServerRouteAppModule {
     init(): Promise<void>;

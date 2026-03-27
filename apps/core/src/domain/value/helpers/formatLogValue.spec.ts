@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../../utils/utils';
 import formatLogValue from './formatLogValue';
-import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
+import {type IRecordDomain} from '../../record/recordDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type ITreeDomain} from '../../tree/treeDomain';
 import mockLogger from '../../../__tests__/mockers/logger';
 import {mockTranslator} from '../../../__tests__/mocks/translator';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type Log} from '_types/log';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type Log} from '../../../_types/log';
 import {EventAction} from '@leav/utils';
-import {type IDBPayloadData} from '_types/events';
+import {type IDBPayloadData} from '../../../_types/events';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
-import {type IListWithCursor} from '_types/list';
+import {type IListWithCursor} from '../../../_types/list';
 import {AttributeCondition, type IRecord, type IRecordIdentity} from '../../../_types/record';
 import {ActionsListEvents} from '../../../_types/actionsList';
 

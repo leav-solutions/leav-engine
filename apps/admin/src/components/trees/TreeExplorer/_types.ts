@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type TreeItem} from '@nosferatu500/react-sortable-tree';
-import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {type ITreeNode, type ITreeNodeData} from '_types/trees';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type ITreeNode, type ITreeNodeData} from '../../../_types/trees';
 
 /** Compatible with OnMoveNodeParams from @nosferatu500/react-sortable-tree */
 export type OnMoveNodeParams = {

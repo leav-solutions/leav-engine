@@ -19,7 +19,7 @@ import {
     type IFormElement,
     type IFormElementPos,
 } from '../../../_types';
-import {useGetAttributesQuery} from '_gqlTypes';
+import {useGetAttributesQuery} from '../../../../../../../../../../../_gqlTypes';
 
 interface IFieldWrapperProps extends IFormBuilderStateAndDispatch {
     element: IFormElement;

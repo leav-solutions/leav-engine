@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act} from 'react-dom/test-utils';
-import {render, screen} from '_tests/testUtils';
+import {render, screen} from '../../../_tests/testUtils';
 import {mockAttrAdv} from '../../../__mocks__/attributes';
 import EditAttribute from './EditAttribute';
-import {GetAttributeByIdDocument} from '_gqlTypes';
+import {GetAttributeByIdDocument} from '../../../_gqlTypes';
 
 jest.mock(
     './EditAttributeTabs',

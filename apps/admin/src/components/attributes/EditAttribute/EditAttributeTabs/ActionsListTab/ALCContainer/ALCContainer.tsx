@@ -25,7 +25,7 @@ import {
     type GetActionsListQueryQuery,
     useGetActionsListQueryQuery,
     useSaveAttributeActionListMutation,
-} from '_gqlTypes';
+} from '../../../../../../_gqlTypes';
 
 //////////////////// INTERFACES
 

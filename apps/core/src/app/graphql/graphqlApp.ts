@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {makeExecutableSchema} from '@graphql-tools/schema';
 import {type AwilixContainer} from 'awilix';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import {type GraphQLResolveInfo, type GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
-import {type IUtils} from 'utils/utils';
-import {IConfig} from '_types/config';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IAppModule} from '_types/shared';
+import {type IUtils} from '../../utils/utils';
+import {IConfig} from '../../_types/config';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IAppModule} from '../../_types/shared';
 import {type IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp extends IAppModule {

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
-import {type IGroupedPermissionsActions} from '_types/permissions';
-import {fakeRootId, type ITreeNodeData} from '_types/trees';
+import {type IGroupedPermissionsActions} from '../../../_types/permissions';
+import {fakeRootId, type ITreeNodeData} from '../../../_types/trees';
 import {getTreeNodeKey} from '../../../utils/utils';
-import {type PermissionTypes} from '_gqlTypes';
+import {type PermissionTypes} from '../../../_gqlTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
 import DefinePermissionsViewLoadTree from '../DefinePermissionsViewLoadTree';
 import EditPermissions from '../EditPermissions';

@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IValidateHelper} from '../helpers/validate';
+import {type IValueDomain} from '../value/valueDomain';
 import {type i18n} from 'i18next';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type IUtils} from 'utils/utils';
-import type * as Config from '_types/config';
-import {type IListWithCursor} from '_types/list';
-import {type IPreview} from '_types/preview';
-import {type ISaveValue, type ITreeValue, type IValue, type IValuesOptions} from '_types/value';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type IUtils} from '../../utils/utils';
+import type * as Config from '../../_types/config';
+import {type IListWithCursor} from '../../_types/list';
+import {type IPreview} from '../../_types/preview';
+import {type ISaveValue, type ITreeValue, type IValue, type IValuesOptions} from '../../_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
@@ -40,10 +40,10 @@ import {
     type ICreateRecordValueError,
     type IFindRecordParams,
 } from './_types';
-import {type IFormRepo} from 'infra/form/formRepo';
+import {type IFormRepo} from '../../infra/form/formRepo';
 import {type DeleteRecordHelper} from './helpers/deleteRecord';
 import {type CreateRecordHelper} from './helpers/createRecord';
-import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
 import {type ILogger} from '@leav/logger';
 import {type FindRecordsHelper} from './helpers/findRecords';
 

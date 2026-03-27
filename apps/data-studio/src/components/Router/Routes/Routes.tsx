@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import Workspace from 'components/Workspace';
+import Workspace from '../../Workspace';
 import {Route, Routes as RouterRoutes} from 'react-router-dom';
 import RouteNotFound from '../RouteNotFound';
 import {routes} from './ListRoutes';

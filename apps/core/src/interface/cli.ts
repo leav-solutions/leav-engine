@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type ICoreImportApp} from 'app/core/importApp';
+import {type ICoreImportApp} from '../app/core/importApp';
 import {Command} from 'commander';
 
 interface IDeps {

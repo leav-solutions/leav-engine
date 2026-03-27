@@ -4,7 +4,7 @@
 import {type FormDropdownProps} from 'semantic-ui-react';
 import Loading from '../../shared/Loading';
 import ViewSelectorField from './ViewSelectorField';
-import {useGetViewsQuery} from '_gqlTypes';
+import {useGetViewsQuery} from '../../../_gqlTypes';
 
 interface IViewSelectorProps extends FormDropdownProps {
     library: string;

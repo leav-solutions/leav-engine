@@ -5,8 +5,8 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, List, type ListItemProps} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type PermissionTypes} from '_gqlTypes';
-import {type IGroupedPermissionsActions} from '_types/permissions';
+import {type PermissionTypes} from '../../../_gqlTypes';
+import {type IGroupedPermissionsActions} from '../../../_types/permissions';
 
 interface IPermissionsActionsGroupSelectorProps {
     actions: IGroupedPermissionsActions;

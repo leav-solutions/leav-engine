@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {type IDbDocument} from 'infra/db/_types';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IRecord} from '_types/record';
+import {type IDbDocument} from '../db/_types';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IRecord} from '../../_types/record';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type ILinkBaseValue, type ILinkValue, type IDistinctValue} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
@@ -13,7 +13,7 @@ import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} f
 import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
 import _ from 'lodash';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

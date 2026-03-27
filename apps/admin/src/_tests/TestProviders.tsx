@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ApplicationContext from 'context/CurrentApplicationContext';
+import ApplicationContext from '../context/CurrentApplicationContext';
 import {MemoryRouter, type MemoryRouterProps} from 'react-router-dom';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
-import MockedUserContextProvider from '__mocks__/MockedUserContextProvider';
-import {MockStore} from '__mocks__/reduxProvider';
-import {type ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
+import {mockApplicationDetails} from '../__mocks__/common/applications';
+import MockedLangContextProvider from '../__mocks__/MockedLangContextProvider';
+import MockedProviderWithFragments from '../__mocks__/MockedProviderWithFragments';
+import MockedUserContextProvider from '../__mocks__/MockedUserContextProvider';
+import {MockStore} from '../__mocks__/reduxProvider';
+import {type ICurrentApplicationContext} from '../context/CurrentApplicationContext/_types';
 import {type PropsWithChildren, type ReactElement} from 'react';
 import {type InMemoryCacheConfig} from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
-import {type RootState} from 'reduxStore/store';
-import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type RootState} from '../reduxStore/store';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '../_gqlTypes/GET_GLOBAL_SETTINGS';
 import {KitApp} from 'aristid-ds';
 
 interface IProvidersProps {

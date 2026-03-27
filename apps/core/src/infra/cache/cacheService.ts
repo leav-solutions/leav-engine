@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import DataLoader from 'dataloader';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IConfig} from '../../_types/config';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 import {nextTick} from 'process';
 import ramService from './ramService';

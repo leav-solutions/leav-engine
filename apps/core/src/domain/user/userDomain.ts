@@ -3,23 +3,23 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
 import ValidationError from '../../errors/ValidationError';
-import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain';
+import {type IPermissionDomain} from '../permission/permissionDomain';
+import {type IRecordDomain} from '../record/recordDomain';
 import {readFile} from 'fs/promises';
 import handlebars from 'handlebars';
 import {type i18n} from 'i18next';
-import {type IMailerService} from 'infra/mailer/mailerService';
-import {type IUserDataRepo} from 'infra/userData/userDataRepo';
-import {type IUtils} from 'utils/utils';
+import {type IMailerService} from '../../infra/mailer/mailerService';
+import {type IUserDataRepo} from '../../infra/userData/userDataRepo';
+import {type IUtils} from '../../utils/utils';
 import {Errors} from '../../_types/errors';
-import type * as Config from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IUserIdentity, type IUserData} from '_types/userData';
+import type * as Config from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IUserIdentity, type IUserData} from '../../_types/userData';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
-import {type IStandardValue} from '_types/value';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IStandardValue} from '../../_types/value';
+import {type IValueDomain} from '../value/valueDomain';
 import {USERS_LIBRARY} from '../../_types/library';
 
 interface ISaveUserDataParams {

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import type DataLoader from 'dataloader';
-import type LeavError from 'errors/LeavError';
+import type LeavError from '../errors/LeavError';
 import {type IDbProfiler} from './dbProfiler';
 import {type IValueVersion} from './value';
 

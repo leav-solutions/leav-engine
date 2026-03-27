@@ -4,7 +4,7 @@
 import {type TFunction} from 'i18next';
 import React from 'react';
 import {Button} from 'semantic-ui-react';
-import {AttributeFormat} from '_gqlTypes';
+import {AttributeFormat} from '../../../../../../_gqlTypes';
 import {type IFlatItem} from '../EmbeddedFieldsTab';
 import ModalCreateEmbeddedField from '../ModalCreateEmbeddedField';
 import ModalRemoveEmbeddedField from '../ModalRemoveEmbeddedField';

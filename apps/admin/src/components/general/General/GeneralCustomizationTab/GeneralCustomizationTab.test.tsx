@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '_tests/testUtils';
+import {render, screen, waitFor} from '../../../../_tests/testUtils';
 import GeneralCustomizationTab from './GeneralCustomizationTab';
-import {GetGlobalSettingsDocument, GetApplicationsDocument, SaveGlobalSettingsDocument} from '_gqlTypes';
+import {GetGlobalSettingsDocument, GetApplicationsDocument, SaveGlobalSettingsDocument} from '../../../../_gqlTypes';
 
 jest.mock(
-    'components/shared/FileSelector',
+    '../../../shared/FileSelector',
     () =>
         function FileSelector() {
             return <div>FileSelector</div>;

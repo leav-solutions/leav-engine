@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IIndexationManagerDomain} from 'domain/indexationManager/indexationManagerDomain';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IIndexationManagerDomain} from '../../domain/indexationManager/indexationManagerDomain';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 
 export interface IIndexationManagerApp {

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {type IDbService} from 'infra/db/dbService';
+import {type IDbService} from '../../db/dbService';
 import {TreeCondition} from '../../../_types/record';
 import {type IFilterTypesHelper} from './filterTypes';
 import getClassifyingFiltersVariableQueryPart from './getClassifyingFiltersVariableQueryPart';

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import ErrorDisplay from '../../shared/ErrorDisplay';
 import {useTranslation} from 'react-i18next';
-import {type GET_ALL_PLUGINS_plugins} from '_gqlTypes/GET_ALL_PLUGINS';
+import {type GET_ALL_PLUGINS_plugins} from '../../../_gqlTypes/GET_ALL_PLUGINS';
 import PluginsList from './PluginsList';
-import {useGetAllPluginsQuery} from '_gqlTypes';
+import {useGetAllPluginsQuery} from '../../../_gqlTypes';
 
 const PluginsExplorer = (): JSX.Element => {
     const {t} = useTranslation();

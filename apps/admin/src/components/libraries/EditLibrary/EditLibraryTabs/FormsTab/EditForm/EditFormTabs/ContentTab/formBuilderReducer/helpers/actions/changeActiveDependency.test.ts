@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {formBuilderReducer} from '../..';
-import {FormElementTypes} from '_gqlTypes';
+import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes';
 import {UIElementTypes} from '../../../_types';
 import {layoutElements} from '../../../uiElements/__mocks__/uiElements';
 import {formElem1, formElem2, formElem3, formElem4, mockInitialState} from '../../_fixtures/fixtures';

@@ -13,7 +13,7 @@ import {
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import getPermissionCacheKey from './getPermissionCacheKey';
 import {type ICachesService} from '../../../infra/cache/cacheService';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../_types/config';
 import {type GetDefaultGlobalPermission} from '../_types';
 import {adminsGroupId, systemUserId} from '../../../_constants/users';
 

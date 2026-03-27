@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen} from '_tests/testUtils';
-import {mockVersionProfile} from '__mocks__/common/versionProfiles';
+import {render, screen} from '../../../_tests/testUtils';
+import {mockVersionProfile} from '../../../__mocks__/common/versionProfiles';
 import VersionProfilesSelector from './VersionProfilesSelector';
-import {GetVersionProfilesDocument} from '_gqlTypes';
+import {GetVersionProfilesDocument} from '../../../_gqlTypes';
 
 describe('VersionProfilesSelector', () => {
     test('Can filter list and select a profile', async () => {

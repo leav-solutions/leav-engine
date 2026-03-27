@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IUtils} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type ITreeDomain} from '../../tree/treeDomain';
+import {type ITreeRepo} from '../../../infra/tree/treeRepo';
+import {type IUtils} from '../../../utils/utils';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 
 interface IDeps {

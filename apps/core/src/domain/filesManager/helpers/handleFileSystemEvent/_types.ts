@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAmqpService} from '@leav/message-broker';
-import {type UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type IUtils} from 'utils/utils';
+import {type UpdateRecordLastModifFunc} from '../../../helpers/updateRecordLastModif';
+import {type ILibraryDomain} from '../../../library/libraryDomain';
+import {type SendRecordUpdateEventHelper} from '../../../record/helpers/sendRecordUpdateEvent';
+import {type IRecordDomain} from '../../../record/recordDomain';
+import {type ITreeDomain} from '../../../tree/treeDomain';
+import {type IValueDomain} from '../../../value/valueDomain';
+import {type IFilesManagerRepo} from '../../../../infra/filesManager/filesManagerRepo';
+import {type IRecordRepo} from '../../../../infra/record/recordRepo';
+import {type IUtils} from '../../../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import {type IConfig} from '_types/config';
-import {type IFileEventData} from '_types/filesManager';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '../../../../_types/config';
+import {type IFileEventData} from '../../../../_types/filesManager';
+import {type IQueryInfos} from '../../../../_types/queryInfos';
 
 export interface IHandleFileSystemEventDeps {
     libraryDomain: ILibraryDomain;

@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IUtils} from 'utils/utils';
-import {type IAttribute} from '_types/attribute';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IValue} from '_types/value';
+import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type IUtils} from '../../../utils/utils';
+import {type IAttribute} from '../../../_types/attribute';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IValue} from '../../../_types/value';
 import {ActionsListEvents} from '../../../_types/actionsList';
 
 /**

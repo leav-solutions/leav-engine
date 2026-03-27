@@ -4,7 +4,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 import configureStore from 'redux-mock-store';
-import {type RootState} from 'reduxStore/store';
+import {type RootState} from '../../../reduxStore/store';
 import {mockInitialState} from './mockInitialState';
 
 const mockStore = configureStore();

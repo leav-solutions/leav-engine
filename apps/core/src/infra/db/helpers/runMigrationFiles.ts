@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {asFunction, type AwilixContainer} from 'awilix';
 import {type ILogger} from '@leav/logger';
-import {type IMigration} from '_types/migration';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IMigration} from '../../../_types/migration';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IDbService} from '../dbService';
 import {MIGRATIONS_COLLECTION_NAME} from '../dbUtils';
 import loadMigrationFile from './loadMigrationFile';

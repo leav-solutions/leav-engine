@@ -4,8 +4,8 @@
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {type IAttributeDomain} from '../attributeDomain';
+import {type GetCoreEntityByIdFunc} from '../../helpers/getCoreEntityById';
 
 export type IfLibraryJoinLinkAttributeCallback<R> = (joinLibId: string, joinAttributeProps: IAttribute) => Promise<R>;
 export type IfLibraryJoinLinkAttribute = <R = unknown>(

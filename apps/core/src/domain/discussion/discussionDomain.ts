@@ -6,14 +6,14 @@ import {
     type IDiscussionComment,
     type IDiscussionTargetRecord,
     type IPostDiscussionCommentParams,
-} from '_types/discussion';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type INotificationDomain} from 'domain/notification/notificationDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type IUserDomain} from 'domain/user/userDomain';
+} from '../../_types/discussion';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type INotificationDomain} from '../notification/notificationDomain';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type IValueDomain} from '../value/valueDomain';
+import {type IUserDomain} from '../user/userDomain';
 import {type i18n} from 'i18next';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 import {
     DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID,
     DISCUSSION_COMMENT_THREAD_ATTRIBUTE_ID,

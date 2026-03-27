@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import DataLoader from 'dataloader';
-import {type IDbService} from 'infra/db/dbService';
-import {type IConfig} from '_types/config';
-import {type IAttribute} from '_types/attribute';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IDistinctValue, type ISaveValue, type IValue, type IValueVersion, type IBaseValue} from '_types/value';
+import {type IDbService} from '../db/dbService';
+import {type IConfig} from '../../_types/config';
+import {type IAttribute} from '../../_types/attribute';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IDistinctValue, type ISaveValue, type IValue, type IValueVersion, type IBaseValue} from '../../_types/value';
 import {
     type IAttributeTypesRepo,
     type IAttributeWithRevLink,

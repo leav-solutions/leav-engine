@@ -6,11 +6,11 @@ import {
     type TREE_NODE_CHILDREN,
     type TREE_NODE_CHILDRENVariables,
     type TREE_NODE_CHILDREN_treeNodeChildren_list,
-} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {type WithOptional} from '_types/WithOptional';
-import {type ITreeNode, type ITreeNodeData, fakeRootId} from '_types/trees';
-import {type ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
-import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
+} from '../../../_gqlTypes/TREE_NODE_CHILDREN';
+import {type WithOptional} from '../../../_types/WithOptional';
+import {type ITreeNode, type ITreeNodeData, fakeRootId} from '../../../_types/trees';
+import {type ITreeItem} from '../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
+import {getTreeNodeChildrenQuery} from '../../../queries/trees/treeNodeChildrenQuery';
 import React, {useState} from 'react';
 import {
     addNodeUnderParent,

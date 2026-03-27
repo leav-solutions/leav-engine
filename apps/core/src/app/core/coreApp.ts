@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
-import {type ICoreDomain} from 'domain/core/coreDomain';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type ISystemTranslationGenerator} from '../graphql/customScalars/systemTranslation/systemTranslation';
+import {type ICoreDomain} from '../../domain/core/coreDomain';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import * as fs from 'fs';
 import {type GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
@@ -11,10 +11,10 @@ import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 // eslint-disable-next-line import/extensions
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import {type i18n} from 'i18next';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IAppModule} from '_types/shared';
-import {type ISystemTranslation} from '_types/systemTranslation';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IAppModule} from '../../_types/shared';
+import {type ISystemTranslation} from '../../_types/systemTranslation';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 export interface ICoreApp extends IAppModule, IGraphqlAppModule {

@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
-import {type ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type ITreeNodePermissionDomain} from '../permission/treeNodePermissionDomain';
+import {type ITreePermissionDomain} from '../permission/treePermissionDomain';
+import {type IValueDomain} from '../value/valueDomain';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';

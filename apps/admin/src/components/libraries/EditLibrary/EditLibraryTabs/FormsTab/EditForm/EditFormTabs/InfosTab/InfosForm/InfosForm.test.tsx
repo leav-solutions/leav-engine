@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import {render, screen} from '_tests/testUtils';
+import {render, screen} from '../../../../../../../../../_tests/testUtils';
 import InfosForm from '.';
 import {mockFormFull} from '../../../../../../../../../__mocks__/forms';
 import {EditFormModalButtonsContext} from '../../../../EditFormModal/EditFormModalButtonsContext';
 import * as useEditFormContext from '../../../hooks/useEditFormContext';
 
-jest.mock('hooks/useLang');
+jest.mock('../../../../../../../../../hooks/useLang');
 
 jest.mock(
     '../../../../../../../../attributes/AttributeSelector',

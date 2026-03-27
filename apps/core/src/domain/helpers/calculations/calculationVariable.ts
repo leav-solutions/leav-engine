@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {type ActionsListValueType, type IActionsListContext} from '_types/actionsList';
+import {type ActionsListValueType, type IActionsListContext} from '../../../_types/actionsList';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {type IVariableFunctions} from './calculationsVariableFunctions';

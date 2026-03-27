@@ -5,8 +5,8 @@
 interface IDragObjectWithType {
     type: string | symbol;
 }
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type FormElementTypes} from '_gqlTypes';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type FormElementTypes} from '../../../../../../../../_gqlTypes';
 import {type IKeyValue} from '../../../../../../../../_types/shared';
 
 export const PLACEHOLDER_ID = '__placeholder__';

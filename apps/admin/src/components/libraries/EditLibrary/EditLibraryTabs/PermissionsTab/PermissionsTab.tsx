@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import PermissionsContent from './PermissionsContent';
-import {type TreepermissionsConfInput, useSaveLibraryMutation} from '_gqlTypes';
+import {type TreepermissionsConfInput, useSaveLibraryMutation} from '../../../../../_gqlTypes';
 
 interface IPermissionsTabProps {
     library: GET_LIB_BY_ID_libraries_list;

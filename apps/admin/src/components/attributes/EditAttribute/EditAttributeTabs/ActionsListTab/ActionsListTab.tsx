@@ -6,7 +6,7 @@ import Loading from '../../../../shared/Loading';
 import ALCContainer from './ALCContainer';
 import {type IReserveAction} from './interfaces/interfaces';
 import {generateReserveActionFrom} from './utils/generatingFunction';
-import {useGetAvailableActionsQuery} from '_gqlTypes';
+import {useGetAvailableActionsQuery} from '../../../../../_gqlTypes';
 
 interface IActionListConfigurerProps {
     attribute: GET_ATTRIBUTES_attributes_list;

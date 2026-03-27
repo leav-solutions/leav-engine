@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import EditApplicationContext from 'context/EditApplicationContext';
+import ErrorDisplay from '../../shared/ErrorDisplay';
+import Loading from '../../shared/Loading';
+import EditApplicationContext from '../../../context/EditApplicationContext';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import EditApplicationTabs from './EditApplicationTabs';
-import {useGetApplicationByIdQuery} from '_gqlTypes';
-import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {useGetApplicationByIdQuery} from '../../../_gqlTypes';
+import {type GET_APPLICATION_BY_ID_applications_list} from '../../../_gqlTypes/GET_APPLICATION_BY_ID';
 
 const Wrapper = styled.div`
     display: grid;

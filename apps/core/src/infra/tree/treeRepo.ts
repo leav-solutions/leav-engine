@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, literal, join} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
-import {type IList, type IPaginationParams} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IRecord} from '_types/record';
-import {type IGetCoreEntitiesParams} from '_types/shared';
-import {type IConfig} from '_types/config';
+import {type IList, type IPaginationParams} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IRecord} from '../../_types/record';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
+import {type IConfig} from '../../_types/config';
 import {
     type IGetCoreTreesParams,
     type ITree,
@@ -15,7 +15,7 @@ import {
     type ITreeNode,
     type ITreeNodeLight,
     type TreePath,
-} from '_types/tree';
+} from '../../_types/tree';
 import {type IDbDocument, type IDbEdge, type IExecuteWithCount, isExecuteWithCount} from '../db/_types';
 import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {type IDbService} from '../db/dbService';

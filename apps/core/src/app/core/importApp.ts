@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
-import {type StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
-import {type IImportDomain} from 'domain/import/importDomain';
+import {type StoreUploadFileFunc} from '../../domain/helpers/storeUploadFile';
+import {type IImportDomain} from '../../domain/import/importDomain';
 
 // eslint-disable-next-line import/extensions
 import {type FileUpload} from 'graphql-upload/Upload.mjs';
@@ -11,10 +11,10 @@ import {type FileUpload} from 'graphql-upload/Upload.mjs';
 // eslint-disable-next-line import/extensions
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import {nanoid} from 'nanoid';
-import {type IUtils} from 'utils/utils';
-import type * as Config from '_types/config';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../utils/utils';
+import type * as Config from '../../_types/config';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';

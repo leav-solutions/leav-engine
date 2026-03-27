@@ -4,10 +4,10 @@
 import {Database} from 'arangojs';
 import {type Stats} from 'fs';
 import fs from 'fs/promises';
-import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IDbUtils} from '../db/dbUtils';
 import path from 'path';
 import {type ILogger} from '@leav/logger';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationRepo from './applicationRepo';

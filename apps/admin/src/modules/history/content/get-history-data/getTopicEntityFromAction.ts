@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {LogAction, type AvailableLanguage, type GetHistoryDataQuery} from '_gqlTypes';
+import {LogAction, type AvailableLanguage, type GetHistoryDataQuery} from '../../../../_gqlTypes';
 
 type LogTopic = NonNullable<NonNullable<GetHistoryDataQuery['logs']>['logs'][number]['topic']>;
 

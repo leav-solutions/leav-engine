@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../../_types/config';
 import {FileEvents, type IFileEventData} from '../../../../_types/filesManager';
 import {mockCtx} from '../../../../__tests__/mocks/shared';
 import messagesHandler, {type IMessagesHandlerDeps} from './messagesHandler';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../../../utils/utils';
 
 const depsBase: ToAny<IMessagesHandlerDeps> = {
     'core.utils.logger': jest.fn(),

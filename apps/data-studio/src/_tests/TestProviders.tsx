@@ -4,16 +4,16 @@
 import {type InMemoryCacheConfig} from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
 import {type ILangContext, type IUserContext, LangContext, UserContext} from '@leav/ui';
-import ApplicationContext from 'context/ApplicationContext';
-import {type IApplicationContext} from 'context/ApplicationContext/_types';
+import ApplicationContext from '../context/ApplicationContext';
+import {type IApplicationContext} from '../context/ApplicationContext/_types';
 import {type PropsWithChildren} from 'react';
-import {type RootState} from 'reduxStore/store';
-import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {mockRecord} from '__mocks__/common/record';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
+import {type RootState} from '../reduxStore/store';
+import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '../_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '../_gqlTypes/GET_GLOBAL_SETTINGS';
+import {mockApplicationDetails} from '../__mocks__/common/applications';
+import MockStore from '../__mocks__/common/mockRedux/mockStore';
+import {mockRecord} from '../__mocks__/common/record';
+import MockedProviderWithFragments from '../__mocks__/MockedProviderWithFragments';
 
 interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];

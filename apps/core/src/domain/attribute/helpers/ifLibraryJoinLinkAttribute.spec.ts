@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../../utils/utils';
 import ifLibraryJoinLinkAttribute, {type IIfLibraryJoinLinkDeps} from './ifLibraryJoinLinkAttribute';
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 
 const depsBase: ToAny<IIfLibraryJoinLinkDeps> = {
     'core.domain.attribute': jest.fn(),

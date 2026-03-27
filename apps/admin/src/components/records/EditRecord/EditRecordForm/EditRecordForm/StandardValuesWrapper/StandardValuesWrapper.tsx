@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, type ValueInput} from '_gqlTypes';
+import {AttributeType, type ValueInput} from '../../../../../../_gqlTypes';
 import {type IValue} from '../../../../../../_types/records';
 import EditRecordInput from './EditRecordInput';
 import reducer, {StandardValuesActionTypes} from './StandardValuesReducer';

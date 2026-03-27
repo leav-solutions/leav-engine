@@ -6,7 +6,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import {logger} from '@leav/logger';
-import {type ILang} from '_types/config';
+import {type ILang} from '../_types/config';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

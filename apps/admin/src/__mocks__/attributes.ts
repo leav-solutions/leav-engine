@@ -7,7 +7,7 @@ import {
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeFormat, AttributeType, MultiDisplayOption, ValueVersionMode} from '_gqlTypes';
+import {AttributeFormat, AttributeType, MultiDisplayOption, ValueVersionMode} from '../_gqlTypes';
 
 const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     id: 'test_attribute',

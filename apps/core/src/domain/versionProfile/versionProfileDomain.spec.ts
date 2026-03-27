@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type ICacheService, type ICachesService} from 'infra/cache/cacheService';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IAttributeRepo} from '../../infra/attribute/attributeRepo';
+import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AdminPermissionsActions} from '../../_types/permissions';

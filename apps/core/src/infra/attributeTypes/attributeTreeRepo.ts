@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {type IDbDocument, type IDbEdge} from 'infra/db/_types';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IUtils} from 'utils/utils';
+import {type IDbDocument, type IDbEdge} from '../db/_types';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IUtils} from '../../utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
 import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IUserData} from '_types/userData';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IUserData} from '../../_types/userData';
 import {type IDbService} from '../db/dbService';
 
 const USER_DATA_COLLECTION = 'core_user_data';

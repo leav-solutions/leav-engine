@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Joi from 'joi';
-import {type IDateRangeValue, type IValue} from '_types/value';
+import {type IDateRangeValue, type IValue} from '../../_types/value';
 import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
 import {AttributeFormats, type IAttribute, type IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';

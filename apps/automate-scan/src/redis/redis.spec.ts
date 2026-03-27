@@ -8,7 +8,7 @@ const redisClient = {
     del: jest.fn(),
     get: jest.fn(),
 };
-const redisMock = jest.mock('redis', () => ({
+const redisMock = jest.mock('./', () => ({
     createClient: () => redisClient,
 }));
 

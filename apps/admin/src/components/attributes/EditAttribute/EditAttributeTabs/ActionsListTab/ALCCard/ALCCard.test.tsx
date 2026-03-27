@@ -6,7 +6,7 @@
 // import {TestBackend} from 'react-dnd-test-backend';
 // import ALCCard from './ALCCard';
 
-// jest.mock('hooks/useLang');
+// jest.mock('../../../../../../hooks/useLang');
 
 // jest.mock('react-dnd', () => ({
 // useDrag: () => {

@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ApolloHandler from 'components/app/ApolloHandler';
-import App from 'components/app/App';
+import ApolloHandler from './components/app/ApolloHandler';
+import App from './components/app/App';
 import {InitRouting} from './config/router/InitRouting';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import ErrorDisplay from './components/shared/ErrorDisplay';
 import 'fomantic-ui-less/semantic.less';
 import {Suspense, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import {Provider as ReduxProvider} from 'react-redux';
-import {store} from 'reduxStore/store';
+import {store} from './reduxStore/store';
 import {Loader} from 'semantic-ui-react';
 import {APP_BASE_URL} from './constants';
 import useAppLang from './hooks/useAppLang';

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '_tests/testUtils';
-import {mockApiKey} from '__mocks__/common/apiKeys';
+import {render, screen, waitFor} from '../../../../_tests/testUtils';
+import {mockApiKey} from '../../../../__mocks__/common/apiKeys';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
-import {DeleteApiKeyDocument, GetApiKeysDocument} from '_gqlTypes';
+import {DeleteApiKeyDocument, GetApiKeysDocument} from '../../../../_gqlTypes';
 
 jest.mock('../../../../hooks/useLang');
 

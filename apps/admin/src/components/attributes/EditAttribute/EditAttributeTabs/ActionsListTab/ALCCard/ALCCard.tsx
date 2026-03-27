@@ -11,7 +11,7 @@ import {type IAction, type IColorDic, type IParamInput} from '../interfaces/inte
 import itemTypes from '../ItemTypes';
 import {ActionRow} from '../stylesComps';
 import Param from './ActionContent/Param';
-import useLang from 'hooks/useLang';
+import useLang from '../../../../../../hooks/useLang';
 import CustomMessage from './ActionContent/CustomMessage/CustomMessage';
 
 //////////////////// INTERFACES

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '_tests/testUtils';
-import {mockVersionProfile} from '__mocks__/common/versionProfiles';
+import {render, screen, waitFor} from '../../../_tests/testUtils';
+import {mockVersionProfile} from '../../../__mocks__/common/versionProfiles';
 import VersionProfiles from './VersionProfiles';
-import {DeleteVersionProfileDocument, GetVersionProfilesDocument} from '_gqlTypes';
+import {DeleteVersionProfileDocument, GetVersionProfilesDocument} from '../../../_gqlTypes';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({

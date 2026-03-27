@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 import {
     type INotificationChannel,
     type ICreateNotification,
     type NotificationChannels,
     type INotification,
-} from '_types/notification';
-import {type IQueryInfos} from '_types/queryInfos';
+} from '../../_types/notification';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import dayjs from 'dayjs';
 import {
     type INotificationFilterOptionsInRepo,

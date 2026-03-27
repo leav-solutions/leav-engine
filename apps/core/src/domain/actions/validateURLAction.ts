@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
-import {type IValue} from '_types/value';
+import {type IValue} from '../../_types/value';
 
 export default function (): IActionsListFunction {
     return {

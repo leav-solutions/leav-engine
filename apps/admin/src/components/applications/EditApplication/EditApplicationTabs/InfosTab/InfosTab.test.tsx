@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import EditApplicationContext from 'context/EditApplicationContext';
+import EditApplicationContext from '../../../../../context/EditApplicationContext';
 import {
     ApplicationType,
     GetApplicationByIdDocument,
     GetApplicationModulesDocument,
     SaveApplicationDocument,
-} from '_gqlTypes';
-import {act, fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
-import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
+} from '../../../../../_gqlTypes';
+import {act, fireEvent, render, screen, waitFor, within} from '../../../../../_tests/testUtils';
+import {mockApplicationDetails, mockApplicationsModules} from '../../../../../__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
 jest.mock(
-    'components/shared/FileSelector',
+    '../../../../shared/FileSelector',
     () =>
         function FileSelector() {
             return <div>FileSelector</div>;

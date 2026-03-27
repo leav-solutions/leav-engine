@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PreviewSize, RecordCard} from '@leav/ui';
-import useUserData from 'hooks/useUserData';
+import useUserData from '../../hooks/useUserData';
 import {useState} from 'react';
 import styled from 'styled-components';
 import UserPanel from './UserPanel';

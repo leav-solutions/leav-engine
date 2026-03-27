@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type QueryResult, useQuery} from '@apollo/client';
-import {isAllowedQuery} from 'queries/permissions/isAllowedQuery';
-import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
-import {type IS_ALLOWED, type IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
+import {isAllowedQuery} from '../../queries/permissions/isAllowedQuery';
+import {PermissionsActions, PermissionTypes} from '../../_gqlTypes/globalTypes';
+import {type IS_ALLOWED, type IS_ALLOWEDVariables} from '../../_gqlTypes/IS_ALLOWED';
 
 export interface IUseApplicationsPermissionsHook {
     loading: boolean;

@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button} from 'antd';
-import {useActiveTree} from 'hooks/useActiveTree';
-import {useTreeLibraryAllowedAsChild} from 'hooks/useTreeLibraryAllowedAsChild';
+import {useActiveTree} from '../../../../../../hooks/useActiveTree';
+import {useTreeLibraryAllowedAsChild} from '../../../../../../hooks/useTreeLibraryAllowedAsChild';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'reduxStore/infos';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {type IInfo, InfoChannel, InfoType} from '_types/types';
+import {addInfo} from '../../../../../../reduxStore/infos';
+import {useAppDispatch, useAppSelector} from '../../../../../../reduxStore/store';
+import {type IInfo, InfoChannel, InfoType} from '../../../../../../_types/types';
 import DefaultActions from './DefaultActions';
 import SelectionActions from './SelectionActions';
 import {type OnMessagesFunc} from './_types';

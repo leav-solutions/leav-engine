@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ILibraryPermissionDomain} from '../../permission/libraryPermissionDomain';
+import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {
@@ -32,7 +32,7 @@ import {type ITreeRepo} from '../../../infra/tree/treeRepo';
 import {type GetCoreEntityByIdFunc} from '../../helpers/getCoreEntityById';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {type IDefaultPermissionHelper} from '../../permission/helpers/defaultPermission';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../_types/config';
 
 /**
  * Search records

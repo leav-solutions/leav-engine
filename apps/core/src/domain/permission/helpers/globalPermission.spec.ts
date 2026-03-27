@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import globalPermissions, {type IGlobalPermissionDeps} from './globalPermission';
 import {type IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {type ToAny} from '../../../utils/utils';
-import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 
 const depsBase: ToAny<IGlobalPermissionDeps> = {
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),

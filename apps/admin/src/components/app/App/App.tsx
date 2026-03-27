@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import ApplicationContext from 'context/CurrentApplicationContext';
-import {type ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
-import useAppLang from 'hooks/useAppLang/useAppLang';
+import ErrorDisplay from '../../shared/ErrorDisplay';
+import ApplicationContext from '../../../context/CurrentApplicationContext';
+import {type ICurrentApplicationContext} from '../../../context/CurrentApplicationContext/_types';
+import useAppLang from '../../../hooks/useAppLang/useAppLang';
 import {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
-import {ErrorDisplayTypes} from '_types/errors';
+import {ErrorDisplayTypes} from '../../../_types/errors';
 import {APP_ENDPOINT} from '../../../constants';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import LangContext from '../../shared/LangContext';
@@ -32,11 +32,11 @@ import {
     useGetLangsQuery,
     useIsAllowedQuery,
     useMeQuery,
-} from '_gqlTypes';
-import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {type IS_ALLOWED_isAllowed} from '_gqlTypes/IS_ALLOWED';
-import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+} from '../../../_gqlTypes';
+import {type GET_APPLICATION_BY_ID_applications_list} from '../../../_gqlTypes/GET_APPLICATION_BY_ID';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '../../../_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type IS_ALLOWED_isAllowed} from '../../../_gqlTypes/IS_ALLOWED';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 
 const App = (): JSX.Element => {
     const {t, i18n} = useTranslation();

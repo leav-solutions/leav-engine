@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IUtils} from 'utils/utils';
-import {IFormFilterOptions} from '_types/forms';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IUtils} from '../../utils/utils';
+import {IFormFilterOptions} from '../../_types/forms';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
 import {mockForm} from '../../__tests__/mocks/forms';
 import taskRepo from './taskRepo';

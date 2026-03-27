@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {type IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
-import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import type * as Config from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type ISaveValue, type IValue, type IValueVersion} from '_types/value';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
+import {type IGetDefaultElementHelper} from '../tree/helpers/getDefaultElement';
+import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IValueRepo} from '../../infra/value/valueRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import type * as Config from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type ISaveValue, type IValue, type IValueVersion} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -31,7 +31,7 @@ import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';
-import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from '../permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain, {type IValueDomainDeps} from './valueDomain';

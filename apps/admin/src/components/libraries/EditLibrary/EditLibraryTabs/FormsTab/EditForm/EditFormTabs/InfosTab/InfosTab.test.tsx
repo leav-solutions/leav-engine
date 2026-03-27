@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {mount} from 'enzyme';
-// import {wait} from 'utils/testUtils';
-// import {act, render, screen} from '_tests/testUtils';
+// import {wait} from '../../../../../../../../utils/testUtils';
+// import {act, render, screen} from '../../../../../../../../_tests/testUtils';
 // import {type SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 // import {mockFormFull} from '../../../../../../../../__mocks__/forms';
 // import MockedProviderWithFragments from '../../../../../../../../__mocks__/MockedProviderWithFragments';
 // import {EditFormContext} from '../../hooks/useEditFormContext';
 // import {formDataWithTypename} from '../ContentTab/formBuilderReducer/_fixtures/fixtures';
 // import InfosTab from './InfosTab';
-// import {SaveFormDocument} from '_gqlTypes';
+// import {SaveFormDocument} from '../../../../../../../../_gqlTypes';
 
 // jest.mock(
 // './InfosForm',

@@ -7,12 +7,12 @@ import {type ExpressAppMethod, type PluginRegisterRoute} from '../../_types/endp
 import {type IRequestWithContext} from '../../_types/express';
 import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
-import {type IConfig} from '_types/config';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IConfig} from '../../_types/config';
+import {type IValueDomain} from '../../domain/value/valueDomain';
 import {USERS_LIBRARY} from '../../_types/library';
-import {type ITreeValue} from '_types/value';
+import {type ITreeValue} from '../../_types/value';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
-import {type IServerRouteAppModule} from 'interface/server';
+import {type IServerRouteAppModule} from '../../interface/server';
 
 type IEndpointApp = IAppModule & IServerRouteAppModule;
 

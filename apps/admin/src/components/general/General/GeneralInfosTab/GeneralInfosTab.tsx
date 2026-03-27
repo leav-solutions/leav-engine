@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import PluginsExplorer from 'components/general/PluginsExplorer';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import PluginsExplorer from '../../PluginsExplorer';
+import ErrorDisplay from '../../../shared/ErrorDisplay';
+import Loading from '../../../shared/Loading';
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-import {PermissionsActions, useGetVersionQuery} from '_gqlTypes';
+import {PermissionsActions, useGetVersionQuery} from '../../../../_gqlTypes';
 import useUserData from '../../../../hooks/useUserData';
 
 function GeneralInfosTab(): JSX.Element {

@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
-import {type IUtils} from 'utils/utils';
-import {type IAttribute} from '_types/attribute';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IGetCoreVersionProfileParams, type IVersionProfile} from '_types/versionProfile';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IAttributeRepo} from '../../infra/attribute/attributeRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
+import {type IUtils} from '../../utils/utils';
+import {type IAttribute} from '../../_types/attribute';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IGetCoreVersionProfileParams, type IVersionProfile} from '../../_types/versionProfile';
 import PermissionError from '../../errors/PermissionError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';

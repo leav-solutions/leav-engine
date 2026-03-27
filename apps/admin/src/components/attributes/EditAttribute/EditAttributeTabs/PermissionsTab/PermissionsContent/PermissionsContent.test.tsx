@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {shallow} from 'enzyme';
 // import React from 'react';
-// import {PermissionsRelation} from '_gqlTypes';
+// import {PermissionsRelation} from '../../../../../../_gqlTypes';
 // import {mockAttrSimple, mockAttrTree} from '../../../../../../__mocks__/attributes';
 // import PermissionsContent from './PermissionsContent';
 

@@ -6,7 +6,7 @@ import {type GET_FORM_forms_list} from '../../../../../../_gqlTypes/GET_FORM';
 import Loading from '../../../../../shared/Loading';
 import EditFormTabs from './EditFormTabs';
 import {EditFormContext} from './hooks/useEditFormContext';
-import {useGetFormQuery} from '_gqlTypes';
+import {useGetFormQuery} from '../../../../../../_gqlTypes';
 
 interface IEditFormProps {
     formId: string | null;

@@ -9,7 +9,7 @@ import ListPanel from './ListPanel';
 import styles from './MainPanel.module.css';
 import {ActionTypes, type IReducerAction, type IReducerState} from './NavigatorReducer';
 import TopPanel from './TopPanel';
-import {type AvailableLanguage, useQueryLibraryConfigQuery} from '_gqlTypes';
+import {type AvailableLanguage, useQueryLibraryConfigQuery} from '../../_gqlTypes';
 
 export interface IListProps {
     state: IReducerState;

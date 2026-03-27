@@ -9,7 +9,7 @@ import {
     type GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute,
     type GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute,
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
-import {AttributeFormat, AttributeType, type ValuesListConfInput} from '_gqlTypes';
+import {AttributeFormat, AttributeType, type ValuesListConfInput} from '../../../../../../_gqlTypes';
 import {
     type IDateRangeValue,
     type ILinkValuesList,

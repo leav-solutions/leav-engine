@@ -4,7 +4,7 @@
 import {AttributeDependentValuesPermissionsActions, PermissionTypes} from '../../../../_types/permissions';
 import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
-import {type ITreeValue} from '_types/value';
+import {type ITreeValue} from '../../../../_types/value';
 import {
     e2eNonAdminGroupId,
     e2eNonAdminUser,

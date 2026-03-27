@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {mount} from 'enzyme';
 // import {act} from 'react-dom/test-utils';
-// import {wait} from 'utils/testUtils';
+// import {wait} from '../../../../../utils/testUtils';
 // import {getAttributeValuesListQuery} from '../../../../../queries/attributes/getAttributeValuesListQuery';
 // import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 // import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 // import ValuesListTab from './ValuesListTab';
-// import {GetAttributesValuesListDocument} from '_gqlTypes';
+// import {GetAttributesValuesListDocument} from '../../../../../_gqlTypes';
 
 // jest.mock(
 // './ValuesListForm',

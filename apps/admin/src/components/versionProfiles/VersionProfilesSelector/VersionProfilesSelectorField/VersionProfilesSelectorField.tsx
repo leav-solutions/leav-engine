@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import useLang from 'hooks/useLang';
+import useLang from '../../../../hooks/useLang';
 import React from 'react';
 import {Form, type FormDropdownProps} from 'semantic-ui-react';
-import {type GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
+import {type GET_VERSION_PROFILES_versionProfiles_list} from '../../../../_gqlTypes/GET_VERSION_PROFILES';
 
 interface IVersionProfilesSelectorFieldProps extends FormDropdownProps {
     profiles: GET_VERSION_PROFILES_versionProfiles_list[];

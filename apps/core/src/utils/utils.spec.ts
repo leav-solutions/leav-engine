@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type i18n} from 'i18next';
-import {type IConfig, type IServer} from '_types/config';
-import {type ISaveValue, type IValue} from '_types/value';
+import {type IConfig, type IServer} from '../_types/config';
+import {type ISaveValue, type IValue} from '../_types/value';
 import {AttributeFormats} from '../_types/attribute';
 import {Errors} from '../_types/errors';
 import {

@@ -4,8 +4,8 @@
 // import {InMemoryCache} from '@apollo/client';
 // import {mount} from 'enzyme';
 // import {act} from 'react-dom/test-utils';
-// import {wait} from 'utils/testUtils';
-// import {render, screen} from '_tests/testUtils';
+// import {wait} from '../../../../../utils/testUtils';
+// import {render, screen} from '../../../../../_tests/testUtils';
 // import {mockAttrAdv, mockAttrSimple} from '../../../../../__mocks__/attributes';
 // import {attributesPossibleTypes} from '../../../../../__mocks__/fragmentMatchers/attributesFragmentMatchers';
 // import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
@@ -16,7 +16,7 @@
 // GetAttributesDocument,
 // SaveAttributeDocument,
 // type TreepermissionsConfInput,
-// } from '_gqlTypes';
+// } from '../../../../../_gqlTypes';
 
 // jest.mock(
 // './PermissionsContent',

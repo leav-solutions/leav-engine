@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
-import {isAllowedQuery} from 'queries/permissions/isAllowedQuery';
-import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
-import {renderHook, waitFor} from '_tests/testUtils';
+import {isAllowedQuery} from '../../queries/permissions/isAllowedQuery';
+import {PermissionsActions, PermissionTypes} from '../../_gqlTypes/globalTypes';
+import {renderHook, waitFor} from '../../_tests/testUtils';
 import {useApplicationsPermissions} from './useApplicationsPermissions';
 
 describe('useCanEditRecord', () => {

@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type IUtils} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type ILibraryRepo} from '../../../infra/library/libraryRepo';
+import {type IUtils} from '../../../utils/utils';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {PermissionsRelations} from '../../../_types/permissions';
 import {mockLibrary} from '../../../__tests__/mocks/library';

@@ -6,9 +6,9 @@ import {getConfig} from '../../config';
 import i18nextInit from '../../i18nextInit';
 import {initDI} from '../../depsManager';
 import {initDb} from '../../infra/db/db';
-import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IDbUtils} from '../../infra/db/dbUtils';
 import {initRedis} from '../../infra/cache';
-import {type ITasksManagerInterface} from 'interface/tasksManager';
+import {type ITasksManagerInterface} from '../../interface/tasksManager';
 import {type IGlobalThis} from './integrationTestUtils';
 
 declare const globalThis: IGlobalThis;

@@ -5,7 +5,7 @@
 // import {mount, shallow} from 'enzyme';
 // import React from 'react';
 // import {act} from 'react-dom/test-utils';
-// import {wait} from 'utils/testUtils';
+// import {wait} from '../../../../utils/testUtils';
 // import {createRecordQuery} from '../../../../queries/records/createRecordMutation';
 // import {saveValueBatchQuery} from '../../../../queries/values/saveValueBatchMutation';
 // import {mockAttrAdvMultiVal, mockAttrSimple} from '../../../../__mocks__/attributes';

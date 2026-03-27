@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
+import {type IVersionProfileDomain} from '../../versionProfile/versionProfileDomain';
+import {type IAttributeRepo} from '../../../infra/attribute/attributeRepo';
+import {type ITreeRepo} from '../../../infra/tree/treeRepo';
 import {difference, intersection} from 'lodash';
-import {type IUtils} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../../utils/utils';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeTypes, type IAttribute, type IAttributeFilterOptions} from '../../../_types/attribute';

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType, FormElementTypes} from '_gqlTypes';
+import {AttributeFormat, AttributeType, FormElementTypes} from '../../../../../../../../../../../_gqlTypes';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';

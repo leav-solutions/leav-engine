@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useUserData from '../../../hooks/useUserData';
-import {PermissionsActions, useGetTreeByIdQuery} from '_gqlTypes';
+import {PermissionsActions, useGetTreeByIdQuery} from '../../../_gqlTypes';
 import Loading from '../../shared/Loading';
 import EditTreeTabs from './EditTreeTabs';
-import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
+import {type GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import {useParams} from 'react-router-dom';
 
 const EditTree = (): JSX.Element => {

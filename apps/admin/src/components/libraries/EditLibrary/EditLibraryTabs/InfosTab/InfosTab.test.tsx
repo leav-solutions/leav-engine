@@ -9,8 +9,8 @@ import {
     GetLibrariesDocument,
     GetViewsDocument,
     SaveLibraryDocument,
-} from '_gqlTypes';
-import {fireEvent, render, screen, waitFor} from '_tests/testUtils';
+} from '../../../../../_gqlTypes';
+import {fireEvent, render, screen, waitFor} from '../../../../../_tests/testUtils';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import InfosTab from './InfosTab';
 

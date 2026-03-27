@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import bcrypt from 'bcryptjs';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import {type IApiKey} from '_types/apiKey';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IApiKeyRepo} from '../../infra/apiKey/apiKeyRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import {type IApiKey} from '../../_types/apiKey';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -15,7 +15,7 @@ import {mockCtx} from '../../__tests__/mocks/shared';
 import apiKeyDomain, {type IApiKeyDomainDeps} from './apiKeyDomain';
 import {type Mockify} from '@leav/utils';
 import {IAuth, IConfig} from '../../_types/config';
-import * as Config from '_types/config';
+import * as Config from '../../_types/config';
 import {IAttributeDomainDeps} from '../attribute/attributeDomain';
 
 const depsBase: ToAny<IApiKeyDomainDeps> = {

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
+// import {act, fireEvent, render, screen, waitFor} from '../../../_tests/testUtils';
 // import {type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
 // import {
 //     PermissionsActions,
@@ -9,7 +9,7 @@
 //     GetPermissionsActionsDocument,
 //     GetPermissionsDocument,
 //     SavePermissionDocument,
-// } from '_gqlTypes';
+// } from '../../../_gqlTypes';
 // import EditPermissions from './EditPermissions';
 
 // jest.mock('../../../hooks/useLang');

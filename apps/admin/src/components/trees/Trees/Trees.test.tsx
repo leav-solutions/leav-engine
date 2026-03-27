@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {act, render, screen, waitFor} from '_tests/testUtils';
-import {mockTree} from '__mocks__/trees';
+import {act, render, screen, waitFor} from '../../../_tests/testUtils';
+import {mockTree} from '../../../__mocks__/trees';
 import Trees from './Trees';
-import {GetTreesDocument} from '_gqlTypes';
+import {GetTreesDocument} from '../../../_gqlTypes';
 
 jest.mock(
     '../TreesList',

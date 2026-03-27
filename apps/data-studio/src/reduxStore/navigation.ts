@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
-import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../_gqlTypes/TREE_NODE_CHILDREN';
 import {type INavigationState} from './stateType';
 
 export const navigationInitialState: INavigationState = {

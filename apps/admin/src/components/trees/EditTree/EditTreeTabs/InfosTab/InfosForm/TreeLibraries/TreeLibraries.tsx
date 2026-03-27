@@ -5,7 +5,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, Grid, Icon, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type TreeLibraryInput} from '_gqlTypes';
+import {type TreeLibraryInput} from '../../../../../../../_gqlTypes';
 import LibrariesSelector from '../../../../../../libraries/LibrariesSelector';
 
 interface ITreeLibrariesProps {

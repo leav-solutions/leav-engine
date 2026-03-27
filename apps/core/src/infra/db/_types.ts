@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {type AqlQuery} from 'arangojs/aql';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 export interface IDbDocument {
     _id: string;

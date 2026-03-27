@@ -12,7 +12,7 @@ import {
 import {type IFormFilterOptions} from '../../../../../_types/forms';
 import EditFormModal from './EditFormModal';
 import FormsList from './FormsList';
-import {useDeleteFormMutation, useGetFormsListQuery} from '_gqlTypes';
+import {useDeleteFormMutation, useGetFormsListQuery} from '../../../../../_gqlTypes';
 
 interface IFormsTabProps {
     libraryId: string;

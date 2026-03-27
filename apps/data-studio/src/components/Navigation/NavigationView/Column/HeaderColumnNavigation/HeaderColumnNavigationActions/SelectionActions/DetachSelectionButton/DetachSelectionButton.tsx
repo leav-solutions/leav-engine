@@ -4,14 +4,14 @@
 import {DeleteOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button} from 'antd';
-import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
-import {useActiveTree} from 'hooks/useActiveTree';
-import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
+import {removeTreeElementMutation} from '../../../../../../../../graphQL/mutations/trees/removeTreeElementMutation';
+import {useActiveTree} from '../../../../../../../../hooks/useActiveTree';
+import useRefreshTreeContent from '../../../../../../../../hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
-import {setNavigationPath} from 'reduxStore/navigation';
-import {resetSelection} from 'reduxStore/selection';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {type REMOVE_TREE_ELEMENT, type REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
+import {setNavigationPath} from '../../../../../../../../reduxStore/navigation';
+import {resetSelection} from '../../../../../../../../reduxStore/selection';
+import {useAppDispatch, useAppSelector} from '../../../../../../../../reduxStore/store';
+import {type REMOVE_TREE_ELEMENT, type REMOVE_TREE_ELEMENTVariables} from '../../../../../../../../_gqlTypes/REMOVE_TREE_ELEMENT';
 import {type IMessages, type OnMessagesFunc} from '../../_types';
 
 interface IDetachSelectionButtonProps {

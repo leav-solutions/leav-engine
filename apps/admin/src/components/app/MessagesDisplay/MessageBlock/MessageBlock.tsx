@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect} from 'react';
-import {type IMessage, MessagesTypes} from 'reduxStore/messages/messages';
+import {type IMessage, MessagesTypes} from '../../../../reduxStore/messages/messages';
 import {Icon, Message} from 'semantic-ui-react';
 import {type SemanticCOLORS, type SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
 import {type CSSObject} from 'styled-components';

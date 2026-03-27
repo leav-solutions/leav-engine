@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type PublishedEvent} from '@leav/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 
 export interface ICommonSubscriptionFilters {
     ignoreOwnEvents?: boolean;

@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import useUserData from 'hooks/useUserData';
+import ErrorDisplay from '../../shared/ErrorDisplay';
+import useUserData from '../../../hooks/useUserData';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {addWildcardToFilters} from 'utils';
-import {PermissionsActions, type VersionProfilesFiltersInput, useGetVersionProfilesQuery} from '_gqlTypes';
+import {addWildcardToFilters} from '../../../utils';
+import {PermissionsActions, type VersionProfilesFiltersInput, useGetVersionProfilesQuery} from '../../../_gqlTypes';
 import VersionProfilesList from './VersionProfilesList';
 import DeleteProfileButton from './VersionProfilesList/DeleteProfileButton';
 

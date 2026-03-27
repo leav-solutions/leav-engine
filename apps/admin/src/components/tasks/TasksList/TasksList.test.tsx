@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import {Button} from 'semantic-ui-react';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen} from '../../../_tests/testUtils';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import {mockTask} from '../../../__mocks__/task';
 import TasksList from './TasksList';

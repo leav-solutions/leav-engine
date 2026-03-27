@@ -21,16 +21,16 @@ import {
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {type SizeType} from 'antd/lib/config-provider/SizeContext';
-import {useActiveTree} from 'hooks/useActiveTree';
+import {useActiveTree} from '../../../../../hooks/useActiveTree';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setNavigationPath} from 'reduxStore/navigation';
-import {setSelection} from 'reduxStore/selection';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {setNavigationPath} from '../../../../../reduxStore/navigation';
+import {setSelection} from '../../../../../reduxStore/selection';
+import {useAppDispatch, useAppSelector} from '../../../../../reduxStore/store';
 import styled, {type CSSObject} from 'styled-components';
-import {getFilesLibraryId, localizedTranslation} from 'utils';
-import {TreeBehavior} from '_gqlTypes';
-import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {getFilesLibraryId, localizedTranslation} from '../../../../../utils';
+import {TreeBehavior} from '../../../../../_gqlTypes';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../../../../_gqlTypes/TREE_NODE_CHILDREN';
 import {
     type IRecordIdentityWhoAmI,
     type ISharedSelected,

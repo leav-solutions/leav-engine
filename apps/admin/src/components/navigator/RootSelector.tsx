@@ -4,7 +4,7 @@
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
-import {useGetLibrariesQuery} from '_gqlTypes';
+import {useGetLibrariesQuery} from '../../_gqlTypes';
 
 export interface IRootSelectorContainerProps {
     restrictToRoots: string[];

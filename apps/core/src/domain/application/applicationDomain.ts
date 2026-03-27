@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CONSULTED_APPS_KEY, EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IUserDomain} from 'domain/user/userDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IUserDomain} from '../user/userDomain';
 import {type i18n} from 'i18next';
-import {type IApplicationRepo} from 'infra/application/applicationRepo';
-import {type IUtils} from 'utils/utils';
-import {type IConfig} from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IApplicationRepo} from '../../infra/application/applicationRepo';
+import {type IUtils} from '../../utils/utils';
+import {type IConfig} from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {

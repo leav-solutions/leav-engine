@@ -14,7 +14,7 @@ import {
     type GET_TREE_BY_ID_trees_list,
     type GET_TREE_BY_ID_trees_list_libraries_settings,
 } from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {TreeBehavior, type TreeInput, type TreeLibraryInput} from '_gqlTypes';
+import {TreeBehavior, type TreeInput, type TreeLibraryInput} from '../../../../../../_gqlTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
 import {type Override} from '../../../../../../_types/Override';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';

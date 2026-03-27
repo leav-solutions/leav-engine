@@ -21,7 +21,7 @@ import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import dayjs from 'dayjs';
 import {waitForTaskCompletion} from '../taskUtils';
-import {type IExportProfileConfig} from 'domain/export/exportProfileDomain';
+import {type IExportProfileConfig} from '../../../../domain/export/exportProfileDomain';
 import {waitEmailNotification, waitWebSocketNotification} from '../notificationUtils';
 
 describe('Export', () => {

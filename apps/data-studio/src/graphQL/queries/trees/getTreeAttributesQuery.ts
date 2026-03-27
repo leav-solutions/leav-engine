@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {type AttributeFormat, type AttributeType} from '_gqlTypes';
+import {type AttributeFormat, type AttributeType} from '../../../_gqlTypes';
 import {type ISystemTranslation} from '../../../_types/types';
 
 export interface IGetTreeAttributesQueryAttribute {

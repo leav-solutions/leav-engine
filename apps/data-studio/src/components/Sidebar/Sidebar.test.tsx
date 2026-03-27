@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
-import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
+import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
+import {getUserDataQuery} from '../../graphQL/queries/userData/getUserData';
 import {MemoryRouter} from 'react-router-dom';
-import {act, render, screen} from '_tests/testUtils';
-import {mockLibrary} from '__mocks__/common/library';
-import {mockTree} from '__mocks__/common/tree';
+import {act, render, screen} from '../../_tests/testUtils';
+import {mockLibrary} from '../../__mocks__/common/library';
+import {mockTree} from '../../__mocks__/common/tree';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
 import Sidebar from './Sidebar';
 

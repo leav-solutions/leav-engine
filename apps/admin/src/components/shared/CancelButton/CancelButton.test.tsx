@@ -4,7 +4,7 @@
 // import {shallow} from 'enzyme';
 import React from 'react';
 import CancelButton from './CancelButton';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen} from '../../../_tests/testUtils';
 
 describe('CancelButton', () => {
     test('Snapshot test', async () => {

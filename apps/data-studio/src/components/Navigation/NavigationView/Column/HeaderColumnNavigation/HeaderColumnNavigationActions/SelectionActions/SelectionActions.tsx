@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useActiveTree} from 'hooks/useActiveTree';
-import {useAppSelector} from 'reduxStore/store';
-import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {SharedStateSelectionType} from '_types/types';
+import {useActiveTree} from '../../../../../../../hooks/useActiveTree';
+import {useAppSelector} from '../../../../../../../reduxStore/store';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../../../../../../_gqlTypes/TREE_NODE_CHILDREN';
+import {SharedStateSelectionType} from '../../../../../../../_types/types';
 import {type OnMessagesFunc} from '../_types';
 import AddSelectionButton from './AddSelectionButton';
 import DetachSelectionButton from './DetachSelectionButton';

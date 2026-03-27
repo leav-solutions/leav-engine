@@ -7,7 +7,7 @@ import {Button, Modal} from 'semantic-ui-react';
 import {type GET_ATTRIBUTESVariables, type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../shared/Loading';
 import AttributesSelectionList from './AttributesSelectionList';
-import {useGetAttributesQuery} from '_gqlTypes';
+import {useGetAttributesQuery} from '../../../_gqlTypes';
 
 interface IAttributesSelectionProps {
     onSubmit: (selectedAttributes: string[]) => void;

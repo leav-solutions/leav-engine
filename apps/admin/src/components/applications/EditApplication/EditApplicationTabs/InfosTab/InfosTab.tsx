@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
-import {useEditApplicationContext} from 'context/EditApplicationContext';
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
+import {useEditApplicationContext} from '../../../../../context/EditApplicationContext';
+import {getApplicationByIdQuery} from '../../../../../queries/applications/getApplicationByIdQuery';
 import {useNavigate} from 'react-router-dom';
-import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {type IFormError} from '_types/errors';
+import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '../../../../../_gqlTypes/GET_APPLICATION_BY_ID';
+import {type IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
 import {type ApplicationInfosFormValues} from './_types';
-import {useSaveApplicationMutation} from '_gqlTypes';
+import {useSaveApplicationMutation} from '../../../../../_gqlTypes';
 
 function InfosTab(): JSX.Element {
     const apolloClient = useApolloClient();

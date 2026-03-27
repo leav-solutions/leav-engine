@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction, localizedTranslation} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
-import {type SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
-import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {type IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
-import {type IUtils} from 'utils/utils';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type UpdateRecordLastModifFunc} from '../helpers/updateRecordLastModif';
+import {type SendRecordUpdateEventHelper} from '../record/helpers/sendRecordUpdateEvent';
+import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
+import {type IGetDefaultElementHelper} from '../tree/helpers/getDefaultElement';
+import {type ITreeDomain} from '../tree/treeDomain';
+import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IValueRepo} from '../../infra/value/valueRepo';
+import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import type * as Config from '_types/config';
-import {type IRecordFilterLight, type IRecord} from '_types/record';
+import type * as Config from '../../_types/config';
+import {type IRecordFilterLight, type IRecord} from '../../_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -39,7 +39,7 @@ import {
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';
-import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from '../permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import canSaveRecordValue, {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from './helpers/canSaveRecordValue';
@@ -50,10 +50,10 @@ import postDeleteValue from './helpers/postDeleteValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {type IDeleteValueParams, type IRunActionListParams} from './_types';
-import {type CreateRecordHelper} from 'domain/record/helpers/createRecord';
+import {type CreateRecordHelper} from '../record/helpers/createRecord';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
-import {type FindRecordsHelper} from 'domain/record/helpers/findRecords';
+import {type FindRecordsHelper} from '../record/helpers/findRecords';
 import areValuesIdentical from './helpers/areValuesIdentical';
 
 export interface ISaveBatchValueError {

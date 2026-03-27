@@ -5,7 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import {clearCacheForQuery} from '../../../../../utils';
 import {type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {type TreeInput, useGetTreesLazyQuery, useSaveTreeMutation} from '_gqlTypes';
+import {type TreeInput, useGetTreesLazyQuery, useSaveTreeMutation} from '../../../../../_gqlTypes';
 import TreeInfosForm from './InfosForm';
 
 interface ITreeInfosTabProps {

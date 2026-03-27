@@ -16,17 +16,17 @@ import {initPlugins} from '../../../pluginsLoader';
 import {type IConfig} from '../../../_types/config';
 import {initOIDCClient} from '../../../infra/oidc';
 import {initDb} from '../../../infra/db/db';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IServer} from 'interface/server';
+import {type IDbUtils} from '../../../infra/db/dbUtils';
+import {type IServer} from '../../../interface/server';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
-import {type ITasksManagerInterface} from 'interface/tasksManager';
-import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITasksManagerInterface} from '../../../interface/tasksManager';
+import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {USERS_GROUPS_LIBRARY, USERS_LIBRARY} from '../../../_types/library';
-import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
+import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {type IGlobalThis} from './e2eUtils';
 import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
-import {type ICorePluginsApp} from 'app/core/pluginsApp';
+import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 
 declare const globalThis: IGlobalThis;
 

@@ -19,11 +19,11 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {CloseCode, createClient} from 'graphql-ws';
-import useRedirectToLogin from 'hooks/useRedirectToLogin';
+import useRedirectToLogin from '../../../hooks/useRedirectToLogin';
 import {type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
-import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsWatcher';
+import {endMutation, startMutation} from '../../../reduxStore/mutationsWatcher/mutationsWatcher';
 import * as yup from 'yup';
 import {API_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
 

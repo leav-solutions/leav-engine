@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
+import {type IAttributeRepo} from '../attribute/attributeRepo';
+import {type GetSearchQuery} from '../indexation/helpers/getSearchQuery';
 import {cloneDeep, omit} from 'lodash';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {AttributeTypes} from '../../_types/attribute';
@@ -12,10 +12,10 @@ import {type IAttributeTypeRepo, type IAttributeTypesRepo} from '../attributeTyp
 import {type IDbUtils} from '../db/dbUtils';
 import {type IFilterTypesHelper} from './helpers/filterTypes';
 import recordRepo, {type IRecordRepoDeps} from './recordRepo';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 import {SortOrder} from '../../_types/list';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 const depsBase: ToAny<IRecordRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),

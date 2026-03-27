@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
 import * as bcrypt from 'bcryptjs';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import {type i18n} from 'i18next';
-import {type IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
+import {type IApiKeyRepo} from '../../infra/apiKey/apiKeyRepo';
 import dayjs from 'dayjs';
-import {type IUtils} from 'utils/utils';
-import {type IApiKey, type IGetCoreApiKeysParams} from '_types/apiKey';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../utils/utils';
+import {type IApiKey, type IGetCoreApiKeysParams} from '../../_types/apiKey';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import AuthenticationError from '../../errors/AuthenticationError';
 import PermissionError from '../../errors/PermissionError';
 import {Errors} from '../../_types/errors';

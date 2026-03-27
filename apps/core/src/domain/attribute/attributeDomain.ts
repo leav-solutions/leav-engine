@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {type IAttributeForRepo, type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type IFormRepo} from 'infra/form/formRepo';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IUtils} from 'utils/utils';
-import {type IFormStrict} from '_types/forms';
-import {type ILibrary} from '_types/library';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IDateRangeValue} from '_types/value';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
+import {type IAttributeForRepo, type IAttributeRepo} from '../../infra/attribute/attributeRepo';
+import {type IFormRepo} from '../../infra/form/formRepo';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IUtils} from '../../utils/utils';
+import {type IFormStrict} from '../../_types/forms';
+import {type ILibrary} from '../../_types/library';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IDateRangeValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
@@ -33,7 +33,7 @@ import getPermissionCachePatternKey from '../permission/helpers/getPermissionCac
 import getAllowedInputTypes, {getActionsListToSave, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {type IValidateHelper} from 'domain/helpers/validate';
+import {type IValidateHelper} from '../helpers/validate';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;

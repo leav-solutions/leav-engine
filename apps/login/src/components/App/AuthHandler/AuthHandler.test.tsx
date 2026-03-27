@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '@testing-library/react';
-import * as useAuthChecker from 'hooks/useAuthChecker';
-import * as useRedirectToDest from 'hooks/useRedirectToDest';
+import * as useAuthChecker from '../../../hooks/useAuthChecker';
+import * as useRedirectToDest from '../../../hooks/useRedirectToDest';
 import AuthHandler from './AuthHandler';
 
-jest.mock('hooks/useRedirectToDest', () => ({
+jest.mock('../../../hooks/useRedirectToDest', () => ({
     useRedirectToDest: jest.fn().mockReturnValue({
         redirectToDest: jest.fn(),
     }),

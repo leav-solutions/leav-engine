@@ -11,7 +11,7 @@ import {
 } from '../../../../_constants/discussions';
 import {adminUserId} from '../../../../_constants/users';
 import {getConfig} from '../../../../config';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../../_types/config';
 import {
     e2eGuestUser,
     e2eNonAdminUser,

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ApplicationContext from 'context/ApplicationContext';
-import {type IApplicationContext} from 'context/ApplicationContext/_types';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {renderHook, waitFor} from '_tests/testUtils';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
+import ApplicationContext from '../../context/ApplicationContext';
+import {type IApplicationContext} from '../../context/ApplicationContext/_types';
+import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
+import {renderHook, waitFor} from '../../_tests/testUtils';
+import {mockApplicationDetails} from '../../__mocks__/common/applications';
+import {mockLibrary, mockLibraryPermissions} from '../../__mocks__/common/library';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useApplicationLibraries} from './useApplicationLibraries';
 
 describe('useApplicationLibraries', () => {

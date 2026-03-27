@@ -8,7 +8,7 @@ import {Button, Form, Icon} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {isLinkAttribute, isValueNull, localizedLabel} from '../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType} from '_gqlTypes';
+import {AttributeType} from '../../../../_gqlTypes';
 import {type SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
     type IGenericValue,

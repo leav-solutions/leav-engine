@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
-import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type InitQueryContextFunc} from '../helpers/initQueryContext';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {Express, type NextFunction, type Response} from 'express';
 import path from 'node:path';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import {type IConfig} from '_types/config';
-import {type IRequestWithContext} from '_types/express';
-import {type IGlobalSettings} from '_types/globalSettings';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IAppModule} from '_types/shared';
+import {type IConfig} from '../../_types/config';
+import {type IRequestWithContext} from '../../_types/express';
+import {type IGlobalSettings} from '../../_types/globalSettings';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IAppModule} from '../../_types/shared';
 import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 import {APP_DEFAULT_NAME, DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 import {AttributeCondition} from '../../_types/record';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {type IServerRouteAppModule} from 'interface/server';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type IServerRouteAppModule} from '../../interface/server';
 
 export type ICoreApp = IAppModule & IGraphqlAppModule & IServerRouteAppModule;
 

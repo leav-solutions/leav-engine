@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import {getApplicationsEventsSubscription} from 'queries/applications/getApplicationsEventsSubscription';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
-import {getMe} from 'queries/me/me';
-import {mockUser} from '_tests/mocks/user';
-import {render, screen} from '_tests/testUtils';
+import {getApplicationByIdQuery} from '../../queries/applications/getApplicationByIdQuery';
+import {getApplicationsEventsSubscription} from '../../queries/applications/getApplicationsEventsSubscription';
+import {getGlobalSettingsQuery} from '../../queries/globalSettings/getGlobalSettingsQuery';
+import {getMe} from '../../queries/me/me';
+import {mockUser} from '../../_tests/mocks/user';
+import {render, screen} from '../../_tests/testUtils';
 import App from './App';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import {getLangs} from 'queries/core/getLangs';
+import {getApplicationsQuery} from '../../queries/applications/getApplicationsQuery';
+import {getLangs} from '../../queries/core/getLangs';
 import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
 jest.mock(
-    'components/UserMenu',
+    '../UserMenu',
     () =>
         function UserMenu() {
             return <div>UserMenu</div>;
@@ -23,7 +23,7 @@ jest.mock(
 );
 
 jest.mock(
-    'components/Applications',
+    '../Applications',
     () =>
         function Applications() {
             return <div>Applications</div>;
@@ -34,7 +34,7 @@ jest.mock('../../constants', () => ({
     APP_ENDPOINT: 'portal',
 }));
 
-jest.mock('hooks/useApplicationEventsSubscription', () => ({
+jest.mock('../../hooks/useApplicationEventsSubscription', () => ({
     useApplicationEventsSubscription: jest.fn(),
 }));
 

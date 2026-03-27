@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type PublishedEvent} from '@leav/utils';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from '../../../domain/eventsManager/eventsManagerDomain';
+import {type ILibraryDomain} from '../../../domain/library/libraryDomain';
+import {type IPermissionDomain} from '../../../domain/permission/permissionDomain';
 import {type GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {omit} from 'lodash';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IList, type IPaginationParams} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IKeyValue} from '_types/shared';
+import {type IAppGraphQLSchema} from '../../../_types/graphql';
+import {type IList, type IPaginationParams} from '../../../_types/list';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IKeyValue} from '../../../_types/shared';
 import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {TriggerNames} from '../../../_types/eventsManager';
 import {
@@ -46,7 +46,7 @@ import {
     type ITreesQueryArgs,
 } from './_types';
 import {type IRecordPermissionDomain} from '../../../domain/permission/recordPermissionDomain';
-import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from '../../../domain/permission/attributeDependentValuesPermissionDomain';
 
 export type ITreeAttributeApp = IGraphqlAppModule;
 

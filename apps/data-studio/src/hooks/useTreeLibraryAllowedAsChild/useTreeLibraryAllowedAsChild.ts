@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
+import {getTreeLibraries} from '../../graphQL/queries/trees/getTreeLibraries';
 import {
     type GET_TREE_LIBRARIES,
     type GET_TREE_LIBRARIESVariables,
     type GET_TREE_LIBRARIES_trees_list_libraries,
-} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+} from '../../_gqlTypes/GET_TREE_LIBRARIES';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../_gqlTypes/TREE_NODE_CHILDREN';
 
 export interface IUseTreeLibraryAllowedAsChild {
     loading: boolean;

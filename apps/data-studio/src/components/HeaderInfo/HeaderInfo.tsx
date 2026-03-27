@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useEffect, useState} from 'react';
-import {setInfoStack} from 'reduxStore/infos';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {setInfoStack} from '../../reduxStore/infos';
+import {useAppDispatch, useAppSelector} from '../../reduxStore/store';
 import {defaultInfosTime} from '../../constants/constants';
 import {sortInfoByPriority} from '../../utils';
 import {type IInfo, InfoChannel} from '../../_types/types';

@@ -15,7 +15,7 @@ import {
     gqlSaveValueBis,
     makeGraphQlCall,
 } from '../e2eUtils';
-import {type ILinkValue} from '_types/value';
+import {type ILinkValue} from '../../../../_types/value';
 import {
     IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS,
     IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS,

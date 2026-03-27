@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as crypto from 'node:crypto';
 import fs from 'fs';
-import {type FilesystemContent, type IFilesystemDatas} from '_types/filesystem';
-import {type IDbFilesDatas, type IRecord} from '_types/queries';
+import {type FilesystemContent, type IFilesystemDatas} from './_types/filesystem';
+import {type IDbFilesDatas, type IRecord} from './_types/queries';
 import {logger} from '@leav/logger';
 
 export const createHashFromFile = (filePath: string): Promise<string> =>

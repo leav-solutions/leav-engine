@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
 import {render, screen, waitFor} from '@testing-library/react';
-import {mockAttrSimple} from '__mocks__/attributes';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
+import {mockAttrSimple} from '../../../../../../../../../../__mocks__/attributes';
+import MockedProviderWithFragments from '../../../../../../../../../../__mocks__/MockedProviderWithFragments';
 import * as useFormBuilderReducer from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import {formElem1, mockInitialState} from '../../formBuilderReducer/_fixtures/fixtures';
 import {formElements} from '../../uiElements';
 import {FieldTypes, FormElementSettingsInputTypes} from '../../_types';
 import SettingsEdition from './SettingsEdition';
-import {GetAttributeByIdDocument} from '_gqlTypes';
+import {GetAttributeByIdDocument} from '../../../../../../../../../../_gqlTypes';
 
 jest.mock(
-    'components/attributes/AttributeSelector',
+    '../../../../../../../../../attributes/AttributeSelector',
     () =>
         function AttributeSelector() {
             return <div>AttributeSelector</div>;

@@ -10,10 +10,10 @@ import {initRedis} from '../../../infra/cache';
 import {initDb} from '../../../infra/db/db';
 import {initMailer} from '../../../infra/mailer';
 import {initOIDCClient} from '../../../infra/oidc';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IServer} from 'interface/server';
-import {type ITasksManagerInterface} from 'interface/tasksManager';
-import {type IIndexationManagerInterface} from 'interface/indexationManager';
+import {type IDbUtils} from '../../../infra/db/dbUtils';
+import {type IServer} from '../../../interface/server';
+import {type ITasksManagerInterface} from '../../../interface/tasksManager';
+import {type IIndexationManagerInterface} from '../../../interface/indexationManager';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 
 export async function setup() {

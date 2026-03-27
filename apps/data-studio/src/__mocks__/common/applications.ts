@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type WithTypename} from '@leav/utils';
-import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {ApplicationType} from '_gqlTypes';
+import {type GET_APPLICATIONS_applications_list} from '../../_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '../../_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {ApplicationType} from '../../_gqlTypes';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {
     id: 'my-app',

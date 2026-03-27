@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
+import {type ILibraryPermissionDomain} from '../../permission/libraryPermissionDomain';
+import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import dayjs from 'dayjs';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';

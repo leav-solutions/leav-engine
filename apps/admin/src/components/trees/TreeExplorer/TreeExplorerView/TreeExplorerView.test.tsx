@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {shallow} from 'enzyme';
 // import React from 'react';
-// import {mockTree} from '__mocks__/trees';
+// import {mockTree} from '../../../../__mocks__/trees';
 // import TreeExplorerView from './TreeExplorerView';
 
 // jest.mock('@nosferatu500/react-sortable-tree', () => ({
@@ -12,7 +12,7 @@
 // },
 // }));
 
-// jest.mock('hooks/useLang');
+// jest.mock('../../../../hooks/useLang');
 
 // describe('StructureView', () => {
 // test('Render loading if no data', async () => {

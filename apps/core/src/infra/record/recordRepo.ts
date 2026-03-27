@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import DataLoader from 'dataloader';
-import {type GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
-import {type IDbDocument, type IExecuteWithCount} from 'infra/db/_types';
-import {type GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IConfig} from '_types/config';
+import {type GetConditionPart} from '../attributeTypes/helpers/getConditionPart';
+import {type IDbDocument, type IExecuteWithCount} from '../db/_types';
+import {type GetSearchQuery} from '../indexation/helpers/getSearchQuery';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IConfig} from '../../_types/config';
 import {
     CursorDirection,
     type ICursorPaginationParams,
@@ -30,7 +30,7 @@ import {type IDbUtils} from '../db/dbUtils';
 import {type IFilterTypesHelper} from './helpers/filterTypes';
 import {type GetSearchVariableName} from './helpers/getSearchVariableName';
 import {type GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
-import {type IGetAccessPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
+import {type IGetAccessPermissionsValue} from '../../domain/record/helpers/getAccessPermissionFilters';
 import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 

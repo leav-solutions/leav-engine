@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {mount} from 'enzyme';
 // import {BrowserRouter as Router} from 'react-router-dom-v5';
-// import {PermissionsActions} from '_gqlTypes';
+// import {PermissionsActions} from '../../../_gqlTypes';
 // import UserContext from '../UserContext';
 // import {type IUserContext} from '../UserContext/UserContext';
 // import ProtectedRoute from './ProtectedRoute';

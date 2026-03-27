@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IDbUtils} from '../db/dbUtils';
 import {mockAttrAdvVersionable} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import versionProfileRepo from './versionProfileRepo';
