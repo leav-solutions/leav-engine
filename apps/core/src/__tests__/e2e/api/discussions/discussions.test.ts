@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {AttributeCondition} from '../../../../_types/record';
 import {
     DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID,
@@ -13,12 +14,15 @@ import {adminUserId} from '../../../../_constants/users';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
 import {
-    e2eGuestUser,
     adminUserSdk,
+    e2eAdminUser,
+    e2eGuestUser,
     e2eNonAdminUser,
     gqlCreateRecord,
     gqlSaveAttribute,
     makeGraphQlCall,
+    makeWebSocketGraphQlCall,
+    waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
 import {deleteMailpitMessagesBySearch, getMailpitMessage, waitForMailpitSearchMessage} from '../mailpitUtils';
 import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from '../constants';
@@ -31,6 +35,7 @@ describe('Discussion', () => {
     let targetRecordIdWithoutLabel: string;
     const targetRecordLabelWith = 'Record with label';
     let config: IConfig;
+    let adminWsClient: GraphqlWsClient;
 
     beforeAll(async () => {
         config = await getConfig();
@@ -65,6 +70,12 @@ describe('Discussion', () => {
         }`);
         targetRecordIdWithLabel = resCreateRecord.data.data.c1.record.id;
         targetRecordIdWithoutLabel = resCreateRecord.data.data.c2.record.id;
+
+        adminWsClient = await makeWebSocketGraphQlCall({user: e2eAdminUser()});
+    });
+
+    afterAll(() => {
+        adminWsClient?.dispose();
     });
 
     beforeEach(async () => {
@@ -270,6 +281,65 @@ describe('Discussion', () => {
             expect(message.Subject).toContain('You were mentioned in a comment');
             expect(message.HTML).toContain(`You were mentioned by admin in a comment on ${targetRecordLabelWith}.`);
             expect(message.HTML).toContain(commentUrl);
+        });
+
+        test('post comment should send pubsub event RECORD_NEW_COMMENT', async () => {
+            const commentMessage = 'This is a test comment to test pubsub event';
+
+            const discussionSubscriptionQuery = `
+                subscription {
+                    recordNewComment(filters: {
+                        records: ["${targetRecordIdWithLabel}"]
+                    }) {
+                        record {
+                            whoAmI {
+                                label
+                                id
+                            }
+                        }
+                        comment {
+                            whoAmI {
+                                label
+                                id
+                            }
+                        }
+                    }
+                }
+            `;
+            const res = waitGraphqlWebSocketMessage<{
+                recordNewComment: {
+                    record: {whoAmI: {label: string; id: string}};
+                    comment: {whoAmI: {label: string; id: string}};
+                };
+            }>(
+                adminWsClient,
+                discussionSubscriptionQuery,
+                {},
+                data => data?.recordNewComment?.record?.whoAmI?.id === targetRecordIdWithLabel,
+                {timeoutMs: 20_000},
+            );
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // wait a bit to be sure subscription is well set before posting the comment
+
+            const resPostComment = await adminUserSdk.PostDiscussionComment({
+                comment: {
+                    message: commentMessage,
+                    targetRecord: {
+                        id: targetRecordIdWithLabel,
+                        libraryId: targetLibId,
+                    },
+                    threadId,
+                },
+            });
+
+            expect(resPostComment.postDiscussionComment.id).toEqual(expect.any(String));
+
+            const commentNotification = await res;
+
+            expect(commentNotification.recordNewComment.comment.whoAmI.id).toBe(
+                resPostComment.postDiscussionComment.id,
+            );
+            expect(commentNotification.recordNewComment.record.whoAmI.id).toBe(targetRecordIdWithLabel);
         });
     });
 });

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {type INotification} from './notification';
+import {type IRecord} from './record';
 import {type ITask} from './tasksManager';
 
 export enum TriggerNames {
@@ -12,6 +13,7 @@ export enum TriggerNames {
     TASK = 'TASK',
     TREE_EVENT = 'TREE_EVENT',
     RECORD_UPDATE = 'RECORD_UPDATE',
+    RECORD_NEW_COMMENT = 'RECORD_NEW_COMMENT',
     NOTIFICATION = 'NOTIFICATION',
 }
 
@@ -22,4 +24,11 @@ export interface IPubSubNotificationData {
 
 export interface IPubSubTaskData {
     task: ITask;
+}
+
+export interface IPubSubRecordNewCommentData {
+    recordNewComment: {
+        record: IRecord;
+        comment: IRecord;
+    };
 }

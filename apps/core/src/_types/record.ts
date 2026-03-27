@@ -116,6 +116,8 @@ export interface IRecordUpdateEventFilters {
     records?: string[];
 }
 
+export type IRecordCommentEventFilters = IRecordUpdateEventFilters;
+
 export interface IRecordFilterLight {
     field?: string;
     value?: string;
