@@ -4,7 +4,7 @@
 import {startWatch} from './setupWatcher';
 import {start} from '../watch/watch';
 
-jest.mock('../redis');
+jest.mock('redis');
 
 jest.mock('../watch/watch', () => ({
     start: jest.fn(),

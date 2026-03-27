@@ -22,7 +22,12 @@ import {
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import CreateRecordForm from '../CreateRecordForm';
-import {AttributeType, useCreateRecordMutation, useSaveValueBatchMutation, type ValueBatchInput} from '../../../../../_gqlTypes';
+import {
+    AttributeType,
+    useCreateRecordMutation,
+    useSaveValueBatchMutation,
+    type ValueBatchInput,
+} from '../../../../../_gqlTypes';
 
 interface ICreateRecordFormContainerProps {
     library: GET_LIB_BY_ID_libraries_list;

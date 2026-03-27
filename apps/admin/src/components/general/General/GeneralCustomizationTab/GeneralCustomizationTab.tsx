@@ -4,7 +4,11 @@
 import ErrorDisplay from '../../../shared/ErrorDisplay';
 import Loading from '../../../shared/Loading';
 import {getGlobalSettingsQuery} from '../../../../queries/globalSettings/getGlobalSettingsQuery';
-import {type GlobalSettingsInput, useGetGlobalSettingsQuery, useSaveGlobalSettingsMutation} from '../../../../_gqlTypes';
+import {
+    type GlobalSettingsInput,
+    useGetGlobalSettingsQuery,
+    useSaveGlobalSettingsMutation,
+} from '../../../../_gqlTypes';
 import CustomizationForm from './CustomizationForm';
 import {type GET_GLOBAL_SETTINGS_globalSettings} from '../../../../_gqlTypes/GET_GLOBAL_SETTINGS';
 import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '../../../../_gqlTypes/SAVE_GLOBAL_SETTINGS';

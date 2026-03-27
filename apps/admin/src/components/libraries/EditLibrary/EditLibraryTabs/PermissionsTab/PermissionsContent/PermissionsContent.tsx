@@ -13,7 +13,12 @@ import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute,
 } from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {PermissionsActions, PermissionsRelation, PermissionTypes, type TreepermissionsConfInput} from '../../../../../../_gqlTypes';
+import {
+    PermissionsActions,
+    PermissionsRelation,
+    PermissionTypes,
+    type TreepermissionsConfInput,
+} from '../../../../../../_gqlTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 

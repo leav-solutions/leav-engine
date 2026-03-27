@@ -27,7 +27,10 @@ import {useAppDispatch, useAppSelector} from '../../../../../../../reduxStore/st
 import {getFilesLibraryId} from '../../../../../../../utils';
 import {type GET_TREE_LIBRARIES_trees_list_libraries} from '../../../../../../../_gqlTypes/GET_TREE_LIBRARIES';
 import {LibraryBehavior, TreeBehavior} from '../../../../../../../_gqlTypes';
-import {type REMOVE_TREE_ELEMENT, type REMOVE_TREE_ELEMENTVariables} from '../../../../../../../_gqlTypes/REMOVE_TREE_ELEMENT';
+import {
+    type REMOVE_TREE_ELEMENT,
+    type REMOVE_TREE_ELEMENTVariables,
+} from '../../../../../../../_gqlTypes/REMOVE_TREE_ELEMENT';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../../../../../../_gqlTypes/TREE_NODE_CHILDREN';
 import {type IInfo, InfoChannel, InfoType} from '../../../../../../../_types/types';
 import {type OnMessagesFunc} from '../_types';

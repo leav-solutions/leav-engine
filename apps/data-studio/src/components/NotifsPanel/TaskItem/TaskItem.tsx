@@ -6,9 +6,8 @@ import {useLang} from '@leav/ui';
 import {Button, List, Popconfirm, Progress, Space, Tooltip, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {isCompletedTask, isExceptionTask, localizedTranslation} from '../../../utils';
+import {isCompletedTask, isExceptionTask, localizedTranslation, getFileUrl} from '../../../utils';
 import {TaskStatus} from '../../../_gqlTypes';
-import {getFileUrl} from '../../../utils';
 import {type INotif} from '../NotifsPanel';
 import dayjs from 'dayjs';
 

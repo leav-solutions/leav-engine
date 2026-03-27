@@ -3,7 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import uniqBy from 'lodash/uniqBy';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {type TreeNodePermissionsConfInput, type TreepermissionsConfInput, useSaveTreeMutation} from '../../../../../_gqlTypes';
+import {
+    type TreeNodePermissionsConfInput,
+    type TreepermissionsConfInput,
+    useSaveTreeMutation,
+} from '../../../../../_gqlTypes';
 import PermissionsContent from './PermissionsContent';
 
 interface IPermissionsTabProps {

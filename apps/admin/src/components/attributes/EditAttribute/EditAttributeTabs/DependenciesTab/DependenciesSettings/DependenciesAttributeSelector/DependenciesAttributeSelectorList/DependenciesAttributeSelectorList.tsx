@@ -5,7 +5,7 @@ import useLang from '../../../../../../../../hooks/useLang';
 import {useTranslation} from 'react-i18next';
 import {List, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {activeItemColor} from 'themingVar';
+import {activeItemColor} from '../../../../../../../../themingVar';
 import {localizedLabel} from '../../../../../../../../utils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 

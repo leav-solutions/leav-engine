@@ -11,7 +11,10 @@ import {localizedLabel} from '../../../../../../utils';
 import SimplisticButton from '../../../../../shared/SimplisticButton';
 import DependenciesAttributeSelector from './DependenciesAttributeSelector';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values} from '../../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type AttributeDetailsTreeAttributeFragment, type TreePermissionsDependentValuesConfInput} from '../../../../../../_gqlTypes';
+import {
+    type AttributeDetailsTreeAttributeFragment,
+    type TreePermissionsDependentValuesConfInput,
+} from '../../../../../../_gqlTypes';
 
 const PopContent = styled.div`
     display: flex;

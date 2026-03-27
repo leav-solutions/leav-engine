@@ -8,10 +8,9 @@ import PermissionError from '../../errors/PermissionError';
 import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {default as globalSettingsDomain, type IGlobalSettingsDomainDeps} from './globalSettingsDomain';
-import {type ToAny} from '../../utils/utils';
+import {type ToAny, type IUtils} from '../../utils/utils';
 import {type Mockify} from '@leav/utils';
 import {mockCachesService, mockCacheService} from '../../__tests__/mocks/cache';
-import {type IUtils} from '../../utils/utils';
 
 const mockUtils: Mockify<IUtils> = {
     getGlobalSettingsCacheKey: jest.fn(() => 'globalSettingsCacheKey'),

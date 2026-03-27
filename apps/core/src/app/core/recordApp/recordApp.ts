@@ -68,7 +68,7 @@ export default function ({
 }: IDeps): ICoreRecordApp {
     const _getPropertyValues = async (parent: IRecord, attributeId: string, ctx: IQueryInfos) => {
         try {
-            return recordDomain.getRecordFieldValue({
+            return await recordDomain.getRecordFieldValue({
                 library: parent.library,
                 record: parent,
                 attributeId,

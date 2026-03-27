@@ -13,7 +13,7 @@ import React, {type SyntheticEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Input, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {borderColorBase, borderRadiusBase, greyBackground} from 'themingVar';
+import {borderColorBase, borderRadiusBase, greyBackground} from '../../../../../themingVar';
 import {
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list,
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes,

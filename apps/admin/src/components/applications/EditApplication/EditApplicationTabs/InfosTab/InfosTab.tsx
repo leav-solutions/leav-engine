@@ -5,7 +5,10 @@ import {useApolloClient} from '@apollo/client';
 import {useEditApplicationContext} from '../../../../../context/EditApplicationContext';
 import {getApplicationByIdQuery} from '../../../../../queries/applications/getApplicationByIdQuery';
 import {useNavigate} from 'react-router-dom';
-import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '../../../../../_gqlTypes/GET_APPLICATION_BY_ID';
+import {
+    type GET_APPLICATION_BY_ID,
+    type GET_APPLICATION_BY_IDVariables,
+} from '../../../../../_gqlTypes/GET_APPLICATION_BY_ID';
 import {type IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
 import {type ApplicationInfosFormValues} from './_types';

@@ -11,7 +11,10 @@ import useRefreshTreeContent from '../../../../../../../../hooks/useRefreshTreeC
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from '../../../../../../../../utils';
-import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '../../../../../../../../_gqlTypes/ADD_TREE_ELEMENT';
+import {
+    type ADD_TREE_ELEMENT,
+    type ADD_TREE_ELEMENTVariables,
+} from '../../../../../../../../_gqlTypes/ADD_TREE_ELEMENT';
 import {type GET_TREE_LIBRARIES_trees_list_libraries} from '../../../../../../../../_gqlTypes/GET_TREE_LIBRARIES';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../../../../../../../_gqlTypes/TREE_NODE_CHILDREN';
 import {type IInfo, InfoChannel, InfoType} from '../../../../../../../../_types/types';
