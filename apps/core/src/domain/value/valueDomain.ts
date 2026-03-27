@@ -238,21 +238,29 @@ const valueDomain = function ({
         options: IValuesOptions,
         ctx: IQueryInfos,
     ): Promise<IValue[]> => {
-        let values: IValue[];
-
         if (attribute.id && typeof record[attribute.id] !== 'undefined') {
-            // Format attribute field into simple value
-            values = [
-                {
-                    payload:
-                        attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
-                            ? {id: record[attribute.id]}
-                            : record[attribute.id],
-                },
-            ];
+            let values: IValue[];
 
-            // Apply actionsList
-            values = await _runActionsList({
+            if (attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string') {
+                const linkedRecord = await recordRepo.getRecord({
+                    libraryId: attribute.linked_library,
+                    recordId: record[attribute.id],
+                    ctx,
+                });
+
+                if (linkedRecord === null) {
+                    values = [];
+                    logger.warn(
+                        `[ValueDomain] Unable to find record for library ${attribute.linked_library} and record ${record[attribute.id]}`,
+                    );
+                } else {
+                    values = [{payload: {id: record[attribute.id]}}];
+                }
+            } else {
+                values = [{payload: record[attribute.id]}];
+            }
+
+            return _runActionsList({
                 listName: ActionsListEvents.GET_VALUE,
                 values,
                 attribute,
@@ -261,7 +269,7 @@ const valueDomain = function ({
                 ctx,
             });
         } else {
-            values = await _getValues({
+            return _getValues({
                 library,
                 recordId: record.id,
                 attribute: attribute.id,
@@ -269,8 +277,6 @@ const valueDomain = function ({
                 ctx,
             });
         }
-
-        return values;
     };
 
     /**
@@ -1080,8 +1086,7 @@ const valueDomain = function ({
         const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
         let values = await _extractRecordValue(record, attrProps, library, options, ctx);
 
-        const hasNoValue = values.length === 0;
-        if (hasNoValue) {
+        if (values.length === 0) {
             values = [
                 {
                     payload: null,
@@ -1140,17 +1145,8 @@ const valueDomain = function ({
             return acc;
         }, []);
 
-        if (hasNoValue) {
-            // remove null values or values that do not represent a record
-            formattedValues = formattedValues.filter(
-                v =>
-                    v.payload !== null &&
-                    typeof v.payload !== 'undefined' &&
-                    typeof v.payload === 'object' &&
-                    v.payload.hasOwnProperty('id') &&
-                    v.payload.hasOwnProperty('library'),
-            );
-        }
+        // remove null values
+        formattedValues = formattedValues.filter(v => v.payload !== null && typeof v.payload !== 'undefined');
 
         return formattedValues;
     };
