@@ -14,7 +14,8 @@ import {useColumnWidth} from './useColumnWidth';
 import {WHO_AM_I_COLUMN} from './_constants';
 import {TableNameCell} from './TableNameCell';
 import cn from 'classnames';
-import {INTERNAL_COL_DEFINE} from 'rc-table';
+
+const USELESS = '';
 
 const tableRowHeight = 56;
 const tableHeaderMinLineHeight = 22;
@@ -64,11 +65,6 @@ const StyledTable = styled(KitTable)`
         .ant-table-cell {
             min-height: ${tableRowHeight}px;
             height: auto !important;
-        }
-
-        /* Align actions to the right of the cell only if another column is present after */
-        td:has(+ td) .ant-table-cell .actions-list {
-            margin-left: auto;
         }
     }
 
@@ -136,32 +132,26 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
         const {getFieldColumnWidth} = useColumnWidth();
 
-        const getColumnProps = (attributeName: string): KitTableColumnType<IItemData> => ({
-            title: () => attributesProperties[attributeName].label,
+        const columns = attributesToDisplay.map<KitTableColumnType<IItemData>>(attributeName => ({
+            title: attributeName === WHO_AM_I_COLUMN ? t('explorer.name') : attributesProperties[attributeName].label,
+            dataIndex: USELESS,
             ellipsis: useSmallHeaderSize,
             width: getFieldColumnWidth(attributesProperties[attributeName]),
             shouldCellUpdate: (record, prevRecord) =>
-                isMassSelectionAll || record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
-            render: (_, item) => (
-                <TableCell
-                    attributeProperties={attributesProperties[attributeName]}
-                    values={item.propertiesById[attributeName]}
-                />
-            ),
-        });
-
-        const columns = attributesToDisplay.map(getColumnProps);
-
-        const whoIAmColumn: KitTableColumnType<IItemData> = {
-            ...getColumnProps(WHO_AM_I_COLUMN),
-            title: () => t('explorer.name'),
-            fixed: 'left',
-            render: (_, item) => <TableNameCell item={item} itemActions={itemActions} />,
-            shouldCellUpdate: (record, prevRecord) => isMassSelectionAll || record.whoAmI !== prevRecord.whoAmI,
-        };
-
-        // replace `width` by `min-width` for the whoAmI column definition to prevent selection column to expand when all column have a width defined (which is a native table behaviour).
-        whoIAmColumn[INTERNAL_COL_DEFINE] = {style: {width: 'unset', minWidth: whoIAmColumn.width}};
+                isMassSelectionAll ||
+                (attributeName === WHO_AM_I_COLUMN
+                    ? record.whoAmI !== prevRecord.whoAmI
+                    : record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName]),
+            render: (_, item) =>
+                attributeName === WHO_AM_I_COLUMN ? (
+                    <TableNameCell item={item} itemActions={itemActions} />
+                ) : (
+                    <TableCell
+                        attributeProperties={attributesProperties[attributeName]}
+                        values={item.propertiesById[attributeName]}
+                    />
+                ),
+        }));
 
         const itemActionToUseOnRowClick = itemActions.find(itemAction => itemAction.useItemActionOnRowClick);
 
@@ -200,7 +190,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     })}
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     headerLineSize={useSmallHeaderSize ? 's' : undefined}
-                    columns={[whoIAmColumn, ...columns]}
+                    columns={columns}
                     tableLayout="fixed"
                     scroll={{
                         y: tableBodyHeight ?? (hideTableHeader ? '100%' : scrollHeight),

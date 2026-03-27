@@ -35,7 +35,7 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
-import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
+import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID, WHO_AM_I_COLUMN} from './_constants';
 import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
 import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
 import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
@@ -402,9 +402,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 <DataView
                                     dataGroupedFilteredSorted={data?.records ?? emptyArray}
                                     attributesProperties={data?.attributes ?? emptyObject}
-                                    attributesToDisplay={
-                                        /* ⚠️ whoAmI column will always be displayed first*/ view.attributesIds
-                                    }
+                                    attributesToDisplay={[WHO_AM_I_COLUMN, ...view.attributesIds]}
                                     hideTableHeader={hideTableHeader}
                                     useSmallHeaderSize={useSmallHeaderSize}
                                     paginationProps={
