@@ -5,7 +5,7 @@ import {logger} from '@leav/logger';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import cron from 'node-cron';
 import {type ITasksManagerDomain} from './tasksManagerDomain';
-import {type RegisterCronTask} from '_types/cronTask';
+import {type RegisterCronTask} from '../../_types/cronTask';
 
 export interface ICronTasksManagerDomain {
     initCronTasksManager(): Promise<void>;
@@ -25,16 +25,23 @@ export default function ({
     const cronTasksToRegisters: RegisterCronTask[] = [];
     function registerCronTasks(registerCronTask: RegisterCronTask): void {
         const {schedule, name, createTask} = registerCronTask;
-        logger.verbose(`Register cron task ${name} with schedule ${schedule}`);
+        if (schedule === 'never') {
+            logger.verbose(`Cron task ${name} is set to 'never', it will not be scheduled`);
+            return;
+        }
+
+        logger.verbose(`Register cron task ${name} with schedule "${schedule}"`);
         cron.schedule(schedule, async () => {
             try {
                 const ctx = getSystemQueryContext(`cron-task::${name}`);
 
                 const taskToCreate = await createTask(ctx);
                 const taskId = await tasksManagerDomain.createTask(taskToCreate, ctx);
-                logger.debug(`Submit cron task ${taskId} ${name} with schedule ${schedule}`);
+                logger.debug(`Submit cron task ${taskId} ${name} with schedule "${schedule}"`);
             } catch (e) {
-                logger.error(`Error while submitting cron task ${name} with schedule ${schedule} : ${e.stack}`);
+                logger.error(`Error while submitting cron task ${name} with schedule "${schedule}" : ${e.stack}`, {
+                    error: e,
+                });
             }
         });
     }
