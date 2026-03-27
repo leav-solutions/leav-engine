@@ -1,12 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import useMessages from 'hooks/useMessages';
+import useMessages from '../../../../../../../../hooks/useMessages';
 import {useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {MessagesTypes} from 'reduxStore/messages/messages';
+import {MessagesTypes} from '../../../../../../../../reduxStore/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
-import {type FormElementInput, type FormElementsByDepsInput, useSaveFormMutation} from '_gqlTypes';
+import {
+    type FormElementInput,
+    type FormElementsByDepsInput,
+    useSaveFormMutation,
+} from '../../../../../../../../_gqlTypes';
 import {useEditFormModalButtonsContext} from '../../../EditFormModal/useEditFormModalButtonsContext';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import BreadcrumbNavigator from './BreadcrumbNavigator';

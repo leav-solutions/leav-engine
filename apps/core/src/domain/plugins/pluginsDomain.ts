@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
-import {IPluginInfos, IRegisteredPlugin} from '_types/plugin';
+import {IPluginsRepo} from '../../infra/plugins/pluginsRepo';
+import {IPluginInfos, IRegisteredPlugin} from '../../_types/plugin';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IPermissionDomain} from '../permission/permissionDomain';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import PermissionError from '../../errors/PermissionError';
 
 interface IDeps {

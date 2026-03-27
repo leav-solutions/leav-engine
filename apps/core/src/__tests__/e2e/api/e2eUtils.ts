@@ -9,8 +9,8 @@ import axios, {type AxiosResponse} from 'axios';
 import FormData from 'form-data';
 import jwt, {type SignOptions, type Algorithm} from 'jsonwebtoken';
 import {getSdk} from '../_gqlTypes';
-import {type ActionsListConfig} from '_types/actionsList';
-import {type ITreeElement} from '_types/tree';
+import {type ActionsListConfig} from '../../../_types/actionsList';
+import {type ITreeElement} from '../../../_types/tree';
 import {getConfig} from '../../../config';
 import {adminsGroupId, adminUserId} from '../../../_constants/users';
 import {
@@ -20,9 +20,9 @@ import {
     type IEmbeddedAttribute,
 } from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
-import {type ITreePermissionsDependentValuesConf} from '_types/permissions';
+import {type ITreePermissionsDependentValuesConf} from '../../../_types/permissions';
 import {AttributeCondition} from '../../../_types/record';
-import {type ISaveValue} from '_types/value';
+import {type ISaveValue} from '../../../_types/value';
 
 // Share some global variables from global setup to tests
 export interface IGlobalThis {

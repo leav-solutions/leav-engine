@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import RecordPreview from 'components/shared/RecordPreview';
-import SimplisticButton from 'components/shared/SimplisticButton';
-import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
-import useLang from 'hooks/useLang';
+import ErrorDisplay from '../../shared/ErrorDisplay';
+import Loading from '../../shared/Loading';
+import RecordPreview from '../../shared/RecordPreview';
+import SimplisticButton from '../../shared/SimplisticButton';
+import {useCurrentApplicationContext} from '../../../context/CurrentApplicationContext';
+import useLang from '../../../hooks/useLang';
 import React from 'react';
 import {Icon, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {useGetApplicationsQuery} from '_gqlTypes';
+import {useGetApplicationsQuery} from '../../../_gqlTypes';
 
 const AppSidebar = styled(Sidebar)`
     background: #ffffff;

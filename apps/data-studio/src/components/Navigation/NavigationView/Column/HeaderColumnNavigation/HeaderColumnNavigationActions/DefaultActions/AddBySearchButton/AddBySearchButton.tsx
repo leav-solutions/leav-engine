@@ -4,19 +4,22 @@
 import {useMutation} from '@apollo/client';
 import {type ISearchSelection, SearchModal, useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
-import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
-import {useActiveTree} from 'hooks/useActiveTree';
-import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
+import {addTreeElementMutation} from '../../../../../../../../graphQL/mutations/trees/addTreeElementMutation';
+import {useActiveTree} from '../../../../../../../../hooks/useActiveTree';
+import useRefreshTreeContent from '../../../../../../../../hooks/useRefreshTreeContent';
 import {type CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'reduxStore/infos';
-import {useAppDispatch} from 'reduxStore/store';
-import {localizedTranslation} from 'utils';
-import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
-import {type GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {type TreeElementInput} from '_gqlTypes';
-import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {InfoChannel, InfoType} from '_types/types';
+import {addInfo} from '../../../../../../../../reduxStore/infos';
+import {useAppDispatch} from '../../../../../../../../reduxStore/store';
+import {localizedTranslation} from '../../../../../../../../utils';
+import {
+    type ADD_TREE_ELEMENT,
+    type ADD_TREE_ELEMENTVariables,
+} from '../../../../../../../../_gqlTypes/ADD_TREE_ELEMENT';
+import {type GET_TREE_LIBRARIES_trees_list_libraries} from '../../../../../../../../_gqlTypes/GET_TREE_LIBRARIES';
+import {type TreeElementInput} from '../../../../../../../../_gqlTypes';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../../../../../../../_gqlTypes/TREE_NODE_CHILDREN';
+import {InfoChannel, InfoType} from '../../../../../../../../_types/types';
 import {type IMessages} from '../../_types';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';

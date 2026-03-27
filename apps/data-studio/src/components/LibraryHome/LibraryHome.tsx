@@ -5,10 +5,10 @@ import {type FunctionComponent} from 'react';
 import {ErrorDisplay, ErrorDisplayTypes, Explorer, Loading} from '@leav/ui';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
-import {isLibraryInApp} from 'utils';
+import useGetLibraryDetailExtendedQuery from '../../hooks/useGetLibraryDetailExtendedQuery';
+import {isLibraryInApp} from '../../utils';
 import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
-import {useApplicationContext} from 'context/ApplicationContext';
+import {useApplicationContext} from '../../context/ApplicationContext';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEye} from '@fortawesome/free-solid-svg-icons';
 

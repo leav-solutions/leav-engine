@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Icon, type SemanticICONS} from 'semantic-ui-react';
-import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {LibraryBehavior} from '_gqlTypes';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {LibraryBehavior} from '../../../_gqlTypes';
 import RecordPreview from '../RecordPreview';
 
 interface ILibraryIconProps {

@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IKeyValue, type PublishedEvent} from '@leav/utils';
-import {type ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type ConvertVersionFromGqlFormatFunc} from '../../helpers/convertVersionFromGqlFormat';
+import {type IEventsManagerDomain} from '../../../domain/eventsManager/eventsManagerDomain';
+import {type ILibraryDomain} from '../../../domain/library/libraryDomain';
+import {type IPermissionDomain} from '../../../domain/permission/permissionDomain';
+import {type IRecordDomain} from '../../../domain/record/recordDomain';
+import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import LeavError from '../../../errors/LeavError';
 import {type GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
-import {type IUtils} from 'utils/utils';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type ICursorPaginationParams, type IListWithCursor, type IPaginationParams} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type ITree} from '_types/tree';
+import {type IUtils} from '../../../utils/utils';
+import {type IAppGraphQLSchema} from '../../../_types/graphql';
+import {type ICursorPaginationParams, type IListWithCursor, type IPaginationParams} from '../../../_types/list';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type ITree} from '../../../_types/tree';
 import {type IPreview} from '../../../_types/preview';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors, ErrorTypes} from '../../../_types/errors';
@@ -34,8 +34,8 @@ import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp
 import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {type IIndexationManagerApp} from '../indexationManagerApp';
 import {type ICreateRecordParams, type IRecordsQueryVariables} from './_types';
-import {type IFindRecordParams} from 'domain/record/_types';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IFindRecordParams} from '../../../domain/record/_types';
+import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
 
 export type ICoreRecordApp = IGraphqlAppModule;
 
@@ -68,7 +68,7 @@ export default function ({
 }: IDeps): ICoreRecordApp {
     const _getPropertyValues = async (parent: IRecord, attributeId: string, ctx: IQueryInfos) => {
         try {
-            return recordDomain.getRecordFieldValue({
+            return await recordDomain.getRecordFieldValue({
                 library: parent.library,
                 record: parent,
                 attributeId,

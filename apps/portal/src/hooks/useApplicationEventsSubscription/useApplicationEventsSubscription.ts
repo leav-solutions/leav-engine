@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSubscription} from '@apollo/client';
-import {getApplicationsEventsSubscription} from 'queries/applications/getApplicationsEventsSubscription';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import {type APPLICATION_EVENTS, type APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
-import {type GET_APPLICATIONS, type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {ApplicationEventTypes} from '_gqlTypes/globalTypes';
+import {getApplicationsEventsSubscription} from '../../queries/applications/getApplicationsEventsSubscription';
+import {getApplicationsQuery} from '../../queries/applications/getApplicationsQuery';
+import {type APPLICATION_EVENTS, type APPLICATION_EVENTSVariables} from '../../_gqlTypes/APPLICATION_EVENTS';
+import {type GET_APPLICATIONS, type GET_APPLICATIONS_applications_list} from '../../_gqlTypes/GET_APPLICATIONS';
+import {ApplicationEventTypes} from '../../_gqlTypes/globalTypes';
 
 const useApplicationEventsSubscription = () =>
     useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {

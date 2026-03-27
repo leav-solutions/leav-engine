@@ -3,26 +3,26 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import useLang from 'hooks/useLang';
-import useUserData from 'hooks/useUserData';
+import ErrorDisplay from '../../shared/ErrorDisplay';
+import Loading from '../../shared/Loading';
+import useLang from '../../../hooks/useLang';
+import useUserData from '../../../hooks/useUserData';
 import omit from 'lodash/omit';
-import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
+import {getVersionProfilesQuery} from '../../../queries/versionProfiles/getVersionProfilesQuery';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
+import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '../../../_gqlTypes/GET_VERSION_PROFILES';
 import {
     PermissionsActions,
     type VersionProfileInput,
     useGetVersionProfileByIdQuery,
     useSaveVersionProfileMutation,
-} from '_gqlTypes';
-import {type IFormError} from '_types/errors';
+} from '../../../_gqlTypes';
+import {type IFormError} from '../../../_types/errors';
 import InfoForm from './InfoForm';
-import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '../../../_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 
 const Wrapper = styled.div`
     display: grid;

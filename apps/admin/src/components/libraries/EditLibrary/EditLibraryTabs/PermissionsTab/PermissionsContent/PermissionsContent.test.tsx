@@ -4,7 +4,7 @@
 // import {shallow} from 'enzyme';
 // import React from 'react';
 // import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-// import {PermissionsRelation} from '_gqlTypes';
+// import {PermissionsRelation} from '../../../../../../_gqlTypes';
 // import {mockAttrTree} from '../../../../../../__mocks__/attributes';
 // import {mockLibrary} from '../../../../../../__mocks__/libraries';
 // import PermissionsContent from './PermissionsContent';

@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IAppModule} from '_types/shared';
+import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
+import {type IPermissionDomain} from '../../../domain/permission/permissionDomain';
+import {type IAppGraphQLSchema} from '../../../_types/graphql';
+import {type IAppModule} from '../../../_types/shared';
 import {
     type ILabeledPermissionsAction,
     type IPermission,
@@ -14,7 +14,7 @@ import {
     PermissionTypes,
 } from '../../../_types/permissions';
 import {type IInheritedPermissionsQueryParams} from './_types';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IGraphqlAppModule} from '../../graphql/graphqlApp';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
 

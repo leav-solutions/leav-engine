@@ -13,15 +13,15 @@ describe('getRecordFieldValueHelper', () => {
 // // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // // This file is released under LGPL V3
 // // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-// import {type ToAny} from 'utils/utils';
-// import {type IQueryInfos} from '_types/queryInfos';
+// import {type IAttributeDomain} from '../../attribute/attributeDomain';
+// import {type ToAny} from '../../../utils/utils';
+// import {type IQueryInfos} from '../../../_types/queryInfos';
 // import {AttributeTypes} from '../../../_types/attribute';
 // import {type IRecord} from '../../../_types/record';
 // import {mockAttrSimple, mockAttrSimpleLink} from '../../../__tests__/mocks/attribute';
 // import getRecordFieldValueHelper, {type IGetRecordFieldValueHelperDeps} from './getRecordFieldValue';
 // import {mockRecord} from '../../../__tests__/mocks/record';
-// import {type IValueDomain} from 'domain/value/valueDomain';
+// import {type IValueDomain} from '../../value/valueDomain';
 // import {type IStandardValue, type IValue} from '../../../_types/value';
 // import {ActionsListEvents} from '../../../_types/actionsList';
 // import {type IRecordAttributePermissionDomain} from '../../permission/recordAttributePermissionDomain';

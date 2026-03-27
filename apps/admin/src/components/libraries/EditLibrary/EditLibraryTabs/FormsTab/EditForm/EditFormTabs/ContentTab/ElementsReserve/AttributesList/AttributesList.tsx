@@ -5,7 +5,7 @@ import {type GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../..
 import Loading from '../../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import ReserveAttribute from './ReserveAttribute';
-import {useGetAttributesQuery} from '_gqlTypes';
+import {useGetAttributesQuery} from '../../../../../../../../../../_gqlTypes';
 
 function AttributesList(): JSX.Element {
     // Get library attributes

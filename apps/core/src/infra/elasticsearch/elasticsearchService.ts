@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Client, type estypes} from '@elastic/elasticsearch';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 import {logger} from '@leav/logger';
 import {type Log} from '@leav/utils';
 import {type MappingProperty} from '@elastic/elasticsearch/lib/api/types';

@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {mount} from 'enzyme';
-// import {wait} from 'utils/testUtils';
-// import {act, render, screen} from '_tests/testUtils';
+// import {wait} from '../../../../../utils/testUtils';
+// import {act, render, screen} from '../../../../../_tests/testUtils';
 // import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 // import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-// import {AttributeFormat, AttributeType, GetAttributesDocument, SaveAttributeDocument} from '_gqlTypes';
+// import {AttributeFormat, AttributeType, GetAttributesDocument, SaveAttributeDocument} from '../../../../../_gqlTypes';
 // import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 // import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 // import MetadataTab from './MetadataTab';

@@ -2,26 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Override} from '@leav/utils';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type IViewDomain} from 'domain/view/viewDomain';
+import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
+import {type ILibraryDomain} from '../../../domain/library/libraryDomain';
+import {type IPermissionDomain} from '../../../domain/permission/permissionDomain';
+import {type IRecordDomain} from '../../../domain/record/recordDomain';
+import {type ITreeDomain} from '../../../domain/tree/treeDomain';
+import {type IViewDomain} from '../../../domain/view/viewDomain';
 import {type GraphQLResolveInfo} from 'graphql';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IList} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IKeyValue} from '_types/shared';
-import {type ISystemTranslation} from '_types/systemTranslation';
-import {type ITree} from '_types/tree';
+import {type IAppGraphQLSchema} from '../../../_types/graphql';
+import {type IList} from '../../../_types/list';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IKeyValue} from '../../../_types/shared';
+import {type ISystemTranslation} from '../../../_types/systemTranslation';
+import {type ITree} from '../../../_types/tree';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
 import {type ICoreApp} from '../coreApp';
 import {type IGetLibraryParams} from './_types';
-import {type IExportProfileDomain} from 'domain/export/exportProfileDomain';
+import {type IExportProfileDomain} from '../../../domain/export/exportProfileDomain';
 
 export type ICoreLibraryApp = IGraphqlAppModule;
 

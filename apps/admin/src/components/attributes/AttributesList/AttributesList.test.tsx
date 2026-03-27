@@ -4,8 +4,8 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {mount, shallow} from 'enzyme';
 // import React from 'react';
-// import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-// import {AttributeFormat, AttributeType} from '_gqlTypes';
+// import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+// import {AttributeFormat, AttributeType} from '../../../_gqlTypes';
 // import {mockAttrSimple} from '../../../__mocks__/attributes';
 // import AttributesList from './AttributesList';
 

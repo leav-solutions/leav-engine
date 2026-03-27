@@ -4,7 +4,7 @@
 import {type IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
 import {type ILogger} from '@leav/logger';
-import type * as Config from '_types/config';
+import type * as Config from '../../../_types/config';
 import {type IPreviewMessage, type IPreviewResponseContext, type IPreviewVersion} from '../../../_types/filesManager';
 
 export const sendPreviewMessage = async (

@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import FormFieldWrapper from 'components/shared/FormFieldWrapper';
+import ErrorDisplay from '../../../../../../shared/ErrorDisplay';
+import FormFieldWrapper from '../../../../../../shared/FormFieldWrapper';
 import difference from 'lodash/difference';
 import {type SyntheticEvent, useMemo} from 'react';
 import {type DropdownProps, type FormDropdownProps} from 'semantic-ui-react';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '../../../../../../../_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
 import AttributeLibrariesField from './AttributeLibrariesField';
-import {useGetLibrariesWithAttributesQuery, useSaveLibraryAttributesMutation} from '_gqlTypes';
+import {useGetLibrariesWithAttributesQuery, useSaveLibraryAttributesMutation} from '../../../../../../../_gqlTypes';
 
 export type AttributeLibrariesOnChange = (
     e: SyntheticEvent<HTMLElement>,

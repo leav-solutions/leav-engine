@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {exiftool, type Tags} from 'exiftool-vendored';
 import path from 'node:path';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../_types/config';
 import {FilesAttributes, type IFileMetadata} from '../../../_types/filesManager';
 import {getRootPathByKey} from './getRootPathByKey';
 

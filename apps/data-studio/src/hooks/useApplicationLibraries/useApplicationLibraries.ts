@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type QueryResult, useQuery} from '@apollo/client';
-import {useApplicationContext} from 'context/ApplicationContext';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
+import {useApplicationContext} from '../../context/ApplicationContext';
+import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
 import {
     type GET_LIBRARIES_LIST,
     type GET_LIBRARIES_LISTVariables,
     type GET_LIBRARIES_LIST_libraries_list,
-} from '_gqlTypes/GET_LIBRARIES_LIST';
+} from '../../_gqlTypes/GET_LIBRARIES_LIST';
 
 interface IUseApplicationLibrariesParams {
     onlyAllowed?: boolean;

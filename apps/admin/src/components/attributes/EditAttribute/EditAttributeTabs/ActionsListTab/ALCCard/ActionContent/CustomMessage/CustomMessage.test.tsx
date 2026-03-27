@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import CustomMessage from './CustomMessage';
-import {render, screen} from '_tests/testUtils';
+import {render, screen} from '../../../../../../../../_tests/testUtils';
 
 function placeholder() {
     return undefined;

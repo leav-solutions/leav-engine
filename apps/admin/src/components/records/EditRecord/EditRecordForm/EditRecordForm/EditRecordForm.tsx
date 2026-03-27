@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, NetworkStatus} from '@apollo/client';
 import React, {useCallback, useEffect} from 'react';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils';
@@ -25,7 +25,7 @@ import {
 import Loading from '../../../../shared/Loading';
 import LinksField from '../../../FormFields/LinksField';
 import StandardValuesWrapper from './StandardValuesWrapper';
-import {useDeleteValueMutation, useSaveValueMutation, type ValueInput} from '_gqlTypes';
+import {useDeleteValueMutation, useSaveValueMutation, type ValueInput} from '../../../../../_gqlTypes';
 
 interface IEditRecordFormProps {
     attributes: GET_LIB_BY_ID_libraries_list_attributes[];

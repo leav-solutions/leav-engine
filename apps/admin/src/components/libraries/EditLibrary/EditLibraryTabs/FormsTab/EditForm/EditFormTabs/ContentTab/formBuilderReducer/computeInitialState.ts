@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {FormElementTypes} from '_gqlTypes';
+import {FormElementTypes} from '../../../../../../../../../_gqlTypes';
 import {type IFormElement} from '../_types';
 import {formElements, layoutElements} from '../uiElements';
 import {

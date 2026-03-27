@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {LibraryBehavior} from '_gqlTypes';
-import {type RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {LibraryBehavior} from '../../_gqlTypes';
+import {type RecordIdentity} from '../../_gqlTypes/RecordIdentity';
 import {
     type TREE_NODE_CHILDREN_treeNodeChildren_list,
     type TREE_NODE_CHILDREN_treeNodeChildren_list_permissions,
-} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {type INavigationPath} from '_types/types';
+} from '../../_gqlTypes/TREE_NODE_CHILDREN';
+import {type INavigationPath} from '../../_types/types';
 import {mockPreviews} from './record';
 
 export const mockTreeRecord: RecordIdentity = {

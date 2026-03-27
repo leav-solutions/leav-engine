@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../_types/attribute';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type IRecord} from '_types/record';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IAttributeWithRevLink} from '../../../infra/attributeTypes/attributeTypesRepo';
+import {type IRecordRepo} from '../../../infra/record/recordRepo';
+import {type ILibraryRepo} from '../../../infra/library/libraryRepo';
+import {type IRecord} from '../../../_types/record';
 import {getCoreDep, getLibraryRepo, getRecordRepo, getTreeRepo} from './integrationTestRepoUtils';
-import {type ILinkValue, type ITreeValue, type IValueVersion} from '_types/value';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IAttributeTreeRepo} from 'infra/attributeTypes/attributeTreeRepo';
-import {type ITreeNodeLight} from '_types/tree';
+import {type ILinkValue, type ITreeValue, type IValueVersion} from '../../../_types/value';
+import {type ITreeRepo} from '../../../infra/tree/treeRepo';
+import {type IAttributeTreeRepo} from '../../../infra/attributeTypes/attributeTreeRepo';
+import {type ITreeNodeLight} from '../../../_types/tree';
 
 // Very partial tests, to be completed !
 // TODO - createValue

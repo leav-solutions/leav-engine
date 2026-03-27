@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction, extractArgsFromString} from '@leav/utils';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type UpdateTaskProgress} from '../helpers/updateTaskProgress';
+import {type ILibraryDomain} from '../library/libraryDomain';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type ITasksManagerDomain} from '../tasksManager/tasksManagerDomain';
+import {type ITreeDomain} from '../tree/treeDomain';
+import {type IValueDomain} from '../value/valueDomain';
+import {type IPermissionDomain} from '../permission/permissionDomain';
 import {type AwilixContainer} from 'awilix';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
@@ -20,9 +20,9 @@ import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
 import {nanoid} from 'nanoid';
 import path from 'path';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import * as crypto from 'node:crypto';
-import type * as Config from '_types/config';
+import type * as Config from '../../_types/config';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import ValidationError from '../../errors/ValidationError';
@@ -49,7 +49,7 @@ import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 import {type ILogger} from '@leav/logger';
-import {type ICreateRecordValueError} from 'domain/record/_types';
+import {type ICreateRecordValueError} from '../record/_types';
 import getFileDataBuffer from '../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../utils/helpers/getExcelData';
 

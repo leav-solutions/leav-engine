@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type IFormRepo} from 'infra/form/formRepo';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import {type ILibrary} from '_types/library';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
+import {type IAttributeRepo} from '../../infra/attribute/attributeRepo';
+import {type IFormRepo} from '../../infra/form/formRepo';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import {type ILibrary} from '../../_types/library';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
@@ -22,7 +22,7 @@ import {mockLibrary} from '../../__tests__/mocks/library';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain, {type IAttributeDomainDeps} from './attributeDomain';
 import {type Mockify} from '@leav/utils';
-import {type IValidateHelper} from 'domain/helpers/validate';
+import {type IValidateHelper} from '../helpers/validate';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),

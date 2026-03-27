@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
 // import {mount} from 'enzyme';
-// import {wait} from 'utils/testUtils';
-// import {act, render, screen} from '_tests/testUtils';
+// import {wait} from '../../../../../utils/testUtils';
+// import {act, render, screen} from '../../../../../_tests/testUtils';
 // import {mockFormLight} from '../../../../../__mocks__/forms';
 // import FormsTab from './FormsTab';
-// import {DeleteFormDocument, GetFormsListDocument} from '_gqlTypes';
+// import {DeleteFormDocument, GetFormsListDocument} from '../../../../../_gqlTypes';
 
 // jest.mock(
 // './FormsList',

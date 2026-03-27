@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ApolloError, type StoreObject} from '@apollo/client';
 import {useTranslation} from 'react-i18next';
-import {deleteFromCache} from 'utils';
+import {deleteFromCache} from '../../../utils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
-import {useDeleteAttributeMutation} from '_gqlTypes';
+import {useDeleteAttributeMutation} from '../../../_gqlTypes';
 
 interface IDeleteAttributeProps {
     attribute?: GET_ATTRIBUTES_attributes_list;

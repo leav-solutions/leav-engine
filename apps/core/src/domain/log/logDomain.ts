@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ILogRepo} from 'infra/log/logRepo';
-import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, Log} from '_types/log';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type ILogRepo} from '../../infra/log/logRepo';
+import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, Log} from '../../_types/log';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {AdminPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
-import {type IPermissionDomain} from 'domain/permission/permissionDomain';
-import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
+import {type IPermissionDomain} from '../permission/permissionDomain';
+import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 
 export interface ILogDomain {
     getLogs: (

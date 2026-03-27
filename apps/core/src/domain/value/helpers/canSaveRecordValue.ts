@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IAttributeDependentValuesPermissionDomain} from 'domain/permission/attributeDependentValuesPermissionDomain';
-import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
+import {type IAttributeDependentValuesPermissionDomain} from '../../permission/attributeDependentValuesPermissionDomain';
+import {type IRecordAttributePermissionDomain} from '../../permission/recordAttributePermissionDomain';
+import {type IRecordPermissionDomain} from '../../permission/recordPermissionDomain';
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
-import {type IConfig} from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IValue} from '_types/value';
+import {type IConfig} from '../../../_types/config';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IValue} from '../../../_types/value';
 import {type ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {
     AttributeDependentValuesPermissionsActions,

@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IValidateHelper} from '../helpers/validate';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IRecordDomain} from '../record/recordDomain';
 import {type i18n} from 'i18next';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import type * as Config from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IAttributeRepo} from '../../infra/attribute/attributeRepo';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import type * as Config from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {systemPreviewsSettings} from '../../domain/filesManager/_constants';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';

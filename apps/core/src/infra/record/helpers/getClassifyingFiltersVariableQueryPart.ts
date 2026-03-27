@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {type GeneratedAqlQuery, literal} from 'arangojs/aql';
-import {type IDbService} from 'infra/db/dbService';
-import {type IRecordFilterOption} from '_types/record';
+import {type IDbService} from '../../db/dbService';
+import {type IRecordFilterOption} from '../../../_types/record';
 import {getEdgesCollectionName, getFullNodeId, getRootId} from '../../../infra/tree/helpers/utils';
 import {MAX_TREE_DEPTH} from '../../../infra/tree/treeRepo';
 import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../../infra/tree/_types';

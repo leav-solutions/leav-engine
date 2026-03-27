@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {type IPermissionRepo} from 'infra/permission/permissionRepo';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type TreePath} from '_types/tree';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
+import {type IPermissionRepo} from '../../../infra/permission/permissionRepo';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type TreePath} from '../../../_types/tree';
 import {type PermissionsActions, PermissionsRelations, type PermissionTypes} from '../../../_types/permissions';
 import {
     type GetDefaultGlobalPermission,

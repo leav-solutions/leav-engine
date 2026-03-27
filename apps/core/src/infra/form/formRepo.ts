@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {type IDbService} from 'infra/db/dbService';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IDbDocument} from 'infra/db/_types';
-import {type IForm, type IFormFilterOptions, type IFormStrict} from '_types/forms';
-import {type IList} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IDbDocument} from '../db/_types';
+import {type IForm, type IFormFilterOptions, type IFormStrict} from '../../_types/forms';
+import {type IList} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
 
 export const FORM_COLLECTION_NAME = 'core_forms';
 

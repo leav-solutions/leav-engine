@@ -5,7 +5,7 @@ import {render, type RenderOptions, type RenderResult} from '@testing-library/re
 import {TestProviders} from './TestProviders';
 import {type InMemoryCacheConfig} from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
-import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {type GET_APPLICATION_BY_ID_applications_list} from '../_gqlTypes/GET_APPLICATION_BY_ID';
 import {type ReactElement} from 'react';
 
 interface ICustomRenderOptions extends RenderOptions {

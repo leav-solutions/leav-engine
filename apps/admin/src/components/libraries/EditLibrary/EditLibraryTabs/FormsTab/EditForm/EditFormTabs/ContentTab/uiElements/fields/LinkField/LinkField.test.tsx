@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import LinkField from './LinkField';
 import {render, screen} from '../../../../../../../../../../../_tests/testUtils';
-import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
+import MockedLangContextProvider from '../../../../../../../../../../../__mocks__/MockedLangContextProvider';
 
 describe('LinkField', () => {
     it('should display input with fr label', async () => {

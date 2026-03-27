@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import EditRecordModal from 'components/records/EditRecordModal';
-import SelectRecordModal from 'components/records/SelectRecordModal';
-import Loading from 'components/shared/Loading';
-import useLang from 'hooks/useLang';
+import EditRecordModal from '../../../records/EditRecordModal';
+import SelectRecordModal from '../../../records/SelectRecordModal';
+import Loading from '../../../shared/Loading';
+import useLang from '../../../../hooks/useLang';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {SortableTreeWithoutDndContext as SortableTree} from '@nosferatu500/react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {activeItemColor} from 'themingVar';
-import {getTreeNodeKey, localizedLabel, stringToColor} from 'utils';
-import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
-import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {fakeRootId, type IExtendedTreeNodeData, type ITreeNode, type ITreeNodeData} from '_types/trees';
+import {activeItemColor} from '../../../../themingVar';
+import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../../utils';
+import {type GET_TREE_BY_ID_trees_list} from '../../../../_gqlTypes/GET_TREE_BY_ID';
+import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
+import {fakeRootId, type IExtendedTreeNodeData, type ITreeNode, type ITreeNodeData} from '../../../../_types/trees';
 import {
     type AddTreeElementHandler,
     type ClickNodeHandler,

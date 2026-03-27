@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Loading} from '@leav/ui';
-import RouteNotFound from 'components/Router/RouteNotFound';
-import {useActiveLibrary} from 'hooks/useActiveLibrary';
-import {useActiveTree} from 'hooks/useActiveTree';
+import RouteNotFound from '../Router/RouteNotFound';
+import {useActiveLibrary} from '../../hooks/useActiveLibrary';
+import {useActiveTree} from '../../hooks/useActiveTree';
 import {type FunctionComponent, lazy, Suspense, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import {setActivePanel} from 'reduxStore/activePanel';
-import {useAppDispatch} from 'reduxStore/store';
+import {setActivePanel} from '../../reduxStore/activePanel';
+import {useAppDispatch} from '../../reduxStore/store';
 import styled from 'styled-components';
-import {WorkspacePanels} from '_types/types';
+import {WorkspacePanels} from '../../_types/types';
 
 const VisibilityHandlerDiv = styled.div<{$isActive: boolean}>`
     display: ${p => (p.$isActive ? 'block' : 'none')};
@@ -22,9 +22,9 @@ const WrapperDiv = styled.div`
     overflow-x: hidden;
 `;
 
-const Home = lazy(() => import('components/Home'));
-const LibraryHome = lazy(() => import('components/LibraryHome'));
-const Navigation = lazy(() => import('components/Navigation'));
+const Home = lazy(() => import('../Home'));
+const LibraryHome = lazy(() => import('../LibraryHome'));
+const Navigation = lazy(() => import('../Navigation'));
 
 const Workspace: FunctionComponent = () => {
     const allowedPanels = Object.values(WorkspacePanels);

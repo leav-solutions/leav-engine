@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
+import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 import type nodemailer from 'nodemailer';
 import {type Attachment} from 'nodemailer/lib/mailer';
-import {type IConfig} from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 export interface IMailerService {
     mailer?: nodemailer.Transporter;

@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
-import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
+import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
+import {getUserDataQuery} from '../../graphQL/queries/userData/getUserData';
 import {MemoryRouter} from 'react-router-dom';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import {mockLibrary} from '__mocks__/common/library';
-import {mockTree} from '__mocks__/common/tree';
+import {LibraryBehavior, TreeBehavior} from '../../_gqlTypes';
+import {act, render, screen, waitFor, within} from '../../_tests/testUtils';
+import {mockApplicationDetails} from '../../__mocks__/common/applications';
+import {mockLibrary} from '../../__mocks__/common/library';
+import {mockTree} from '../../__mocks__/common/tree';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
 import Home from './Home';
 

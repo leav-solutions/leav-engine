@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Loading} from '@leav/ui';
-import {useAuthChecker} from 'hooks/useAuthChecker';
-import {useRedirectToDest} from 'hooks/useRedirectToDest';
+import {useAuthChecker} from '../../../hooks/useAuthChecker';
+import {useRedirectToDest} from '../../../hooks/useRedirectToDest';
 
 interface IAuthHandlerProps {
     children: React.ReactNode;

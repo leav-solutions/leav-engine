@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {type INotification, type INotificationChannel, NotificationChannels} from '../../../_types/notification';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IMailerService} from 'infra/mailer/mailerService';
-import {type IUserDomain} from 'domain/user/userDomain';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IMailerService} from '../../../infra/mailer/mailerService';
+import {type IUserDomain} from '../../user/userDomain';
 import * as fs from 'fs';
 import handlebars from 'handlebars';
-import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
-import {type IConfig} from '_types/config';
+import {type IGlobalSettingsDomain} from '../../globalSettings/globalSettingsDomain';
+import {type IConfig} from '../../../_types/config';
 import {NOTIFICATION_EMAIL_TASK_ID_HEADER} from '../../../_constants/notifications';
 
 export interface INotificationByEmailChannelDeps {

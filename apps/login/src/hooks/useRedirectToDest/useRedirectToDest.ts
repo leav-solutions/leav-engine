@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GLOBAL_BASE_URL} from '../../constants';
-import {useQueryParams} from 'hooks/useQueryParams';
+import {useQueryParams} from '../useQueryParams';
 
 export default function useRedirectToDest() {
     const params = useQueryParams();

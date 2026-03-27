@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import useLang from 'hooks/useLang';
+import useLang from '../../../hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {localizedLabel} from 'utils';
-import {type GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
+import {localizedLabel} from '../../../utils';
+import {type GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {
     type GET_LIB_BY_ID_libraries_list,
     type GET_LIB_BY_ID_libraries_list_permissions_conf,
-} from '_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, PermissionsRelation, type TreepermissionsConfInput} from '_gqlTypes';
+} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {AttributeType, PermissionsRelation, type TreepermissionsConfInput} from '../../../_gqlTypes';
 import SimplisticButton from '../SimplisticButton';
 import PermissionsAttributeSelector from './PermissionsAttributeSelector';
 import {

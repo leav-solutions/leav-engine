@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IPubSubNotificationData} from '_types/eventsManager';
+import {type IPubSubNotificationData} from '../../../_types/eventsManager';
 import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {NOTIFICATION_EMAIL_TASK_ID_HEADER} from '../../../_constants/notifications';
 import {waitGraphqlWebSocketMessage} from './e2eUtils';

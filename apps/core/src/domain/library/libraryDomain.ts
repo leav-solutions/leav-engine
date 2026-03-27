@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IValidateHelper} from '../helpers/validate';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import {type i18n} from 'i18next';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IAttributeRepo} from '../../infra/attribute/attributeRepo';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {difference, intersection, union} from 'lodash';
-import {type IUtils} from 'utils/utils';
-import {type IAttribute} from '_types/attribute';
-import {type IConfig} from '_types/config';
+import {type IUtils} from '../../utils/utils';
+import {type IAttribute} from '../../_types/attribute';
+import {type IConfig} from '../../_types/config';
 import {Errors, type ErrorFieldDetail} from '../../_types/errors';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import {systemPreviewsSettings} from '../filesManager/_constants';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';

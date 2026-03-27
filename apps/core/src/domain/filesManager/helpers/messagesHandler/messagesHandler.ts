@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
-import {type IConfig} from '_types/config';
-import {type IFileEventData} from '_types/filesManager';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '../../../../_types/config';
+import {type IFileEventData} from '../../../../_types/filesManager';
+import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {type HandleFileSystemEventFunc} from '../handleFileSystemEvent/_types';
 
 export interface IMessagesHandlerHelper {

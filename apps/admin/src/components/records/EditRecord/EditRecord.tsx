@@ -1,8 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type GET_LIB_BY_ID_libraries_list, type GET_LIB_BY_ID_libraries_list_attributes} from '_gqlTypes/GET_LIB_BY_ID';
-import {type TreeElementInput, useGetLibByIdQuery} from '_gqlTypes';
+import {
+    type GET_LIB_BY_ID_libraries_list,
+    type GET_LIB_BY_ID_libraries_list_attributes,
+} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {type TreeElementInput, useGetLibByIdQuery} from '../../../_gqlTypes';
 import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {type RecordEdition} from '../../../_types/records';
 import Loading from '../../shared/Loading';

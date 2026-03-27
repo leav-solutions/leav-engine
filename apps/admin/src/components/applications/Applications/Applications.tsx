@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import ErrorDisplay from '../../shared/ErrorDisplay';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters} from '../../../utils/utils';
-import {type ApplicationsFiltersInput, PermissionsActions, useGetApplicationsQuery} from '_gqlTypes';
+import {type ApplicationsFiltersInput, PermissionsActions, useGetApplicationsQuery} from '../../../_gqlTypes';
 import ApplicationsList from './ApplicationsList';
 import DeleteApplication from './ApplicationsList/DeleteApplication';
-import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS_applications_list} from '../../../_gqlTypes/GET_APPLICATIONS';
 
 const Applications = (): JSX.Element => {
     const {t} = useTranslation();

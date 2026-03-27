@@ -6,12 +6,12 @@ import {EventAction, IDbPayload, type IPubSubEvent, type IPubSubPayload} from '@
 import type * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import type * as Config from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import type * as Config from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {Errors} from '../../_types/errors';
-import {type IDbPayloadInternal} from '_types/events';
+import {type IDbPayloadInternal} from '../../_types/events';
 import * as crypto from 'node:crypto';
 
 export interface IEventsManagerDomain {

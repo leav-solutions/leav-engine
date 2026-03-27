@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
+import ErrorDisplay from '../../shared/ErrorDisplay';
+import Loading from '../../shared/Loading';
+import {useCurrentApplicationContext} from '../../../context/CurrentApplicationContext';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RiNodeTree} from 'react-icons/ri';
@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
 import {type GET_TREESVariables, type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {PermissionsActions, useGetTreesQuery} from '_gqlTypes';
+import {PermissionsActions, useGetTreesQuery} from '../../../_gqlTypes';
 import TreesList from '../TreesList';
 
 const Title = styled(Header)`

@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
 import {ActionsListEvents, type ActionsListValueType, type IActionsListContext} from '../../_types/actionsList';
-import {type ICalculationVariable, type IVariableValue} from 'domain/helpers/calculations/calculationVariable';
+import {type ICalculationVariable, type IVariableValue} from '../helpers/calculations/calculationVariable';
 import excelCalculationAction from './excelCalculationAction';
-import {type IValue} from '_types/value';
+import {type IValue} from '../../_types/value';
 import {Errors} from '../../_types/errors';
 import {mockStandardValue} from '../../__tests__/mocks/value';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 
 const mockCalculationsVariable = {
     processVariableString: jest.fn(),

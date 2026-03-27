@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IUtils} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IUtils} from '../../utils/utils';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {type IValue} from '../../_types/value';

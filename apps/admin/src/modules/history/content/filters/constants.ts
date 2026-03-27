@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import dayjs from 'dayjs';
-import {type LogAction} from '_gqlTypes';
+import {type LogAction} from '../../../../_gqlTypes';
 import {type DateFilterValue} from './types';
 
 export const DEFAULT_DATES: DateFilterValue = {

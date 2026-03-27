@@ -5,7 +5,7 @@ import {type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import {Button, Icon, Message, type MessageSizeProp, type SemanticICONS} from 'semantic-ui-react';
-import {ErrorDisplayTypes} from '_types/errors';
+import {ErrorDisplayTypes} from '../../../_types/errors';
 
 interface IErrorDisplayProps {
     message?: string;

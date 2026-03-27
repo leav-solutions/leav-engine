@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {mockView} from '../../__tests__/mocks/view';
 import viewRepo from './viewRepo';
-import {type IViewFilterOptions} from '_types/views';
+import {type IViewFilterOptions} from '../../_types/views';
 
 describe('viewRepo', () => {
     const docViewData = {

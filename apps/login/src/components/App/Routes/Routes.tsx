@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorDisplay, Loading} from '@leav/ui';
-import ForgotPassword from 'components/ForgotPassword';
-import Login from 'components/Login';
-import ResetPassword from 'components/ResetPassword';
-import useAppName from 'hooks/useAppName';
+import ForgotPassword from '../../ForgotPassword';
+import Login from '../../Login';
+import ResetPassword from '../../ResetPassword';
+import useAppName from '../../../hooks/useAppName';
 import {useEffect} from 'react';
 import {Route, Routes as RouterRoutes} from 'react-router-dom';
 

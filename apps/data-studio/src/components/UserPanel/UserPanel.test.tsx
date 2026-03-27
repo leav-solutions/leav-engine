@@ -4,7 +4,7 @@
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
 import {BrowserRouter} from 'react-router-dom';
-import {render, screen, waitFor} from '_tests/testUtils';
+import {render, screen, waitFor} from '../../_tests/testUtils';
 import UserPanel from './UserPanel';
 
 const mockDeleteToken = jest.fn();

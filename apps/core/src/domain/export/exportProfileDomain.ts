@@ -6,8 +6,8 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import Joi from 'joi';
 import {ErrorTypes} from '../../_types/errors';
 import LeavError from '../../errors/LeavError';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IConfig} from '_types/config';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IConfig} from '../../_types/config';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 
 export interface IExportProfileColumn {

@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {type IActionsListDomain} from '../../domain/actionsList/actionsListDomain';
 import {type i18n} from 'i18next';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IAppModule} from '_types/shared';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IAppModule} from '../../_types/shared';
 import {ActionsListEvents, ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 export type ICoreActionListApp = IAppModule & IGraphqlAppModule;
 

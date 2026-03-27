@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {act, render, screen} from '_tests/testUtils';
-import {mockLibrary} from '__mocks__/libraries';
+import {act, render, screen} from '../../../_tests/testUtils';
+import {mockLibrary} from '../../../__mocks__/libraries';
 import Libraries from './Libraries';
-import {GetLibrariesDocument} from '_gqlTypes';
+import {GetLibrariesDocument} from '../../../_gqlTypes';
 
 jest.mock(
     '../LibrariesList',

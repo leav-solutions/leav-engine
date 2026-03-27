@@ -1,25 +1,24 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {withFilter} from 'graphql-subscriptions';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import {type IConfig} from '_types/config';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IList, type IPaginationParams, type ISortParams} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IRecord} from '_types/record';
+import {type IConfig} from '../../_types/config';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IList, type IPaginationParams, type ISortParams} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IRecord, AttributeCondition} from '../../_types/record';
 import {type ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
 import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
 import {USERS_LIBRARY} from '../../_types/library';
-import {AttributeCondition} from '../../_types/record';
 import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type IAdminPermissionDomain} from '../../domain/permission/adminPermissionDomain';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {type IExtensionPoints} from '_types/extensionPoints';
+import {type IExtensionPoints} from '../../_types/extensionPoints';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timeout>;

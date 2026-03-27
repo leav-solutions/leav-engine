@@ -9,8 +9,8 @@ import exportProfileDomain, {
     type IExportProfileConfig,
     type IExportProfileDomain,
 } from './exportProfileDomain';
-import {type IConfig} from '_types/config';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IConfig} from '../../_types/config';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
 
 jest.mock('@leav/logger', () => ({
     logger: mockLogger,

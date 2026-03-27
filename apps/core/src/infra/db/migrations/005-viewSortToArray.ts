@@ -4,8 +4,8 @@
 import {type IDbService} from '../dbService';
 import {aql} from 'arangojs';
 import {VIEWS_COLLECTION_NAME} from '../../view/_types';
-import {type IMigration} from '_types/migration';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IMigration} from '../../../_types/migration';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

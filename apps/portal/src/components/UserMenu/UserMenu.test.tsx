@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
-import UserContext from 'context/UserContext';
-import {mockUser} from '_tests/mocks/user';
-import {act, render, screen} from '_tests/testUtils';
+import UserContext from '../../context/UserContext';
+import {mockUser} from '../../_tests/mocks/user';
+import {act, render, screen} from '../../_tests/testUtils';
 import UserMenu from './UserMenu';
 import {getFlagByLang} from '@leav/utils';
 

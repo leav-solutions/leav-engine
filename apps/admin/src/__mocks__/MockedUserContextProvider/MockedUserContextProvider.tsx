@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {type ReactElement} from 'react';
 import UserContext, {type IUserContext} from '../../components/shared/UserContext/UserContext';
-import {PermissionsActions} from '_gqlTypes';
+import {PermissionsActions} from '../../_gqlTypes';
 
 interface IProps {
     permissions?: {[permName: string]: boolean};

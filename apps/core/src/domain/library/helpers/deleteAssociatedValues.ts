@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecordDomain} from '../../record/recordDomain';
+import {type IValueDomain} from '../../value/valueDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeTypes} from '../../../_types/attribute';
-import {type IValueRepo} from 'infra/value/valueRepo';
-import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {type IValueRepo} from '../../../infra/value/valueRepo';
+import {type IAttributeWithRevLink} from '../../../infra/attributeTypes/attributeTypesRepo';
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;

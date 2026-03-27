@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
-import {WorkspacePanels} from '_types/types';
+import {WorkspacePanels} from '../_types/types';
 
 const activePanelSlice = createSlice({
     name: 'activePanel',

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ApplicationContext from 'context/ApplicationContext';
-import {type IApplicationContext} from 'context/ApplicationContext/_types';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
-import {renderHook, waitFor} from '_tests/testUtils';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import {mockTree} from '__mocks__/common/tree';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
+import ApplicationContext from '../../context/ApplicationContext';
+import {type IApplicationContext} from '../../context/ApplicationContext/_types';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
+import {renderHook, waitFor} from '../../_tests/testUtils';
+import {mockApplicationDetails} from '../../__mocks__/common/applications';
+import {mockTree} from '../../__mocks__/common/tree';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useApplicationTrees} from './useApplicationTrees';
 
 describe('useApplicationTrees', () => {

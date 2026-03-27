@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
-import {type IBaseInfo, type IInfo, InfoType} from '_types/types';
+import {type IBaseInfo, type IInfo, InfoType} from '../_types/types';
 import {type IInfosState} from './stateType';
 
 export const infosInitialState: IInfosState = {

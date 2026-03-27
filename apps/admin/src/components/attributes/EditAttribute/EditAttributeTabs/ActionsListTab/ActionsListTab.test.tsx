@@ -9,7 +9,7 @@ import {act} from 'react-dom/test-utils';
 import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import ActionsListTab from './ActionsListTab';
 import {AVAILABLE_ACTIONS_MOCK, NO_AVAILABLE_ACTION_MOCK} from './mocks/ALCMocks';
-import {render, screen} from '_tests/testUtils';
+import {render, screen} from '../../../../../_tests/testUtils';
 
 // adds the availableActions
 // check that it don't crash when there's no actionList or no available actions

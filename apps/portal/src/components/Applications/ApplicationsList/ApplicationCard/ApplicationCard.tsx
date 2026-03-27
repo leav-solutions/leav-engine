@@ -7,11 +7,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
 import {KitAvatar, KitImage, KitRedirectCard} from 'aristid-ds';
-import EditApplicationModal, {
-    type IEditApplicationModalProps,
-} from 'components/Applications/EditApplicationModal/EditApplicationModal';
+import EditApplicationModal, {type IEditApplicationModalProps} from '../../EditApplicationModal/EditApplicationModal';
 import {type ComponentProps, useState} from 'react';
-import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS_applications_list} from '../../../../_gqlTypes/GET_APPLICATIONS';
 import {useTranslation} from 'react-i18next';
 
 interface IApplicationCardProps {

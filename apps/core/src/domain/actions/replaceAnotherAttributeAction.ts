@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import _ from 'lodash';
 import {logger} from '@leav/logger';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IRecord} from '_types/record';
-import {type IStandardValue, type ILinkValue, type ITreeValue, type ISaveValue, type IValue} from '_types/value';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IRecord} from '../../_types/record';
+import {type IStandardValue, type ILinkValue, type ITreeValue, type ISaveValue, type IValue} from '../../_types/value';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IValueDomain} from '../value/valueDomain';
 import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 
 interface IDeps {
     'core.domain.value'?: IValueDomain;

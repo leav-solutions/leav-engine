@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getLogsIndexName} from '@leav/utils';
-import {type IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
-import {type IConfig} from '_types/config';
-import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, type Log} from '_types/log';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IElasticsearchService} from '../elasticsearch/elasticsearchService';
+import {type IConfig} from '../../_types/config';
+import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, type Log} from '../../_types/log';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 export interface ILogRepo {
     getLogs(

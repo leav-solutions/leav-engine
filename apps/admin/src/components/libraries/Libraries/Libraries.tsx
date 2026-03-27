@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
+import {useCurrentApplicationContext} from '../../../context/CurrentApplicationContext';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineDatabase} from 'react-icons/ai';
@@ -10,9 +10,9 @@ import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters, isLibraryInApp} from '../../../utils/utils';
-import {PermissionsActions, useGetLibrariesQuery} from '_gqlTypes';
+import {PermissionsActions, useGetLibrariesQuery} from '../../../_gqlTypes';
 import LibrariesList from '../LibrariesList';
-import {type GET_LIBRARIES_libraries_list} from '_gqlTypes/GET_LIBRARIES';
+import {type GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 
 const Title = styled(Header)`
     display: flex;

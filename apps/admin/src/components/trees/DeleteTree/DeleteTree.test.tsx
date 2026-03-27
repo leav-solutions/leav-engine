@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import React from 'react';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen} from '../../../_tests/testUtils';
 import DeleteTree from '.';
 import {type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {type Mockify} from '../../../_types//Mockify';

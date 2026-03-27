@@ -2,13 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import useLang from 'hooks/useLang';
+import useLang from '../../../../../../../../hooks/useLang';
 import React, {useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_TREES_trees_list, type GET_TREES_trees_list_libraries} from '_gqlTypes/GET_TREES';
+import {
+    type GET_TREES_trees_list,
+    type GET_TREES_trees_list_libraries,
+} from '../../../../../../../../_gqlTypes/GET_TREES';
 import {type IDndDropResult, type IDndLibraryItem, LIBRARY_DND_TYPE} from '../../../_types';
 
 const LibraryItemWrapper = styled.div<{$isOver: boolean}>`

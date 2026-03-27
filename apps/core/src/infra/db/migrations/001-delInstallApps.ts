@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IMigration} from '_types/migration';
+import {type IMigration} from '../../../_types/migration';
 import {type IDbService} from '../dbService';
 import {aql} from 'arangojs';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

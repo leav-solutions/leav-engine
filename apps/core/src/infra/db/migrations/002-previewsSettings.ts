@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type IUtils} from 'utils/utils';
-import {type IMigration} from '_types/migration';
+import {type IAttributeRepo} from '../../attribute/attributeRepo';
+import {type ILibraryRepo} from '../../library/libraryRepo';
+import {type IUtils} from '../../../utils/utils';
+import {type IMigration} from '../../../_types/migration';
 import {systemPreviewsSettings} from '../../../domain/filesManager/_constants';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';

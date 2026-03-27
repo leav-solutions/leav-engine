@@ -7,13 +7,13 @@ import {type i18n} from 'i18next';
 import get from 'lodash/get';
 import {type TreeNode} from '@nosferatu500/react-sortable-tree';
 import removeAccents from 'remove-accents';
-import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {type GET_APPLICATION_BY_ID_applications_list} from '../_gqlTypes/GET_APPLICATION_BY_ID';
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeType, type AvailableLanguage} from '_gqlTypes';
+import {AttributeType, type AvailableLanguage} from '../_gqlTypes';
 import {type IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {type IErrorByField} from '../_types/errors';
 import {type IGenericValue, type ILinkValue, type ITreeLinkValue, type IValue} from '../_types/records';

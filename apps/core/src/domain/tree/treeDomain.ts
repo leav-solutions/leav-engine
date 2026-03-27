@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {EventAction} from '@leav/utils';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
-import {type ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type ITreeNodePermissionDomain} from '../permission/treeNodePermissionDomain';
+import {type ITreePermissionDomain} from '../permission/treePermissionDomain';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
 import {omit} from 'lodash';
-import {type IUtils} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../utils/utils';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';

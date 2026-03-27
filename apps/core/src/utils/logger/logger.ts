@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Bugsnag from '@bugsnag/js';
 import {configureLogger, logger} from '@leav/logger';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 
 export default function () {
     // Do not configure logger here, should be done in app entry point

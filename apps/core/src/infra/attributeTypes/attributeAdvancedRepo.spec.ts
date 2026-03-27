@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeAdvancedRepo, {type IAttributeAdvancedRepoDeps} from './attributeAdvancedRepo';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 import {type IAttributeWithRevLink} from './attributeTypesRepo';
 
 const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {

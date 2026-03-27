@@ -7,7 +7,7 @@ import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, AttributeType} from '_gqlTypes';
+import {AttributeFormat, AttributeType} from '../../../_gqlTypes';
 import Loading from '../../shared/Loading';
 
 interface IAttributesListProps {

@@ -3,19 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import {act, render, screen} from '_tests/testUtils';
-import {mockRecord} from '__mocks__/common/records';
+import {act, render, screen} from '../../../_tests/testUtils';
+import {mockRecord} from '../../../__mocks__/common/records';
 import RecordSelector from './RecordSelector';
 
 jest.mock(
-    'components/records/SelectRecordModal',
+    '../../records/SelectRecordModal',
     () =>
         function SelectRecordModal() {
             return <div>SelectRecordModal</div>;
         },
 );
 
-jest.mock('hooks/useLang');
+jest.mock('../../../hooks/useLang');
 
 describe('RecordSelector', () => {
     afterEach(() => jest.clearAllMocks());

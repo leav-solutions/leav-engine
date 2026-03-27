@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type StoreObject} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import ConfirmedButton from 'components/shared/ConfirmedButton';
-import DeleteButton from 'components/shared/DeleteButton';
-import useLang from 'hooks/useLang';
+import ConfirmedButton from '../../../../shared/ConfirmedButton';
+import DeleteButton from '../../../../shared/DeleteButton';
+import useLang from '../../../../../hooks/useLang';
 import {useTranslation} from 'react-i18next';
-import {deleteFromCache} from 'utils';
-import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {useDeleteApplicationMutation} from '_gqlTypes';
+import {deleteFromCache} from '../../../../../utils';
+import {type GET_APPLICATIONS_applications_list} from '../../../../../_gqlTypes/GET_APPLICATIONS';
+import {useDeleteApplicationMutation} from '../../../../../_gqlTypes';
 
 interface IDeleteApplicationProps {
     application?: GET_APPLICATIONS_applications_list;

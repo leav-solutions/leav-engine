@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IViewDomain} from 'domain/view/viewDomain';
-import {type IUtils} from 'utils/utils';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IList} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IViewDomain} from '../../domain/view/viewDomain';
+import {type IUtils} from '../../utils/utils';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IList} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {
@@ -17,8 +17,8 @@ import {
     ViewSizes,
     ViewTypes,
 } from '../../_types/views';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;

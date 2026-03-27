@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, renderHook} from '@testing-library/react';
-import * as useQueryParams from 'hooks/useQueryParams';
+import * as useQueryParams from '../useQueryParams';
 import useRedirectToDest from './useRedirectToDest';
 
 jest.mock('react-router-dom', () => ({

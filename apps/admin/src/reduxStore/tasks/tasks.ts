@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
-import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {type GET_TASKS_tasks_list} from '../../_gqlTypes/GET_TASKS';
 
 export interface ITasksState {
     tasks: {[taskId: string]: GET_TASKS_tasks_list};

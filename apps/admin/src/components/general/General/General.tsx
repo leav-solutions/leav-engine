@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import useUserData from 'hooks/useUserData';
+import useUserData from '../../../hooks/useUserData';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {Header, Icon, Tab, type TabProps} from 'semantic-ui-react';
-import {PermissionsActions} from '_gqlTypes';
+import {PermissionsActions} from '../../../_gqlTypes';
 import GeneralAdminPermissionsTab from './GeneralAdminPermissionsTab';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
 import GeneralCustomizationTab from './GeneralCustomizationTab';

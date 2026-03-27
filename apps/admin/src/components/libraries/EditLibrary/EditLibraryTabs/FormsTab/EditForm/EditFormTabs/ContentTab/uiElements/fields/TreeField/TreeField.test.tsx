@@ -4,7 +4,7 @@
 // import {render} from 'enzyme';
 // import React from 'react';
 // import TreeField from './TreeField';
-// import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
+// import MockedLangContextProvider from '../../../../../../../../../../../__mocks__/MockedLangContextProvider';
 
 // describe('TreeField', () => {
 // test('Snapshot test', async () => {

@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import ApplicationsSwitcher from 'components/applications/ApplicationsSwitcher';
-import AppIcon from 'components/shared/AppIcon';
-import RecordCard from 'components/shared/RecordCard';
-import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
-import useLang from 'hooks/useLang';
-import useUserData from 'hooks/useUserData';
+import ApplicationsSwitcher from '../../applications/ApplicationsSwitcher';
+import AppIcon from '../../shared/AppIcon';
+import RecordCard from '../../shared/RecordCard';
+import {useCurrentApplicationContext} from '../../../context/CurrentApplicationContext';
+import useLang from '../../../hooks/useLang';
+import useUserData from '../../../hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
-import {type RootState, useAppSelector} from 'reduxStore/store';
+import {type RootState, useAppSelector} from '../../../reduxStore/store';
 import {Loader, Menu} from 'semantic-ui-react';
 import styled from 'styled-components';
 import UserPanel from '../UserPanel';

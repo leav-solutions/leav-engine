@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import ErrorDisplay from '../../shared/ErrorDisplay';
 import {useMemo} from 'react';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type AttributeType, useGetAttributeByIdQuery} from '_gqlTypes';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type AttributeType, useGetAttributeByIdQuery} from '../../../_gqlTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
 import {type AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';

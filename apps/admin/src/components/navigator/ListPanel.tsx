@@ -9,7 +9,7 @@ import RecordCard from '../shared/RecordCard';
 import {type IListProps} from './MainPanel';
 import styles from './MainPanel.module.css';
 import {ActionTypes} from './NavigatorReducer';
-import {useRecordsListQuery} from '_gqlTypes';
+import {useRecordsListQuery} from '../../_gqlTypes';
 
 export default function ListPanel({state, dispatch}: IListProps) {
     return !state.execSearch ? (

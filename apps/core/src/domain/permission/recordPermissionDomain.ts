@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
-import {type ILibrary} from '_types/library';
+import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
+import {type IAttributeWithRevLink} from '../../infra/attributeTypes/attributeTypesRepo';
+import {type IValueRepo} from '../../infra/value/valueRepo';
+import {type ILibrary} from '../../_types/library';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {
@@ -27,7 +27,7 @@ import {
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import {type IRecordInCreationBypassHelper} from './helpers/recordInCreationBypass';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;

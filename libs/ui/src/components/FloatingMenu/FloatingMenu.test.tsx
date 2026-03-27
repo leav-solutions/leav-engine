@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
 import userEvent from '@testing-library/user-event';
-import {act} from '_ui/_tests/testUtils';
-import {render, screen} from '../../_tests/testUtils';
+import {act, render, screen} from '_ui/_tests/testUtils';
 import FloatingMenu from './FloatingMenu';
 import {type FloatingMenuAction, type IFloatingMenuActionWithIcon} from './_types';
 

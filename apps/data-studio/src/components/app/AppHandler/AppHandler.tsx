@@ -19,28 +19,28 @@ import {
 import {localizedTranslation} from '@leav/utils';
 import {Button, ConfigProvider, theme} from 'antd';
 import {KitApp} from 'aristid-ds';
-import ApplicationContext from 'context/ApplicationContext';
+import ApplicationContext from '../../../context/ApplicationContext';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/fr';
-import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
-import {getLangs} from 'graphQL/queries/core/getLangs';
-import {getGlobalSettingsQuery} from 'graphQL/queries/globalSettings/getGlobalSettingsQuery';
-import {getTasks} from 'graphQL/queries/tasks/getTasks';
-import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
+import {getApplicationByEndpointQuery} from '../../../graphQL/queries/applications/getApplicationByEndpointQuery';
+import {getLangs} from '../../../graphQL/queries/core/getLangs';
+import {getGlobalSettingsQuery} from '../../../graphQL/queries/globalSettings/getGlobalSettingsQuery';
+import {getTasks} from '../../../graphQL/queries/tasks/getTasks';
+import {getTaskUpdates} from '../../../graphQL/subscribes/tasks/getTaskUpdates';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppDispatch} from 'reduxStore/store';
-import {addTask} from 'reduxStore/tasks';
+import {useAppDispatch} from '../../../reduxStore/store';
+import {addTask} from '../../../reduxStore/tasks';
 import {ThemeProvider} from 'styled-components';
 import {
     type GET_APPLICATION_BY_ENDPOINT,
     type GET_APPLICATION_BY_ENDPOINTVariables,
-} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
+} from '../../../_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {type GET_GLOBAL_SETTINGS} from '../../../_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type GET_LANGS} from '../../../_gqlTypes/GET_LANGS';
 import {getMe} from '../../../graphQL/queries/userData/me';
-import {initialActiveLibrary, useActiveLibrary} from 'hooks/useActiveLibrary';
+import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/useActiveLibrary';
 import {type ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 import ReactModal from 'react-modal';

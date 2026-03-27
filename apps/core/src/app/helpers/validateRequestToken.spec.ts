@@ -12,7 +12,7 @@ import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import jwt from 'jsonwebtoken';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IValueDomain} from '../../domain/value/valueDomain';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 import {mockCtx, mockSystemQueryContext} from '../../__tests__/mocks/shared';
 import {type ISessionRepo} from '../../infra/session/sessionRepo';
 

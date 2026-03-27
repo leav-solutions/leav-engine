@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
-import FormFieldWrapper from 'components/shared/FormFieldWrapper';
-import RecordSelector from 'components/shared/RecordSelector';
+import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
+import RecordSelector from '../../../../../shared/RecordSelector';
 import {Formik, type FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {getFieldError} from 'utils';
+import {getFieldError} from '../../../../../../utils';
 import * as yup from 'yup';
-import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {type ApiKeyInput} from '_gqlTypes';
-import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {type IFormError} from '_types/errors';
+import {type GET_API_KEYS_apiKeys_list} from '../../../../../../_gqlTypes/GET_API_KEYS';
+import {type ApiKeyInput} from '../../../../../../_gqlTypes';
+import {type RecordIdentity_whoAmI} from '../../../../../../_gqlTypes/RecordIdentity';
+import {type IFormError} from '../../../../../../_types/errors';
 import ExpirationSelector from './ExpirationSelector';
 
 const FormWrapper = styled(Form)<{$isNewKey: boolean}>`

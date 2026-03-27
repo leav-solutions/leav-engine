@@ -4,11 +4,11 @@
 import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
 import {type i18n} from 'i18next';
-import {type IPermissionRepo} from 'infra/permission/permissionRepo';
+import {type IPermissionRepo} from '../../../permission/permissionRepo';
 import dayjs from 'dayjs';
-import {type IConfig} from '_types/config';
-import {type IMigration} from '_types/migration';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '../../../../_types/config';
+import {type IMigration} from '../../../../_types/migration';
+import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {adminsGroupId, filesAdminsGroupId} from '../../../../_constants/users';
 import {SortOrder} from '../../../../_types/list';
 import {PermissionTypes, TreeNodePermissionsActions} from '../../../../_types/permissions';

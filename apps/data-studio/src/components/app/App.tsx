@@ -4,7 +4,7 @@
 import {Loading, SimpleErrorBoundary} from '@leav/ui';
 import {type FunctionComponent, Suspense, useEffect} from 'react';
 import {Provider} from 'react-redux';
-import store from 'reduxStore/store';
+import store from '../../reduxStore/store';
 import ApolloHandler from './ApolloHandler';
 import AppHandler from './AppHandler';
 import './App.css';

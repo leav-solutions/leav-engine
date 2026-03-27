@@ -1,17 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import useLang from 'hooks/useLang';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
+import useLang from '../../../../../../hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {localizedLabel} from 'utils';
+import {localizedLabel} from '../../../../../../utils';
 import SimplisticButton from '../../../../../shared/SimplisticButton';
 import DependenciesAttributeSelector from './DependenciesAttributeSelector';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type AttributeDetailsTreeAttributeFragment, type TreePermissionsDependentValuesConfInput} from '_gqlTypes';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values} from '../../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {
+    type AttributeDetailsTreeAttributeFragment,
+    type TreePermissionsDependentValuesConfInput,
+} from '../../../../../../_gqlTypes';
 
 const PopContent = styled.div`
     display: flex;

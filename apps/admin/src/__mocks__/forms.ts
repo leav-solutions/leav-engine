@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GET_FORM_forms_list} from '../_gqlTypes/GET_FORM';
 import {type GET_FORMS_LIST_forms_list} from '../_gqlTypes/GET_FORMS_LIST';
-import {FormElementTypes} from '_gqlTypes';
+import {FormElementTypes} from '../_gqlTypes';
 
 const myField = {
     id: '123456',

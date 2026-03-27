@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {fakeRootId, type ITreeNodeData} from '_types/trees';
+import {fakeRootId, type ITreeNodeData} from '../../../../../../_types/trees';
 import {getTreeNodeKey} from '../../../../../../utils/utils';
-import {PermissionTypes, type AttributeDetailsTreeAttributeFragment} from '_gqlTypes';
+import {PermissionTypes, type AttributeDetailsTreeAttributeFragment} from '../../../../../../_gqlTypes';
 import ColumnsDisplay from '../../../../../shared/ColumnsDisplay';
-import {type ITreePermissionsDependentValuesConf} from 'components/attributes/EditAttribute/EditAttributeTabs/DependenciesTab/DependenciesSettings/DependenciesSettings';
-import DefinePermissionsViewLoadTree from 'components/permissions/DefinePermissionsViewLoadTree';
-import EditPermissions from 'components/permissions/EditPermissions';
+import {type ITreePermissionsDependentValuesConf} from '../DependenciesSettings/DependenciesSettings';
+import DefinePermissionsViewLoadTree from '../../../../../permissions/DefinePermissionsViewLoadTree';
+import EditPermissions from '../../../../../permissions/EditPermissions';
 import {useTranslation} from 'react-i18next';
 
 interface IDependenciesTreePermissionsViewProps {

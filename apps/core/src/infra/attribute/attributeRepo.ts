@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {join} from 'arangojs/aql';
-import {type IUtils} from 'utils/utils';
-import {type ILibrary} from '_types/library';
-import {type IList} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../utils/utils';
+import {type ILibrary} from '../../_types/library';
+import {type IList} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAttribute, type IGetCoreAttributesParams} from '../../_types/attribute';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import {type IDbService} from '../db/dbService';

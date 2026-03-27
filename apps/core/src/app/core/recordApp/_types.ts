@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Override} from '@leav/utils';
-import {type IRecordFilterLight, type IRecordSortLight} from '_types/record';
-import {type IValue, type IValueVersionFromGql} from '_types/value';
+import {type IRecordFilterLight, type IRecordSortLight} from '../../../_types/record';
+import {type IValue, type IValueVersionFromGql} from '../../../_types/value';
 
 export type ICreateRecordValue = Override<
     Omit<IValue, 'version'>,

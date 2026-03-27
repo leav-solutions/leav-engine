@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type PublishedEvent} from '@leav/utils';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import {withFilter} from 'graphql-subscriptions';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import {type IPubSubNotificationData, TriggerNames} from '../../_types/eventsManager';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IList} from '../../_types/list';
 import {type INotification} from '../../_types/notification';
 import {type INotificationDomain} from '../../domain/notification/notificationDomain';

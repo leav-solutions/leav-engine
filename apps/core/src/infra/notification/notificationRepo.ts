@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
-import {type IList} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IList} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {type INotification} from '../../_types/notification';
-import {type IDbDocument} from 'infra/db/_types';
+import {type IDbDocument} from '../db/_types';
 
 export const NOTIFICATIONS_COLLECTION_NAME = 'core_notifications';
 

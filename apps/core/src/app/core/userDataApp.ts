@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {UserCoreDataKeys, type IUserDomain} from '../../domain/user/userDomain';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IUserData} from '_types/userData';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IUserData} from '../../_types/userData';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 export type ICoreImportApp = IGraphqlAppModule;
 

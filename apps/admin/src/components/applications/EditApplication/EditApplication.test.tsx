@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '_tests/testUtils';
-import {mockApplicationDetails} from '__mocks__/common/applications';
+import {render, screen} from '../../../_tests/testUtils';
+import {mockApplicationDetails} from '../../../__mocks__/common/applications';
 import EditApplication from './EditApplication';
-import {GetApplicationByIdDocument} from '_gqlTypes';
+import {GetApplicationByIdDocument} from '../../../_gqlTypes';
 
 jest.mock(
     './EditApplicationTabs/InfosTab',

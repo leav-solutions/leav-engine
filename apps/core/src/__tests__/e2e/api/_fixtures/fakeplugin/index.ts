@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type i18n} from 'i18next';
-import {type IPluginInitModule} from '_types/plugin';
+import {type IPluginInitModule} from '../../../../../_types/plugin';
 import {PermissionTypes} from '../../../../../_types/permissions';
 import {ActionsListIOTypes} from '../../../../../_types/actionsList';
 import {type IValueRepo} from '../../../../../infra/value/valueRepo';
 import {type IAttributeDomain} from '../../../../../domain/attribute/attributeDomain';
 import {type IAttribute} from '../../../../../_types/attribute';
-import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type ITasksManagerDomain} from '../../../../../domain/tasksManager/tasksManagerDomain';
 import {FakePluginTaskType} from './_types/_types';
 import {type IFakeDomain} from './domain/fakeDomain';
 import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';

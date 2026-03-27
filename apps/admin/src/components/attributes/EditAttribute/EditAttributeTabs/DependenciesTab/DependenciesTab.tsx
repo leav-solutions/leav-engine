@@ -6,10 +6,10 @@ import {
     useSaveAttributeMutation,
     type AttributeDetailsTreeAttributeFragment,
     AttributeType,
-} from '_gqlTypes';
-import DependenciesSettings from 'components/attributes/EditAttribute/EditAttributeTabs/DependenciesTab/DependenciesSettings';
-import {type ITreePermissionsDependentValuesConf} from 'components/attributes/EditAttribute/EditAttributeTabs/DependenciesTab/DependenciesSettings/DependenciesSettings';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+} from '../../../../../_gqlTypes';
+import DependenciesSettings from './DependenciesSettings';
+import {type ITreePermissionsDependentValuesConf} from './DependenciesSettings/DependenciesSettings';
+import ErrorDisplay from '../../../../shared/ErrorDisplay';
 import styled from 'styled-components';
 import DependenciesTreePermissionsView from './DependenciesTreePermissionsView';
 import {useTranslation} from 'react-i18next';

@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type IValidateHelper} from '../../helpers/validate';
+import {type ILibraryPermissionDomain} from '../../permission/libraryPermissionDomain';
+import {type ILibraryRepo} from '../../../infra/library/libraryRepo';
+import {type IRecordRepo} from '../../../infra/record/recordRepo';
+import {type ITreeRepo} from '../../../infra/tree/treeRepo';
+import {type IUtils, type ToAny} from '../../../utils/utils';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import PermissionError from '../../../errors/PermissionError';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {LibraryBehavior} from '../../../_types/library';
 import {AttributeCondition} from '../../../_types/record';
 import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../../__tests__/mocks/library';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../_types/config';
 import {mockTree} from '../../../__tests__/mocks/tree';
 import findRecordsHelper, {type IFindRecordsHelperDeps} from './findRecords';
 

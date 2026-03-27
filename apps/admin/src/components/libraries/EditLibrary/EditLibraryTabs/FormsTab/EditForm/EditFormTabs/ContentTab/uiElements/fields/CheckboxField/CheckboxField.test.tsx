@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import CheckboxField from './CheckboxField';
 import {render, screen} from '../../../../../../../../../../../_tests/testUtils';
-import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
+import MockedLangContextProvider from '../../../../../../../../../../../__mocks__/MockedLangContextProvider';
 
 describe('CheckboxField', () => {
     it('should display checkbox with fr label', async () => {

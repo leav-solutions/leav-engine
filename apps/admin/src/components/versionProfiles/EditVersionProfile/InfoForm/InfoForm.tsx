@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
-import FormFieldWrapper from 'components/shared/FormFieldWrapper';
-import TreesSelector from 'components/trees/TreesSelector';
+import FormFieldWrapper from '../../../shared/FormFieldWrapper';
+import TreesSelector from '../../../trees/TreesSelector';
 import {Formik, type FormikProps} from 'formik';
-import useLang from 'hooks/useLang';
+import useLang from '../../../../hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, type FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {formatIDString, getFieldError} from 'utils';
+import {formatIDString, getFieldError} from '../../../../utils';
 import * as yup from 'yup';
-import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {type VersionProfileInput} from '_gqlTypes';
-import {type IFormError} from '_types/errors';
+import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '../../../../_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {type VersionProfileInput} from '../../../../_gqlTypes';
+import {type IFormError} from '../../../../_types/errors';
 import LinkedAttributes from './LinkedAttributes';
 
 const FormWrapper = styled(({isNewProfile, ...props}: {isNewProfile: boolean} & FormProps) => <Form {...props} />)`

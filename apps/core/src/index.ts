@@ -5,10 +5,10 @@ import {amqpService} from '@leav/message-broker';
 import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
 import {type IConfig, CoreMode} from './_types/config';
-import {type IFilesManagerInterface} from 'interface/filesManager';
-import {type IIndexationManagerInterface} from 'interface/indexationManager';
-import {type IServer} from 'interface/server';
-import {type ITasksManagerInterface} from 'interface/tasksManager';
+import {type IFilesManagerInterface} from './interface/filesManager';
+import {type IIndexationManagerInterface} from './interface/indexationManager';
+import {type IServer} from './interface/server';
+import {type ITasksManagerInterface} from './interface/tasksManager';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
@@ -22,7 +22,7 @@ import {type IUtils} from './utils/utils';
 import {logger} from '@leav/logger';
 import {setupLogger} from './utils/logger/logger';
 import {type ILogsCollectorInterface} from './interface/logsCollector';
-import {type ICorePluginsApp} from 'app/core/pluginsApp';
+import {type ICorePluginsApp} from './app/core/pluginsApp';
 
 (async function () {
     let conf: IConfig;

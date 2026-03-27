@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IUserDomain} from 'domain/user/userDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IApiKeyDomain} from '../../domain/apiKey/apiKeyDomain';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IUserDomain} from '../../domain/user/userDomain';
+import {type IValueDomain} from '../../domain/value/valueDomain';
 import {type CookieOptions, type NextFunction, type Request, type Response} from 'express';
 import useragent from 'express-useragent';
 import jwt, {type Algorithm, type SignOptions} from 'jsonwebtoken';
 import ms from 'ms';
-import {type IConfig} from '_types/config';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type ITreeValue} from '_types/value';
+import {type IConfig} from '../../_types/config';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type ITreeValue} from '../../_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {
@@ -30,10 +30,10 @@ import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
 import {type IncomingHttpHeaders} from 'http';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {type IServerRouteAppModule} from 'interface/server';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type IServerRouteAppModule} from '../../interface/server';
 import {adminsGroupId, systemUserId} from '../../_constants/users';
-import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
+import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {type ISessionRepo} from '../../infra/session/sessionRepo';
 import {type IExtensionPoints} from '../../_types/extensionPoints';
 import * as crypto from 'node:crypto';

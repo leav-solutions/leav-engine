@@ -4,7 +4,7 @@
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import styled, {type CSSObject} from 'styled-components';
-import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {ORIGIN_URL} from '../../../constants';
 import RecordPreview from './RecordPreview';
 

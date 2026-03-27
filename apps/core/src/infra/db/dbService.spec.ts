@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {type IUtils, type ToAny} from 'utils/utils';
-import {type IConfig} from '_types/config';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import {type IConfig} from '../../_types/config';
 import dbService, {type IDbServiceDeps} from './dbService';
 
 const depsBase: ToAny<IDbServiceDeps> = {

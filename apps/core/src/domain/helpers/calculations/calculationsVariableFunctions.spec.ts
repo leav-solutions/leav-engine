@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type IRecordDomain} from '../../record/recordDomain';
 import {ActionsListEvents, type IActionsListContext} from '../../../_types/actionsList';
 import calculationsVariableFunctions from './calculationsVariableFunctions';
 import {TypeGuards} from '../../../utils';

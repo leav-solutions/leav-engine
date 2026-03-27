@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Override} from '@leav/utils';
-import {useEditApplicationContext} from 'context/EditApplicationContext';
+import {useEditApplicationContext} from '../../../../../../context/EditApplicationContext';
 import {Formik, type FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, type FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
-import {ApplicationType} from '_gqlTypes';
-import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {ApplicationType} from '../../../../../../_gqlTypes';
+import {type RecordIdentity_whoAmI} from '../../../../../../_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type i18n} from 'i18next';
-import {type IPermissionRepo} from 'infra/permission/permissionRepo';
-import {type IConfig} from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IPermissionRepo} from '../../infra/permission/permissionRepo';
+import {type IConfig} from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import {adminUserId, systemUserId} from '../../_constants/users';
@@ -22,7 +22,7 @@ import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
 import permissionDomain, {type IPermissionDomainDeps} from './permissionDomain';
 import {type IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from './recordPermissionDomain';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),

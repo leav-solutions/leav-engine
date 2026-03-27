@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {shallow} from 'enzyme';
-// import {AttributeFormat, AttributeType} from '_gqlTypes';
+// import {AttributeFormat, AttributeType} from '../../../../../../_gqlTypes';
 // import MetadataList from './MetadataList';
 
 // jest.mock('../../../../../../hooks/useLang');

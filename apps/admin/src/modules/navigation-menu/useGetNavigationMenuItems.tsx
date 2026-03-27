@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
-import useUserData from 'hooks/useUserData';
+import useUserData from '../../hooks/useUserData';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faBook,

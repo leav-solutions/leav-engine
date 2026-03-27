@@ -15,7 +15,7 @@ import SortableTree, {
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, useSaveAttributeEmbeddedFieldsMutation} from '_gqlTypes';
+import {AttributeFormat, useSaveAttributeEmbeddedFieldsMutation} from '../../../../../_gqlTypes';
 import {
     type IEmbeddedFields,
     type IGetEmbeddedFieldsQuery as IQuery,

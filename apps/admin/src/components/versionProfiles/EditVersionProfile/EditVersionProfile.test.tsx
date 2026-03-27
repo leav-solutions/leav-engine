@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {fireEvent, render, screen, waitFor} from '_tests/testUtils';
-import {mockAttrAdv} from '__mocks__/attributes';
-import {mockRecord} from '__mocks__/common/records';
-import {mockVersionProfile} from '__mocks__/common/versionProfiles';
+import {fireEvent, render, screen, waitFor} from '../../../_tests/testUtils';
+import {mockAttrAdv} from '../../../__mocks__/attributes';
+import {mockRecord} from '../../../__mocks__/common/records';
+import {mockVersionProfile} from '../../../__mocks__/common/versionProfiles';
 import * as useUserData from '../../../hooks/useUserData';
 import EditVersionProfile from './EditVersionProfile';
 import {
@@ -15,10 +15,10 @@ import {
     GetVersionProfilesDocument,
     SaveAttributeDocument,
     SaveVersionProfileDocument,
-} from '_gqlTypes';
+} from '../../../_gqlTypes';
 
 jest.mock(
-    'components/attributes/AttributesSelectionModal',
+    '../../attributes/AttributesSelectionModal',
     () =>
         function AttributesSelectionModal() {
             return <div>AttributesSelectionModal</div>;

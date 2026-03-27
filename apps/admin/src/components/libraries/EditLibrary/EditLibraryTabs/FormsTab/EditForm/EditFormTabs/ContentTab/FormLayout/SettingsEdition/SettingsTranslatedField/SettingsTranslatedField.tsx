@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Loading from 'components/shared/Loading';
+import Loading from '../../../../../../../../../../shared/Loading';
 import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Input} from 'semantic-ui-react';
@@ -9,9 +9,9 @@ import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {type IFormElementSettings, type ISettingsFieldCommonProps} from '../../../_types';
-import useLang from 'hooks/useLang';
-import {useGetAttributeByIdQuery} from '_gqlTypes';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import useLang from '../../../../../../../../../../../hooks/useLang';
+import {useGetAttributeByIdQuery} from '../../../../../../../../../../../_gqlTypes';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 
 interface ISettingsFieldProps {
     settingsField: IFormElementSettings;

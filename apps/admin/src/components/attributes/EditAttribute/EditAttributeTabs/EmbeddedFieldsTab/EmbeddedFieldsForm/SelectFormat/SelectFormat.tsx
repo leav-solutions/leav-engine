@@ -4,7 +4,7 @@
 import {type TFunction} from 'i18next';
 import React, {useState} from 'react';
 import {Confirm, type DropdownProps, Form} from 'semantic-ui-react';
-import {AttributeFormat} from '_gqlTypes';
+import {AttributeFormat} from '../../../../../../../_gqlTypes';
 import {type IFormValues} from '../EmbeddedFieldsForm';
 
 interface ISelectFormatProps {

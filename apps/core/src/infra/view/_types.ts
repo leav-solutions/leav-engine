@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IDbService} from 'infra/db/dbService';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IList} from '_types/list';
-import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IList} from '../../_types/list';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type IView} from '_types/views';
+import {type IView} from '../../_types/views';
 
 export const VIEWS_COLLECTION_NAME = 'core_views';
 

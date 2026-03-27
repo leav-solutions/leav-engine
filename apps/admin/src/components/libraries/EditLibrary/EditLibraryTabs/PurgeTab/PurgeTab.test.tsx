@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '_tests/testUtils';
-import {mockLibrary} from '__mocks__/libraries';
+import {render, screen, waitFor} from '../../../../../_tests/testUtils';
+import {mockLibrary} from '../../../../../__mocks__/libraries';
 import PurgeTab from './PurgeTab';
-import {PurgeRecordsDocument, RecordsListDocument} from '_gqlTypes';
+import {PurgeRecordsDocument, RecordsListDocument} from '../../../../../_gqlTypes';
 
 describe('PurgeTab', () => {
     const mockGetRecordsList = {

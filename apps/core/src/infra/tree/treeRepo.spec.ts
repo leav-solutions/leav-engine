@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {type IDbDocument} from 'infra/db/_types';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IDbDocument} from '../db/_types';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {type IDbUtils} from '../db/dbUtils';
 import treeRepo, {type ITreeRepoDeps, TREES_COLLECTION_NAME} from './treeRepo';
-import {type ToAny} from 'utils/utils';
-import {type IConfig} from '_types/config';
+import {type ToAny} from '../../utils/utils';
+import {type IConfig} from '../../_types/config';
 
 const config = {} as IConfig;
 const depsBase: ToAny<ITreeRepoDeps> = {

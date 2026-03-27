@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {aql, Database} from 'arangojs';
-import {type IDbService} from 'infra/db/dbService';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IUtils} from 'utils/utils';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IUtils} from '../../utils/utils';
 import {mockAttrAdvLink, mockAttrSimpleLink} from '../../__tests__/mocks/attribute';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {AttributeTypes} from '../../_types/attribute';

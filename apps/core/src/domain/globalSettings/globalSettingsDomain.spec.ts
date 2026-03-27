@@ -1,17 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {type IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IGlobalSettingsRepo} from '../../infra/globalSettings/globalSettingsRepo';
 import PermissionError from '../../errors/PermissionError';
 import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {default as globalSettingsDomain, type IGlobalSettingsDomainDeps} from './globalSettingsDomain';
-import {type ToAny} from 'utils/utils';
+import {type ToAny, type IUtils} from '../../utils/utils';
 import {type Mockify} from '@leav/utils';
 import {mockCachesService, mockCacheService} from '../../__tests__/mocks/cache';
-import {type IUtils} from '../../utils/utils';
 
 const mockUtils: Mockify<IUtils> = {
     getGlobalSettingsCacheKey: jest.fn(() => 'globalSettingsCacheKey'),

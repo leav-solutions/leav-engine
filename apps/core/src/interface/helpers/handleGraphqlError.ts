@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
 import {type GraphQLError, type GraphQLFormattedError} from 'graphql';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../_types/config';
 import {GRAPHQL_ERROR_CODES, type IExtendedErrorMsg} from '../../_types/errors';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {isLeavError, isPermissionError, isValidationError} from '../../errors/typeguards';
 
 export type HandleGraphqlErrorFunc = (err: GraphQLError, ctx: IQueryInfos) => GraphQLFormattedError;

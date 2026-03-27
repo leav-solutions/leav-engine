@@ -5,12 +5,12 @@ import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
-import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
-import {mockAttrTree} from '__mocks__/attributes';
-import {mockTree} from '__mocks__/trees';
+import {type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
+import {act, render, screen, waitFor, within} from '../../../../../_tests/testUtils';
+import {mockAttrTree} from '../../../../../__mocks__/attributes';
+import {mockTree} from '../../../../../__mocks__/trees';
 import TreeStructure from './TreeStructure';
-import {SaveTreeDocument} from '_gqlTypes';
+import {SaveTreeDocument} from '../../../../../_gqlTypes';
 
 describe('TreeStructure', () => {
     const _renderTreeStructure = (tree: GET_TREES_trees_list, readOnly = false, mocks?: MockedResponse[]) => {

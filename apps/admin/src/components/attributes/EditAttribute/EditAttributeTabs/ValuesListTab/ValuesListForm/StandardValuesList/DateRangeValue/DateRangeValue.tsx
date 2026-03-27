@@ -6,7 +6,7 @@ import React, {type ChangeEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type IDateRangeValue} from '_types/attributes';
+import {type IDateRangeValue} from '../../../../../../../../_types/attributes';
 
 interface IDateRangeValueProps {
     value: IDateRangeValue;

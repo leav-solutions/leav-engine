@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {addTask, addTasks, deleteTasks} from 'reduxStore/tasks/tasks';
+import {useAppDispatch, useAppSelector} from '../../../reduxStore/store';
+import {addTask, addTasks, deleteTasks} from '../../../reduxStore/tasks/tasks';
 import {Button, Header, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {type GET_TASKS_tasks_list} from '../../../_gqlTypes/GET_TASKS';
 import useUserData from '../../../hooks/useUserData';
 import {
     TaskStatus,
@@ -15,7 +15,7 @@ import {
     useDeleteTasksMutation,
     useGetTasksQuery,
     useSubTasksUpdateSubscription,
-} from '_gqlTypes';
+} from '../../../_gqlTypes';
 import CancelTask from '../CancelTask';
 import DeleteAllTasks from '../DeleteAllTasks';
 import DeleteTask from '../DeleteTask';

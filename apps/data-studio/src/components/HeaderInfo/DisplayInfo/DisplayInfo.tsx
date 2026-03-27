@@ -5,7 +5,7 @@ import {CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, WarningOutlined
 import {type AntdThemeToken} from '@leav/ui';
 import {Badge, message as antMessage, Space, theme} from 'antd';
 import React, {useEffect} from 'react';
-import {useAppSelector} from 'reduxStore/store';
+import {useAppSelector} from '../../../reduxStore/store';
 import styled from 'styled-components';
 import {type IInfo, InfoType} from '../../../_types/types';
 

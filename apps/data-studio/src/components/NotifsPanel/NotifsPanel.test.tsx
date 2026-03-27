@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MockedResponse} from '@apollo/client/testing';
-import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
-import {deleteTasksMutation} from 'graphQL/mutations/tasks/deleteTasks';
+import {cancelTaskMutation} from '../../graphQL/mutations/tasks/cancelTask';
+import {deleteTasksMutation} from '../../graphQL/mutations/tasks/deleteTasks';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {TaskStatus} from '_gqlTypes';
-import {act, render, screen} from '_tests/testUtils';
+import {type GET_TASKS_tasks_list} from '../../_gqlTypes/GET_TASKS';
+import {TaskStatus} from '../../_gqlTypes';
+import {act, render, screen} from '../../_tests/testUtils';
 import NotifsPanel from './NotifsPanel';
 
 export const mockTask: GET_TASKS_tasks_list = {

@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import {Button, Col, Drawer, List, Row} from 'antd';
-import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
-import {deleteTasksMutation} from 'graphQL/mutations/tasks/deleteTasks';
+import {cancelTaskMutation} from '../../graphQL/mutations/tasks/cancelTask';
+import {deleteTasksMutation} from '../../graphQL/mutations/tasks/deleteTasks';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setIsPanelOpen} from 'reduxStore/notifications';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {deleteTasks} from 'reduxStore/tasks';
-import {isCompletedTask, isInProgressTask} from 'utils';
-import {type CANCEL_TASK, type CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
-import {type DELETE_TASKS, type DELETE_TASKSVariables} from '_gqlTypes/DELETE_TASKS';
-import {NotifTypes} from '_types/types';
+import {setIsPanelOpen} from '../../reduxStore/notifications';
+import {useAppDispatch, useAppSelector} from '../../reduxStore/store';
+import {deleteTasks} from '../../reduxStore/tasks';
+import {isCompletedTask, isInProgressTask} from '../../utils';
+import {type CANCEL_TASK, type CANCEL_TASKVariables} from '../../_gqlTypes/CANCEL_TASK';
+import {type DELETE_TASKS, type DELETE_TASKSVariables} from '../../_gqlTypes/DELETE_TASKS';
+import {NotifTypes} from '../../_types/types';
 import TaskItem from './TaskItem';
 
 interface INotifsPanelProps {

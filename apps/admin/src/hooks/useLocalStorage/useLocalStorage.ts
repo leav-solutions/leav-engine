@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
+import {useCurrentApplicationContext} from '../../context/CurrentApplicationContext';
 import {useEffect, useState} from 'react';
 
 function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {

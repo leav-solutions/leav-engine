@@ -3,21 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type RouteObject} from 'react-router-dom';
 import {AdminAbsolutePaths, AdminUnreachablePaths} from './paths';
-import {PermissionsActions} from '_gqlTypes';
-import Dashboard from 'components/app/Dashboard';
-import General from 'components/general/General';
-import ProtectedRoute from 'components/shared/ProtectedRoute';
-import Libraries from 'components/libraries/Libraries';
-import EditLibrary from 'components/libraries/EditLibrary';
-import Attributes from 'components/attributes/Attributes';
-import EditAttribute from 'components/attributes/EditAttribute';
-import Trees from 'components/trees/Trees';
-import EditTree from 'components/trees/EditTree';
-import Applications from 'components/applications/Applications';
-import EditApplication from 'components/applications/EditApplication';
-import VersionProfiles from 'components/versionProfiles/VersionProfiles';
-import EditVersionProfile from 'components/versionProfiles/EditVersionProfile';
-import Tasks from 'components/tasks/Tasks';
+import {PermissionsActions} from '../../_gqlTypes';
+import Dashboard from '../../components/app/Dashboard';
+import General from '../../components/general/General';
+import ProtectedRoute from '../../components/shared/ProtectedRoute';
+import Libraries from '../../components/libraries/Libraries';
+import EditLibrary from '../../components/libraries/EditLibrary';
+import Attributes from '../../components/attributes/Attributes';
+import EditAttribute from '../../components/attributes/EditAttribute';
+import Trees from '../../components/trees/Trees';
+import EditTree from '../../components/trees/EditTree';
+import Applications from '../../components/applications/Applications';
+import EditApplication from '../../components/applications/EditApplication';
+import VersionProfiles from '../../components/versionProfiles/VersionProfiles';
+import EditVersionProfile from '../../components/versionProfiles/EditVersionProfile';
+import Tasks from '../../components/tasks/Tasks';
 import {History} from '../history/History';
 import {NotFound} from '../not-found/NotFound';
 

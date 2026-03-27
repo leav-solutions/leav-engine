@@ -4,7 +4,7 @@
 // import {mount} from 'enzyme';
 // import React from 'react';
 // import {act} from 'react-dom/test-utils';
-// import {wait} from 'utils/testUtils';
+// import {wait} from '../../../utils/testUtils';
 // import {getViewsQuery} from '../../../queries/views/getViewsQuery';
 // import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 // import ViewSelector from './ViewSelector';

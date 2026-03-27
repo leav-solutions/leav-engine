@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import {RecordFilterCondition} from 'queries/records/recordsListQuery';
+import ErrorDisplay from '../../../../shared/ErrorDisplay';
+import Loading from '../../../../shared/Loading';
+import {RecordFilterCondition} from '../../../../../queries/records/recordsListQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Confirm, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {usePurgeRecordsMutation, useRecordsListQuery} from '_gqlTypes';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
+import {usePurgeRecordsMutation, useRecordsListQuery} from '../../../../../_gqlTypes';
 
 const Summary = styled.div`
     margin: 1rem 0;

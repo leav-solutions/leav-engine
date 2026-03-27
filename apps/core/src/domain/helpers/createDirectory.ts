@@ -4,8 +4,8 @@
 import * as fs from 'fs';
 import * as Path from 'path';
 import {Errors} from '../../_types/errors';
-import {type IUtils} from 'utils/utils';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../utils/utils';
+import {type IQueryInfos} from '../../_types/queryInfos';
 
 export type CreateDirectoryFunc = (name: string, path: string, ctx: IQueryInfos) => Promise<void>;
 

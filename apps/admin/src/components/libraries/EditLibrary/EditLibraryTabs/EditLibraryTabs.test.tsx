@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {render, screen, within} from '_tests/testUtils';
-import {mockAttrSimple} from '__mocks__/attributes';
-import {mockLibrary} from '__mocks__/libraries';
+import {render, screen, within} from '../../../../_tests/testUtils';
+import {mockAttrSimple} from '../../../../__mocks__/attributes';
+import {mockLibrary} from '../../../../__mocks__/libraries';
 import EditLibraryTabs from '.';
 import {
     type GET_LIB_BY_ID_libraries_list,

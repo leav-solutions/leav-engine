@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useNavigate} from 'react-router-dom';
-import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type AttributeType, useGetAttributesLazyQuery, useSaveAttributeMutation} from '_gqlTypes';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type AttributeType, useGetAttributesLazyQuery, useSaveAttributeMutation} from '../../../../../_gqlTypes';
 import {type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {type IFormError} from '../../../../../_types/errors';
 import {type OnAttributePostSaveFunc} from '../../EditAttribute';

@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IKeyValue, objectToNameValueArray} from '@leav/utils';
-import {type ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type ConvertVersionFromGqlFormatFunc} from '../helpers/convertVersionFromGqlFormat';
+import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IValueDomain} from '../../domain/value/valueDomain';
 import isEmptyValue from '../../domain/value/helpers/isEmptyValue';
-import {type IUtils} from 'utils/utils';
-import {type IAppGraphQLSchema} from '_types/graphql';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from '../../utils/utils';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     type ISaveValue,
     type IBaseValue,
@@ -17,11 +17,11 @@ import {
     type ITreeValue,
     type IValue,
     type IValueVersion,
-} from '_types/value';
+} from '../../_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
-import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
 import {type IPurgeMultipleValuesTask} from '../../domain/value/tasks/purgeMultipleValues';
 

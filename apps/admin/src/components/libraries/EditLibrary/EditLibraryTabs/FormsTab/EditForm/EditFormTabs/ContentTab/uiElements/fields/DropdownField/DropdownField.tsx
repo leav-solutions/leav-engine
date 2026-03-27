@@ -4,8 +4,8 @@
 import React from 'react';
 import {Dropdown} from 'semantic-ui-react';
 import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
-import {localizedLabel} from 'utils';
-import useLang from 'hooks/useLang';
+import {localizedLabel} from '../../../../../../../../../../../utils';
+import useLang from '../../../../../../../../../../../hooks/useLang';
 
 function DropdownField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {lang: availableLangs} = useLang();

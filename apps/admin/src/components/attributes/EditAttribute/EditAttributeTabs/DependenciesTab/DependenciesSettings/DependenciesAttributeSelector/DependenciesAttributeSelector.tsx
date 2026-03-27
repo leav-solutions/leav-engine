@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import SimplisticButton from 'components/shared/SimplisticButton';
-import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
+import ErrorDisplay from '../../../../../../shared/ErrorDisplay';
+import Loading from '../../../../../../shared/Loading';
+import SimplisticButton from '../../../../../../shared/SimplisticButton';
+import {getAttributesQuery} from '../../../../../../../queries/attributes/getAttributesQuery';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon} from 'semantic-ui-react';
@@ -13,8 +13,8 @@ import {
     type GET_ATTRIBUTES,
     type GET_ATTRIBUTESVariables,
     type GET_ATTRIBUTES_attributes_list,
-} from '_gqlTypes/GET_ATTRIBUTES';
-import {type AttributeDetailsTreeAttributeFragment, AttributeType} from '_gqlTypes';
+} from '../../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type AttributeDetailsTreeAttributeFragment, AttributeType} from '../../../../../../../_gqlTypes';
 import DependenciesAttributeSelectorList from './DependenciesAttributeSelectorList';
 
 interface IDependenciesAttributeSelectorProps {

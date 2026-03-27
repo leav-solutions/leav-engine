@@ -5,11 +5,11 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {type NodeData} from '@nosferatu500/react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
-import {type ITreeNodeData} from '_types/trees';
+import {type ITreeNodeData} from '../../../_types/trees';
 import Loading from '../../shared/Loading';
 import TreeExplorer from '../TreeExplorer';
-import {useGetTreeByIdQuery} from '_gqlTypes';
-import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
+import {useGetTreeByIdQuery} from '../../../_gqlTypes';
+import {type GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
 
 interface ISelectTreeNodeModalProps {
     tree: string;

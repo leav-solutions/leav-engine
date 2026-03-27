@@ -4,9 +4,9 @@
 import {BellOutlined} from '@ant-design/icons';
 import {themeVars} from '@leav/ui';
 import {Badge, Button} from 'antd';
-import ApplicationSwitcher from 'components/ApplicationSwitcher';
-import {setIsPanelOpen} from 'reduxStore/notifications';
-import {useAppDispatch} from 'reduxStore/store';
+import ApplicationSwitcher from '../ApplicationSwitcher';
+import {setIsPanelOpen} from '../../reduxStore/notifications';
+import {useAppDispatch} from '../../reduxStore/store';
 import styled from 'styled-components';
 import HeaderInfo from '../HeaderInfo';
 import UserMenu from './UserMenu';

@@ -5,8 +5,8 @@ import {type InMemoryCacheConfig} from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
 import {render, type RenderOptions, type RenderResult} from '@testing-library/react';
 import {type ReactElement} from 'react';
-import {type RootState} from 'reduxStore/store';
-import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {type RootState} from '../reduxStore/store';
+import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '../_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {TestProviders} from './TestProviders';
 
 export interface ICustomRenderOptions extends RenderOptions {

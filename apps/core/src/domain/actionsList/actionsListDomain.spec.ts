@@ -10,7 +10,7 @@ import {mockCtx} from '../../__tests__/mocks/shared';
 import actionListDomain, {type IActionsListDomainDeps} from './actionsListDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {type i18n} from 'i18next';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 

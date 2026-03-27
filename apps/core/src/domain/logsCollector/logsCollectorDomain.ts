@@ -6,7 +6,7 @@ import {getLogsIndexName, type IDbEvent} from '@leav/utils';
 import type * as amqp from 'amqplib';
 import Joi from 'joi';
 import {type ILogger} from '@leav/logger';
-import type * as Config from '_types/config';
+import type * as Config from '../../_types/config';
 import {type IIndexationService} from '../../infra/indexation/indexationService';
 import {type IElasticsearchService} from '../../infra/elasticsearch/elasticsearchService';
 

@@ -4,7 +4,7 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {render} from 'enzyme';
 // import React from 'react';
-// import {PermissionTypes} from '_gqlTypes';
+// import {PermissionTypes} from '../../../_gqlTypes';
 // import DefinePermByUserGroupView from './DefinePermByUserGroupView';
 
 // jest.mock('../../../hooks/useLang');

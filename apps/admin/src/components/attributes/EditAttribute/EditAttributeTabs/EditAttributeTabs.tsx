@@ -9,10 +9,10 @@ import styled from 'styled-components';
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute,
     type GET_ATTRIBUTE_BY_ID_attributes_list,
-} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+} from '../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
-import {AttributeType} from '_gqlTypes';
+import {AttributeType} from '../../../../_gqlTypes';
 import {type OnAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';
@@ -22,7 +22,7 @@ import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
 import CustomConfigTab from './CustomConfigTab';
 import DependenciesTab from './DependenciesTab';
-import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
+import {useCurrentApplicationContext} from '../../../../context/CurrentApplicationContext';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;

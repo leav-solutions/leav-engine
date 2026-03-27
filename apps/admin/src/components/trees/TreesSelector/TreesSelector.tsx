@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FormDropdownProps} from 'semantic-ui-react';
 import TreesSelectorField from '../TreesSelectorField';
-import {type TreesFiltersInput, useGetTreesQuery} from '_gqlTypes';
-import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type TreesFiltersInput, useGetTreesQuery} from '../../../_gqlTypes';
+import {type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 
 interface IAttributesSelectorProps extends FormDropdownProps {
     filters?: TreesFiltersInput;

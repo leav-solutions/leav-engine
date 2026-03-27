@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import DefinePermByUserGroupView from 'components/permissions/DefinePermByUserGroupView';
+import DefinePermByUserGroupView from '../../../permissions/DefinePermByUserGroupView';
 import React from 'react';
-import {PermissionsActions, PermissionTypes} from '_gqlTypes';
-import {type IGroupedPermissionsActions} from '_types/permissions';
+import {PermissionsActions, PermissionTypes} from '../../../../_gqlTypes';
+import {type IGroupedPermissionsActions} from '../../../../_types/permissions';
 
 function GeneralAdminPermissionsTab(): JSX.Element {
     const groupedPermissionsActions: IGroupedPermissionsActions = {

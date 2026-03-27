@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
-import Sidebar from 'components/Sidebar';
-import TopBar from 'components/TopBar';
+import Sidebar from '../Sidebar';
+import TopBar from '../TopBar';
 import {type FunctionComponent, useRef, useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';

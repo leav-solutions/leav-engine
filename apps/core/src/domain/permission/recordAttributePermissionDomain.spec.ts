@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IValueRepo} from 'infra/value/valueRepo';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IValueRepo} from '../../infra/value/valueRepo';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {PermissionsRelations, RecordAttributePermissionsActions} from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IAttributePermissionDomain} from './attributePermissionDomain';
@@ -11,7 +11,7 @@ import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import recordAttributePermissionDomain, {
     type IRecordAttributePermissionDomainDeps,
 } from './recordAttributePermissionDomain';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 
 const depsBase: ToAny<IRecordAttributePermissionDomainDeps> = {
     'core.domain.permission.attribute': jest.fn(),

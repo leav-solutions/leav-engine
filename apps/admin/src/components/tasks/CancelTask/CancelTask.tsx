@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {type GET_TASKS_tasks_list} from '../../../_gqlTypes/GET_TASKS';
 import useUserData from '../../../hooks/useUserData';
-import {PermissionsActions} from '_gqlTypes';
+import {PermissionsActions} from '../../../_gqlTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import CancelButton from '../../shared/CancelButton';
-import useLang from 'hooks/useLang';
+import useLang from '../../../hooks/useLang';
 import {localizedTranslation} from '@leav/utils';
 
 interface ICancelTaskProps {

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IValidateHelper} from '../../helpers/validate';
+import {type IValueDomain} from '../valueDomain';
 import {type i18n} from 'i18next';
-import type * as Config from '_types/config';
-import {type ITreeValue} from '_types/value';
+import type * as Config from '../../../_types/config';
+import {type ITreeValue} from '../../../_types/value';
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeTypes} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';

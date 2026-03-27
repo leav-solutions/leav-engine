@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IAttributeWithRevLink} from '../../infra/attributeTypes/attributeTypesRepo';
+import {type IValueRepo} from '../../infra/value/valueRepo';
 import {
     type AttributeDependentValuesPermissionsActions,
     type IPermissionsDependenciesTreeTarget,
@@ -13,9 +13,9 @@ import {
 } from '../../_types/permissions';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
-import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {type IAttribute} from '_types/attribute';
-import {type TreePath} from '_types/tree';
+import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
+import {type IAttribute} from '../../_types/attribute';
+import {type TreePath} from '../../_types/tree';
 
 export interface IAttributeDependentValuesPermissionDomain {
     getAttributeDependentValuesPermission(params: {

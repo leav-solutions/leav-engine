@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import _ from 'lodash';
 import {adminsGroupId, systemUserId} from '../../../_constants/users';
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../_types/config';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
@@ -17,8 +17,8 @@ import {
     TreePermissionsActions,
     type PermissionsActions,
 } from '../../../_types/permissions';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type TreePath} from '_types/tree';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type TreePath} from '../../../_types/tree';
 
 interface IDeps {
     config: IConfig;

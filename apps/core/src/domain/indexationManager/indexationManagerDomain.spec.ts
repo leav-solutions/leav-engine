@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAmqpService} from '@leav/message-broker';
 import type * as amqp from 'amqplib';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type IConfig} from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type ILibraryDomain} from '../library/libraryDomain';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type IConfig} from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import indexationManager, {type IIndexationManagerDomainDeps} from './indexationManagerDomain';
-import {type IIndexationService} from 'infra/indexation/indexationService';
+import {type IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeCondition} from '../../_types/record';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type ILogger} from '@leav/logger';
-import {type ToAny} from 'utils/utils';
+import {type ToAny} from '../../utils/utils';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {

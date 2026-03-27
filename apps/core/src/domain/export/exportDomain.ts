@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type UpdateTaskProgress} from '../helpers/updateTaskProgress';
+import {type ILibraryDomain} from '../library/libraryDomain';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type ITasksManagerDomain} from '../tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
 import {type i18n} from 'i18next';
 import {pick, set} from 'lodash';
 import path from 'path';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../utils/utils';
 import * as crypto from 'node:crypto';
 import type * as Config from '../../_types/config';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
@@ -25,7 +25,7 @@ import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
-import {type INotificationDomain} from 'domain/notification/notificationDomain';
+import {type INotificationDomain} from '../notification/notificationDomain';
 import {type IExportProfileDomain} from './exportProfileDomain';
 
 export interface IExportParams {

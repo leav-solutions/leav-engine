@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import {getUserDataQuery} from 'queries/userData/getUserData';
-import {saveUserData} from 'queries/userData/saveUserData';
-import {mockApplication} from '_tests/mocks/applications';
-import {render, screen, within} from '_tests/testUtils';
+import {getApplicationsQuery} from '../../queries/applications/getApplicationsQuery';
+import {getUserDataQuery} from '../../queries/userData/getUserData';
+import {saveUserData} from '../../queries/userData/saveUserData';
+import {mockApplication} from '../../_tests/mocks/applications';
+import {render, screen, within} from '../../_tests/testUtils';
 import * as useApplicationsPermissions from '../../hooks/useApplicationsPermissions/useApplicationsPermissions';
 import Applications from './Applications';
 import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from './_constants';
 
-jest.mock('hooks/useApplicationsPermissions', () => ({
+jest.mock('../../hooks/useApplicationsPermissions', () => ({
     useApplicationsPermissions: () => ({
         loading: false,
         canCreate: true,

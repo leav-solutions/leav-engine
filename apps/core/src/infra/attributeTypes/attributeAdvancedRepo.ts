@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {type DocumentCollection, type EdgeCollection} from 'arangojs/collection';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IDbDocument, type IDbEdge} from 'infra/db/_types';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IDbDocument, type IDbEdge} from '../db/_types';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';

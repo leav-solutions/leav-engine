@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type WithTypename} from '@leav/utils';
-import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
+import {type GET_API_KEYS_apiKeys_list} from '../../_gqlTypes/GET_API_KEYS';
 
 const mockUser = {
     whoAmI: {

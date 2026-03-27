@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import useLang from 'hooks/useLang';
+import useLang from '../../../../../../../../hooks/useLang';
 import React from 'react';
 import {Form, type FormDropdownProps} from 'semantic-ui-react';
-import {localizedLabel} from 'utils';
-import {type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
+import {localizedLabel} from '../../../../../../../../utils';
+import {type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '../../../../../../../../_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
 
 interface IAttributeLibrariesFieldProps extends FormDropdownProps {
     libraries: GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list[];

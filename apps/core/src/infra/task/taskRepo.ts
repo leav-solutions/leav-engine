@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {IDbService} from 'infra/db/dbService';
-import {type IDbService} from 'infra/db/dbService';
-import {type IDbUtils} from 'infra/db/dbUtils';
-import {type IList} from '_types/list';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type IGetCoreEntitiesParams} from '_types/shared';
+// import {IDbService} from '../db/dbService';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IList} from '../../_types/list';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import {TaskStatus, type ITask, TaskCallbackStatus} from '../../_types/tasksManager';
 import {aql, join} from 'arangojs/aql';
-import {type IUtils} from 'utils/utils';
-import {type IExecuteWithCount, type IDbDocument} from 'infra/db/_types';
+import {type IUtils} from '../../utils/utils';
+import {type IExecuteWithCount, type IDbDocument} from '../db/_types';
 
 export const TASKS_COLLECTION = 'core_tasks';
 

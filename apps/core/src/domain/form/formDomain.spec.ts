@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type ILibraryDomain} from 'domain/library/libraryDomain';
-import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
-import {type IFormRepo} from 'infra/form/formRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IValidateHelper} from '../helpers/validate';
+import {type ILibraryDomain} from '../library/libraryDomain';
+import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDomain';
+import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type ITreeDomain} from '../tree/treeDomain';
+import {type IFormRepo} from '../../infra/form/formRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
 import {FormElementTypes, type IForm, IFormElement, type IFormElementWithValues} from '../../_types/forms';
 import {type ILogger} from '@leav/logger';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';

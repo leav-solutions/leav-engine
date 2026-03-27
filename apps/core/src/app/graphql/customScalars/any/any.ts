@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GraphQLScalarType, type ValueNode} from 'graphql';
-import {type IKeyValue} from '_types/shared';
+import {type IKeyValue} from '../../../../_types/shared';
 import parseLiteral from '../helpers/parseLiteral';
 
 export default function (): GraphQLScalarType {

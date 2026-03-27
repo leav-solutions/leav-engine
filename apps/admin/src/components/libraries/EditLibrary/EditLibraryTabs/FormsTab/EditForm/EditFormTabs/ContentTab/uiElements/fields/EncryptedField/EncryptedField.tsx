@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input} from 'semantic-ui-react';
 import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
-import useLang from 'hooks/useLang';
-import {localizedLabel} from 'utils';
+import useLang from '../../../../../../../../../../../hooks/useLang';
+import {localizedLabel} from '../../../../../../../../../../../utils';
 
 const defaulLabel = {en: 'Date'};
 

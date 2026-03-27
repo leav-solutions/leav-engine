@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Errors, ErrorTypes} from '../../_types/errors';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {type IValidateHelper} from 'domain/helpers/validate';
-import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IValidateHelper} from '../helpers/validate';
+import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDomain';
+import {type IValueDomain} from '../value/valueDomain';
 import {type i18n} from 'i18next';
-import {type ICachesService} from 'infra/cache/cacheService';
-import {type ILibraryRepo} from 'infra/library/libraryRepo';
-import {type IRecordRepo} from 'infra/record/recordRepo';
-import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
-import {type IUtils, type ToAny} from 'utils/utils';
-import type * as Config from '_types/config';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type ICachesService} from '../../infra/cache/cacheService';
+import {type ILibraryRepo} from '../../infra/library/libraryRepo';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IValueRepo} from '../../infra/value/valueRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import type * as Config from '../../_types/config';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {
@@ -34,7 +34,7 @@ import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain
 import recordDomain, {ATTRIBUTE_ACTIVE, type IRecordDomainDeps} from './recordDomain';
 import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
-import {type IFormRepo} from 'infra/form/formRepo';
+import {type IFormRepo} from '../../infra/form/formRepo';
 import mockLogger from '../../__tests__/mockers/logger';
 import {LibraryPermissionsActions} from '../../_types/permissions';
 

@@ -14,7 +14,7 @@ import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {waitForTaskCompletedWithStatus} from '../taskUtils';
 import {TaskStatus} from '../../../../_types/tasksManager';
-import {type IExportProfileConfig} from 'domain/export/exportProfileDomain';
+import {type IExportProfileConfig} from '../../../../domain/export/exportProfileDomain';
 
 // Helper function to create a record as a specific user
 async function createRecordAsUser(library: string, user: ReturnType<typeof e2eGuestUser>): Promise<string> {

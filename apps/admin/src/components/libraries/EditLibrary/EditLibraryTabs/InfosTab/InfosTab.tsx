@@ -6,7 +6,7 @@ import {clearCacheForQuery} from '../../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
-import {useGetLibByIdLazyQuery, useSaveLibraryMutation} from '_gqlTypes';
+import {useGetLibByIdLazyQuery, useSaveLibraryMutation} from '../../../../../_gqlTypes';
 
 interface IInfosTabProps {
     library: GET_LIB_BY_ID_libraries_list | null;

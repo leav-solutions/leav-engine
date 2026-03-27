@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IConfig} from '_types/config';
+import {type IConfig} from '../../../_types/config';
 import defaultPermission from './defaultPermission';
 import {adminsGroupId, systemUserId} from '../../../_constants/users';
 import {
@@ -11,8 +11,8 @@ import {
     PermissionTypes,
     RecordPermissionsActions,
 } from '../../../_types/permissions';
-import {type IQueryInfos} from '_types/queryInfos';
-import {type TreePath} from '_types/tree';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type TreePath} from '../../../_types/tree';
 
 describe('getDefaultPermission', () => {
     const config: IConfig = {

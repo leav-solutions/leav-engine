@@ -5,8 +5,8 @@ import initQueryContext from '../helpers/initQueryContext';
 import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {type Express} from 'express';
 import createEndpointApp, {type IPluginRoute} from './endpointApp';
-import {type IValueDomain} from 'domain/value/valueDomain';
-import {type IConfig} from '_types/config';
+import {type IValueDomain} from '../../domain/value/valueDomain';
+import {type IConfig} from '../../_types/config';
 
 describe('endpointApp', () => {
     const validateRequestTokenHelper = jest.fn();

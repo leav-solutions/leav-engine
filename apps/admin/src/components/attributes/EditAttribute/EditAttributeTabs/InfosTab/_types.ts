@@ -4,8 +4,8 @@
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
     type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf,
-} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {type Override} from '_types/Override';
+} from '../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type Override} from '../../../../../_types/Override';
 
 export type AttributeInfosFormValuesVersionsConf = Override<
     GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf,

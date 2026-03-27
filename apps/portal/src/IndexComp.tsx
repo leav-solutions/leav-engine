@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorDisplay, Loading, useAppLang} from '@leav/ui';
-import ApolloHandler from 'components/ApolloHandler';
-import App from 'components/App';
+import ApolloHandler from './components/ApolloHandler';
+import App from './components/App';
 import React, {Suspense, useEffect, useState} from 'react';
 import i18n from './i18n';
 

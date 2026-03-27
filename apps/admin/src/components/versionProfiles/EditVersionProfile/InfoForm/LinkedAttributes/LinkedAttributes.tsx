@@ -3,22 +3,22 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import AttributesSelectionModal from 'components/attributes/AttributesSelectionModal';
-import EditAttributeModal from 'components/attributes/EditAttributeModal';
-import ConfirmedButton from 'components/shared/ConfirmedButton';
-import SimplisticButton from 'components/shared/SimplisticButton';
-import useLang from 'hooks/useLang';
-import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProfileByIdQuery';
+import AttributesSelectionModal from '../../../../attributes/AttributesSelectionModal';
+import EditAttributeModal from '../../../../attributes/EditAttributeModal';
+import ConfirmedButton from '../../../../shared/ConfirmedButton';
+import SimplisticButton from '../../../../shared/SimplisticButton';
+import useLang from '../../../../../hooks/useLang';
+import {getVersionProfileByIdQuery} from '../../../../../queries/versionProfiles/getVersionProfileByIdQuery';
 import React, {type SyntheticEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Input, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {borderColorBase, borderRadiusBase, greyBackground} from 'themingVar';
+import {borderColorBase, borderRadiusBase, greyBackground} from '../../../../../themingVar';
 import {
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list,
     type GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes,
-} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {AttributeType, useSaveAttributeMutation} from '_gqlTypes';
+} from '../../../../../_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {AttributeType, useSaveAttributeMutation} from '../../../../../_gqlTypes';
 
 const Wrapper = styled.div`
     &&& {

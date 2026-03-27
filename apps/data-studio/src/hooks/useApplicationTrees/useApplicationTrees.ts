@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type QueryResult, useQuery} from '@apollo/client';
-import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
-import {useApplicationContext} from 'context/ApplicationContext';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
+import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '../../_gqlTypes/GET_TREES';
+import {useApplicationContext} from '../../context/ApplicationContext';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 
 interface IUseApplicationTreesParams {
     onlyAllowed?: boolean;

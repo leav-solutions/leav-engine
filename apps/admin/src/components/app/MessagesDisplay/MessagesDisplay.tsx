@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import useMessages from 'hooks/useMessages';
+import useMessages from '../../../hooks/useMessages';
 import React from 'react';
-import {type IMessage} from 'reduxStore/messages/messages';
+import {type IMessage} from '../../../reduxStore/messages/messages';
 import styled from 'styled-components';
 import MessageBlock from './MessageBlock';
 

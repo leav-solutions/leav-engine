@@ -6,13 +6,13 @@ import {themeVars} from '@leav/ui';
 import {Button, Checkbox, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import {useTranslation} from 'react-i18next';
-import {setNavigationPath} from 'reduxStore/navigation';
-import {resetSelection, setSelection} from 'reduxStore/selection';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {setNavigationPath} from '../../../../../reduxStore/navigation';
+import {resetSelection, setSelection} from '../../../../../reduxStore/selection';
+import {useAppDispatch, useAppSelector} from '../../../../../reduxStore/store';
 import styled from 'styled-components';
-import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {type ISharedSelected, SharedStateSelectionType} from '_types/types';
-import {useActiveTree} from 'hooks/useActiveTree';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../../../../../_gqlTypes/TREE_NODE_CHILDREN';
+import {type ISharedSelected, SharedStateSelectionType} from '../../../../../_types/types';
+import {useActiveTree} from '../../../../../hooks/useActiveTree';
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
 interface IHeaderColumnProps {

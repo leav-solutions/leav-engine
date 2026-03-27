@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {ErrorDisplay, ErrorDisplayTypes, Loading, useGetRecordUpdatesSubscription, useLang} from '@leav/ui';
-import {useApplicationContext} from 'context/ApplicationContext';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
+import {useApplicationContext} from '../../context/ApplicationContext';
+import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setInfoBase} from 'reduxStore/infos';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {type GET_TREES, type GET_TREESVariables} from '_gqlTypes/GET_TREES';
-import {useActiveTree} from 'hooks/useActiveTree';
+import {setInfoBase} from '../../reduxStore/infos';
+import {useAppDispatch, useAppSelector} from '../../reduxStore/store';
+import {type GET_TREES, type GET_TREESVariables} from '../../_gqlTypes/GET_TREES';
+import {useActiveTree} from '../../hooks/useActiveTree';
 import {isTreeInApp, localizedTranslation} from '../../utils';
 import {type IBaseInfo, InfoType, WorkspacePanels} from '../../_types/types';
 import NavigationView from './NavigationView';

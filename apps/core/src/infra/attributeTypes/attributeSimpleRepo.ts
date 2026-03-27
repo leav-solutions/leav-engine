@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {type IQueryInfos} from '_types/queryInfos';
+import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type ISaveStandardValue, type IStandardValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';

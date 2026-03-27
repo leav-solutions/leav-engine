@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IKeyValue} from '@leav/utils';
 import {useTranslation} from 'react-i18next';
-import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
-import {type SAVE_TREE_saveTree_libraries_settings} from '_gqlTypes/SAVE_TREE';
+import {type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
+import {type SAVE_TREE_saveTree_libraries_settings} from '../../../../../_gqlTypes/SAVE_TREE';
 import TreeStructureView from './TreeStructureView';
-import {useSaveTreeMutation} from '_gqlTypes';
+import {useSaveTreeMutation} from '../../../../../_gqlTypes';
 
 interface ITreeStructureProps {
     tree: GET_TREES_trees_list;

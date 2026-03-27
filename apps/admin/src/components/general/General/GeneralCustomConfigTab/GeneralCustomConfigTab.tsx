@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useGetGlobalSettingsQuery, useSaveGlobalSettingsMutation} from '_gqlTypes';
-import Loading from 'components/shared/Loading';
+import {useGetGlobalSettingsQuery, useSaveGlobalSettingsMutation} from '../../../../_gqlTypes';
+import Loading from '../../../shared/Loading';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import styled from 'styled-components';

@@ -4,7 +4,7 @@
 import {ErrorDisplay, Loading, useAppLang} from '@leav/ui';
 import {type FunctionComponent, useEffect, useState} from 'react';
 import {createRoot} from 'react-dom/client';
-import App from 'components/app';
+import App from './components/app';
 import {AntApp} from 'aristid-ds';
 import i18n from './i18n';
 

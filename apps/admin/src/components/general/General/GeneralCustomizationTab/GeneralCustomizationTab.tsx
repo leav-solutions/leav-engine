@@ -1,13 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
-import {type GlobalSettingsInput, useGetGlobalSettingsQuery, useSaveGlobalSettingsMutation} from '_gqlTypes';
+import ErrorDisplay from '../../../shared/ErrorDisplay';
+import Loading from '../../../shared/Loading';
+import {getGlobalSettingsQuery} from '../../../../queries/globalSettings/getGlobalSettingsQuery';
+import {
+    type GlobalSettingsInput,
+    useGetGlobalSettingsQuery,
+    useSaveGlobalSettingsMutation,
+} from '../../../../_gqlTypes';
 import CustomizationForm from './CustomizationForm';
-import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '../../../../_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '../../../../_gqlTypes/SAVE_GLOBAL_SETTINGS';
 
 function GeneralCustomizationTab(): JSX.Element {
     const {loading, error, data} = useGetGlobalSettingsQuery();

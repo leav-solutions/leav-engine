@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type EventAction} from '@leav/utils';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
-import {type IDBPayloadData} from '_types/events';
-import {type Log} from '_types/log';
-import {type ILinkValue, type IStandardValue, type ITreeValue, type IValue} from '_types/value';
-import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {type IRecordDomain} from 'domain/record/recordDomain';
-import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IDBPayloadData} from '../../../_types/events';
+import {type Log} from '../../../_types/log';
+import {type ILinkValue, type IStandardValue, type ITreeValue, type IValue} from '../../../_types/value';
+import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {type IRecordDomain} from '../../record/recordDomain';
+import {type ITreeDomain} from '../../tree/treeDomain';
 import {type i18n} from 'i18next';
 import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '../../../_types/queryInfos';

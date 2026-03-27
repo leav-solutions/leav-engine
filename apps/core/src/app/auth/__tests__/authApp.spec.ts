@@ -20,7 +20,7 @@ import {type ToAny} from '../../../utils/utils';
 import {adminsGroupId} from '../../../_constants/users';
 import {mockCtx, mockSystemQueryContext} from '../../../__tests__/mocks/shared';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
-import {type IUserDomain} from 'domain/user/userDomain';
+import {type IUserDomain} from '../../../domain/user/userDomain';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),

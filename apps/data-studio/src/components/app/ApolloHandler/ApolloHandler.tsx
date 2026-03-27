@@ -19,9 +19,9 @@ import {createUploadLink} from 'apollo-upload-client';
 import {CloseCode, createClient} from 'graphql-ws';
 import {type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'reduxStore/infos';
-import {useAppDispatch} from 'reduxStore/store';
-import {type IInfo, InfoChannel, InfoType} from '_types/types';
+import {addInfo} from '../../../reduxStore/infos';
+import {useAppDispatch} from '../../../reduxStore/store';
+import {type IInfo, InfoChannel, InfoType} from '../../../_types/types';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 
 const ApolloHandler: FunctionComponent = ({children}) => {

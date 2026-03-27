@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GraphQLScalarType, Kind, type ValueNode} from 'graphql';
-import {type IUtils} from 'utils/utils';
+import {type IUtils} from '../../../../utils/utils';
 
 interface IDeps {
     'core.utils': IUtils;

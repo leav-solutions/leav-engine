@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {render} from 'enzyme';
 // import DateField from './DateField';
-// import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
+// import MockedLangContextProvider from '../../../../../../../../../../../__mocks__/MockedLangContextProvider';
 // import {render as renderWithProviders, screen} from '../../../../../../../../../../../_tests/testUtils';
 
 // describe('DateField', () => {
