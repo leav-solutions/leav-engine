@@ -4,10 +4,9 @@
         "module": "CommonJS",
         "lib": ["es6", "dom", "esnext"],
         "rootDir": "./",
-        /* /!\ Paths are relative to the src folder of each app. Each app must set its baseUrl to src */
         "paths": {
-            "@leav/*": ["../../../libs/*/src"],
-            "_ui/*": ["../../../libs/ui/src/*"]
+            "@leav/*": ["./libs/*/src"],
+            "_ui/*": ["./libs/ui/src/*"]
         },
         "strict": true,
         "noImplicitAny": false,
