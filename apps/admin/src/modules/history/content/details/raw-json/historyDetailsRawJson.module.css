@@ -1,0 +1,30 @@
+.historyDetailsRawJsonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    flex: 1;
+    min-height: 0;
+}
+
+.historyDetailsRawJsonScrollable {
+    --json-view-nord-theme-background-color: #2e3440;
+
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px);
+    background-color: var(--json-view-nord-theme-background-color);
+}
+
+.historyDetailsRawJsonScrollableContent {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+.historyDetailsRawJsonField {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+}

@@ -11191,6 +11191,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@uiw/react-json-view@npm:2.0.0-alpha.41":
+  version: 2.0.0-alpha.41
+  resolution: "@uiw/react-json-view@npm:2.0.0-alpha.41"
+  peerDependencies:
+    "@babel/runtime": ">=7.10.0"
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: 10/60fece800a1adeb657cf1e20b013ce98a33d630beed6820c1c224f2d5e6e24efeaa7982e3f3d544ab1eab4e03cee0e11148eb0875d576557b5b8e7ec864bef5f
+  languageName: node
+  linkType: hard
+
 "@ungap/structured-clone@npm:^1.2.0":
   version: 1.2.0
   resolution: "@ungap/structured-clone@npm:1.2.0"
@@ -11631,6 +11642,7 @@ __metadata:
     "@types/redux-mock-store": "npm:1.5.0"
     "@types/styled-components": "npm:4.4.3"
     "@types/testing-library__jest-dom": "npm:5.14.9"
+    "@uiw/react-json-view": "npm:2.0.0-alpha.41"
     "@vitejs/plugin-react": "npm:5.2.0"
     aristid-ds: "npm:15.2.0-e049fb9"
     babel-jest: "npm:30.2.0"

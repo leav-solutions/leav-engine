@@ -9,12 +9,15 @@ import {HistoryFilters} from './filters/HistoryFilters';
 import {useGetHistoryData} from './get-history-data/useGetHistoryData';
 import {usePagination} from './table/usePagination';
 import {HistoryTable} from './table/HistoryTable';
+import {useHistoryDetails} from './details/useHistoryDetails';
+import {HistoryDetailsModal} from './details/HistoryDetailsModal';
 import {historyContentContainer} from './historyContent.module.css';
 
 export const HistoryContent = () => {
     const {currentPage, pageSize, resetPage, handlePageChange, handlePageSizeChange} = usePagination();
     const {gqlFilters, filtersValues, onFilterChange} = useHistoryFilters({onFilterChange: resetPage});
     const {data, total, loading, error} = useGetHistoryData({currentPage, pageSize, filters: gqlFilters});
+    const {isOpen, selectedRecord, openDetails, closeDetails} = useHistoryDetails();
 
     if (error) {
         return <Navigate to={AdminAbsolutePaths.notFound} />;
@@ -38,8 +41,10 @@ export const HistoryContent = () => {
                     pageSize={pageSize}
                     onPageChange={handlePageChange}
                     onPageSizeChange={handlePageSizeChange}
+                    onRowClick={openDetails}
                 />
             )}
+            <HistoryDetailsModal isOpen={isOpen} historyData={selectedRecord} onClose={closeDetails} />
         </div>
     );
 };

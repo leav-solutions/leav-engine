@@ -23,6 +23,7 @@
         "@leav/utils": "workspace:libs/utils",
         "@nosferatu500/react-sortable-tree": "4.4.0",
         "@reduxjs/toolkit": "1.9.7",
+        "@uiw/react-json-view": "2.0.0-alpha.41",
         "aristid-ds": "15.2.0-e049fb9",
         "cross-fetch": "3.2.0",
         "dayjs": "1.11.20",
