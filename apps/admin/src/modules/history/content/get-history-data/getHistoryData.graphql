@@ -17,6 +17,8 @@ query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination:
                     label
                 }
             }
+            trigger
+            metadata
             action
             topic {
                 apiKey
@@ -96,9 +98,11 @@ query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination:
             }
             after {
                 asString
+                raw
             }
             before {
                 asString
+                raw
             }
             queryId
         }

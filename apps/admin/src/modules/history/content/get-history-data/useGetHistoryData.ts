@@ -16,6 +16,7 @@ export type HistoryData = {
     before: string;
     after: string;
     queryId: string;
+    rawJson: string;
 };
 
 export type HistoryPaginationParams = {

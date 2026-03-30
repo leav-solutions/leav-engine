@@ -1,0 +1,19 @@
+.historyDetailsHeaderContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(var(--general-spacing-s) * 1px);
+    width: 100%;
+}
+
+.historyDetailsHeaderField {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+}
+
+.historyDetailsHeaderFieldWrapper {
+    display: flex;
+    height: 16px;
+    align-items: center;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+}

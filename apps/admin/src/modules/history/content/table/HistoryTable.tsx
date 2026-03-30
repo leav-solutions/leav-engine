@@ -17,6 +17,7 @@ type HistoryTableProps = {
     pageSize: number;
     onPageChange: (page: number) => void;
     onPageSizeChange: (page: number, size: number) => void;
+    onRowClick: (record: HistoryData) => void;
 };
 
 export const HistoryTable = ({
@@ -26,6 +27,7 @@ export const HistoryTable = ({
     pageSize,
     onPageChange,
     onPageSizeChange,
+    onRowClick,
 }: HistoryTableProps) => {
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
@@ -91,6 +93,10 @@ export const HistoryTable = ({
             <KitTable
                 dataSource={data}
                 columns={tableColumns}
+                onRow={record => ({
+                    onClick: () => onRowClick(record),
+                    style: {cursor: 'pointer'},
+                })}
                 headerLineSize="s"
                 lineSize="s" //TODO: Replace by "xs" when it will be available
                 scroll={{

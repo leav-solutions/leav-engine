@@ -4,6 +4,7 @@
 import {type AvailableLanguage, type GetHistoryDataQuery} from '../../../../_gqlTypes';
 import {type HistoryData} from './useGetHistoryData';
 import {getTopicEntityFromAction} from './getTopicEntityFromAction';
+import {removeGraphqlTypename} from './removeGraphqlTypename';
 
 export const mapLogsToHistoryData = (data: GetHistoryDataQuery['logs'], lang: AvailableLanguage[]): HistoryData[] => {
     const _formatDate = (date: number) => new Date(date * 1000).toLocaleString();
@@ -22,6 +23,7 @@ export const mapLogsToHistoryData = (data: GetHistoryDataQuery['logs'], lang: Av
             before: log.before?.asString ?? '',
             after: log.after?.asString ?? '',
             queryId: log.queryId,
+            rawJson: JSON.stringify(removeGraphqlTypename(log)),
         };
     });
 };

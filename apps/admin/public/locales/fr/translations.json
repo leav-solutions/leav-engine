@@ -533,6 +533,19 @@
                 "query_id": "Query ID"
             }
         },
+        "details": {
+            "title": "Détail de l’évènement",
+            "date": "Date",
+            "user": "Utilisateur",
+            "action": "Action",
+            "object": "Objet",
+            "entity": "Entité",
+            "details": "Détails",
+            "before": "Valeur - Avant",
+            "after": "Valeur - Après",
+            "query_id": "Query ID",
+            "json_full": "JSON complet"
+        },
         "copy_button": {
             "copy": "Copier",
             "copy_success": "{{title}} copié dans le presse-papiers"

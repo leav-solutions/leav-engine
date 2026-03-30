@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCopy} from '@fortawesome/free-solid-svg-icons';
 import {KitAlert, KitButton, KitTooltip} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
+import {type MouseEventHandler} from 'react';
 
 type CopyButtonProps = {
     title: string;
@@ -20,7 +21,7 @@ const SUCCESS_ALERT_DURATION = 3_000;
 export const CopyButton = ({className, iconColor, title, value}: CopyButtonProps) => {
     const {t} = useTranslation();
 
-    const handleCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleCopy: MouseEventHandler<HTMLButtonElement> = e => {
         // Prevent from opening history details modal when clicking on the copy button
         e.stopPropagation();
 

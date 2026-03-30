@@ -1,0 +1,16 @@
+.historyBeforeAfterComparatorContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: calc(var(--general-spacing-s) * 1px);
+}
+
+.historyBeforeAfterComparatorBlock {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px);
+    border: 1px solid var(--general-utilities-border);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    background-color: var(--general-utilities-neutral-light);
+}

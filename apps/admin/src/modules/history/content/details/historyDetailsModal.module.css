@@ -1,0 +1,7 @@
+.historyDetailsModalContainer {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-m) * 1px);
+    height: 100%;
+    min-height: 0;
+}

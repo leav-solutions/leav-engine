@@ -1112,13 +1112,13 @@ export type GetHistoryDataQueryVariables = Exact<{
 }>;
 
 
-export type GetHistoryDataQuery = { logs?: { total: number, logs: Array<{ time: number, action?: LogAction | null, queryId: string, user:
+export type GetHistoryDataQuery = { logs?: { total: number, logs: Array<{ time: number, trigger?: string | null, metadata?: any | null, action?: LogAction | null, queryId: string, user:
         | { id: string, label?: any | null }
         | { id: string, email: Array<{ payload?: any | null }> }
       , topic?: { apiKey?: string | null, filename?: string | null, attribute?: { id: string, label?: any | null } | null, library?: { id: string, label?: any | null } | null, permission?: { type: string, applyTo?: any | null } | null, profile?: { id: string } | null, record?:
           | { id: string, label?: any | null }
           | { id: string, whoAmI: { label?: string | null } }
-         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null } | null, after?: { asString?: string | null } | null, before?: { asString?: string | null } | null }> } | null };
+         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null } | null, after?: { asString?: string | null, raw?: any | null } | null, before?: { asString?: string | null, raw?: any | null } | null }> } | null };
 
 export type DeleteApiKeyMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -2169,6 +2169,8 @@ export const GetHistoryDataDocument = gql`
           label
         }
       }
+      trigger
+      metadata
       action
       topic {
         apiKey
@@ -2248,9 +2250,11 @@ export const GetHistoryDataDocument = gql`
       }
       after {
         asString
+        raw
       }
       before {
         asString
+        raw
       }
       queryId
     }
