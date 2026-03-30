@@ -4,15 +4,18 @@
 import {KitIdCard} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {HistoryContent} from './content/HistoryContent';
-import {historyContainer} from './history.module.css';
+import {PageContainer} from '../ui/page/PageContainer';
+import {PageContentContainer} from '../ui/page/PageContentContainer';
 
 export const History = () => {
     const {t} = useTranslation();
 
     return (
-        <div className={historyContainer}>
+        <PageContainer>
             <KitIdCard title={t('logs.title')} description={t('logs.description')} size="s" />
-            <HistoryContent />
-        </div>
+            <PageContentContainer>
+                <HistoryContent />
+            </PageContentContainer>
+        </PageContainer>
     );
 };

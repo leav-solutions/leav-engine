@@ -7,11 +7,10 @@ import {AdminAbsolutePaths} from '../../routes/paths';
 import {useHistoryFilters} from './filters/useHistoryFilters';
 import {HistoryFilters} from './filters/HistoryFilters';
 import {useGetHistoryData} from './get-history-data/useGetHistoryData';
-import {usePagination} from './table/usePagination';
+import {usePagination} from '../../utils/usePagination';
 import {HistoryTable} from './table/HistoryTable';
 import {useHistoryDetails} from './details/useHistoryDetails';
 import {HistoryDetailsModal} from './details/HistoryDetailsModal';
-import {historyContentContainer} from './historyContent.module.css';
 
 export const HistoryContent = () => {
     const {currentPage, pageSize, resetPage, handlePageChange, handlePageSizeChange} = usePagination();
@@ -24,7 +23,7 @@ export const HistoryContent = () => {
     }
 
     return (
-        <div className={historyContentContainer}>
+        <>
             <HistoryFilters
                 loading={loading}
                 total={total}
@@ -45,6 +44,6 @@ export const HistoryContent = () => {
                 />
             )}
             <HistoryDetailsModal isOpen={isOpen} historyData={selectedRecord} onClose={closeDetails} />
-        </div>
+        </>
     );
 };

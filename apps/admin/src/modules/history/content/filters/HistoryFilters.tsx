@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDivider} from 'aristid-ds';
-import {Toolbar} from './toolbar/Toolbar';
+import {Toolbar} from '../../../ui/toolbar/Toolbar';
 import {TotalResult} from './TotalResult';
 import {QueryIdFilter} from './filter-item/QueryIdFilter';
 import {DateFilter} from './filter-item/DateFilter';
