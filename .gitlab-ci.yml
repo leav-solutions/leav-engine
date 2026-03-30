@@ -734,7 +734,7 @@ e2e-playwright:
           - DOCKER_PLATFORM: linux/amd64
             RUNNER: docker-build
       artifacts: false
-      optional: false
+      optional: true
   rules:
     - if: $DISABLE_E2E_PLAYWRIGHT_JOBS == "true"
       when: never
