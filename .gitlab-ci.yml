@@ -60,6 +60,7 @@ variables:
 stages:
   - test
   - build
+  - post-build-test
 
 .yarn_cache: &yarn_cache
   key:
@@ -671,7 +672,7 @@ e2e-sync-scan:
         - libs/utils/**/*
 
 .e2e_service_leav_core: &e2e_service_leav_core # May be use build images from same MR pipeline in the future
-  name: registry.aristid.com/dev/leav/leav/core:develop
+  name: registry.aristid.com/dev/leav/leav/core:$LEAV_DOCKER_IMAGE_TAG
   alias: leav_core
   pull_policy: always
   command:
@@ -704,12 +705,13 @@ e2e-sync-scan:
     FILES_ROOT_PATHS: "/files"
 
 e2e-playwright:
-  stage: test
+  stage: post-build-test
   image: mcr.microsoft.com/playwright:v1.58.2-noble
   variables:
     FF_NETWORK_PER_BUILD: 1 # important for core to connect to services https://docs.gitlab.com/ci/services/#connecting-services
     BASE_URL: "http://leav_core:4001"
     TZ: "Europe/Paris" # Necessary for date component timestamp tests
+    LEAV_DOCKER_IMAGE_TAG: develop
   services:
     - *e2e_service_arangodb
     - *e2e_service_rabbitmq
@@ -725,6 +727,14 @@ e2e-playwright:
     paths:
       - test-apps/e2e-playwright/playwright-report
     when: always
+  needs:
+    - job: build-docker-core
+      parallel:
+        matrix:
+          - DOCKER_PLATFORM: linux/amd64
+            RUNNER: docker-build
+      artifacts: false
+      optional: false
   rules:
     - if: $DISABLE_E2E_PLAYWRIGHT_JOBS == "true"
       when: never
@@ -734,6 +744,8 @@ e2e-playwright:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       allow_failure: true # To make job optional in MR pipelines
       when: manual
+      variables:
+        LEAV_DOCKER_IMAGE_TAG: "mr-$CI_COMMIT_REF_SLUG" # With amd64 docker image, previously built in build-docker-core job
     - if: $CI_COMMIT_BRANCH == "develop"
       allow_failure: true # To make job optional for now
       when: manual
@@ -751,11 +763,11 @@ e2e-playwright:
   rules:
     - if: $DISABLE_BUILD_DOCKER_JOBS == "true"
       when: never
-    - if: ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/arm64"
+    - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/arm64"
       needs:
         - job: build-docker-arm64
       when: on_success
-    - if: ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/amd64"
+    - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/amd64"
       when: on_success
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       allow_failure: true # To make job optional in MR pipelines
@@ -788,10 +800,9 @@ e2e-playwright:
         export DOCKER_IMAGE_LATEST=""
         export DOCKER_PUSH="--push"
       elif [ "$CI_PIPELINE_SOURCE" == "merge_request_event" ]; then
-        # Manual job trigger, no tag or develop branch, do not push anything
-        export DOCKER_IMAGE_TAG=""
+        export DOCKER_IMAGE_TAG="--tag $CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:mr-$CI_COMMIT_REF_SLUG$DOCKER_IMAGE_TAG_SUFFIX"
         export DOCKER_IMAGE_LATEST=""
-        export DOCKER_PUSH=""
+        export DOCKER_PUSH="--push"
       fi
     # Runner docker-build-macos-arm64 need to login to registry
     - |
@@ -1003,7 +1014,7 @@ publish-npm-leav-types-next:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
       changes:
         # libs/types is a projection of apps/core
         - apps/core/**/*
@@ -1036,7 +1047,7 @@ publish-npm-leav-types-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
       when: on_success
 
 publish-npm-leav-ui-next:
@@ -1066,7 +1077,7 @@ publish-npm-leav-ui-next:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
       changes:
         - libs/ui/**/*
       when: on_success
@@ -1096,7 +1107,7 @@ publish-npm-leav-ui-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
       when: on_success
 
 publish-npm-leav-utils-next:
@@ -1126,7 +1137,7 @@ publish-npm-leav-utils-next:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
       changes:
         - libs/utils/**/*
       when: on_success
@@ -1156,7 +1167,7 @@ publish-npm-leav-utils-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
       when: on_success
 ## Publish npm packages
 ##########
