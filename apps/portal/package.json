@@ -24,7 +24,7 @@
         "@leav/utils": "workspace:libs/utils",
         "aristid-ds": "15.2.0-e049fb9",
         "cross-fetch": "3.2.0",
-        "graphql": "16.12.0",
+        "graphql": "16.13.2",
         "graphql-ws": "5.16.2",
         "i18next": "22.5.1",
         "i18next-browser-languagedetector": "7.0.2",
