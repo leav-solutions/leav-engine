@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {type LogFilterInput} from '../../../../_gqlTypes';
-import {type OnFilterChange, type HistoryFiltersValues} from './types';
-import {DEFAULT_ACTIONS, DEFAULT_DATES, DEFAULT_QUERY_ID, DEFAULT_USER_ID} from './constants';
+import {type LogFilterInput} from '../../../../../_gqlTypes';
+import {type OnFilterChange, type HistoryFiltersValues} from '../types';
+import {DEFAULT_ACTIONS, DEFAULT_DATES, DEFAULT_QUERY_ID, DEFAULT_USER_ID} from '../constants';
 
 type UseHistoryFiltersParams = {
     onFilterChange: () => void;

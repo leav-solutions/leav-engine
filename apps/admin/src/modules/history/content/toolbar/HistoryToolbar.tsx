@@ -3,22 +3,22 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDivider} from 'aristid-ds';
 import {Toolbar} from '../../../ui/toolbar/Toolbar';
-import {TotalResult} from './TotalResult';
-import {QueryIdFilter} from './filter-item/QueryIdFilter';
-import {DateFilter} from './filter-item/DateFilter';
-import {ActionFilter} from './filter-item/ActionFilter';
-import {UserFilter} from './filter-item/UserFilter';
+import {TotalResult} from './total-result/TotalResult';
+import {QueryIdFilter} from './filter/filter-item/QueryIdFilter';
+import {DateFilter} from './filter/filter-item/DateFilter';
+import {ActionFilter} from './filter/filter-item/ActionFilter';
+import {UserFilter} from './filter/filter-item/UserFilter';
 import {DEFAULT_ACTIONS, DEFAULT_DATES, DEFAULT_QUERY_ID, DEFAULT_USER_ID} from './constants';
 import {type OnFilterChange, type HistoryFiltersValues} from './types';
 
-type HistoryFiltersProps = {
+type HistoryToolbarProps = {
     loading: boolean;
     total: number;
     filtersValues: HistoryFiltersValues;
     onFilterChange: OnFilterChange;
 };
 
-export const HistoryFilters = ({loading, total, filtersValues, onFilterChange}: HistoryFiltersProps) => (
+export const HistoryToolbar = ({loading, total, filtersValues, onFilterChange}: HistoryToolbarProps) => (
     <Toolbar
         extraAlignLeft={
             <>
@@ -50,5 +50,8 @@ export const HistoryFilters = ({loading, total, filtersValues, onFilterChange}: 
                 />
             </>
         }
+        // extraAlignRight={
+        //TODO: Add refresh button here (and maybe more buttons if needed)
+        // }
     />
 );

@@ -4,8 +4,8 @@
 import {KitLoader} from 'aristid-ds';
 import {Navigate} from 'react-router-dom';
 import {AdminAbsolutePaths} from '../../routes/paths';
-import {useHistoryFilters} from './filters/useHistoryFilters';
-import {HistoryFilters} from './filters/HistoryFilters';
+import {useHistoryFilters} from './toolbar/filter/useHistoryFilters';
+import {HistoryToolbar} from './toolbar/HistoryToolbar';
 import {useGetHistoryData} from './get-history-data/useGetHistoryData';
 import {usePagination} from '../../utils/usePagination';
 import {HistoryTable} from './table/HistoryTable';
@@ -24,7 +24,7 @@ export const HistoryContent = () => {
 
     return (
         <>
-            <HistoryFilters
+            <HistoryToolbar
                 loading={loading}
                 total={total}
                 filtersValues={filtersValues}
