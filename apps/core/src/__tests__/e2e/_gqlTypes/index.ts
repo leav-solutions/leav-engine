@@ -208,6 +208,20 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleSortableFields {
+  id = 'id'
+}
+
+export type AutomationRulesFiltersInput = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AutomationRulesSortInput = {
+  field: AutomationRuleSortableFields;
+  order?: InputMaybe<SortOrder>;
+};
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
@@ -342,6 +356,17 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
+}
+
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -504,11 +529,6 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']['input']>;
-  before?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -603,6 +623,7 @@ export enum PermissionsActions {
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_list_plugins = 'admin_list_plugins',
+  admin_manage_automation = 'admin_manage_automation',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -745,7 +766,18 @@ export type ReportFramingFiltersInput = {
   attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
   campaigns?: InputMaybe<Array<RecordFilterInput>>;
   categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SaveValueBulkMappingInput = {
+  dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  values: Array<SaveValueBulkMappingValueInput>;
+};
+
+export type SaveValueBulkMappingValueInput = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SheetInput = {
@@ -985,6 +1017,7 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -999,6 +1032,7 @@ export type ViewInput = {
 };
 
 export type ViewInputPartial = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -1065,6 +1099,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { me?: { id: string } | null };
+
+export type GetAutomationRulesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null }> } };
 
 export type GetRecordsLinkValuesPropertyQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -1240,6 +1279,17 @@ export const MeDocument = gql`
   }
 }
     `;
+export const GetAutomationRulesDocument = gql`
+    query GetAutomationRules {
+  automationRules {
+    list {
+      id
+      label
+      description
+    }
+  }
+}
+    `;
 export const GetRecordsLinkValuesPropertyDocument = gql`
     query GetRecordsLinkValuesProperty($library: ID!, $filters: [RecordFilterInput], $retrieveInactive: Boolean, $attribute: ID!) {
   records(
@@ -1406,6 +1456,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     Me(variables?: MeQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MeQuery>({ document: MeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Me', 'query', variables);
+    },
+    GetAutomationRules(variables?: GetAutomationRulesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetAutomationRulesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAutomationRulesQuery>({ document: GetAutomationRulesDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetAutomationRules', 'query', variables);
     },
     GetRecordsLinkValuesProperty(variables: GetRecordsLinkValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordsLinkValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordsLinkValuesPropertyQuery>({ document: GetRecordsLinkValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordsLinkValuesProperty', 'query', variables);
