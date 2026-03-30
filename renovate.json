@@ -15,6 +15,15 @@
             "enabled": false
         },
         {
+            "description": "Update Node.js Docker images in Dockerfile, docker-compose, and GitLab CI (minor and patch only)",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": ["node"],
+            "matchManagers": ["dockerfile", "docker-compose", "gitlabci"],
+            "groupName": "nodejs docker images",
+            "enabled": true,
+            "matchUpdateTypes": ["minor", "patch"]
+        },
+        {
             "description": "Enable npm detection",
             "enabled": true,
             "matchManagers": ["npm"]
