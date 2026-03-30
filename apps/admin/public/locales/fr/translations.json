@@ -279,7 +279,8 @@
             "version_profiles": "Profils de version",
             "api_keys": "Clés API",
             "plugins": "Plugins",
-            "logs": "Historique"
+            "logs": "Historique",
+            "automation": "Automatisation"
         }
     },
     "login": {

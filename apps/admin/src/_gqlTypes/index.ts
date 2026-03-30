@@ -603,6 +603,7 @@ export enum PermissionsActions {
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_list_plugins = 'admin_list_plugins',
+  admin_manage_automation = 'admin_manage_automation',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',

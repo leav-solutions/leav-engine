@@ -102,6 +102,7 @@ export enum AdminPermissionsActions {
     EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings',
     LIST_PLUGINS = 'admin_list_plugins',
     ACCESS_LOGS = 'admin_access_logs',
+    MANAGE_AUTOMATION = 'admin_manage_automation',
     // Only backend for now, not configurable from the admin UI
     IMPORT_CONFIG_CLEAR_DATABASE = 'admin_import_config_clear_database',
 }

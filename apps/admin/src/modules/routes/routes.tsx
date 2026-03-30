@@ -96,6 +96,7 @@ export const adminRoutes: RouteObject[] = [
         path: AdminAbsolutePaths.logs,
         element: <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={History} />,
     },
+    //TODO: Add automation route (using permissions and/or feature toggle)
     {
         path: AdminAbsolutePaths.notFound,
         element: <NotFound />,
