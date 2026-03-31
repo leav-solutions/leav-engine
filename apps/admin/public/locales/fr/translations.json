@@ -552,6 +552,9 @@
             "copy_success": "{{title}} copié dans le presse-papiers"
         }
     },
+    "automation": {
+        "title": "Automatisation"
+    },
     "error": {
         "title": "Erreur de chargement des données",
         "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",

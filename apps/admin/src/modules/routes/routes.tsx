@@ -20,6 +20,7 @@ import EditVersionProfile from '../../components/versionProfiles/EditVersionProf
 import Tasks from '../../components/tasks/Tasks';
 import {History} from '../history/History';
 import {NotFound} from '../not-found/NotFound';
+import {Automation} from '../automation/Automation';
 
 // Note:
 // - For historic routes, we don't use the children routes feature as they don't have an <Outlet/> and are not nested
@@ -96,7 +97,10 @@ export const adminRoutes: RouteObject[] = [
         path: AdminAbsolutePaths.logs,
         element: <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={History} />,
     },
-    //TODO: Add automation route (using permissions and/or feature toggle)
+    {
+        path: AdminAbsolutePaths.automation,
+        element: <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={Automation} />,
+    },
     {
         path: AdminAbsolutePaths.notFound,
         element: <NotFound />,
