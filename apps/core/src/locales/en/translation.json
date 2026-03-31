@@ -230,6 +230,7 @@
         "unknown_tree": "Unknown tree ({{id}})",
         "unknown_version_profile": "Unknown version profile ({{id}})",
         "unknown_application": "Unknown application ({{id}})",
+        "unknown_automation_rule": "Unknown automation rule ({{id}})",
         "unknown_value": "Unknown value"
     },
     "tasks": {

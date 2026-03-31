@@ -12,6 +12,7 @@ import {type IValue} from './value';
 import {type IVersionProfile} from './versionProfile';
 import {type IPermission} from './permissions';
 import {type ITreeDbEvent, type ITree} from './tree';
+import {type IAutomationRule} from './automation';
 
 // Event data should be object, not string/number/boolean to avoid elasticsearch index errors like:
 // parsing_exception: Failed to parse object: expecting token of type [START_OBJECT] but found [VALUE_STRING]
@@ -38,6 +39,7 @@ interface IDBPayloadDataMap {
     [EventAction.API_KEY_DELETE]: IApiKey;
     [EventAction.APP_SAVE]: IApplication;
     [EventAction.APP_DELETE]: IApplication;
+    [EventAction.AUTOMATION_RULE_CREATE]: IAutomationRule;
     [EventAction.GLOBAL_SETTINGS_SAVE]: IGlobalSettings;
     [EventAction.LIBRARY_SAVE]: ILibraryDbEvent;
     [EventAction.LIBRARY_DELETE]: ILibraryDbEvent;

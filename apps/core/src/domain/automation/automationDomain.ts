@@ -10,6 +10,8 @@ import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {EventAction} from '@leav/utils';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -31,11 +33,13 @@ export interface IAutomationDomain {
 
 export interface IAutomationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.automation.rule': IAutomationRuleRepo;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.automation.rule': automationRuleRepo,
 }: IAutomationDomainDeps): IAutomationDomain {
     return {
@@ -66,9 +70,18 @@ export default function ({
 
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 
-            // TODO eventManager.sendDatabaseEvent
-
             logger.debug(`Created new automation rule with id ${newAutomationRule.id}`);
+
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_CREATE>(
+                {
+                    action: EventAction.AUTOMATION_RULE_CREATE,
+                    topic: {
+                        automationRule: newAutomationRule.id,
+                    },
+                    after: newAutomationRule,
+                },
+                ctx,
+            );
 
             return newAutomationRule;
         },

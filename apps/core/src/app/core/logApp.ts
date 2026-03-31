@@ -6,6 +6,7 @@ import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import {type ILibraryDomain} from '../../domain/library/libraryDomain';
 import {type ILogDomain} from '../../domain/log/logDomain';
+import {type IAutomationDomain} from '../../domain/automation/automationDomain';
 import {type ITreeDomain} from '../../domain/tree/treeDomain';
 import {type IVersionProfileDomain} from '../../domain/versionProfile/versionProfileDomain';
 import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, type Log} from '../../_types/log';
@@ -34,6 +35,7 @@ interface IDeps {
     'core.domain.value.helpers.formatLogValue': IFormatLogValueHelper;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.domain.application': IApplicationDomain;
+    'core.domain.automation': IAutomationDomain;
     'core.domain.record': IRecordDomain;
     translator: i18n;
     config: IConfig;
@@ -48,6 +50,7 @@ export default function ({
     'core.domain.value.helpers.formatLogValue': formatLogValue,
     'core.domain.versionProfile': versionProfileDomain,
     'core.domain.application': applicationDomain,
+    'core.domain.automation': automationDomain,
     'core.domain.record': recordDomain,
     translator,
     config,
@@ -83,6 +86,11 @@ export default function ({
                         label: SystemTranslation!
                     }
 
+                    type LogUnknownAutomationRuleEntity {
+                        id: ID!
+                        label: SystemTranslation!
+                    }
+
                     union LogRecord = Record | LogUnknownEntity
                     union LogUser = Record | LogUnknownEntity
                     union LogLibrary = Library | LogUnknownEntity
@@ -90,6 +98,7 @@ export default function ({
                     union LogTree = Tree | LogUnknownEntity
                     union LogVersionProfile = VersionProfile | LogUnknownStringEntity
                     union LogApplication = Application | LogUnknownApplicationEntity
+                    union LogAutomationRule = AutomationRule | LogUnknownAutomationRuleEntity
 
                     type LogTopic {
                         record: LogRecord
@@ -101,6 +110,7 @@ export default function ({
                         apiKey: String
                         application: LogApplication
                         filename: String
+                        automationRule: LogAutomationRule
                     }
 
                     type LogData {
@@ -145,6 +155,7 @@ export default function ({
                         permission: LogTopicPermissionFilterInput,
                         apiKey: String,
                         filename: String
+                        automationRule: String
                     }
 
                     input LogFilterInput {
@@ -286,6 +297,10 @@ export default function ({
                         __resolveType: (obj: {_isUnknown?: boolean}) =>
                             obj._isUnknown ? 'LogUnknownApplicationEntity' : 'Application',
                     },
+                    LogAutomationRule: {
+                        __resolveType: (obj: {_isUnknown?: boolean}) =>
+                            obj._isUnknown ? 'LogUnknownAutomationRuleEntity' : 'AutomationRule',
+                    },
                     LogTopic: {
                         record: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
                             if (!topic.record) {
@@ -416,6 +431,40 @@ export default function ({
                                     _isUnknown: true,
                                     id: topic.application,
                                     label: toSystemTranslation('logs.unknown_application', topic.application),
+                                };
+                            }
+                        },
+                        automationRule: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
+                            if (!topic.automationRule) {
+                                return null;
+                            }
+
+                            try {
+                                const result = await automationDomain.getAutomationRules({
+                                    params: {
+                                        filters: {
+                                            id: topic.automationRule,
+                                        },
+                                    },
+                                    ctx,
+                                });
+
+                                if (result.list.length === 0) {
+                                    return {
+                                        _isUnknown: true,
+                                        id: topic.automationRule,
+                                        label: toSystemTranslation(
+                                            'logs.unknown_automation_rule',
+                                            topic.automationRule,
+                                        ),
+                                    };
+                                }
+                                return result.list[0];
+                            } catch (error) {
+                                return {
+                                    _isUnknown: true,
+                                    id: topic.automationRule,
+                                    label: toSystemTranslation('logs.unknown_automation_rule', topic.automationRule),
                                 };
                             }
                         },
