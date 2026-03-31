@@ -134,6 +134,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                         },
                         dispatch,
                     );
+                    break;
                 default:
                     if (message.type === 'change-language') {
                         setLang(message.language);
