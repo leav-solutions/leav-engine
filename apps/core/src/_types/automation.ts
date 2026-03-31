@@ -15,3 +15,8 @@ export type IAutomationRule = ICoreEntity & {
     modifiedAt?: number;
     modifiedBy?: string;
 };
+
+export type ICreateAutomationRule = {
+    label: ISystemTranslation;
+    description?: ISystemTranslation;
+};

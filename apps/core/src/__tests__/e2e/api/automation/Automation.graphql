@@ -7,3 +7,10 @@ query GetAutomationRules {
         }
     }
 }
+
+mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
+    createAutomationRule(rule: $rule) {
+        id
+        label
+    }
+}

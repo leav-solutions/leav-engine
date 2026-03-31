@@ -245,6 +245,11 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
   libraryId: Scalars['ID']['input'];
 };
 
+export type CreateAutomationRuleInput = {
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  label: Scalars['SystemTranslation']['input'];
+};
+
 export type CreateRecordDataInput = {
   values?: InputMaybe<Array<ValueBatchInput>>;
   version?: InputMaybe<Array<ValueVersionInput>>;
@@ -1105,6 +1110,13 @@ export type GetAutomationRulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null }> } };
 
+export type CreateAutomationRuleMutationVariables = Exact<{
+  rule: CreateAutomationRuleInput;
+}>;
+
+
+export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: any } };
+
 export type GetRecordsLinkValuesPropertyQueryVariables = Exact<{
   library: Scalars['ID']['input'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
@@ -1290,6 +1302,14 @@ export const GetAutomationRulesDocument = gql`
   }
 }
     `;
+export const CreateAutomationRuleDocument = gql`
+    mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
+  createAutomationRule(rule: $rule) {
+    id
+    label
+  }
+}
+    `;
 export const GetRecordsLinkValuesPropertyDocument = gql`
     query GetRecordsLinkValuesProperty($library: ID!, $filters: [RecordFilterInput], $retrieveInactive: Boolean, $attribute: ID!) {
   records(
@@ -1459,6 +1479,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetAutomationRules(variables?: GetAutomationRulesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetAutomationRulesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAutomationRulesQuery>({ document: GetAutomationRulesDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetAutomationRules', 'query', variables);
+    },
+    CreateAutomationRule(variables: CreateAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<CreateAutomationRuleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateAutomationRuleMutation>({ document: CreateAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreateAutomationRule', 'mutation', variables);
     },
     GetRecordsLinkValuesProperty(variables: GetRecordsLinkValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordsLinkValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordsLinkValuesPropertyQuery>({ document: GetRecordsLinkValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordsLinkValuesProperty', 'query', variables);

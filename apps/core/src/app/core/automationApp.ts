@@ -5,7 +5,7 @@ import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAutomationDomain} from '../../domain/automation/automationDomain';
-import {type IAutomationRule} from '../../_types/automation';
+import {type ICreateAutomationRule, type IAutomationRule} from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
 
 export type ICoreImportApp = IGraphqlAppModule;
@@ -53,12 +53,21 @@ export default function ({'core.domain.automation': automationDomain}: IDeps): I
                         label: String,
                     }
 
+                    input CreateAutomationRuleInput {
+                        label: SystemTranslation!,
+                        description: SystemTranslationOptional,
+                    }
+
                     extend type Query {
                         automationRules(
                             filters: AutomationRulesFiltersInput,
                             pagination: Pagination,
                             sort: AutomationRulesSortInput
                         ): AutomationRulesList!
+                    }
+
+                    extend type Mutation {
+                        createAutomationRule(rule: CreateAutomationRuleInput!): AutomationRule!
                     }
                 `,
                 resolvers: {
@@ -73,9 +82,19 @@ export default function ({'core.domain.automation': automationDomain}: IDeps): I
                                     filters,
                                     pagination,
                                     sort,
+                                    withCount: true,
                                 },
                                 ctx,
                             });
+                        },
+                    },
+                    Mutation: {
+                        async createAutomationRule(
+                            parent,
+                            {rule}: {rule: ICreateAutomationRule},
+                            ctx: IQueryInfos,
+                        ): Promise<IAutomationRule> {
+                            return automationDomain.createAutomationRule({rule, ctx});
                         },
                     },
                 },
