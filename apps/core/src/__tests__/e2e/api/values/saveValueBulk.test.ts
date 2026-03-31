@@ -34,6 +34,8 @@ describe('saveValueBulk', () => {
     let node1RecordId3: string;
     let noNodeRecordId4: string;
     let node3RecordId5: string;
+    let node1RecordId6: string;
+    let node1RecordId7: string;
 
     let treeNodeId1: string;
     let treeNodeId2: string;
@@ -126,6 +128,8 @@ describe('saveValueBulk', () => {
             c3: createRecord(library: "${testLibName}", data: { values: [{ attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId1}"}]}) { record {id} },
             c4: createRecord(library: "${testLibName}") { record {id} },
             c5: createRecord(library: "${testLibName}", data: { values: [{ attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId3}"}]}) { record {id} },
+            c6: createRecord(library: "${testLibName}", data: { values: [{ attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId1}"}, { attribute: "${attrSimpleName}", payload: "value1"}]}) { record {id} },
+            c7: createRecord(library: "${testLibName}", data: { values: [{ attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId1}"}, { attribute: "${attrSimpleName}", payload: "value2"}]}) { record {id} }
         }`);
 
         node1RecordId1 = resRecord.data.data.c1.record.id;
@@ -133,6 +137,8 @@ describe('saveValueBulk', () => {
         node1RecordId3 = resRecord.data.data.c3.record.id;
         noNodeRecordId4 = resRecord.data.data.c4.record.id;
         node3RecordId5 = resRecord.data.data.c5.record.id;
+        node1RecordId6 = resRecord.data.data.c6.record.id;
+        node1RecordId7 = resRecord.data.data.c7.record.id;
 
         await makeGraphQlCall(`mutation {
             savePermission(
@@ -158,8 +164,10 @@ describe('saveValueBulk', () => {
                 libraryId: "${testLibName}",
                 attributeId: "${attrSimpleName}",
                 recordsFilters: [],
-                mapValues: [
-                    {before: null, after: "some_value"}
+                mapping: [
+                    {
+                        values: [{before: null, after: "some_value"}]
+                    }
                 ]
             )
         }`;
@@ -175,8 +183,10 @@ describe('saveValueBulk', () => {
                 libraryId: "${testLibName}",
                 attributeId: "${attrTreeMultiValueName}",
                 recordsFilters: [],
-                mapValues: [
-                    {before: null, after: "some_value"}
+                mapping: [
+                    {
+                        values: [{before: null, after: "some_value"}]
+                    }
                 ]
             )
         }`;
@@ -196,8 +206,10 @@ describe('saveValueBulk', () => {
                     recordsFilters: [
                         {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId1}"}
                     ],
-                    mapValues: [
-                        {before: "${treeNodeId1}", after: "${treeNodeId1}"}
+                    mapping: [
+                        {
+                            values: [{before: "${treeNodeId1}", after: "${treeNodeId1}"}]
+                        }
                     ]
                 )
             }`;
@@ -221,8 +233,10 @@ describe('saveValueBulk', () => {
                     recordsFilters: [
                         {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node3RecordId5}"},
                     ],
-                    mapValues: [
-                        {before: "${treeNodeId3}", after: "${treeNodeId3}"}
+                    mapping: [
+                        {
+                            values: [{before: "${treeNodeId3}", after: "${treeNodeId3}"}]
+                        }
                     ]
                 )
             }`;
@@ -246,8 +260,10 @@ describe('saveValueBulk', () => {
                     recordsFilters: [
                         {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId1}"}
                     ],
-                    mapValues: [
-                        {before: ${treeNodeId1}, after: "id_not_existing"}
+                    mapping: [
+                        {
+                            values: [{before: ${treeNodeId1}, after: "id_not_existing"}]
+                        }
                     ]
                 )
             }`;
@@ -274,8 +290,10 @@ describe('saveValueBulk', () => {
                         {operator: OR},
                         {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId2}"}
                     ],
-                    mapValues: [
-                        {before: "${treeNodeId1}", after: "${treeNodeId2}"}
+                    mapping: [
+                        {
+                            values: [{before: "${treeNodeId1}", after: "${treeNodeId2}"}]
+                        }
                     ]
                 )
             }`;
@@ -313,16 +331,18 @@ describe('saveValueBulk', () => {
         it('should replace an undefined value', async () => {
             const gqlMutation = `mutation {
             saveValueBulk(
-                libraryId: "${testLibName}",
-                attributeId: "${attrTreeMonoValueName}",
-                recordsFilters: [
-                    {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${noNodeRecordId4}"}
-                ],
-                mapValues: [
-                    {before: null, after: "${treeNodeId1}"}
-                ]
-            )
-        }`;
+                    libraryId: "${testLibName}",
+                    attributeId: "${attrTreeMonoValueName}",
+                    recordsFilters: [
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${noNodeRecordId4}"}
+                    ],
+                    mapping: [
+                        {
+                            values: [{before: null, after: "${treeNodeId1}"}]
+                        }
+                    ]
+                )
+            }`;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
             await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
@@ -350,17 +370,19 @@ describe('saveValueBulk', () => {
 
         it('should replace by an undefined value', async () => {
             const gqlMutation = `mutation {
-            saveValueBulk(
-                libraryId: "${testLibName}",
-                attributeId: "${attrTreeMonoValueName}",
-                recordsFilters: [
-                    {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId3}"}
-                ],
-                mapValues: [
-                    {before: "${treeNodeId1}", after: null}
-                ]
-            )
-        }`;
+                saveValueBulk(
+                    libraryId: "${testLibName}",
+                    attributeId: "${attrTreeMonoValueName}",
+                    recordsFilters: [
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId3}"}
+                    ],
+                    mapping: [
+                        {
+                            values: [{before: "${treeNodeId1}", after: null}]
+                        }
+                    ]
+                )
+            }   `;
 
             const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
             await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
@@ -384,6 +406,73 @@ describe('saveValueBulk', () => {
             }`);
 
             expect(record.data.data.records.list[0].property[0]).toBeUndefined();
+        });
+
+        it('should filter records with dependendencies filters', async () => {
+            const gqlMutation = `mutation {
+                saveValueBulk(
+                    libraryId: "${testLibName}",
+                    attributeId: "${attrTreeMonoValueName}",
+                    recordsFilters: [
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId6}"},
+                        {operator: OR},
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId7}"}
+                    ],
+                    mapping: [
+                        {
+                            dependenciesFilters: [
+                                {field: "${attrSimpleName}", condition: ${AttributeCondition.EQUAL}, value: "value1"},
+                            ],
+                            values: [{before: "${treeNodeId1}", after: "${treeNodeId2}"}]
+                        },
+                        {
+                            dependenciesFilters: [
+                                {field: "${attrSimpleName}", condition: ${AttributeCondition.EQUAL}, value: "value2"},
+                            ],
+                            values: [{before: "${treeNodeId1}", after: "${treeNodeId3}"}]
+                        }
+                    ]
+                )
+            }`;
+
+            const saveValueBulkTaskId = (await makeGraphQlCall(gqlMutation)).data.data.saveValueBulk;
+            await waitForTaskCompletedWithStatus(saveValueBulkTaskId, TaskStatus.DONE);
+
+            const record = await makeGraphQlCall(`query {
+                records(
+                    library: "${testLibName}",
+                    filters: [
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId6}"},
+                        {operator: OR},
+                        {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${node1RecordId7}"}
+                    ],
+                ) {
+                    list {
+                       id
+                       property(attribute: "${attrTreeMonoValueName}") {
+                            ... on TreeValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }`);
+
+            expect(record.data.data.records.list.length).toBe(2);
+            expect(record.data.data.records.list).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        id: node1RecordId6,
+                        property: [{payload: {id: treeNodeId2}}],
+                    }),
+                    expect.objectContaining({
+                        id: node1RecordId7,
+                        property: [{payload: {id: treeNodeId3}}],
+                    }),
+                ]),
+            );
         });
     });
 });

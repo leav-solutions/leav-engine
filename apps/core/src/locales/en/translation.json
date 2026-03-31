@@ -277,7 +277,7 @@
         "save_value_bulk_complete_title": "Bulk edit completed successfully",
         "save_value_bulk_error_title": "Bulk edit encountered an error",
         "save_value_bulk_error_message": "Your bulk edit request from {{date}} failed. Please contact your administrator.",
-        "save_value_bulk_complete_message": "The operation completed successfully. {{number}}/{{total}} items were updated; the others were not modified because you do not have the necessary permissions. The current display may not reflect these changes: refresh the page if necessary.",
+        "save_value_bulk_complete_message": "The operation completed successfully. {{number}}/{{total}} items were treated; the others were not because you do not have the necessary permissions. The current display may not reflect these changes: refresh the page if necessary.",
         "discussion_comment_mention_title": "You were mentioned in a comment",
         "discussion_comment_mention_link_label": "See the comment",
         "discussion_comment_mention_message_with_record_label": "You were mentioned by {{author}} in a comment on {{recordLabel}}. Click the link below to view the comment.",
