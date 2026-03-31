@@ -12,6 +12,7 @@ import {type ITasksManagerDomain} from '../../../../../domain/tasksManager/tasks
 import {FakePluginTaskType} from './_types/_types';
 import {type IFakeDomain} from './domain/fakeDomain';
 import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';
+import {TaskPriority} from '../../../../../_types/tasksManager';
 
 interface IDeps {
     translator: i18n;
@@ -78,6 +79,7 @@ export default function ({
                         fakePluginTranslation: String!
                         fakePluginTask(taskName: String!): String!
                         hasFakePluginStarted: Boolean!
+                        hasFakePluginCronTaskExecuted: Boolean!
                     }
                     
                     extend type Mutation {
@@ -130,6 +132,7 @@ export default function ({
                                 ctx,
                             ),
                         hasFakePluginStarted: () => fakeDomain.getPluginStarted(),
+                        hasFakePluginCronTaskExecuted: () => fakeDomain.getCronTaskExecuted(),
                     },
                 },
             });
@@ -141,6 +144,21 @@ export default function ({
             extensionPoints.registerActions([_fakeReplaceValueAction]);
 
             extensionPoints.registerTaskTypes([FakePluginTaskType.FAKE_TYPE]);
+
+            extensionPoints.registerCronTask({
+                name: 'fakeCronTask',
+                schedule: '*/1 * * * *', // every minute
+                createTask: async ctx => ({
+                    label: {
+                        en: 'Fake Cron Task',
+                    },
+                    func: {path: 'fakeplugin.domain', name: 'execCronTask', args: {ctx}},
+                    role: {
+                        type: FakePluginTaskType.FAKE_TYPE,
+                    },
+                    priority: TaskPriority.LOW,
+                }),
+            });
 
             extensionPoints.registerStart(async () => fakeDomain.startPlugin());
         },

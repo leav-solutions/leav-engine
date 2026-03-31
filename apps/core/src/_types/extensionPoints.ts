@@ -6,6 +6,7 @@ import {type IAppGraphQLSchema} from './graphql';
 import {type PermissionTypes} from './permissions';
 import {type PluginRegisterRoute} from './endpoint';
 import {type AuthPostOidcLoginCallback} from './auth';
+import {type RegisterCronTask} from './cronTask';
 
 export interface IExtensionPoints {
     [name: string]: (...args: any[]) => void;
@@ -41,4 +42,9 @@ export interface IExtensionPointsFunctions extends IExtensionPoints {
      * Useful to change user settings or to log some information after the user is authenticated but before the session is created.
      */
     registerAuthPostOidcLoginCallback: (callback: AuthPostOidcLoginCallback) => void;
+
+    /**
+     * Register a cron task to be executed on a schedule defined by the `schedule` property of `registerCronTask`.
+     */
+    registerCronTask: (registerCronTask: RegisterCronTask) => void;
 }

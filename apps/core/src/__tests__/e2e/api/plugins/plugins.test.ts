@@ -120,4 +120,27 @@ describe('Plugins', () => {
             expect(task.role.type).toBe(FakePluginTaskType.FAKE_TYPE);
         });
     });
+
+    describe('Register a cron task', () => {
+        test(
+            'Plugins should be able to register a cron task',
+            async () => {
+                // wait for cron task to be executed (cron task is scheduled every minute, so max wait time is 1min)
+                let hasExecuted = false;
+                const startTime = Date.now();
+                while (!hasExecuted && Date.now() - startTime < 80 * 1000) {
+                    const res = await makeGraphQlCall(`{
+                    hasFakePluginCronTaskExecuted
+                }`);
+                    hasExecuted = res.data.data.hasFakePluginCronTaskExecuted;
+                    if (!hasExecuted) {
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                    }
+                }
+
+                expect(hasExecuted).toBe(true);
+            },
+            90 * 1000, // set timeout to 90s because cron task is scheduled every minute, but other tasks might delay execution
+        );
+    });
 });

@@ -19,6 +19,8 @@ import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAdminPermissionDomain} from '../../domain/permission/adminPermissionDomain';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IExtensionPoints} from '../../_types/extensionPoints';
+import {type ICronTasksManagerDomain} from '../../domain/tasksManager/cronTasksManagerDomain';
+import {type RegisterCronTask} from '../../_types/cronTask';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timeout>;
@@ -28,6 +30,7 @@ export interface ITasksManagerApp extends IGraphqlAppModule {
 
 interface IDeps {
     'core.domain.tasksManager'?: ITasksManagerDomain;
+    'core.domain.tasksManager.cron'?: ICronTasksManagerDomain;
     'core.utils.logger'?: ILogger;
     config?: IConfig;
     'core.utils'?: IUtils;
@@ -49,6 +52,7 @@ export interface IGetTasksArgs {
 export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
+    'core.domain.tasksManager.cron': cronTasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
 }: IDeps): ITasksManagerApp {
@@ -65,8 +69,12 @@ export default function ({
     };
 
     return {
-        initMaster: tasksManagerDomain.initMaster,
-        initWorker: tasksManagerDomain.initWorker,
+        initMaster: async () => {
+            const res = await tasksManagerDomain.initMaster();
+            await cronTasksManagerDomain.initCronTasksManager();
+            return res;
+        },
+        initWorker: () => tasksManagerDomain.initWorker(),
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
@@ -239,6 +247,9 @@ export default function ({
         extensionPoints: {
             registerTaskTypes: (types: string[]) => {
                 tasksManagerDomain.registerTaskTypes(types);
+            },
+            registerCronTask: (registerCronTask: RegisterCronTask) => {
+                cronTasksManagerDomain.registerCronTask(registerCronTask);
             },
         },
     };
