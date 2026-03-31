@@ -508,6 +508,15 @@ export default function ({
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
                         },
+                        active: async (parent: IRecord, _, ctx: IQueryInfos) =>
+                            (
+                                await recordDomain.getRecordFieldValue({
+                                    record: parent,
+                                    attributeId: 'active',
+                                    library: parent.library,
+                                    ctx,
+                                })
+                            )?.[0].payload,
                     },
                     RecordFilter: {
                         tree: async (recordFilter: IRecordFilterLight, _, ctx: IQueryInfos): Promise<ITree | null> => {
