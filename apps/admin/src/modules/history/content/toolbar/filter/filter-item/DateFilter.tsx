@@ -12,7 +12,7 @@ import {
     rangePickerDropdownContainer,
 } from './dateFilter.module.css';
 import {FilterDropdownFooter} from './shared/FilterDropdownFooter';
-import {type DateFilterValue} from '../types';
+import {type DateFilterValue} from '../../types';
 
 type DateFilterProps = {
     loading: boolean;

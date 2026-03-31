@@ -7,7 +7,7 @@ import {HistoryCell} from './cell/HistoryCell';
 import {CopyCell} from './cell/CopyCell';
 import {type HistoryData} from '../get-history-data/useGetHistoryData';
 import {useTranslation} from 'react-i18next';
-import {useTableScrollableHeight} from './useTableScrollableHeight';
+import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
 import {historyTableContainer} from './historyTable.module.css';
 
 type HistoryTableProps = {
