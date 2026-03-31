@@ -4,6 +4,11 @@ query GetAutomationRules {
             id
             label
             description
+            active
+            createdAt
+            createdBy
+            modifiedAt
+            modifiedBy
         }
     }
 }

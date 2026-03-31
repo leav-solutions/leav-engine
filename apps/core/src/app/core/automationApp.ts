@@ -17,6 +17,7 @@ interface IDeps {
 export interface IGetAutomationRulesArgs {
     filters?: ICoreEntityFilterOptions & {
         id: string;
+        active: boolean;
     };
     pagination?: IPaginationParams;
     sort?: ISortParams;
@@ -32,6 +33,11 @@ export default function ({'core.domain.automation': automationDomain}: IDeps): I
                         id: ID!,
                         label(lang: [AvailableLanguage!]): SystemTranslation!,
                         description: SystemTranslation,
+                        active: Boolean!,
+                        createdAt: Int!,
+                        createdBy: String!,
+                        modifiedAt: Int!,
+                        modifiedBy: String!
                     }
 
                     type AutomationRulesList {

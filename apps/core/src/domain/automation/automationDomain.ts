@@ -13,10 +13,7 @@ import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
-        created_at?: number;
-        created_by?: string;
-        modified_at?: number;
-        modified_by?: string;
+        active?: boolean;
     };
 }
 

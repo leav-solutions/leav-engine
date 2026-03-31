@@ -8,6 +8,7 @@ export type IAutomationRule = ICoreEntity & {
     id: string;
     label: ISystemTranslation;
     description?: ISystemTranslation;
+    active: boolean;
 
     // metadata
     createdAt?: number;

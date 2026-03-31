@@ -33,13 +33,22 @@ describe('automationRuleRepo', () => {
                 ctx,
             );
 
-            expect(automationRule).toHaveProperty('id');
-            expect(automationRule.label).toEqual({
-                en: 'Test Automation Rule',
-            });
-            expect(automationRule.description).toEqual({
-                en: 'This is a test automation rule.',
-            });
+            expect(automationRule).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    label: {
+                        en: 'Test Automation Rule',
+                    },
+                    description: {
+                        en: 'This is a test automation rule.',
+                    },
+                    active: false,
+                    createdAt: expect.any(Number),
+                    createdBy: ctx.userId,
+                    modifiedAt: expect.any(Number),
+                    modifiedBy: ctx.userId,
+                }),
+            );
         });
     });
 

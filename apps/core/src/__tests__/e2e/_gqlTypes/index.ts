@@ -1108,7 +1108,7 @@ export type MeQuery = { me?: { id: string } | null };
 export type GetAutomationRulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null }> } };
+export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string }> } };
 
 export type CreateAutomationRuleMutationVariables = Exact<{
   rule: CreateAutomationRuleInput;
@@ -1298,6 +1298,11 @@ export const GetAutomationRulesDocument = gql`
       id
       label
       description
+      active
+      createdAt
+      createdBy
+      modifiedAt
+      modifiedBy
     }
   }
 }

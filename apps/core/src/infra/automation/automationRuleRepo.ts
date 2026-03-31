@@ -18,6 +18,7 @@ export const AUTOMATION_RULES_COLLECTION_NAME = 'core_automation_rules';
 type IAutomationRuleBaseDocument = {
     label: ISystemTranslation;
     description?: ISystemTranslation;
+    active: boolean;
     // metadata
     createdAt?: number;
     createdBy?: string;
@@ -28,10 +29,7 @@ type IAutomationRuleBaseDocument = {
 type IAutomationRuleDbDocument = IAutomationRuleBaseDocument & IDbDocument;
 
 export type IAutomationRuleFilterOptionsInRepo = ICoreEntityFilterOptions & {
-    created_at?: number;
-    created_by?: string;
-    modified_at?: number;
-    modified_by?: string;
+    active?: boolean;
 };
 
 export type IGetAutomationRulesParams = IGetCoreEntitiesParams & {
@@ -60,6 +58,7 @@ export default function ({
         ctx: IQueryInfos,
     ): IAutomationRuleBaseDocument => ({
         ...rule,
+        active: false,
         createdAt: dayjs().unix(),
         createdBy: String(ctx.userId),
         modifiedAt: dayjs().unix(),
