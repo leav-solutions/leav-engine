@@ -27,7 +27,7 @@
         "aristid-ds": "15.2.0-e049fb9",
         "cross-fetch": "3.2.0",
         "dayjs": "1.11.20",
-        "fomantic-ui-less": "2.8.8",
+        "fomantic-ui-less": "2.9.4",
         "formik": "1.5.8",
         "graphql": "16.13.2",
         "graphql-ws": "5.16.2",
