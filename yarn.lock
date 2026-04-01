@@ -11648,7 +11648,7 @@ __metadata:
     babel-jest: "npm:30.2.0"
     cross-fetch: "npm:3.2.0"
     dayjs: "npm:1.11.20"
-    fomantic-ui-less: "npm:2.8.8"
+    fomantic-ui-less: "npm:2.9.4"
     formik: "npm:1.5.8"
     graphql: "npm:16.13.2"
     graphql-ws: "npm:5.16.2"
@@ -17239,12 +17239,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fomantic-ui-less@npm:2.8.8":
-  version: 2.8.8
-  resolution: "fomantic-ui-less@npm:2.8.8"
+"fomantic-ui-less@npm:2.9.4":
+  version: 2.9.4
+  resolution: "fomantic-ui-less@npm:2.9.4"
   dependencies:
     jquery: "npm:^3.4.0"
-  checksum: 10/f615afd703e6a83133f09eee606f22874f4db0144f2b590d5c9ff99115384c29196b000b5e22694e6da7c52a75610d121277d4621010ec4b04dd3d770f3dbbb8
+  checksum: 10/e6b2f11c696e72d190a6ba3dc6e1405a502ac912d5380761825a1692ec553c0bf4adf22af95956782ce14760696596e6d4b6f1de4ba2af3800f51815fc5a52a7
   languageName: node
   linkType: hard
 
