@@ -8260,7 +8260,7 @@ __metadata:
     babel-jest: "npm:29.7.0"
     dayjs: "npm:^1.11.13"
     dompurify: "npm:3.3.3"
-    graphql: "npm:16.12.0"
+    graphql: "npm:16.13.2"
     html-react-parser: "npm:4.2.10"
     i18next: "npm:22.5.1"
     i18next-resources-to-backend: "npm:1.1.4"
@@ -11650,8 +11650,8 @@ __metadata:
     dayjs: "npm:1.11.20"
     fomantic-ui-less: "npm:2.8.8"
     formik: "npm:1.5.8"
-    graphql: "npm:16.12.0"
-    graphql-ws: "npm:5.10.2"
+    graphql: "npm:16.13.2"
+    graphql-ws: "npm:5.16.2"
     hex-rgba: "npm:1.0.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.0.2"
@@ -12122,8 +12122,8 @@ __metadata:
     browserslist: "npm:4.28.1"
     classnames: "npm:2.5.1"
     dayjs: "npm:1.11.20"
-    graphql: "npm:16.12.0"
-    graphql-ws: "npm:5.10.2"
+    graphql: "npm:16.13.2"
+    graphql-ws: "npm:5.16.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-resources-to-backend: "npm:1.1.4"
@@ -14474,12 +14474,12 @@ __metadata:
     exiftool-vendored: "npm:29.3.0"
     express: "npm:4.22.1"
     express-useragent: "npm:1.0.15"
-    graphql: "npm:16.12.0"
+    graphql: "npm:16.13.2"
     graphql-request: "npm:7.4.0"
     graphql-subscriptions: "npm:2.0.0"
     graphql-type-json: "npm:0.3.2"
     graphql-upload: "npm:16.0.2"
-    graphql-ws: "npm:5.10.0"
+    graphql-ws: "npm:5.16.2"
     handlebars: "npm:4.7.9"
     hyperformula: "npm:3.1.1"
     i18next: "npm:22.5.1"
@@ -14899,8 +14899,8 @@ __metadata:
     aristid-ds: "npm:15.2.0-e049fb9"
     babel-jest: "npm:29.7.0"
     dayjs: "npm:1.11.20"
-    graphql: "npm:16.12.0"
-    graphql-ws: "npm:5.10.2"
+    graphql: "npm:16.13.2"
+    graphql-ws: "npm:5.16.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-resources-to-backend: "npm:1.1.4"
@@ -15637,7 +15637,7 @@ __metadata:
     "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
     "@graphql-codegen/typescript-operations": "npm:5.0.9"
     "@playwright/test": "npm:1.58.2"
-    graphql: "npm:16.12.0"
+    graphql: "npm:16.13.2"
     graphql-request: "npm:7.4.0"
     graphql-tag: "npm:2.12.6"
     typescript: "npm:5.9.3"
@@ -17979,30 +17979,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:5.10.0":
-  version: 5.10.0
-  resolution: "graphql-ws@npm:5.10.0"
+"graphql-ws@npm:5.16.2":
+  version: 5.16.2
+  resolution: "graphql-ws@npm:5.16.2"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10/321612c0a6e3022f6ee5b7254e6a3738aff714e8c7a16d11c333ba394844d866235d5557e20f6b3d760144ef1ea7ffd0cf429e0d809859dc85d2be69274212e4
-  languageName: node
-  linkType: hard
-
-"graphql-ws@npm:5.10.2":
-  version: 5.10.2
-  resolution: "graphql-ws@npm:5.10.2"
-  peerDependencies:
-    graphql: ">=0.11 <=16"
-  checksum: 10/2c1128d65af6d102485bcd9722c275c2a536fa14a91b8585ca1ab088a23cce4b9ab431c9c1cfcdfa994784c2c2a25fa39f0145fd3b76a3bcfd95a4525e4813b3
-  languageName: node
-  linkType: hard
-
-"graphql-ws@npm:5.12.0":
-  version: 5.12.0
-  resolution: "graphql-ws@npm:5.12.0"
-  peerDependencies:
-    graphql: ">=0.11 <=16"
-  checksum: 10/fb42a8bfecd3dc5a17f37b589ddd0e990ad8838f214cdd758ae6718c1ec68a146c26baadd8769299747587e151a7f48a0f61989e4485f68869298e6f6f77a369
+  checksum: 10/6647bfe640b467f27aaf5ee044c1d114fe266e82cda4ebbb4368d5a4e98df5d2de9d6be70d28eb5e821d87fbf8964c3a8a18abf87c76d4f148800fd8e0488c3d
   languageName: node
   linkType: hard
 
@@ -18028,14 +18010,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:15.0.0":
-  version: 15.0.0
-  resolution: "graphql@npm:15.0.0"
-  checksum: 10/1393d0f06bce947e2c2179eab3409a0135c872c489ed8a41c148fb9253a3005ed9f94e2263c4797557b439dc5ebedb27b627f93a2bb985294c881bd55ecdfac3
+"graphql@npm:16.13.2":
+  version: 16.13.2
+  resolution: "graphql@npm:16.13.2"
+  checksum: 10/9ede86f0a7227d47a41e2076e0132839f66fbd14899abfd818d7de2ab81076ee249c8788ad42243367d68a027a8763cc4c7be2e441ccfb03a8549490c7b66c2f
   languageName: node
   linkType: hard
 
-"graphql@npm:16.12.0, graphql@npm:^16.3.0":
+"graphql@npm:^16.3.0":
   version: 16.12.0
   resolution: "graphql@npm:16.12.0"
   checksum: 10/e299bc97cca178e549c8c1ed4cb164f631f07be987d3657f76cdf18c0250040cc0d456d4b6d41c87b855cac97b15a62ed345557527efcb0546492895a893bb87
@@ -21987,7 +21969,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:5.2.0"
     aristid-ds: "npm:15.2.0-e049fb9"
     babel-jest: "npm:29.7.0"
-    graphql: "npm:15.0.0"
+    graphql: "npm:16.13.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-http-backend: "npm:2.1.1"
@@ -23693,8 +23675,8 @@ __metadata:
     aristid-ds: "npm:15.2.0-e049fb9"
     babel-jest: "npm:29.7.0"
     cross-fetch: "npm:3.2.0"
-    graphql: "npm:16.12.0"
-    graphql-ws: "npm:5.12.0"
+    graphql: "npm:16.13.2"
+    graphql-ws: "npm:5.16.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-resources-to-backend: "npm:1.1.4"
@@ -27450,7 +27432,7 @@ __metadata:
     apollo-link-http: "npm:1.5.17"
     app-root-path: "npm:3.1.0"
     arangojs: "npm:8.8.1"
-    graphql: "npm:16.12.0"
+    graphql: "npm:16.13.2"
     graphql-tag: "npm:2.12.6"
     jest: "npm:29.7.0"
     jest-jasmine2: "npm:29.7.0"
