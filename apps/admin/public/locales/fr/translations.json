@@ -552,6 +552,19 @@
             "copy_success": "{{title}} copié dans le presse-papiers"
         }
     },
+    "automation": {
+        "title": "Automatisation",
+        "description": "Gérez vos automatisations et valeurs par défaut conditionnelles",
+        "table": {
+            "column": {
+                "name": "Nom",
+                "trigger": "Déclencheur",
+                "target": "Cible",
+                "nb_actions": "NB. Actions",
+                "status": "Statut"
+            }
+        }
+    },
     "error": {
         "title": "Erreur de chargement des données",
         "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",

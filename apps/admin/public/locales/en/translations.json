@@ -552,6 +552,19 @@
             "copy_success": "{{title}} copied to clipboard"
         }
     },
+    "automation": {
+        "title": "Automation",
+        "description": "Manage your automations and default conditional values",
+        "table": {
+            "column": {
+                "name": "Name",
+                "trigger": "Trigger",
+                "target": "Target",
+                "nb_actions": "Number of actions",
+                "status": "Status"
+            }
+        }
+    },
     "error": {
         "title": "Error loading data",
         "description": "A technical error has occurred, please reload the page. If the error persists, please contact the Aristid support.",
