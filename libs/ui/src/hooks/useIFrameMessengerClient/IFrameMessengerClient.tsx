@@ -15,6 +15,10 @@ export const IFrameMessengerClient: FunctionComponent<IFrameMessengerClientProps
 
     useEffect(() => () => iFrameMessenger.unregister(), []);
 
+    if (!iFrameMessenger.isRegistered) {
+        return null;
+    }
+
     return (
         <IframeMessengerClientContext.Provider value={iFrameMessenger}>
             {children}

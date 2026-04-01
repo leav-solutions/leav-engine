@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useCallback, useContext, useEffect, useRef} from 'react';
+import {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {LangContext} from '_ui/contexts';
 import {
     type AddMessageToPanelMessageHandler,
@@ -22,6 +22,7 @@ export {IUseIFrameMessengerOptions};
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const registry = useRef<Record<string, Window>>({});
     const selfId = useRef(options?.id ?? window.crypto.randomUUID());
+    const [isRegistered, setIsRegistered] = useState(window === window.top);
 
     const {setLang} = useContext(LangContext);
 
@@ -113,11 +114,16 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                             registry.current[message.id] = frames[i];
                         }
                     }
+
+                    dispatch({type: 'is-registered', id: message.id}, message.id);
                     break;
                 case 'unregister':
                     if (registry.current[message.id]) {
                         delete registry.current[message.id];
                     }
+                    break;
+                case 'is-registered':
+                    setIsRegistered(true);
                     break;
                 case 'message-to-panel':
                     panelMessageHandlerRegistry.current[message.data.type]?.(message.data.payload);
@@ -157,5 +163,8 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         };
     }, []);
 
-    return methods.current;
+    return {
+        ...methods.current,
+        isRegistered,
+    };
 };
