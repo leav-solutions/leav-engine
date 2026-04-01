@@ -1,0 +1,13 @@
+query getAutomationData(
+    $filters: AutomationRulesFiltersInput
+    $pagination: Pagination
+    $sort: AutomationRulesSortInput
+) {
+    automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
+        totalCount
+        list {
+            id
+            label
+        }
+    }
+}

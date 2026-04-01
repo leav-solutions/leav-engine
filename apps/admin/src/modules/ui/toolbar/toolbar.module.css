@@ -25,6 +25,7 @@
 
 .leftContent,
 .rightContent {
+    min-height: var(--toolbar-height);
     display: flex;
     gap: calc(var(--general-spacing-xxs) * 1px);
     align-items: center;

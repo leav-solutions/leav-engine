@@ -553,7 +553,17 @@
         }
     },
     "automation": {
-        "title": "Automation"
+        "title": "Automation",
+        "description": "Manage your automations and default conditional values",
+        "table": {
+            "column": {
+                "name": "Name",
+                "trigger": "Trigger",
+                "target": "Target",
+                "nb_actions": "Number of actions",
+                "status": "Status"
+            }
+        }
     },
     "error": {
         "title": "Error loading data",

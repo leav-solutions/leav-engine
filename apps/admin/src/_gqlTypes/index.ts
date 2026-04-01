@@ -208,6 +208,20 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleSortableFields {
+  id = 'id'
+}
+
+export type AutomationRulesFiltersInput = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AutomationRulesSortInput = {
+  field: AutomationRuleSortableFields;
+  order?: InputMaybe<SortOrder>;
+};
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
@@ -504,11 +518,6 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']['input']>;
-  before?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -746,7 +755,18 @@ export type ReportFramingFiltersInput = {
   attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
   campaigns?: InputMaybe<Array<RecordFilterInput>>;
   categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SaveValueBulkMappingInput = {
+  dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  values: Array<SaveValueBulkMappingValueInput>;
+};
+
+export type SaveValueBulkMappingValueInput = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SheetInput = {
@@ -986,6 +1006,7 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -1000,6 +1021,7 @@ export type ViewInput = {
 };
 
 export type ViewInputPartial = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -1101,10 +1123,14 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, defaultView?: { id: string } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
-export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAutomationDataQueryVariables = Exact<{
+  filters?: InputMaybe<AutomationRulesFiltersInput>;
+  pagination?: InputMaybe<Pagination>;
+  sort?: InputMaybe<AutomationRulesSortInput>;
+}>;
 
 
-export type GetUsersQuery = { records: { list: Array<{ id: string, email: Array<{ payload?: any | null }> }> } };
+export type GetAutomationDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: any }> } };
 
 export type GetHistoryDataQueryVariables = Exact<{
   filters?: InputMaybe<LogFilterInput>;
@@ -1120,6 +1146,11 @@ export type GetHistoryDataQuery = { logs?: { total: number, logs: Array<{ time: 
           | { id: string, label?: any | null }
           | { id: string, whoAmI: { label?: string | null } }
          | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null } | null, after?: { asString?: string | null, raw?: any | null } | null, before?: { asString?: string | null, raw?: any | null } | null }> } | null };
+
+export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = { records: { list: Array<{ id: string, email: Array<{ payload?: any | null }> }> } };
 
 export type DeleteApiKeyMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -2101,55 +2132,55 @@ export const ValueDetailsExtendedFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
-export const GetUsersDocument = gql`
-    query GetUsers {
-  records(library: "users") {
+export const GetAutomationDataDocument = gql`
+    query getAutomationData($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
+  automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
+    totalCount
     list {
       id
-      email: property(attribute: "email") {
-        ... on Value {
-          payload
-        }
-      }
+      label
     }
   }
 }
     `;
 
 /**
- * __useGetUsersQuery__
+ * __useGetAutomationDataQuery__
  *
- * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAutomationDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAutomationDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUsersQuery({
+ * const { data, loading, error } = useGetAutomationDataQuery({
  *   variables: {
+ *      filters: // value for 'filters'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
  *   },
  * });
  */
-export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+export function useGetAutomationDataQuery(baseOptions?: Apollo.QueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        return Apollo.useQuery<GetAutomationDataQuery, GetAutomationDataQueryVariables>(GetAutomationDataDocument, options);
       }
-export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+export function useGetAutomationDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+          return Apollo.useLazyQuery<GetAutomationDataQuery, GetAutomationDataQueryVariables>(GetAutomationDataDocument, options);
         }
 // @ts-ignore
-export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery, GetUsersQueryVariables>;
-export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery | undefined, GetUsersQueryVariables>;
-export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+export function useGetAutomationDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationDataQuery, GetAutomationDataQueryVariables>;
+export function useGetAutomationDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationDataQuery | undefined, GetAutomationDataQueryVariables>;
+export function useGetAutomationDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+          return Apollo.useSuspenseQuery<GetAutomationDataQuery, GetAutomationDataQueryVariables>(GetAutomationDataDocument, options);
         }
-export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
-export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
-export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
-export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export type GetAutomationDataQueryHookResult = ReturnType<typeof useGetAutomationDataQuery>;
+export type GetAutomationDataLazyQueryHookResult = ReturnType<typeof useGetAutomationDataLazyQuery>;
+export type GetAutomationDataSuspenseQueryHookResult = ReturnType<typeof useGetAutomationDataSuspenseQuery>;
+export type GetAutomationDataQueryResult = Apollo.QueryResult<GetAutomationDataQuery, GetAutomationDataQueryVariables>;
 export const GetHistoryDataDocument = gql`
     query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
   logs(filters: $filters, sort: $sort, pagination: $pagination) {
@@ -2300,6 +2331,55 @@ export type GetHistoryDataQueryHookResult = ReturnType<typeof useGetHistoryDataQ
 export type GetHistoryDataLazyQueryHookResult = ReturnType<typeof useGetHistoryDataLazyQuery>;
 export type GetHistoryDataSuspenseQueryHookResult = ReturnType<typeof useGetHistoryDataSuspenseQuery>;
 export type GetHistoryDataQueryResult = Apollo.QueryResult<GetHistoryDataQuery, GetHistoryDataQueryVariables>;
+export const GetUsersDocument = gql`
+    query GetUsers {
+  records(library: "users") {
+    list {
+      id
+      email: property(attribute: "email") {
+        ... on Value {
+          payload
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+      }
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+// @ts-ignore
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery | undefined, GetUsersQueryVariables>;
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const DeleteApiKeyDocument = gql`
     mutation DELETE_API_KEY($id: String!) {
   deleteApiKey(id: $id) {
