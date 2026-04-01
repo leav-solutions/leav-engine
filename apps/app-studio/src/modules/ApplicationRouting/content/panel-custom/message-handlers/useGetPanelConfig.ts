@@ -16,7 +16,6 @@ export const useGetPanelConfig = (): {
     return {
         getPanelConfig: ({panelId, onGetPanelConfig}) => {
             const {currentPanel} = retrievePanelDetails({application, recordPanelId: null, panelId});
-            console.log('currentPanel on app-studio', currentPanel, onGetPanelConfig);
             onGetPanelConfig(currentPanel as PanelIFrame);
         },
     };
