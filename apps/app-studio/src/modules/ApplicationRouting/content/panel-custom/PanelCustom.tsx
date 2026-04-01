@@ -33,6 +33,9 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {getPanelConfig} = useGetPanelConfig();
     const {getURL} = useGetURL();
 
+    console.log('PanelCustom');
+
+    //TODO: If two iframe are displayed, functions might be called twice (please fix me!!)
     const {changeLangInAllFrames} = useIFrameMessenger({
         handlers: {
             onModalConfirm: openConfirmModal,
@@ -55,15 +58,13 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     }, [lang]);
 
     return (
-        <>
-            <iframe
-                className={iframe}
-                name={title}
-                src={source + (recordId ? '?' + new URLSearchParams({recordId}).toString() : '')}
-                title={title}
-                width="100%"
-                height="100%"
-            />
-        </>
+        <iframe
+            className={iframe}
+            name={title}
+            src={source + (recordId ? '?' + new URLSearchParams({recordId}).toString() : '')}
+            title={title}
+            width="100%"
+            height="100%"
+        />
     );
 };

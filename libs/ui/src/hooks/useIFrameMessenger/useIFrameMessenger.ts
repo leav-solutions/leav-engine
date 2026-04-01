@@ -45,6 +45,8 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
 
     const dispatch = useCallback<MessageDispatcher>(
         (message, frameId) => {
+            console.log('-> dispatch on useIFrameMessenger', message, registry.current);
+
             if (window !== window.top) {
                 window.parent.postMessage(encodeMessage({...message, __frameId: selfId.current}), '*');
             } else if (frameId && registry.current[frameId]) {
@@ -66,6 +68,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
 
     const callCb = useCallback<CallCbFunction>(
         (path, data, frameId) => {
+            console.log('-> callCb on useIFrameMessenger', path, data, frameId);
             dispatch({type: 'on-call-callback', path, data}, frameId);
         },
         [dispatch],
@@ -83,6 +86,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         unregister,
         changeLangInAllFrames,
         addPanelMessageHandler,
+        ready: false,
     });
 
     const getPanelIdFromEvent = (event: MessageEvent) => {
@@ -148,6 +152,9 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         window.addEventListener('message', onMessage);
 
         if (window !== window.top) {
+            console.log('registering', selfId.current, window);
+            console.trace();
+
             // Register the message handler for the parent window
             dispatch({type: 'register', id: selfId.current});
         }

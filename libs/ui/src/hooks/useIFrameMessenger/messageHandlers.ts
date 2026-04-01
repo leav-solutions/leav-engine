@@ -44,6 +44,7 @@ export const decodeMessage = (raw: string): Message | undefined => {
 };
 
 const getCallback = (path: string, callbacksList?: MutableRefObject<Callbacks>): CallbackFunction | null => {
+    console.log('-> getCallback', path, callbacksList);
     if (!callbacksList?.current) {
         return null;
     }
@@ -60,6 +61,7 @@ const setCallbacks = (
     callCb: CallCbFunction,
     overrides?: string[],
 ): unknown => {
+    // console.log('-> setCallbacks', id, frameId, data, callCb, overrides);
     if (!overrides) {
         return data;
     }
@@ -67,6 +69,7 @@ const setCallbacks = (
     const nextData = {...(data as Record<string, unknown>)};
     overrides.forEach((key: string) => {
         nextData[key] = (...args: unknown[]) => {
+            // console.log('-> callCb', `${id}.${key}`, args, frameId);
             callCb(`${id}.${key}`, args, frameId);
         };
     });
