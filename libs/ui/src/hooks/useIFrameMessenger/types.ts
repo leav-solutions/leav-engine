@@ -78,6 +78,11 @@ export type UnregisterMessage = IMessageBase & {
     id: string;
 };
 
+export type IsRegisteredMessage = IMessageBase & {
+    type: 'is-registered';
+    id: string;
+};
+
 export type Panel = z.infer<typeof PanelSchema>;
 
 export type AttributeExplorerPanel = Panel &
@@ -204,6 +209,7 @@ export type MessageFromParent =
           path: string;
           data: unknown;
       })
+    | IsRegisteredMessage
     | ChangeLanguageMessage;
 
 export type Message = MessageToParent | MessageFromParent;
