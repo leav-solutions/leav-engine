@@ -4,6 +4,18 @@ query GetAutomationRules {
             id
             label
             description
+            active
+            createdAt
+            createdBy
+            modifiedAt
+            modifiedBy
         }
+    }
+}
+
+mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
+    createAutomationRule(rule: $rule) {
+        id
+        label
     }
 }
