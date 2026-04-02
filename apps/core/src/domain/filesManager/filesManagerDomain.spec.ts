@@ -118,6 +118,11 @@ describe('FilesManager', () => {
         getLibraryProperties: global.__mockPromise(mockLibraryFiles),
     };
 
+    const mockLibraryPermissionDomain = {
+        getLibraryPermission: jest.fn().mockReturnValue(true),
+        getInheritedLibraryPermission: jest.fn().mockReturnValue(true),
+    } satisfies Mockify<ILibraryPermissionDomain>;
+
     const mockAmqpService = {
         consume: jest.fn(),
         consumer: {
@@ -184,6 +189,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
@@ -228,6 +234,7 @@ describe('FilesManager', () => {
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
@@ -308,6 +315,7 @@ describe('FilesManager', () => {
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordIds: ['id']});
@@ -355,6 +363,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
@@ -418,6 +427,7 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
 
@@ -463,6 +473,7 @@ describe('FilesManager', () => {
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
             } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({
@@ -600,6 +611,7 @@ describe('FilesManager', () => {
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.utils': mockUtils as IUtils,
             });
 
@@ -649,6 +661,7 @@ describe('FilesManager', () => {
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.utils': mockUtils as IUtils,
             });
 
@@ -711,10 +724,6 @@ describe('FilesManager', () => {
                     replace: false,
                 },
             ],
-        };
-
-        const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
-            getLibraryPermission: global.__mockPromise(true),
         };
 
         const mockStoreUploadFile = jest.fn();
