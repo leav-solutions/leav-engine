@@ -20,6 +20,9 @@ import AuthenticationError from '../../errors/AuthenticationError';
 import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IServerRouteAppModule} from '../../interface/server';
+import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
+import {type IRecordPermissionDomain} from '../../domain/permission/recordPermissionDomain';
 
 export interface IFilesManagerApp extends IGraphqlAppModule, IServerRouteAppModule {
     init(): Promise<void>;
@@ -30,6 +33,7 @@ interface IDeps {
     'core.app.helpers.validateRequestToken': ValidateRequestTokenFunc;
     'core.domain.filesManager': IFilesManagerDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.permission.record': IRecordPermissionDomain;
     config: IConfig;
 }
 
@@ -50,6 +54,7 @@ export default function ({
     'core.app.helpers.validateRequestToken': validateRequestToken,
     'core.domain.filesManager': filesManagerDomain,
     'core.domain.eventsManager': eventsManager,
+    'core.domain.permission.record': recordPermissionDomain,
     config,
 }: IDeps): IFilesManagerApp {
     return {
@@ -206,9 +211,7 @@ export default function ({
                 },
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
         registerRoute(app): void {
             app.get(
@@ -220,6 +223,17 @@ export default function ({
                         const payload = await validateRequestToken(req, res);
                         req.ctx.userId = payload.userId;
                         req.ctx.groupsId = payload.groupsId;
+
+                        const canAccessFile = await recordPermissionDomain.getRecordPermission({
+                            action: RecordPermissionsActions.ACCESS_RECORD,
+                            recordId: req.params.fileId,
+                            library: req.params.libraryId,
+                            ctx: req.ctx,
+                        });
+
+                        if (!canAccessFile) {
+                            throw new PermissionError(LibraryPermissionsActions.ACCESS_RECORD);
+                        }
 
                         return next();
                     } catch {

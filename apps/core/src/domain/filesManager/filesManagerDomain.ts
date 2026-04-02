@@ -252,6 +252,15 @@ export default function ({
             logger.info('Files Manager is ready. Waiting for messages... 👀');
         },
         async createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord> {
+            const canCreateRecord = await libraryPermissionDomain.getLibraryPermission({
+                action: LibraryPermissionsActions.CREATE_RECORD,
+                libraryId: library,
+                ctx,
+            });
+            if (!canCreateRecord) {
+                throw new PermissionError(LibraryPermissionsActions.CREATE_RECORD);
+            }
+
             const filesLibrary = utils.getFilesLibraryId(library);
             const treeId = treeDomain.getLibraryTreeId(filesLibrary, ctx);
             const recordNode = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
@@ -480,6 +489,16 @@ export default function ({
             previewVersionSizeNames,
         }: IForcePreviewsGenerationParams): Promise<boolean> {
             const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
+
+            const canEditRecords = await libraryPermissionDomain.getLibraryPermission({
+                action: LibraryPermissionsActions.EDIT_RECORD,
+                libraryId,
+                ctx,
+            });
+
+            if (!canEditRecords) {
+                throw new PermissionError(LibraryPermissionsActions.EDIT_RECORD);
+            }
 
             if (!recordIds.length && !filters && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Nothing to do if we ask to generate previews for directories
