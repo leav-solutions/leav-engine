@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitTypography} from 'aristid-ds';
+import {KitSpace, KitTypography} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 
 interface IResultCountProps {
@@ -18,7 +18,7 @@ export const ResultsCount: FunctionComponent<IResultCountProps> = ({
     totalCountFiltered,
     totalCountLibrary,
 }) => (
-    <KitTypography.Paragraph>
+    <KitSpace direction="horizontal" size="xxs">
         <KitTypography.Text weight="bold" size="fontSize7">
             {isInactive
                 ? `${totalCountLibrary} `
@@ -29,5 +29,5 @@ export const ResultsCount: FunctionComponent<IResultCountProps> = ({
         <KitTypography.Text weight="medium" size="fontSize7">
             {t('explorer.massAction.results', {count: totalCountLibrary})}
         </KitTypography.Text>
-    </KitTypography.Paragraph>
+    </KitSpace>
 );
