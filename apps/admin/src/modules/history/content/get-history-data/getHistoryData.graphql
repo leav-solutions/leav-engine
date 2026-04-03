@@ -95,6 +95,16 @@ query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination:
                         label
                     }
                 }
+                automationRule {
+                    ... on AutomationRule {
+                        id
+                        label
+                    }
+                    ... on LogUnknownAutomationRuleEntity {
+                        id
+                        label
+                    }
+                }
             }
             after {
                 asString

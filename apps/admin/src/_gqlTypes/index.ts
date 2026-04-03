@@ -245,6 +245,11 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
   libraryId: Scalars['ID']['input'];
 };
 
+export type CreateAutomationRuleInput = {
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  label: Scalars['SystemTranslation']['input'];
+};
+
 export type CreateRecordDataInput = {
   values?: InputMaybe<Array<ValueBatchInput>>;
   version?: InputMaybe<Array<ValueVersionInput>>;
@@ -358,6 +363,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -443,6 +459,7 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
@@ -454,6 +471,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -500,6 +519,7 @@ export enum LogSortableField {
 export type LogTopicFilterInput = {
   apiKey?: InputMaybe<Scalars['String']['input']>;
   attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
   library?: InputMaybe<Scalars['String']['input']>;
   permission?: InputMaybe<LogTopicPermissionFilterInput>;
@@ -1145,7 +1165,7 @@ export type GetHistoryDataQuery = { logs?: { total: number, logs: Array<{ time: 
       , topic?: { apiKey?: string | null, filename?: string | null, attribute?: { id: string, label?: any | null } | null, library?: { id: string, label?: any | null } | null, permission?: { type: string, applyTo?: any | null } | null, profile?: { id: string } | null, record?:
           | { id: string, label?: any | null }
           | { id: string, whoAmI: { label?: string | null } }
-         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null } | null, after?: { asString?: string | null, raw?: any | null } | null, before?: { asString?: string | null, raw?: any | null } | null }> } | null };
+         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null, automationRule?: { id: string, label: any } | null } | null, after?: { asString?: string | null, raw?: any | null } | null, before?: { asString?: string | null, raw?: any | null } | null }> } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2275,6 +2295,16 @@ export const GetHistoryDataDocument = gql`
             label
           }
           ... on LogUnknownApplicationEntity {
+            id
+            label
+          }
+        }
+        automationRule {
+          ... on AutomationRule {
+            id
+            label
+          }
+          ... on LogUnknownAutomationRuleEntity {
             id
             label
           }

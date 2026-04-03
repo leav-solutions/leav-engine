@@ -16,6 +16,7 @@ export enum EventAction {
     API_KEY_SAVE = 'API_KEY_SAVE',
     APP_DELETE = 'APP_DELETE',
     APP_SAVE = 'APP_SAVE',
+    AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
     ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
     ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
     EXPORT_START = 'EXPORT_START',
@@ -60,6 +61,7 @@ export interface IDbPayload {
             type: string;
             applyTo?: any;
         };
+        automationRule?: string;
         apiKey?: string;
         application?: string;
         filename?: string;
