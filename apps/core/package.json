@@ -101,7 +101,7 @@
         "graphql-upload": "16.0.2",
         "graphql-ws": "5.16.2",
         "handlebars": "4.7.9",
-        "hyperformula": "3.1.1",
+        "hyperformula": "3.2.0",
         "i18next": "22.5.1",
         "i18next-fs-backend": "2.1.2",
         "joi": "18.0.2",
