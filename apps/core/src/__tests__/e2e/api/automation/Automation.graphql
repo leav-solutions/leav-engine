@@ -17,5 +17,16 @@ mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
     createAutomationRule(rule: $rule) {
         id
         label
+        modifiedAt
+    }
+}
+
+mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
+    updateAutomationRule(rule: $rule) {
+        id
+        label
+        description
+        active
+        modifiedAt
     }
 }

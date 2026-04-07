@@ -27,7 +27,7 @@ export default function ({config}: IDeps): ISystemTranslationGenerator {
                     [lng]:
                         lng === config.lang.default && !optional
                             ? Joi.string().required()
-                            : Joi.string().optional().allow(''),
+                            : Joi.string().optional().allow('', null),
                 }),
                 {},
             ),

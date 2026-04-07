@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
-import {type ICreateAutomationRule, type IAutomationRule} from '../../_types/automation';
+import {type ICreateAutomationRule, type IAutomationRule, type IUpdateAutomationRule} from '../../_types/automation';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
@@ -38,6 +38,7 @@ export type IGetAutomationRulesParams = IGetCoreEntitiesParams & {
 
 export interface IAutomationRuleRepo {
     createAutomationRule(rule: ICreateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule>;
+    updateAutomationRule(rule: IUpdateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule>;
     getAutomationRules(params: IGetAutomationRulesParams, ctx: IQueryInfos): Promise<IList<IAutomationRule>>;
 }
 
@@ -65,6 +66,15 @@ export default function ({
         modifiedBy: String(ctx.userId),
     });
 
+    const updateDocumentFromAutomationRule = (
+        rule: IUpdateAutomationRule,
+        ctx: IQueryInfos,
+    ): IAutomationRuleBaseDocument => ({
+        ...dbUtils.convertToDoc(rule),
+        modifiedAt: dayjs().unix(),
+        modifiedBy: String(ctx.userId),
+    });
+
     return {
         async createAutomationRule(rule: ICreateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule> {
             const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
@@ -76,6 +86,20 @@ export default function ({
             });
 
             return automationRuleFromDbDocument(newAutomationRule[0]);
+        },
+        async updateAutomationRule(rule: IUpdateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule> {
+            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const docToUpdate = updateDocumentFromAutomationRule(rule, ctx);
+
+            const updatedAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
+                query: aql`
+                    UPDATE ${docToUpdate} IN ${collection} 
+                        OPTIONS { keepNull: false }
+                    RETURN NEW`,
+                ctx,
+            });
+
+            return automationRuleFromDbDocument(updatedAutomationRule[0]);
         },
         async getAutomationRules(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<IAutomationRule>> {
             const defaultParams: IGetCoreEntitiesParams = {

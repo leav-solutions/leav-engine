@@ -21,3 +21,10 @@ export type ICreateAutomationRule = {
     label: ISystemTranslation;
     description?: ISystemTranslation;
 };
+
+export type IUpdateAutomationRule = {
+    id: string;
+    label?: ISystemTranslation;
+    description?: ISystemTranslation;
+    active?: boolean;
+};

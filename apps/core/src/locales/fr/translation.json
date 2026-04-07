@@ -99,6 +99,7 @@
         "UNKNOWN_NODE": "Noeud inconnu",
         "UNKNOWN_PARENT": "Parent inconnu",
         "UNKNOWN_RECORD": "Élément inconnu: {{library}} / {{recordId}}",
+        "UNKNOWN_AUTOMATION_RULE": "Règle d’automatisation inconnue: {{ruleId}}",
         "UNKNOWN_TREE": "Arbre inconnu: {{tree}}",
         "UNKNOWN_TREES": "Arbres inconnus : {{trees}}",
         "UNKNOWN_VALUE": "Valeur inconnue",

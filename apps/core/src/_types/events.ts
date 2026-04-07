@@ -40,6 +40,7 @@ interface IDBPayloadDataMap {
     [EventAction.APP_SAVE]: IApplication;
     [EventAction.APP_DELETE]: IApplication;
     [EventAction.AUTOMATION_RULE_CREATE]: IAutomationRule;
+    [EventAction.AUTOMATION_RULE_UPDATE]: IAutomationRule;
     [EventAction.GLOBAL_SETTINGS_SAVE]: IGlobalSettings;
     [EventAction.LIBRARY_SAVE]: ILibraryDbEvent;
     [EventAction.LIBRARY_DELETE]: ILibraryDbEvent;
