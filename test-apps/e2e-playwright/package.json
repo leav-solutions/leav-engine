@@ -14,7 +14,7 @@
         "local-stack-core-logs": "docker compose -f docker-compose.e2e-playwright.yml logs -f leav_core"
     },
     "dependencies": {
-        "@playwright/test": "1.58.2",
+        "@playwright/test": "1.59.1",
         "graphql": "16.13.2",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.6"
