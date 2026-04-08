@@ -6,6 +6,7 @@ import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
 import {type ILibraryDomain} from '../../../domain/library/libraryDomain';
 import {type IPermissionDomain} from '../../../domain/permission/permissionDomain';
 import {type IAttributeDependentValuesPermissionDomain} from '../../../domain/permission/attributeDependentValuesPermissionDomain';
+import {type IfLibraryJoinLinkAttribute} from '../../../domain/attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {type IVersionProfileDomain} from '../../../domain/versionProfile/versionProfileDomain';
@@ -41,6 +42,7 @@ export type ICoreAttributeApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.domain.library': ILibraryDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.tree': ITreeDomain;
@@ -56,6 +58,7 @@ interface IDeps {
 export default function (deps: IDeps): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain,
+        'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
         'core.domain.record': recordDomain,
         'core.domain.library': libraryDomain,
         'core.domain.tree': treeDomain,
@@ -333,6 +336,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                     type SmartFilterConf {
                         enable: Boolean!
+                        through: Attribute
                     }
 
                     input SmartFilterConfInput {
@@ -479,6 +483,23 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                         ),
                                     )
                                 ).filter(r => r !== null), // Remove invalid values (unknown records)
+                            };
+                        },
+                        smart_filter: async (attributeData: IAttribute, _, ctx: IQueryInfos) => {
+                            if (!attributeData.smart_filter?.enable) {
+                                return null;
+                            }
+
+                            const throughAttribute = async () =>
+                                ifLibraryJoinLinkAttribute(
+                                    attributeData,
+                                    async (joinLibId, joinAttributeProps) => joinAttributeProps,
+                                    ctx,
+                                );
+
+                            return {
+                                enable: true,
+                                through: throughAttribute, // exec only when in graphql query
                             };
                         },
                     },

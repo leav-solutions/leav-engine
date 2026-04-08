@@ -42,6 +42,9 @@ export interface IUIFilterLinkAttribute extends IUIFilterBaseAttribute {
     };
     smartFilter?: {
         enable?: boolean;
+        through?: {
+            id: string;
+        } | null;
     };
 }
 

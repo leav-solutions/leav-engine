@@ -54,6 +54,7 @@ import {type CreateRecordHelper} from '../record/helpers/createRecord';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
 import {type FindRecordsHelper} from '../record/helpers/findRecords';
+import {type IAttributeWithRevLink} from '../../infra/attributeTypes/attributeTypesRepo';
 import areValuesIdentical from './helpers/areValuesIdentical';
 
 export interface ISaveBatchValueError {
@@ -1383,13 +1384,54 @@ const valueDomain = function ({
                 ctx,
             });
 
-            return valueRepo.listDistinctValues({
+            const distinctValues = await valueRepo.listDistinctValues({
                 library: libraryId,
                 attribute: {...attribute, reverse_link: reverseLink},
                 recordIds: records.list.map(r => r.id),
                 options,
                 ctx,
             });
+
+            return (
+                (await ifLibraryJoinLinkAttribute<IDistinctValue | void>(
+                    attribute,
+                    async (joinLibId, joinAttributeProps) => {
+                        const joinRecordIds = distinctValues
+                            .filter(v => v.value !== null)
+                            .map(v => (v.value as IRecord).id);
+
+                        if (!!joinAttributeProps.reverse_link) {
+                            joinAttributeProps.reverse_link = await attributeDomain.getAttributeProperties({
+                                id: joinAttributeProps.reverse_link as string,
+                                ctx,
+                            });
+                        }
+
+                        const targetDistinctValues = await valueRepo.listDistinctValues({
+                            library: joinLibId,
+                            attribute: joinAttributeProps as IAttributeWithRevLink,
+                            recordIds: joinRecordIds,
+                            options,
+                            ctx,
+                        });
+
+                        // Replace or add null value count from source attribute to target attribute, to be able to return correct count of record without joined record
+                        const nullValuesCount = distinctValues.find(v => v.value === null)?.count || 0;
+                        const targetNullValues = targetDistinctValues.find(v => v.value === null);
+                        if (targetNullValues) {
+                            targetNullValues.count = nullValuesCount; // number of record without joined record
+                        } else if (nullValuesCount) {
+                            targetDistinctValues.push({
+                                value: null,
+                                count: nullValuesCount,
+                            });
+                        }
+
+                        return targetDistinctValues;
+                    },
+                    ctx,
+                )) || distinctValues
+            );
         },
     };
 };

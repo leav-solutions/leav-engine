@@ -10,6 +10,7 @@ import {
     isUIFilterValueList,
     type UIFilter,
     isUIFilterWithSmartFilter,
+    type IUIFilterThrough,
 } from '_ui/components/Filters/_types';
 
 export const prepareViewForRequest = (
@@ -46,11 +47,13 @@ export const prepareViewForRequest = (
         }
 
         if (isUIFilterWithSmartFilter(filter)) {
+            const isThoughFilter = isUIFilterThrough(filter);
             return {
-                field: filter.field, // We use the field here because we want to keep the full path to the attribute (ex: link_attribute.id)
-                // TODO : save filter values as string[] when filter and handle fields with libraries
-                value: filter.value?.[0],
-                condition: filter.condition,
+                field: isThoughFilter
+                    ? `${(filter as IUIFilterThrough).field}.${(filter as IUIFilterThrough).subField}`
+                    : filter.field, // We use the field here because we want to keep the full path to the attribute (ex: link_attribute.id)
+                value: null, // Force no value to avoid broken load view, may be fix after LEAVC-569
+                condition: isThoughFilter ? (filter as IUIFilterThrough).subCondition : filter.condition,
                 withEmptyValues: filter.withEmptyValues,
             };
         }

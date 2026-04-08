@@ -3,3 +3,18 @@ mutation SaveAttribute($attribute: AttributeInput) {
         id
     }
 }
+
+query getLinkAttributeSmartFilter($filters: AttributesFiltersInput) {
+    attributes(filters: $filters) {
+        list {
+            ... on LinkAttribute {
+                smart_filter {
+                    enable
+                    through {
+                        id
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,8 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordPermissionsActions} from '../../../../_types/permissions';
 import {AttributeTypes} from '../../../../_types/attribute';
-import {e2eGuestUser, gqlAddElemToTree, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {
+    adminUserSdk,
+    e2eGuestUser,
+    gqlAddElemToTree,
+    gqlSaveAttribute,
+    gqlSaveTree,
+    makeGraphQlCall,
+} from '../e2eUtils';
 import {AttributeCondition} from '../../../../_types/record';
+import {type AttributeInput, AttributeType, AttributeFormat, type LibraryInput, LibraryBehavior} from '../../_gqlTypes';
 
 describe('listDistinctValues', () => {
     const testLibName = 'list_distinct_values_library_test';
@@ -19,6 +27,30 @@ describe('listDistinctValues', () => {
     const attrAdvancedLinkMultiValueName = 'list_distinct_values_attribute_test_advanced_link_multi_value';
     const attrTreeMonoValueName = 'list_distinct_values_attribute_test_tree_mono_value';
     const attrTreeMultiValueName = 'list_distinct_values_attribute_test_tree_multi_value';
+
+    const mandatoryJoinAttribute: AttributeInput = {
+        id: 'list_distinct_values_attribute_test_mandatory_join_attribute',
+        type: AttributeType.simple_link,
+        format: AttributeFormat.text,
+        label: {fr: 'Test attr', en: 'Test attr en'},
+        linked_library: remoteLibName,
+    };
+
+    const joinLibrary: LibraryInput = {
+        id: 'list_distinct_values_join_library',
+        behavior: LibraryBehavior.join,
+        attributes: [mandatoryJoinAttribute.id],
+        mandatoryAttribute: mandatoryJoinAttribute.id,
+    };
+
+    const joinAttribute: AttributeInput = {
+        id: 'list_distinct_values_attribute_test_join_attribute',
+        type: AttributeType.advanced_link,
+        multiple_values: true,
+        format: AttributeFormat.text,
+        label: {fr: 'Test attr', en: 'Test attr en'},
+        linked_library: joinLibrary.id,
+    };
 
     let remoteRecordId1: string;
     let remoteRecordId2: string;
@@ -104,6 +136,16 @@ describe('listDistinctValues', () => {
             multipleValues: true,
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: mandatoryJoinAttribute,
+        });
+        await adminUserSdk.SaveLibrary({
+            library: joinLibrary,
+        });
+        await adminUserSdk.SaveAttribute({
+            attribute: joinAttribute,
+        });
+
         // Create library
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {
@@ -116,6 +158,7 @@ describe('listDistinctValues', () => {
                     "${attrAdvancedLinkMultiValueName}",
                     "${attrTreeMonoValueName}",
                     "${attrTreeMultiValueName}",
+                    "${joinAttribute.id}",
                 ],
                 permissions_conf: {permissionTreeAttributes: ["${attrTreeMonoValueName}"], relation: and}
             }) { id }
@@ -160,6 +203,8 @@ describe('listDistinctValues', () => {
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId1}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId2}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId3}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId1}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId2}"}
             ]}) { record {id} },
             c2: createRecord(library: "${testLibName}", data: { values: [
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId1}"},
@@ -170,6 +215,8 @@ describe('listDistinctValues', () => {
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId1}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId3}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId3}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId3}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId4}"}
             ]}) { record {id} },
             c3: createRecord(library: "${testLibName}", data: { values: [
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId2}"},
@@ -179,6 +226,7 @@ describe('listDistinctValues', () => {
                 { attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId1}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId1}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId2}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId5}"}
             ]}) { record {id} },
             c4: createRecord(library: "${testLibName}", data: { values: [
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId2}"},
@@ -188,6 +236,10 @@ describe('listDistinctValues', () => {
                 { attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId2}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId1}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId2}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId1}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId2}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId3}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId4}"}
             ]}) { record {id} },
             c5: createRecord(library: "${testLibName}", data: { values: [
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId3}"},
@@ -198,6 +250,7 @@ describe('listDistinctValues', () => {
                 { attribute: "${attrTreeMonoValueName}", payload: "${treeNodeId2}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId1}"}
                 { attribute: "${attrTreeMultiValueName}", payload: "${treeNodeId2}"}
+                { attribute: "${joinAttribute.id}", payload: "${remoteRecordId3}"}
             ]}) { record {id} },
             c6: createRecord(library: "${testLibName}", data: { values: [
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
@@ -582,6 +635,89 @@ describe('listDistinctValues', () => {
                         }),
                     }),
                     {count: 2, treeNode: null},
+                ]),
+            );
+        });
+    });
+
+    describe('With advanced link multi value attribute through join library', () => {
+        it('without record filters should return all set values', async () => {
+            const distinctValues = await listDistinctValues(testLibName, joinAttribute.id);
+
+            expect(distinctValues.length).toBe(6);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 2,
+                        record: expect.objectContaining({
+                            id: remoteRecordId1,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        record: expect.objectContaining({
+                            id: remoteRecordId2,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 3,
+                        record: expect.objectContaining({
+                            id: remoteRecordId3,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        record: expect.objectContaining({
+                            id: remoteRecordId4,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        record: expect.objectContaining({
+                            id: remoteRecordId5,
+                        }),
+                    }),
+                    {count: 3, record: null},
+                ]),
+            );
+        });
+
+        it('with record filters should return some set values, no null', async () => {
+            const distinctValues = await listDistinctValues(testLibName, joinAttribute.id, [
+                recordId1,
+                recordId2,
+                recordId5,
+                recordId6,
+            ]);
+
+            expect(distinctValues.length).toBe(5);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 1,
+                        record: expect.objectContaining({
+                            id: remoteRecordId1,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        record: expect.objectContaining({
+                            id: remoteRecordId2,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        record: expect.objectContaining({
+                            id: remoteRecordId3,
+                        }),
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        record: expect.objectContaining({
+                            id: remoteRecordId4,
+                        }),
+                    }),
+                    {count: 1, record: null},
                 ]),
             );
         });

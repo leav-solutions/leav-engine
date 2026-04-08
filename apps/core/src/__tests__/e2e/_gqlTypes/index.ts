@@ -227,6 +227,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -351,6 +363,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -449,6 +472,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -731,6 +756,30 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -816,12 +865,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1056,6 +1112,13 @@ export type SaveAttributeMutationVariables = Exact<{
 
 export type SaveAttributeMutation = { saveAttribute: { id: string } };
 
+export type GetLinkAttributeSmartFilterQueryVariables = Exact<{
+  filters?: InputMaybe<AttributesFiltersInput>;
+}>;
+
+
+export type GetLinkAttributeSmartFilterQuery = { attributes?: { list: Array<{ smart_filter?: { enable: boolean, through?: { id: string } | null } | null }> } | null };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1244,6 +1307,22 @@ export const SaveAttributeDocument = gql`
     mutation SaveAttribute($attribute: AttributeInput) {
   saveAttribute(attribute: $attribute) {
     id
+  }
+}
+    `;
+export const GetLinkAttributeSmartFilterDocument = gql`
+    query getLinkAttributeSmartFilter($filters: AttributesFiltersInput) {
+  attributes(filters: $filters) {
+    list {
+      ... on LinkAttribute {
+        smart_filter {
+          enable
+          through {
+            id
+          }
+        }
+      }
+    }
   }
 }
     `;
@@ -1453,6 +1532,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     SaveAttribute(variables?: SaveAttributeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveAttributeMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SaveAttributeMutation>({ document: SaveAttributeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveAttribute', 'mutation', variables);
+    },
+    getLinkAttributeSmartFilter(variables?: GetLinkAttributeSmartFilterQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetLinkAttributeSmartFilterQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetLinkAttributeSmartFilterQuery>({ document: GetLinkAttributeSmartFilterDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'getLinkAttributeSmartFilter', 'query', variables);
     },
     Me(variables?: MeQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MeQuery>({ document: MeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Me', 'query', variables);

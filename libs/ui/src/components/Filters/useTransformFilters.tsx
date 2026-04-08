@@ -99,10 +99,12 @@ export const useTransformFilters = () => {
             const _isThroughFilter = filter.field.includes('.');
 
             if (_isThroughFilter) {
-                const [field, subField] = filter.field.split('.');
+                // Hack because view filters does not have the necessary data to be transformed directly to UI filter,
+                // we need to split the field to get the subCondition and subField for through filter, may be fix after LEAVC-569
+                const [field, ...subFields] = filter.field.split('.');
                 const throughFilter: ValidFieldFilterThrough = {
                     field,
-                    subField,
+                    subField: subFields.join('.'),
                     value: filter.value ?? null,
                     hidden: filter.hidden ?? false,
                     condition: ThroughConditionFilter.THROUGH,

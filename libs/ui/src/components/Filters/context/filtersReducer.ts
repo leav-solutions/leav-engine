@@ -13,6 +13,8 @@ import {
     isUIFilterValueList,
     isUIFilterWithSmartFilter,
     type FiltersOperator,
+    type IUIFilterLinkAttribute,
+    type IUIFilterThrough,
 } from '../_types';
 import {hasOnlyNoValueConditions, nullValueConditions} from '../conditionsHelper';
 import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';
@@ -114,7 +116,9 @@ export type UIFiltersAction =
 const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
     const hasValueList = payload.attribute.valuesList?.enable;
     const isSmartFilter = isUIFilterWithSmartFilter(payload as UIFilter);
-    let condition = hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
+    let condition: RecordFilterCondition | null = hasOnlyNoValueConditions(
+        (payload as IUIFilterStandard).attribute.format,
+    )
         ? null
         : (conditionsByFormat[(payload as IUIFilterStandard).attribute.format][0] ?? null);
     if (hasValueList || isSmartFilter) {
@@ -122,7 +126,19 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
     }
 
     let filterToAdd;
-    if (isUIFilterTree(payload as UIFilter)) {
+    if (isSmartFilter && (payload.attribute as IUIFilterLinkAttribute).smartFilter.through) {
+        if ((payload.attribute as IUIFilterLinkAttribute).smartFilter.through) {
+            filterToAdd = {
+                ...payload,
+                field: payload.field as string,
+                id: window.crypto.randomUUID(),
+                condition: ThroughConditionFilter.THROUGH,
+                subCondition: AttributeConditionFilter.EQUAL,
+                subField: `${(payload.attribute as IUIFilterLinkAttribute).smartFilter.through.id}.id`,
+                value: null,
+            } satisfies IUIFilterThrough;
+        }
+    } else if (isUIFilterTree(payload as UIFilter)) {
         const filterWithDefaultValues = state.initialFilters.find(
             initialFilter => initialFilter.attribute.id === payload.attribute.id,
         );
