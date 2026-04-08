@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -33,7 +33,7 @@ describe('Records permissions', () => {
     let nodePermTreeElemForMultival2: string;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(permTreeLibName, 'Test lib on permissions tree');
+        await adminUserSdk.SaveLibrary({library: {id: permTreeLibName, label: {en: 'Test lib on permissions tree'}}});
 
         await gqlSaveTree(permTreeName, 'Test', [permTreeLibName]);
         permTreeElemId = await gqlCreateRecord(permTreeLibName);

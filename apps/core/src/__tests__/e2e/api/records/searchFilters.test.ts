@@ -5,10 +5,10 @@ import dayjs from 'dayjs';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
     gqlSaveValueBis,
@@ -185,57 +185,65 @@ describe('searchFilters', () => {
         ];
 
         // Create library with no attributes first so that the graphql is available
-        await gqlSaveLibrary(linkedLibraryId, 'Test lib');
+        await adminUserSdk.SaveLibrary({library: {id: linkedLibraryId, label: {en: 'Test lib'}}});
 
         for (const attribute of attributesToCreate) {
             await gqlSaveAttribute(attribute);
         }
 
-        await gqlSaveLibrary(
-            treeLibraryId,
-            'Test lib',
-            attributesToCreate.map(a => a.id).filter(id => id !== treeAttributeId),
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: treeLibraryId,
+                label: {en: 'Test lib'},
+                attributes: attributesToCreate.map(a => a.id).filter(id => id !== treeAttributeId),
+            },
+        });
         await gqlSaveTree(treeId, 'Tree', [treeLibraryId]);
 
-        await gqlSaveLibrary(
-            deepLinkedLibraryId,
-            'Test lib',
-            attributesToCreate
-                .map(a => a.id)
-                .filter(
-                    id =>
-                        ![
-                            simpleLinkAttributeId,
-                            advancedLinkAttributeId,
-                            advancedLinkMultivalAttributeId,
-                            simpleDeepLinkAttributeId,
-                            advancedDeepLinkAttributeId,
-                        ].includes(id),
-                ),
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: deepLinkedLibraryId,
+                label: {en: 'Test lib'},
+                attributes: attributesToCreate
+                    .map(a => a.id)
+                    .filter(
+                        id =>
+                            ![
+                                simpleLinkAttributeId,
+                                advancedLinkAttributeId,
+                                advancedLinkMultivalAttributeId,
+                                simpleDeepLinkAttributeId,
+                                advancedDeepLinkAttributeId,
+                            ].includes(id),
+                    ),
+            },
+        });
 
-        await gqlSaveLibrary(
-            linkedLibraryId,
-            'Test lib',
-            attributesToCreate
-                .map(a => a.id)
-                .filter(id => ![simpleLinkAttributeId, advancedLinkAttributeId].includes(id)),
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: linkedLibraryId,
+                label: {en: 'Test lib'},
+                attributes: attributesToCreate
+                    .map(a => a.id)
+                    .filter(id => ![simpleLinkAttributeId, advancedLinkAttributeId].includes(id)),
+            },
+        });
 
-        await gqlSaveLibrary(
-            libraryId,
-            'Test lib',
-            attributesToCreate.map(a => a.id),
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {id: libraryId, label: {en: 'Test lib'}, attributes: attributesToCreate.map(a => a.id)},
+        });
 
-        await gqlSaveLibrary(
-            libraryForOperatorsId,
-            'Test lib',
-            attributesToCreate.map(a => a.id),
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: libraryForOperatorsId,
+                label: {en: 'Test lib'},
+                attributes: attributesToCreate.map(a => a.id),
+            },
+        });
 
-        await gqlSaveLibrary(libraryDateId, 'Test lib', [dateAttributeId]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: libraryDateId, label: {en: 'Test lib'}, attributes: [dateAttributeId]},
+        });
 
         recordId1 = await gqlCreateRecord(libraryId);
         recordId2 = await gqlCreateRecord(libraryId);

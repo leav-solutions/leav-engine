@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListEvents} from '../../../../../_types/actionsList';
 import {AttributeTypes} from '../../../../../_types/attribute';
-import {gqlCreateRecord, gqlSaveAttribute, gqlSaveLibrary, gqlSaveValue, makeGraphQlCall} from '../../e2eUtils';
+import {adminUserSdk, gqlCreateRecord, gqlSaveAttribute, gqlSaveValue, makeGraphQlCall} from '../../e2eUtils';
 
 describe('inheritanceCalculationAction', () => {
     const libraryId = 'test_inheritance_action_library';
@@ -152,17 +152,23 @@ describe('inheritanceCalculationAction', () => {
         ]);
 
         // Create a library
-        await gqlSaveLibrary(libraryId, 'test inheritance action library', [
-            simpleAttributeId,
-            advancedAttributeId,
-            simpleLinkAttributeId,
-            advancedLinkAttributeId,
-            treeAttributeId,
-            linkAttributeId,
-            sourceSimpleAttributeId,
-            sourceAdvancedLinkAttributeId,
-            sourceTreeAttributeId,
-        ]);
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: libraryId,
+                label: {en: 'test inheritance action library'},
+                attributes: [
+                    simpleAttributeId,
+                    advancedAttributeId,
+                    simpleLinkAttributeId,
+                    advancedLinkAttributeId,
+                    treeAttributeId,
+                    linkAttributeId,
+                    sourceSimpleAttributeId,
+                    sourceAdvancedLinkAttributeId,
+                    sourceTreeAttributeId,
+                ],
+            },
+        });
 
         // Create a record
         [recordIdToInheritFrom, recordIdForGetValues, recordIdWithNoValues] = await Promise.all([

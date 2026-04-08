@@ -7,8 +7,8 @@ import {appRootPath} from '@leav/app-root-path';
 import path from 'path';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     importFileGraphQlCall,
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
@@ -52,7 +52,13 @@ describe('Import', () => {
             format: AttributeFormats.TEXT,
             label: linkAttributeId,
         });
-        await gqlSaveLibrary(testLibName, testLibName, [labelAttributeId, lovAttributeId, linkAttributeId]);
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: testLibName,
+                label: {en: testLibName},
+                attributes: [labelAttributeId, lovAttributeId, linkAttributeId],
+            },
+        });
 
         // Create attributes for link library
         await gqlSaveAttribute({
@@ -61,7 +67,9 @@ describe('Import', () => {
             format: AttributeFormats.TEXT,
             label: 'link_test1',
         });
-        await gqlSaveLibrary(linkLibName, linkLibName, [linkLabelAttributeId]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: linkLibName, label: {en: linkLibName}, attributes: [linkLabelAttributeId]},
+        });
     });
     afterEach(async () => {
         // Purge all records in the test library using purgeRecord
@@ -94,7 +102,7 @@ describe('Import', () => {
                     await makeGraphQlCall(`mutation { purgeRecord(libraryId: "${lib}", recordId: "${r.id}") { id } }`);
                 }),
             );
-            await gqlSaveLibrary(lib, lib, []);
+            await adminUserSdk.SaveLibrary({library: {id: lib, label: {en: lib}, attributes: []}});
         }
 
         // Delete attributes for both libraries

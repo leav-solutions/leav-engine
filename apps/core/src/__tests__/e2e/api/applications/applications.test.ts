@@ -4,10 +4,10 @@
 import axios from 'axios';
 import {getConfig} from '../../../../config';
 import {
+    adminUserSdk,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlCreateRecord,
-    gqlSaveLibrary,
     gqlSaveValue,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -192,48 +192,50 @@ describe('Applications', () => {
 
             const libraryIdWithPanels = 'library_with_panels';
 
-            await gqlSaveLibrary(
-                libraryIdWithPanels,
-                'Library with panels',
-                ['label'],
-                toGraphQLObject({
-                    applications: {
-                        [appIdToDelete]: {
-                            libraryPanels: [
-                                {
-                                    id: `${libraryIdWithPanels}_list`,
-                                    type: 'explorer',
-                                    actions: [
-                                        {
-                                            where: 'slider',
-                                            what: 'record',
-                                            icon: 'fa-pen',
-                                            label: {
-                                                en: 'Edit with custom label',
-                                                fr: 'Éditer avec un label personnalisé',
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: libraryIdWithPanels,
+                    label: {en: 'Library with panels'},
+                    attributes: ['label'],
+                    settings: {
+                        applications: {
+                            [appIdToDelete]: {
+                                libraryPanels: [
+                                    {
+                                        id: `${libraryIdWithPanels}_list`,
+                                        type: 'explorer',
+                                        actions: [
+                                            {
+                                                where: 'slider',
+                                                what: 'record',
+                                                icon: 'fa-pen',
+                                                label: {
+                                                    en: 'Edit with custom label',
+                                                    fr: 'Éditer avec un label personnalisé',
+                                                },
+                                                onRowClick: true,
                                             },
-                                            onRowClick: true,
-                                        },
-                                    ],
-                                },
-                            ],
-                            recordPanels: [
-                                {
-                                    id: `${libraryIdWithPanels}_edition`,
-                                    type: 'editionForm',
-                                    formId: 'editionFormIdOverride',
-                                },
-                                {
-                                    id: `${libraryIdWithPanels}_creation`,
-                                    type: 'creationForm',
-                                    formId: 'creationFormIdOverride',
-                                    isStandalone: true,
-                                },
-                            ],
+                                        ],
+                                    },
+                                ],
+                                recordPanels: [
+                                    {
+                                        id: `${libraryIdWithPanels}_edition`,
+                                        type: 'editionForm',
+                                        formId: 'editionFormIdOverride',
+                                    },
+                                    {
+                                        id: `${libraryIdWithPanels}_creation`,
+                                        type: 'creationForm',
+                                        formId: 'creationFormIdOverride',
+                                        isStandalone: true,
+                                    },
+                                ],
+                            },
                         },
                     },
-                }),
-            );
+                },
+            });
 
             // Delete application
             await makeGraphQlCall(`mutation {deleteApplication(id: "${appIdToDelete}") { id }}`);
@@ -277,60 +279,67 @@ describe('Applications', () => {
 
         beforeAll(async () => {
             // Create libraries
-            await gqlSaveLibrary(allowedLibId, 'Allowed Library');
-            await gqlSaveLibrary(deniedLibId, 'Denied Library');
-            await gqlSaveLibrary(noWorkspaceTitleLibId, 'No Workspace Title Library', ['label'], '', {
-                label: 'label',
-                subLabel: 'label',
+            await adminUserSdk.SaveLibrary({library: {id: allowedLibId, label: {en: 'Allowed Library'}}});
+            await adminUserSdk.SaveLibrary({library: {id: deniedLibId, label: {en: 'Denied Library'}}});
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: noWorkspaceTitleLibId,
+                    label: {en: 'No Workspace Title Library'},
+                    attributes: ['label'],
+                    recordIdentityConf: {label: 'label', subLabel: 'label'},
+                },
             });
-            await gqlSaveLibrary(
-                withLibraryPanelsLibId,
-                'Library with panels',
-                [],
-                toGraphQLObject({
-                    applications: {
-                        [librariesPanelsAppId]: {
-                            libraryPanels: [
-                                {
-                                    id: `${withLibraryPanelsLibId}_list`,
-                                    type: 'explorer',
-                                    actions: [
-                                        {
-                                            where: 'slider',
-                                            what: 'record',
-                                            icon: 'fa-pen',
-                                            label: {
-                                                en: 'Edit with custom label',
-                                                fr: 'Éditer avec un label personnalisé',
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: withLibraryPanelsLibId,
+                    label: {en: 'Library with panels'},
+                    settings: {
+                        applications: {
+                            [librariesPanelsAppId]: {
+                                libraryPanels: [
+                                    {
+                                        id: `${withLibraryPanelsLibId}_list`,
+                                        type: 'explorer',
+                                        actions: [
+                                            {
+                                                where: 'slider',
+                                                what: 'record',
+                                                icon: 'fa-pen',
+                                                label: {
+                                                    en: 'Edit with custom label',
+                                                    fr: 'Éditer avec un label personnalisé',
+                                                },
+                                                onRowClick: true,
                                             },
-                                            onRowClick: true,
-                                        },
-                                    ],
-                                },
-                            ],
-                            recordPanels: [
-                                {
-                                    id: `${withLibraryPanelsLibId}_edition`,
-                                    type: 'editionForm',
-                                    formId: 'editionFormIdOverride',
-                                },
-                                {
-                                    id: `${withLibraryPanelsLibId}_creation`,
-                                    type: 'creationForm',
-                                    formId: 'creationFormIdOverride',
-                                    isStandalone: true,
-                                },
-                                {
-                                    id: `${withLibraryPanelsLibId}_link_to_other_library`,
-                                    type: 'explorer',
-                                    libraryId: withoutLibraryPanelsLibId,
-                                },
-                            ],
+                                        ],
+                                    },
+                                ],
+                                recordPanels: [
+                                    {
+                                        id: `${withLibraryPanelsLibId}_edition`,
+                                        type: 'editionForm',
+                                        formId: 'editionFormIdOverride',
+                                    },
+                                    {
+                                        id: `${withLibraryPanelsLibId}_creation`,
+                                        type: 'creationForm',
+                                        formId: 'creationFormIdOverride',
+                                        isStandalone: true,
+                                    },
+                                    {
+                                        id: `${withLibraryPanelsLibId}_link_to_other_library`,
+                                        type: 'explorer',
+                                        libraryId: withoutLibraryPanelsLibId,
+                                    },
+                                ],
+                            },
                         },
                     },
-                }),
-            );
-            await gqlSaveLibrary(withoutLibraryPanelsLibId, 'Library without panels');
+                },
+            });
+            await adminUserSdk.SaveLibrary({
+                library: {id: withoutLibraryPanelsLibId, label: {en: 'Library without panels'}},
+            });
 
             // Create records
             allowedRecordId = await gqlCreateRecord(allowedLibId);

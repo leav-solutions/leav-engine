@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {e2eNonAdminGroupId, e2eNonAdminUser, gqlAddElemToTree, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {adminUserSdk, e2eNonAdminGroupId, e2eNonAdminUser, gqlAddElemToTree, makeGraphQlCall} from '../e2eUtils';
 
 describe('TreeLibraryPermissions', () => {
     const permTreeName = 'tree_library_permissions_test_tree';
@@ -9,7 +9,7 @@ describe('TreeLibraryPermissions', () => {
 
     beforeAll(async () => {
         // Create tree
-        await gqlSaveLibrary(treeLibId, 'Test lib', []);
+        await adminUserSdk.SaveLibrary({library: {id: treeLibId, label: {en: 'Test lib'}}});
 
         await makeGraphQlCall(`mutation {
             saveTree(

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {e2eAdminUser, e2eGuestUser, e2eNonAdminGroupId, gqlSaveLibrary, makeGraphQlCall} from '../../e2eUtils';
+import {adminUserSdk, e2eAdminUser, e2eGuestUser, e2eNonAdminGroupId, makeGraphQlCall} from '../../e2eUtils';
 
 describe('PermissionsAdminPermissions', () => {
     const libraryId = 'permissions_admin_permissions_library_name';
 
     beforeAll(async () => {
-        await gqlSaveLibrary(libraryId, 'library test');
+        await adminUserSdk.SaveLibrary({library: {id: libraryId, label: {en: 'library test'}}});
     });
 
     describe('access permissions', () => {

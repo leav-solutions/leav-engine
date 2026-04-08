@@ -5,11 +5,11 @@ import {type ILinkValue, type IStandardValue, type ITreeValue} from '../../../..
 import {type ActionsListConfig, ActionsListEvents} from '../../../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../../../_types/attribute';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlDeleteValue,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValueBis,
     makeGraphQlCall,
@@ -30,7 +30,7 @@ describe('replaceAnotherAttributeAction', () => {
     let parentRecordId: string;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(testTreeLibraryName, 'Test node lib', []);
+        await adminUserSdk.SaveLibrary({library: {id: testTreeLibraryName, label: {en: 'Test node lib'}}});
         await gqlSaveTree(testTreeName, 'Attribute tree', [testTreeLibraryName]);
 
         treeNodeRecord1Id = await gqlCreateRecord(testTreeLibraryName);
@@ -76,7 +76,9 @@ describe('replaceAnotherAttributeAction', () => {
                     ],
                 },
             });
-            await gqlSaveLibrary(libraryId, 'Test node lib', [attrSimpleId, attrSimpleTriggerId]);
+            await adminUserSdk.SaveLibrary({
+                library: {id: libraryId, label: {en: 'Test node lib'}, attributes: [attrSimpleId, attrSimpleTriggerId]},
+            });
         });
 
         beforeEach(async () => {
@@ -105,7 +107,13 @@ describe('replaceAnotherAttributeAction', () => {
                 type: AttributeTypes.SIMPLE_LINK,
                 linkedLibrary: linkedLibraryId,
             });
-            await gqlSaveLibrary(libraryId, 'Test node lib', [attrSimpleLinkId, triggerAttributeId]);
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: libraryId,
+                    label: {en: 'Test node lib'},
+                    attributes: [attrSimpleLinkId, triggerAttributeId],
+                },
+            });
         };
 
         describe('register simple attribute', () => {
@@ -115,7 +123,9 @@ describe('replaceAnotherAttributeAction', () => {
                     label: 'Test register another attribute action simple attr',
                     type: AttributeTypes.SIMPLE,
                 });
-                await gqlSaveLibrary(linkedLibraryId, 'Test node lib', [attrSimpleId]);
+                await adminUserSdk.SaveLibrary({
+                    library: {id: linkedLibraryId, label: {en: 'Test node lib'}, attributes: [attrSimpleId]},
+                });
 
                 await gqlSaveAttribute({
                     id: attrSimpleTriggerId,
@@ -176,7 +186,13 @@ describe('replaceAnotherAttributeAction', () => {
                 multipleValues: true,
                 linkedLibrary: linkedLibraryId,
             });
-            await gqlSaveLibrary(libraryId, 'Test node lib', [attrChildAdvancedLinkId, triggerAttributeId]);
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: libraryId,
+                    label: {en: 'Test node lib'},
+                    attributes: [attrChildAdvancedLinkId, triggerAttributeId],
+                },
+            });
         };
 
         const attributeActionListConfig = (
@@ -261,7 +277,9 @@ describe('replaceAnotherAttributeAction', () => {
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
                 });
-                await gqlSaveLibrary(linkedLibraryId, 'Test node lib', [attrSimpleId]);
+                await adminUserSdk.SaveLibrary({
+                    library: {id: linkedLibraryId, label: {en: 'Test node lib'}, attributes: [attrSimpleId]},
+                });
 
                 await gqlSaveAttribute({
                     id: attrSimpleTriggerId,
@@ -327,7 +345,9 @@ describe('replaceAnotherAttributeAction', () => {
                     type: AttributeTypes.SIMPLE_LINK,
                     linkedLibrary: testTreeLibraryName,
                 });
-                await gqlSaveLibrary(linkedLibraryId, 'Test node lib', [attrSimpleLinkId]);
+                await adminUserSdk.SaveLibrary({
+                    library: {id: linkedLibraryId, label: {en: 'Test node lib'}, attributes: [attrSimpleLinkId]},
+                });
 
                 await gqlSaveAttribute({
                     id: attrSimpleLinkTriggerId,
@@ -393,7 +413,9 @@ describe('replaceAnotherAttributeAction', () => {
                     format: AttributeFormats.TEXT,
                     multipleValues,
                 });
-                await gqlSaveLibrary(linkedLibraryId, 'Test node lib', [attrAdvancedStandardId]);
+                await adminUserSdk.SaveLibrary({
+                    library: {id: linkedLibraryId, label: {en: 'Test node lib'}, attributes: [attrAdvancedStandardId]},
+                });
 
                 await gqlSaveAttribute({
                     id: attrAdvancedStandardTriggerId,
@@ -533,7 +555,9 @@ describe('replaceAnotherAttributeAction', () => {
                     linkedLibrary: testTreeLibraryName,
                     multipleValues,
                 });
-                await gqlSaveLibrary(linkedLibraryId, 'Test node lib', [attrAdvancedLinkId]);
+                await adminUserSdk.SaveLibrary({
+                    library: {id: linkedLibraryId, label: {en: 'Test node lib'}, attributes: [attrAdvancedLinkId]},
+                });
 
                 await gqlSaveAttribute({
                     id: attrAdvancedLinkTriggerId,
@@ -658,7 +682,9 @@ describe('replaceAnotherAttributeAction', () => {
                     multipleValues,
                     linkedTree: testTreeName,
                 });
-                await gqlSaveLibrary(linkedLibraryId, 'Test node lib', [attrTreeId]);
+                await adminUserSdk.SaveLibrary({
+                    library: {id: linkedLibraryId, label: {en: 'Test node lib'}, attributes: [attrTreeId]},
+                });
 
                 await gqlSaveAttribute({
                     id: attrTreeTriggerId,

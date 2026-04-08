@@ -6,10 +6,10 @@ import {TaskStatus} from '../../../../_types/tasksManager';
 import {getConfig} from '../../../../config';
 import {MASKED_VALUE} from '../../../../_constants/values';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
     makeGraphQlCall,
@@ -38,94 +38,53 @@ describe('Export', () => {
             attrId: `simple_attr_${format.toLowerCase()}`,
         }));
 
-    const exportProfileConfig = `{
+    const exportProfileConfig = {
         export: {
-            defaultProfile: "default",
+            defaultProfile: 'default',
             profiles: [
                 {
-                    label: "default",
+                    label: 'default',
                     columns: [
-                        {
-                            columnLabel: "campaign id",
-                            attribute: "id"
-                        },
-                        {
-                            columnLabel: "created by",
-                            attribute: "created_by"
-                        }
-                    ]
+                        {columnLabel: 'campaign id', attribute: 'id'},
+                        {columnLabel: 'created by', attribute: 'created_by'},
+                    ],
                 },
                 {
-                    label: "wrongExportProfile",
+                    label: 'wrongExportProfile',
                     columns: [
-                        {
-                            columnLabel: "campaign id",
-                            attribute: "id"
-                        },
-                        {
-                            columnLabel: "wrong_attribute",
-                            attribute: "wrong_attribute"
-                        }
-                    ]
+                        {columnLabel: 'campaign id', attribute: 'id'},
+                        {columnLabel: 'wrong_attribute', attribute: 'wrong_attribute'},
+                    ],
                 },
                 {
-                    label: "testAllAttributesTypes",
+                    label: 'testAllAttributesTypes',
                     columns: [
-                        {
-                            columnLabel: "id",
-                            attribute: "id"
-                        }, 
-                        {
-                            columnLabel: "created_by",
-                            attribute: "created_by"
-                        }, 
-                        {
-                            columnLabel: "${advancedAttrId}",
-                            attribute: "${advancedAttrId}"
-                        }, 
-                        {
-                            columnLabel: "${advancedLinkAttrId}",
-                            attribute: "${advancedLinkAttrId}"
-                        },
-                        {
-                            columnLabel: "${treeAttrId}",
-                            attribute: "${treeAttrId}"
-                        }
-                    ]
+                        {columnLabel: 'id', attribute: 'id'},
+                        {columnLabel: 'created_by', attribute: 'created_by'},
+                        {columnLabel: advancedAttrId, attribute: advancedAttrId},
+                        {columnLabel: advancedLinkAttrId, attribute: advancedLinkAttrId},
+                        {columnLabel: treeAttrId, attribute: treeAttrId},
+                    ],
                 },
                 {
-                    label: "testAllAttributesFormats",
-                    columns: [${attributesIdFormats.map(({attrId}) => `{columnLabel: "${attrId}", attribute: "${attrId}"}`)}]
+                    label: 'testAllAttributesFormats',
+                    columns: attributesIdFormats.map(({attrId}) => ({columnLabel: attrId, attribute: attrId})),
                 },
                 {
-                    label: "profile1",
-                    columns: [
-                       {
-                            columnLabel: "modified by",
-                            attribute: "modified_by"
-                        }
-                    ]
-                }
+                    label: 'profile1',
+                    columns: [{columnLabel: 'modified by', attribute: 'modified_by'}],
+                },
                 {
-                    label: "profileWithEmptyColumn",
+                    label: 'profileWithEmptyColumn',
                     columns: [
-                        {
-                            columnLabel: "id",
-                            attribute: "id"
-                        }, 
-                        {
-                            columnLabel: "",
-                            attribute: "modified_by"
-                        }
-                        {
-                            columnLabel: "",
-                            attribute: ""
-                        }
-                    ]
-                }
-            ]
-        }
-    }`;
+                        {columnLabel: 'id', attribute: 'id'},
+                        {columnLabel: '', attribute: 'modified_by'},
+                        {columnLabel: '', attribute: ''},
+                    ],
+                },
+            ],
+        },
+    };
 
     let exportTaskId: string;
     let graphqlClient: GraphqlWsClient;
@@ -169,12 +128,19 @@ describe('Export', () => {
             ),
         );
 
-        await gqlSaveLibrary(
-            exportLibName,
-            'Lib test export',
-            [advancedAttrId, advancedLinkAttrId, treeAttrId, ...attributesIdFormats.map(({attrId}) => attrId)],
-            exportProfileConfig,
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: exportLibName,
+                label: {en: 'Lib test export'},
+                attributes: [
+                    advancedAttrId,
+                    advancedLinkAttrId,
+                    treeAttrId,
+                    ...attributesIdFormats.map(({attrId}) => attrId),
+                ],
+                settings: exportProfileConfig,
+            },
+        });
 
         await gqlSaveTree(testTreeId, 'Test tree', [exportLibName]);
 
@@ -394,7 +360,9 @@ describe('Export', () => {
 
         test('should not export and fail if library has no exportProfiles', async () => {
             const noExportProfileLibName = 'no_export_profile_lib';
-            await gqlSaveLibrary(noExportProfileLibName, 'Lib no export profile', []);
+            await adminUserSdk.SaveLibrary({
+                library: {id: noExportProfileLibName, label: {en: 'Lib no export profile'}},
+            });
 
             const exportProfilesConfig = (
                 await makeGraphQlCall(`query {

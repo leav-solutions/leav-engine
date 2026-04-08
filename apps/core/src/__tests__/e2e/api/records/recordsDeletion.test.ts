@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
-import {gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {adminUserSdk, makeGraphQlCall} from '../e2eUtils';
 
 describe('Records deletion', () => {
     const testLibName = 'record_deletion_library_test';
@@ -18,7 +18,7 @@ describe('Records deletion', () => {
     let linkRecordId3;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(testLibName, 'Test Lib');
+        await adminUserSdk.SaveLibrary({library: {id: testLibName, label: {en: 'Test Lib'}}});
 
         await makeGraphQlCall(`mutation {
             saveAttribute(
@@ -31,7 +31,9 @@ describe('Records deletion', () => {
                 }
             ) { id }
         }`);
-        await gqlSaveLibrary(testAnotherLibName, 'Test Another Lib', [testAnotherLinkAttribute]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: testAnotherLibName, label: {en: 'Test Another Lib'}, attributes: [testAnotherLinkAttribute]},
+        });
 
         const resCrea = await makeGraphQlCall(`mutation {
             r1: createRecord(library: "${testLibName}") { record {id} }

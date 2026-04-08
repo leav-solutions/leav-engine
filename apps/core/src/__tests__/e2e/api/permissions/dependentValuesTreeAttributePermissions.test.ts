@@ -6,12 +6,12 @@ import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {type ITreeValue} from '../../../../_types/value';
 import {
+    adminUserSdk,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -28,7 +28,7 @@ describe('DependentValuesTreeAttributePermissions', () => {
     let recordId: string;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(testTreeLibraryName, 'Test node lib', []);
+        await adminUserSdk.SaveLibrary({library: {id: testTreeLibraryName, label: {en: 'Test node lib'}}});
         await gqlSaveTree(testTreeName, 'Attribute tree', [testTreeLibraryName]);
 
         const treeNodeRecord1Id = await gqlCreateRecord(testTreeLibraryName);
@@ -47,7 +47,9 @@ describe('DependentValuesTreeAttributePermissions', () => {
             multipleValues: false,
         });
 
-        await gqlSaveLibrary(testLibraryName, 'Test node lib', [testAttrName]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: testLibraryName, label: {en: 'Test node lib'}, attributes: [testAttrName]},
+        });
     });
 
     it('attribute with tree_values should not contains allowedDependentValues when dependency not defined', async () => {
@@ -662,7 +664,13 @@ describe('DependentValuesTreeAttributePermissions', () => {
                 multipleValues: false,
             });
 
-            await gqlSaveLibrary(testLibraryName, 'Test node lib', [testAttrName, anotherAttrName]);
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: testLibraryName,
+                    label: {en: 'Test node lib'},
+                    attributes: [testAttrName, anotherAttrName],
+                },
+            });
         });
 
         describe('dependent on another tree attribute (allowed_by_default)', () => {

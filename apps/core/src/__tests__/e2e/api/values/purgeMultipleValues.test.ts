@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlGetValue,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValueBis,
     makeGraphQlCall,
@@ -74,7 +74,13 @@ describe('Purge multiple values', () => {
             linkedTree: treeId,
         });
 
-        await gqlSaveLibrary(testLibId, 'Test lib', [attrAdvancedId, attrAdvancedLinkId, attrTreeId]);
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: testLibId,
+                label: {en: 'Test lib'},
+                attributes: [attrAdvancedId, attrAdvancedLinkId, attrTreeId],
+            },
+        });
 
         treeRecord1 = await gqlCreateRecord(treeLibId);
         treeRecord2 = await gqlCreateRecord(treeLibId);

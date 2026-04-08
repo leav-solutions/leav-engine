@@ -4,9 +4,9 @@
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
     makeGraphQlCall,
@@ -40,7 +40,7 @@ describe('Record identity', () => {
 
     beforeAll(async () => {
         // Create base library
-        await gqlSaveLibrary(testLibraryId, 'Test Lib');
+        await adminUserSdk.SaveLibrary({library: {id: testLibraryId, label: {en: 'Test Lib'}}});
 
         // Create color attribute
         await gqlSaveAttribute({
@@ -107,7 +107,9 @@ describe('Record identity', () => {
         }`,
         );
 
-        await gqlSaveLibrary(testLibraryId, 'Test Lib', [testLinkAttributeId]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: testLibraryId, label: {en: 'Test Lib'}, attributes: [testLinkAttributeId]},
+        });
 
         await gqlSaveTree(testTreeId, 'Test tree', [testTreeRecordLibraryId]);
         await gqlSaveAttribute({

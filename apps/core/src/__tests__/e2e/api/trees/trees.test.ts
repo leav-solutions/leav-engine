@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     e2eGuestUser,
     e2eNonAdminGroupId,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -433,7 +433,9 @@ describe('Trees', () => {
                 label: 'Test attr tree',
             });
 
-            await gqlSaveLibrary(testLibName, 'Test lib', [attrTreeName]);
+            await adminUserSdk.SaveLibrary({
+                library: {id: testLibName, label: {en: 'Test lib'}, attributes: [attrTreeName]},
+            });
 
             // Create a record to link to the tree
             const testRecordId = await gqlCreateRecord(testLibName);

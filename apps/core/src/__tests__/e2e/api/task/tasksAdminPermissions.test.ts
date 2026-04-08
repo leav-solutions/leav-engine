@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    adminUserSdk,
     e2eAdminUser,
     e2eNonAdminUser,
     gqlCreateRecord,
-    gqlSaveLibrary,
     type IE2EUser,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -38,24 +38,23 @@ describe('TasksAdminPermissions', () => {
 
     beforeAll(async () => {
         // Create test library with export profile
-        await gqlSaveLibrary(
-            testLibName,
-            'Test lib for task permissions',
-            [],
-            `{
-                export: {
-                    defaultProfile: "default",
-                    profiles: [
-                        {
-                            label: "default",
-                            columns: [
-                                { columnLabel: "id", attribute: "id" }
-                            ]
-                        }
-                    ]
-                }
-            }`,
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: testLibName,
+                label: {en: 'Test lib for task permissions'},
+                settings: {
+                    export: {
+                        defaultProfile: 'default',
+                        profiles: [
+                            {
+                                label: 'default',
+                                columns: [{columnLabel: 'id', attribute: 'id'}],
+                            },
+                        ],
+                    },
+                },
+            },
+        });
 
         // Create a record to export
         await gqlCreateRecord(testLibName);

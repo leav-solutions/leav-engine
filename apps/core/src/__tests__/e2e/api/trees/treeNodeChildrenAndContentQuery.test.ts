@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    adminUserSdk,
     e2eGuestUser,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -38,7 +38,9 @@ describe('Trees', () => {
             linkedTree: testTreeName,
         });
 
-        await gqlSaveLibrary(testLibName, 'Test Lib', [treeAttributeId]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: testLibName, label: {en: 'Test Lib'}, attributes: [treeAttributeId]},
+        });
         await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
 
         recordId1 = await gqlCreateRecord(testLibName);

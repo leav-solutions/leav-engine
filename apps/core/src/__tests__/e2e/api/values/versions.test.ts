@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveVersionProfile,
     makeGraphQlCall,
@@ -28,7 +28,7 @@ describe('Versions', () => {
     let nodeElement3: string;
     let recordId: string;
     beforeAll(async () => {
-        await gqlSaveLibrary(treeElementLibName, 'Test Tree Lib');
+        await adminUserSdk.SaveLibrary({library: {id: treeElementLibName, label: {en: 'Test Tree Lib'}}});
         await gqlSaveTree(treeName, 'Test Tree', [treeElementLibName]);
         await gqlSaveVersionProfile(versionProfileName, 'Test Version Profile', [treeName]);
 
@@ -46,10 +46,12 @@ describe('Versions', () => {
         });
 
         // Create libraries
-        await gqlSaveLibrary(testLibName, 'Test Lib');
+        await adminUserSdk.SaveLibrary({library: {id: testLibName, label: {en: 'Test Lib'}}});
 
         // Second call needed to attach attribute
-        await gqlSaveLibrary(testLibName, 'Test Lib', [attrAdvName]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: testLibName, label: {en: 'Test Lib'}, attributes: [attrAdvName]},
+        });
 
         // Create records for tree
         const resCreaTreeRecord = await makeGraphQlCall(`

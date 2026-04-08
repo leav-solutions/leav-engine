@@ -4,11 +4,11 @@
 
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     e2eNonAdminGroupId,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     makeGraphQlCall,
     e2eNonAdminUser,
@@ -42,8 +42,8 @@ describe('TreeNodePermissions', () => {
          *   └──[record 2]
          */
 
-        await gqlSaveLibrary(elementsTreeLibId, 'Test');
-        await gqlSaveLibrary(permissionsTreeLibId, 'Test');
+        await adminUserSdk.SaveLibrary({library: {id: elementsTreeLibId, label: {en: 'Test'}}});
+        await adminUserSdk.SaveLibrary({library: {id: permissionsTreeLibId, label: {en: 'Test'}}});
 
         await gqlSaveTree(elementsTreeId, 'Elements tree', [elementsTreeLibId]);
         await makeGraphQlCall(`mutation {
@@ -78,7 +78,9 @@ describe('TreeNodePermissions', () => {
             linkedTree: permissionsTreeId,
         });
 
-        await gqlSaveLibrary(elementsTreeLibId, 'Test', [treeAttrID]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: elementsTreeLibId, label: {en: 'Test'}, attributes: [treeAttrID]},
+        });
 
         // Create records for elements tree
         elementsTreeRecord1 = await gqlCreateRecord(elementsTreeLibId);

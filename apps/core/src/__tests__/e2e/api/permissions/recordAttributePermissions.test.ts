@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
+    adminUserSdk,
     e2eNonAdminGroupId,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -29,7 +29,7 @@ describe('RecordAttributePermissions', () => {
             label: 'Test attr',
             format: AttributeFormats.TEXT,
         });
-        await gqlSaveLibrary(permTreeLibName, 'Test Lib');
+        await adminUserSdk.SaveLibrary({library: {id: permTreeLibName, label: {en: 'Test Lib'}}});
         await gqlSaveTree(permTreeName, 'Test tree', [permTreeLibName]);
 
         // Add elements to library

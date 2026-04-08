@@ -8,10 +8,10 @@ import {
     e2eGuestUser,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
+    adminUserSdk,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     type IMakeGraphQlCallOptions,
     makeGraphQlCall,
@@ -32,7 +32,7 @@ describe('ExtendedLibraryPermissions', () => {
     let record2Id: string;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(permNodeLibName, 'Test node lib', []);
+        await adminUserSdk.SaveLibrary({library: {id: permNodeLibName, label: {en: 'Test node lib'}}});
         await gqlSaveTree(permTreeName, 'Permissions tree', [permNodeLibName]);
 
         permTreeNodeRecord1Id = await gqlCreateRecord(permNodeLibName);
