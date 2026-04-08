@@ -8,7 +8,7 @@ import {useCreateThread} from '../useCreateThread';
 import {useGetThreadQuery, usePostDiscussionCommentMutation} from '../../../../__generated__';
 import {useThreadStatusOptions} from '../../useThreadStatusOption/useThreadStatusOptions';
 import {WIP_STATUS} from '../../threadConstants';
-import {REDIRECT_URL_QUERY_PARAM} from '../../../../modules/ApplicationRouting/content/panel-custom/message-handlers/useOpenFlapPanel';
+import {REDIRECT_URL_QUERY_PARAM} from '../../../ApplicationRouting/content/panel-custom/message-handlers/useNavigateToPanel';
 
 interface IUseThreadActions {
     recordId: string;

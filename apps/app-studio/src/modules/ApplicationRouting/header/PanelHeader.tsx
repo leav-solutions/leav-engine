@@ -13,7 +13,7 @@ import {KitSpace} from 'aristid-ds';
 import {panelHeader, panelHeaderTabs, panelHeaderActionPositionRight} from './panelHeader.module.css';
 import {PanelDisplayModeSelector} from './action-button/PanelDisplayModeSelector';
 import {ToggleFlapButton} from './action-button/ToggleFlapButton';
-import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../constants';
+import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../constants';
 import cn from 'classnames';
 import {PanelsTabs} from './tabs/PanelsTabs';
 
@@ -34,11 +34,15 @@ export const PanelHeader: FunctionComponent<{
     const {lang} = useContext(LangContext);
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
+
     const {libraryId, panelType, currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
+    const isBlankPanel = currentPanel.id === BLANK_PANEL_ID;
     const isLibraryPanel = panelType === 'libraryPanels';
     const isFirstPanel = where === undefined;
     const hasFlapPanel = flapPanelId !== undefined;
+    const computedRecordId = isBlankPanel ? flapRecordId : (currentRecordId ?? recordId);
+    const computedLibraryId = isBlankPanel ? flapLibraryId : (currentLibraryId ?? libraryId);
 
     return (
         <div className={panelHeader}>
@@ -56,25 +60,23 @@ export const PanelHeader: FunctionComponent<{
                         avatarSize="l"
                     />
                 ) : (
-                    <RecordIdCard
-                        libraryId={currentLibraryId ?? libraryId}
-                        currentRecordId={currentRecordId ?? recordId}
-                        avatarSize="l"
-                    />
+                    <RecordIdCard libraryId={computedLibraryId} currentRecordId={computedRecordId} avatarSize="l" />
                 )}
                 {!isLibraryPanel && currentPanel.type !== 'creationForm' && (
                     <KitSpace direction="horizontal" size="xxs">
                         <ToggleFlapButton
                             targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}
-                            targetRecordId={currentRecordId ?? recordId}
-                            targetLibraryId={currentLibraryId ?? libraryId}
+                            targetRecordId={computedRecordId}
+                            targetLibraryId={computedLibraryId}
                         />
                         <ToggleFlapButton
                             targetFlapPanelId={FLAP_THREAD_PANEL_ID}
-                            targetRecordId={currentRecordId ?? recordId}
-                            targetLibraryId={currentLibraryId ?? libraryId}
+                            targetRecordId={computedRecordId}
+                            targetLibraryId={computedLibraryId}
                         />
-                        {!isFirstPanel && !hidePanelDisplayModeSelector && <PanelDisplayModeSelector />}
+                        {!isFirstPanel && !hidePanelDisplayModeSelector && !isBlankPanel && (
+                            <PanelDisplayModeSelector />
+                        )}
                     </KitSpace>
                 )}
             </KitSpace>

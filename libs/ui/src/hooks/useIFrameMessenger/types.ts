@@ -110,6 +110,7 @@ export type NavigateToPanelMessage = IMessageBase & {
         flapLibraryId?: LibraryId;
         flapPanelId?: FlapPanelId;
         queryParams?: Record<string, string> & {
+            redirectUrl?: string;
             formInitialValues?: Record<string, Array<AnyPrimitive | IRecordIdentity | ITreeNodeWithRecord>>;
         };
     };
@@ -150,7 +151,6 @@ export type OpenFlapPanelMessage = IMessageBase & {
         flapRecordId: string;
         flapLibraryId: LibraryId;
         flapPanelId: FlapPanelId;
-        redirectUrl?: string;
     };
 };
 

@@ -159,7 +159,7 @@ describe('useNavigateToPanel', () => {
             where: 'fullpage',
         });
 
-        expect(navigateMock).toHaveBeenCalledWith('1234567890/fullpage/panelIdTest');
+        expect(navigateMock).toHaveBeenCalledWith('1234567890/fullpage/panelIdTest', undefined);
     });
 
     it('should looking for first panel in given library and do nothing when library as no panel', async () => {
@@ -206,6 +206,57 @@ describe('useNavigateToPanel', () => {
         });
 
         expect(navigateMock).not.toHaveBeenCalled();
+    });
+
+    it('should navigate with flap params', async () => {
+        spyUseApplicationSettingsContext.mockReturnValue([
+            {
+                workspaces: [
+                    {
+                        id: '1',
+                        title: {
+                            fr: 'un',
+                            en: 'one',
+                        },
+                        icon: 'fa-house',
+                        type: 'library',
+                        libraryId: 'test1',
+                    },
+                ],
+                libraries: {
+                    test1: {
+                        libraryPanels: [],
+                        recordPanels: [
+                            {
+                                id: 'panelIdTest',
+                                type: 'explorer',
+                                actions: [],
+                            },
+                        ],
+                    },
+                },
+            } satisfies Application,
+            jest.fn(),
+        ]);
+
+        const {
+            result: {current},
+        } = renderHook(() => useNavigateToPanel());
+
+        current.navigateToPanel({
+            libraryId: 'test1',
+            recordId: '1234567890',
+            where: 'fullpage',
+            panelId: 'panelIdTest',
+            flapPanelId: 'thread',
+            flapRecordId: '5511',
+            flapLibraryId: 'campaign-detail',
+        });
+
+        expect(navigateMock).toHaveBeenCalledWith(
+            '1234567890/fullpage/panelIdTest/flap/5511/campaign-detail/thread',
+            undefined,
+        );
     });
 
     describe('when navigating from a slider context', () => {
@@ -256,6 +307,57 @@ describe('useNavigateToPanel', () => {
             });
 
             expect(navigateMock).toHaveBeenCalledWith('../../../1234567890/fullpage/panelIdTest', {relative: 'path'});
+        });
+
+        it('should navigate with relative path and prefix when in slider with flap params', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([
+                {
+                    workspaces: [
+                        {
+                            id: '1',
+                            title: {
+                                fr: 'un',
+                                en: 'one',
+                            },
+                            icon: 'fa-house',
+                            type: 'library',
+                            libraryId: 'test1',
+                        },
+                    ],
+                    libraries: {
+                        test1: {
+                            libraryPanels: [],
+                            recordPanels: [
+                                {
+                                    id: 'panelIdTest',
+                                    type: 'explorer',
+                                    actions: [],
+                                },
+                            ],
+                        },
+                    },
+                } satisfies Application,
+                jest.fn(),
+            ]);
+
+            const {
+                result: {current},
+            } = renderHook(() => useNavigateToPanel());
+
+            current.navigateToPanel({
+                libraryId: 'test1',
+                recordId: '1234567890',
+                where: 'fullpage',
+                panelId: 'panelIdTest',
+                flapPanelId: 'thread',
+                flapRecordId: '5511',
+                flapLibraryId: 'campaign-detail',
+            });
+
+            expect(navigateMock).toHaveBeenCalledWith(
+                '../../../1234567890/fullpage/panelIdTest/flap/5511/campaign-detail/thread',
+                {relative: 'path'},
+            );
         });
     });
 });

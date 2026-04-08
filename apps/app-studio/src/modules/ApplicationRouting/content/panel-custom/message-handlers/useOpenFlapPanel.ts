@@ -5,8 +5,6 @@ import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/type
 import {RelativePaths} from '../../../router/paths';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 
-export const REDIRECT_URL_QUERY_PARAM = 'redirectUrl';
-
 /**
  * Navigate to a flap panel from an iframe panel.
  * If already in a flap, replace the current flap instead of adding a new one.
@@ -24,12 +22,10 @@ export const useOpenFlapPanel = (): {
     const isInFlap = currentFlapPanelId !== undefined;
 
     return {
-        openFlapPanel: ({flapRecordId, flapLibraryId, flapPanelId, redirectUrl}) => {
+        openFlapPanel: ({flapRecordId, flapLibraryId, flapPanelId}) => {
             // If already in a flap, go back 4 levels (flap/:flapRecordId/:flapLibraryId/:flapPanelId) before opening new flap
             const flapPath = isInFlap ? '../../../../' + RelativePaths.openFlap : RelativePaths.openFlap;
-            const path = generatePath(flapPath, {flapRecordId, flapLibraryId, flapPanelId});
-            const search = redirectUrl ? `?${REDIRECT_URL_QUERY_PARAM}=${encodeURIComponent(redirectUrl)}` : '';
-            navigate(`${path}${search}`, {
+            return navigate(generatePath(flapPath, {flapRecordId, flapLibraryId, flapPanelId}), {
                 relative: 'path',
             });
         },
