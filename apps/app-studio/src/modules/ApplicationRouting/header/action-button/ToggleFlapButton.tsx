@@ -5,11 +5,12 @@ import {faComment, faInfo} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useLocation, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import {RelativePaths} from '../../router/paths';
 import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
-import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID} from '../../../../constants';
+import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
+import {REDIRECT_URL_QUERY_PARAM} from '../../content/panel-custom/message-handlers/useNavigateToPanel';
 
 interface IToggleFlapButtonProps {
     targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;
@@ -23,7 +24,9 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
     targetLibraryId,
 }) => {
     const navigate = useNavigate();
-    const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} = useParams();
+    const [searchParams] = useSearchParams();
+    const redirectUrl = searchParams.get(REDIRECT_URL_QUERY_PARAM);
+    const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId, panelId} = useParams();
     const {t} = useTranslation();
 
     const isInfoAndHistoryFlap = targetFlapPanelId === FLAP_INFO_AND_HISTORY_PANEL_ID;
@@ -33,6 +36,7 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
     const hasFlapAlreadyOpen = flapPanelId !== undefined;
     const isTargetFlapAlreadyOpen =
         targetRecordId === flapRecordId && targetLibraryId === flapLibraryId && targetFlapPanelId === flapPanelId;
+    const shouldPreventClose = isTargetFlapAlreadyOpen && recordPanelId === BLANK_PANEL_ID;
 
     return (
         <KitTooltip title={buttonTitle} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
@@ -42,6 +46,10 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
                 icon={<FontAwesomeIcon icon={buttonIcon} />}
                 active={isTargetFlapAlreadyOpen}
                 onClick={() => {
+                    if (shouldPreventClose) {
+                        return;
+                    }
+
                     if (isTargetFlapAlreadyOpen) {
                         return navigate(RelativePaths.closeFlapPanel, {relative: 'path'});
                     }
@@ -56,7 +64,7 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
                                 flapLibraryId: targetLibraryId,
                                 flapPanelId: targetFlapPanelId,
                             },
-                        ),
+                        ) + (redirectUrl ? `?${REDIRECT_URL_QUERY_PARAM}=${encodeURIComponent(redirectUrl)}` : ''),
                         {relative: 'path'},
                     );
                 }}

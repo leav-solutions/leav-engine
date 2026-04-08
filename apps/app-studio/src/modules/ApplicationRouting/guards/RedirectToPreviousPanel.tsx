@@ -9,11 +9,12 @@ import {RelativePaths} from '../router/paths';
 
 export const RedirectToPreviousPanel: FunctionComponent = ({children}) => {
     const [application] = useApplicationSettingsContext();
-    const {panelId, recordPanelId} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
+        useParams();
 
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
-    return currentPanel === null ? (
+    return currentPanel === null && !flapRecordId && !flapLibraryId && !flapPanelId ? (
         <Navigate to={RelativePaths.closeCurrentPanel} relative="path" replace />
     ) : (
         <>{children}</>

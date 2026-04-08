@@ -5,7 +5,9 @@ import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../../../router/paths';
+import {type Application} from '../../../types';
 
+export const REDIRECT_URL_QUERY_PARAM = 'redirectUrl';
 export const INIIAL_VALUES_QUERY_PARAMS = 'formInitialValues';
 
 /**
@@ -40,65 +42,61 @@ export const useNavigateToPanel = (): {
             flapPanelId,
             queryParams,
         }) => {
-            if (recordId === undefined) {
+            const recordPanelId = getWithFallback(panelId, {libraryId, application});
+
+            if (recordId === undefined || recordPanelId === undefined) {
                 // TODO: manage panels without recordId
                 return;
             }
 
             const shouldOpenFlap =
                 flapRecordId !== undefined && flapLibraryId !== undefined && flapPanelId !== undefined;
-
             const nextLevelPanelPath = isInSlider
                 ? '../../../' + RelativePaths.nextLevelPanel
                 : RelativePaths.nextLevelPanel;
-
             const panelPath = shouldOpenFlap ? nextLevelPanelPath + '/' + RelativePaths.openFlap : nextLevelPanelPath;
             const searchParams: Record<string, string> = queryParams ?? {};
             if (searchParams[INIIAL_VALUES_QUERY_PARAMS]) {
                 searchParams[INIIAL_VALUES_QUERY_PARAMS] = JSON.stringify(searchParams[INIIAL_VALUES_QUERY_PARAMS]);
             }
-
             const search =
                 '?' +
                 Object.entries(searchParams)
                     .map(([name, value]) => `${name}=${encodeURIComponent(value)}`)
                     .join('&');
+            const path = generatePath(panelPath, {
+                recordId,
+                where,
+                recordPanelId,
+                flapRecordId,
+                flapLibraryId,
+                flapPanelId,
+            });
 
-            let path = '';
-
-            if (panelId === undefined) {
-                if (
-                    application.libraries[libraryId] === undefined ||
-                    application.libraries[libraryId].recordPanels[0] === undefined
-                ) {
-                    // TODO: manage panels without recordPanelId (ex: structure_item with comment)
-                    return;
-                }
-                const firstRecordPanelId = application.libraries[libraryId].recordPanels[0].id;
-
-                path = generatePath(panelPath, {
-                    recordId,
-                    where,
-                    recordPanelId: firstRecordPanelId,
-                    flapRecordId,
-                    flapLibraryId,
-                    flapPanelId,
-                });
-                return navigate(`${path}${search !== '?' ? search : ''}`);
-            } else {
-                path = generatePath(panelPath, {
-                    recordId,
-                    where,
-                    recordPanelId: panelId,
-                    flapRecordId,
-                    flapLibraryId,
-                    flapPanelId,
-                });
-            }
-
-            const panelPathWithQueryParams = `${path}${search !== '?' ? search : ''}`;
-
-            return navigate(panelPathWithQueryParams, isInSlider ? {relative: 'path'} : undefined);
+            return navigate(`${path}${search !== '?' ? search : ''}`, isInSlider ? {relative: 'path'} : undefined);
         },
     };
 };
+
+function getWithFallback(
+    panelId: string,
+    {
+        libraryId,
+        application,
+    }: {
+        libraryId: string;
+        application: Application;
+    },
+) {
+    if (panelId !== undefined) {
+        return panelId;
+    }
+
+    // TODO: manage panels without recordPanelId (ex: structure_item with comment) and without flap data
+    if (
+        application.libraries[libraryId] !== undefined &&
+        application.libraries[libraryId].recordPanels[0] !== undefined
+    ) {
+        return application.libraries[libraryId].recordPanels[0].id;
+    }
+}

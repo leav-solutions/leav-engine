@@ -18,6 +18,8 @@ export const ACTIVITY_CENTER_TARGET_ID = 'activity-center-target';
 export const FLAP_THREAD_PANEL_ID = 'thread';
 export const FLAP_INFO_AND_HISTORY_PANEL_ID = 'info-history';
 
+export const BLANK_PANEL_ID = 'blank';
+
 export const WORKSPACE_PANEL_CONTAINER_ID = 'workspace-panel-container';
 export const MODAL_EXTRA_RIGHT_PORTAL_ID = 'modal-extra-right-portal';
 
