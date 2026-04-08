@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    adminUserSdk,
     e2eGuestUser,
     e2eNonAdminUser,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveValue,
     makeGraphQlCall,
 } from '../e2eUtils';
@@ -43,56 +43,61 @@ describe('Export Nested Attributes', () => {
             label: 'Event Name',
         });
 
-        await gqlSaveLibrary(
-            eventLibName,
-            'Events Library',
-            ['event_name'],
-            `{
-                export: {
-                    defaultProfile: "default",
-                    profiles: [
-                        {
-                            label: "default",
-                            columns: [
-                                {columnLabel: "Event Name", attribute: "event_name"},
-                                {columnLabel: "Created By (default label)", attribute: "created_by"}
-                            ]
-                        },
-                        {
-                            label: "with_user_info",
-                            columns: [
-                                {columnLabel: "Event Name", attribute: "event_name"},
-                                {columnLabel: "Creator Email", attribute: "created_by.email"}
-                            ]
-                        },
-                        {
-                            label: "with_creator_of_creator",
-                            columns: [
-                                {columnLabel: "Event Name", attribute: "event_name"},
-                                {columnLabel: "Creator's Creator Email", attribute: "created_by.created_by.email"}
-                            ]
-                        },
-                        {
-                            label: "with_creator_of_creator_label",
-                            columns: [
-                                {columnLabel: "Event Name", attribute: "event_name"},
-                                {columnLabel: "Creator's Creator Label", attribute: "created_by.created_by"}
-                            ]
-                        },
-                        {
-                            label: "with_creator_of_creator_wrong_attribute",
-                            columns: [
-                                {columnLabel: "Event Name", attribute: "event_name"},
-                                {columnLabel: "Creator's Creator Email", attribute: "created_by.created_by.wrong_attribute"}
-                            ]
-                        }
-                    ]
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: eventLibName,
+                label: {en: 'Events Library'},
+                attributes: ['event_name'],
+                settings: {
+                    export: {
+                        defaultProfile: 'default',
+                        profiles: [
+                            {
+                                label: 'default',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {columnLabel: 'Created By (default label)', attribute: 'created_by'},
+                                ],
+                            },
+                            {
+                                label: 'with_user_info',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {columnLabel: 'Creator Email', attribute: 'created_by.email'},
+                                ],
+                            },
+                            {
+                                label: 'with_creator_of_creator',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {columnLabel: "Creator's Creator Email", attribute: 'created_by.created_by.email'},
+                                ],
+                            },
+                            {
+                                label: 'with_creator_of_creator_label',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {columnLabel: "Creator's Creator Label", attribute: 'created_by.created_by'},
+                                ],
+                            },
+                            {
+                                label: 'with_creator_of_creator_wrong_attribute',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {
+                                        columnLabel: "Creator's Creator Email",
+                                        attribute: 'created_by.created_by.wrong_attribute',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    recordIdentityConf: {
+                        label: 'event_name',
+                    },
                 },
-                recordIdentityConf: {
-                    label: "event_name"
-                }
-            }`,
-        );
+            },
+        });
 
         // Create Event records authenticated as different users
         // Event created by guest user

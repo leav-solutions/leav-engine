@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
-import {gqlCreateRecord, gqlSaveAttribute, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {adminUserSdk, gqlCreateRecord, gqlSaveAttribute, makeGraphQlCall} from '../e2eUtils';
 
 describe('GetConditionPart', () => {
     const testLibName = 'get_condition_part_test_lib';
@@ -15,7 +15,7 @@ describe('GetConditionPart', () => {
 
     beforeAll(async () => {
         // Create library
-        await gqlSaveLibrary(testLibName, 'Test');
+        await adminUserSdk.SaveLibrary({library: {id: testLibName, label: {en: 'Test'}}});
 
         // Create attribute
         await gqlSaveAttribute({
@@ -26,7 +26,9 @@ describe('GetConditionPart', () => {
         });
 
         // Save attribute on library
-        await gqlSaveLibrary(testLibName, 'Test', [testSimpleAttrId]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: testLibName, label: {en: 'Test'}, attributes: [testSimpleAttrId]},
+        });
 
         // Create records
         record1 = await gqlCreateRecord(testLibName);

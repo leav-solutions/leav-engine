@@ -4,12 +4,12 @@
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition, Operator, TreeCondition} from '../../../../_types/record';
 import {
+    adminUserSdk,
     e2eNonAdminGroupId,
     e2eNonAdminUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     gqlSaveTree,
     gqlSaveValue,
     makeGraphQlCall,
@@ -52,8 +52,16 @@ describe('Records', () => {
                 linkedTree: testTreeName,
             });
 
-            await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
-            await gqlSaveLibrary(testLibLink, 'Test2', [testAttributeId]);
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: testLibName,
+                    label: {en: 'Test'},
+                    attributes: [testAttributeId, testLinkAttributeId, testTreeAttributeId],
+                },
+            });
+            await adminUserSdk.SaveLibrary({
+                library: {id: testLibLink, label: {en: 'Test2'}, attributes: [testAttributeId]},
+            });
             await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
 
             // Create and activate a record for later use
@@ -89,8 +97,8 @@ describe('Records', () => {
 
         afterAll(async () => {
             // unlink attributes before deleting them
-            await gqlSaveLibrary(testLibName, 'Test', []);
-            await gqlSaveLibrary(testLibLink, 'Test2', []);
+            await adminUserSdk.SaveLibrary({library: {id: testLibName, label: {en: 'Test'}, attributes: []}});
+            await adminUserSdk.SaveLibrary({library: {id: testLibLink, label: {en: 'Test2'}, attributes: []}});
 
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
@@ -245,12 +253,13 @@ describe('Records', () => {
                     required: true,
                     label: 'dependent required',
                 });
-                await gqlSaveLibrary(testLibName, 'Test', [
-                    testAttributeId,
-                    testLinkAttributeId,
-                    testTreeAttributeId,
-                    dependentAttrId,
-                ]);
+                await adminUserSdk.SaveLibrary({
+                    library: {
+                        id: testLibName,
+                        label: {en: 'Test'},
+                        attributes: [testAttributeId, testLinkAttributeId, testTreeAttributeId, dependentAttrId],
+                    },
+                });
 
                 // Create a form with a dependent element that is never triggered (dependencyValue never set)
                 await makeGraphQlCall(`mutation {
@@ -286,7 +295,13 @@ describe('Records', () => {
                     `mutation { deleteForm(library: "${testLibName}", id: "${formWithDependency}") { id } }`,
                 );
 
-                await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]); // remove dependentAttrId attribute from lib before delete
+                await adminUserSdk.SaveLibrary({
+                    library: {
+                        id: testLibName,
+                        label: {en: 'Test'},
+                        attributes: [testAttributeId, testLinkAttributeId, testTreeAttributeId],
+                    },
+                }); // remove dependentAttrId attribute from lib before delete
                 await makeGraphQlCall(`mutation { deleteAttribute(id: "${dependentAttrId}") { id } }`);
             });
 
@@ -388,8 +403,16 @@ describe('Records', () => {
                 linkedTree: testTreeName,
             });
 
-            await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
-            await gqlSaveLibrary(testLibLink, 'Test2', [testAttributeId]);
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: testLibName,
+                    label: {en: 'Test'},
+                    attributes: [testAttributeId, testLinkAttributeId, testTreeAttributeId],
+                },
+            });
+            await adminUserSdk.SaveLibrary({
+                library: {id: testLibLink, label: {en: 'Test2'}, attributes: [testAttributeId]},
+            });
             await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
 
             // Create and activate a record for later use
@@ -425,8 +448,8 @@ describe('Records', () => {
 
         afterAll(async () => {
             // unlink attributes before deleting them
-            await gqlSaveLibrary(testLibName, 'Test', []);
-            await gqlSaveLibrary(testLibLink, 'Test2', []);
+            await adminUserSdk.SaveLibrary({library: {id: testLibName, label: {en: 'Test'}, attributes: []}});
+            await adminUserSdk.SaveLibrary({library: {id: testLibLink, label: {en: 'Test2'}, attributes: []}});
 
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
@@ -837,9 +860,9 @@ describe('Records', () => {
 
         beforeAll(async () => {
             // Create libs
-            await gqlSaveLibrary(sfTestLibId, 'Test');
-            await gqlSaveLibrary(sfTestLibLinkId, 'Test');
-            await gqlSaveLibrary(sfTestLibTreeId, 'Test');
+            await adminUserSdk.SaveLibrary({library: {id: sfTestLibId, label: {en: 'Test'}}});
+            await adminUserSdk.SaveLibrary({library: {id: sfTestLibLinkId, label: {en: 'Test'}}});
+            await adminUserSdk.SaveLibrary({library: {id: sfTestLibTreeId, label: {en: 'Test'}}});
 
             // Create tree
             await gqlSaveTree(testTreeId, 'Test', [sfTestLibTreeId]);
@@ -915,22 +938,36 @@ describe('Records', () => {
             });
 
             // Save attributes on libs
-            await gqlSaveLibrary(sfTestLibId, 'Test', [
-                testSimpleAttrId,
-                testSimpleAttrId2,
-                testSimpleExtAttrId,
-                testAdvAttrId,
-                testSimpleLinkAttrId,
-                testAdvLinkAttrId,
-                testTreeAttrId,
-            ]);
-            await gqlSaveLibrary(sfTestLibLinkId, 'Test', [
-                testSimpleAttrId,
-                testAdvThroughLinkAttrId,
-                testAdvRevLinkAttrId,
-                testAdvRevLinkToSimpleLinkAttrId,
-            ]);
-            await gqlSaveLibrary(sfTestLibTreeId, 'Test', [testSimpleAttrId]);
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: sfTestLibId,
+                    label: {en: 'Test'},
+                    attributes: [
+                        testSimpleAttrId,
+                        testSimpleAttrId2,
+                        testSimpleExtAttrId,
+                        testAdvAttrId,
+                        testSimpleLinkAttrId,
+                        testAdvLinkAttrId,
+                        testTreeAttrId,
+                    ],
+                },
+            });
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: sfTestLibLinkId,
+                    label: {en: 'Test'},
+                    attributes: [
+                        testSimpleAttrId,
+                        testAdvThroughLinkAttrId,
+                        testAdvRevLinkAttrId,
+                        testAdvRevLinkToSimpleLinkAttrId,
+                    ],
+                },
+            });
+            await adminUserSdk.SaveLibrary({
+                library: {id: sfTestLibTreeId, label: {en: 'Test'}, attributes: [testSimpleAttrId]},
+            });
 
             // Create some records
             sfRecord1 = await gqlCreateRecord(sfTestLibId);
@@ -1009,13 +1046,17 @@ describe('Records', () => {
         });
         afterAll(async () => {
             // unlink attributes before deleting them
-            await gqlSaveLibrary(sfTestLibId, 'Test', [testTreeAttrId]);
-            await gqlSaveLibrary(sfTestLibLinkId, 'Test', [
-                testAdvThroughLinkAttrId,
-                testAdvRevLinkAttrId,
-                testAdvRevLinkToSimpleLinkAttrId,
-            ]);
-            await gqlSaveLibrary(sfTestLibTreeId, 'Test', []);
+            await adminUserSdk.SaveLibrary({
+                library: {id: sfTestLibId, label: {en: 'Test'}, attributes: [testTreeAttrId]},
+            });
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: sfTestLibLinkId,
+                    label: {en: 'Test'},
+                    attributes: [testAdvThroughLinkAttrId, testAdvRevLinkAttrId, testAdvRevLinkToSimpleLinkAttrId],
+                },
+            });
+            await adminUserSdk.SaveLibrary({library: {id: sfTestLibTreeId, label: {en: 'Test'}, attributes: []}});
 
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it

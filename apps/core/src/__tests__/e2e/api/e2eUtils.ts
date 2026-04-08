@@ -180,43 +180,6 @@ export async function importFileGraphQlCall(query: string, filePath: string, she
     }
 }
 
-export async function gqlSaveLibrary(
-    id: string,
-    label: string,
-    additionalAttributes: string[] = [],
-    settings?: string,
-    recordIdentityConf?: {
-        label: string;
-        subLabel?: string;
-        preview?: string;
-        color?: string;
-        treeColorPreview?: string;
-    },
-) {
-    const baseAttributes = ['id', 'modified_by', 'modified_at', 'created_by', 'created_at'];
-    const libAttributes = baseAttributes.concat(additionalAttributes);
-
-    const saveLibRes = await makeGraphQlCall(
-        `mutation {
-        saveLibrary(library: {
-            id: "${id}",
-            label: {en: "${label}"},
-            ${
-                recordIdentityConf
-                    ? `recordIdentityConf: {${Object.entries(recordIdentityConf)
-                          .map(([k, v]) => `${k}: "${v}"`)
-                          .join(', ')}}`
-                    : ''
-            }
-            attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
-            ${settings ? `settings: ${settings}` : ''}
-        }) { id }
-    }`,
-    );
-
-    return saveLibRes.data.data;
-}
-
 export async function gqlSaveApplication(id: string, label: string, endpoint: string) {
     const saveAppRes = await makeGraphQlCall(
         `mutation {

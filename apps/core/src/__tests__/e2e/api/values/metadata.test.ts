@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {gqlCreateRecord, gqlSaveAttribute, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {adminUserSdk, gqlCreateRecord, gqlSaveAttribute, makeGraphQlCall} from '../e2eUtils';
 
 describe('Values Metadata', () => {
     const metadataLibId = 'metadata_test_lib';
@@ -24,7 +24,9 @@ describe('Values Metadata', () => {
             format: AttributeFormats.TEXT,
             metadataFields: [metaAttrId],
         });
-        await gqlSaveLibrary(metadataLibId, 'Test Metadata', [attrWithMetaId]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: metadataLibId, label: {en: 'Test Metadata'}, attributes: [attrWithMetaId]},
+        });
         recordId = await gqlCreateRecord(metadataLibId);
     });
 

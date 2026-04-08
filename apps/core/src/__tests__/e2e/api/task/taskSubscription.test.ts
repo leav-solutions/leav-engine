@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {
+    adminUserSdk,
     e2eAdminUser,
     e2eNonAdminUser,
     gqlCreateRecord,
-    gqlSaveLibrary,
     type IE2EUser,
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
@@ -20,24 +20,23 @@ describe('Task Subscription Permissions', () => {
 
     beforeAll(async () => {
         // Create test library with export profile
-        await gqlSaveLibrary(
-            testLibName,
-            'Test lib for task subscription permissions',
-            [],
-            `{
-                export: {
-                    defaultProfile: "default",
-                    profiles: [
-                        {
-                            label: "default",
-                            columns: [
-                                { columnLabel: "id", attribute: "id" }
-                            ]
-                        }
-                    ]
-                }
-            }`,
-        );
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: testLibName,
+                label: {en: 'Test lib for task subscription permissions'},
+                settings: {
+                    export: {
+                        defaultProfile: 'default',
+                        profiles: [
+                            {
+                                label: 'default',
+                                columns: [{columnLabel: 'id', attribute: 'id'}],
+                            },
+                        ],
+                    },
+                },
+            },
+        });
 
         // Create a record to export
         await gqlCreateRecord(testLibName);

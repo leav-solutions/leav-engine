@@ -14,10 +14,10 @@ import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
 import {
     e2eGuestUser,
+    adminUserSdk,
     e2eNonAdminUser,
     gqlCreateRecord,
     gqlSaveAttribute,
-    gqlSaveLibrary,
     makeGraphQlCall,
 } from '../e2eUtils';
 import {deleteMailpitMessagesBySearch, getMailpitMessage, waitForMailpitSearchMessage} from '../mailpitUtils';
@@ -53,7 +53,9 @@ describe('Discussion', () => {
         }`,
         );
 
-        await gqlSaveLibrary(targetLibId, 'Test discussion lib', [targetLibLabelAttr]);
+        await adminUserSdk.SaveLibrary({
+            library: {id: targetLibId, label: {en: 'Test discussion lib'}, attributes: [targetLibLabelAttr]},
+        });
         targetRecordIdWithoutLabel = await gqlCreateRecord(targetLibId);
         const resCreateRecord = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${targetLibId}", data: {
