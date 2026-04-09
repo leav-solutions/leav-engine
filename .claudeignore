@@ -1,0 +1,13 @@
+# IDE
+.idea/
+.junie/
+.vscode/
+
+# Binaires et dépendances
+.yarn/
+node_modules/
+
+# Artefacts de build
+dist/
+build/
+coverage/

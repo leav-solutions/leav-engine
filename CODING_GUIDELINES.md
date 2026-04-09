@@ -1,6 +1,6 @@
-This document establishes coding standards that should be applied across all projects. All "cosmetic" conventions (tabs vs spaces, brackets position, etc.) are managed by eslint and Prettier and won't be discussed in this document.
+This document establishes coding standards that should be applied across all projects. All "cosmetic" conventions (tabs vs. spaces, brackets’ position, etc.) are managed by eslint and Prettier and won't be discussed in this document.
 
-Current code might not respect all of this conventions. New code should.
+The current code might not respect all of these conventions. New code should.
 
 Apply the boy-scout rule:
 
@@ -91,19 +91,57 @@ function calculateAverage(numbers: number[]): number {
 
 ## Naming
 
--   Always use camelCase to name your functions, variables and files. Database fields can use snake_case.
--   Prefer long names over short but hard to read or understand names. Too much abbreviation might actually make reading more difficult. Rule of thumbs: if you cannot pronounce it out loud, it's probably not a good name.
--   Types names must use PascalCase
--   All types interfaces must start with a `I` (enforced by eslint).
--   Enum names must be uppercase
--   Internal (= not exported) functions are prefixed by a \_
+-   Prefer long names over short but hard to read or understand names. Too many abbreviations might actually make reading more difficult. Rule of thumbs: if you cannot pronounce it out loud, it's probably not a good name.
+-   Internal (= not exported) functions are prefixed by `_`
 -   Folder name: plural if several modules inside
+-   Database fields can use snake_case
+
+### TypeScript
+
+Enforced by ESLint (`.eslintrc.js`, rule `@typescript-eslint/naming-convention`).
+
+| Element           | Convention                                  | Example                    |
+| ----------------- | ------------------------------------------- | -------------------------- |
+| Interface         | `PascalCase` prefixed with `I` (mandatory)  | `ILibrary`, `IAmqpService` |
+| Class             | `PascalCase`                                | `LoggerCallStack`          |
+| Enum              | `PascalCase`                                | `AttributeType`            |
+| Enum member       | `UPPER_CASE`                                | `SIMPLE_LINK`              |
+| Type alias        | `PascalCase`                                | `ValuesOccurrences`        |
+| Exported variable | `PascalCase` \| `camelCase` \| `UPPER_CASE` | —                          |
+| Constant          | `UPPER_CASE`                                | `MASS_SELECTION_ALL`       |
+| Exported function | `camelCase` \| `PascalCase`                 | —                          |
+| Parameter         | `camelCase` (underscore prefix tolerated)   | `_noop`                    |
+
+### Files
+
+| Type                  | Convention                                                     | Example                                    |
+| --------------------- | -------------------------------------------------------------- | ------------------------------------------ |
+| React component       | `PascalCase.tsx`                                               | `EditTreeAttributeValueLine.tsx`           |
+| Hook                  | `useCamelCase.tsx`                                             | `useCountValuesOccurrences.tsx`            |
+| Feature folder        | `kebab-case/`                                                  | `edit-attribute/`, `manage-view-settings/` |
+| Infra/internal folder | `_kebab-case/` (underscore prefix)                             | `_queries/`, `_gqlTypes/`, `_types/`       |
+| GraphQL operation     | `operationNameQuery.graphql` / `operationNameMutation.graphql` | `countValuesOccurrencesQuery.graphql`      |
+| Tests                 | Consistent with local context                                  | `.test.tsx` (libs/ui), `.spec.ts` (core)   |
+
+### Styled components
+
+Include the HTML tag + `Styled` suffix:
+
+```tsx
+const DivStyled = styled.div`...`;
+const KitButtonStyled = styled(KitButton)`...`;
+```
+
+### `console`
+
+-   Forbidden in `apps/core` and backend apps
+-   In frontend apps (`libs/ui`, `apps/admin`, `apps/app-studio`…): only `console.warn`, `console.error` and `console.info` are allowed
 
 ## Tests
 
--   Test Driven Development is encouraged.
+-   Test-Driven Development is encouraged.
 -   A test coverage of 100% is not mandatory. Tests must make sense and give confidence in the code.
--   Snapshot tests must only be used in very specific situation. They're very sensitive and subject to a lot of false-positive. Prefer testing the logic and business rules of your code.
+-   Snapshot tests must only be used in very specific situations. They're very sensitive and subject to a lot of false-positives. Prefer testing the logic and business rules of your code.
 
 ## Types
 
@@ -113,28 +151,28 @@ function calculateAverage(numbers: number[]): number {
 
 # Frontend apps
 
-Following rules apply to frontend development only, specifically on a React app.
+The following rules apply to frontend development only, specifically on a React app.
 
 ## Generalities
 
--   Seperate logic from UI as much as possible. It will make your component easier to read and the logic will be easier to test and reason about.
+-   Separate logic from the UI as much as possible. It will make your component easier to read, and the logic will be easier to test and reason about.
 
 ## Custom Hooks
 
--   Hooks name always start by `use` (eg. `useLang` )
+-   Hooks name always start by `use` (e.g. `useLang` )
 -   Each custom hook must have its own folder, containing these files:
     -   `useMyHook.ts`
     -   `useMyHook.test.ts`
     -   `index.ts` exporting `useMyHook`
 -   Folder is named after hook's name
 -   Each hook must be unit-tested
--   All reusable hooks are in the hooks folder, at projet root
+-   All reusable hooks are in the hooks folder, at the project root
 
 ## Props
 
 -   Props are named in camelCase
--   If prop is a function called on an event (click, submit...), name must start with `on` (eg. `onSubmit`). Function passed to this prop must start with `_handle` (eg. `_handleSubmit`)
--   Don't pass function directly when calling a component. Use a variable instead. It improves readability.
+-   If prop is a function called on an event (click, submit...), name must start with `on` (e.g. `onSubmit`). Function passed to this prop must start with `_handle` (e.g. `_handleSubmit`)
+-   Don't pass a function directly when calling a component. Use a variable instead. It improves readability.
 
 ```jsx
 // Bad
@@ -148,19 +186,19 @@ const _handleSubmit = () => { /* Handle submit... */ };
 ## Testing
 
 -   Use [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) through the wrapper available in `_tests/testUtils.tsx`. It includes automatically all global providers (like Apollo or Redux)
--   Prefer using `getByRole` : it encourages to use accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
+-   Prefer using `getByRole` : it encourages using accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
 -   Use the [Testing Playground](https://testing-playground.com/) to find the best selector for your use case
 -   Use `getByTestId` only on last resort
--   Don't use non-standard roles (eg. `<div role="myOwnRole">...</div>`)
+-   Don't use non-standard roles (e.g. `<div role="myOwnRole">...</div>`)
 -   Small integration tests, testing a whole feature, might make more sense than testing all presentational components individually
 
 ## Folder structure
 
--   One component per file, one folder per component, same name as the component. Containing at least these files
+-   One component per file, one folder per component, the same name as the component. Containing at least these files
     -   `Component.tsx`
     -   `Component.test.tsx`
-    -   `index.ts` exporting `Component`. It allows to directly import the component by its folder name.
--   Folders structure must look similar to components tree at runtime. For example:
+    -   `index.ts` exporting `Component`. It allows directly importing the component by its folder name.
+-   Folders’ structure must look similar to the component tree at runtime. For example:
 
 **Components**: Parent > Child > Grandchild
 
@@ -181,10 +219,97 @@ Parent/
 
 ## Sharing components
 
--   If a component is used in different, unrelated branches within one app it must go to the `shared` folder (eg. `shared/MySharedComponent`)
+-   If a component is used in different, unrelated branches within one app it must go to the `shared` folder (e.g. `shared/MySharedComponent`)
 -   If a component might be used across multiple apps, it belongs to `@leav/ui`
 -   If a component is very generic and might be used across multiple unrelated projects, we'll consider adding it to the design system
 
 ## Styles
 
--   Avoid inline styles. Prefer using `styled-components` with a clear and meaningful name.
+-   **`aristid-ds` is the target design system.** Always prefer its components over creating a custom styled component from scratch.
+-   Use **CSS modules** for any custom styling — it is the new target approach.
+-   `styled-components` exists in legacy code — do not add new ones.
+-   Never use `semantic-ui-react` for new components — migration only.
+-   Avoid inline styles.
+-   Always use design system tokens for colors, spacing, typography, etc. No hardcoded values.
+
+```tsx
+// Bad — styled-components (legacy)
+const DivStyled = styled.div`
+    color: #ff0000;
+    padding: 8px;
+`;
+
+// Good — CSS module
+// styles.module.css
+// .container { color: var(--my-token); }
+import {container} from './styles.module.css';
+<div className={container} />;
+```
+
+# GraphQL
+
+## Operations
+
+-   Place operations in a `_queries/` folder **close to the usage** (e.g. `src/components/Explorer/_queries/`).
+-   The global `src/_queries/` folder is legacy — do not add new operations there.
+-   File naming: `operationNameQuery.graphql` / `operationNameMutation.graphql` (see [Naming](#files)).
+
+## Code generation
+
+-   Run `yarn graphql-generate` after adding or modifying an operation to regenerate `_gqlTypes/index.ts`.
+-   **Never modify `_gqlTypes/index.ts` by hand** — it is fully regenerated on each run.
+-   Each app/lib requiring codegen has an `apolloApiKey.js.example`. Copy it to `apolloApiKey.js` and fill in a valid token (generate one in the admin API keys panel).
+
+## Fragments
+
+Fragments are allowed but should not be over-abstracted. GraphQL's value is fetching exactly what each use case needs — an over-shared fragment forces every consumer to fetch fields it doesn't use.
+
+```graphql
+# Bad — one fragment shared everywhere fetches too much
+fragment FullRecord on Record {
+    id
+    label
+    created_at
+    modified_at
+    created_by {
+        id
+        login
+    }
+    modified_by {
+        id
+        login
+    }
+    active
+}
+
+# Good — each query requests exactly what it needs
+query getRecordLabel($id: ID!) {
+    record(id: $id) {
+        id
+        label
+    }
+}
+```
+
+## `__typename`
+
+Apollo Client adds `__typename` automatically to every query for cache normalization. **Do not add it manually in `.graphql` files.**
+
+The only valid use is as a **union type discriminant** in TypeScript:
+
+```ts
+// Value is IStandardValue | ILinkValue | ITreeValue
+if (value.__typename === 'StandardValue') {
+    // TS narrows to IStandardValue here
+}
+```
+
+## Error handling
+
+Error handling is centralized in the Apollo error link (`useInitApollo`):
+
+-   `401` / `UNAUTHENTICATED` → redirect to login
+-   `graphQLErrors` → logged as `console.warn`
+-   `networkError` → message normalized for display
+
+Do not add GraphQL error handling inside individual components — let the error link handle it.
