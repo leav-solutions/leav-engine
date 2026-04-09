@@ -10,12 +10,16 @@ type UseHistoryFiltersParams = {
     onFilterChange: () => void;
 };
 
+const DEFAULT_FILTERS_VALUES: HistoryFiltersValues = {
+    dates: DEFAULT_DATES,
+    queryId: DEFAULT_QUERY_ID,
+    actions: DEFAULT_ACTIONS,
+    userId: DEFAULT_USER_ID,
+};
+
 export const useHistoryFilters = ({onFilterChange: onFilterChangeCallback}: UseHistoryFiltersParams) => {
     const [filtersValues, setFiltersValues] = useState<HistoryFiltersValues>({
-        dates: DEFAULT_DATES,
-        queryId: DEFAULT_QUERY_ID,
-        actions: DEFAULT_ACTIONS,
-        userId: DEFAULT_USER_ID,
+        ...DEFAULT_FILTERS_VALUES,
     });
 
     const gqlFilters: LogFilterInput = {
@@ -30,9 +34,15 @@ export const useHistoryFilters = ({onFilterChange: onFilterChangeCallback}: UseH
         onFilterChangeCallback();
     };
 
+    const onFilterReset = () => {
+        setFiltersValues({...DEFAULT_FILTERS_VALUES});
+        onFilterChangeCallback();
+    };
+
     return {
         gqlFilters,
         filtersValues,
         onFilterChange,
+        onFilterReset,
     };
 };

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 
-const DEFAULT_CURRENT_PAGE = 1;
+export const DEFAULT_CURRENT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 50;
 
 export const usePagination = () => {

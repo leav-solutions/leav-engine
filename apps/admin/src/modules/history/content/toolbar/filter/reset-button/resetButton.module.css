@@ -1,0 +1,4 @@
+.resetButton {
+    /* Fix alignment issue with the icon */
+    line-height: normal;
+}
