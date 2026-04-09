@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, type Key, memo} from 'react';
+
+import {type ComponentProps, type FunctionComponent, type Key, memo, useCallback, useState} from 'react';
 import {KitPagination, KitTable} from 'aristid-ds';
 import {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import styled from 'styled-components';
@@ -14,7 +15,7 @@ import {useColumnWidth} from './useColumnWidth';
 import {WHO_AM_I_COLUMN} from './_constants';
 import {TableNameCell} from './TableNameCell';
 import cn from 'classnames';
-import {INTERNAL_COL_DEFINE} from 'rc-table';
+import {throttle} from 'lodash';
 
 const tableRowHeight = 56;
 const tableHeaderMinLineHeight = 22;
@@ -64,11 +65,9 @@ const StyledTable = styled(KitTable)`
         .ant-table-cell {
             min-height: ${tableRowHeight}px;
             height: auto !important;
-        }
-
-        /* Align actions to the right of the cell only if another column is present after */
-        td:has(+ td) .ant-table-cell .actions-list {
-            margin-left: auto;
+            .actions-list {
+                margin-left: auto;
+            }
         }
     }
 
@@ -136,32 +135,30 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
         const {getFieldColumnWidth} = useColumnWidth();
 
-        const getColumnProps = (attributeName: string): KitTableColumnType<IItemData> => ({
-            title: () => attributesProperties[attributeName].label,
-            ellipsis: useSmallHeaderSize,
-            width: getFieldColumnWidth(attributesProperties[attributeName]),
-            shouldCellUpdate: (record, prevRecord) =>
-                isMassSelectionAll || record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
-            render: (_, item) => (
-                <TableCell
-                    attributeProperties={attributesProperties[attributeName]}
-                    values={item.propertiesById[attributeName]}
-                />
-            ),
-        });
+        const getColumnProps = (attributeName: string) =>
+            ({
+                title: () => attributesProperties[attributeName].label,
+                ellipsis: useSmallHeaderSize,
+                width: getFieldColumnWidth(attributesProperties[attributeName]),
+                shouldCellUpdate: (record, prevRecord) =>
+                    isMassSelectionAll ||
+                    record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
+                render: (_, item) => (
+                    <TableCell
+                        attributeProperties={attributesProperties[attributeName]}
+                        values={item.propertiesById[attributeName]}
+                    />
+                ),
+            }) satisfies KitTableColumnType<IItemData>;
 
         const columns = attributesToDisplay.map(getColumnProps);
 
-        const whoIAmColumn: KitTableColumnType<IItemData> = {
+        const whoIAmColumn = useWhoAmIColumn({
             ...getColumnProps(WHO_AM_I_COLUMN),
-            title: () => t('explorer.name'),
             fixed: 'left',
             render: (_, item) => <TableNameCell item={item} itemActions={itemActions} />,
             shouldCellUpdate: (record, prevRecord) => isMassSelectionAll || record.whoAmI !== prevRecord.whoAmI,
-        };
-
-        // replace `width` by `min-width` for the whoAmI column definition to prevent selection column to expand when all column have a width defined (which is a native table behaviour).
-        whoIAmColumn[INTERNAL_COL_DEFINE] = {style: {width: 'unset', minWidth: whoIAmColumn.width}};
+        });
 
         const itemActionToUseOnRowClick = itemActions.find(itemAction => itemAction.useItemActionOnRowClick);
 
@@ -235,3 +232,38 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
     },
     arePropsEqual,
 );
+
+// This hook exists to change the width of the whoAmI column dynamically.
+// The aimed result is a whoAmI column that always expand and is the only one to expand if there is horizontal space available, but never shrinks under its specifed width.
+// This behaviour is mostly present to prevent the selection column to expand
+function useWhoAmIColumn(props: KitTableColumnType<IItemData> & {width: number}) {
+    const {t} = useSharedTranslation();
+
+    const [width, setWidth] = useState<number | string>(props.width);
+
+    // initialize observer only once using the useState initializer
+    const [resizeObserver] = useState(
+        () =>
+            new ResizeObserver(
+                throttle(
+                    ([node]: ResizeObserverEntry[]) =>
+                        setWidth(node.contentRect.width < props.width ? props.width : '100%'),
+                    100,
+                ),
+            ),
+    );
+
+    // use the `ref` prop as a callback to retrieve the div element and connect the observer on it
+    const onWhoAmIColumnRender = useCallback((node: HTMLDivElement) => {
+        resizeObserver.disconnect();
+        if (node) {
+            resizeObserver.observe(node);
+        }
+    }, []);
+
+    return {
+        ...props,
+        title: () => <div ref={onWhoAmIColumnRender}>{t('explorer.name')}</div>,
+        width,
+    };
+}
