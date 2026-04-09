@@ -20,3 +20,5 @@ export {useIFrameMessenger} from './useIFrameMessenger/useIFrameMessenger';
 export {useIFrameMessengerClient} from './useIFrameMessengerClient/useIFrameMessengerClient';
 export {IFrameMessengerClient} from './useIFrameMessengerClient/IFrameMessengerClient';
 export {creationPanelSchema} from './useIFrameMessenger/schema';
+export {useIFrameMessengerHandlers} from './useIFrameMessenger/useIFrameMessengerHandlers';
+export {IFrameMessengerProvider} from './useIFrameMessenger/useIFrameMessengerContext';

@@ -11,13 +11,21 @@ import {
     type IUseIFrameMessengerOptions,
     type MessageDispatcher,
 } from './types';
-import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
+import {encodeMessage, decodeMessage, getExposedMethods} from './messageHandlers';
 
 export {IUseIFrameMessengerOptions};
 
 /**
- * This is the core of `useIFrameMessenger`. Should be used for top-level apps, such as **app-studio**.
- * For client apps (apps that need to consume the messenger), please use the `useIFrameMessengerClient`
+ * Core hook of the IFrameMessenger system. Registers a single `window.addEventListener('message')`
+ * and manages a registry of connected child frames.
+ *
+ * **Usage:**
+ * - Top-level apps (e.g. app-studio): use via `IFrameMessengerProvider` which calls this hook once as a singleton.
+ * - Client apps (child iframes): use `useIFrameMessengerClient` instead.
+ *
+ * **`onMessageReceived` option:** when provided, all non-system messages are delegated to this callback
+ * instead of being handled locally. Used by `IFrameMessengerProvider` to route messages to the correct
+ * per-iframe handlers without registering multiple listeners.
  */
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const registry = useRef<Record<string, Window>>({});
@@ -98,7 +106,6 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     };
 
     useEffect(() => {
-        const clientHandlers = initClientHandlers(callCb, {...options, id: selfId.current}, callbacksStore);
         const onMessage = (event: MessageEvent) => {
             const message = decodeMessage(event.data);
             if (message === undefined) {
@@ -132,20 +139,20 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                         dispatch(message, target);
                     }
                     break;
-                case 'get-panel-config':
-                    clientHandlers(
-                        {
-                            ...message,
-                            data: {...message.data, panelId: getPanelIdFromEvent(event)},
-                        },
-                        dispatch,
-                    );
-                    break;
                 default:
                     if (message.type === 'change-language') {
                         setLang(message.language);
-                    } else {
-                        clientHandlers(message, dispatch);
+                    } else if (options?.onMessageReceived) {
+                        // Singleton mode: delegate routing to the Provider (IFrameMessengerProvider).
+                        // The Provider resolves which iframe sent the message and calls the matching handlers.
+                        options.onMessageReceived(
+                            event.source as Window,
+                            message,
+                            getPanelIdFromEvent(event),
+                            dispatch,
+                            callCb,
+                            callbacksStore,
+                        );
                     }
                     break;
             }
