@@ -366,15 +366,77 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export type AutomationRule = {
+  active: Scalars['Boolean']['output'];
+  createdAt: Scalars['Int']['output'];
+  createdBy: Scalars['String']['output'];
+  description?: Maybe<Scalars['SystemTranslation']['output']>;
+  id: Scalars['ID']['output'];
+  label: Scalars['SystemTranslation']['output'];
+  modifiedAt: Scalars['Int']['output'];
+  modifiedBy: Scalars['String']['output'];
+};
+
+
+export type AutomationRuleLabelArgs = {
+  lang?: InputMaybe<Array<AvailableLanguage>>;
+};
+
+export enum AutomationRuleSortableFields {
+  id = 'id'
+}
+
+export type AutomationRulesFiltersInput = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AutomationRulesList = {
+  list: Array<AutomationRule>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type AutomationRulesSortInput = {
+  field: AutomationRuleSortableFields;
+  order?: InputMaybe<SortOrder>;
+};
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignsFraming = {
+  computed?: Maybe<CampaignsFramingComputed>;
+  id: Scalars['String']['output'];
+};
+
+export type CampaignsFramingComputed = {
+  framing?: Maybe<Scalars['JSONObject']['output']>;
+  results?: Maybe<Scalars['JSONObject']['output']>;
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
   libraryId: Scalars['ID']['input'];
+};
+
+export type CreateAutomationRuleInput = {
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  label: Scalars['SystemTranslation']['input'];
 };
 
 export type CreateRecordDataInput = {
@@ -862,6 +924,8 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
@@ -890,6 +954,8 @@ export enum LogAction {
 export type LogApplication = Application | LogUnknownApplicationEntity;
 
 export type LogAttribute = LinkAttribute | LogUnknownEntity | StandardAttribute | TreeAttribute;
+
+export type LogAutomationRule = AutomationRule | LogUnknownAutomationRuleEntity;
 
 export type LogData = {
   asString?: Maybe<Scalars['String']['output']>;
@@ -933,6 +999,7 @@ export type LogTopic = {
   apiKey?: Maybe<Scalars['String']['output']>;
   application?: Maybe<LogApplication>;
   attribute?: Maybe<LogAttribute>;
+  automationRule?: Maybe<LogAutomationRule>;
   filename?: Maybe<Scalars['String']['output']>;
   library?: Maybe<LogLibrary>;
   permission?: Maybe<PermissionTopic>;
@@ -944,6 +1011,7 @@ export type LogTopic = {
 export type LogTopicFilterInput = {
   apiKey?: InputMaybe<Scalars['String']['input']>;
   attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
   library?: InputMaybe<Scalars['String']['input']>;
   permission?: InputMaybe<LogTopicPermissionFilterInput>;
@@ -969,6 +1037,11 @@ export type LogUnknownApplicationEntity = {
   label: Scalars['SystemTranslation']['output'];
 };
 
+export type LogUnknownAutomationRuleEntity = {
+  id: Scalars['ID']['output'];
+  label: Scalars['SystemTranslation']['output'];
+};
+
 export type LogUnknownEntity = {
   id: Scalars['ID']['output'];
   label?: Maybe<Scalars['SystemTranslation']['output']>;
@@ -988,6 +1061,17 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
+export type MoveThematicResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
+};
+
+export type MoveThematicsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematics?: Maybe<Array<MoveThematicResultThematic>>;
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -998,6 +1082,7 @@ export type Mutation = {
   activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean']['output'];
+  createAutomationRule: AutomationRule;
   createDirectory: Record;
   createEmptyRecord: CreateRecordResult;
   createRecord: CreateRecordResult;
@@ -1021,11 +1106,15 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
+  initRenewCampaigns: Scalars['String']['output'];
+  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
+  removeCampaigns: RemoveCampaignsResult;
+  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1045,6 +1134,8 @@ export type Mutation = {
   treeAddElement: TreeNode;
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
+  updateAutomationRule: AutomationRule;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   upload: Array<UploadData>;
 };
@@ -1066,6 +1157,11 @@ export type MutationActivateRecordsArgs = {
 
 export type MutationCancelTaskArgs = {
   taskId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateAutomationRuleArgs = {
+  rule: CreateAutomationRuleInput;
 };
 
 
@@ -1194,6 +1290,21 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationInitRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  fromPacId: Scalars['String']['input'];
+  redirectUrl: Scalars['String']['input'];
+  toPacId: Scalars['String']['input'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicsArgs = {
+  moveThematic: Scalars['Boolean']['input'];
+  thematics: Array<ThematicToRenew>;
+  toCampaignId: Scalars['String']['input'];
+};
+
+
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1212,6 +1323,16 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCampaignsArgs = {
+  campaignsIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationRemoveStructureItemsArgs = {
+  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1317,6 +1438,16 @@ export type MutationTreeMoveElementArgs = {
   order?: InputMaybe<Scalars['Int']['input']>;
   parentTo?: InputMaybe<Scalars['ID']['input']>;
   treeId: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateAutomationRuleArgs = {
+  rule: UpdateAutomationRuleInput;
+};
+
+
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1531,10 +1662,13 @@ export type Query = {
   applications?: Maybe<ApplicationsList>;
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
+  automationRules: AutomationRulesList;
   availableActions?: Maybe<Array<Action>>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
+  framingCampaigns: Array<CampaignsFraming>;
+  framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
@@ -1584,6 +1718,13 @@ export type QueryAttributesArgs = {
 };
 
 
+export type QueryAutomationRulesArgs = {
+  filters?: InputMaybe<AutomationRulesFiltersInput>;
+  pagination?: InputMaybe<Pagination>;
+  sort?: InputMaybe<AutomationRulesSortInput>;
+};
+
+
 export type QueryDoesFileExistAsChildArgs = {
   filename: Scalars['String']['input'];
   parentNode?: InputMaybe<Scalars['ID']['input']>;
@@ -1602,6 +1743,21 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
+};
+
+
+export type QueryFramingCampaignsArgs = {
+  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  pacID: Scalars['String']['input'];
+  searchFilter?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryFramingReportArgs = {
+  content?: InputMaybe<ReportFramingContentInput>;
+  pacID: Scalars['String']['input'];
+  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1946,6 +2102,41 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
+export type RenewCampaignResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  thematic_id: Scalars['ID']['output'];
+};
+
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID']['output'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -1969,6 +2160,7 @@ export type SheetInput = {
 
 export type SmartFilterConf = {
   enable: Scalars['Boolean']['output'];
+  through?: Maybe<Attribute>;
 };
 
 export type SmartFilterConfInput = {
@@ -2167,16 +2359,23 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -2443,6 +2642,13 @@ export enum TreesSortableFields {
   system = 'system'
 }
 
+export type UpdateAutomationRuleInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+};
+
 export type UploadData = {
   record: Record;
   uid: Scalars['String']['output'];
@@ -2672,6 +2878,16 @@ export type ViewsList = {
   totalCount: Scalars['Int']['output'];
 };
 
+export type RemoveCampaignsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
+export type RemoveStructureItemsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
 export type SaveValueBatchResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   values?: Maybe<Array<GenericValue>>;
@@ -2700,14 +2916,6 @@ export type GetLibraryNameQueryVariables = Exact<{
 
 
 export type GetLibraryNameQuery = { libraries?: { list: Array<{ label?: any | null }> } | null };
-
-export type GetRecordIdCardQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']['input']>;
-  libraryId: Scalars['ID']['input'];
-}>;
-
-
-export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null, parentContext?: Array<{ id: string, label?: string | null }> | null } }> } };
 
 export type PanelAttributeCountQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -2981,66 +3189,6 @@ export type GetLibraryNameQueryHookResult = ReturnType<typeof useGetLibraryNameQ
 export type GetLibraryNameLazyQueryHookResult = ReturnType<typeof useGetLibraryNameLazyQuery>;
 export type GetLibraryNameSuspenseQueryHookResult = ReturnType<typeof useGetLibraryNameSuspenseQuery>;
 export type GetLibraryNameQueryResult = Apollo.QueryResult<GetLibraryNameQuery, GetLibraryNameQueryVariables>;
-export const GetRecordIdCardDocument = gql`
-    query GetRecordIdCard($id: String, $libraryId: ID!) {
-  records(
-    library: $libraryId
-    filters: [{field: "id", condition: EQUAL, value: $id}]
-  ) {
-    list {
-      id
-      whoAmI {
-        id
-        color
-        label
-        subLabel
-        preview
-        parentContext {
-          id
-          label
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetRecordIdCardQuery__
- *
- * To run a query within a React component, call `useGetRecordIdCardQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRecordIdCardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRecordIdCardQuery({
- *   variables: {
- *      id: // value for 'id'
- *      libraryId: // value for 'libraryId'
- *   },
- * });
- */
-export function useGetRecordIdCardQuery(baseOptions: Apollo.QueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables> & ({ variables: GetRecordIdCardQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
-      }
-export function useGetRecordIdCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
-        }
-// @ts-ignore
-export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
-export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordIdCardQuery | undefined, GetRecordIdCardQueryVariables>;
-export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
-        }
-export type GetRecordIdCardQueryHookResult = ReturnType<typeof useGetRecordIdCardQuery>;
-export type GetRecordIdCardLazyQueryHookResult = ReturnType<typeof useGetRecordIdCardLazyQuery>;
-export type GetRecordIdCardSuspenseQueryHookResult = ReturnType<typeof useGetRecordIdCardSuspenseQuery>;
-export type GetRecordIdCardQueryResult = Apollo.QueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
 export const PanelAttributeCountDocument = gql`
     query panelAttributeCount($library: ID!, $filters: [RecordFilterInput]) {
   records(library: $library, filters: $filters) {

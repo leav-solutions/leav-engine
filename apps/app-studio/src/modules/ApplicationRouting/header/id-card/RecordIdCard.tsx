@@ -4,8 +4,7 @@
 import {type ComponentProps, type FunctionComponent} from 'react';
 import {KitBreadcrumb, KitIdCard, KitTypography} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
-import {NEW_RECORD_ID} from '@leav/ui';
-import {useGetRecordIdCardQuery} from '../../../../__generated__';
+import {NEW_RECORD_ID, useGetRecordIdCard} from '@leav/ui';
 import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
 import {RecordIdCardDescription} from './RecordIdCardDescription';
 
@@ -15,27 +14,21 @@ export const RecordIdCard: FunctionComponent<{
     avatarSize: 'l' | 'm';
 }> = ({currentRecordId, libraryId, avatarSize}) => {
     const {t} = useTranslation();
-    const {data, loading} = useGetRecordIdCardQuery({
-        variables: {
-            id: currentRecordId,
-            libraryId,
-        },
-        skip: !currentRecordId || !libraryId,
-    });
+    const {data, loading} = useGetRecordIdCard(currentRecordId, libraryId);
 
     // Complete breadcrumb data here
-    const breadcrumbItems = data?.records?.list?.[0]?.whoAmI?.parentContext
+    const breadcrumbItems = data?.whoAmI?.parentContext
         ?.map(pc => ({
             title: pc.label,
         }))
         .reverse();
 
     const avatarProps: ComponentProps<typeof KitIdCard>['avatarProps'] =
-        data?.records?.list?.[0]?.whoAmI?.preview?.small || data?.records?.list?.[0]?.whoAmI?.label
+        data?.whoAmI?.preview?.small || data?.whoAmI?.label
             ? {
                   shape: 'square',
-                  src: data?.records?.list?.[0]?.whoAmI?.preview?.small,
-                  label: data?.records?.list?.[0]?.whoAmI?.label,
+                  src: data?.whoAmI?.preview?.small,
+                  label: data?.whoAmI?.label,
                   size: avatarSize,
               }
             : undefined;
@@ -48,10 +41,7 @@ export const RecordIdCard: FunctionComponent<{
         : {
               title: <KitBreadcrumb items={breadcrumbItems} />,
               description: (
-                  <RecordIdCardDescription
-                      label={data?.records?.list?.[0]?.whoAmI?.label ?? data?.records?.list?.[0]?.id}
-                      sublabel={data?.records?.list?.[0]?.whoAmI?.subLabel}
-                  />
+                  <RecordIdCardDescription label={data?.whoAmI?.label ?? data?.id} sublabel={data?.whoAmI?.subLabel} />
               ),
           };
 
