@@ -7,7 +7,7 @@ import {InitNetwork} from './config/network/InitNetwork';
 import {InitTranslation} from './config/translation/InitTranslation';
 import {InitUser} from './config/user/InitUser';
 import {InitTheme} from './config/theme/InitTheme';
-import {InitNotificationsSubscription} from '@leav/ui';
+import {InitNotificationsSubscription, IFrameMessengerProvider} from '@leav/ui';
 import {InitRouting} from './config/router/InitRouting';
 import {InitApplicationSettingProvider} from './config/application-instance/application-settings/InitApplicationSettingProvider';
 import {InitDocumentTitle} from './config/application-instance/document-title/InitDocumentTitle';
@@ -28,7 +28,9 @@ export const Index: FunctionComponent = () => (
                                 <InitDocumentTitle>
                                     <GuardAccess>
                                         <InitLayout>
-                                            <InitApplicationRouter />
+                                            <IFrameMessengerProvider>
+                                                <InitApplicationRouter />
+                                            </IFrameMessengerProvider>
                                         </InitLayout>
                                     </GuardAccess>
                                 </InitDocumentTitle>

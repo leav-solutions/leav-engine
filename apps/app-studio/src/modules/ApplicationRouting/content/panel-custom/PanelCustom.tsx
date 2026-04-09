@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent, useContext, useEffect} from 'react';
-import {LangContext, useIFrameMessenger} from '@leav/ui';
+import {type FunctionComponent, useContext, useEffect, useRef} from 'react';
+import {LangContext, useIFrameMessengerHandlers} from '@leav/ui';
 import {useOpenNotification} from './message-handlers/useOpenNotification';
 import {useOpenAlert} from './message-handlers/useOpenAlert';
 import {useOpenConfirmModal} from './message-handlers/useOpenConfirmModal';
@@ -22,6 +22,8 @@ interface IPanelCustomProps {
 }
 
 export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title, recordId}) => {
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
     const {navigateToPanel} = useNavigateToPanel();
     const {closePanel} = useClosePanel();
     const {navigateToIframe} = useNavigateToIframe();
@@ -33,30 +35,28 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {getPanelConfig} = useGetPanelConfig();
     const {getURL} = useGetURL();
 
-    //TODO: If two iframe are displayed, functions might be called twice (please fix me!!)
-    const {changeLangInAllFrames} = useIFrameMessenger({
-        handlers: {
-            onModalConfirm: openConfirmModal,
-            onAlert: openAlert,
-            onNotification: openNotification,
-            onNavigateToPanel: navigateToPanel,
-            onNavigateToIframe: navigateToIframe,
-            onOpenFlapPanel: openFlapPanel,
-            onCloseFlapPanel: closeFlapPanel,
-            onClosePanel: closePanel,
-            onGetPanelConfig: getPanelConfig,
-            onGetUrl: getURL,
-        },
+    const {changeLangInFrame} = useIFrameMessengerHandlers(iframeRef, {
+        onModalConfirm: openConfirmModal,
+        onAlert: openAlert,
+        onNotification: openNotification,
+        onNavigateToPanel: navigateToPanel,
+        onNavigateToIframe: navigateToIframe,
+        onOpenFlapPanel: openFlapPanel,
+        onCloseFlapPanel: closeFlapPanel,
+        onClosePanel: closePanel,
+        onGetPanelConfig: getPanelConfig,
+        onGetUrl: getURL,
     });
 
     const {lang} = useContext(LangContext);
 
     useEffect(() => {
-        changeLangInAllFrames(lang[0]);
+        changeLangInFrame(lang[0]);
     }, [lang]);
 
     return (
         <iframe
+            ref={iframeRef}
             className={iframe}
             name={title}
             src={source + (recordId ? '?' + new URLSearchParams({recordId}).toString() : '')}

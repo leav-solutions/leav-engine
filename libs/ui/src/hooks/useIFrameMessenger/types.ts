@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
+import {type MutableRefObject, type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
 import type * as z from 'zod/v4';
 import {type KitNotification} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
@@ -225,9 +225,23 @@ export type Callbacks = Record<string, Record<string, CallbackFunction>>;
 export type MessageToPanelMessageHandler = (data: MessageToPanelMessage['data']['payload']) => void;
 export type AddMessageToPanelMessageHandler = (type: string, handler: MessageToPanelMessageHandler) => void;
 
+export type UnregisterHandlers = () => void;
+export type RegisterHandlers = (
+    iframeRef: RefObject<HTMLIFrameElement>,
+    handlers: IUseIFrameMessengerOptions['handlers'],
+) => UnregisterHandlers;
+
 export interface IUseIFrameMessengerOptions {
     ref?: RefObject<HTMLIFrameElement>;
     id?: string;
+    onMessageReceived?: (
+        senderWindow: Window | null,
+        message: Message,
+        panelId: string | null,
+        dispatch: MessageDispatcher,
+        callCb: CallCbFunction,
+        callbacksStore: MutableRefObject<Callbacks>,
+    ) => void;
     handlers?: {
         onModalConfirm?: (
             data: ModalConfirmMessage['data'],
