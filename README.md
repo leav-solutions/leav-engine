@@ -200,6 +200,17 @@ More infos about profiles can be found [here](https://docs.docker.com/compose/pr
 docker compose build --pull
 ```
 
+# Working with Claude Code
+
+This repository is configured for [Claude Code](https://claude.ai/code).
+
+Each package (`apps/*`, `libs/*`) has its own `CLAUDE.md` alongside the root [CLAUDE.md](./CLAUDE.md).
+These files contain the context Claude needs to assist effectively: architecture decisions, known pitfalls, conventions, and anything not derivable from the code itself.
+
+> When contributing, keep `CLAUDE.md` files up to date — they are the source of truth for AI-assisted development on this project.
+
+---
+
 # Contributing
 
 We're glad you're interested in contributing to LEAV-Engine!
@@ -222,7 +233,7 @@ merge your changes.
 
 This is the monorepo for all LEAV Engine services. It contains all projects related to LEAV Engine, including the core,
 the automate and the front apps.
-All apps are located in the `src/apps` folder. All shared code must live in the `src/libs` folder.
+All apps are located in the `apps/` folder. All shared code must live in the `libs/` folder.
 
 We're using [Yarn Workspaces](https://yarnpkg.com/features/workspaces) to manage dependencies and scripts running across
 all projects.
@@ -287,30 +298,6 @@ Then, in your code, you can import it and use it like a regular package:
 import {mySuperFunc} from '@leav/my_lib';
 
 mySuperFunc();
-```
-
----
-
-## Accessing UIs
-
-A few URLs are handled by the proxy (Traefik) to manage and access your app:
-
--   http://admin.leav.localhost: Admin app
--   http://arango.leav.localhost: Arango DB admin
--   http://core.leav.localhost/graphql: GraphQL playground
--   http://rabbitmq.leav.localhost: RabbitMQ admin
--   http://data-studio.leav.localhost/: Data Studio app
--   http://keycloak.leav.localhost: Keycloak (if [Oidc](#oidc) started)
-
-You might need to add it to your `/etc/hosts` file to access it:
-
-```
-127.0.0.1       admin.leav.localhost
-127.0.0.1       core.leav.localhost
-127.0.0.1       arango.leav.localhost
-127.0.0.1       rabbitmq.leav.localhost
-127.0.0.1       data-studio.leav.localhost
-127.0.0.1       keycloak.leav.localhost
 ```
 
 ---

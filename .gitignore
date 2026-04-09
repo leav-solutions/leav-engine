@@ -1,5 +1,8 @@
 .yarn/*
 
+# Claude Code local instructions (personal, not shared)
+CLAUDE.local.md
+
 !.yarn/releases
 !.yarn/plugins
 !.yarn/sdks
