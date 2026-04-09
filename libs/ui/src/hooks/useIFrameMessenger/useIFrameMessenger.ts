@@ -11,7 +11,7 @@ import {
     type IUseIFrameMessengerOptions,
     type MessageDispatcher,
 } from './types';
-import {encodeMessage, decodeMessage, getExposedMethods} from './messageHandlers';
+import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 
 export {IUseIFrameMessengerOptions};
 
@@ -106,6 +106,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     };
 
     useEffect(() => {
+        const clientHandlers = initClientHandlers(callCb, {...options, id: selfId.current}, callbacksStore);
         const onMessage = (event: MessageEvent) => {
             const message = decodeMessage(event.data);
             if (message === undefined) {
@@ -153,6 +154,14 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                             callCb,
                             callbacksStore,
                         );
+                    } else {
+                        // Legacy / client mode: handle messages directly with local clientHandlers.
+                        // get-panel-config needs panelId enriched before dispatch.
+                        const enrichedMessage =
+                            message.type === 'get-panel-config'
+                                ? {...message, data: {...message.data, panelId: getPanelIdFromEvent(event)}}
+                                : message;
+                        clientHandlers(enrichedMessage, dispatch);
                     }
                     break;
             }
