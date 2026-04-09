@@ -11,6 +11,7 @@ import {UserFilter} from './filter/filter-item/UserFilter';
 import {DEFAULT_ACTIONS, DEFAULT_DATES, DEFAULT_QUERY_ID, DEFAULT_USER_ID} from './constants';
 import {type OnFilterChange, type HistoryFiltersValues} from './types';
 import {RefreshButton} from './refresh-button/RefreshButton';
+import {ResetButton} from './filter/reset-button/ResetButton';
 
 type HistoryToolbarProps = {
     loading: boolean;
@@ -18,9 +19,17 @@ type HistoryToolbarProps = {
     filtersValues: HistoryFiltersValues;
     onFilterChange: OnFilterChange;
     onRefresh: () => void;
+    onFilterReset: () => void;
 };
 
-export const HistoryToolbar = ({loading, total, filtersValues, onFilterChange, onRefresh}: HistoryToolbarProps) => (
+export const HistoryToolbar = ({
+    loading,
+    total,
+    filtersValues,
+    onFilterChange,
+    onRefresh,
+    onFilterReset,
+}: HistoryToolbarProps) => (
     <Toolbar
         extraAlignLeft={
             <>
@@ -50,6 +59,7 @@ export const HistoryToolbar = ({loading, total, filtersValues, onFilterChange, o
                     onChange={value => onFilterChange('queryId', value)}
                     onReset={() => onFilterChange('queryId', DEFAULT_QUERY_ID)}
                 />
+                <ResetButton loading={loading} onReset={onFilterReset} />
             </>
         }
         extraAlignRight={<RefreshButton loading={loading} onRefresh={onRefresh} />}
