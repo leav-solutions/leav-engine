@@ -10,15 +10,17 @@ import {ActionFilter} from './filter/filter-item/ActionFilter';
 import {UserFilter} from './filter/filter-item/UserFilter';
 import {DEFAULT_ACTIONS, DEFAULT_DATES, DEFAULT_QUERY_ID, DEFAULT_USER_ID} from './constants';
 import {type OnFilterChange, type HistoryFiltersValues} from './types';
+import {RefreshButton} from './refresh-button/RefreshButton';
 
 type HistoryToolbarProps = {
     loading: boolean;
     total: number;
     filtersValues: HistoryFiltersValues;
     onFilterChange: OnFilterChange;
+    onRefresh: () => void;
 };
 
-export const HistoryToolbar = ({loading, total, filtersValues, onFilterChange}: HistoryToolbarProps) => (
+export const HistoryToolbar = ({loading, total, filtersValues, onFilterChange, onRefresh}: HistoryToolbarProps) => (
     <Toolbar
         extraAlignLeft={
             <>
@@ -50,8 +52,6 @@ export const HistoryToolbar = ({loading, total, filtersValues, onFilterChange}: 
                 />
             </>
         }
-        // extraAlignRight={
-        //TODO: Add refresh button here (and maybe more buttons if needed)
-        // }
+        extraAlignRight={<RefreshButton loading={loading} onRefresh={onRefresh} />}
     />
 );

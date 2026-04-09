@@ -4,6 +4,7 @@
 import {type LogFilterInput, LogSortableField, SortOrder, useGetHistoryDataQuery} from '../../../../_gqlTypes';
 import {mapLogsToHistoryData} from './mapLogsToHistoryData';
 import useLang from '../../../../hooks/useLang';
+import {DEFAULT_CURRENT_PAGE} from '../../../utils/usePagination';
 
 export type HistoryData = {
     key: string;
@@ -23,11 +24,12 @@ export type HistoryPaginationParams = {
     currentPage: number;
     pageSize: number;
     filters?: LogFilterInput;
+    resetPage: () => void;
 };
 
-export const useGetHistoryData = ({currentPage, pageSize, filters}: HistoryPaginationParams) => {
+export const useGetHistoryData = ({currentPage, pageSize, filters, resetPage}: HistoryPaginationParams) => {
     const {lang} = useLang();
-    const {data, loading, error} = useGetHistoryDataQuery({
+    const {data, loading, error, refetch} = useGetHistoryDataQuery({
         fetchPolicy: 'no-cache',
         variables: {
             filters,
@@ -42,12 +44,32 @@ export const useGetHistoryData = ({currentPage, pageSize, filters}: HistoryPagin
         },
     });
 
+    const refresh = () => {
+        if (currentPage === DEFAULT_CURRENT_PAGE) {
+            refetch({
+                filters,
+                sort: {
+                    field: LogSortableField.time,
+                    order: SortOrder.desc,
+                },
+                pagination: {
+                    limit: pageSize,
+                    offset: 0,
+                },
+            });
+            return;
+        }
+
+        resetPage();
+    };
+
     if (loading || error || !data) {
         return {
             data: [],
             total: 0,
             loading,
             error,
+            refresh,
         };
     }
 
@@ -56,5 +78,6 @@ export const useGetHistoryData = ({currentPage, pageSize, filters}: HistoryPagin
         total: data.logs?.total ?? 0,
         loading,
         error,
+        refresh,
     };
 };

@@ -9,6 +9,7 @@
         "add": "Ajouter",
         "remove": "Supprimer",
         "reset": "Réinitialiser",
+        "refresh": "Rafraîchir",
         "loading": "Chargement...",
         "forbidden_route": "Accès interdit",
         "validation_errors": {

@@ -15,7 +15,12 @@ import {HistoryDetailsModal} from './details/HistoryDetailsModal';
 export const HistoryContent = () => {
     const {currentPage, pageSize, resetPage, handlePageChange, handlePageSizeChange} = usePagination();
     const {gqlFilters, filtersValues, onFilterChange} = useHistoryFilters({onFilterChange: resetPage});
-    const {data, total, loading, error} = useGetHistoryData({currentPage, pageSize, filters: gqlFilters});
+    const {data, total, loading, error, refresh} = useGetHistoryData({
+        currentPage,
+        pageSize,
+        filters: gqlFilters,
+        resetPage,
+    });
     const {isOpen, selectedRecord, openDetails, closeDetails} = useHistoryDetails();
 
     if (error) {
@@ -29,6 +34,7 @@ export const HistoryContent = () => {
                 total={total}
                 filtersValues={filtersValues}
                 onFilterChange={onFilterChange}
+                onRefresh={refresh}
             />
             {loading ? (
                 <KitLoader />

@@ -9,6 +9,7 @@
         "add": "Add",
         "remove": "Remove",
         "reset": "Reset",
+        "refresh": "Refresh",
         "loading": "Loading...",
         "forbidden_route": "Access denied",
         "validation_errors": {
