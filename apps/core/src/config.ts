@@ -163,6 +163,9 @@ export const validateConfig = (conf: IConfig) => {
             excel: {
                 debug: Joi.boolean().required(),
             },
+            jexl: {
+                debug: Joi.boolean().required(),
+            },
         }),
         lang: Joi.object().keys({
             available: Joi.array().items(Joi.string()).required(),

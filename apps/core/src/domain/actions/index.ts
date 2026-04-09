@@ -4,6 +4,7 @@
 export {default as dateRangeToNumberAction} from './dateRangeToNumberAction';
 export {default as encryptAction} from './encryptAction';
 export {default as excelAction} from './excelCalculationAction';
+export {default as jexlCalculationAction} from './jexlCalculationAction';
 export {default as formatDateAction} from './formatDateAction';
 export {default as formatDateRangeAction} from './formatDateRangeAction';
 export {default as formatNumberAction} from './formatNumberAction';

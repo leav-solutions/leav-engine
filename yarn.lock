@@ -4277,6 +4277,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.10.2":
+  version: 7.29.2
+  resolution: "@babel/runtime@npm:7.29.2"
+  checksum: 10/f55ba4052aa0255055b34371a145fbe69c29b37b49eaea14805b095bfb4153701486416e89392fd27ec8abafa53868be86e960b9f8f959fff91f2c8ac2a14b02
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.26.10":
   version: 7.27.0
   resolution: "@babel/runtime@npm:7.27.0"
@@ -10816,6 +10823,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jexl@npm:2.3.4":
+  version: 2.3.4
+  resolution: "@types/jexl@npm:2.3.4"
+  checksum: 10/0ea7b3bd688a1a632e8aa01a9af928bc01e26593d5f9682bf344c2f7c96717b6c3eab427bd2a9368239200712965cad251b42aaa363c82b2d97dad1d21c69763
+  languageName: node
+  linkType: hard
+
 "@types/joi@npm:14.3.4":
   version: 14.3.4
   resolution: "@types/joi@npm:14.3.4"
@@ -14865,6 +14879,7 @@ __metadata:
     "@types/debug": "npm:0.0.31"
     "@types/graphql-upload": "npm:16.0.7"
     "@types/jest-when": "npm:3.5.5"
+    "@types/jexl": "npm:2.3.4"
     "@types/jsonwebtoken": "npm:9.0.10"
     "@types/lodash": "npm:4.17.24"
     "@types/ms": "npm:0.7.34"
@@ -14901,6 +14916,7 @@ __metadata:
     i18next: "npm:22.5.1"
     i18next-fs-backend: "npm:2.6.4"
     jest-when: "npm:3.7.0"
+    jexl-extended: "npm:1.4.2"
     joi: "npm:18.0.2"
     jsonparse: "npm:1.3.1"
     jsonschema: "npm:1.4.1"
@@ -15433,6 +15449,22 @@ __metadata:
   version: 2.2.3
   resolution: "dataloader@npm:2.2.3"
   checksum: 10/83fe6259abe00ae64c5f48252ef59d8e5fcabda9fd4d26685f14a76eeca596bf6f9500d9f22a0094c50c3ea782a0977728f9367e232dfa0fdb5c9d646de279b2
+  languageName: node
+  linkType: hard
+
+"date-fns-tz@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "date-fns-tz@npm:3.2.0"
+  peerDependencies:
+    date-fns: ^3.0.0 || ^4.0.0
+  checksum: 10/8ab4745f00b40381220f0a7a2ec16e217cb629d4018a19047264d289dd260322baa23e19b3ed63c7e553f9ad34bea9dea105391132930a3e141e9a0a53e54af2
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "date-fns@npm:4.1.0"
+  checksum: 10/d5f6e9de5bbc52310f786099e18609289ed5e30af60a71e0646784c8185ddd1d0eebcf7c96b7faaaefc4a8366f3a3a4244d099b6d0866ee2bec80d1361e64342
   languageName: node
   linkType: hard
 
@@ -21246,6 +21278,33 @@ __metadata:
   bin:
     jest: ./bin/jest.js
   checksum: 10/61c9d100750e4354cd7305d1f3ba253ffde4deaf12cb4be4d42d54f2dd5986e383a39c4a8691dbdc3839c69094a52413ed36f1886540ac37b71914a990b810d0
+  languageName: node
+  linkType: hard
+
+"jexl-extended@npm:1.4.2":
+  version: 1.4.2
+  resolution: "jexl-extended@npm:1.4.2"
+  dependencies:
+    date-fns: "npm:^4.1.0"
+    date-fns-tz: "npm:^3.2.0"
+    jexl: "npm:^2.3.0"
+    uuid: "npm:^13.0.0"
+    windows-iana: "npm:^5.1.0"
+  peerDependencies:
+    monaco-editor: ">=0.40.0"
+  peerDependenciesMeta:
+    monaco-editor:
+      optional: true
+  checksum: 10/3579b3eb210989030f9d0be4aaa4ed19e7a41c9735306c096668a50600f561713a7efe545725aa99ea54209f4244b93c670a257e01f1132c862714e137018a1e
+  languageName: node
+  linkType: hard
+
+"jexl@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "jexl@npm:2.3.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.10.2"
+  checksum: 10/39691eec7ccdf077788eb26c61897414d7e4afd0d751de3647dfc614029e84046302ab4b8831088079d4f196095027fd1d7f1c1f0251a0d1043eb4346aefa59a
   languageName: node
   linkType: hard
 
@@ -29289,6 +29348,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "uuid@npm:13.0.0"
+  bin:
+    uuid: dist-node/bin/uuid
+  checksum: 10/2742b24d1e00257e60612572e4d28679423469998cafbaf1fe9f1482e3edf9c40754b31bfdb3d08d71b29239f227a304588f75210b3b48f2609f0673f1feccef
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^8.3.0":
   version: 8.3.2
   resolution: "uuid@npm:8.3.2"
@@ -29910,6 +29978,13 @@ __metadata:
   dependencies:
     string-width: "npm:^1.0.2 || 2 || 3 || 4"
   checksum: 10/d5f8027b9a8255a493a94e4ec1b74a27bff6679d5ffe29316a3215e4712945c84ef73ca4045c7e20ae7d0c72f5f57f296e04a4928e773d4276a2f1222e4c2e99
+  languageName: node
+  linkType: hard
+
+"windows-iana@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "windows-iana@npm:5.1.0"
+  checksum: 10/501a8c1b7e8b13aa8646fc5971b4b9a9d0cdc24401000b516177b28be1395fb56425d356ba37a71280a6be376b41b04464dbcfdf9220c88ff38935cee3f87ac4
   languageName: node
   linkType: hard
 

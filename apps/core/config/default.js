@@ -112,6 +112,9 @@ module.exports = {
         excel: {
             debug: envToBool(process.env.ACTIONS_EXCEL_DEBUG, false),
         },
+        jexl: {
+            debug: envToBool(process.env.ACTIONS_JEXL_DEBUG, false),
+        },
     },
     bugsnag: {
         enable: envToBool(process.env.BUGSNAG_ENABLE, false),

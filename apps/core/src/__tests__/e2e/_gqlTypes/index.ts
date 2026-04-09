@@ -267,6 +267,17 @@ export type AutomationRulesSortInput = {
   order?: InputMaybe<SortOrder>;
 };
 
+export enum AutomationTriggerDefSynchronicity {
+  ASYNC = 'ASYNC',
+  BOTH = 'BOTH',
+  SYNC = 'SYNC'
+}
+
+export enum AutomationTriggerDefTopics {
+  ATTRIBUTE = 'ATTRIBUTE',
+  LIBRARY = 'LIBRARY'
+}
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
@@ -291,8 +302,8 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 };
 
 export type CreateAutomationRuleInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
-  label: Scalars['SystemTranslation']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
   trigger: AutomationRuleTriggerInput;
 };
 
@@ -1070,9 +1081,9 @@ export enum TreesSortableFields {
 
 export type UpdateAutomationRuleInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
-  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
   trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
@@ -1247,21 +1258,21 @@ export type GetAutomationRulesQueryVariables = Exact<{
 }>;
 
 
-export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } }> } };
+export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } }> } };
 
 export type CreateAutomationRuleMutationVariables = Exact<{
   rule: CreateAutomationRuleInput;
 }>;
 
 
-export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: any, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
+export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: string, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
 
 export type UpdateAutomationRuleMutationVariables = Exact<{
   rule: UpdateAutomationRuleInput;
 }>;
 
 
-export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: any, description?: any | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
+export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: string, description?: string | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
 
 export type PostDiscussionCommentMutationVariables = Exact<{
   comment?: InputMaybe<DiscussionCommentInput>;
@@ -1359,6 +1370,20 @@ export type SaveValueBatchMutation = { saveValueBatch: { errors?: Array<{ attrib
       | { payload?: any | null, id_value?: string | null }
     > | null } };
 
+export type SaveValueMutationVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  attributeId: Scalars['ID']['input'];
+  value: ValueInput;
+  recordId: Scalars['ID']['input'];
+}>;
+
+
+export type SaveValueMutation = { saveValue: Array<
+    | { id_value?: string | null, linkPayload?: { id: string } | null }
+    | { id_value?: string | null, treePayload?: { id: string } | null }
+    | { payload?: any | null, id_value?: string | null }
+  > };
+
 export type DeleteValueMutationVariables = Exact<{
   library: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
@@ -1372,6 +1397,15 @@ export type DeleteValueMutation = { deleteValue: Array<
     | { id_value?: string | null, treePayload?: { id: string } | null }
     | { payload?: any | null, id_value?: string | null }
   > };
+
+export type GetRecordByIdStandardValuesPropertyQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['String']['input'];
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type GetRecordByIdStandardValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: any | null }> }> } };
 
 export const SaveValuePayloadFragmentDoc = gql`
     fragment SaveValuePayload on Value {
@@ -1651,6 +1685,23 @@ export const SaveValueBatchDocument = gql`
     ${SaveValuePayloadFragmentDoc}
 ${SaveLinkValuePayloadFragmentDoc}
 ${SaveTreeValuePayloadFragmentDoc}`;
+export const SaveValueDocument = gql`
+    mutation SaveValue($libraryId: ID!, $attributeId: ID!, $value: ValueInput!, $recordId: ID!) {
+  saveValue(
+    library: $libraryId
+    attribute: $attributeId
+    value: $value
+    recordId: $recordId
+  ) {
+    id_value
+    ...SaveValuePayload
+    ...SaveLinkValuePayload
+    ...SaveTreeValuePayload
+  }
+}
+    ${SaveValuePayloadFragmentDoc}
+${SaveLinkValuePayloadFragmentDoc}
+${SaveTreeValuePayloadFragmentDoc}`;
 export const DeleteValueDocument = gql`
     mutation DeleteValue($library: ID!, $recordId: ID!, $attribute: ID!, $value: ValueInput) {
   deleteValue(
@@ -1668,6 +1719,30 @@ export const DeleteValueDocument = gql`
     ${SaveValuePayloadFragmentDoc}
 ${SaveLinkValuePayloadFragmentDoc}
 ${SaveTreeValuePayloadFragmentDoc}`;
+export const GetRecordByIdStandardValuesPropertyDocument = gql`
+    query GetRecordByIdStandardValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      id
+      whoAmI {
+        library {
+          id
+        }
+      }
+      active
+      property(attribute: $attributeId) {
+        ... on Value {
+          id_value
+          payload
+        }
+      }
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 
@@ -1736,8 +1811,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     SaveValueBatch(variables?: SaveValueBatchMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveValueBatchMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SaveValueBatchMutation>({ document: SaveValueBatchDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveValueBatch', 'mutation', variables);
     },
+    SaveValue(variables: SaveValueMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveValueMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SaveValueMutation>({ document: SaveValueDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveValue', 'mutation', variables);
+    },
     DeleteValue(variables: DeleteValueMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteValueMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteValueMutation>({ document: DeleteValueDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteValue', 'mutation', variables);
+    },
+    GetRecordByIdStandardValuesProperty(variables: GetRecordByIdStandardValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdStandardValuesPropertyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdStandardValuesPropertyQuery>({ document: GetRecordByIdStandardValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdStandardValuesProperty', 'query', variables);
     }
   };
 }

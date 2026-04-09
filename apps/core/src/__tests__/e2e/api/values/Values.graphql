@@ -34,11 +34,40 @@ mutation SaveValueBatch($library: ID, $recordId: ID, $values: [ValueBatchInput],
     }
 }
 
+mutation SaveValue($libraryId: ID!, $attributeId: ID!, $value: ValueInput!, $recordId: ID!) {
+    saveValue(library: $libraryId, attribute: $attributeId, value: $value, recordId: $recordId) {
+        id_value
+        ...SaveValuePayload
+        ...SaveLinkValuePayload
+        ...SaveTreeValuePayload
+    }
+}
+
 mutation DeleteValue($library: ID!, $recordId: ID!, $attribute: ID!, $value: ValueInput) {
     deleteValue(library: $library, recordId: $recordId, attribute: $attribute, value: $value) {
         id_value
         ...SaveValuePayload
         ...SaveLinkValuePayload
         ...SaveTreeValuePayload
+    }
+}
+
+query GetRecordByIdStandardValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
+    records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
+        list {
+            id
+            whoAmI {
+                library {
+                    id
+                }
+            }
+            active
+            property(attribute: $attributeId) {
+                ... on Value {
+                    id_value
+                    payload
+                }
+            }
+        }
     }
 }

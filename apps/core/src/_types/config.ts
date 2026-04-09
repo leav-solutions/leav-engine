@@ -97,6 +97,12 @@ export interface IActions {
          */
         debug: boolean;
     };
+    jexl: {
+        /**
+         * Add debug log for each calculation with formula and result or error
+         */
+        debug: boolean;
+    };
 }
 
 export interface IDb {
