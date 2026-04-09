@@ -208,15 +208,46 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleSortableFields {
+  id = 'id'
+}
+
+export type AutomationRulesFiltersInput = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AutomationRulesSortInput = {
+  field: AutomationRuleSortableFields;
+  order?: InputMaybe<SortOrder>;
+};
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
   libraryId: Scalars['ID']['input'];
+};
+
+export type CreateAutomationRuleInput = {
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  label: Scalars['SystemTranslation']['input'];
 };
 
 export type CreateRecordDataInput = {
@@ -417,6 +448,8 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
@@ -474,6 +507,7 @@ export enum LogSortableField {
 export type LogTopicFilterInput = {
   apiKey?: InputMaybe<Scalars['String']['input']>;
   attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
   library?: InputMaybe<Scalars['String']['input']>;
   permission?: InputMaybe<LogTopicPermissionFilterInput>;
@@ -586,6 +620,7 @@ export enum PermissionsActions {
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_list_plugins = 'admin_list_plugins',
+  admin_manage_automation = 'admin_manage_automation',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -708,6 +743,29 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -793,10 +851,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
@@ -877,6 +937,13 @@ export enum TreesSortableFields {
   system = 'system'
 }
 
+export type UpdateAutomationRuleInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+};
+
 export type UploadFiltersInput = {
   uid?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['ID']['input']>;
@@ -953,6 +1020,7 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -967,6 +1035,7 @@ export type ViewInput = {
 };
 
 export type ViewInputPartial = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -1629,6 +1698,14 @@ export type PurgeRecordMutationVariables = Exact<{
 
 
 export type PurgeRecordMutation = { purgeRecord: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } };
+
+export type GetRecordIdCardQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+  libraryId: Scalars['ID']['input'];
+}>;
+
+
+export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: IPreviewScalar | null, parentContext?: Array<{ id: string, label?: string | null }> | null } }> } };
 
 export type CancelTaskMutationVariables = Exact<{
   taskId: Scalars['ID']['input'];
@@ -4639,6 +4716,66 @@ export function usePurgeRecordMutation(baseOptions?: Apollo.MutationHookOptions<
 export type PurgeRecordMutationHookResult = ReturnType<typeof usePurgeRecordMutation>;
 export type PurgeRecordMutationResult = Apollo.MutationResult<PurgeRecordMutation>;
 export type PurgeRecordMutationOptions = Apollo.BaseMutationOptions<PurgeRecordMutation, PurgeRecordMutationVariables>;
+export const GetRecordIdCardDocument = gql`
+    query GetRecordIdCard($id: String, $libraryId: ID!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $id}]
+  ) {
+    list {
+      id
+      whoAmI {
+        id
+        color
+        label
+        subLabel
+        preview
+        parentContext {
+          id
+          label
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRecordIdCardQuery__
+ *
+ * To run a query within a React component, call `useGetRecordIdCardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecordIdCardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecordIdCardQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useGetRecordIdCardQuery(baseOptions: Apollo.QueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables> & ({ variables: GetRecordIdCardQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
+      }
+export function useGetRecordIdCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
+        }
+// @ts-ignore
+export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
+export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordIdCardQuery | undefined, GetRecordIdCardQueryVariables>;
+export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
+        }
+export type GetRecordIdCardQueryHookResult = ReturnType<typeof useGetRecordIdCardQuery>;
+export type GetRecordIdCardLazyQueryHookResult = ReturnType<typeof useGetRecordIdCardLazyQuery>;
+export type GetRecordIdCardSuspenseQueryHookResult = ReturnType<typeof useGetRecordIdCardSuspenseQuery>;
+export type GetRecordIdCardQueryResult = Apollo.QueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
 export const CancelTaskDocument = gql`
     mutation CANCEL_TASK($taskId: ID!) {
   cancelTask(taskId: $taskId)

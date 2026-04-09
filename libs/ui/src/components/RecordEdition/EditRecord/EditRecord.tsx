@@ -12,6 +12,7 @@ import {
     type RecordFormAttributeStandardAttributeFragment,
     type RecordIdentityFragment,
     useActivateNewRecordMutation,
+    useGetRecordIdCardQuery,
 } from '../../../_gqlTypes';
 import {ErrorBoundary} from '../../ErrorBoundary';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -110,6 +111,13 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         variables: {id: [libraryId]},
     });
 
+    const {refetch: refetchRecordIdCardQuery} = useGetRecordIdCardQuery({
+        variables: {
+            id: record?.id ?? '',
+            libraryId,
+        },
+    });
+
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
     const [activateNewRecordMutation] = useActivateNewRecordMutation();
@@ -190,6 +198,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         if (errors == null || errors?.length === 0) {
             if (onCreate) {
                 onCreate(activateNewRecordResult?.data?.activateNewRecord?.record?.whoAmI);
+                refetchRecordIdCardQuery(); // Force apollo to set cache with correct whoAmI instead of empty record
             }
             return;
         }
