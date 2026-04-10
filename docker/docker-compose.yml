@@ -715,7 +715,7 @@ services:
 
   ## Kibana is used for debugging essentially. Uncomment following lines if needed
   kibana:
-    profiles: ["logs"]
+    profiles: ["debug"]
     image: kibana:8.10.2
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
