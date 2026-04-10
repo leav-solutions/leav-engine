@@ -31,6 +31,8 @@ export const useGetHistoryData = ({currentPage, pageSize, filters, resetPage}: H
     const {lang} = useLang();
     const {data, loading, error, refetch} = useGetHistoryDataQuery({
         fetchPolicy: 'no-cache',
+        // Without this option, Apollo only sets `loading = true` on the initial fetch (and not on subsequent refetch calls).
+        notifyOnNetworkStatusChange: true,
         variables: {
             filters,
             sort: {
