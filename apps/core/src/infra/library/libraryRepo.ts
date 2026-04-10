@@ -119,7 +119,7 @@ export default function ({
             const docToInsert = dbUtils.convertToDoc(libData);
 
             // Create new collection for library
-            await dbService.createCollection(docToInsert._key);
+            await dbService.createCollection(docToInsert._key as string);
 
             // Insert in libraries collection
             const libCollc = dbService.db.collection(LIB_COLLECTION_NAME);

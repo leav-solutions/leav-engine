@@ -321,6 +321,9 @@ export const validateConfig = (conf: IConfig) => {
                 otherwise: Joi.string().required().allow(''),
             }),
         }),
+        automation: Joi.object().keys({
+            enable: Joi.boolean().required(),
+        }),
     });
 
     const isValid = configSchema.validate(conf);

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AUTOMATION_RULES_COLLECTION_NAME, type IAutomationRuleRepo} from '../../../infra/automation/automationRuleRepo';
+import {SyncAutomationRuleEventAction} from '../../../_types/automation';
 import {clearAllCollectionDocuments, getAutomationRuleRepo} from './integrationTestRepoUtils';
 
 describe('automationRuleRepo', () => {
@@ -28,6 +29,10 @@ describe('automationRuleRepo', () => {
                     },
                     description: {
                         en: 'This is a test automation rule.',
+                    },
+                    trigger: {
+                        synchronous: false,
+                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
                     },
                 },
                 ctx,
@@ -63,6 +68,10 @@ describe('automationRuleRepo', () => {
                     {
                         label: {
                             en: `Test Automation Rule ${i + 1}`,
+                        },
+                        trigger: {
+                            synchronous: false,
+                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
                         },
                     },
                     ctx,

@@ -260,4 +260,7 @@ module.exports = {
         queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events',
     },
     pluginsPath: envToStringArray(process.env.PLUGINS_PATH),
+    automation: {
+        enable: envToBool(process.env.AUTOMATION_ENABLE, false),
+    },
 };

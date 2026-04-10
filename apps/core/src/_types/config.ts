@@ -51,6 +51,11 @@ export interface IConfig {
     pluginsPath: string[];
     bugsnag: IBugsnag;
     matomo: IMatomo;
+    automation: IAutomation;
+}
+
+export interface IAutomation {
+    enable: boolean;
 }
 
 export enum CoreMode {

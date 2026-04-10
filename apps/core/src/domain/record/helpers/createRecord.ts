@@ -11,6 +11,9 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import {CORE_IN_CREATION_BY, type IRecord} from '../../../_types/record';
 import PermissionError from '../../../errors/PermissionError';
 import {type ICreateRecordValueError} from '../_types';
+import {type IAutomationDomain} from '../../automation/automationDomain';
+import {SyncAutomationRuleEventAction} from '../../../_types/automation';
+import {logger} from '@leav/logger';
 
 export type IPreCreateRecordCallback = () => Promise<ICreateRecordValueError[]>;
 
@@ -20,12 +23,14 @@ interface IDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.infra.record': IRecordRepo;
+    'core.domain.automation': IAutomationDomain;
 }
 
 export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.permission.library': libraryPermissionDomain,
     'core.infra.record': recordRepo,
+    'core.domain.automation': automationDomain,
 }: IDeps): CreateRecordHelper {
     return async ({library, active, ctx}) => {
         const recordData = {
@@ -48,6 +53,18 @@ export default function ({
         }
 
         const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
+
+        await automationDomain.triggerRules(
+            {
+                action: SyncAutomationRuleEventAction.RECORD_INIT,
+                topic: {
+                    library,
+                    // TODO: ajouter le record lorsqu'on aura le match partiel du topic au niveau du getAutomationRules
+                },
+            },
+            true,
+            ctx,
+        );
 
         // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
         // important to send for indexation manager

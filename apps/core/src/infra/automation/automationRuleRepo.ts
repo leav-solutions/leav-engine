@@ -3,7 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
-import {type ICreateAutomationRule, type IAutomationRule, type IUpdateAutomationRule} from '../../_types/automation';
+import {
+    type ICreateAutomationRule,
+    type IAutomationRule,
+    type IUpdateAutomationRule,
+    type SyncAutomationRuleEventAction,
+} from '../../_types/automation';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
@@ -12,24 +17,36 @@ import {type IDbDocument} from '../db/_types';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import dayjs from 'dayjs';
+import {type EventAction, type IDbPayload} from '@leav/utils';
 
 export const AUTOMATION_RULES_COLLECTION_NAME = 'core_automation_rules';
 
 type IAutomationRuleBaseDocument = {
+    // metadata
+    createdAt: number;
+    createdBy: string;
+    modifiedAt: number;
+    modifiedBy: string;
+
     label: ISystemTranslation;
     description?: ISystemTranslation;
     active: boolean;
-    // metadata
-    createdAt?: number;
-    createdBy?: string;
-    modifiedAt?: number;
-    modifiedBy?: string;
+    trigger: {
+        synchronous: boolean;
+        eventAction: EventAction | SyncAutomationRuleEventAction;
+        eventTopic?: IDbPayload['topic'];
+    };
 };
 
 type IAutomationRuleDbDocument = IAutomationRuleBaseDocument & IDbDocument;
 
 export type IAutomationRuleFilterOptionsInRepo = ICoreEntityFilterOptions & {
     active?: boolean;
+    trigger?: {
+        synchronous?: boolean;
+        eventAction?: EventAction | SyncAutomationRuleEventAction;
+        eventTopic?: IDbPayload['topic'];
+    };
 };
 
 export type IGetAutomationRulesParams = IGetCoreEntitiesParams & {
@@ -69,8 +86,8 @@ export default function ({
     const updateDocumentFromAutomationRule = (
         rule: IUpdateAutomationRule,
         ctx: IQueryInfos,
-    ): IAutomationRuleBaseDocument => ({
-        ...dbUtils.convertToDoc(rule),
+    ): Omit<IUpdateAutomationRule, 'id'> & {modifiedAt: number; modifiedBy: string; _key: string} => ({
+        ...(dbUtils.convertToDoc(rule) as Omit<IUpdateAutomationRule, 'id'> & {_key: string}),
         modifiedAt: dayjs().unix(),
         modifiedBy: String(ctx.userId),
     });

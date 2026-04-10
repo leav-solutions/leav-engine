@@ -2,7 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {adminUserId} from '../../../../_constants/users';
-import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
+import {SyncAutomationRuleEventAction} from '../../../../_types/automation';
+import {AutomationRuleEventAction} from '../../_gqlTypes';
+import {adminUserSdk, gqlCreateRecord, nonAdminUserSdk} from '../e2eUtils';
 
 describe('Automation', () => {
     describe('get automation rules', () => {
@@ -26,6 +28,13 @@ describe('Automation', () => {
                         },
                         description: {
                             en: 'This is a test rule',
+                        },
+                        trigger: {
+                            synchronous: false,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'test',
+                            },
                         },
                     },
                 })
@@ -53,6 +62,13 @@ describe('Automation', () => {
                     createdBy: adminUserId,
                     modifiedAt: expect.any(Number),
                     modifiedBy: adminUserId,
+                    trigger: {
+                        synchronous: expect.any(Boolean),
+                        eventAction: expect.any(String),
+                        eventTopic: {
+                            library: expect.any(String),
+                        },
+                    },
                 }),
             ]);
         });
@@ -63,6 +79,10 @@ describe('Automation', () => {
                     rule: {
                         label: {
                             en: 'Test rule',
+                        },
+                        trigger: {
+                            synchronous: false,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
                         },
                     },
                 }),
@@ -83,6 +103,10 @@ describe('Automation', () => {
                         description: {
                             fr: 'regle de test',
                             en: 'This is a test rule',
+                        },
+                        trigger: {
+                            synchronous: false,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
                         },
                     },
                 })
@@ -133,6 +157,55 @@ describe('Automation', () => {
                     },
                 }),
             ).rejects.toThrow('Action forbidden');
+        });
+
+        test('update unknown rule throws UNKNOWN_AUTOMATION_RULE', async () => {
+            await expect(
+                adminUserSdk.UpdateAutomationRule({
+                    rule: {
+                        id: 'nonexistent-rule-id',
+                        label: {en: 'ghost'},
+                    },
+                }),
+            ).rejects.toThrow(/Unknown automation rule/);
+        });
+    });
+
+    describe('record creation triggers automation rules', () => {
+        const testLibraryId = 'automation_trigger_test_lib';
+
+        beforeAll(async () => {
+            await adminUserSdk.SaveLibrary({
+                library: {
+                    id: testLibraryId,
+                    label: {en: 'Automation Trigger Test Library'},
+                },
+            });
+
+            // Create and activate a RECORD_INIT rule for this library
+            const rule = (
+                await adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: {en: 'RECORD_INIT smoke test rule'},
+                        trigger: {
+                            synchronous: true,
+                            eventAction:
+                                SyncAutomationRuleEventAction.RECORD_INIT as unknown as AutomationRuleEventAction,
+                            eventTopic: {library: testLibraryId},
+                        },
+                    },
+                })
+            ).createAutomationRule;
+
+            await adminUserSdk.UpdateAutomationRule({
+                rule: {id: rule.id, active: true},
+            });
+        });
+
+        test('RECORD_INIT rule does not block record creation', async () => {
+            const recordId = await gqlCreateRecord(testLibraryId);
+            expect(recordId).toBeTruthy();
+            expect(typeof recordId).toBe('string');
         });
     });
 });

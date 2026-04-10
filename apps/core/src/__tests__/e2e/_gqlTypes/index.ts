@@ -208,13 +208,56 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleEventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
 export enum AutomationRuleSortableFields {
   id = 'id'
 }
 
+export type AutomationRuleTriggerInput = {
+  eventAction: AutomationRuleEventAction;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous: Scalars['Boolean']['input'];
+};
+
 export type AutomationRulesFiltersInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type AutomationRulesSortInput = {
@@ -227,18 +270,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -248,6 +279,7 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 export type CreateAutomationRuleInput = {
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   label: Scalars['SystemTranslation']['input'];
+  trigger: AutomationRuleTriggerInput;
 };
 
 export type CreateRecordDataInput = {
@@ -290,6 +322,63 @@ export type EmbeddedAttributeInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   validation_regex?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
+export type EventTopicInput = {
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  application?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  permission?: InputMaybe<EventTopicPermissionInput>;
+  profile?: InputMaybe<Scalars['String']['input']>;
+  record?: InputMaybe<EventTopicRecordInput>;
+  tree?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTopicPermissionInput = {
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type EventTopicRecordInput = {
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type FileInput = {
@@ -361,17 +450,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -472,8 +550,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -555,6 +631,12 @@ export enum NotificationLevel {
 export type Pagination = {
   limit: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
+};
+
+export type PartialAutomationRuleTriggerInput = {
+  eventAction?: InputMaybe<AutomationRuleEventAction>;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type PermissionActionInput = {
@@ -756,30 +838,6 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -865,19 +923,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -956,6 +1007,7 @@ export type UpdateAutomationRuleInput = {
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type UploadFiltersInput = {
@@ -1124,24 +1176,26 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { me?: { id: string } | null };
 
-export type GetAutomationRulesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAutomationRulesQueryVariables = Exact<{
+  filters?: InputMaybe<AutomationRulesFiltersInput>;
+}>;
 
 
-export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string }> } };
+export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: any, description?: any | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } }> } };
 
 export type CreateAutomationRuleMutationVariables = Exact<{
   rule: CreateAutomationRuleInput;
 }>;
 
 
-export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: any, modifiedAt: number } };
+export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: any, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
 
 export type UpdateAutomationRuleMutationVariables = Exact<{
   rule: UpdateAutomationRuleInput;
 }>;
 
 
-export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: any, description?: any | null, active: boolean, modifiedAt: number } };
+export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: any, description?: any | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
 
 export type GetRecordsLinkValuesPropertyQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -1334,8 +1388,8 @@ export const MeDocument = gql`
 }
     `;
 export const GetAutomationRulesDocument = gql`
-    query GetAutomationRules {
-  automationRules {
+    query GetAutomationRules($filters: AutomationRulesFiltersInput) {
+  automationRules(filters: $filters) {
     list {
       id
       label
@@ -1345,6 +1399,13 @@ export const GetAutomationRulesDocument = gql`
       createdBy
       modifiedAt
       modifiedBy
+      trigger {
+        synchronous
+        eventAction
+        eventTopic {
+          library
+        }
+      }
     }
   }
 }
@@ -1355,6 +1416,13 @@ export const CreateAutomationRuleDocument = gql`
     id
     label
     modifiedAt
+    trigger {
+      synchronous
+      eventAction
+      eventTopic {
+        library
+      }
+    }
   }
 }
     `;
@@ -1366,6 +1434,13 @@ export const UpdateAutomationRuleDocument = gql`
     description
     active
     modifiedAt
+    trigger {
+      synchronous
+      eventAction
+      eventTopic {
+        library
+      }
+    }
   }
 }
     `;
