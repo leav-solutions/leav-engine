@@ -16,12 +16,7 @@ export const RefreshButton = ({loading, onRefresh}: RefreshButtonProps) => {
 
     return (
         <KitTooltip title={t('admin.refresh')}>
-            <KitButton
-                size="m"
-                icon={<FontAwesomeIcon icon={faRotateRight} />}
-                onClick={onRefresh}
-                disabled={loading}
-            />
+            <KitButton size="m" icon={<FontAwesomeIcon icon={faRotateRight} />} onClick={onRefresh} loading={loading} />
         </KitTooltip>
     );
 };
