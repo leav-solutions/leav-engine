@@ -222,10 +222,10 @@ export default function ({
         if (conf.label) {
             const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
 
-            let labelValues = await valueDomain.getValues({
+            let labelValues = await valueDomain.getRecordFieldValue({
                 library: lib.id,
-                recordId: record.id,
-                attribute: conf.label,
+                record,
+                attributeId: conf.label,
                 options: valuesOptions,
                 ctx,
             });
@@ -284,10 +284,10 @@ export default function ({
         if (conf.color) {
             const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
 
-            let colorValues = await valueDomain.getValues({
+            let colorValues = await valueDomain.getRecordFieldValue({
                 library: lib.id,
-                recordId: record.id,
-                attribute: conf.color,
+                record,
+                attributeId: conf.color,
                 options: valuesOptions,
                 ctx,
             });
@@ -338,21 +338,21 @@ export default function ({
         };
         let subLabel: string | null = null;
         if (conf.subLabel) {
+            if (conf.subLabel === 'id') {
+                return record.id;
+            }
+
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
-            let subLabelValues = await valueDomain.getValues({
+            let subLabelValues = await valueDomain.getRecordFieldValue({
                 library: lib.id,
-                recordId: record.id,
-                attribute: conf.subLabel,
+                record,
+                attributeId: conf.subLabel,
                 options: valuesOptions,
                 ctx,
             });
 
             subLabelValues = getValuesToDisplay(subLabelValues);
-
-            if (conf.subLabel === 'id') {
-                subLabelValues[0].payload = record.id;
-            }
 
             if (!subLabelValues.length) {
                 return null;
@@ -401,10 +401,10 @@ export default function ({
         };
 
         // Get the value of the parent context attribute (must be a SIMPLE_LINK)
-        let parentContextValues = await valueDomain.getValues({
+        let parentContextValues = await valueDomain.getRecordFieldValue({
             library: lib.id,
-            recordId: record.id,
-            attribute: parentContext,
+            record,
+            attributeId: parentContext,
             options: valuesOptions,
             ctx,
         });
@@ -451,10 +451,10 @@ export default function ({
                 return _getAncestorsPromise;
             }
             _getAncestorsPromise = (async () => {
-                const treeValues = await valueDomain.getValues({
+                const treeValues = await valueDomain.getRecordFieldValue({
                     library: lib.id,
-                    recordId: record.id,
-                    attribute: conf.treeColorPreview,
+                    record,
+                    attributeId: conf.treeColorPreview,
                     options: valuesOptions,
                     ctx,
                 });
