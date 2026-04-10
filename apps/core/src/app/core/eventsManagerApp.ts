@@ -6,8 +6,10 @@ import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManage
 import {type IConfig} from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAppModule} from '../../_types/shared';
+import {type IAppGraphQLSchema} from '../../_types/graphql';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
-export type IEventsManagerApp = IAppModule;
+export type IEventsManagerApp = IAppModule & IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -21,6 +23,62 @@ export default function ({
     config,
 }: IDeps): IEventsManagerApp {
     return {
+        async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            return {
+                typeDefs: `
+                    enum EventAction {
+                        ${eventsManagerDomain.getActions().join('\n')}
+                    }
+                    
+                    input EventTopicRecordInput {
+                        id: String!
+                        libraryId: String!
+                    }
+                    
+                    type EventTopicRecord {
+                        id: String!
+                        libraryId: String!
+                    }
+                    
+                    input EventTopicPermissionInput {
+                        id: String!
+                        applyTo: String
+                    }
+                    
+                    type EventTopicPermission {
+                        id: String!
+                        applyTo: String
+                    }
+                    
+                    input EventTopicInput {
+                        record: EventTopicRecordInput
+                        library: String
+                        attribute: String
+                        tree: String
+                        profile: String
+                        permission: EventTopicPermissionInput
+                        automationRule: String
+                        apiKey: String
+                        application: String
+                        filename: String
+                    }
+
+                    type EventTopic {
+                        record: EventTopicRecord
+                        library: String
+                        attribute: String
+                        tree: String
+                        profile: String
+                        permission: EventTopicPermission
+                        automationRule: String
+                        apiKey: String
+                        application: String
+                        filename: String
+                    }
+                `,
+                resolvers: {},
+            };
+        },
         extensionPoints: {
             registerEventActions(actions: string[], prefix: string) {
                 const ctx: IQueryInfos = {

@@ -19,6 +19,7 @@ import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import {type IAutomationDomain} from '../automation/automationDomain';
 import recordDomain, {ATTRIBUTE_ACTIVE, type IRecordDomainDeps} from './recordDomain';
 import {createRecord as createRecordHelper} from './helpers';
 import {type IFormRepo} from '../../infra/form/formRepo';
@@ -67,6 +68,10 @@ describe('RecordDomain', () => {
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendDatabaseEvent: global.__mockPromise(),
+    };
+
+    const mockAutomationDomain: Mockify<IAutomationDomain> = {
+        triggerRules: global.__mockPromise(),
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
@@ -132,6 +137,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
 
@@ -184,6 +190,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
 
@@ -241,6 +248,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
                 'core.utils': mockUtils as IUtils,
             });
@@ -312,6 +320,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
             jest.spyOn(recDomain, 'activateNewRecord');
@@ -375,6 +384,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
                 'core.utils': mockUtils as IUtils,
             });
@@ -439,6 +449,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
             jest.spyOn(recDomain, 'activateNewRecord');
@@ -512,6 +523,7 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
             jest.spyOn(recDomain, 'activateNewRecord');

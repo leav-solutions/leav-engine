@@ -1,5 +1,5 @@
-query GetAutomationRules {
-    automationRules {
+query GetAutomationRules($filters: AutomationRulesFiltersInput) {
+    automationRules(filters: $filters) {
         list {
             id
             label
@@ -9,6 +9,13 @@ query GetAutomationRules {
             createdBy
             modifiedAt
             modifiedBy
+            trigger {
+                synchronous
+                eventAction
+                eventTopic {
+                    library
+                }
+            }
         }
     }
 }
@@ -18,6 +25,13 @@ mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
         id
         label
         modifiedAt
+        trigger {
+            synchronous
+            eventAction
+            eventTopic {
+                library
+            }
+        }
     }
 }
 
@@ -28,5 +42,12 @@ mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
         description
         active
         modifiedAt
+        trigger {
+            synchronous
+            eventAction
+            eventTopic {
+                library
+            }
+        }
     }
 }

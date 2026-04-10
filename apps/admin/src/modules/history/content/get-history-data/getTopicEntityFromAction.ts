@@ -34,11 +34,6 @@ export const getTopicEntityFromAction = (
             };
 
         case LogAction.AUTOMATION_RULE_CREATE:
-            return {
-                id: topic?.automationRule?.id,
-                label: localizedTranslation(topic?.automationRule?.label, lang),
-            };
-
         case LogAction.AUTOMATION_RULE_UPDATE:
             return {
                 id: topic?.automationRule?.id,

@@ -8,13 +8,10 @@ import {type AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import * as path from 'path';
 import {type ILogger} from '@leav/logger';
-import {type IAttribute} from '../../_types/attribute';
 import {type IConfig} from '../../_types/config';
-import {type ILibrary} from '../../_types/library';
 import {type IList, type IPaginationParams, type ISortParams} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IKeyValue} from '../../_types/shared';
-import {type ITree} from '../../_types/tree';
 import {type IDbValueVersion, type IValueVersion} from '../../_types/value';
 import {type ICachesService} from '../cache/cacheService';
 import {type IDbService} from './dbService';
@@ -48,7 +45,7 @@ export interface IFindCoreEntityParams<T extends ICoreEntity, DbDocument extends
 export interface IDbUtils {
     migrate?(depsManager: AwilixContainer): Promise<void>;
     cleanup?<T extends {}>(record: {}): T;
-    convertToDoc?(obj: {}): any;
+    convertToDoc?<T extends {id?: string | string[]}>(obj: T): Omit<T, 'id'> & {_key?: string | string[]};
     isCollectionExists?(name: string): Promise<boolean>;
     findCoreEntity?<T extends ICoreEntity, DbDocument extends IDbDocument = IDbDocument>(
         params: IFindCoreEntityParams<T, DbDocument>,
@@ -221,12 +218,14 @@ export default function ({
          * @param obj
          * @return any   DB document compatible object
          */
-        convertToDoc(obj: {}): any {
+        convertToDoc(obj) {
+            // FIXME: The return type for _key should be "string" only. Update the call to convertToDoc below line 259 accordingly.
             const newObj: any = {...obj};
 
             if (typeof newObj.id !== 'undefined') {
                 newObj._key = newObj.id;
             }
+
             delete newObj.id;
 
             return newObj;

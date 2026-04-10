@@ -5,39 +5,63 @@ import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAutomationDomain} from '../../domain/automation/automationDomain';
-import {type ICreateAutomationRule, type IAutomationRule, type IUpdateAutomationRule} from '../../_types/automation';
+import {
+    type ICreateAutomationRule,
+    type IAutomationRule,
+    type IUpdateAutomationRule,
+    SyncAutomationRuleEventAction,
+} from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 
 export type ICoreImportApp = IGraphqlAppModule;
 
-interface IDeps {
+interface IAutomationAppDeps {
     'core.domain.automation': IAutomationDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
 }
 
 export interface IGetAutomationRulesArgs {
     filters?: ICoreEntityFilterOptions & {
-        id: string;
-        active: boolean;
+        active?: boolean;
+        synchronous?: boolean;
+        eventAction?: IAutomationRule['trigger']['eventAction'];
+        eventTopic?: IAutomationRule['trigger']['eventTopic'];
     };
     pagination?: IPaginationParams;
     sort?: ISortParams;
 }
 
-export default function ({'core.domain.automation': automationDomain}: IDeps): ICoreImportApp {
+export default function ({
+    'core.domain.automation': automationDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+}: IAutomationAppDeps): ICoreImportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
-
+                    enum AutomationRuleEventAction {
+                        ${Object.values(SyncAutomationRuleEventAction).join(' ')}
+                        ${eventsManagerDomain.getActions().join('\n')}
+                    }
+                
+                    type AutomationRuleTrigger {
+                        synchronous: Boolean!,
+                        eventAction: AutomationRuleEventAction!,
+                        eventTopic: EventTopic,
+                    }
+                
                     type AutomationRule {
-                        id: ID!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation!,
-                        description: SystemTranslation,
-                        active: Boolean!,
                         createdAt: Int!,
                         createdBy: String!,
                         modifiedAt: Int!,
                         modifiedBy: String!
+                        
+                        id: ID!,
+                        label(lang: [AvailableLanguage!]): SystemTranslation!,
+                        description: SystemTranslation,
+                        active: Boolean!,
+                        trigger: AutomationRuleTrigger!,
                     }
 
                     type AutomationRulesList {
@@ -54,23 +78,39 @@ export default function ({'core.domain.automation': automationDomain}: IDeps): I
                         order: SortOrder
                     }
 
+                    input PartialAutomationRuleTriggerInput {
+                        synchronous: Boolean,
+                        eventAction: AutomationRuleEventAction,
+                        eventTopic: EventTopicInput,
+                    }
+                    
                     input AutomationRulesFiltersInput {
                         id: ID,
                         label: String,
+                        active: Boolean,
+                        trigger: PartialAutomationRuleTriggerInput
+                    }
+
+                    input AutomationRuleTriggerInput {
+                        synchronous: Boolean!,
+                        eventAction: AutomationRuleEventAction!,
+                        eventTopic: EventTopicInput
                     }
 
                     input CreateAutomationRuleInput {
                         label: SystemTranslation!,
                         description: SystemTranslationOptional,
+                        trigger: AutomationRuleTriggerInput!
                     }
                     
                     input UpdateAutomationRuleInput {
                         id: ID!,
                         label: SystemTranslation,
                         description: SystemTranslationOptional,
-                        active: Boolean
+                        active: Boolean,
+                        trigger: PartialAutomationRuleTriggerInput
                     }
-
+                    
                     extend type Query {
                         automationRules(
                             filters: AutomationRulesFiltersInput,

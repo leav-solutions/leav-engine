@@ -11,14 +11,18 @@ import PermissionError from '../../errors/PermissionError';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
-import {EventAction} from '@leav/utils';
+import {EventAction, type IDbPayload} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {type ArangoError} from 'arangojs/error';
+import {type IConfig} from '../../_types/config';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
         active?: boolean;
+        synchronous?: boolean;
+        eventAction?: IAutomationRule['trigger']['eventAction'];
+        eventTopic?: IAutomationRule['trigger']['eventTopic'];
     };
 }
 
@@ -30,22 +34,32 @@ export interface IAutomationDomain {
         params: IGetAutomationRulesParams;
         ctx: IQueryInfos;
     }): Promise<IList<IAutomationRule>>;
-
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
+    triggerRules(
+        event: {action: IAutomationRule['trigger']['eventAction']; topic?: IAutomationRule['trigger']['eventTopic']},
+        synchronous: boolean,
+        ctx: IQueryInfos,
+    ): Promise<void>;
 }
 
 export interface IAutomationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.automation.rule': IAutomationRuleRepo;
+    config: IConfig;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.automation.rule': automationRuleRepo,
+    config,
 }: IAutomationDomainDeps): IAutomationDomain {
+    if (config.automation.enable === false) {
+        return automationDisabled();
+    }
+
     const _hasManageAutomationPermissionOrThrow = async (ctx: IQueryInfos): Promise<void> => {
         const hasAdminAccessPermission = await adminPermissionDomain.getAdminPermission({
             action: AdminPermissionsActions.MANAGE_AUTOMATION,
@@ -57,6 +71,29 @@ export default function ({
     };
 
     return {
+        async triggerRules(event, synchronous, ctx): Promise<void> {
+            try {
+                const rules = await automationRuleRepo.getAutomationRules(
+                    {
+                        filters: {
+                            active: true,
+                            trigger: {
+                                synchronous,
+                                eventAction: event.action,
+                                eventTopic: event.topic,
+                            },
+                        },
+                    },
+                    ctx,
+                );
+
+                logger.info(
+                    `Triggering ${rules.list.length} automation rules for event action ${event.action} and topic ${JSON.stringify(event.topic)}`,
+                );
+            } catch (error) {
+                logger.error(`Error while executing ${event.action} rules with topic ${event.topic}: ${error.stack}`);
+            }
+        },
         async getAutomationRules({params, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
@@ -118,6 +155,28 @@ export default function ({
             );
 
             return updatedAutomationRule;
+        },
+    };
+}
+
+function automationDisabled(): IAutomationDomain {
+    logger.verbose('Automation system is disabled in the configuration.');
+
+    return {
+        async getAutomationRules(): Promise<IList<IAutomationRule>> {
+            logger.silly('Automation system is disabled. Skipping automation rules retrieval.');
+            return {list: [], totalCount: 0};
+        },
+        async createAutomationRule(): Promise<IAutomationRule> {
+            logger.silly('Automation system is disabled. Skipping automation rule creation.');
+            return null;
+        },
+        async updateAutomationRule(): Promise<IAutomationRule> {
+            logger.silly('Automation system is disabled. Skipping automation rule updatre.');
+            return null;
+        },
+        async triggerRules(): Promise<void> {
+            logger.silly('Automation system is disabled. Skipping rules trigger.');
         },
     };
 }
