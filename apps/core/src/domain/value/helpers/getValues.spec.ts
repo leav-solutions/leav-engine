@@ -5,35 +5,31 @@ import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors'
 import {type IGetDefaultElementHelper} from '../../tree/helpers/getDefaultElement';
 import {type IVersionProfileDomain} from '../../versionProfile/versionProfileDomain';
 import {type IValueRepo} from '../../../infra/value/valueRepo';
-import {type IUtils, type ToAny} from '../../../utils/utils';
+import {type ToAny} from '../../../utils/utils';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IValueVersion} from '../../../_types/value';
 import ValidationError from '../../../errors/ValidationError';
-import {AttributeTypes} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
 import {mockAttrAdvVersionable, mockAttrAdvVersionableSimple} from '../../../__tests__/mocks/attribute';
 import {mockVersionProfile} from '../../../__tests__/mocks/versionProfile';
-import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IValidateHelper} from '../../helpers/validate';
 import getValuesFactory, {type IGetValuesHelperDeps} from './getValues';
+import {AttributeTypes} from '../../../_types/attribute';
+
+const mockRunActionsList = jest.fn().mockImplementation(async ({values}) => values);
 
 const depsBase: ToAny<IGetValuesHelperDeps> = {
-    'core.domain.actionsList': jest.fn(),
     'core.domain.attribute': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
     'core.domain.tree.helpers.elementAncestors': jest.fn(),
     'core.domain.tree.helpers.getDefaultElement': jest.fn(),
     'core.domain.versionProfile': jest.fn(),
+    'core.domain.value.helpers.runActionsList': mockRunActionsList,
     'core.infra.value': jest.fn(),
-    'core.utils': jest.fn(),
 };
 
 describe('getValues', () => {
-    const mockActionsListDomain = {
-        runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val)),
-    } satisfies Mockify<IActionsListDomain>;
-
     const mockValidateHelper: Mockify<IValidateHelper> = {
         validateLibrary: global.__mockPromise(true),
         validateRecord: global.__mockPromise(true),
@@ -46,13 +42,6 @@ describe('getValues', () => {
             saveValue: [{name: 'validate'}],
             getValue: [{name: 'toNumber'}],
         },
-        type: AttributeTypes.SIMPLE,
-    };
-
-    const mockUtilsStandardAttribute: Mockify<IUtils> = {
-        isStandardAttribute: jest.fn(() => true),
-        isLinkAttribute: jest.fn(() => false),
-        isTreeAttribute: jest.fn(() => false),
     };
 
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
@@ -61,10 +50,6 @@ describe('getValues', () => {
             {id: '8', record: {id: 8, library: 'my_lib'}},
             {id: '9', record: {id: 9, library: 'my_lib'}},
         ]),
-    };
-
-    const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
-        getDefaultElement: global.__mockPromise({id: '12345'}),
     };
 
     const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
@@ -91,17 +76,11 @@ describe('getValues', () => {
             getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
         };
 
-        const mockUtils: Mockify<IUtils> = {
-            isStandardAttribute: global.__mockPromise(true),
-        };
-
         const getValues = getValuesFactory({
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-            'core.utils': mockUtils as IUtils,
         });
 
         const resValue = await getValues({
@@ -132,17 +111,12 @@ describe('getValues', () => {
         const mockAttrDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple),
         };
-        const mockUtils: Mockify<IUtils> = {
-            isStandardAttribute: global.__mockPromise(true),
-        };
 
         const getValues = getValuesFactory({
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-            'core.utils': mockUtils as IUtils,
         });
 
         const resValue = await getValues({
@@ -185,11 +159,9 @@ describe('getValues', () => {
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
             'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
-            'core.utils': mockUtilsStandardAttribute as IUtils,
         });
 
         const version: IValueVersion = {my_tree: '9'};
@@ -254,13 +226,11 @@ describe('getValues', () => {
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperForRoot as IElementAncestorsHelper,
             'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
             'core.domain.tree.helpers.getDefaultElement':
                 mockGetDefaultElementHelperForRoot as IGetDefaultElementHelper,
-            'core.utils': mockUtilsStandardAttribute as IUtils,
         });
 
         const resValue = await getValues({
@@ -310,13 +280,11 @@ describe('getValues', () => {
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
             'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
             'core.domain.tree.helpers.getDefaultElement':
                 mockGetDefaultElementHelperNoElement as IGetDefaultElementHelper,
-            'core.utils': mockUtilsStandardAttribute as IUtils,
         });
 
         const resValue = await getValues({
@@ -415,12 +383,10 @@ describe('getValues', () => {
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree.helpers.elementAncestors':
                 mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
             'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain,
-            'core.utils': mockUtilsStandardAttribute as IUtils,
         });
 
         const version: IValueVersion = {
@@ -472,19 +438,13 @@ describe('getValues', () => {
             getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable),
         };
 
-        const mockUtils: Mockify<IUtils> = {
-            isStandardAttribute: jest.fn().mockReturnValue(true),
-        };
-
         const getValues = getValuesFactory({
             ...depsBase,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.infra.value': mockValRepo as IValueRepo,
-            'core.domain.actionsList': mockActionsListDomain as any,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
             'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
-            'core.utils': mockUtils as IUtils,
         });
 
         const version: IValueVersion = {my_tree: '9'};

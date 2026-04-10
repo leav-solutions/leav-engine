@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
-import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IRecordAttributePermissionDomain} from '../../permission/recordAttributePermissionDomain';
 import {type GetValuesHelper} from './getValues';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
-import {type IUtils, type ToAny} from '../../../utils/utils';
-import {AttributeTypes} from '../../../_types/attribute';
+import {type ToAny} from '../../../utils/utils';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IValue} from '../../../_types/value';
 import {mockAttrAdv, mockAttrSimple, mockAttrSimpleLink} from '../../../__tests__/mocks/attribute';
 import {mockRecord} from '../../../__tests__/mocks/record';
 import getRecordFieldValueFactory from './getRecordFieldValue';
+import {type RunActionsListHelper} from './runActionsList';
+import {type FormatValueHelper} from './formatValue';
 
 const ctx: IQueryInfos = {
     userId: '1',
@@ -46,19 +46,19 @@ const mockRecordAttributePermissionDomain: Mockify<IRecordAttributePermissionDom
 
 const mockGetValuesHelper: Mockify<GetValuesHelper> = global.__mockPromise([]);
 
-const mockActionsListDomain: Mockify<IActionsListDomain> = {
-    runActionsList: jest.fn(async (_, values) => values),
-};
+const mockRunActionsListHelper: RunActionsListHelper = jest.fn(async ({values}) => values);
+
+const mockFormatValueHelper: FormatValueHelper = jest.fn(async ({attribute, value}) => ({
+    ...value,
+    attribute: attribute.id,
+    payload:
+        typeof value.payload === 'object' && value.payload !== null
+            ? {...value.payload, library: value.payload.library ?? attribute.linked_library}
+            : value.payload,
+}));
 
 const mockRecordRepo: Mockify<IRecordRepo> = {
     getRecord: global.__mockPromise(mockRecord),
-};
-
-const mockUtils: Mockify<IUtils> = {
-    isStandardAttribute: jest.fn(attr => attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.ADVANCED),
-    isLinkAttribute: jest.fn(
-        attr => attr.type === AttributeTypes.SIMPLE_LINK || attr.type === AttributeTypes.ADVANCED_LINK,
-    ),
 };
 
 const mockLogger: Mockify<ILogger> = {
@@ -76,9 +76,9 @@ const makeHelper = (overrides: Partial<ToAny<Parameters<typeof getRecordFieldVal
         'core.domain.permission.recordAttribute':
             mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
         'core.domain.value.helpers.getValues': mockGetValuesHelper as unknown as GetValuesHelper,
-        'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+        'core.domain.value.helpers.runActionsList': mockRunActionsListHelper,
+        'core.domain.value.helpers.formatValue': mockFormatValueHelper,
         'core.infra.record': mockRecordRepo as IRecordRepo,
-        'core.utils': mockUtils as IUtils,
         'core.utils.logger': mockLogger as ILogger,
         ...overrides,
     });
@@ -191,15 +191,16 @@ describe('getRecordFieldValue', () => {
             getRecord: global.__mockPromise(linkedRecord),
         };
 
-        const mockLinkUtils: Mockify<IUtils> = {
-            isStandardAttribute: jest.fn().mockReturnValue(false),
-            isLinkAttribute: jest.fn().mockReturnValue(true),
-        };
+        const mockLinkFormatValue: FormatValueHelper = jest.fn(async ({attribute, value}) => ({
+            ...value,
+            attribute: attribute.id,
+            payload: {...(value.payload as object), library: attribute.linked_library},
+        }));
 
         const getRecordFieldValue = makeHelper({
             'core.domain.attribute': mockLinkAttrDomain as IAttributeDomain,
             'core.infra.record': mockLinkRecordRepo as IRecordRepo,
-            'core.utils': mockLinkUtils as IUtils,
+            'core.domain.value.helpers.formatValue': mockLinkFormatValue,
         });
 
         const record = {...mockRecordWithValues, link_attr: '42'};
@@ -228,15 +229,9 @@ describe('getRecordFieldValue', () => {
             getRecord: global.__mockPromise(null),
         };
 
-        const mockNoLinkUtils: Mockify<IUtils> = {
-            isStandardAttribute: jest.fn().mockReturnValue(false),
-            isLinkAttribute: jest.fn().mockReturnValue(false),
-        };
-
         const getRecordFieldValue = makeHelper({
             'core.domain.attribute': mockLinkAttrDomain as IAttributeDomain,
             'core.infra.record': mockNotFoundRecordRepo as IRecordRepo,
-            'core.utils': mockNoLinkUtils as IUtils,
         });
 
         const record = {...mockRecordWithValues, link_attr: '99999'};
@@ -261,13 +256,13 @@ describe('getRecordFieldValue', () => {
             }),
         };
 
-        const mockActionsListWithResult: Mockify<IActionsListDomain> = {
-            runActionsList: jest.fn().mockResolvedValue([{payload: 'formatted_value', raw_payload: 'raw'}]),
-        };
+        const mockRunActionsListWithResult: RunActionsListHelper = jest
+            .fn()
+            .mockResolvedValue([{payload: 'formatted_value', raw_payload: 'raw'}]);
 
         const getRecordFieldValue = makeHelper({
             'core.domain.attribute': mockAttrWithActions as IAttributeDomain,
-            'core.domain.actionsList': mockActionsListWithResult as IActionsListDomain,
+            'core.domain.value.helpers.runActionsList': mockRunActionsListWithResult,
         });
 
         const record = {...mockRecordWithValues, simple_attr: 'raw'};
@@ -278,7 +273,7 @@ describe('getRecordFieldValue', () => {
             ctx,
         });
 
-        expect(mockActionsListWithResult.runActionsList).toHaveBeenCalled();
+        expect(mockRunActionsListWithResult).toHaveBeenCalled();
         expect(values[0].payload).toBe('formatted_value');
     });
 });

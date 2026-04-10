@@ -1,20 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IValidateHelper} from '../../helpers/validate';
 import {type IGetDefaultElementHelper} from '../../tree/helpers/getDefaultElement';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {type IVersionProfileDomain} from '../../versionProfile/versionProfileDomain';
 import {type IValueRepo} from '../../../infra/value/valueRepo';
-import {type IUtils} from '../../../utils/utils';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {ValueVersionMode, type IAttribute} from '../../../_types/attribute';
-import {ErrorTypes} from '../../../_types/errors';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IFindValueTree, type IValue, type IValuesOptions} from '../../../_types/value';
 import findValue from './findValue';
+import {type RunActionsListHelper} from './runActionsList';
 
 export type GetValuesHelper = (params: {
     library: string;
@@ -25,55 +23,24 @@ export type GetValuesHelper = (params: {
 }) => Promise<IValue[]>;
 
 export interface IGetValuesHelperDeps {
-    'core.domain.actionsList': IActionsListDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.versionProfile': IVersionProfileDomain;
+    'core.domain.value.helpers.runActionsList': RunActionsListHelper;
     'core.infra.value': IValueRepo;
-    'core.utils': IUtils;
 }
 
 export default function ({
-    'core.domain.actionsList': actionsListDomain,
     'core.domain.attribute': attributeDomain,
     'core.domain.helpers.validate': validate,
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.versionProfile': versionProfileDomain,
+    'core.domain.value.helpers.runActionsList': runActionsListHelper,
     'core.infra.value': valueRepo,
-    'core.utils': utils,
 }: IGetValuesHelperDeps): GetValuesHelper {
-    const _runActionsList = async ({listName, values, attribute: attrProps, record, library, ctx}) => {
-        const valuesToProcess = utils.isStandardAttribute(attrProps)
-            ? values.map(value => ({...value, raw_payload: value.payload}))
-            : values;
-
-        try {
-            const processedValues =
-                !!attrProps.actions_list?.[listName] && values !== null
-                    ? await actionsListDomain.runActionsList(attrProps.actions_list[listName], valuesToProcess, {
-                          ...ctx,
-                          attribute: attrProps,
-                          recordId: record?.id,
-                          library,
-                          actionEvent: listName,
-                      })
-                    : valuesToProcess;
-            return processedValues;
-        } catch (e) {
-            if (e.type === ErrorTypes.VALIDATION_ERROR) {
-                e.context = {
-                    attribute: attrProps.id,
-                    values,
-                    recordId: record?.id,
-                };
-            }
-            throw e;
-        }
-    };
-
     return async ({library, recordId, attribute, options, ctx}) => {
         await validate.validateLibrary(library, ctx);
         await validate.validateRecord(library, recordId, ctx);
@@ -150,7 +117,7 @@ export default function ({
 
         return options?.skipActions
             ? values
-            : _runActionsList({
+            : runActionsListHelper({
                   listName: ActionsListEvents.GET_VALUE,
                   values,
                   attribute: attr,

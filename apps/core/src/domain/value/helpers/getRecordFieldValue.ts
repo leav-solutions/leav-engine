@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ILogger} from '@leav/logger';
-import {type IActionsListDomain} from '../../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IRecordAttributePermissionDomain} from '../../permission/recordAttributePermissionDomain';
 import {type GetValuesHelper} from './getValues';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
-import {type IUtils} from '../../../utils/utils';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
-import {Errors, ErrorTypes} from '../../../_types/errors';
+import {Errors} from '../../../_types/errors';
 import {RecordAttributePermissionsActions} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IRecord} from '../../../_types/record';
 import {type IStandardValue, type IValue, type IValuesOptions} from '../../../_types/value';
 import ValidationError from '../../../errors/ValidationError';
+import {type FormatValueHelper} from './formatValue';
+import {type RunActionsListHelper} from './runActionsList';
 
 export type GetRecordFieldValueHelper = (params: {
     library: string;
@@ -29,9 +29,9 @@ export interface IGetRecordFieldValueHelperDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.value.helpers.getValues': GetValuesHelper;
-    'core.domain.actionsList': IActionsListDomain;
+    'core.domain.value.helpers.runActionsList': RunActionsListHelper;
+    'core.domain.value.helpers.formatValue': FormatValueHelper;
     'core.infra.record': IRecordRepo;
-    'core.utils': IUtils;
     'core.utils.logger': ILogger;
 }
 
@@ -39,108 +39,11 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.value.helpers.getValues': getValuesHelper,
-    'core.domain.actionsList': actionsListDomain,
+    'core.domain.value.helpers.runActionsList': runActionsListHelper,
+    'core.domain.value.helpers.formatValue': formatValueHelper,
     'core.infra.record': recordRepo,
-    'core.utils': utils,
     'core.utils.logger': logger,
 }: IGetRecordFieldValueHelperDeps): GetRecordFieldValueHelper {
-    const _runActionsList = async ({
-        listName,
-        values,
-        attribute,
-        record,
-        library,
-        ctx,
-    }: {
-        listName: ActionsListEvents;
-        values: IValue[];
-        attribute: IAttribute;
-        record?: IRecord;
-        library: string;
-        ctx: IQueryInfos;
-    }): Promise<IValue[]> => {
-        const valuesToProcess = utils.isStandardAttribute(attribute)
-            ? values.map(value => ({...value, raw_payload: value.payload}))
-            : values;
-
-        try {
-            const processedValues =
-                !!attribute.actions_list?.[listName] && values !== null
-                    ? await actionsListDomain.runActionsList(attribute.actions_list[listName], valuesToProcess, {
-                          ...ctx,
-                          attribute,
-                          recordId: record?.id,
-                          library,
-                          actionEvent: listName,
-                      })
-                    : valuesToProcess;
-            return processedValues;
-        } catch (e) {
-            if (e.type === ErrorTypes.VALIDATION_ERROR) {
-                e.context = {
-                    attribute: attribute.id,
-                    values,
-                    recordId: record?.id,
-                };
-            }
-            throw e;
-        }
-    };
-
-    const _formatValue = async ({
-        attribute,
-        value,
-        ctx,
-    }: {
-        attribute: IAttribute;
-        value: IValue;
-        ctx: IQueryInfos;
-    }): Promise<IValue> => {
-        let processedValue = {...value}; // Don't mutate given value
-
-        if (utils.isLinkAttribute(attribute)) {
-            const linkValue = processedValue.payload
-                ? {...processedValue.payload, library: processedValue.payload.library ?? attribute.linked_library}
-                : null;
-            processedValue = {...value, payload: linkValue};
-        }
-
-        processedValue.attribute = attribute.id;
-
-        // Format metadata values as well
-        if ((attribute.metadata_fields ?? []).length) {
-            const metadataValuesFormatted = await attribute.metadata_fields.reduce(
-                async (allValuesProm, metadataField) => {
-                    const allValues = await allValuesProm;
-                    try {
-                        const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                            id: metadataField,
-                            ctx,
-                        });
-
-                        allValues[metadataField] =
-                            typeof value.metadata?.[metadataField] !== 'undefined'
-                                ? await _formatValue({
-                                      attribute: metadataAttributeProps,
-                                      value: {payload: value.metadata?.[metadataField]},
-                                      ctx,
-                                  })
-                                : null;
-                    } catch (err) {
-                        logger.error(`Error formatting metadata field ${metadataField} : ${err.stack}`);
-                        allValues[metadataField] = null;
-                    }
-
-                    return allValues;
-                },
-                Promise.resolve({}),
-            );
-            processedValue.metadata = metadataValuesFormatted;
-        }
-
-        return processedValue;
-    };
-
     const _extractRecordValue = async (
         record: IRecord,
         attribute: IAttribute,
@@ -170,7 +73,7 @@ export default function ({
                 values = [{payload: record[attribute.id]}];
             }
 
-            return _runActionsList({
+            return runActionsListHelper({
                 listName: ActionsListEvents.GET_VALUE,
                 values,
                 attribute,
@@ -223,7 +126,7 @@ export default function ({
 
         let formattedValues = await Promise.all(
             values.map(async v => {
-                const formattedValue = await _formatValue({
+                const formattedValue = await formatValueHelper({
                     attribute: attrProps,
                     value: v,
                     ctx,
@@ -240,7 +143,7 @@ export default function ({
                             ctx,
                         });
 
-                        const computedMetadata = await _runActionsList({
+                        const computedMetadata = await runActionsListHelper({
                             listName: ActionsListEvents.GET_VALUE,
                             attribute: metadataAttributeProps,
                             library,

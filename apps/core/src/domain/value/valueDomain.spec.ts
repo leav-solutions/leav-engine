@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
-import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
 import {type IGetDefaultElementHelper} from '../tree/helpers/getDefaultElement';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
@@ -62,6 +61,25 @@ const depsBase: ToAny<IValueDomainDeps> = {
     'core.domain.record.helpers.findRecords': jest.fn(),
     'core.domain.value.helpers.getRecordFieldValue': jest.fn(),
     'core.domain.value.helpers.getValues': jest.fn(),
+    'core.domain.value.helpers.runActionsList': jest.fn(async ({values}) =>
+        values.map((v: any) => ({...v, raw_payload: v.payload})),
+    ),
+    'core.domain.value.helpers.formatValue': jest.fn(async ({attribute, value}) => {
+        const processedValue: any = {...value, attribute: attribute.id};
+        // Mimic real behavior: wrap metadata values in {payload: ...}
+        if (attribute.metadata_fields?.length && processedValue.metadata) {
+            const formattedMeta: Record<string, any> = {};
+            for (const field of attribute.metadata_fields) {
+                if (typeof processedValue.metadata[field] !== 'undefined') {
+                    formattedMeta[field] = {payload: processedValue.metadata[field], attribute: field};
+                } else {
+                    formattedMeta[field] = null;
+                }
+            }
+            processedValue.metadata = formattedMeta;
+        }
+        return processedValue;
+    }),
 };
 
 describe('ValueDomain', () => {
@@ -117,32 +135,6 @@ describe('ValueDomain', () => {
         isStandardAttribute: jest.fn(() => true),
         isLinkAttribute: jest.fn(() => false),
         isTreeAttribute: jest.fn(() => false),
-    };
-
-    const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
-        getCachedElementAncestors: global.__mockPromise([
-            {
-                id: '7',
-                record: {
-                    id: 7,
-                    library: 'my_lib',
-                },
-            },
-            {
-                id: '8',
-                record: {
-                    id: 8,
-                    library: 'my_lib',
-                },
-            },
-            {
-                id: '9',
-                record: {
-                    id: 9,
-                    library: 'my_lib',
-                },
-            },
-        ]),
     };
 
     const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
@@ -215,7 +207,7 @@ describe('ValueDomain', () => {
             });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
-            expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(2);
+            expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(1); // saveValue action only
             expect(savedValue[0]).toMatchObject(savedValueData);
         });
 
@@ -1070,6 +1062,8 @@ describe('ValueDomain', () => {
                     getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
+                const mockRunActionsListHelper = jest.fn(async ({values}) => values);
+
                 const valDomain = valueDomain({
                     ...depsBase,
                     config: mockConfig as Config.IConfig,
@@ -1086,6 +1080,7 @@ describe('ValueDomain', () => {
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils,
                     'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                    'core.domain.value.helpers.runActionsList': mockRunActionsListHelper,
                 });
 
                 await valDomain.saveValue({
@@ -1096,8 +1091,12 @@ describe('ValueDomain', () => {
                     ctx,
                 });
 
-                expect(mockActionsListDomain.runActionsList).toHaveBeenCalled();
-                expect(mockActionsListDomain.runActionsList.mock.calls[0][2].attribute.id).toBe('meta_attribute');
+                expect(mockRunActionsListHelper).toHaveBeenCalled();
+                // calls[0] is for the main attribute, calls[1] is for the metadata field
+                const metaCall = mockRunActionsListHelper.mock.calls.find(
+                    ([params]) => params.attribute.id === 'meta_attribute',
+                );
+                expect(metaCall).toBeDefined();
             });
 
             test('Should throw with metafield specified if actions list throws', async () => {
