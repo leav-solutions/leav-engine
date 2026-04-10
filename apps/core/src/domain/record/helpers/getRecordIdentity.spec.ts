@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IValidateHelper} from '../../helpers/validate';
-import {type IValueDomain} from '../../value/valueDomain';
 import {type i18n} from 'i18next';
 import {type ICachesService} from '../../../infra/cache/cacheService';
 import {type IUtils, type ToAny} from '../../../utils/utils';
@@ -15,6 +14,7 @@ import {mockRecord} from '../../../__tests__/mocks/record';
 import {mockTranslatorWithOptions} from '../../../__tests__/mocks/translator';
 import {mockStandardValue} from '../../../__tests__/mocks/value';
 import getRecordIdentityFactory, {type GetRecordIdentityHelper} from './getRecordIdentity';
+import {type GetRecordFieldValueHelper} from '../../value/helpers/getRecordFieldValue';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
@@ -74,7 +74,7 @@ const makeHelper = (
     getRecordIdentityFactory({
         config: {} as Config.IConfig,
         'core.domain.attribute': jest.fn() as unknown as IAttributeDomain,
-        'core.domain.value': {getRecordFieldValue: jest.fn()} as unknown as IValueDomain,
+        'core.domain.value.helpers.getRecordFieldValue': jest.fn() as unknown as GetRecordFieldValueHelper,
         'core.domain.helpers.validate': jest.fn() as unknown as IValidateHelper,
         'core.domain.helpers.getCoreEntityById': jest.fn(),
         'core.domain.tree.helpers.elementAncestors': jest.fn() as any,
@@ -113,8 +113,9 @@ describe('getRecordIdentity', () => {
             },
         };
 
-        const mockValDomain: Mockify<IValueDomain> = {
-            getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+            .fn()
+            .mockImplementation(({attributeId}) => {
                 if (attributeId === 'label_attr') {
                     return Promise.resolve([{payload: 'Label Value'}]);
                 }
@@ -148,8 +149,7 @@ describe('getRecordIdentity', () => {
                     ]);
                 }
                 return Promise.resolve([]);
-            }),
-        };
+            });
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: jest
@@ -179,7 +179,7 @@ describe('getRecordIdentity', () => {
         };
 
         const helper = makeHelper({
-            'core.domain.value': mockValDomain as IValueDomain,
+            'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
             'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
             'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
@@ -234,8 +234,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'label_attr') {
                         return Promise.resolve([
                             {payload: null},
@@ -244,7 +244,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -255,7 +255,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -287,8 +287,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'label_attr') {
                         return Promise.resolve([
                             {payload: 'Override Label Value', isInherited: false},
@@ -297,7 +297,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -308,7 +308,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -342,8 +342,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'subLabel_attr') {
                         return Promise.resolve([
                             {payload: null},
@@ -352,7 +352,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -363,7 +363,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -395,8 +395,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'subLabel_attr') {
                         return Promise.resolve([
                             {payload: 'Override SubLabel Value', isInherited: false},
@@ -405,7 +405,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -416,7 +416,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -445,16 +445,14 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn(),
-            };
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(jest.fn());
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
                 config: mockConfig as Config.IConfig,
@@ -463,7 +461,7 @@ describe('getRecordIdentity', () => {
             const res = await helper(record, ctx);
 
             expect(await res.getSubLabel()).toBe('222536283');
-            expect(mockValDomain.getRecordFieldValue).not.toHaveBeenCalled();
+            expect(mockGetRecordFieldValueHelper).not.toHaveBeenCalled();
         });
     });
 
@@ -486,14 +484,14 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'color_attr') {
                         return Promise.resolve([{payload: null}, {payload: '#ff0000', isInherited: true}]);
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -504,7 +502,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -536,8 +534,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'color_attr') {
                         return Promise.resolve([
                             {payload: '#ffff00', isInherited: false},
@@ -546,7 +544,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -557,7 +555,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -602,8 +600,9 @@ describe('getRecordIdentity', () => {
             });
 
             it('should return a string when date range attribute is present and not null', async () => {
-                const mockValDomain: Mockify<IValueDomain> = {
-                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+                const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+                    .fn()
+                    .mockImplementation(({attributeId}) => {
                         if (attributeId === 'unused_content') {
                             return Promise.resolve([
                                 {
@@ -612,15 +611,14 @@ describe('getRecordIdentity', () => {
                             ]);
                         }
                         return Promise.resolve([]);
-                    }),
-                };
+                    });
 
                 const mockValidateHelperDateRange: Mockify<IValidateHelper> = {
                     validateLibrary: jest.fn().mockReturnValue(libData),
                 };
 
                 const helper = makeHelper({
-                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                     'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.utils': mockUtils as IUtils,
@@ -634,7 +632,7 @@ describe('getRecordIdentity', () => {
                 expect(res).not.toBe(null);
                 const labelOrSubLabel = conf === 'label' ? await res.getLabel() : await res.getSubLabel();
                 expect(labelOrSubLabel).toBeDefined();
-                expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range', {
+                expect(mockTranslatorWithOptions.t).toHaveBeenCalledWith('labels.date_range', {
                     from: '2024-02-16T10:59:52+00:00',
                     to: '2024-02-18T10:59:52+00:00',
                     lng: 'fr',
@@ -643,8 +641,9 @@ describe('getRecordIdentity', () => {
             });
 
             it('should return null when date range attribute is present but null', async () => {
-                const mockValDomain: Mockify<IValueDomain> = {
-                    getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+                const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+                    .fn()
+                    .mockImplementation(({attributeId}) => {
                         if (attributeId === 'unused_content') {
                             return Promise.resolve([{value: null}]);
                         }
@@ -657,11 +656,10 @@ describe('getRecordIdentity', () => {
                             ]);
                         }
                         return Promise.resolve([]);
-                    }),
-                };
+                    });
 
                 const helper = makeHelper({
-                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                     'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -675,7 +673,7 @@ describe('getRecordIdentity', () => {
                 const labelOrSubLabel = conf === 'label' ? await res.getLabel() : await res.getSubLabel();
                 expect(labelOrSubLabel).toBeNull();
 
-                expect(mockTranslatorWithOptions.t).toBeCalledTimes(0);
+                expect(mockTranslatorWithOptions.t).toHaveBeenCalledTimes(0);
             });
         };
 
@@ -702,16 +700,14 @@ describe('getRecordIdentity', () => {
             id: 'test_lib',
         };
 
-        const mockValDomain: Mockify<IValueDomain> = {
-            getRecordFieldValue: jest.fn(),
-        };
+        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn();
 
         const mockValidateHelperLocal: Mockify<IValidateHelper> = {
             validateLibrary: jest.fn().mockReturnValue(libData),
         };
 
         const helper = makeHelper({
-            'core.domain.value': mockValDomain as IValueDomain,
+            'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
             'core.utils': mockUtils as IUtils,
             'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
         });
@@ -743,10 +739,12 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                // Simulates ACCESS_ATTRIBUTE denied — returns empty array silently
-                getRecordFieldValue: jest.fn().mockResolvedValue([]),
-            };
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+                .fn()
+                .mockImplementation(({attributeId}) =>
+                    // Simulates ACCESS_ATTRIBUTE denied — returns empty array silently
+                    Promise.resolve([]),
+                );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
@@ -757,7 +755,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -801,8 +799,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -811,7 +809,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockGetEntityByIdHelper = jest.fn().mockImplementation((_type, id) => {
                 if (id === 'test_lib') {
@@ -840,7 +838,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
@@ -898,8 +896,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({library, attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({library, attributeId}) => {
                     if (library === 'child_lib' && attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -914,7 +912,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockGetEntityByIdHelper = jest.fn().mockImplementation((_type, id) => {
                 if (id === 'child_lib') {
@@ -949,7 +947,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
@@ -984,16 +982,14 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn(),
-            };
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn();
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockReturnValue(libData),
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
             });
@@ -1017,9 +1013,9 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockResolvedValue([]),
-            };
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+                .fn()
+                .mockImplementation(jest.fn().mockResolvedValue([]));
 
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
@@ -1028,7 +1024,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,
                 'core.utils': mockUtils as IUtils,
@@ -1067,8 +1063,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockValDomain: Mockify<IValueDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
+                jest.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -1077,7 +1073,7 @@ describe('getRecordIdentity', () => {
                     }
                     return Promise.resolve([]);
                 }),
-            };
+            );
 
             const mockGetEntityByIdHelper = jest.fn().mockImplementation((_type, id) => {
                 if (id === 'test_lib') {
@@ -1106,7 +1102,7 @@ describe('getRecordIdentity', () => {
             };
 
             const helper = makeHelper({
-                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.value.helpers.getRecordFieldValue': mockGetRecordFieldValueHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.helpers.validate': mockValidateHelperLocal as IValidateHelper,

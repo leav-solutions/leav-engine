@@ -6,7 +6,6 @@ import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {type GetCoreEntityByIdFunc} from '../../helpers/getCoreEntityById';
 import {type IValidateHelper} from '../../helpers/validate';
-import {type IValueDomain} from '../../value/valueDomain';
 import {type FindRecordsHelper} from './findRecords';
 import {type ICachesService} from '../../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../../utils/helpers/getValuesToDisplay';
@@ -20,13 +19,14 @@ import {type TreePath} from '../../../_types/tree';
 import {type ITreeValue, type IValue, type IValuesOptions} from '../../../_types/value';
 import {type IUtils} from '../../../utils/utils';
 import type * as Config from '../../../_types/config';
+import {type GetRecordFieldValueHelper} from '../../value/helpers/getRecordFieldValue';
 
 export type GetRecordIdentityHelper = (record: IRecord, ctx: IQueryInfos) => Promise<IRecordIdentity>;
 
 interface IDeps {
     config: Config.IConfig;
     'core.domain.attribute': IAttributeDomain;
-    'core.domain.value': IValueDomain;
+    'core.domain.value.helpers.getRecordFieldValue': GetRecordFieldValueHelper;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
@@ -39,7 +39,7 @@ interface IDeps {
 export default function ({
     config,
     'core.domain.attribute': attributeDomain,
-    'core.domain.value': valueDomain,
+    'core.domain.value.helpers.getRecordFieldValue': getRecordFieldValueHelper,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
@@ -88,7 +88,7 @@ export default function ({
             }
             const previewAttributeProps = await attributeDomain.getAttributeProperties({id: previewAttribute, ctx});
 
-            let previewValues = await valueDomain.getRecordFieldValue({
+            let previewValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
                 attributeId: previewAttribute,
@@ -134,7 +134,7 @@ export default function ({
         }
 
         // Get value of the previews field. We're calling getRecordFieldValue to apply actions_list if any
-        const filePreviewsValue = await valueDomain.getRecordFieldValue({
+        const filePreviewsValue = await getRecordFieldValueHelper({
             library: fileLibraryId,
             record: previewRecord,
             attributeId: previewsAttributeId,
@@ -222,7 +222,7 @@ export default function ({
         if (conf.label) {
             const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
 
-            let labelValues = await valueDomain.getRecordFieldValue({
+            let labelValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
                 attributeId: conf.label,
@@ -284,7 +284,7 @@ export default function ({
         if (conf.color) {
             const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
 
-            let colorValues = await valueDomain.getRecordFieldValue({
+            let colorValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
                 attributeId: conf.color,
@@ -344,7 +344,7 @@ export default function ({
 
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
-            let subLabelValues = await valueDomain.getRecordFieldValue({
+            let subLabelValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
                 attributeId: conf.subLabel,
@@ -401,7 +401,7 @@ export default function ({
         };
 
         // Get the value of the parent context attribute (must be a SIMPLE_LINK)
-        let parentContextValues = await valueDomain.getRecordFieldValue({
+        let parentContextValues = await getRecordFieldValueHelper({
             library: lib.id,
             record,
             attributeId: parentContext,
@@ -451,7 +451,7 @@ export default function ({
                 return _getAncestorsPromise;
             }
             _getAncestorsPromise = (async () => {
-                const treeValues = await valueDomain.getRecordFieldValue({
+                const treeValues = await getRecordFieldValueHelper({
                     library: lib.id,
                     record,
                     attributeId: conf.treeColorPreview,
