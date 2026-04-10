@@ -49,8 +49,12 @@ import postSaveValue from './helpers/postSaveValue';
 import postDeleteValue from './helpers/postDeleteValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
-import {type IDeleteValueParams, type IRunActionListParams} from './_types';
+import {type IDeleteValueParams} from './_types';
 import {type CreateRecordHelper} from '../record/helpers/createRecord';
+import {type GetRecordFieldValueHelper} from './helpers/getRecordFieldValue';
+import {type GetValuesHelper} from './helpers/getValues';
+import {type RunActionsListHelper} from './helpers/runActionsList';
+import {type FormatValueHelper} from './helpers/formatValue';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
 import {type FindRecordsHelper} from '../record/helpers/findRecords';
@@ -187,6 +191,10 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
+    'core.domain.value.helpers.getRecordFieldValue': GetRecordFieldValueHelper;
+    'core.domain.value.helpers.getValues': GetValuesHelper;
+    'core.domain.value.helpers.runActionsList': RunActionsListHelper;
+    'core.domain.value.helpers.formatValue': FormatValueHelper;
     'core.domain.record.helpers.findRecords': FindRecordsHelper;
     'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
@@ -213,6 +221,10 @@ const valueDomain = function ({
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.value.helpers.getRecordFieldValue': getRecordFieldValueHelper,
+    'core.domain.value.helpers.getValues': getValuesHelper,
+    'core.domain.value.helpers.runActionsList': runActionsListHelper,
+    'core.domain.value.helpers.formatValue': formatValueHelper,
     'core.domain.record.helpers.findRecords': findRecordsHelper,
     'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
@@ -223,164 +235,6 @@ const valueDomain = function ({
     'core.utils': utils,
     'core.utils.logger': logger,
 }: IValueDomainDeps): IValueDomain {
-    /**
-     * Extract value from record if it's available (attribute simple), or fetch it from DB
-     *
-     * @param record
-     * @param attribute
-     * @param library
-     * @param options
-     * @param ctx
-     */
-    const _extractRecordValue = async (
-        record: IRecord,
-        attribute: IAttribute,
-        library: string,
-        options: IValuesOptions,
-        ctx: IQueryInfos,
-    ): Promise<IValue[]> => {
-        if (attribute.id && typeof record[attribute.id] !== 'undefined') {
-            let values: IValue[];
-
-            if (attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string') {
-                const linkedRecord = await recordRepo.getRecord({
-                    libraryId: attribute.linked_library,
-                    recordId: record[attribute.id],
-                    ctx,
-                });
-
-                if (linkedRecord === null) {
-                    values = [];
-                    logger.warn(
-                        `[ValueDomain] Unable to find record for library ${attribute.linked_library} and record ${record[attribute.id]}`,
-                    );
-                } else {
-                    values = [{payload: {id: record[attribute.id]}}];
-                }
-            } else {
-                values = [{payload: record[attribute.id]}];
-            }
-
-            return _runActionsList({
-                listName: ActionsListEvents.GET_VALUE,
-                values,
-                attribute,
-                record,
-                library,
-                ctx,
-            });
-        } else {
-            return _getValues({
-                library,
-                recordId: record.id,
-                attribute: attribute.id,
-                options,
-                ctx,
-            });
-        }
-    };
-
-    /**
-     * Run actions list on a value
-     *
-     * @param listName
-     * @param value
-     * @param attrProps
-     * @param record
-     * @param library
-     * @param ctx
-     */
-    const _runActionsList = async ({
-        listName,
-        values,
-        attribute: attrProps,
-        record,
-        library,
-        ctx,
-    }: IRunActionListParams) => {
-        const valuesToProcess = utils.isStandardAttribute(attrProps)
-            ? values.map(value => ({...value, raw_payload: value.payload}))
-            : values;
-
-        try {
-            const processedValues =
-                !!attrProps.actions_list?.[listName] && values !== null
-                    ? await actionsListDomain.runActionsList(attrProps.actions_list[listName], valuesToProcess, {
-                          ...ctx,
-                          attribute: attrProps,
-                          recordId: record?.id,
-                          library,
-                          actionEvent: listName,
-                      })
-                    : valuesToProcess;
-            return processedValues;
-        } catch (e) {
-            // If ValidationError, add some context about value to the error and throw it again
-            if (e.type === ErrorTypes.VALIDATION_ERROR) {
-                e.context = {
-                    attribute: attrProps.id,
-                    values,
-                    recordId: record?.id,
-                };
-            }
-            throw e;
-        }
-    };
-
-    const _formatValue = async ({
-        attribute,
-        value,
-        ctx,
-    }: {
-        attribute: IAttribute;
-        value: IValue;
-        ctx: IQueryInfos;
-    }): Promise<IValue> => {
-        let processedValue = {...value}; // Don't mutate given value
-
-        if (utils.isLinkAttribute(attribute)) {
-            const linkValue = processedValue.payload
-                ? {...processedValue.payload, library: processedValue.payload.library ?? attribute.linked_library}
-                : null;
-            processedValue = {...value, payload: linkValue};
-        }
-
-        processedValue.attribute = attribute.id;
-
-        // Format metadata values as well
-        if ((attribute.metadata_fields ?? []).length) {
-            const metadataValuesFormatted = await attribute.metadata_fields.reduce(
-                async (allValuesProm, metadataField) => {
-                    const allValues = await allValuesProm;
-                    try {
-                        const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                            id: metadataField,
-                            ctx,
-                        });
-
-                        allValues[metadataField] =
-                            typeof value.metadata?.[metadataField] !== 'undefined'
-                                ? await _formatValue({
-                                      attribute: metadataAttributeProps,
-                                      value: {payload: value.metadata?.[metadataField]},
-                                      ctx,
-                                  })
-                                : null;
-                    } catch (err) {
-                        logger.error(`Error formatting metadata field ${metadataField} : ${err.stack}`);
-                        allValues[metadataField] = null;
-                    }
-
-                    return allValues;
-                },
-                Promise.resolve({}),
-            );
-            processedValue.metadata = metadataValuesFormatted;
-        }
-
-        return processedValue;
-    };
-
     async function _isLastValue(params: {
         attribute: IAttribute;
         library: string;
@@ -794,7 +648,7 @@ const valueDomain = function ({
         ctx: IQueryInfos,
         record: IRecord = null,
     ) => {
-        let processedValues = await _runActionsList({
+        let processedValues = await runActionsListHelper({
             listName: ActionsListEvents.GET_VALUE,
             values: [value],
             attribute,
@@ -805,7 +659,7 @@ const valueDomain = function ({
 
         processedValues = await Promise.all(
             processedValues.map(async processedValue => {
-                const formattedValue = await _formatValue({
+                const formattedValue = await formatValueHelper({
                     attribute,
                     value: processedValue,
                     ctx,
@@ -826,7 +680,7 @@ const valueDomain = function ({
                             ctx,
                         });
 
-                        const resActionList = await _runActionsList({
+                        const resActionList = await runActionsListHelper({
                             listName: ActionsListEvents.GET_VALUE,
                             values: [formattedValue.metadata[metadataField] as IStandardValue],
                             attribute: metadataAttributeProps,
@@ -969,192 +823,11 @@ const valueDomain = function ({
         return allSavedValues;
     };
 
-    const _getValues = async ({library, recordId, attribute, options, ctx}): Promise<IValue[]> => {
-        await validate.validateLibrary(library, ctx);
-        await validate.validateRecord(library, recordId, ctx);
-
-        const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-
-        let reverseLink: IAttribute;
-        if (!!attr.reverse_link) {
-            reverseLink = await attributeDomain.getAttributeProperties({id: attr.reverse_link as string, ctx});
-        }
-
-        let values: IValue[];
-        if (
-            !attr.versions_conf ||
-            !attr.versions_conf.versionable ||
-            attr.versions_conf.mode === ValueVersionMode.SIMPLE
-        ) {
-            const getValOptions = {
-                ...options,
-                version: attr?.versions_conf?.versionable ? options.version : null,
-            };
-
-            values = await valueRepo.getValues({
-                library,
-                recordId,
-                attribute: {...attr, reverse_link: reverseLink},
-                forceGetAllValues: false,
-                options: getValOptions,
-                ctx,
-            });
-        } else {
-            // Get all values, no matter the version.
-            const allValues: IValue[] = await valueRepo.getValues({
-                library,
-                recordId,
-                attribute: {...attr, reverse_link: reverseLink},
-                forceGetAllValues: true,
-                options,
-                ctx,
-            });
-            const versionProfile = await versionProfileDomain.getVersionProfileProperties({
-                id: attr.versions_conf.profile,
-                ctx,
-            });
-
-            // Get trees ancestors
-            const trees: IFindValueTree[] = await Promise.all(
-                versionProfile.trees.map(async (treeName: string): Promise<IFindValueTree> => {
-                    const treeElem =
-                        options?.version?.[treeName] ??
-                        (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx}))?.id;
-
-                    const ancestors = treeElem
-                        ? (
-                              await elementAncestors.getCachedElementAncestors({
-                                  treeId: treeName,
-                                  nodeId: treeElem,
-                                  ctx,
-                              })
-                          ).reverse() // We want the leaves first
-                        : [];
-
-                    return {
-                        name: treeName,
-                        currentIndex: 0,
-                        elements: ancestors,
-                    };
-                }),
-            );
-
-            // Retrieve appropriate value among all values
-            values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
-        }
-
-        return options?.skipActions
-            ? values
-            : _runActionsList({
-                  listName: ActionsListEvents.GET_VALUE,
-                  values,
-                  attribute: attr,
-                  record: {id: recordId},
-                  library,
-                  ctx,
-              });
-    };
-
-    const _getRecordFieldValue = async (params: {
-        library: string;
-        record: IRecord;
-        attributeId: string;
-        options?: IValuesOptions;
-        ctx: IQueryInfos;
-    }): Promise<IValue[]> => {
-        const {library, record, attributeId, options, ctx} = params;
-
-        const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
-
-        if (!libraryAttributes.map(a => a.id).includes(attributeId)) {
-            throw new ValidationError({
-                [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}},
-            });
-        }
-
-        const perm = await recordAttributePermissionDomain.getRecordAttributePermission(
-            RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
-            attributeId,
-            library,
-            record.id,
-            ctx,
-        );
-
-        if (!perm) {
-            return [];
-        }
-
-        const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-        let values = await _extractRecordValue(record, attrProps, library, options, ctx);
-
-        if (values.length === 0) {
-            values = [
-                {
-                    payload: null,
-                },
-            ];
-        }
-
-        let formattedValues = await Promise.all(
-            values.map(async v => {
-                const formattedValue = await _formatValue({
-                    attribute: attrProps,
-                    value: v,
-                    ctx,
-                });
-
-                if (attrProps.metadata_fields && formattedValue.metadata) {
-                    for (const metadataField of attrProps.metadata_fields) {
-                        if (!formattedValue.metadata[metadataField]) {
-                            continue;
-                        }
-
-                        const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                            id: metadataField,
-                            ctx,
-                        });
-
-                        const computedMetadata = await _runActionsList({
-                            listName: ActionsListEvents.GET_VALUE,
-                            attribute: metadataAttributeProps,
-                            library,
-                            values: [formattedValue.metadata[metadataField] as IStandardValue],
-                            ctx,
-                        });
-
-                        formattedValue.metadata[metadataField] = computedMetadata[0];
-                    }
-                }
-
-                return formattedValue;
-            }),
-        );
-
-        // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
-        formattedValues = formattedValues.reduce((acc, v) => {
-            if (Array.isArray(v.payload)) {
-                acc = [
-                    ...acc,
-                    ...v.payload.map(vpart => ({
-                        value: vpart,
-                        attribute: v.attribute,
-                    })),
-                ];
-            } else {
-                acc.push(v);
-            }
-            return acc;
-        }, []);
-
-        // remove null values
-        formattedValues = formattedValues.filter(v => v.payload !== null && typeof v.payload !== 'undefined');
-
-        return formattedValues;
-    };
+    const _getRecordFieldValue = getRecordFieldValueHelper;
 
     return {
         getRecordFieldValue: _getRecordFieldValue,
-        getValues: _getValues,
+        getValues: getValuesHelper,
         saveValue,
         async saveValueBatch({
             library,
@@ -1333,7 +1006,7 @@ const valueDomain = function ({
             await validate.validateRecord(library, recordId, ctx);
             return _executeDeleteValue({library, recordId, attribute, value, skipActions, ctx});
         },
-        formatValue: _formatValue,
+        formatValue: formatValueHelper,
         async listDistinctValues({libraryId, attributeId, recordFilters, options, ctx}) {
             await validate.validateLibrary(libraryId, ctx);
             await validate.validateLibraryAttribute(libraryId, attributeId, ctx);
