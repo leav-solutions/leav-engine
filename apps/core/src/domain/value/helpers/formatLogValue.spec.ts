@@ -418,6 +418,57 @@ describe('formatLogValue', () => {
                     ctx,
                 });
             });
+
+            it('Should return recordLabel from metadata when record fetch fails', async () => {
+                const rawData: IDBPayloadData<EventAction.VALUE_DELETE> = {
+                    payload: {
+                        id: 'purged-record',
+                        library: 'test_link',
+                    },
+                };
+
+                const logWithMetadata: Log = {
+                    action: EventAction.VALUE_DELETE,
+                    topic: {attribute: 'link_attribute'},
+                    metadata: {recordLabel: 'Purged Record Label'},
+                } as Log;
+
+                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                    id: 'link_attribute',
+                    type: AttributeTypes.SIMPLE_LINK,
+                });
+
+                recordDomainMock.find.mockRejectedValue(new Error('DB error'));
+
+                const result = await _formatLogValue.formatAsString(logWithMetadata, rawData, ctx);
+
+                expect(result).toBe('Purged Record Label');
+            });
+
+            it('Should return fallback string when record fetch fails and no metadata', async () => {
+                const rawData: IDBPayloadData<EventAction.VALUE_DELETE> = {
+                    payload: {
+                        id: 'purged-record',
+                        library: 'test_link',
+                    },
+                };
+
+                const logWithoutMetadata: Log = {
+                    action: EventAction.VALUE_DELETE,
+                    topic: {attribute: 'link_attribute'},
+                } as Log;
+
+                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                    id: 'link_attribute',
+                    type: AttributeTypes.SIMPLE_LINK,
+                });
+
+                recordDomainMock.find.mockRejectedValue(new Error('DB error'));
+
+                const result = await _formatLogValue.formatAsString(logWithoutMetadata, rawData, ctx);
+
+                expect(result).toBe('test_link/purged-record');
+            });
         });
 
         describe('tree attribute', () => {
@@ -490,6 +541,53 @@ describe('formatLogValue', () => {
                     treeId: 'tree_1',
                     ctx,
                 });
+            });
+
+            it('Should return recordLabel from metadata when tree node fetch fails', async () => {
+                const rawData: IDBPayloadData<EventAction.VALUE_DELETE> = {
+                    payload: {id: '42'},
+                    treeId: 'tree_1',
+                };
+
+                const logWithMetadata: Log = {
+                    action: EventAction.VALUE_DELETE,
+                    topic: {attribute: 'tree_attribute'},
+                    metadata: {recordLabel: 'Purged Tree Node Label'},
+                } as Log;
+
+                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                    id: 'tree_attribute',
+                    type: AttributeTypes.TREE,
+                });
+
+                treeDomainMock.getRecordByNodeId.mockRejectedValue(new Error('Tree error'));
+
+                const result = await _formatLogValue.formatAsString(logWithMetadata, rawData, ctx);
+
+                expect(result).toBe('Purged Tree Node Label');
+            });
+
+            it('Should return fallback string when tree node fetch fails and no metadata', async () => {
+                const rawData: IDBPayloadData<EventAction.VALUE_DELETE> = {
+                    payload: {id: '42'},
+                    treeId: 'tree_1',
+                };
+
+                const logWithoutMetadata: Log = {
+                    action: EventAction.VALUE_DELETE,
+                    topic: {attribute: 'tree_attribute'},
+                } as Log;
+
+                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                    id: 'tree_attribute',
+                    type: AttributeTypes.TREE,
+                });
+
+                treeDomainMock.getRecordByNodeId.mockRejectedValue(new Error('Tree error'));
+
+                const result = await _formatLogValue.formatAsString(logWithoutMetadata, rawData, ctx);
+
+                expect(result).toBe('tree_1/42');
             });
         });
     });
