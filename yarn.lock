@@ -6745,6 +6745,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/merge@npm:^9.1.8":
+  version: 9.1.8
+  resolution: "@graphql-tools/merge@npm:9.1.8"
+  dependencies:
+    "@graphql-tools/utils": "npm:^11.0.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10/d558f5a8ddc633671d34781805e519f118ea7e2f912e9e614875132be52e9b202be71f10058411d4adcfff03c9c18c6dbdd9b30e76eb7708bdf51bc552611a36
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/optimize@npm:^1.3.0":
   version: 1.3.1
   resolution: "@graphql-tools/optimize@npm:1.3.1"
@@ -6806,16 +6818,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:10.0.31, @graphql-tools/schema@npm:^10.0.29, @graphql-tools/schema@npm:^10.0.31":
-  version: 10.0.31
-  resolution: "@graphql-tools/schema@npm:10.0.31"
+"@graphql-tools/schema@npm:10.0.32":
+  version: 10.0.32
+  resolution: "@graphql-tools/schema@npm:10.0.32"
   dependencies:
-    "@graphql-tools/merge": "npm:^9.1.7"
-    "@graphql-tools/utils": "npm:^11.0.0"
+    "@graphql-tools/merge": "npm:^9.1.8"
+    "@graphql-tools/utils": "npm:^11.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10/5b775736f8b8454319e07cadc7d41bc5c9cc804a393490aaffd1bb7f59afddb02b498837e870bf98db4a1a989a721d5d8e2fd2b97409d078bac14503c2d4f9cb
+  checksum: 10/9672095a5aa6424f0aeefa2e960138ca0bab350d35005810d36a1d678bbdf62b5433405302972f5399deadbb684c2ebef1207c1510a616f495bb3293329cbd4d
   languageName: node
   linkType: hard
 
@@ -6830,6 +6842,19 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10/dd784bcc460746adc32a63e9f19b241f9af6e81a8d123b346806853f24096003764aa117954bb88a35de67ce3484acc9e42a03ebe41dafad1446dd614fbcefb5
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/schema@npm:^10.0.29, @graphql-tools/schema@npm:^10.0.31":
+  version: 10.0.31
+  resolution: "@graphql-tools/schema@npm:10.0.31"
+  dependencies:
+    "@graphql-tools/merge": "npm:^9.1.7"
+    "@graphql-tools/utils": "npm:^11.0.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10/5b775736f8b8454319e07cadc7d41bc5c9cc804a393490aaffd1bb7f59afddb02b498837e870bf98db4a1a989a721d5d8e2fd2b97409d078bac14503c2d4f9cb
   languageName: node
   linkType: hard
 
@@ -6971,6 +6996,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/utils@npm:^11.0.1":
+  version: 11.0.1
+  resolution: "@graphql-tools/utils@npm:11.0.1"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@whatwg-node/promise-helpers": "npm:^1.0.0"
+    cross-inspect: "npm:1.0.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10/ac4eb0c927e85adef0a71b17666d46a01a469cb105272e6b95eb2313949b89d5417e466b0190601fb8c0c6597fb6a9c20e7d232be4321256743ff3a6d8f7e260
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/utils@npm:^9.0.0":
   version: 9.2.1
   resolution: "@graphql-tools/utils@npm:9.2.1"
@@ -7062,12 +7101,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/node-server@npm:1.19.12":
-  version: 1.19.12
-  resolution: "@hono/node-server@npm:1.19.12"
+"@hono/node-server@npm:1.19.14":
+  version: 1.19.14
+  resolution: "@hono/node-server@npm:1.19.14"
   peerDependencies:
     hono: ^4
-  checksum: 10/aeb02f3c255cc9016d88ea4611eb105dbd8dca881b1b4e77256a41d6a18b8b45dd6f46ab35ef08becfa32e64c5ba77de7b5aa0af552e7fe67ce3079b94988c20
+  checksum: 10/618dd95feeb3fd11ec8502e088879cd86529523788de19602edebd16892dd61899e73564d6e3d00875cc5a49488a908ddb2aa425d28f9cdeb7f22cfecabf022c
   languageName: node
   linkType: hard
 
@@ -8214,10 +8253,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/monitoring-server@workspace:libs/monitoring-server"
   dependencies:
-    "@hono/node-server": "npm:1.19.12"
+    "@hono/node-server": "npm:1.19.14"
     "@leav/logger": "workspace:libs/logger"
     "@types/jest": "npm:29.5.14"
-    hono: "npm:4.12.10"
+    hono: "npm:4.12.12"
     jest: "npm:29.7.0"
     node-fetch: "npm:2.6.7"
     prom-client: "npm:15.1.3"
@@ -8277,7 +8316,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     tsc-alias: "npm:1.8.16"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.1"
+    vite: "npm:7.3.2"
     xlsx: "npm:0.18.5"
     zod: "npm:3.25.76"
   peerDependencies:
@@ -11684,7 +11723,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.1"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.1"
+    vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
     yup: "npm:0.32.11"
   languageName: unknown
@@ -12141,7 +12180,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.1"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.1"
+    vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.3.0"
     vite-plugin-svgr: "npm:4.5.0"
@@ -14466,7 +14505,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:5.0.9"
     "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
     "@graphql-codegen/typescript-operations": "npm:5.0.9"
-    "@graphql-tools/schema": "npm:10.0.31"
+    "@graphql-tools/schema": "npm:10.0.32"
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/logger": "workspace:libs/logger"
@@ -14950,7 +14989,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.1"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.1"
+    vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.3.0"
     vite-plugin-svgr: "npm:4.5.0"
@@ -16981,16 +17020,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:5.5.10":
-  version: 5.5.10
-  resolution: "fast-xml-parser@npm:5.5.10"
+"fast-xml-parser@npm:5.5.11":
+  version: 5.5.11
+  resolution: "fast-xml-parser@npm:5.5.11"
   dependencies:
     fast-xml-builder: "npm:^1.1.4"
-    path-expression-matcher: "npm:^1.2.1"
-    strnum: "npm:^2.2.2"
+    path-expression-matcher: "npm:^1.4.0"
+    strnum: "npm:^2.2.3"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10/ac48edff66e5cad1c5f978a9edc2f081edc36abf74a745a3df83acaf35a7603ca561c5be9a0c0c0184095bfd06c6c7f75afb6e3bc81e6ff0cb3544b3886fa4c6
+  checksum: 10/a43d188b2b9cadafb216af28b3eb31987dc5089fe05785f109b5df95bacace9fadf9e211df393ea04c316652a0ed2489fd2c168406860ff387cc091d8f5e43f6
   languageName: node
   linkType: hard
 
@@ -18248,10 +18287,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:4.12.10":
-  version: 4.12.10
-  resolution: "hono@npm:4.12.10"
-  checksum: 10/0e27311bec761e5197039d8b307cb3f2d31d5df4c9c17a36ab63ffbaec703ae214d158f495bac651e0264c4110d7bbfcebdeda5c1caaada194fe6f15c89a214f
+"hono@npm:4.12.12":
+  version: 4.12.12
+  resolution: "hono@npm:4.12.12"
+  checksum: 10/760617935cbc40fb20f2ffb4cbd5d59c3578a6838700be5f89a636a287bce59195d08f8e8e3551ca907796110457fb276327c155289d3776c151ed74ee02270f
   languageName: node
   linkType: hard
 
@@ -22005,7 +22044,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.1"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.1"
+    vite: "npm:7.3.2"
     vite-plugin-dynamic-base: "npm:1.3.0"
     vite-plugin-rewrite-all: "npm:1.0.2"
     web-vitals: "npm:2.1.4"
@@ -23510,10 +23549,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-expression-matcher@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "path-expression-matcher@npm:1.2.1"
-  checksum: 10/2ef295fc82c0aed1efbf78b022ac38517e677c6cb06d7819872e2a3e789cdc7064164a5876aaff22358c49dce7c59157c77ef587dbd8a998e1d71cb44f15d707
+"path-expression-matcher@npm:^1.4.0":
+  version: 1.5.0
+  resolution: "path-expression-matcher@npm:1.5.0"
+  checksum: 10/28303bb9ee6831e6df14c10cd3f3f7b2d7c8d7f788d8bdb7440136fd696064c82a3e264999a0764d28e39f698275fc03a5493bec93c57ef4a22566280367dd64
   languageName: node
   linkType: hard
 
@@ -23725,7 +23764,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.1"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.1"
+    vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.3.0"
   languageName: unknown
@@ -23869,7 +23908,7 @@ __metadata:
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:24.12.2"
     amqplib: "npm:0.10.9"
-    fast-xml-parser: "npm:5.5.10"
+    fast-xml-parser: "npm:5.5.11"
     jest: "npm:29.7.0"
     prettier: "npm:3.3.3"
     ts-jest: "npm:29.4.9"
@@ -27274,10 +27313,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strnum@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "strnum@npm:2.2.2"
-  checksum: 10/c55813cfded750dc84556b4881ffc7cee91382ff15a48f1fba0ff7a678e1640ed96ca40806fbd55724940fd7d51cf752469b2d862e196e4adefb6c7d5d9cd73b
+"strnum@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "strnum@npm:2.2.3"
+  checksum: 10/fb70206301858c319f59ed34fecedf90ac3b821692c2accd403d9d4a3384223a09df8fd92b130bbd4e885b67b7790715c003405ce5f959d9cabbf07d41d62aa8
   languageName: node
   linkType: hard
 
@@ -28898,9 +28937,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.3.1":
-  version: 7.3.1
-  resolution: "vite@npm:7.3.1"
+"vite@npm:7.3.2":
+  version: 7.3.2
+  resolution: "vite@npm:7.3.2"
   dependencies:
     esbuild: "npm:^0.27.0"
     fdir: "npm:^6.5.0"
@@ -28949,7 +28988,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10/62e48ffa4283b688f0049005405a004447ad38ffc99a0efea4c3aa9b7eed739f7402b43f00668c0ee5a895b684dc953d62f0722d8a92c5b2f6c95f051bceb208
+  checksum: 10/c5f7a9a60011c41c836cedf31c8ee7624102aff9b6a7f3aab2ff47639721bba0916f81994c3a3ea6577a16c4f0dfee1e7dbd244e0da8edd5954e3c6d48daaaa2
   languageName: node
   linkType: hard
 
