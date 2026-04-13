@@ -14553,7 +14553,7 @@ __metadata:
     handlebars: "npm:4.7.9"
     hyperformula: "npm:3.2.0"
     i18next: "npm:22.5.1"
-    i18next-fs-backend: "npm:2.1.2"
+    i18next-fs-backend: "npm:2.6.3"
     jest: "npm:29.7.0"
     jest-when: "npm:3.7.0"
     joi: "npm:18.0.2"
@@ -18534,10 +18534,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-fs-backend@npm:2.1.2":
-  version: 2.1.2
-  resolution: "i18next-fs-backend@npm:2.1.2"
-  checksum: 10/7149bcc82eb3e13a2291f92d29df2c82f44b19a553ea9866575fe49095892a301b4a783568da7ff2f99370cf4b667c7da6c2d61f6fe33779af7f3926ee8b786b
+"i18next-fs-backend@npm:2.6.3":
+  version: 2.6.3
+  resolution: "i18next-fs-backend@npm:2.6.3"
+  checksum: 10/6d4ce0edeb6f79c6763b83a5208ab2ac2045b122f1a846161616ff2f6879ec7bfe8880c1fb6d1f2391c3e1601c09bc6819e5336dfd70b1327d4b355ebf252fe8
   languageName: node
   linkType: hard
 
