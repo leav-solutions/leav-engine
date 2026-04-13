@@ -14732,21 +14732,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:3.1.5, cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
-  version: 3.1.5
-  resolution: "cross-fetch@npm:3.1.5"
-  dependencies:
-    node-fetch: "npm:2.6.7"
-  checksum: 10/5d101a3b1e6cb172f0e5e8168cbc927eeff2ef915f33ceef50fed85441df870e1fdff195b56eca36fae8b78ddba5d8e913b8927f73d11b19d27e96301438cd30
-  languageName: node
-  linkType: hard
-
 "cross-fetch@npm:3.2.0":
   version: 3.2.0
   resolution: "cross-fetch@npm:3.2.0"
   dependencies:
     node-fetch: "npm:^2.7.0"
   checksum: 10/e4ab1d390a5b6ca8bb0605f028af2ffc1127d2e407b954654949f506d04873c4863ece264662c074865d7874060e35f938cec74fe7b5736d46d545e2685f6aec
+  languageName: node
+  linkType: hard
+
+"cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
+  version: 3.1.5
+  resolution: "cross-fetch@npm:3.1.5"
+  dependencies:
+    node-fetch: "npm:2.6.7"
+  checksum: 10/5d101a3b1e6cb172f0e5e8168cbc927eeff2ef915f33ceef50fed85441df870e1fdff195b56eca36fae8b78ddba5d8e913b8927f73d11b19d27e96301438cd30
   languageName: node
   linkType: hard
 
@@ -18541,15 +18541,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-http-backend@npm:2.1.1":
-  version: 2.1.1
-  resolution: "i18next-http-backend@npm:2.1.1"
-  dependencies:
-    cross-fetch: "npm:3.1.5"
-  checksum: 10/93b61badaadbf58f1a9127a8c4e8d979aa2bea26d69c5ae45f3989a798064a6dd08eeebf4a6ce1e8615f766d123f5effb6977f226903ebff415f18f6181e76a7
-  languageName: node
-  linkType: hard
-
 "i18next-resources-to-backend@npm:1.1.4":
   version: 1.1.4
   resolution: "i18next-resources-to-backend@npm:1.1.4"
@@ -22031,7 +22022,6 @@ __metadata:
     graphql: "npm:16.13.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
-    i18next-http-backend: "npm:2.1.1"
     i18next-resources-to-backend: "npm:1.1.4"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:29.7.0"
