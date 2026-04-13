@@ -15,6 +15,7 @@ import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {ActionsListEvents} from '../../../_types/actionsList';
+import {getMetadataRecordLabel} from './manageEventMetadata';
 
 export interface IFormatLogValueHelper {
     formatAsString(
@@ -109,7 +110,7 @@ export default function ({
         return recordIdentity.getLabel?.();
     };
 
-    const formatLogDataValueLink = async (rawData: ILinkValue, ctx: IQueryInfos): Promise<string> => {
+    const formatLogDataValueLink = async (rawData: ILinkValue, log: Log, ctx: IQueryInfos): Promise<string> => {
         try {
             // refetch record to have up to date label and whoAmI
             const record = await recordDomain.find({
@@ -142,11 +143,12 @@ export default function ({
             logger.debug(
                 `[LogApp] Error fetching record ${rawData.payload.library}${rawData.payload.id} for link value: ${e.stack}`,
             );
-            return `${rawData.payload.library}/${rawData.payload.id}`;
+
+            return getMetadataRecordLabel(log.metadata) ?? `${rawData.payload.library}/${rawData.payload.id}`;
         }
     };
 
-    const formatLogDataValueTreeAsString = async (rawData: ITreeValue, ctx: IQueryInfos): Promise<string> => {
+    const formatLogDataValueTreeAsString = async (rawData: ITreeValue, log: Log, ctx: IQueryInfos): Promise<string> => {
         try {
             const recordTree = await treeDomain.getRecordByNodeId({
                 nodeId: rawData.payload.id,
@@ -163,7 +165,8 @@ export default function ({
             logger.debug(
                 `[LogApp] Error fetching record ${rawData.treeId}/${rawData.payload.id} for tree value: ${e.stack}`,
             );
-            return `${rawData.treeId}/${rawData.payload.id}`;
+
+            return getMetadataRecordLabel(log.metadata) ?? `${rawData.treeId}/${rawData.payload.id}`;
         }
     };
 
@@ -186,9 +189,9 @@ export default function ({
                         return await formatLogDataValueStandardAsString(attribute, rawData, ctx);
                     case AttributeTypes.SIMPLE_LINK:
                     case AttributeTypes.ADVANCED_LINK:
-                        return await formatLogDataValueLink(rawData, ctx);
+                        return await formatLogDataValueLink(rawData, log, ctx);
                     case AttributeTypes.TREE:
-                        return await formatLogDataValueTreeAsString(rawData as ITreeValue, ctx);
+                        return await formatLogDataValueTreeAsString(rawData as ITreeValue, log, ctx);
                     default:
                         logger.error(`[LogApp] Unknown attribute type ${attribute?.type} for attribute ${attributeId}`);
                         return translator.t('logs.unknown_value', {lng: ctx.lang});

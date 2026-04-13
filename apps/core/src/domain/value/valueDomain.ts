@@ -51,6 +51,7 @@ import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {type IDeleteValueParams} from './_types';
 import {type CreateRecordHelper} from '../record/helpers/createRecord';
+import {type GetRecordIdentityHelper} from '../record/helpers/getRecordIdentity';
 import {type GetRecordFieldValueHelper} from './helpers/getRecordFieldValue';
 import {type GetValuesHelper} from './helpers/getValues';
 import {type RunActionsListHelper} from './helpers/runActionsList';
@@ -60,6 +61,7 @@ import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordIn
 import {type FindRecordsHelper} from '../record/helpers/findRecords';
 import {type IAttributeWithRevLink} from '../../infra/attributeTypes/attributeTypesRepo';
 import areValuesIdentical from './helpers/areValuesIdentical';
+import {setMetadataRecordLabel} from './helpers/manageEventMetadata';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -191,6 +193,7 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
+    'core.domain.record.helpers.getRecordIdentity': GetRecordIdentityHelper;
     'core.domain.value.helpers.getRecordFieldValue': GetRecordFieldValueHelper;
     'core.domain.value.helpers.getValues': GetValuesHelper;
     'core.domain.value.helpers.runActionsList': RunActionsListHelper;
@@ -221,6 +224,7 @@ const valueDomain = function ({
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.record.helpers.getRecordIdentity': getRecordIdentity,
     'core.domain.value.helpers.getRecordFieldValue': getRecordFieldValueHelper,
     'core.domain.value.helpers.getValues': getValuesHelper,
     'core.domain.value.helpers.runActionsList': runActionsListHelper,
@@ -495,8 +499,35 @@ const valueDomain = function ({
                   })
                 : [existingValue];
 
+        const isLinkOrTreeAttribute = [
+            AttributeTypes.SIMPLE_LINK,
+            AttributeTypes.ADVANCED_LINK,
+            AttributeTypes.TREE,
+        ].includes(attributeProps.type);
+
         const deletedValues = await Promise.all(
             actionsListRes.map(async actionsListResValue => {
+                let recordLabel = null;
+
+                // Fetch the linked record's label before deletion so it can be preserved in the event metadata.
+                // This is especially useful when the linked record is later purged and its label would be unrecoverable.
+                if (isLinkOrTreeAttribute && actionsListResValue?.payload) {
+                    const linkedRecord =
+                        attributeProps.type === AttributeTypes.TREE
+                            ? {
+                                  id: actionsListResValue.payload.record?.id,
+                                  library: actionsListResValue.payload.record?.library?.id,
+                              }
+                            : {id: actionsListResValue.payload.id, library: attributeProps.linked_library};
+
+                    if (linkedRecord.id && linkedRecord.library) {
+                        const recordProperties = await getRecordIdentity(linkedRecord, ctx);
+                        const rawRecordLabel = await recordProperties.getLabel?.();
+
+                        recordLabel = rawRecordLabel !== null ? String(rawRecordLabel) : null;
+                    }
+                }
+
                 const deletedValue = await valueRepo.deleteValue({
                     library,
                     recordId,
@@ -540,6 +571,7 @@ const valueDomain = function ({
                             attribute: attributeProps.id,
                         },
                         before: deletedValue,
+                        metadata: setMetadataRecordLabel(recordLabel),
                     },
                     ctx,
                 );
