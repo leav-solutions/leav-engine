@@ -4552,68 +4552,68 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bugsnag/browser@npm:^8.8.1":
-  version: 8.8.1
-  resolution: "@bugsnag/browser@npm:8.8.1"
+"@bugsnag/browser@npm:^8.9.0":
+  version: 8.9.0
+  resolution: "@bugsnag/browser@npm:8.9.0"
   dependencies:
-    "@bugsnag/core": "npm:^8.8.0"
-  checksum: 10/c64d2cb84cebc6d65a562f99b93a243a390b617e942d62d58820b90bef7257cc40f4262b966a2dfbfc73d7f82133404480cdea51b3ac2a130ea9e64c87f29d5e
+    "@bugsnag/core": "npm:^8.9.0"
+  checksum: 10/ab046607c55b82dbcd6c4e563c6a22d69a6884719cb7709e80ed8cd9e6fbb52dd00e13d1040372ccc771cfadae1783ffbf76fa5cf5e16d9e1d326b9b5d0217f0
   languageName: node
   linkType: hard
 
-"@bugsnag/core@npm:^8.8.0":
-  version: 8.8.0
-  resolution: "@bugsnag/core@npm:8.8.0"
+"@bugsnag/core@npm:^8.9.0":
+  version: 8.9.0
+  resolution: "@bugsnag/core@npm:8.9.0"
   dependencies:
-    "@bugsnag/cuid": "npm:^3.0.0"
+    "@bugsnag/cuid": "npm:^3.2.1"
     "@bugsnag/safe-json-stringify": "npm:^6.0.0"
     error-stack-parser: "npm:^2.0.3"
     iserror: "npm:^0.0.2"
     stack-generator: "npm:^2.0.3"
-  checksum: 10/d16b47282ee503b396b6fdb617a9cd9acbf79853d3b3491dda6e1d9aa59ca790176fe29ee9ccfa49fc1f5a6f69d4e744647d2fa8a392a4ec838d67d856ddf8c1
+  checksum: 10/7aecf45c4bcaaaf5cb0d0a1c2d47dea89d65cbd96f8ef3cb1ed967f6402b60ac8d5112cd852a352a4580e58fdf49919a5c04237ddbc5159a9b3370d20cc78b2d
   languageName: node
   linkType: hard
 
-"@bugsnag/cuid@npm:^3.0.0":
+"@bugsnag/cuid@npm:^3.2.1":
   version: 3.2.1
   resolution: "@bugsnag/cuid@npm:3.2.1"
   checksum: 10/5c884c70b9e1dd8e0161f1ff80aa9a73f99773785ad7d349bf46e1adfe494fda984f89d5938eb4d50bee6961da9ab088498d77221d5fce03e51dcc6b2fc8d91e
   languageName: node
   linkType: hard
 
-"@bugsnag/js@npm:8.8.1":
-  version: 8.8.1
-  resolution: "@bugsnag/js@npm:8.8.1"
+"@bugsnag/js@npm:8.9.0":
+  version: 8.9.0
+  resolution: "@bugsnag/js@npm:8.9.0"
   dependencies:
-    "@bugsnag/browser": "npm:^8.8.1"
-    "@bugsnag/node": "npm:^8.8.0"
-  checksum: 10/fbf40d4b67c15d39db741c2a33561d7d65a285a6ee45d7b2b41065cff5ca62e6ef7eb7279a59e5ab7d9083de0b5af27834a53473a2cd9fa364062fec11d02647
+    "@bugsnag/browser": "npm:^8.9.0"
+    "@bugsnag/node": "npm:^8.9.0"
+  checksum: 10/ed1392c5ad3ae2e78b96d054b4d207eec68805c70efc9a6131d31be2461f3e08e5d9e464dc56760441438dac7c5973588abd7992e0a1d757821ad62123f4bd47
   languageName: node
   linkType: hard
 
-"@bugsnag/node@npm:^8.8.0":
-  version: 8.8.0
-  resolution: "@bugsnag/node@npm:8.8.0"
+"@bugsnag/node@npm:^8.9.0":
+  version: 8.9.0
+  resolution: "@bugsnag/node@npm:8.9.0"
   dependencies:
-    "@bugsnag/core": "npm:^8.8.0"
+    "@bugsnag/core": "npm:^8.9.0"
     byline: "npm:^5.0.0"
     error-stack-parser: "npm:^2.0.3"
     iserror: "npm:^0.0.2"
     pump: "npm:^3.0.0"
     stack-generator: "npm:^2.0.3"
-  checksum: 10/a923c93502c8a08e2f09f4f3a4a0b9cc80b4812aa07e29d650df48ec77d9a0a562888287c9a531174627d7d0915a36dabb67d87f452dc5234475516e6f0a7420
+  checksum: 10/52bb6e6e81dad7bd884ff41927b52f664f8eb322a06c2e0e1ad38e30ffedea5e91df420ccfb103864b2a99564a78b5e61e2b0cf838d643c2f08a35c873410fc3
   languageName: node
   linkType: hard
 
-"@bugsnag/plugin-react@npm:8.8.0":
-  version: 8.8.0
-  resolution: "@bugsnag/plugin-react@npm:8.8.0"
+"@bugsnag/plugin-react@npm:8.9.0":
+  version: 8.9.0
+  resolution: "@bugsnag/plugin-react@npm:8.9.0"
   peerDependencies:
     "@bugsnag/core": ^8.0.0
   peerDependenciesMeta:
     "@bugsnag/core":
       optional: true
-  checksum: 10/a986bcfb19138f07c25f777c5c16842b1ff9d98b7b0f2002ca87be365fe1cbf076d70ea0ac780e3f88bd94c9daa5372c741859540880d4c89a766f3664d75e7b
+  checksum: 10/0e3325d060f5ae6b49ebbd2cfcb90191df468a39f6b116a7a8b71ae8357d217f6c81b8c49272271c673559ef071768c3f64fcd7123363562b3b520518fb22706
   languageName: node
   linkType: hard
 
@@ -12134,8 +12134,8 @@ __metadata:
   resolution: "app-studio@workspace:apps/app-studio"
   dependencies:
     "@apollo/client": "npm:3.14.1"
-    "@bugsnag/js": "npm:8.8.1"
-    "@bugsnag/plugin-react": "npm:8.8.0"
+    "@bugsnag/js": "npm:8.9.0"
+    "@bugsnag/plugin-react": "npm:8.9.0"
     "@graphql-codegen/cli": "npm:6.2.1"
     "@graphql-codegen/client-preset": "npm:4.8.3"
     "@graphql-codegen/typescript": "npm:5.0.9"
@@ -14497,7 +14497,7 @@ __metadata:
   resolution: "core@workspace:apps/core"
   dependencies:
     "@apollo/server": "npm:4.13.0"
-    "@bugsnag/js": "npm:8.8.1"
+    "@bugsnag/js": "npm:8.9.0"
     "@elastic/elasticsearch": "npm:8.19.1"
     "@graphql-codegen/add": "npm:5.0.3"
     "@graphql-codegen/cli": "npm:6.2.1"

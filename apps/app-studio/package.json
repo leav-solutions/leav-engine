@@ -16,8 +16,8 @@
     },
     "dependencies": {
         "@apollo/client": "3.14.1",
-        "@bugsnag/js": "8.8.1",
-        "@bugsnag/plugin-react": "8.8.0",
+        "@bugsnag/js": "8.9.0",
+        "@bugsnag/plugin-react": "8.9.0",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "aristid-ds": "15.3.1-637817c",
