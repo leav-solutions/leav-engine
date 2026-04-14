@@ -754,8 +754,10 @@
             "add-link": "Ajouter",
             "replace-link": "Remplacer",
             "toggle_selection": {
-                "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
+                "select_page_one": "Sélectionner l’élément visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",
+                "deselect_page_one": "Désélectionner l’élément visible ({{count, number}})",
+                "deselect_page_other": "Désélectionner les éléments visibles ({{count, number}})",
                 "select_all": "Tout sélectionner ({{count, number}})",
                 "deselect_all": "Tout désélectionner"
             },
