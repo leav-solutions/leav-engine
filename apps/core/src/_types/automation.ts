@@ -17,6 +17,7 @@ export type IAutomationRule = ICoreEntity & {
     description?: string;
     active: boolean;
     trigger: AutomationRuleTrigger;
+    pipeline: AutomationRulePipeline;
 };
 
 export type ICreateAutomationRule = {
@@ -33,12 +34,31 @@ export type IUpdateAutomationRule = {
     trigger?: Partial<AutomationRuleTrigger>;
 };
 
-export type AutomationRuleTrigger = {
-    synchronous: boolean;
-    eventAction: EventAction | SyncAutomationRuleEventAction;
-    eventTopic?: IDbPayload['topic']; // if no specified, the action only is enough to trigger the rule
-};
-
 export enum SyncAutomationRuleEventAction {
     RECORD_INIT = 'RECORD_INIT',
 }
+
+export type AutomationRuleEventAction = EventAction | SyncAutomationRuleEventAction;
+export type AutomationRulesEventTopic = IDbPayload['topic'];
+
+export type AutomationRuleTrigger = {
+    synchronous: boolean;
+    eventAction: AutomationRuleEventAction;
+    eventTopic?: AutomationRulesEventTopic; // if no specified, the action only is enough to trigger the rule
+};
+
+export type AutomationRulePipeline = {
+    steps: AutomationRulePipelineStep[];
+};
+
+export enum AutomationRuleActions {
+    LOG = 'log',
+    CONDITION = 'condition',
+    ERROR = 'error',
+}
+
+export type AutomationRulePipelineStep = {
+    type: AutomationRuleActions | string; // string for custom/plugin actions
+    name?: string;
+    params: Record<string, unknown>;
+};

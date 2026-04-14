@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type ICreateAutomationRule, type IAutomationRule, type IUpdateAutomationRule} from '../../_types/automation';
+import {
+    type ICreateAutomationRule,
+    type IAutomationRule,
+    type IUpdateAutomationRule,
+    type AutomationRulesEventTopic,
+    type AutomationRuleEventAction,
+} from '../../_types/automation';
 import {SortOrder, type IList} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
@@ -11,18 +17,20 @@ import PermissionError from '../../errors/PermissionError';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
-import {EventAction, type IDbPayload} from '@leav/utils';
+import {EventAction} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {type ArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
+import {type IPipelineExecutor} from './pipelineExecutor';
+import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
         active?: boolean;
         synchronous?: boolean;
-        eventAction?: IAutomationRule['trigger']['eventAction'];
-        eventTopic?: IAutomationRule['trigger']['eventTopic'];
+        eventAction?: AutomationRuleEventAction;
+        eventTopic?: AutomationRulesEventTopic;
     };
 }
 
@@ -37,7 +45,7 @@ export interface IAutomationDomain {
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     triggerRules(
-        event: {action: IAutomationRule['trigger']['eventAction']; topic?: IAutomationRule['trigger']['eventTopic']},
+        event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
     ): Promise<void>;
@@ -46,6 +54,7 @@ export interface IAutomationDomain {
 export interface IAutomationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.automation.pipelineExecutor': IPipelineExecutor;
     'core.infra.automation.rule': IAutomationRuleRepo;
     config: IConfig;
 }
@@ -53,6 +62,7 @@ export interface IAutomationDomainDeps {
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.automation.pipelineExecutor': pipelineExecutor,
     'core.infra.automation.rule': automationRuleRepo,
     config,
 }: IAutomationDomainDeps): IAutomationDomain {
@@ -70,28 +80,64 @@ export default function ({
         }
     };
 
+    const _getRulesToTrigger = async (
+        event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
+        synchronous: boolean,
+        ctx: IQueryInfos,
+    ): Promise<IAutomationRule[]> => {
+        if (TRIGGER_FAKER_RULES_FOR_DEV) {
+            return buildFakeRulesToTrigger(event, synchronous, ctx);
+        }
+        const rules = await automationRuleRepo.getAutomationRules(
+            {
+                filters: {
+                    active: true,
+                    trigger: {
+                        synchronous,
+                        eventAction: event.action,
+                        eventTopic: event.topic,
+                    },
+                },
+            },
+            ctx,
+        );
+
+        return rules.list;
+    };
+
     return {
         async triggerRules(event, synchronous, ctx): Promise<void> {
             try {
-                const rules = await automationRuleRepo.getAutomationRules(
-                    {
-                        filters: {
-                            active: true,
-                            trigger: {
-                                synchronous,
-                                eventAction: event.action,
-                                eventTopic: event.topic,
-                            },
-                        },
-                    },
-                    ctx,
+                const rules = await _getRulesToTrigger(event, synchronous, ctx);
+
+                logger.verbose(
+                    `Triggering ${rules.length} automation rules for event action ${event.action} and topic ${JSON.stringify(event.topic)}`,
                 );
 
-                logger.info(
-                    `Triggering ${rules.list.length} automation rules for event action ${event.action} and topic ${JSON.stringify(event.topic)}`,
+                await Promise.all(
+                    rules.map(async rule => {
+                        try {
+                            await pipelineExecutor.executePipeline(
+                                {
+                                    ruleId: rule.id,
+                                    steps: rule.pipeline.steps,
+                                    trigger: {
+                                        eventAction: event.action,
+                                        eventTopic: event.topic,
+                                        synchronous,
+                                    },
+                                },
+                                ctx,
+                            );
+                        } catch (error) {
+                            logger.error(
+                                `Error executing pipeline for rule ${rule.id} triggered by event action ${event.action}: ${error.stack}`,
+                            );
+                        }
+                    }),
                 );
             } catch (error) {
-                logger.error(`Error while executing ${event.action} rules with topic ${event.topic}: ${error.stack}`);
+                logger.error(`Error while triggering ${event.action} rules with topic ${event.topic}: ${error.stack}`);
             }
         },
         async getAutomationRules({params, ctx}) {
