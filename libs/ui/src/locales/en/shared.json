@@ -756,6 +756,8 @@
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
                 "select_page_other": "Select visible items ({{count, number}})",
+                "deselect_page_one": "Deselect visible item ({{count, number}})",
+                "deselect_page_other": "Deselect visible items ({{count, number}})",
                 "select_all": "Select all items ({{count, number}})",
                 "deselect_all": "Deselect all items"
             },

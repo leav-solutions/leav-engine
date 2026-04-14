@@ -106,6 +106,9 @@ export const useMassActions = ({
     const isOnePage = view.pageSize > totalCountFiltered;
     const hasSelectedAllAvailableItems =
         view.massSelection === MASS_SELECTION_ALL || view.massSelection.length === totalCountFiltered;
+    const hasSelectedAllVisibleItems =
+        view.massSelection.length >= allVisibleKeys.length &&
+        allVisibleKeys.find(visibleKey => view.massSelection.includes(visibleKey)) !== undefined;
     const hasSelectedSomeItems =
         view.massSelection !== MASS_SELECTION_ALL &&
         view.massSelection.length > 0 &&
@@ -138,13 +141,21 @@ export const useMassActions = ({
                 items: [
                     hasSelectedAllAvailableItems
                         ? null
-                        : {
-                              key: 'toggle_page_selection',
-                              label: t('explorer.massAction.toggle_selection.select_page', {count: view.pageSize}),
-                              onClick: () => {
-                                  _setSelectedKeys([...new Set([...view.massSelection, ...allVisibleKeys])]);
-                              },
-                          },
+                        : hasSelectedAllVisibleItems
+                          ? {
+                                key: 'toggle_page_selection',
+                                label: t('explorer.massAction.toggle_selection.deselect_page', {count: view.pageSize}),
+                                onClick: () =>
+                                    _setSelectedKeys(
+                                        [...view.massSelection].filter(key => allVisibleKeys.includes[key]),
+                                    ),
+                            }
+                          : {
+                                key: 'toggle_page_selection',
+                                label: t('explorer.massAction.toggle_selection.select_page', {count: view.pageSize}),
+                                onClick: () =>
+                                    _setSelectedKeys([...new Set([...view.massSelection, ...allVisibleKeys])]),
+                            },
                     {
                         key: 'toggle_all_selection',
                         label: hasSelectedAllAvailableItems

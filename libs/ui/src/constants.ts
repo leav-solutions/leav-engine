@@ -79,3 +79,10 @@ export const TREE_FIELD_ID_PREFIX = 'treefield-';
 
 export const SUBMIT_BUTTONS_PORTAL = 'submit_buttons_portal';
 export const NEW_RECORD_ID = 'newRecord';
+
+/**
+ * The modal has a z-index set to 1000, whereas the snackbar has a z-index set to 9999.
+ * By setting the z-index to 12000, we ensure the modal overlay is aboveeverithing,
+ * while keeping some safety margin
+ */
+export const Z_INDEX_MODAL_OVERLAY = 12_000;
