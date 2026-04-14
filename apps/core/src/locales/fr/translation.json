@@ -232,7 +232,8 @@
         "unknown_version_profile": "Profil de version inconnu ({{id}})",
         "unknown_application": "Application inconnu ({{id}})",
         "unknown_automation_rule": "Règle d’automatisation inconnue ({{id}})",
-        "unknown_value": "Valeur inconnue"
+        "unknown_value": "Valeur inconnue",
+        "deleted_record": "Élément supprimé"
     },
     "tasks": {
         "import_config_label": "Import du fichier de configuration {{filename}}",

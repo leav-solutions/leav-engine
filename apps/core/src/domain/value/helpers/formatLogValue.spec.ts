@@ -399,7 +399,7 @@ describe('formatLogValue', () => {
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
 
-                expect(result).toBe(`test_link/${linkedRecordId}`);
+                expect(result).toBe(`test_link/${linkedRecordId} [logs.deleted_record]`);
                 expect(attributeDomainMock.getAttributeProperties).toHaveBeenCalledWith({id: 'link_attribute', ctx});
                 expect(recordDomainMock.find).toHaveBeenCalledWith({
                     params: {
@@ -442,7 +442,7 @@ describe('formatLogValue', () => {
 
                 const result = await _formatLogValue.formatAsString(logWithMetadata, rawData, ctx);
 
-                expect(result).toBe('Purged Record Label');
+                expect(result).toBe('Purged Record Label [logs.deleted_record]');
             });
 
             it('Should return fallback string when record fetch fails and no metadata', async () => {
@@ -467,7 +467,7 @@ describe('formatLogValue', () => {
 
                 const result = await _formatLogValue.formatAsString(logWithoutMetadata, rawData, ctx);
 
-                expect(result).toBe('test_link/purged-record');
+                expect(result).toBe('test_link/purged-record [logs.deleted_record]');
             });
         });
 
@@ -534,7 +534,7 @@ describe('formatLogValue', () => {
 
                 const result = await _formatLogValue.formatAsString(log, rawData, ctx);
 
-                expect(result).toBe(`tree_1/${linkedNodeId}`);
+                expect(result).toBe(`tree_1/${linkedNodeId} [logs.deleted_record]`);
                 expect(attributeDomainMock.getAttributeProperties).toHaveBeenCalledWith({id: 'tree_attribute', ctx});
                 expect(treeDomainMock.getRecordByNodeId).toHaveBeenCalledWith({
                     nodeId: linkedNodeId,
@@ -564,7 +564,7 @@ describe('formatLogValue', () => {
 
                 const result = await _formatLogValue.formatAsString(logWithMetadata, rawData, ctx);
 
-                expect(result).toBe('Purged Tree Node Label');
+                expect(result).toBe('Purged Tree Node Label [logs.deleted_record]');
             });
 
             it('Should return fallback string when tree node fetch fails and no metadata', async () => {
@@ -587,7 +587,7 @@ describe('formatLogValue', () => {
 
                 const result = await _formatLogValue.formatAsString(logWithoutMetadata, rawData, ctx);
 
-                expect(result).toBe('tree_1/42');
+                expect(result).toBe('tree_1/42 [logs.deleted_record]');
             });
         });
     });

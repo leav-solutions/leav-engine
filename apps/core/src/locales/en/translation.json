@@ -232,7 +232,8 @@
         "unknown_version_profile": "Unknown version profile ({{id}})",
         "unknown_application": "Unknown application ({{id}})",
         "unknown_automation_rule": "Unknown automation rule ({{id}})",
-        "unknown_value": "Unknown value"
+        "unknown_value": "Unknown value",
+        "deleted_record": "Deleted record"
     },
     "tasks": {
         "import_config_label": "Import configuration file {{filename}}",
