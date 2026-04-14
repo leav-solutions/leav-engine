@@ -1174,6 +1174,132 @@ describe('ValueDomain', () => {
                 await expect(saveVal).rejects.toHaveProperty('fields.metadata');
             });
         });
+
+        test('Should include linked record label in sendDatabaseEvent metadata for link attribute', async function () {
+            const linkedRecordId = 'linked_record_id';
+            const linkedRecordLabel = 'My Linked Record';
+
+            const mockValRepo = {
+                createValue: global.__mockPromise({
+                    payload: {id: linkedRecordId, library: 'test_lib'},
+                    attribute: mockAttrAdvLink.id,
+                    id_value: '123',
+                    modified_at: 123456,
+                    created_at: 123456,
+                }),
+                getValues: global.__mockPromise([]),
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrAdvLink}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
+            };
+
+            const mockRecordRepoWithLinked: Mockify<IRecordRepo> = {
+                ...mockRecordRepo,
+                getRecord: global.__mockPromise({id: linkedRecordId}),
+            };
+
+            const mockGetRecordIdentity = jest
+                .fn()
+                .mockResolvedValue({getLabel: jest.fn().mockResolvedValue(linkedRecordLabel)});
+
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                sendDatabaseEvent: jest.fn().mockResolvedValue(undefined),
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepoWithLinked as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.domain.record.helpers.getRecordIdentity': mockGetRecordIdentity,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+            });
+
+            await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: mockAttrAdvLink.id,
+                value: {payload: linkedRecordId},
+                ctx,
+            });
+
+            expect(mockGetRecordIdentity).toHaveBeenCalledWith(
+                {id: linkedRecordId, library: mockAttrAdvLink.linked_library},
+                ctx,
+            );
+            expect(mockEventsManager.sendDatabaseEvent).toHaveBeenCalledWith(
+                expect.objectContaining({metadata: {recordLabel: linkedRecordLabel}}),
+                ctx,
+            );
+        });
+
+        test('Should not include metadata in sendDatabaseEvent for standard attribute', async function () {
+            const mockValRepo = {
+                createValue: global.__mockPromise({
+                    payload: 'test val',
+                    attribute: 'test_attr',
+                    id_value: '123',
+                    modified_at: 123456,
+                    created_at: 123456,
+                }),
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
+            };
+
+            const mockGetRecordIdentity = jest.fn();
+
+            const mockEventsManager: Mockify<IEventsManagerDomain> = {
+                sendDatabaseEvent: jest.fn().mockResolvedValue(undefined),
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.domain.record.helpers.getRecordIdentity': mockGetRecordIdentity,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+            });
+
+            await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {payload: 'test val'},
+                ctx,
+            });
+
+            expect(mockGetRecordIdentity).not.toHaveBeenCalled();
+            expect(mockEventsManager.sendDatabaseEvent).toHaveBeenCalledWith(
+                expect.objectContaining({metadata: {}}),
+                ctx,
+            );
+        });
     });
 
     describe('saveValueBatch', () => {

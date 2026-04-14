@@ -379,6 +379,30 @@ const valueDomain = function ({
         }
     };
 
+    const _maybeGetLinkedRecordLabel = async (attribute: IAttribute, value: IValue, ctx: IQueryInfos) => {
+        if (
+            [AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK, AttributeTypes.TREE].includes(attribute.type) &&
+            value?.payload
+        ) {
+            const linkedRecord =
+                attribute.type === AttributeTypes.TREE
+                    ? {
+                          id: value.payload.record?.id,
+                          library: value.payload.record?.library?.id,
+                      }
+                    : {id: value.payload.id, library: attribute.linked_library};
+
+            if (linkedRecord.id && linkedRecord.library) {
+                const recordProperties = await getRecordIdentity(linkedRecord, ctx);
+                const rawRecordLabel = await recordProperties.getLabel?.();
+
+                return rawRecordLabel !== null ? String(rawRecordLabel) : null;
+            }
+        }
+
+        return null;
+    };
+
     const _executeDeleteValue = async ({library, recordId, attribute, value, skipActions, ctx}: IDeleteValueParams) => {
         if (IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(attribute)) {
             throw new ValidationError<IValue>({
@@ -499,34 +523,11 @@ const valueDomain = function ({
                   })
                 : [existingValue];
 
-        const isLinkOrTreeAttribute = [
-            AttributeTypes.SIMPLE_LINK,
-            AttributeTypes.ADVANCED_LINK,
-            AttributeTypes.TREE,
-        ].includes(attributeProps.type);
-
         const deletedValues = await Promise.all(
             actionsListRes.map(async actionsListResValue => {
-                let recordLabel = null;
-
                 // Fetch the linked record's label before deletion so it can be preserved in the event metadata.
                 // This is especially useful when the linked record is later purged and its label would be unrecoverable.
-                if (isLinkOrTreeAttribute && actionsListResValue?.payload) {
-                    const linkedRecord =
-                        attributeProps.type === AttributeTypes.TREE
-                            ? {
-                                  id: actionsListResValue.payload.record?.id,
-                                  library: actionsListResValue.payload.record?.library?.id,
-                              }
-                            : {id: actionsListResValue.payload.id, library: attributeProps.linked_library};
-
-                    if (linkedRecord.id && linkedRecord.library) {
-                        const recordProperties = await getRecordIdentity(linkedRecord, ctx);
-                        const rawRecordLabel = await recordProperties.getLabel?.();
-
-                        recordLabel = rawRecordLabel !== null ? String(rawRecordLabel) : null;
-                    }
-                }
+                const recordLabel = await _maybeGetLinkedRecordLabel(attributeProps, actionsListResValue, ctx);
 
                 const deletedValue = await valueRepo.deleteValue({
                     library,
@@ -645,6 +646,10 @@ const valueDomain = function ({
                 );
             }
 
+            // Fetch the linked record's label so it can be preserved in the event metadata.
+            // This is especially useful when the linked record is later purged and its label would be unrecoverable.
+            const recordLabel = await _maybeGetLinkedRecordLabel(attribute, savedValue, ctx);
+
             await eventsManager.sendDatabaseEvent<EventAction.VALUE_SAVE>(
                 {
                     action: EventAction.VALUE_SAVE,
@@ -658,6 +663,7 @@ const valueDomain = function ({
                     },
                     before: valueBefore,
                     after: savedValue,
+                    metadata: setMetadataRecordLabel(recordLabel),
                 },
                 ctx,
             );

@@ -144,7 +144,13 @@ export default function ({
                 `[LogApp] Error fetching record ${rawData.payload.library}${rawData.payload.id} for link value: ${e.stack}`,
             );
 
-            return getMetadataRecordLabel(log.metadata) ?? `${rawData.payload.library}/${rawData.payload.id}`;
+            const metadataRecordLabel = getMetadataRecordLabel(log.metadata);
+
+            if (metadataRecordLabel) {
+                return `${metadataRecordLabel} [${translator.t('logs.deleted_record', {lng: ctx.lang})}]`;
+            }
+
+            return `${rawData.payload.library}/${rawData.payload.id} [${translator.t('logs.deleted_record', {lng: ctx.lang})}]`;
         }
     };
 
@@ -166,7 +172,13 @@ export default function ({
                 `[LogApp] Error fetching record ${rawData.treeId}/${rawData.payload.id} for tree value: ${e.stack}`,
             );
 
-            return getMetadataRecordLabel(log.metadata) ?? `${rawData.treeId}/${rawData.payload.id}`;
+            const metadataRecordLabel = getMetadataRecordLabel(log.metadata);
+
+            if (metadataRecordLabel) {
+                return `${metadataRecordLabel} [${translator.t('logs.deleted_record', {lng: ctx.lang})}]`;
+            }
+
+            return `${rawData.treeId}/${rawData.payload.id} [${translator.t('logs.deleted_record', {lng: ctx.lang})}]`;
         }
     };
 
