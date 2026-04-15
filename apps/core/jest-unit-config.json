@@ -24,6 +24,7 @@
         "graphql-upload/GraphQLUpload.mjs": "<rootDir>/src/__tests__/mocks/graphql-upload.ts",
         "exceljs": "<rootDir>/../../node_modules/exceljs/dist/exceljs.js",
         "^uuid$": "uuid",
+        "^@leav/core/(.*)$": "<rootDir>/src/$1",
         "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
     }
 }

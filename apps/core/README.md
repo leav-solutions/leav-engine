@@ -37,6 +37,32 @@ You can add plugins to the core by adding them to the plugins folder. Each plugi
 The plugin folder is located by default in `apps/core/src/plugins` on development environment and `apps/core/dist/plugins` on build.
 It can be configured with the `PLUGINS_PATH` environment variable or the `pluginsPath` variable in the `config/local.js` file. ⚠️ The path must be under the `apps/core/src/plugins` folder (eg. `apps/core/src/plugins/my-own-repo/my-plugins`)
 
+### Create a plugin (WIP)
+
+In your plugins, import [@aristid/leav-types](https://www.npmjs.com/package/@aristid/leav-types)
+
+In your tsconfig.json
+
+```json
+{
+    "compilerOptions": {
+        "paths": {
+            "@leav/core/*": ["./node_modules/@aristid/leav-types/apps/core/src/*"],
+            "@leav/utils": ["./node_modules/@aristid/leav-types/libs/utils/src/index"],
+            "@leav/logger": ["./node_modules/@aristid/leav-types/libs/logger/src/index"]
+        }
+    }
+}
+```
+
+In your code
+
+```ts
+import {type ILogger} from '@leav/logger';
+import {AttributeCondition, Operator, type IRecord} from '@leav/core/_types/record';
+import {EventAction, type IDbEvent, type IDbPayload} from '@leav/utils';
+```
+
 ### Tests
 
 In addition to unit tests, there are integration (internal) and end-to-end (api) tests.
