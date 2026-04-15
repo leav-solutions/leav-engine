@@ -13,7 +13,6 @@ import {
     useGetTreeLibrariesQuery,
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '../SelectTreeNode';
-import {Z_INDEX_MODAL_OVERLAY} from '_ui/constants';
 
 interface ICreateDirectoryProps {
     defaultSelectedKey?: string;
@@ -177,7 +176,6 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
             title={t('create_directory.title')}
             open
             width="70rem"
-            zIndex={Z_INDEX_MODAL_OVERLAY}
             onCancel={_onClose}
             footer={
                 <div style={{marginTop: 50}}>
