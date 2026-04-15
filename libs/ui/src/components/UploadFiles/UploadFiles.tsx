@@ -33,7 +33,6 @@ import {
     useUploadUpdateSubscription,
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '../SelectTreeNode';
-import {Z_INDEX_MODAL_OVERLAY} from '_ui/constants';
 
 interface IUploadFilesProps {
     defaultSelectedNode?: {id: string; recordId?: string};
@@ -354,7 +353,6 @@ function UploadFiles({
             <Modal
                 title={t('upload.title')}
                 open
-                zIndex={Z_INDEX_MODAL_OVERLAY}
                 width="70rem"
                 onCancel={_onClose}
                 footer={

@@ -17,7 +17,6 @@ import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
 import {useGetInitialRecordValues} from '../EditRecordPage/getInitialRecordValues';
 import {ErrorComponent} from '../EditRecordPage/ErrorComponent';
-import {Z_INDEX_MODAL_OVERLAY} from '_ui/constants';
 
 export interface IEditRecordModalProps {
     className?: string;
@@ -205,7 +204,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
             maxHeight={autoHeight ? MODAL_HEIGHT : undefined}
             width={MODAL_WIDTH}
             isOpen={open}
-            style={{overlay: {zIndex: Z_INDEX_MODAL_OVERLAY}}}
             close={_handleClose}
             title={
                 <KitSpace>
