@@ -1,0 +1,5 @@
+mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
+    updateAutomationRule(rule: $rule) {
+        id
+    }
+}

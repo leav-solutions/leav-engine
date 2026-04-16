@@ -13,22 +13,22 @@ export type IAutomationRule = ICoreEntity & {
     modifiedBy: string;
 
     id: string;
-    label: ISystemTranslation;
-    description?: ISystemTranslation;
+    label: string;
+    description?: string;
     active: boolean;
     trigger: AutomationRuleTrigger;
 };
 
 export type ICreateAutomationRule = {
-    label: ISystemTranslation;
-    description?: ISystemTranslation;
+    label: string;
+    description?: string;
     trigger: AutomationRuleTrigger;
 };
 
 export type IUpdateAutomationRule = {
     id: string;
-    label?: ISystemTranslation;
-    description?: ISystemTranslation;
+    label?: string;
+    description?: string;
     active?: boolean;
     trigger?: Partial<AutomationRuleTrigger>;
 };

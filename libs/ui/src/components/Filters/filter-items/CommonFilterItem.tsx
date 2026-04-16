@@ -5,7 +5,7 @@ import {type FunctionComponent} from 'react';
 import {FilterDropDown} from '../filter-items/filter-type/FilterDropDown';
 import styled from 'styled-components';
 import {KitFilter} from 'aristid-ds';
-import {AttributeFormat} from '_ui/_gqlTypes';
+import {AttributeFormat, type RecordFilterCondition} from '_ui/_gqlTypes';
 import {getAttributeConditionOptions} from '../filter-items/filter-type/useConditionOptionsByType';
 import {type TFunction} from 'i18next';
 import {nullValueConditions} from '../conditionsHelper';
@@ -23,7 +23,7 @@ const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
-    if (filter.condition && nullValueConditions.includes(filter.condition)) {
+    if (filter.condition && nullValueConditions.includes(filter.condition as RecordFilterCondition)) {
         const conditionOption = getAttributeConditionOptions(t).find(option => option.value === filter.condition);
         return [conditionOption?.label ?? ''];
     }

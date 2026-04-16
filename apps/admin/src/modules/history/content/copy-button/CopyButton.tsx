@@ -6,6 +6,7 @@ import {faCopy} from '@fortawesome/free-solid-svg-icons';
 import {KitAlert, KitButton, KitTooltip} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {type MouseEventHandler} from 'react';
+import {SUCCESS_ALERT_DURATION, TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 
 type CopyButtonProps = {
     title: string;
@@ -13,10 +14,6 @@ type CopyButtonProps = {
     className?: string;
     iconColor?: string;
 };
-
-// When leav/ui will be added to the admin dependencies, we will be able to use the SUCCESS_ALERT_DURATION constant
-// I don't want to add it now just for this
-const SUCCESS_ALERT_DURATION = 3_000;
 
 export const CopyButton = ({className, iconColor, title, value}: CopyButtonProps) => {
     const {t} = useTranslation();
@@ -36,7 +33,11 @@ export const CopyButton = ({className, iconColor, title, value}: CopyButtonProps
     };
 
     return (
-        <KitTooltip title={t('logs.copy_button.copy')} placement="bottom">
+        <KitTooltip
+            title={t('logs.copy_button.copy')}
+            mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
+            placement="bottom"
+        >
             <KitButton
                 className={className}
                 type="tertiary"

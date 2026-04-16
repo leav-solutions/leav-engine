@@ -16,5 +16,6 @@ export const AdminAbsolutePaths = {
 };
 
 export const AdminUnreachablePaths = {
+    create: 'create',
     edit: 'edit/:id?',
 };

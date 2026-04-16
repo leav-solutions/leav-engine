@@ -48,7 +48,7 @@ const _isValidFieldFilterStandardValuesList = (
     filter: ValidFilter,
     attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number],
 ): filter is ValidFieldFilterStandardValuesList & {attribute: StandardAttributeDetailsFragment} =>
-    valueListTextConditions.includes(filter.condition) &&
+    valueListTextConditions.includes(filter.condition as RecordFilterCondition) &&
     [AttributeType.simple, AttributeType.advanced].includes(attribute.type) &&
     'valuesList' in attribute &&
     !!attribute.valuesList?.enable;
@@ -57,7 +57,7 @@ const _isValidFieldFilterLinkValuesList = (
     filter: ValidFilter,
     attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number],
 ): filter is ValidFieldFilterLinkValuesList & {attribute: LinkAttributeDetailsFragment} =>
-    valueListTextConditions.includes(filter.condition) &&
+    valueListTextConditions.includes(filter.condition as RecordFilterCondition) &&
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) &&
     'valuesList' in attribute &&
     !!attribute.valuesList?.enable;

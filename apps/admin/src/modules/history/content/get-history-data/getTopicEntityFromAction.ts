@@ -37,7 +37,7 @@ export const getTopicEntityFromAction = (
         case LogAction.AUTOMATION_RULE_UPDATE:
             return {
                 id: topic?.automationRule?.id,
-                label: localizedTranslation(topic?.automationRule?.label, lang),
+                label: topic?.automationRule?.label,
             };
 
         case LogAction.TREE_SAVE:

@@ -5,6 +5,7 @@ import {KitIdCard} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {HistoryContent} from './content/HistoryContent';
 import {PageContainer} from '../ui/page/PageContainer';
+import {PageHeader} from '../ui/page/PageHeader';
 import {PageContentContainer} from '../ui/page/PageContentContainer';
 
 export const History = () => {
@@ -12,7 +13,9 @@ export const History = () => {
 
     return (
         <PageContainer>
-            <KitIdCard title={t('logs.title')} description={t('logs.description')} size="s" />
+            <PageHeader
+                extraAlignLeft={<KitIdCard title={t('logs.title')} description={t('logs.description')} size="s" />}
+            />
             <PageContentContainer>
                 <HistoryContent />
             </PageContentContainer>

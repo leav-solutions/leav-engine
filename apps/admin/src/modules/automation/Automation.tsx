@@ -3,8 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitIdCard} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
+import {Outlet} from 'react-router-dom';
 import {AutomationContent} from './content/AutomationContent';
 import {PageContainer} from '../ui/page/PageContainer';
+import {PageHeader} from '../ui/page/PageHeader';
 import {PageContentContainer} from '../ui/page/PageContentContainer';
 
 export const Automation = () => {
@@ -12,9 +14,14 @@ export const Automation = () => {
 
     return (
         <PageContainer>
-            <KitIdCard title={t('automation.title')} description={t('automation.description')} size="s" />
+            <PageHeader
+                extraAlignLeft={
+                    <KitIdCard title={t('automation.title')} description={t('automation.description')} size="s" />
+                }
+            />
             <PageContentContainer>
                 <AutomationContent />
+                <Outlet />
             </PageContentContainer>
         </PageContainer>
     );

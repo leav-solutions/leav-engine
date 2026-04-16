@@ -88,7 +88,7 @@ export default function ({
 
                     type LogUnknownAutomationRuleEntity {
                         id: ID!
-                        label: SystemTranslation!
+                        label: String!
                     }
 
                     union LogRecord = Record | LogUnknownEntity

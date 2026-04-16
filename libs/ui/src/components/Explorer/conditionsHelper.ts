@@ -4,7 +4,7 @@
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
 
-export const hasOnlyNoValueConditions = (attributeFormat: string): boolean =>
+export const hasOnlyNoValueConditions = (attributeFormat: AttributeFormat): boolean =>
     [AttributeFormat.color, AttributeFormat.date_range, AttributeFormat.encrypted, AttributeFormat.extended].includes(
         attributeFormat,
     );

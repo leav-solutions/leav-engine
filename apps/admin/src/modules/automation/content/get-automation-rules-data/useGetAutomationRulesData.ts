@@ -5,29 +5,27 @@ import {
     type AutomationRulesFiltersInput,
     AutomationRuleSortableFields,
     SortOrder,
-    useGetAutomationDataQuery,
+    useGetAutomationRulesDataQuery,
 } from '../../../../_gqlTypes';
-import useLang from '../../../../hooks/useLang';
-import {mapAutomationData} from './mapAutomationData';
+import {mapAutomationRulesData} from './mapAutomationRulesData';
 
-export type AutomationData = {
+export type AutomationRulesData = {
     id: string;
     name: string;
     trigger: string;
     target: string;
     nb_actions: number;
-    status: string;
+    active: boolean;
 };
 
-export type AutomationPaginationParams = {
+export type UseGetAutomationRulesParams = {
     currentPage: number;
     pageSize: number;
     filters?: AutomationRulesFiltersInput;
 };
 
-export const useGetAutomationData = ({currentPage, pageSize, filters}: AutomationPaginationParams) => {
-    const {lang} = useLang();
-    const {data, loading, error} = useGetAutomationDataQuery({
+export const useGetAutomationRulesData = ({currentPage, pageSize, filters}: UseGetAutomationRulesParams) => {
+    const {data, loading, error} = useGetAutomationRulesDataQuery({
         fetchPolicy: 'no-cache',
         variables: {
             filters,
@@ -52,7 +50,7 @@ export const useGetAutomationData = ({currentPage, pageSize, filters}: Automatio
     }
 
     return {
-        data: mapAutomationData(data?.automationRules, lang) ?? [],
+        data: mapAutomationRulesData(data?.automationRules) ?? [],
         total: data.automationRules?.totalCount ?? 0,
         loading,
         error,

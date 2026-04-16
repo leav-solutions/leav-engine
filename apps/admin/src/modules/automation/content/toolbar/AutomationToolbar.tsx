@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Toolbar} from '../../../ui/toolbar/Toolbar';
 import {TotalResult} from '../../../ui/toolbar/total-result/TotalResult';
+import {CreateButton} from './create-button/CreateButton';
 
 type AutomationToolbarProps = {
     loading: boolean;
@@ -25,8 +26,11 @@ export const AutomationToolbar = ({
                 {/** TODO: Add filters here */}
             </>
         }
-        // extraAlignRight={
-        //TODO: Add create button here (and maybe more buttons if needed)
-        // }
+        extraAlignRight={
+            <>
+                {/* TODO: Add more buttons here (search, filters, etc.) */}
+                <CreateButton />
+            </>
+        }
     />
 );

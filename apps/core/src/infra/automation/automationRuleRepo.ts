@@ -28,8 +28,8 @@ type IAutomationRuleBaseDocument = {
     modifiedAt: number;
     modifiedBy: string;
 
-    label: ISystemTranslation;
-    description?: ISystemTranslation;
+    label: string;
+    description?: string;
     active: boolean;
     trigger: {
         synchronous: boolean;
