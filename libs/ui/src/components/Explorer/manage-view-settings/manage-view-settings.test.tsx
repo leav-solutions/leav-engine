@@ -4,7 +4,7 @@
 import {type FunctionComponent} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {type Mockify} from '@leav/utils';
+import {type Mockify} from '_ui/__mocks__/utils';
 import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {EditSettingsContextProvider} from './open-view-settings/EditSettingsContextProvider';
