@@ -1,4 +1,4 @@
-query getAutomationData(
+query getAutomationRulesData(
     $filters: AutomationRulesFiltersInput
     $pagination: Pagination
     $sort: AutomationRulesSortInput
@@ -8,6 +8,7 @@ query getAutomationData(
         list {
             id
             label
+            active
         }
     }
 }

@@ -11921,6 +11921,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:5.0.9"
     "@graphql-codegen/typescript-operations": "npm:5.0.9"
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.1"
+    "@leav/ui": "workspace:libs/ui"
     "@leav/utils": "workspace:libs/utils"
     "@nosferatu500/react-sortable-tree": "npm:4.4.0"
     "@reduxjs/toolkit": "npm:1.9.7"

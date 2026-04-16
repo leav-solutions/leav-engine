@@ -1,12 +1,18 @@
 {
     "admin": {
+        "active": "Actif",
+        "inactive": "Inactif",
         "title": "Accueil",
         "global_app_name": "LEAV-Engine",
         "submit": "Valider",
         "save": "Enregistrer",
         "cancel": "Annuler",
+        "create": "Créer",
+        "confirm": "Confirmer",
         "close": "Fermer",
         "add": "Ajouter",
+        "are_you_sure": "Êtes-vous sûr ?",
+        "back": "Retour",
         "remove": "Supprimer",
         "reset": "Réinitialiser",
         "refresh": "Rafraîchir",
@@ -33,7 +39,9 @@
         "document_title": "LEAV Engine - {{appLabel}}",
         "search_placeholder": "Rechercher...",
         "search": "Rechercher",
-        "home_page": "Page d'accueil"
+        "home_page": "Page d'accueil",
+        "yes": "Oui",
+        "no": "Non"
     },
     "dashboard": {
         "title": "Bienvenue sur l'interface d'administration"
@@ -563,6 +571,33 @@
                 "target": "Cible",
                 "nb_actions": "NB. Actions",
                 "status": "Statut"
+            }
+        },
+        "form": {
+            "fields": {
+                "active": "Actif",
+                "label": "Nom de l’automatisation",
+                "label_placeholder": "Entrez le nom de l’automatisation",
+                "label_required": "Le nom de l’automatisation est requis",
+                "description": "Description",
+                "description_placeholder": "Décrivez l’objectif de cette automatisation"
+            },
+            "sections": {
+                "info": "Informations de l’automatisation"
+            },
+            "create": {
+                "title": "Nouvelle automatisation",
+                "success": "Règle d'automatisation créée",
+                "error": "Une erreur est survenue lors de la création de la règle d'automatisation"
+            },
+            "edit": {
+                "title": "Modifier la règle d'automatisation",
+                "success": "Règle d'automatisation mise à jour",
+                "error": "Une erreur est survenue lors de la mise à jour de la règle d'automatisation"
+            },
+            "unsaved_changes": {
+                "title": "Modifications non enregistrées",
+                "content": "Vous avez des modifications non enregistrées. Si vous quittez cette page, vos modifications seront perdues."
             }
         }
     },

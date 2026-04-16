@@ -1,0 +1,14 @@
+query getAutomationRuleDetails(
+    $filters: AutomationRulesFiltersInput
+    $pagination: Pagination
+    $sort: AutomationRulesSortInput
+) {
+    automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
+        list {
+            id
+            label
+            description
+            active
+        }
+    }
+}

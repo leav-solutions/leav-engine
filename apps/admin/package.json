@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@apollo/client": "3.14.1",
+        "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "@nosferatu500/react-sortable-tree": "4.4.0",
         "@reduxjs/toolkit": "1.9.7",

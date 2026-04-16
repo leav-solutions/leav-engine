@@ -208,13 +208,58 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleEventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
 export enum AutomationRuleSortableFields {
   id = 'id'
 }
 
+export type AutomationRuleTriggerInput = {
+  eventAction: AutomationRuleEventAction;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous: Scalars['Boolean']['input'];
+};
+
 export type AutomationRulesFiltersInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type AutomationRulesSortInput = {
@@ -227,6 +272,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -234,8 +291,9 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 };
 
 export type CreateAutomationRuleInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
-  label: Scalars['SystemTranslation']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  trigger: AutomationRuleTriggerInput;
 };
 
 export type CreateRecordDataInput = {
@@ -278,6 +336,65 @@ export type EmbeddedAttributeInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   validation_regex?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
+export type EventTopicInput = {
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  application?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  permission?: InputMaybe<EventTopicPermissionInput>;
+  profile?: InputMaybe<Scalars['String']['input']>;
+  record?: InputMaybe<EventTopicRecordInput>;
+  tree?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTopicPermissionInput = {
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type EventTopicRecordInput = {
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type FileInput = {
@@ -449,6 +566,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -530,6 +649,12 @@ export enum NotificationLevel {
 export type Pagination = {
   limit: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
+};
+
+export type PartialAutomationRuleTriggerInput = {
+  eventAction?: InputMaybe<AutomationRuleEventAction>;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type PermissionActionInput = {
@@ -731,6 +856,30 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -816,12 +965,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -897,9 +1053,10 @@ export enum TreesSortableFields {
 
 export type UpdateAutomationRuleInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
-  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type UploadFiltersInput = {
@@ -1095,14 +1252,37 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, defaultView?: { id: string } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
-export type GetAutomationDataQueryVariables = Exact<{
+export type GetAutomationRulesDataQueryVariables = Exact<{
   filters?: InputMaybe<AutomationRulesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<AutomationRulesSortInput>;
 }>;
 
 
-export type GetAutomationDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: any }> } };
+export type GetAutomationRulesDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: string, active: boolean }> } };
+
+export type CreateAutomationRuleMutationVariables = Exact<{
+  rule: CreateAutomationRuleInput;
+}>;
+
+
+export type CreateAutomationRuleMutation = { createAutomationRule: { id: string } };
+
+export type UpdateAutomationRuleMutationVariables = Exact<{
+  rule: UpdateAutomationRuleInput;
+}>;
+
+
+export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string } };
+
+export type GetAutomationRuleDetailsQueryVariables = Exact<{
+  filters?: InputMaybe<AutomationRulesFiltersInput>;
+  pagination?: InputMaybe<Pagination>;
+  sort?: InputMaybe<AutomationRulesSortInput>;
+}>;
+
+
+export type GetAutomationRuleDetailsQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean }> } };
 
 export type GetHistoryDataQueryVariables = Exact<{
   filters?: InputMaybe<LogFilterInput>;
@@ -1117,7 +1297,7 @@ export type GetHistoryDataQuery = { logs?: { total: number, logs: Array<{ time: 
       , topic?: { apiKey?: string | null, filename?: string | null, attribute?: { id: string, label?: any | null } | null, library?: { id: string, label?: any | null } | null, permission?: { type: string, applyTo?: any | null } | null, profile?: { id: string } | null, record?:
           | { id: string, label?: any | null }
           | { id: string, whoAmI: { label?: string | null } }
-         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null, automationRule?: { id: string, label: any } | null } | null, after?: { asString?: string | null, raw?: any | null } | null, before?: { asString?: string | null, raw?: any | null } | null }> } | null };
+         | null, tree?: { id: string, label?: any | null } | null, application?: { id: string, label: any } | null, automationRule?: { id: string, label: string } | null } | null, after?: { asString?: string | null, raw?: any | null } | null, before?: { asString?: string | null, raw?: any | null } | null }> } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2104,29 +2284,30 @@ export const ValueDetailsExtendedFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
-export const GetAutomationDataDocument = gql`
-    query getAutomationData($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
+export const GetAutomationRulesDataDocument = gql`
+    query getAutomationRulesData($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
   automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
     totalCount
     list {
       id
       label
+      active
     }
   }
 }
     `;
 
 /**
- * __useGetAutomationDataQuery__
+ * __useGetAutomationRulesDataQuery__
  *
- * To run a query within a React component, call `useGetAutomationDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAutomationDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAutomationRulesDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAutomationRulesDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAutomationDataQuery({
+ * const { data, loading, error } = useGetAutomationRulesDataQuery({
  *   variables: {
  *      filters: // value for 'filters'
  *      pagination: // value for 'pagination'
@@ -2134,25 +2315,141 @@ export const GetAutomationDataDocument = gql`
  *   },
  * });
  */
-export function useGetAutomationDataQuery(baseOptions?: Apollo.QueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>) {
+export function useGetAutomationRulesDataQuery(baseOptions?: Apollo.QueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAutomationDataQuery, GetAutomationDataQueryVariables>(GetAutomationDataDocument, options);
+        return Apollo.useQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
       }
-export function useGetAutomationDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>) {
+export function useGetAutomationRulesDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAutomationDataQuery, GetAutomationDataQueryVariables>(GetAutomationDataDocument, options);
+          return Apollo.useLazyQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
         }
 // @ts-ignore
-export function useGetAutomationDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationDataQuery, GetAutomationDataQueryVariables>;
-export function useGetAutomationDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationDataQuery | undefined, GetAutomationDataQueryVariables>;
-export function useGetAutomationDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationDataQuery, GetAutomationDataQueryVariables>) {
+export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
+export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRulesDataQuery | undefined, GetAutomationRulesDataQueryVariables>;
+export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetAutomationDataQuery, GetAutomationDataQueryVariables>(GetAutomationDataDocument, options);
+          return Apollo.useSuspenseQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
         }
-export type GetAutomationDataQueryHookResult = ReturnType<typeof useGetAutomationDataQuery>;
-export type GetAutomationDataLazyQueryHookResult = ReturnType<typeof useGetAutomationDataLazyQuery>;
-export type GetAutomationDataSuspenseQueryHookResult = ReturnType<typeof useGetAutomationDataSuspenseQuery>;
-export type GetAutomationDataQueryResult = Apollo.QueryResult<GetAutomationDataQuery, GetAutomationDataQueryVariables>;
+export type GetAutomationRulesDataQueryHookResult = ReturnType<typeof useGetAutomationRulesDataQuery>;
+export type GetAutomationRulesDataLazyQueryHookResult = ReturnType<typeof useGetAutomationRulesDataLazyQuery>;
+export type GetAutomationRulesDataSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRulesDataSuspenseQuery>;
+export type GetAutomationRulesDataQueryResult = Apollo.QueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
+export const CreateAutomationRuleDocument = gql`
+    mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
+  createAutomationRule(rule: $rule) {
+    id
+  }
+}
+    `;
+export type CreateAutomationRuleMutationFn = Apollo.MutationFunction<CreateAutomationRuleMutation, CreateAutomationRuleMutationVariables>;
+
+/**
+ * __useCreateAutomationRuleMutation__
+ *
+ * To run a mutation, you first call `useCreateAutomationRuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAutomationRuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAutomationRuleMutation, { data, loading, error }] = useCreateAutomationRuleMutation({
+ *   variables: {
+ *      rule: // value for 'rule'
+ *   },
+ * });
+ */
+export function useCreateAutomationRuleMutation(baseOptions?: Apollo.MutationHookOptions<CreateAutomationRuleMutation, CreateAutomationRuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAutomationRuleMutation, CreateAutomationRuleMutationVariables>(CreateAutomationRuleDocument, options);
+      }
+export type CreateAutomationRuleMutationHookResult = ReturnType<typeof useCreateAutomationRuleMutation>;
+export type CreateAutomationRuleMutationResult = Apollo.MutationResult<CreateAutomationRuleMutation>;
+export type CreateAutomationRuleMutationOptions = Apollo.BaseMutationOptions<CreateAutomationRuleMutation, CreateAutomationRuleMutationVariables>;
+export const UpdateAutomationRuleDocument = gql`
+    mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
+  updateAutomationRule(rule: $rule) {
+    id
+  }
+}
+    `;
+export type UpdateAutomationRuleMutationFn = Apollo.MutationFunction<UpdateAutomationRuleMutation, UpdateAutomationRuleMutationVariables>;
+
+/**
+ * __useUpdateAutomationRuleMutation__
+ *
+ * To run a mutation, you first call `useUpdateAutomationRuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAutomationRuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAutomationRuleMutation, { data, loading, error }] = useUpdateAutomationRuleMutation({
+ *   variables: {
+ *      rule: // value for 'rule'
+ *   },
+ * });
+ */
+export function useUpdateAutomationRuleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAutomationRuleMutation, UpdateAutomationRuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAutomationRuleMutation, UpdateAutomationRuleMutationVariables>(UpdateAutomationRuleDocument, options);
+      }
+export type UpdateAutomationRuleMutationHookResult = ReturnType<typeof useUpdateAutomationRuleMutation>;
+export type UpdateAutomationRuleMutationResult = Apollo.MutationResult<UpdateAutomationRuleMutation>;
+export type UpdateAutomationRuleMutationOptions = Apollo.BaseMutationOptions<UpdateAutomationRuleMutation, UpdateAutomationRuleMutationVariables>;
+export const GetAutomationRuleDetailsDocument = gql`
+    query getAutomationRuleDetails($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
+  automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
+    list {
+      id
+      label
+      description
+      active
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAutomationRuleDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetAutomationRuleDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAutomationRuleDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAutomationRuleDetailsQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useGetAutomationRuleDetailsQuery(baseOptions?: Apollo.QueryHookOptions<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>(GetAutomationRuleDetailsDocument, options);
+      }
+export function useGetAutomationRuleDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>(GetAutomationRuleDetailsDocument, options);
+        }
+// @ts-ignore
+export function useGetAutomationRuleDetailsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>;
+export function useGetAutomationRuleDetailsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRuleDetailsQuery | undefined, GetAutomationRuleDetailsQueryVariables>;
+export function useGetAutomationRuleDetailsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>(GetAutomationRuleDetailsDocument, options);
+        }
+export type GetAutomationRuleDetailsQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsQuery>;
+export type GetAutomationRuleDetailsLazyQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsLazyQuery>;
+export type GetAutomationRuleDetailsSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsSuspenseQuery>;
+export type GetAutomationRuleDetailsQueryResult = Apollo.QueryResult<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>;
 export const GetHistoryDataDocument = gql`
     query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
   logs(filters: $filters, sort: $sort, pagination: $pagination) {

@@ -24,12 +24,8 @@ describe('automationRuleRepo', () => {
         it('should create an automation rule', async () => {
             const automationRule = await automationRuleRepo.createAutomationRule(
                 {
-                    label: {
-                        en: 'Test Automation Rule',
-                    },
-                    description: {
-                        en: 'This is a test automation rule.',
-                    },
+                    label: 'Test Automation Rule',
+                    description: 'This is a test automation rule.',
                     trigger: {
                         synchronous: false,
                         eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
@@ -41,12 +37,8 @@ describe('automationRuleRepo', () => {
             expect(automationRule).toEqual(
                 expect.objectContaining({
                     id: expect.any(String),
-                    label: {
-                        en: 'Test Automation Rule',
-                    },
-                    description: {
-                        en: 'This is a test automation rule.',
-                    },
+                    label: 'Test Automation Rule',
+                    description: 'This is a test automation rule.',
                     active: false,
                     createdAt: expect.any(Number),
                     createdBy: ctx.userId,
@@ -66,9 +58,7 @@ describe('automationRuleRepo', () => {
             for (let i = 0; i < 4; i++) {
                 const rule = await automationRuleRepo.createAutomationRule(
                     {
-                        label: {
-                            en: `Test Automation Rule ${i + 1}`,
-                        },
+                        label: `Test Automation Rule ${i + 1}`,
                         trigger: {
                             synchronous: false,
                             eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
@@ -109,9 +99,7 @@ describe('automationRuleRepo', () => {
                     expect.arrayContaining([
                         expect.objectContaining({
                             id: ruleIds[0],
-                            label: {
-                                en: 'Test Automation Rule 1',
-                            },
+                            label: 'Test Automation Rule 1',
                         }),
                     ]),
                 );

@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitTable} from 'aristid-ds';
+import {KitIdCard, KitTable, KitTag} from 'aristid-ds';
 import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
 import {automationTableContainer} from './automationTable.module.css';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
-import {type AutomationData} from '../get-automation-data/useGetAutomationData';
+import {type AutomationRulesData} from '../get-automation-rules-data/useGetAutomationRulesData';
 
 type AutomationTableProps = {
-    data: AutomationData[];
+    data: AutomationRulesData[];
     total: number;
     currentPage: number;
     pageSize: number;
     onPageChange: (page: number) => void;
     onPageSizeChange: (page: number, size: number) => void;
-    // onRowClick: (record: any) => void; //TODO: Use a proper type
+    onRowClick: (record: AutomationRulesData) => void;
 };
 
 export const AutomationTable = ({
@@ -25,7 +25,7 @@ export const AutomationTable = ({
     pageSize,
     onPageChange,
     onPageSizeChange,
-    // onRowClick,
+    onRowClick,
 }: AutomationTableProps) => {
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
@@ -58,9 +58,19 @@ export const AutomationTable = ({
         },
         {
             title: t('automation.table.column.status'),
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'active',
+            key: 'active',
             width: '15%',
+            render: (active: boolean) =>
+                active ? (
+                    <KitTag type="success">
+                        <KitIdCard description={t('admin.active')} />
+                    </KitTag>
+                ) : (
+                    <KitTag>
+                        <KitIdCard description={t('admin.inactive')} />
+                    </KitTag>
+                ),
         },
     ];
 
@@ -68,11 +78,12 @@ export const AutomationTable = ({
         <div className={automationTableContainer} ref={containerRef}>
             <KitTable
                 dataSource={data}
+                rowKey="id"
                 columns={tableColumns}
-                // onRow={record => ({ //TODO: Use this prop to open the automation details
-                //     onClick: () => onRowClick(record),
-                //     style: {cursor: 'pointer'},
-                // })}
+                onRow={record => ({
+                    onClick: () => onRowClick(record),
+                    style: {cursor: 'pointer'},
+                })}
                 headerLineSize="s"
                 lineSize="s" //TODO: Replace by "xs" when it will be available
                 scroll={{

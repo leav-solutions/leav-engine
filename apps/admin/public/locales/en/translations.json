@@ -1,12 +1,18 @@
 {
     "admin": {
+        "active": "Active",
+        "inactive": "Inactive",
         "title": "Home",
         "global_app_name": "LEAV-Engine",
         "submit": "Submit",
         "save": "Save",
         "cancel": "Cancel",
+        "create": "Create",
         "close": "Close",
+        "confirm": "Confirm",
+        "are_you_sure": "Are you sure?",
         "add": "Add",
+        "back": "Back",
         "remove": "Remove",
         "reset": "Reset",
         "refresh": "Refresh",
@@ -33,7 +39,9 @@
         "document_title": "LEAV Engine - {{appLabel}}",
         "search_placeholder": "Search...",
         "search": "Search",
-        "home_page": "Home page"
+        "home_page": "Home page",
+        "yes": "Yes",
+        "no": "No"
     },
     "dashboard": {
         "title": "Welcome to administration panel"
@@ -563,6 +571,33 @@
                 "target": "Target",
                 "nb_actions": "Number of actions",
                 "status": "Status"
+            }
+        },
+        "form": {
+            "fields": {
+                "active": "Active",
+                "label": "Automation name",
+                "label_placeholder": "Enter the name of the automation",
+                "label_required": "The automation name is required",
+                "description": "Description",
+                "description_placeholder": "Describe the objective of this automation"
+            },
+            "sections": {
+                "info": "Automation information"
+            },
+            "create": {
+                "title": "New automation",
+                "success": "Automation rule created",
+                "error": "An error occurred while creating the automation rule"
+            },
+            "edit": {
+                "title": "Edit automation rule",
+                "success": "Automation rule updated",
+                "error": "An error occurred while updating the automation rule"
+            },
+            "unsaved_changes": {
+                "title": "Unsaved changes",
+                "content": "You have unsaved changes. If you leave this page, your changes will be lost."
             }
         }
     },

@@ -140,16 +140,16 @@ export const useConditionsOptionsByType = (filter: UIFilter) => {
             .filter(({value}) => {
                 // Use special condition set for text fields with closed list values
                 if (isUIFilterValueList(filter)) {
-                    return valueListTextConditions.includes(value);
+                    return valueListTextConditions.includes(value as RecordFilterCondition);
                 }
                 if (isUIFilterStandard(filter)) {
-                    return conditionsByFormat[filter.attribute.format].includes(value);
+                    return conditionsByFormat[filter.attribute.format].includes(value as RecordFilterCondition);
                 }
                 if (isUIFilterLink(filter) || isUIFilterThrough(filter)) {
                     return linkFilterConditions.includes(value);
                 }
                 if (isUIFilterTree(filter)) {
-                    return treeFilterConditions.includes(value);
+                    return treeFilterConditions.includes(value as RecordFilterCondition);
                 }
             })
             .map(option => ({

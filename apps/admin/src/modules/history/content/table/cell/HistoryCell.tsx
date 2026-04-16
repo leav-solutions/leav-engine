@@ -4,6 +4,7 @@
 import {KitTooltip} from 'aristid-ds';
 import {useRef, useState} from 'react';
 import {historyCellContainer} from './historyCell.module.css';
+import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 
 type HistoryCellProps = {
     value: string;
@@ -20,7 +21,7 @@ export const HistoryCell = ({value}: HistoryCellProps) => {
     };
 
     return (
-        <KitTooltip title={isTruncated ? value : null}>
+        <KitTooltip title={isTruncated ? value : null} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
             <div ref={ref} className={historyCellContainer} onMouseEnter={handleMouseEnter}>
                 {value}
             </div>

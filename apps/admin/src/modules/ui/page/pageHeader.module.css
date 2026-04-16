@@ -1,0 +1,12 @@
+.pageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leftContent,
+.rightContent {
+    display: flex;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+    align-items: center;
+}

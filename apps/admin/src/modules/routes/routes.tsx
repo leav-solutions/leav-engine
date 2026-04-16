@@ -21,6 +21,8 @@ import Tasks from '../../components/tasks/Tasks';
 import {History} from '../history/History';
 import {NotFound} from '../not-found/NotFound';
 import {Automation} from '../automation/Automation';
+import {CreateAutomation} from '../automation/form/CreateAutomation';
+import {EditAutomation} from '../automation/form/EditAutomation';
 
 // Note:
 // - For historic routes, we don't use the children routes feature as they don't have an <Outlet/> and are not nested
@@ -100,6 +102,19 @@ export const adminRoutes: RouteObject[] = [
     {
         path: AdminAbsolutePaths.automation,
         element: <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={Automation} />,
+    },
+    {
+        // Note: We didn't use the children routes for now because we don't need to keep automation list visible (or preserve filters / sorting / etc.)
+        path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.create}`,
+        element: (
+            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={CreateAutomation} />
+        ),
+    },
+    {
+        path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.edit}`,
+        element: (
+            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={EditAutomation} />
+        ),
     },
     {
         path: AdminAbsolutePaths.notFound,

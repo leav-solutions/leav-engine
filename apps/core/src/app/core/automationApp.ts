@@ -58,8 +58,8 @@ export default function ({
                         modifiedBy: String!
                         
                         id: ID!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation!,
-                        description: SystemTranslation,
+                        label: String!,
+                        description: String,
                         active: Boolean!,
                         trigger: AutomationRuleTrigger!,
                     }
@@ -98,15 +98,15 @@ export default function ({
                     }
 
                     input CreateAutomationRuleInput {
-                        label: SystemTranslation!,
-                        description: SystemTranslationOptional,
+                        label: String!,
+                        description: String,
                         trigger: AutomationRuleTriggerInput!
                     }
                     
                     input UpdateAutomationRuleInput {
                         id: ID!,
-                        label: SystemTranslation,
-                        description: SystemTranslationOptional,
+                        label: String,
+                        description: String,
                         active: Boolean,
                         trigger: PartialAutomationRuleTriggerInput
                     }

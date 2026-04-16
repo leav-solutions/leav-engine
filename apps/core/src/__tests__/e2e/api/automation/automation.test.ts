@@ -23,12 +23,8 @@ describe('Automation', () => {
             const newRule = (
                 await adminUserSdk.CreateAutomationRule({
                     rule: {
-                        label: {
-                            en: 'Test rule',
-                        },
-                        description: {
-                            en: 'This is a test rule',
-                        },
+                        label: 'Test rule',
+                        description: 'This is a test rule',
                         trigger: {
                             synchronous: false,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -42,21 +38,15 @@ describe('Automation', () => {
 
             expect(newRule).toMatchObject({
                 id: expect.any(String),
-                label: {
-                    en: 'Test rule',
-                },
+                label: 'Test rule',
             });
 
             const rules = await adminUserSdk.GetAutomationRules();
             expect(rules.automationRules.list).toEqual([
                 expect.objectContaining({
                     id: newRule.id,
-                    label: {
-                        en: 'Test rule',
-                    },
-                    description: {
-                        en: 'This is a test rule',
-                    },
+                    label: 'Test rule',
+                    description: 'This is a test rule',
                     active: false,
                     createdAt: expect.any(Number),
                     createdBy: adminUserId,
@@ -77,9 +67,7 @@ describe('Automation', () => {
             await expect(
                 nonAdminUserSdk.CreateAutomationRule({
                     rule: {
-                        label: {
-                            en: 'Test rule',
-                        },
+                        label: 'Test rule',
                         trigger: {
                             synchronous: false,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -97,13 +85,8 @@ describe('Automation', () => {
             ruleToUpdate = (
                 await adminUserSdk.CreateAutomationRule({
                     rule: {
-                        label: {
-                            en: 'Test rule',
-                        },
-                        description: {
-                            fr: 'regle de test',
-                            en: 'This is a test rule',
-                        },
+                        label: 'Test rule',
+                        description: 'This is a test rule',
                         trigger: {
                             synchronous: false,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -120,12 +103,7 @@ describe('Automation', () => {
                 await adminUserSdk.UpdateAutomationRule({
                     rule: {
                         id: ruleToUpdate.id,
-                        label: {
-                            en: 'updated label',
-                        },
-                        description: {
-                            en: null,
-                        },
+                        label: 'updated label',
                     },
                 })
             ).updateAutomationRule;
@@ -133,12 +111,8 @@ describe('Automation', () => {
             expect(updatedRule).toEqual(
                 expect.objectContaining({
                     id: ruleToUpdate.id,
-                    label: {
-                        en: 'updated label',
-                    },
-                    description: {
-                        fr: 'regle de test', // we verify mergeObjects is true
-                    },
+                    label: 'updated label',
+                    description: 'This is a test rule', // we verify mergeObjects is true
                 }),
             );
 
@@ -151,9 +125,7 @@ describe('Automation', () => {
                 nonAdminUserSdk.UpdateAutomationRule({
                     rule: {
                         id: ruleToUpdate.id,
-                        label: {
-                            en: 'Test rule',
-                        },
+                        label: 'Test rule',
                     },
                 }),
             ).rejects.toThrow('Action forbidden');
@@ -164,7 +136,7 @@ describe('Automation', () => {
                 adminUserSdk.UpdateAutomationRule({
                     rule: {
                         id: 'nonexistent-rule-id',
-                        label: {en: 'ghost'},
+                        label: 'ghost',
                     },
                 }),
             ).rejects.toThrow(/Unknown automation rule/);
@@ -186,7 +158,7 @@ describe('Automation', () => {
             const rule = (
                 await adminUserSdk.CreateAutomationRule({
                     rule: {
-                        label: {en: 'RECORD_INIT smoke test rule'},
+                        label: 'RECORD_INIT smoke test rule',
                         trigger: {
                             synchronous: true,
                             eventAction:

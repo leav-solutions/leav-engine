@@ -307,6 +307,8 @@ apps/admin-unit-tests:
       changes:
         - *new_lib_installed_changes
         - apps/admin/**/*
+        - libs/ui/**/*
+        - libs/utils/**/*
 
 apps/app-studio-unit-tests:
   stage: test
