@@ -8,7 +8,7 @@ exports[`CheckboxField Snapshot test 1`] = `
       <div
         class="aristid-ds-toaster"
         data-rht-toaster=""
-        style="position: fixed; z-index: 9999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
+        style="position: fixed; z-index: 999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
       />
       <div
         class="ui toggle checkbox"
@@ -28,7 +28,7 @@ exports[`CheckboxField Snapshot test 1`] = `
     <div
       class="aristid-ds-toaster"
       data-rht-toaster=""
-      style="position: fixed; z-index: 9999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
+      style="position: fixed; z-index: 999; top: 16px; left: 16px; right: 16px; bottom: 16px; pointer-events: none;"
     />
     <div
       class="ui toggle checkbox"

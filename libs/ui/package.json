@@ -42,7 +42,7 @@
         "@types/lodash.isequal": "^4",
         "@types/react": "18.2.14",
         "@types/react-dom": "18.2.6",
-        "aristid-ds": "15.3.1-637817c",
+        "aristid-ds": "15.3.1-886678",
         "babel-jest": "29.7.0",
         "graphql": "16.13.2",
         "i18next": "22.5.1",
