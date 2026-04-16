@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 1`] = `
+exports[`AttributeAdvancedLinkRepo > createValue > Should create a new advanced link value 1`] = `
 "
                     LET linkedRecord = DOCUMENT(@value0)
                     INSERT @value1 IN @@value2
                     RETURN {edge: NEW, linkedRecord}"
 `;
 
-exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 2`] = `
+exports[`AttributeAdvancedLinkRepo > createValue > Should create a new advanced link value 2`] = `
 {
   "@value2": "core_edge_values_links",
   "value0": "test_linked_lib/987654",
@@ -29,14 +29,14 @@ exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 1`] = `
+exports[`AttributeAdvancedLinkRepo > createValue > Should create a new reverse advanced link value 1`] = `
 "
                     LET linkedRecord = DOCUMENT(@value0)
                     INSERT @value1 IN @@value2
                     RETURN {edge: NEW, linkedRecord}"
 `;
 
-exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 2`] = `
+exports[`AttributeAdvancedLinkRepo > createValue > Should create a new reverse advanced link value 2`] = `
 {
   "@value2": "core_edge_values_links",
   "value0": "test_lib/12345",
@@ -58,13 +58,13 @@ exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advan
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 1`] = `
+exports[`AttributeAdvancedLinkRepo > deleteValue > Should delete a value 1`] = `
 "
                     REMOVE @value0 IN @@value1
                     RETURN OLD"
 `;
 
-exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 2`] = `
+exports[`AttributeAdvancedLinkRepo > deleteValue > Should delete a value 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": {
@@ -73,7 +73,7 @@ exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 2`] = `
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
+exports[`AttributeAdvancedLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -88,7 +88,7 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter 1`] = `
+exports[`AttributeAdvancedLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for "count" filter 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -106,7 +106,7 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter on reverse link 1`] = `
+exports[`AttributeAdvancedLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for "count" filter on reverse link 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -124,7 +124,7 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter on reverse link, based on simple link 1`] = `
+exports[`AttributeAdvancedLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for "count" filter on reverse link, based on simple link 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -141,7 +141,7 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link 1`] = `
+exports[`AttributeAdvancedLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for reverse link 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -156,7 +156,7 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link, based on simple link 1`] = `
+exports[`AttributeAdvancedLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for reverse link, based on simple link 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -169,7 +169,7 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced link attribute 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValueByID > Should return value for advanced link attribute 1`] = `
 " FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
                     @@value1
@@ -179,7 +179,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced
                     RETURN {linkedRecord, edge}"
 `;
 
-exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced link attribute 2`] = `
+exports[`AttributeAdvancedLinkRepo > getValueByID > Should return value for advanced link attribute 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
@@ -188,7 +188,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse advanced link attribute 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValueByID > Should return value for reverse advanced link attribute 1`] = `
 " FOR linkedRecord, edge
                     IN 1 INBOUND @value0
                     @@value1
@@ -198,7 +198,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse 
                     RETURN {linkedRecord, edge}"
 `;
 
-exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse advanced link attribute 2`] = `
+exports[`AttributeAdvancedLinkRepo > getValueByID > Should return value for reverse advanced link attribute 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
@@ -207,7 +207,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse 
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return all values if forced 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return all values if forced 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
@@ -219,7 +219,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return all values if forced 
             "
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return only first value if not multiple attribute 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return only first value if not multiple attribute 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
@@ -231,7 +231,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return only first value if n
             "
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return only first value if not multiple attribute 2`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return only first value if not multiple attribute 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
@@ -239,7 +239,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return only first value if n
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return values filtered by version 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return values filtered by version 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
@@ -251,7 +251,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values filtered by ve
             "
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced link attribute 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return values for advanced link attribute 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
@@ -263,7 +263,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced l
             "
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced link attribute 2`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return values for advanced link attribute 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
@@ -271,7 +271,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced l
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse advanced link attribute 1`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return values for reverse advanced link attribute 1`] = `
 "
                 FOR linkedRecord, edge
                     IN 1 INBOUND @value0
@@ -283,7 +283,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse ad
             "
 `;
 
-exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse advanced link attribute 2`] = `
+exports[`AttributeAdvancedLinkRepo > getValues > Should return values for reverse advanced link attribute 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
@@ -291,7 +291,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse ad
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sort 1`] = `
+exports[`AttributeAdvancedLinkRepo > sortQueryPart > Should return advanced link sort 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -308,7 +308,7 @@ exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sor
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 1`] = `
+exports[`AttributeAdvancedLinkRepo > updateValue > Should update a advanced link value 1`] = `
 "
                     LET linkedRecord = DOCUMENT(@value0)
                     UPDATE @value1
@@ -317,7 +317,7 @@ exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link val
                     RETURN {edge: NEW, linkedRecord}"
 `;
 
-exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 2`] = `
+exports[`AttributeAdvancedLinkRepo > updateValue > Should update a advanced link value 2`] = `
 {
   "@value3": "core_edge_values_links",
   "value0": "test_linked_lib/987654",
@@ -341,7 +341,7 @@ exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link val
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 1`] = `
+exports[`AttributeAdvancedLinkRepo > updateValue > Should update a reverse advanced link value 1`] = `
 "
                     LET linkedRecord = DOCUMENT(@value0)
                     UPDATE @value1
@@ -350,7 +350,7 @@ exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced 
                     RETURN {edge: NEW, linkedRecord}"
 `;
 
-exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 2`] = `
+exports[`AttributeAdvancedLinkRepo > updateValue > Should update a reverse advanced link value 2`] = `
 {
   "@value3": "core_edge_values_links",
   "value0": "test_lib/12345",

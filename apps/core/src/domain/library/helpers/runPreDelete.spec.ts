@@ -12,15 +12,15 @@ import runPreDelete from './runPreDelete';
 describe('runPreDelete', () => {
     const mockTreeDomain: Mockify<ITreeDomain> = {
         getTrees: global.__mockPromise({list: [mockTree]}),
-        saveTree: jest.fn(),
+        saveTree: vi.fn(),
     };
 
     const mockTreeRepo: Mockify<ITreeRepo> = {
-        deleteTree: jest.fn(),
+        deleteTree: vi.fn(),
     };
 
     const mockUtils: Mockify<IUtils> = {
-        getLibraryTreeId: jest.fn(() => 'lib_tree'),
+        getLibraryTreeId: vi.fn(() => 'lib_tree'),
     };
 
     test("Remove library from tree where it's used", async () => {

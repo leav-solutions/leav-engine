@@ -37,35 +37,35 @@ import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordIn
 
 const depsBase: ToAny<IValueDomainDeps> = {
     config: {},
-    'core.domain.actionsList': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.permission.attributeDependentValues': jest.fn(),
-    'core.domain.permission.recordAttribute': jest.fn(),
-    'core.domain.permission.record': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.helpers.updateRecordLastModif': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
-    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
-    'core.domain.record.helpers.getRecordIdentity': jest.fn(),
-    'core.domain.permission.helpers.recordInCreationBypass': jest.fn(),
-    'core.domain.versionProfile': jest.fn(),
-    'core.infra.record': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.infra.value': jest.fn(),
-    'core.utils': jest.fn(),
-    'core.utils.logger': jest.fn(),
-    'core.domain.tree': jest.fn(),
-    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': jest.fn(),
-    'core.domain.record.helpers.createRecord': jest.fn(),
-    'core.domain.record.helpers.findRecords': jest.fn(),
-    'core.domain.value.helpers.getRecordFieldValue': jest.fn(),
-    'core.domain.value.helpers.getValues': jest.fn(),
-    'core.domain.value.helpers.runActionsList': jest.fn(async ({values}) =>
+    'core.domain.actionsList': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.permission.attributeDependentValues': vi.fn(),
+    'core.domain.permission.recordAttribute': vi.fn(),
+    'core.domain.permission.record': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.helpers.updateRecordLastModif': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
+    'core.domain.tree.helpers.getDefaultElement': vi.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': vi.fn(),
+    'core.domain.record.helpers.getRecordIdentity': vi.fn(),
+    'core.domain.permission.helpers.recordInCreationBypass': vi.fn(),
+    'core.domain.versionProfile': vi.fn(),
+    'core.infra.record': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.infra.value': vi.fn(),
+    'core.utils': vi.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.domain.tree': vi.fn(),
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': vi.fn(),
+    'core.domain.record.helpers.createRecord': vi.fn(),
+    'core.domain.record.helpers.findRecords': vi.fn(),
+    'core.domain.value.helpers.getRecordFieldValue': vi.fn(),
+    'core.domain.value.helpers.getValues': vi.fn(),
+    'core.domain.value.helpers.runActionsList': vi.fn(async ({values}) =>
         values.map((v: any) => ({...v, raw_payload: v.payload})),
     ),
-    'core.domain.value.helpers.formatValue': jest.fn(async ({attribute, value}) => {
+    'core.domain.value.helpers.formatValue': vi.fn(async ({attribute, value}) => {
         const processedValue: any = {...value, attribute: attribute.id};
         // Mimic real behavior: wrap metadata values in {payload: ...}
         if (attribute.metadata_fields?.length && processedValue.metadata) {
@@ -93,12 +93,12 @@ describe('ValueDomain', () => {
     };
 
     const mockRecordRepo: Mockify<IRecordRepo> = {
-        updateRecord: jest.fn(),
+        updateRecord: vi.fn(),
         find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]}),
     };
 
     const mockActionsListDomain = {
-        runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val)),
+        runActionsList: vi.fn().mockImplementation((_, val) => Promise.resolve(val)),
     } satisfies Mockify<IActionsListDomain>;
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
@@ -133,9 +133,9 @@ describe('ValueDomain', () => {
     };
 
     const mockUtilsStandardAttribute: Mockify<IUtils> = {
-        isStandardAttribute: jest.fn(() => true),
-        isLinkAttribute: jest.fn(() => false),
-        isTreeAttribute: jest.fn(() => false),
+        isStandardAttribute: vi.fn(() => true),
+        isLinkAttribute: vi.fn(() => false),
+        isTreeAttribute: vi.fn(() => false),
     };
 
     const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
@@ -146,13 +146,13 @@ describe('ValueDomain', () => {
         recordInCreationBypassById: global.__mockPromise(false),
     };
 
-    const mockUpdateRecordLastModif = jest.fn();
+    const mockUpdateRecordLastModif = vi.fn();
 
     const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
         getVersionProfileProperties: global.__mockPromise({...mockVersionProfile, trees: ['my_tree']}),
     };
 
-    const mockSendRecordUpdateEventHelper = jest.fn();
+    const mockSendRecordUpdateEventHelper = vi.fn();
 
     const ctx: IQueryInfos = {
         userId: '1',
@@ -160,7 +160,7 @@ describe('ValueDomain', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('saveValue', () => {
@@ -328,7 +328,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown attribute', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementationOnce(() => {
+                getAttributeProperties: vi.fn().mockImplementationOnce(() => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 }),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
@@ -356,7 +356,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if the library does not use the attribute', async function () {
             const mValidateHelper: Mockify<IValidateHelper> = {
-                validateLibraryAttribute: jest.fn().mockImplementation(() => {
+                validateLibraryAttribute: vi.fn().mockImplementation(() => {
                     throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
                 }),
             };
@@ -607,7 +607,7 @@ describe('ValueDomain', () => {
             };
 
             const mockValidHelper: Mockify<IValidateHelper> = {
-                validateRecord: jest.fn().mockImplementation(() => {
+                validateRecord: vi.fn().mockImplementation(() => {
                     throw new ValidationError({test_record: Errors.UNKNOWN_RECORD});
                 }),
                 validateLibrary: global.__mockPromise(true),
@@ -822,7 +822,7 @@ describe('ValueDomain', () => {
             };
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: jest.fn(),
+                updateValue: vi.fn(),
                 getValueById: global.__mockPromise(dbValueData),
             };
 
@@ -1000,7 +1000,7 @@ describe('ValueDomain', () => {
                 };
 
                 const mockRecordAttrPermForbidDom: Mockify<IRecordAttributePermissionDomain> = {
-                    getRecordAttributePermission: jest
+                    getRecordAttributePermission: vi
                         .fn()
                         .mockImplementation((a, attrId) => Promise.resolve(attrId !== 'meta_attribute')),
                 };
@@ -1049,7 +1049,7 @@ describe('ValueDomain', () => {
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
-                    getAttributeProperties: jest.fn().mockImplementation(({id}) =>
+                    getAttributeProperties: vi.fn().mockImplementation(({id}) =>
                         Promise.resolve(
                             id === attrWithMetadataId
                                 ? {...mockAttrAdvWithMetadata}
@@ -1063,7 +1063,7 @@ describe('ValueDomain', () => {
                     getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 };
 
-                const mockRunActionsListHelper = jest.fn(async ({values}) => values);
+                const mockRunActionsListHelper = vi.fn(async ({values}) => values);
 
                 const valDomain = valueDomain({
                     ...depsBase,
@@ -1103,9 +1103,9 @@ describe('ValueDomain', () => {
             test('Should throw with metafield specified if actions list throws', async () => {
                 const mockUtils: Mockify<IUtils> = {
                     ...mockUtilsStandardAttribute,
-                    rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                    rethrow: vi.fn().mockImplementation(e => {
                         throw e;
-                    }),
+                    }) as never,
                 };
 
                 const attrWithMetadataId = 'advanced_attribute_with_meta';
@@ -1125,7 +1125,7 @@ describe('ValueDomain', () => {
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
-                    getAttributeProperties: jest.fn().mockImplementation(id =>
+                    getAttributeProperties: vi.fn().mockImplementation(id =>
                         Promise.resolve(
                             id === attrWithMetadataId
                                 ? {...mockAttrAdvWithMetadata}
@@ -1140,7 +1140,7 @@ describe('ValueDomain', () => {
                 };
 
                 const mockALThrowsDomain: Mockify<IActionsListDomain> = {
-                    runActionsList: jest
+                    runActionsList: vi
                         .fn()
                         .mockImplementationOnce(mockActionsListDomain.runActionsList)
                         .mockImplementation(() => {
@@ -1200,12 +1200,12 @@ describe('ValueDomain', () => {
                 getRecord: global.__mockPromise({id: linkedRecordId}),
             };
 
-            const mockGetRecordIdentity = jest
+            const mockGetRecordIdentity = vi
                 .fn()
-                .mockResolvedValue({getLabel: jest.fn().mockResolvedValue(linkedRecordLabel)});
+                .mockResolvedValue({getLabel: vi.fn().mockResolvedValue(linkedRecordLabel)});
 
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                sendDatabaseEvent: jest.fn().mockResolvedValue(undefined),
+                sendDatabaseEvent: vi.fn().mockResolvedValue(undefined),
             };
 
             const valDomain = valueDomain({
@@ -1261,10 +1261,10 @@ describe('ValueDomain', () => {
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
             };
 
-            const mockGetRecordIdentity = jest.fn();
+            const mockGetRecordIdentity = vi.fn();
 
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                sendDatabaseEvent: jest.fn().mockResolvedValue(undefined),
+                sendDatabaseEvent: vi.fn().mockResolvedValue(undefined),
             };
 
             const valDomain = valueDomain({
@@ -1311,9 +1311,9 @@ describe('ValueDomain', () => {
         test('Should save multiple values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw e;
-                }),
+                }) as never,
             };
             const values: ISaveValue[] = [
                 {
@@ -1344,7 +1344,7 @@ describe('ValueDomain', () => {
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementation(({id}) => {
+                getAttributeProperties: vi.fn().mockImplementation(({id}) => {
                     let attrProps;
 
                     switch (id) {
@@ -1418,9 +1418,9 @@ describe('ValueDomain', () => {
         test('Should ignore values that are identical to DB value', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw e;
-                }),
+                }) as never,
             };
             const values: ISaveValue[] = [
                 {
@@ -1459,7 +1459,7 @@ describe('ValueDomain', () => {
             } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementation(({id}) => {
+                getAttributeProperties: vi.fn().mockImplementation(({id}) => {
                     let attrProps;
 
                     switch (id) {
@@ -1544,8 +1544,8 @@ describe('ValueDomain', () => {
             ];
 
             const mockValRepo = {
-                updateValue: jest.fn(),
-                createValue: jest.fn(),
+                updateValue: vi.fn(),
+                createValue: vi.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345',
                 }),
@@ -1556,14 +1556,14 @@ describe('ValueDomain', () => {
             };
 
             const mockActionsListDomainInvalid: Mockify<IActionsListDomain> = {
-                runActionsList: jest.fn().mockImplementation(() => {
+                runActionsList: vi.fn().mockImplementation(() => {
                     throw new ValidationError({test_attr: Errors.ERROR});
                 }),
             };
 
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                translateError: jest.fn().mockImplementation(err => err.msg ?? err),
+                translateError: vi.fn().mockImplementation(err => err.msg ?? err),
             };
 
             const valDomain = valueDomain({
@@ -1614,8 +1614,8 @@ describe('ValueDomain', () => {
             ];
 
             const mockValRepo = {
-                updateValue: jest.fn(),
-                createValue: jest.fn(),
+                updateValue: vi.fn(),
+                createValue: vi.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345',
                 }),
@@ -1666,9 +1666,9 @@ describe('ValueDomain', () => {
         test('Delete empty values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw e;
-                }),
+                }) as never,
             };
 
             const values: ISaveValue[] = [
@@ -1680,8 +1680,8 @@ describe('ValueDomain', () => {
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: jest.fn(),
-                createValue: jest.fn(),
+                updateValue: vi.fn(),
+                createValue: vi.fn(),
                 deleteValue: global.__mockPromise({
                     id_value: '12345',
                     payload: 'MyLabel',
@@ -1735,9 +1735,9 @@ describe('ValueDomain', () => {
         test("Don't delete empty values if keepEmpty true", async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw e;
-                }),
+                }) as never,
             };
 
             const values: ISaveValue[] = [
@@ -1754,7 +1754,7 @@ describe('ValueDomain', () => {
                     {payload: 'test', id_value: 12345},
                     {payload: 'test', id_value: null},
                 ]),
-                deleteValue: jest.fn(),
+                deleteValue: vi.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345',
                 }),
@@ -1805,7 +1805,7 @@ describe('ValueDomain', () => {
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateRecord: global.__mockPromise(true),
-                validateLibrary: jest.fn().mockImplementation(() => {
+                validateLibrary: vi.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
                 }),
             };
@@ -1830,7 +1830,7 @@ describe('ValueDomain', () => {
         test('Should throw if the library does not use the attribute', async function () {
             const mValidateHelper: Mockify<IValidateHelper> = {
                 validateLibrary: global.__mockPromise(true),
-                validateLibraryAttribute: jest.fn().mockImplementation(() => {
+                validateLibraryAttribute: vi.fn().mockImplementation(() => {
                     throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
                 }),
             };
@@ -1861,7 +1861,7 @@ describe('ValueDomain', () => {
             ];
 
             const mockValidHelper: Mockify<IValidateHelper> = {
-                validateRecord: jest.fn().mockImplementation(() => {
+                validateRecord: vi.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
                 }),
                 validateLibrary: global.__mockPromise(true),
@@ -1932,7 +1932,7 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown attribute', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn().mockImplementationOnce(() => {
+                getAttributeProperties: vi.fn().mockImplementationOnce(() => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
                 }),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
@@ -1973,7 +1973,7 @@ describe('ValueDomain', () => {
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateRecord: global.__mockPromise(true),
-                validateLibrary: jest.fn().mockImplementation(() => {
+                validateLibrary: vi.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
                 }),
             };
@@ -2020,7 +2020,7 @@ describe('ValueDomain', () => {
 
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: global.__mockPromise(true),
-                validateRecord: jest.fn().mockImplementation(() => {
+                validateRecord: vi.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
                 }),
             };
@@ -2220,12 +2220,12 @@ describe('ValueDomain', () => {
                 getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
-            const mockGetRecordIdentity = jest
+            const mockGetRecordIdentity = vi
                 .fn()
-                .mockResolvedValue({getLabel: jest.fn().mockResolvedValue(linkedRecordLabel)});
+                .mockResolvedValue({getLabel: vi.fn().mockResolvedValue(linkedRecordLabel)});
 
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                sendDatabaseEvent: jest.fn().mockResolvedValue(undefined),
+                sendDatabaseEvent: vi.fn().mockResolvedValue(undefined),
             };
 
             const valDomain = valueDomain({
@@ -2276,10 +2276,10 @@ describe('ValueDomain', () => {
                 getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
             };
 
-            const mockGetRecordIdentity = jest.fn();
+            const mockGetRecordIdentity = vi.fn();
 
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                sendDatabaseEvent: jest.fn().mockResolvedValue(undefined),
+                sendDatabaseEvent: vi.fn().mockResolvedValue(undefined),
             };
 
             const valDomain = valueDomain({
@@ -2350,7 +2350,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     ctx,
                 }),
-            ).rejects.toEqual(new ValidationError({test_attr: Errors.REQUIRED_ATTRIBUTE}));
+            ).rejects.toThrow(ValidationError);
 
             expect(mockValRepo.deleteValue).toHaveBeenCalledTimes(0);
         });

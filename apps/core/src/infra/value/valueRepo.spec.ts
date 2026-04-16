@@ -38,7 +38,7 @@ describe('valueRepo', () => {
 
             const repo = valueRepo({
                 'core.infra.db.dbService': mockDbServ as IDbService,
-                'core.infra.attributeTypes': jest.fn() as unknown as IAttributeTypesRepo,
+                'core.infra.attributeTypes': vi.fn() as unknown as IAttributeTypesRepo,
             });
 
             await repo.deleteAllValuesByRecord({

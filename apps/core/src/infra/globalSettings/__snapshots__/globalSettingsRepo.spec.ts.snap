@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`getSettingsRepo saveSettings Should return settings 1`] = `
+exports[`getSettingsRepo > saveSettings > Should return settings 1`] = `
 "
                     FOR s IN @@value0
                         FILTER s._key == @value1
@@ -8,14 +8,14 @@ exports[`getSettingsRepo saveSettings Should return settings 1`] = `
                 "
 `;
 
-exports[`getSettingsRepo saveSettings Should return settings 2`] = `
+exports[`getSettingsRepo > saveSettings > Should return settings 2`] = `
 {
   "@value0": "core_global_settings",
   "value1": "1",
 }
 `;
 
-exports[`getSettingsRepo saveSettings Should save settings 1`] = `
+exports[`getSettingsRepo > saveSettings > Should save settings 1`] = `
 "UPSERT {_key: @value0}
                     INSERT @value1
                     UPDATE @value1
@@ -25,7 +25,7 @@ exports[`getSettingsRepo saveSettings Should save settings 1`] = `
                 "
 `;
 
-exports[`getSettingsRepo saveSettings Should save settings 2`] = `
+exports[`getSettingsRepo > saveSettings > Should save settings 2`] = `
 {
   "@value2": "core_global_settings",
   "value0": "1",

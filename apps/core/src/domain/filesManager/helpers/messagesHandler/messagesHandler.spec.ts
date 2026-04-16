@@ -8,14 +8,14 @@ import messagesHandler, {type IMessagesHandlerDeps} from './messagesHandler';
 import {type ToAny} from '../../../../utils/utils';
 
 const depsBase: ToAny<IMessagesHandlerDeps> = {
-    'core.utils.logger': jest.fn(),
-    'core.domain.filesManager.helpers.handleFileSystemEvent': jest.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.domain.filesManager.helpers.handleFileSystemEvent': vi.fn(),
     config: {},
 };
 
 describe('MessagesHandler', () => {
     test('Process messages, respect incoming order', async () => {
-        const mockHandleEventFileSystem = jest.fn();
+        const mockHandleEventFileSystem = vi.fn();
 
         const mockConfig = {
             filesManager: {

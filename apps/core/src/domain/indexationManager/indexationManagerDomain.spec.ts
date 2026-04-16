@@ -17,19 +17,19 @@ import {type ToAny} from '../../utils/utils';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: jest.fn(),
-    checkExchange: jest.fn(),
-    assertQueue: jest.fn(),
-    bindQueue: jest.fn(),
-    consume: jest.fn(),
-    publish: jest.fn(),
-    waitForConfirms: jest.fn(),
-    prefetch: jest.fn(),
+    assertExchange: vi.fn(),
+    checkExchange: vi.fn(),
+    assertQueue: vi.fn(),
+    bindQueue: vi.fn(),
+    consume: vi.fn(),
+    publish: vi.fn(),
+    waitForConfirms: vi.fn(),
+    prefetch: vi.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
+    close: vi.fn(),
+    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
 };
 
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -42,20 +42,20 @@ const ctx: IQueryInfos = {
 };
 
 const mockLogger: Mockify<ILogger> = {
-    info: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    info: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
 };
 
 const depsBase: ToAny<IIndexationManagerDomainDeps> = {
-    'core.infra.amqpService': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.domain.library': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.infra.indexation.indexationService': jest.fn(),
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.tasksManager': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.utils.logger': jest.fn(),
-    'core.utils.getSystemQueryContext': jest.fn(),
+    'core.infra.amqpService': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.library': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.infra.indexation.indexationService': vi.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.tasksManager': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.utils.getSystemQueryContext': vi.fn(),
     translator: {},
     config: {},
 };
@@ -90,7 +90,7 @@ describe('Indexation Manager', () => {
 
     test('Init message listening', async () => {
         const mockAmqpService: Mockify<IAmqpService> = {
-            consume: jest.fn(),
+            consume: vi.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
                 channel: mockAmqpChannel as amqp.ConfirmChannel,

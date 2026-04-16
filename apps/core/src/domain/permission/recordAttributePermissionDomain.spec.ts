@@ -14,13 +14,13 @@ import recordAttributePermissionDomain, {
 import {type ToAny} from '../../utils/utils';
 
 const depsBase: ToAny<IRecordAttributePermissionDomainDeps> = {
-    'core.domain.permission.attribute': jest.fn(),
-    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
-    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
-    'core.domain.permission.helpers.recordInCreationBypass': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.infra.record': jest.fn(),
-    'core.infra.value': jest.fn(),
+    'core.domain.permission.attribute': vi.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': vi.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': vi.fn(),
+    'core.domain.permission.helpers.recordInCreationBypass': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.infra.record': vi.fn(),
+    'core.infra.value': vi.fn(),
 };
 
 describe('AttributePermissionDomain', () => {
@@ -46,7 +46,7 @@ describe('AttributePermissionDomain', () => {
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation(({attribute}) => {
+            getValues: vi.fn().mockImplementation(({attribute}) => {
                 let val;
                 switch (attribute.id) {
                     case 'category':
@@ -89,7 +89,7 @@ describe('AttributePermissionDomain', () => {
         };
 
         test('Return permission', async () => {
-            jest.spyOn(getDefaultPermission, 'default');
+            const getDefaultPermissionSpy = vi.spyOn(getDefaultPermission, 'default');
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
                 ...depsBase,
@@ -106,13 +106,13 @@ describe('AttributePermissionDomain', () => {
                 ctx,
             );
 
-            expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
+            expect(getDefaultPermissionSpy.mock.calls.length).toBe(0);
             expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
         test('Return default permission if no config', async () => {
-            jest.spyOn(getDefaultPermission, 'default');
+            vi.spyOn(getDefaultPermission, 'default');
             const mockAttrNoPermsDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
                     id: 'test_attr',

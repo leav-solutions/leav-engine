@@ -11,17 +11,17 @@ import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain
 
 describe('logDomain', () => {
     const mockLogRepo: Mockify<ILogRepo> = {
-        getLogs: jest.fn(),
+        getLogs: vi.fn(),
     };
     const mockPermissionDomain: Mockify<IPermissionDomain> = {
-        isAllowed: jest.fn(),
+        isAllowed: vi.fn(),
     };
     const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
-        getRecordPermission: jest.fn(),
+        getRecordPermission: vi.fn(),
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
         mockLogRepo.getLogs.mockResolvedValue([mockLog]);
     });
 

@@ -137,7 +137,7 @@ describe('AttributeSimpleRepo', () => {
 
     describe('filterValueQueryPart', () => {
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isCountFilter: jest.fn().mockReturnValue(false),
+            isCountFilter: vi.fn().mockReturnValue(false),
         };
 
         test('Should query to retrieve value to filter on', () => {
@@ -191,7 +191,7 @@ describe('AttributeSimpleRepo', () => {
 
             const mockDbServ = {
                 db: new Database(),
-                execute: jest
+                execute: vi
                     .fn()
                     .mockReturnValueOnce(librarieusUsingAttribute) // Number of deleted values
                     .mockReturnValueOnce([]) // Number of deleted values

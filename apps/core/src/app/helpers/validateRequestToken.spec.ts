@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import validateRequestTokenHelper from './validateRequestToken';
 import createAuthApp, {type IAuthApp, type IAuthAppDeps} from '../auth/authApp';
-import {type Mockify} from '@leav/utils';
 import {type IConfig} from '../../_types/config';
 import {type DeepPartial} from '../../_types/utils';
 import {type IRequestWithContext} from '../../_types/express';
 import {type Response} from 'express';
-import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import jwt from 'jsonwebtoken';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IValueDomain} from '../../domain/value/valueDomain';
@@ -65,17 +63,17 @@ describe('validateRequestToken', () => {
     };
 
     const authAppdepsBase: ToAny<IAuthAppDeps> = {
-        'core.domain.value': jest.fn(),
-        'core.domain.record': jest.fn(),
-        'core.infra.record': jest.fn(),
-        'core.domain.apiKey': jest.fn(),
-        'core.domain.user': jest.fn(),
-        'core.infra.session': jest.fn(),
-        'core.utils.logger': jest.fn(),
-        'core.infra.oidc.oidcClientService': jest.fn(),
-        'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
-        'core.app.helpers.convertOIDCIdentifier': jest.fn(),
-        'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
+        'core.domain.value': vi.fn(),
+        'core.domain.record': vi.fn(),
+        'core.infra.record': vi.fn(),
+        'core.domain.apiKey': vi.fn(),
+        'core.domain.user': vi.fn(),
+        'core.infra.session': vi.fn(),
+        'core.utils.logger': vi.fn(),
+        'core.infra.oidc.oidcClientService': vi.fn(),
+        'core.app.helpers.initQueryContext': vi.fn(() => mockCtx),
+        'core.app.helpers.convertOIDCIdentifier': vi.fn(),
+        'core.utils.getSystemQueryContext': vi.fn(() => mockSystemQueryContext),
         config: {},
     };
 
@@ -95,7 +93,7 @@ describe('validateRequestToken', () => {
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
             await expect(
@@ -121,7 +119,7 @@ describe('validateRequestToken', () => {
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
             await expect(
@@ -149,7 +147,7 @@ describe('validateRequestToken', () => {
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
             await expect(
@@ -175,7 +173,7 @@ describe('validateRequestToken', () => {
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
             await expect(
@@ -210,10 +208,10 @@ describe('validateRequestToken', () => {
             };
 
             const responseMock: Mockify<Response> = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
-            const mockedVerify = jest.spyOn(jwt, 'verify');
+            const mockedVerify = vi.spyOn(jwt, 'verify');
 
             mockedVerify.mockImplementation(() => ({
                 userId: '1',
@@ -221,7 +219,7 @@ describe('validateRequestToken', () => {
                 agent: 'test',
             }));
 
-            const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+            const mockedSign = vi.spyOn(jwt, 'sign');
 
             mockedSign
                 .mockImplementationOnce(() => 'new_mocked_access_token')
@@ -276,10 +274,10 @@ describe('validateRequestToken', () => {
         };
 
         const responseMock: Mockify<Response> = {
-            cookie: jest.fn(),
+            cookie: vi.fn(),
         };
 
-        const mockedVerify = jest.spyOn(jwt, 'verify');
+        const mockedVerify = vi.spyOn(jwt, 'verify');
         mockedVerify.mockImplementation(token => {
             if (token === 'expired_access_token') {
                 const err = new Error('jwt expired');
@@ -293,7 +291,7 @@ describe('validateRequestToken', () => {
             };
         });
 
-        const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+        const mockedSign = vi.spyOn(jwt, 'sign');
         mockedSign
             .mockImplementationOnce(() => 'new_mocked_access_token_2')
             .mockImplementationOnce(() => 'new_mocked_refresh_token_2');
@@ -349,10 +347,10 @@ describe('validateRequestToken', () => {
         };
 
         const responseMock: Mockify<Response> = {
-            cookie: jest.fn(),
+            cookie: vi.fn(),
         };
 
-        const mockedVerify = jest.spyOn(jwt, 'verify');
+        const mockedVerify = vi.spyOn(jwt, 'verify');
 
         mockedVerify.mockImplementation(() => ({
             userId: '1',
@@ -361,7 +359,7 @@ describe('validateRequestToken', () => {
             agent: 'test',
         }));
 
-        const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+        const mockedSign = vi.spyOn(jwt, 'sign');
 
         mockedSign
             .mockImplementationOnce(() => 'new_mocked_access_token')

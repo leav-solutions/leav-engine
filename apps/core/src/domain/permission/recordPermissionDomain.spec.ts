@@ -12,16 +12,16 @@ import recordPermissionDomain, {type IRecordPermissionDomainDeps} from './record
 import {type ToAny} from '../../utils/utils';
 
 const depsBase: ToAny<IRecordPermissionDomainDeps> = {
-    'core.domain.permission.library': jest.fn(),
-    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
-    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.infra.value': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.utils': jest.fn(),
-    'core.domain.permission.helpers.recordInCreationBypass': jest.fn(),
-    'core.infra.record': jest.fn(),
+    'core.domain.permission.library': vi.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': vi.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.infra.value': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.utils': vi.fn(),
+    'core.domain.permission.helpers.recordInCreationBypass': vi.fn(),
+    'core.infra.record': vi.fn(),
 };
 
 describe('recordPermissionDomain', () => {
@@ -38,7 +38,7 @@ describe('recordPermissionDomain', () => {
         } satisfies Mockify<ITreeBasedPermissionHelper>;
 
         const mockLibPermDomain: Mockify<ILibraryPermissionDomain> = {
-            getLibraryPermission: jest.fn().mockReturnValue(defaultPerm),
+            getLibraryPermission: vi.fn().mockReturnValue(defaultPerm),
         };
 
         const mockLibSimplePerms = {
@@ -57,11 +57,11 @@ describe('recordPermissionDomain', () => {
             },
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id])),
+            getAttributeProperties: vi.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id])),
         };
 
         const mockValueRepo = {
-            getValues: jest.fn().mockImplementation(({attribute}) => {
+            getValues: vi.fn().mockImplementation(({attribute}) => {
                 let val;
                 switch (attribute.id) {
                     case 'category':

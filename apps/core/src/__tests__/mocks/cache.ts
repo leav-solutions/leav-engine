@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type Mockify} from '@leav/utils';
 import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 
 export const mockCacheService: Mockify<ICacheService> = {
@@ -11,6 +10,6 @@ export const mockCacheService: Mockify<ICacheService> = {
 };
 
 export const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService),
-    memoize: jest.fn().mockImplementation(({func}) => func()),
+    getCache: vi.fn().mockReturnValue(mockCacheService),
+    memoize: vi.fn().mockImplementation(({func}) => func()),
 };

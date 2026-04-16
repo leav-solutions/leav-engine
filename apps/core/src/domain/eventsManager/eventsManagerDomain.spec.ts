@@ -12,28 +12,28 @@ import eventsManager, {type IEventsManagerDomainDeps} from './eventsManagerDomai
 import {type ILogger} from '@leav/logger';
 
 const logger: Mockify<ILogger> = {
-    error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    warn: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    error: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    warn: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: jest.fn(),
-    checkExchange: jest.fn(),
-    assertQueue: jest.fn(),
-    bindQueue: jest.fn(),
-    consume: jest.fn(),
-    publish: jest.fn(),
-    waitForConfirms: jest.fn(),
-    prefetch: jest.fn(),
+    assertExchange: vi.fn(),
+    checkExchange: vi.fn(),
+    assertQueue: vi.fn(),
+    bindQueue: vi.fn(),
+    consume: vi.fn(),
+    publish: vi.fn(),
+    waitForConfirms: vi.fn(),
+    prefetch: vi.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
+    close: vi.fn(),
+    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
 };
 
-jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection),
+vi.mock('amqplib', () => ({
+    connect: vi.fn().mockImplementation(() => mockAmqpConnection),
 }));
 
 const ctx: IQueryInfos = {
@@ -43,14 +43,14 @@ const ctx: IQueryInfos = {
 
 const depsBase: ToAny<IEventsManagerDomainDeps> = {
     config: {},
-    'core.infra.amqpService': jest.fn(),
-    'core.utils.logger': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.infra.amqpService': vi.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.utils': vi.fn(),
 };
 
 describe('Events Manager', () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const conf: Mockify<IConfig> = {
@@ -77,7 +77,7 @@ describe('Events Manager', () => {
     };
 
     const mockAmqpService: Mockify<IAmqpService> = {
-        consume: jest.fn(),
+        consume: vi.fn(),
         consumer: {
             connection: mockAmqpConnection as amqp.ChannelModel,
             channel: mockAmqpChannel as amqp.ConfirmChannel,
@@ -87,11 +87,11 @@ describe('Events Manager', () => {
             connection: mockAmqpConnection as amqp.ChannelModel,
             channel: mockAmqpChannel as amqp.ConfirmChannel,
         },
-        close: jest.fn(),
+        close: vi.fn(),
     };
 
     const mockUtils: Mockify<IUtils> = {
-        getProcessIdentifier: jest.fn().mockReturnValue('98765431-42'),
+        getProcessIdentifier: vi.fn().mockReturnValue('98765431-42'),
     };
 
     test('Init', async () => {

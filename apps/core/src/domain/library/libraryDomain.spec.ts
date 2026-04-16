@@ -40,7 +40,7 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const mockTranslator: Mockify<i18n> = {
-    t: jest.fn((key: string) => key),
+    t: vi.fn((key: string) => key),
 };
 
 const mockCacheService: Mockify<ICacheService> = {
@@ -50,24 +50,24 @@ const mockCacheService: Mockify<ICacheService> = {
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService),
+    getCache: vi.fn().mockReturnValue(mockCacheService),
 };
 
 const depsBase: ToAny<ILibraryDomainDeps> = {
-    'core.domain.attribute': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.library.helpers.deleteAssociatedValues': jest.fn(),
-    'core.domain.library.helpers.runPreDelete': jest.fn(),
-    'core.domain.library.helpers.updateAssociatedForms': jest.fn(),
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.infra.attribute': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
-    'core.infra.library': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.library.helpers.deleteAssociatedValues': vi.fn(),
+    'core.domain.library.helpers.runPreDelete': vi.fn(),
+    'core.domain.library.helpers.updateAssociatedForms': vi.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.infra.attribute': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
+    'core.infra.library': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.utils': vi.fn(),
     translator: {},
     config: {},
 };
@@ -87,8 +87,8 @@ describe('LibraryDomain', () => {
     };
 
     const mockTreeRepo: Mockify<ITreeRepo> = {
-        createTree: jest.fn(),
-        deleteTree: jest.fn(),
+        createTree: vi.fn(),
+        deleteTree: vi.fn(),
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
@@ -99,21 +99,21 @@ describe('LibraryDomain', () => {
         validateView: global.__mockPromise(false),
     };
 
-    const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockLibrary);
-    const mockGetEntityByIdHelperNoResult = jest.fn().mockReturnValue(null);
+    const mockGetEntityByIdHelper = vi.fn().mockReturnValue(mockLibrary);
+    const mockGetEntityByIdHelperNoResult = vi.fn().mockReturnValue(null);
 
     const mockUtils: Mockify<IUtils> = {
-        isIdValid: jest.fn().mockReturnValue(true),
-        getLibraryTreeId: jest.fn().mockReturnValue({}),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:library:42'),
-        getDirectoriesLibraryId: jest.fn().mockReturnValue('files_directories'),
-        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-        getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previews_status'),
-        getPreviewAttributesSettings: jest.fn().mockReturnValue(systemPreviewsSettings),
-        getDefaultActionsList: jest.fn().mockReturnValue([]),
+        isIdValid: vi.fn().mockReturnValue(true),
+        getLibraryTreeId: vi.fn().mockReturnValue({}),
+        getCoreEntityCacheKey: vi.fn().mockReturnValue('coreEntity:library:42'),
+        getDirectoriesLibraryId: vi.fn().mockReturnValue('files_directories'),
+        getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+        getPreviewsStatusAttributeName: vi.fn().mockReturnValue('previews_status'),
+        getPreviewAttributesSettings: vi.fn().mockReturnValue(systemPreviewsSettings),
+        getDefaultActionsList: vi.fn().mockReturnValue([]),
     };
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     describe('getLibraries', () => {
         test('Should return a list of libs', async function () {
@@ -122,8 +122,8 @@ describe('LibraryDomain', () => {
             } satisfies Mockify<ILibraryRepo>;
 
             const mockAttrDomain = {
-                getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
             } satisfies Mockify<IAttributeDomain>;
 
             const libDomain = libraryDomain({
@@ -151,8 +151,8 @@ describe('LibraryDomain', () => {
             } satisfies Mockify<ILibraryRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
             };
 
             const libDomain = libraryDomain({
@@ -191,13 +191,13 @@ describe('LibraryDomain', () => {
         describe('Create library', () => {
             test('Should throw if invalid ID', async function () {
                 const mockUtilsInvalidID: Mockify<IUtils> = {
-                    isIdValid: jest.fn().mockReturnValue(false),
+                    isIdValid: vi.fn().mockReturnValue(false),
                 };
 
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -205,10 +205,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -228,9 +226,9 @@ describe('LibraryDomain', () => {
             test('Save behavior specific attributes', async () => {
                 const mockLibRepo = {
                     createLibrary: global.__mockPromise({id: 'test', system: false}),
-                    updateLibrary: jest.fn(),
-                    saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
+                    updateLibrary: vi.fn(),
+                    saveLibraryAttributes: vi.fn(),
+                    saveLibraryFullTextAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -258,10 +256,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -290,9 +286,9 @@ describe('LibraryDomain', () => {
                 test('Add previews settings on create', async function () {
                     const mockLibRepo = {
                         createLibrary: global.__mockPromise({id: 'test', system: false}),
-                        updateLibrary: jest.fn(),
-                        saveLibraryAttributes: jest.fn(),
-                        saveLibraryFullTextAttributes: jest.fn(),
+                        updateLibrary: vi.fn(),
+                        saveLibraryAttributes: vi.fn(),
+                        saveLibraryFullTextAttributes: vi.fn(),
                     } satisfies Mockify<ILibraryRepo>;
 
                     const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -318,8 +314,8 @@ describe('LibraryDomain', () => {
                             ],
                             totalCount: 0,
                         }),
-                        getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([])),
-                        getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([])),
+                        getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([])),
+                        getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([])),
                     };
 
                     const libDomain = libraryDomain({
@@ -349,9 +345,9 @@ describe('LibraryDomain', () => {
                 test('Should save a new library with custom previews settings', async function () {
                     const mockLibRepo = {
                         createLibrary: global.__mockPromise({id: 'test', system: false}),
-                        updateLibrary: jest.fn(),
-                        saveLibraryAttributes: jest.fn(),
-                        saveLibraryFullTextAttributes: jest.fn(),
+                        updateLibrary: vi.fn(),
+                        saveLibraryAttributes: vi.fn(),
+                        saveLibraryFullTextAttributes: vi.fn(),
                     } satisfies Mockify<ILibraryRepo>;
 
                     const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -377,8 +373,8 @@ describe('LibraryDomain', () => {
                             ],
                             totalCount: 0,
                         }),
-                        getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([])),
-                        getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([])),
+                        getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([])),
+                        getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([])),
                     };
 
                     const libDomain = libraryDomain({
@@ -428,9 +424,9 @@ describe('LibraryDomain', () => {
                 test('Should throw if a size name is already used', async function () {
                     const mockLibRepo: Mockify<ILibraryRepo> = {
                         createLibrary: global.__mockPromise({id: 'test', system: false}),
-                        updateLibrary: jest.fn(),
-                        saveLibraryAttributes: jest.fn(),
-                        saveLibraryFullTextAttributes: jest.fn(),
+                        updateLibrary: vi.fn(),
+                        saveLibraryAttributes: vi.fn(),
+                        saveLibraryFullTextAttributes: vi.fn(),
                     };
 
                     const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -456,8 +452,8 @@ describe('LibraryDomain', () => {
                             ],
                             totalCount: 0,
                         }),
-                        getLibraryAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([])),
-                        getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([])),
+                        getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([])),
+                        getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([])),
                     };
 
                     const libDomain = libraryDomain({
@@ -508,9 +504,9 @@ describe('LibraryDomain', () => {
                             system: false,
                             behavior: LibraryBehavior.FILES,
                         }),
-                        updateLibrary: jest.fn(),
-                        saveLibraryAttributes: jest.fn(),
-                        saveLibraryFullTextAttributes: jest.fn(),
+                        updateLibrary: vi.fn(),
+                        saveLibraryAttributes: vi.fn(),
+                        saveLibraryFullTextAttributes: vi.fn(),
                     };
 
                     const mockAttributeRepo: Mockify<IAttributeRepo> = {
@@ -542,10 +538,10 @@ describe('LibraryDomain', () => {
                             ],
                             totalCount: 0,
                         }),
-                        getLibraryAttributes: jest
+                        getLibraryAttributes: vi
                             .fn()
                             .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                        getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                        getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                     };
 
                     const libDomain = libraryDomain({
@@ -579,10 +575,10 @@ describe('LibraryDomain', () => {
         describe('Update library', () => {
             test('Should update a library', async function () {
                 const mockLibRepo = {
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
+                    saveLibraryFullTextAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -605,10 +601,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -640,10 +634,10 @@ describe('LibraryDomain', () => {
 
             test('Should update library attributes', async function () {
                 const mockLibRepo = {
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
+                    saveLibraryFullTextAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -723,10 +717,10 @@ describe('LibraryDomain', () => {
 
             test('Should throw if unknown attributes', async function () {
                 const mockLibRepo = {
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
+                    saveLibraryFullTextAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -749,10 +743,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -785,9 +777,9 @@ describe('LibraryDomain', () => {
 
             test('Should throw if unknown trees attributes in permissions conf', async function () {
                 const mockLibRepo = {
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -810,10 +802,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -847,9 +837,9 @@ describe('LibraryDomain', () => {
             test('Should throw if attributes in recordIdentity are not binded to library', async function () {
                 const mockLibRepo = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -872,10 +862,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -905,9 +893,9 @@ describe('LibraryDomain', () => {
             test('Should throw if forbidden action', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -915,10 +903,8 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -937,10 +923,10 @@ describe('LibraryDomain', () => {
 
             test('Should throw if unknown default view', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
+                    saveLibraryFullTextAttributes: vi.fn(),
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -963,10 +949,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -988,10 +972,10 @@ describe('LibraryDomain', () => {
             test('Should not save behavior on existing library', async () => {
                 const mockLibRepo = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
-                    createLibrary: jest.fn(),
+                    createLibrary: vi.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
-                    saveLibraryAttributes: jest.fn(),
-                    saveLibraryFullTextAttributes: jest.fn(),
+                    saveLibraryAttributes: vi.fn(),
+                    saveLibraryFullTextAttributes: vi.fn(),
                 } satisfies Mockify<ILibraryRepo>;
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -1014,10 +998,8 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0,
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
+                    getLibraryAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
+                    getLibraryFullTextAttributes: vi.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}])),
                 };
 
                 const libDomain = libraryDomain({
@@ -1040,7 +1022,7 @@ describe('LibraryDomain', () => {
     });
 
     describe('deleteLibrary', () => {
-        const mockRunPreDelete = jest.fn();
+        const mockRunPreDelete = vi.fn();
 
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
@@ -1141,7 +1123,7 @@ describe('LibraryDomain', () => {
                 find: global.__mockPromise({totalCount: 0, list: []}),
             };
 
-            const mockGetEntityByIdHelperFilesLibrary = jest.fn().mockReturnValue({
+            const mockGetEntityByIdHelperFilesLibrary = vi.fn().mockReturnValue({
                 ...mockLibrary,
                 behavior: LibraryBehavior.FILES,
             });

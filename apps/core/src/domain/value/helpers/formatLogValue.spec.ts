@@ -17,22 +17,23 @@ import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types
 import {type IListWithCursor} from '../../../_types/list';
 import {AttributeCondition, type IRecord, type IRecordIdentity} from '../../../_types/record';
 import {ActionsListEvents} from '../../../_types/actionsList';
+import {type Mocked} from 'vitest';
 
-const actionListMock: jest.Mocked<Partial<IActionsListDomain>> = {
-    runActionsList: jest.fn(),
+const actionListMock: Mocked<Partial<IActionsListDomain>> = {
+    runActionsList: vi.fn(),
 };
 
-const recordDomainMock: jest.Mocked<Partial<IRecordDomain>> = {
-    find: jest.fn(),
-    getRecordIdentity: jest.fn(),
+const recordDomainMock: Mocked<Partial<IRecordDomain>> = {
+    find: vi.fn(),
+    getRecordIdentity: vi.fn(),
 };
 
-const attributeDomainMock: jest.Mocked<Partial<IAttributeDomain>> = {
-    getAttributeProperties: jest.fn(),
+const attributeDomainMock: Mocked<Partial<IAttributeDomain>> = {
+    getAttributeProperties: vi.fn(),
 };
 
-const treeDomainMock: jest.Mocked<Partial<ITreeDomain>> = {
-    getRecordByNodeId: jest.fn(),
+const treeDomainMock: Mocked<Partial<ITreeDomain>> = {
+    getRecordByNodeId: vi.fn(),
 };
 
 const deps: ToAny<Parameters<typeof formatLogValue>[0]> = {
@@ -52,8 +53,8 @@ describe('formatLogValue', () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
-        mockTranslator.t.mockImplementation((key: string) => key);
+        vi.resetAllMocks();
+        mockTranslator.t.mockImplementation((key: string | string[]) => key as string);
     });
 
     describe('formatAsString', () => {

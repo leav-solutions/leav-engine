@@ -25,17 +25,17 @@ import {AttributeTypes} from '../../_types/attribute';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const depsBase: ToAny<IFormDomainDeps> = {
-    'core.domain.library': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.permission.recordAttribute': jest.fn(),
-    'core.domain.permission.attribute': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.tree': jest.fn(),
-    'core.infra.form': jest.fn(),
-    'core.utils': jest.fn(),
-    'core.utils.logger': jest.fn(),
+    'core.domain.library': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.permission.recordAttribute': vi.fn(),
+    'core.domain.permission.attribute': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.tree': vi.fn(),
+    'core.infra.form': vi.fn(),
+    'core.utils': vi.fn(),
+    'core.utils.logger': vi.fn(),
     translator: {},
 };
 
@@ -70,19 +70,19 @@ describe('formDomain', () => {
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn(),
+        validateLibrary: vi.fn(),
     };
 
     const mockValidateHelperNoLibrary: Mockify<IValidateHelper> = {
         ...mockValidateHelper,
-        validateLibrary: jest.fn(() => {
+        validateLibrary: vi.fn(() => {
             throw new ValidationError({id: 'boom'});
         }),
     };
 
     const mockUtils: Mockify<IUtils> = {
-        isIdValid: jest.fn().mockReturnValue(true),
-        translateError: jest.fn().mockReturnValue('boom!'),
+        isIdValid: vi.fn().mockReturnValue(true),
+        translateError: vi.fn().mockReturnValue('boom!'),
     };
 
     describe('Get forms by lib', () => {
@@ -183,7 +183,7 @@ describe('formDomain', () => {
         test('Save new form', async () => {
             const mockFormRepo = {
                 getForms: global.__mockPromise({list: []}),
-                updateForm: jest.fn(),
+                updateForm: vi.fn(),
                 createForm: global.__mockPromise(mockForm),
             } satisfies Mockify<IFormRepo>;
 
@@ -209,7 +209,7 @@ describe('formDomain', () => {
             const mockFormRepo = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
-                createForm: jest.fn(),
+                createForm: vi.fn(),
             } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
@@ -240,8 +240,8 @@ describe('formDomain', () => {
         test('If unknown library, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
-                updateForm: jest.fn(),
-                createForm: jest.fn(),
+                updateForm: vi.fn(),
+                createForm: vi.fn(),
             };
 
             const domain = formDomain({
@@ -262,12 +262,12 @@ describe('formDomain', () => {
         test('If invalid ID format, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
-                updateForm: jest.fn(),
-                createForm: jest.fn(),
+                updateForm: vi.fn(),
+                createForm: vi.fn(),
             };
 
             const mockUtilsInvalidID: Mockify<IUtils> = {
-                isIdValid: jest.fn().mockReturnValue(false),
+                isIdValid: vi.fn().mockReturnValue(false),
             };
 
             const domain = formDomain({
@@ -290,8 +290,8 @@ describe('formDomain', () => {
         test('If field attribute does not exist, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
-                updateForm: jest.fn(),
-                createForm: jest.fn(),
+                updateForm: vi.fn(),
+                createForm: vi.fn(),
             };
 
             const mockAttrDomainNoMatch: Mockify<IAttributeDomain> = {
@@ -322,7 +322,7 @@ describe('formDomain', () => {
 
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
-                updateForm: jest.fn(),
+                updateForm: vi.fn(),
                 createForm: global.__mockPromise(mockForm),
             };
 
@@ -350,7 +350,7 @@ describe('formDomain', () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
-                createForm: jest.fn(),
+                createForm: vi.fn(),
             };
 
             const domain = formDomain({
@@ -392,7 +392,7 @@ describe('formDomain', () => {
         test('If unknown form, throw validation error', async () => {
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
-                deleteForm: jest.fn(),
+                deleteForm: vi.fn(),
             };
 
             const domain = formDomain({
@@ -477,11 +477,11 @@ describe('formDomain', () => {
 
         test('Return error encountered when fetching values', async () => {
             const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!')),
+                getRecordFieldValue: vi.fn().mockRejectedValue(new Error('boom!')),
             };
 
             const mockLogger: Mockify<ILogger> = {
-                error: jest.fn(),
+                error: vi.fn(),
             };
 
             const domain = formDomain({
@@ -523,7 +523,7 @@ describe('formDomain', () => {
 
         test('Return ValidationError encountered when fetching values', async () => {
             const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockRejectedValue(
+                getRecordFieldValue: vi.fn().mockRejectedValue(
                     new ValidationError({
                         test_attribute: 'boom!',
                     }),
@@ -578,7 +578,7 @@ describe('formDomain', () => {
                 'core.domain.attribute': mockAttrDomainWithAttrs as IAttributeDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
-                translator: {t: jest.fn().mockReturnValue('Missing form warning')} as any,
+                translator: {t: vi.fn().mockReturnValue('Missing form warning')} as any,
             });
 
             const mockFormWithMissingForm: IFormElementWithValues = {
@@ -628,7 +628,7 @@ describe('formDomain', () => {
                 ],
             };
 
-            domain.getFormProperties = jest.fn().mockRejectedValue(new ValidationError({id: 'UNKNOWN_FORM'}));
+            domain.getFormProperties = vi.fn().mockRejectedValue(new ValidationError({id: 'UNKNOWN_FORM'}));
 
             const res = await domain.getRecordForm({
                 libraryId: 'my_lib',
@@ -651,7 +651,7 @@ describe('formDomain', () => {
 
         test('Retrieve fields by dependency value', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
@@ -727,7 +727,7 @@ describe('formDomain', () => {
 
         test('Retrieve fields by dependency value, applying inheritance', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
@@ -807,7 +807,7 @@ describe('formDomain', () => {
 
         test('Remove fields not visible and their container if empty', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {record: {id: '123456', library: 'dep_lib'}}};
@@ -818,7 +818,7 @@ describe('formDomain', () => {
             };
 
             const mockRecordAttributePermissionDomainForbidden: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: jest.fn(async (action, attributeId) => {
+                getRecordAttributePermission: vi.fn(async (action, attributeId) => {
                     switch (attributeId) {
                         case 'allowed_attribute':
                             return true;
@@ -901,7 +901,7 @@ describe('formDomain', () => {
 
         test('Handle tabs with not visible fields', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {record: {id: '123456', library: 'dep_lib'}}};
@@ -912,7 +912,7 @@ describe('formDomain', () => {
             };
 
             const mockRecordAttributePermissionDomainForbidden: Mockify<IRecordAttributePermissionDomain> = {
-                getRecordAttributePermission: jest.fn(async (action, attributeId) => {
+                getRecordAttributePermission: vi.fn(async (action, attributeId) => {
                     switch (attributeId) {
                         case 'allowed_attribute':
                             return true;

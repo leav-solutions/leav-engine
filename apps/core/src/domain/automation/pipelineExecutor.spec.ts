@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type AwilixContainer} from 'awilix';
 import {z} from 'zod';
+import {type Mock} from 'vitest';
 import {
     SyncAutomationRuleEventAction,
     type AutomationRulePipelineStep,
@@ -16,7 +17,7 @@ describe('pipelineExecutor', () => {
     const makeMockAction = (type: string, executeResult?: IActionExecutionResult): IAutomationAction => ({
         type,
         paramsSchema: z.object({}), // permissive schema — param validation is not the focus here
-        execute: jest.fn().mockResolvedValue(executeResult),
+        execute: vi.fn().mockResolvedValue(executeResult),
     });
 
     const makeDepsManager = (actions: IAutomationAction[]): AwilixContainer => {
@@ -72,7 +73,7 @@ describe('pipelineExecutor', () => {
 
         it('interrupts pipeline when an action throws, without rethrowing', async () => {
             const actionA = makeMockAction('A');
-            (actionA.execute as jest.Mock).mockRejectedValue(new Error('boom'));
+            (actionA.execute as Mock).mockRejectedValue(new Error('boom'));
             const actionB = makeMockAction('B');
             const executor = createPipelineExecutor({'core.depsManager': makeDepsManager([actionA, actionB])});
 
@@ -102,7 +103,7 @@ describe('pipelineExecutor', () => {
             const actionA: IAutomationAction = {
                 type: 'A',
                 paramsSchema: z.object({x: z.string()}), // requires x: string
-                execute: jest.fn(),
+                execute: vi.fn(),
             };
             const actionB = makeMockAction('B');
             const executor = createPipelineExecutor({'core.depsManager': makeDepsManager([actionA, actionB])});
@@ -117,12 +118,12 @@ describe('pipelineExecutor', () => {
         });
 
         it('(temporary here for now) calls optional validateParams after schema validation when defined', async () => {
-            const validateParams = jest.fn();
+            const validateParams = vi.fn();
             const action: IAutomationAction = {
                 type: 'A',
                 paramsSchema: z.object({}),
                 validateParams,
-                execute: jest.fn(),
+                execute: vi.fn(),
             };
             const executor = createPipelineExecutor({'core.depsManager': makeDepsManager([action])});
 

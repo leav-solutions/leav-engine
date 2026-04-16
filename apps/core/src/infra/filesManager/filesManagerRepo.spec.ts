@@ -11,12 +11,12 @@ describe('FilesManagerRepo', () => {
             userId: '0',
             queryId: 'filesManagerRepoTest',
         };
-        const mockEnsureIndex = jest.fn();
+        const mockEnsureIndex = vi.fn();
         const mockCollection = new Database().collection('test');
         mockCollection.ensureIndex = mockEnsureIndex;
 
         const mockDb = new Database();
-        mockDb.collection = jest.fn().mockReturnValue(mockCollection);
+        mockDb.collection = vi.fn().mockReturnValue(mockCollection);
 
         const mockDbServ = {
             db: mockDb,
@@ -48,12 +48,12 @@ describe('FilesManagerRepo', () => {
             userId: '0',
             queryId: 'filesManagerRepoTest',
         };
-        const mockEnsureIndex = jest.fn();
+        const mockEnsureIndex = vi.fn();
         const mockCollection = new Database().collection('test');
         mockCollection.ensureIndex = mockEnsureIndex;
 
         const mockDb = new Database();
-        mockDb.collection = jest.fn().mockReturnValue(mockCollection);
+        mockDb.collection = vi.fn().mockReturnValue(mockCollection);
 
         const mockDbServ = {
             db: mockDb,

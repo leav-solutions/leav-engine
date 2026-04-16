@@ -12,7 +12,7 @@ import exportProfileDomain, {
 import {type IConfig} from '../../_types/config';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 
-jest.mock('@leav/logger', () => ({
+vi.mock('@leav/logger', () => ({
     logger: mockLogger,
 }));
 
@@ -43,11 +43,11 @@ describe('exportProfileDomain', () => {
     };
 
     const mockLibraryDomain: Mockify<ILibraryDomain> = {
-        getLibraryProperties: jest.fn(),
+        getLibraryProperties: vi.fn(),
     };
 
     const mockAttributeDomain: Mockify<IAttributeDomain> = {
-        getLibraryAttributes: jest.fn(),
+        getLibraryAttributes: vi.fn(),
     };
 
     const deps: IExportProfileDomainDeps = {
@@ -58,7 +58,7 @@ describe('exportProfileDomain', () => {
     const domain: IExportProfileDomain = exportProfileDomain(deps);
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockLibraryDomain.getLibraryProperties.mockResolvedValue({
             id: 'test_library',
             settings: {

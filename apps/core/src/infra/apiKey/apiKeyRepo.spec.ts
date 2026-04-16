@@ -9,8 +9,8 @@ import apiKeyRepo, {type IApiKeyRepoDeps} from './apiKeyRepo';
 import {type ToAny} from '../../utils/utils';
 
 const depsBase: ToAny<IApiKeyRepoDeps> = {
-    'core.infra.db.dbUtils': jest.fn(),
-    'core.infra.db.dbService': jest.fn(),
+    'core.infra.db.dbUtils': vi.fn(),
+    'core.infra.db.dbService': vi.fn(),
 };
 
 describe('apiKeyRepo', () => {
@@ -33,8 +33,8 @@ describe('apiKeyRepo', () => {
     };
 
     const mockDbUtils = {
-        cleanup: jest.fn().mockReturnValue(keyData),
-        convertToDoc: jest.fn().mockReturnValue(docKeyData),
+        cleanup: vi.fn().mockReturnValue(keyData),
+        convertToDoc: vi.fn().mockReturnValue(docKeyData),
         findCoreEntity: global.__mockPromise([keyData]),
     } satisfies Mockify<IDbUtils>;
 

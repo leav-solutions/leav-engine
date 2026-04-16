@@ -10,16 +10,16 @@ import {AttributeFormats} from '../../_types/attribute';
 import {when} from 'jest-when';
 
 const depsBase: ToAny<IExportDomainDeps> = {
-    'core.domain.record': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.library': jest.fn(),
-    'core.domain.tasksManager': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.export.exportProfile': jest.fn(),
-    'core.domain.helpers.updateTaskProgress': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.domain.notification': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.library': vi.fn(),
+    'core.domain.tasksManager': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.export.exportProfile': vi.fn(),
+    'core.domain.helpers.updateTaskProgress': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.domain.notification': vi.fn(),
+    'core.utils': vi.fn(),
     translator: {},
     config: {},
 };
@@ -41,11 +41,11 @@ describe('exportDomain', () => {
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn(),
+                getAttributeProperties: vi.fn(),
             };
 
             const mockUtils: Mockify<IUtils> = {
-                isLinkAttribute: jest.fn(),
+                isLinkAttribute: vi.fn(),
             };
 
             const attributeProperties = {
@@ -72,7 +72,7 @@ describe('exportDomain', () => {
             );
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn(),
+                getRecordFieldValue: vi.fn(),
             };
 
             const fieldValues = [
@@ -151,11 +151,11 @@ describe('exportDomain', () => {
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn(),
+                getAttributeProperties: vi.fn(),
             };
 
             const mockUtils: Mockify<IUtils> = {
-                isLinkAttribute: jest.fn(),
+                isLinkAttribute: vi.fn(),
             };
 
             const attributeProperties = {
@@ -182,7 +182,7 @@ describe('exportDomain', () => {
             );
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn(),
+                getRecordFieldValue: vi.fn(),
             };
 
             const fieldValues = [
@@ -261,11 +261,11 @@ describe('exportDomain', () => {
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn(),
+                getAttributeProperties: vi.fn(),
             };
 
             const mockUtils: Mockify<IUtils> = {
-                isLinkAttribute: jest.fn(),
+                isLinkAttribute: vi.fn(),
             };
 
             const attributeProperties = {
@@ -286,7 +286,7 @@ describe('exportDomain', () => {
             );
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn(),
+                getRecordFieldValue: vi.fn(),
             };
 
             const fieldValues = [
@@ -354,11 +354,11 @@ describe('exportDomain', () => {
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: jest.fn(),
+                getAttributeProperties: vi.fn(),
             };
 
             const mockUtils: Mockify<IUtils> = {
-                isLinkAttribute: jest.fn(),
+                isLinkAttribute: vi.fn(),
             };
 
             const attributeProperties = {
@@ -379,7 +379,7 @@ describe('exportDomain', () => {
             );
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                getRecordFieldValue: jest.fn(),
+                getRecordFieldValue: vi.fn(),
             };
 
             const fieldValues = [
@@ -448,7 +448,7 @@ describe('exportDomain', () => {
     describe('exportExcel', () => {
         it('should throw CustomConfigError when profile returns no attributes', async () => {
             const mockExportProfileDomain = {
-                getColumnsFromProfileConfig: jest.fn().mockResolvedValue(undefined),
+                getColumnsFromProfileConfig: vi.fn().mockResolvedValue(undefined),
             };
 
             const domain = exportDomain({
@@ -475,11 +475,11 @@ describe('exportDomain', () => {
 
         it('should create a task and return task ID when no task.id is provided', async () => {
             const mockTasksManager = {
-                createTask: jest.fn().mockResolvedValue(undefined),
+                createTask: vi.fn().mockResolvedValue(undefined),
             };
 
             const mockExportProfileDomain = {
-                getColumnsFromProfileConfig: jest.fn().mockResolvedValue([
+                getColumnsFromProfileConfig: vi.fn().mockResolvedValue([
                     {columnLabel: 'Name', attribute: 'name'},
                     {columnLabel: 'Email', attribute: 'email'},
                 ]),
@@ -496,7 +496,7 @@ describe('exportDomain', () => {
                     },
                 } as any,
                 translator: {
-                    t: jest.fn().mockReturnValue('Export task'),
+                    t: vi.fn().mockReturnValue('Export task'),
                 } as any,
             });
 
@@ -525,11 +525,11 @@ describe('exportDomain', () => {
             ];
 
             const mockExportProfileDomain = {
-                getColumnsFromProfileConfig: jest.fn().mockResolvedValue(mockColumns),
+                getColumnsFromProfileConfig: vi.fn().mockResolvedValue(mockColumns),
             };
 
             const mockTasksManager = {
-                createTask: jest.fn().mockResolvedValue(undefined),
+                createTask: vi.fn().mockResolvedValue(undefined),
             };
 
             const domain = exportDomain({
@@ -543,7 +543,7 @@ describe('exportDomain', () => {
                     },
                 } as any,
                 translator: {
-                    t: jest.fn().mockReturnValue('Export task'),
+                    t: vi.fn().mockReturnValue('Export task'),
                 } as any,
             });
 

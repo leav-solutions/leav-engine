@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AttributeTreeRepo createValue Should create a new advanced tree value 1`] = `
+exports[`AttributeTreeRepo > createValue > Should create a new advanced tree value 1`] = `
 "
                     LET linkedNode = DOCUMENT(@value0, @value1)
                     LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
@@ -9,7 +9,7 @@ exports[`AttributeTreeRepo createValue Should create a new advanced tree value 1
                 "
 `;
 
-exports[`AttributeTreeRepo createValue Should create a new advanced tree value 2`] = `
+exports[`AttributeTreeRepo > createValue > Should create a new advanced tree value 2`] = `
 {
   "@value3": "core_edge_values_links",
   "value0": "categories",
@@ -32,7 +32,7 @@ exports[`AttributeTreeRepo createValue Should create a new advanced tree value 2
 }
 `;
 
-exports[`AttributeTreeRepo deleteValue Should delete a value 1`] = `
+exports[`AttributeTreeRepo > deleteValue > Should delete a value 1`] = `
 "
                     FOR linkedNode, edge IN 1 OUTBOUND @value0
                         @@value1
@@ -43,7 +43,7 @@ exports[`AttributeTreeRepo deleteValue Should delete a value 1`] = `
                 "
 `;
 
-exports[`AttributeTreeRepo deleteValue Should delete a value 2`] = `
+exports[`AttributeTreeRepo > deleteValue > Should delete a value 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/12345",
@@ -51,7 +51,7 @@ exports[`AttributeTreeRepo deleteValue Should delete a value 2`] = `
 }
 `;
 
-exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
+exports[`AttributeTreeRepo > filterValueQueryPart > Should return query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -72,7 +72,7 @@ exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve 
 }
 `;
 
-exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter 1`] = `
+exports[`AttributeTreeRepo > filterValueQueryPart > Should return query to retrieve value to filter on for "count" filter 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -90,7 +90,7 @@ exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve 
 }
 `;
 
-exports[`AttributeTreeRepo getValueByID Should return value 1`] = `
+exports[`AttributeTreeRepo > getValueByID > Should return value 1`] = `
 "
                 FOR linkedNode, edge IN 1 OUTBOUND @value0
                     @@value1
@@ -102,7 +102,7 @@ exports[`AttributeTreeRepo getValueByID Should return value 1`] = `
             "
 `;
 
-exports[`AttributeTreeRepo getValueByID Should return value 2`] = `
+exports[`AttributeTreeRepo > getValueByID > Should return value 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
@@ -111,7 +111,7 @@ exports[`AttributeTreeRepo getValueByID Should return value 2`] = `
 }
 `;
 
-exports[`AttributeTreeRepo getValues Should return all values if forced 1`] = `
+exports[`AttributeTreeRepo > getValues > Should return all values if forced 1`] = `
 "FOR vertex, edge IN 1 OUTBOUND @value0
                     @@value1, @@value2
                     LET record = DOCUMENT(
@@ -125,7 +125,7 @@ exports[`AttributeTreeRepo getValues Should return all values if forced 1`] = `
             "
 `;
 
-exports[`AttributeTreeRepo getValues Should return linked tree element 1`] = `
+exports[`AttributeTreeRepo > getValues > Should return linked tree element 1`] = `
 "FOR vertex, edge IN 1 OUTBOUND @value0
                     @@value1, @@value2
                     LET record = DOCUMENT(
@@ -139,7 +139,7 @@ exports[`AttributeTreeRepo getValues Should return linked tree element 1`] = `
             "
 `;
 
-exports[`AttributeTreeRepo getValues Should return linked tree element 2`] = `
+exports[`AttributeTreeRepo > getValues > Should return linked tree element 2`] = `
 {
   "@value1": "core_edge_values_links",
   "@value2": "core_edge_tree_test_tree",
@@ -148,7 +148,7 @@ exports[`AttributeTreeRepo getValues Should return linked tree element 2`] = `
 }
 `;
 
-exports[`AttributeTreeRepo getValues Should return linked tree element filtered by version 1`] = `
+exports[`AttributeTreeRepo > getValues > Should return linked tree element filtered by version 1`] = `
 "FOR vertex, edge IN 1 OUTBOUND @value0
                     @@value1, @@value2
                     LET record = DOCUMENT(
@@ -162,7 +162,7 @@ exports[`AttributeTreeRepo getValues Should return linked tree element filtered 
             "
 `;
 
-exports[`AttributeTreeRepo sortQueryPart Should return tree filter 1`] = `
+exports[`AttributeTreeRepo > sortQueryPart > Should return tree filter 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -185,7 +185,7 @@ exports[`AttributeTreeRepo sortQueryPart Should return tree filter 1`] = `
 }
 `;
 
-exports[`AttributeTreeRepo updateValue Should update a advanced link value 1`] = `
+exports[`AttributeTreeRepo > updateValue > Should update a advanced link value 1`] = `
 "
                     LET linkedNode = DOCUMENT(@value0, @value1)
                     LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
@@ -194,7 +194,7 @@ exports[`AttributeTreeRepo updateValue Should update a advanced link value 1`] =
                 "
 `;
 
-exports[`AttributeTreeRepo updateValue Should update a advanced link value 2`] = `
+exports[`AttributeTreeRepo > updateValue > Should update a advanced link value 2`] = `
 {
   "@value4": "core_edge_values_links",
   "value0": "categories",

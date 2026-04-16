@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`LibraryRepo createLibrary Should insert a library and create a new collection 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+exports[`LibraryRepo > createLibrary > Should insert a library and create a new collection 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
-exports[`LibraryRepo createLibrary Should insert a library and create a new collection 2`] = `
+exports[`LibraryRepo > createLibrary > Should insert a library and create a new collection 2`] = `
 {
   "@value1": "core_libraries",
   "value0": {
@@ -12,20 +12,20 @@ exports[`LibraryRepo createLibrary Should insert a library and create a new coll
 }
 `;
 
-exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 1`] = `
+exports[`LibraryRepo > deleteLibrary > Should delete a library and return deleted library 1`] = `
 "FOR e IN @@value0
                          FILTER e._from == @value1
                          REMOVE e IN @@value0"
 `;
 
-exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 2`] = `
+exports[`LibraryRepo > deleteLibrary > Should delete a library and return deleted library 2`] = `
 {
   "@value0": "core_edge_libraries_attributes",
   "value1": "core_libraries/test_lib",
 }
 `;
 
-exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 1`] = `
+exports[`LibraryRepo > saveLibraryAttributes > Should link attributes to a library and return linked attributes 1`] = `
 "
                         FOR attr IN @value0
                             FOR l in @@value1
@@ -38,7 +38,7 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
                     "
 `;
 
-exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 2`] = `
+exports[`LibraryRepo > saveLibraryAttributes > Should link attributes to a library and return linked attributes 2`] = `
 {
   "@value1": "core_edge_libraries_attributes",
   "value0": [
@@ -48,7 +48,7 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
 }
 `;
 
-exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 3`] = `
+exports[`LibraryRepo > saveLibraryAttributes > Should link attributes to a library and return linked attributes 3`] = `
 "
                     FOR attr IN @value0
                         LET attrToInsert = {
@@ -66,7 +66,7 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
                 "
 `;
 
-exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 4`] = `
+exports[`LibraryRepo > saveLibraryAttributes > Should link attributes to a library and return linked attributes 4`] = `
 {
   "@value2": "core_edge_libraries_attributes",
   "value0": [
@@ -77,7 +77,7 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
 }
 `;
 
-exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 1`] = `
+exports[`LibraryRepo > saveLibraryFullTextAttributes > Should set full text attributes of a library and return full text attributes 1`] = `
 "
                     FOR attr IN @@value0
                         FILTER attr._from == @value1
@@ -89,7 +89,7 @@ exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attribut
                 "
 `;
 
-exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 2`] = `
+exports[`LibraryRepo > saveLibraryFullTextAttributes > Should set full text attributes of a library and return full text attributes 2`] = `
 {
   "@value0": "core_edge_libraries_attributes",
   "value1": "core_libraries/users",
@@ -99,9 +99,9 @@ exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attribut
 }
 `;
 
-exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
+exports[`LibraryRepo > updateLibrary > Should update library 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
-exports[`LibraryRepo updateLibrary Should update library 2`] = `
+exports[`LibraryRepo > updateLibrary > Should update library 2`] = `
 {
   "@value1": "core_libraries",
   "value0": {

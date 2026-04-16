@@ -15,7 +15,7 @@ describe('getSettingsRepo', () => {
         };
 
         beforeEach(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         test('Should save settings', async () => {

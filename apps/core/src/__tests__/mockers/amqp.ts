@@ -4,7 +4,7 @@
 export default {
     consumer: {
         channel: {
-            ack: jest.fn(),
+            ack: vi.fn(),
         },
     },
 };

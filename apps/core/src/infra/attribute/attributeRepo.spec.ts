@@ -92,7 +92,7 @@ describe('AttributeRepo', () => {
                 },
             ];
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const repo = attributeRepo({
@@ -146,7 +146,7 @@ describe('AttributeRepo', () => {
                 },
             ];
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const repo = attributeRepo({
@@ -196,7 +196,7 @@ describe('AttributeRepo', () => {
                 },
             ];
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]),
             };
 
             const repo = attributeRepo({
@@ -245,8 +245,8 @@ describe('AttributeRepo', () => {
 
             const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAttrData),
+                cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+                convertToDoc: vi.fn().mockReturnValue(docAttrData),
             };
 
             const attrRepo = attributeRepo({
@@ -291,8 +291,8 @@ describe('AttributeRepo', () => {
 
             const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAttrData),
+                cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+                convertToDoc: vi.fn().mockReturnValue(docAttrData),
             };
 
             const attrRepo = attributeRepo({
@@ -333,7 +333,7 @@ describe('AttributeRepo', () => {
         test('Should delete an attribute and return deleted attribute', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest
+                execute: vi
                     .fn()
                     .mockReturnValueOnce([])
                     .mockReturnValueOnce(Promise.resolve([docAttrData])),
@@ -341,12 +341,12 @@ describe('AttributeRepo', () => {
 
             const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(attrData),
-                convertToDoc: jest.fn().mockReturnValue(docAttrData),
+                cleanup: vi.fn().mockReturnValue(attrData),
+                convertToDoc: vi.fn().mockReturnValue(docAttrData),
             };
 
             const mockValueRepo: Mockify<IValueRepo> = {
-                clearAllValues: jest.fn(),
+                clearAllValues: vi.fn(),
             };
 
             const attrRepo = attributeRepo({

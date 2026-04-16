@@ -11,7 +11,7 @@ import {mockStandardValue} from '../../__tests__/mocks/value';
 import {type IConfig} from '../../_types/config';
 
 const mockCalculationsVariable = {
-    processVariableString: jest.fn(),
+    processVariableString: vi.fn(),
 };
 
 const ctxForGet: IActionsListContext = {userId: 'test_user', actionEvent: ActionsListEvents.GET_VALUE};
@@ -29,7 +29,7 @@ describe('excelCalculationAction', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockCalculationsVariable.processVariableString.mockImplementation(
             async (
                 context: IActionsListContext,

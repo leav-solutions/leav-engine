@@ -34,26 +34,26 @@ const mockCacheService: Mockify<ICacheService> = {
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService),
+    getCache: vi.fn().mockReturnValue(mockCacheService),
 };
 
 const depsBase: ToAny<ITreeDomainDeps> = {
-    'core.domain.record': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.permission.tree': jest.fn(),
-    'core.domain.permission.treeNode': jest.fn(),
-    'core.domain.tree.helpers.treeDataValidation': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.domain.tree.helpers.handleRemovedLibraries': jest.fn(),
-    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.library': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.infra.versionProfile': jest.fn(),
-    'core.utils': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.permission.tree': vi.fn(),
+    'core.domain.permission.treeNode': vi.fn(),
+    'core.domain.tree.helpers.treeDataValidation': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
+    'core.domain.tree.helpers.handleRemovedLibraries': vi.fn(),
+    'core.domain.tree.helpers.getDefaultElement': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.library': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.infra.versionProfile': vi.fn(),
+    'core.utils': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
 };
 
 describe('treeDomain', () => {
@@ -71,7 +71,7 @@ describe('treeDomain', () => {
     };
 
     const treeDataValidationHelper: Mockify<ITreeDataValidationHelper> = {
-        validate: jest.fn(),
+        validate: vi.fn(),
     };
 
     const mockTreeNodePermissionDomain: Mockify<ITreeNodePermissionDomain> = {
@@ -84,36 +84,36 @@ describe('treeDomain', () => {
 
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
         getCachedElementAncestors: global.__mockPromise([]),
-        clearElementAncestorsCache: jest.fn(),
+        clearElementAncestorsCache: vi.fn(),
     };
 
     const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
-        clearCache: jest.fn(),
+        clearCache: vi.fn(),
     };
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
-    const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockTree);
-    const mockGetEntityByIdHelperNoResult = jest.fn().mockReturnValue(null);
-    const mockGetEntityByIdHelperFilesTree = jest.fn().mockReturnValue({...mockFilesTree});
+    const mockGetEntityByIdHelper = vi.fn().mockReturnValue(mockTree);
+    const mockGetEntityByIdHelperNoResult = vi.fn().mockReturnValue(null);
+    const mockGetEntityByIdHelperFilesTree = vi.fn().mockReturnValue({...mockFilesTree});
 
     const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-        sendPubSubEvent: jest.fn(),
-        sendDatabaseEvent: jest.fn(),
+        sendPubSubEvent: vi.fn(),
+        sendDatabaseEvent: vi.fn(),
     };
 
     const mockUtils: Mockify<IUtils> = {
-        isIdValid: jest.fn().mockReturnValue(true),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:tree:1'),
-        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, '')),
+        isIdValid: vi.fn().mockReturnValue(true),
+        getCoreEntityCacheKey: vi.fn().mockReturnValue('coreEntity:tree:1'),
+        generateExplicitValidationError: vi.fn().mockReturnValue(new ValidationError({}, '')),
     };
 
     describe('saveTree', () => {
-        const mockHandleRemovedLibraries = jest.fn();
+        const mockHandleRemovedLibraries = vi.fn();
         test('Should create new tree', async () => {
             const treeRepo = {
                 createTree: global.__mockPromise(mockTree),
-                updateTree: jest.fn(),
+                updateTree: vi.fn(),
             } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
                 ...depsBase,
@@ -140,7 +140,7 @@ describe('treeDomain', () => {
 
         test('Should update existing tree', async () => {
             const treeRepo = {
-                createTree: jest.fn(),
+                createTree: vi.fn(),
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({
                     list: [
@@ -184,7 +184,7 @@ describe('treeDomain', () => {
 
         test('Should throw if forbidden action', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
-                createTree: jest.fn(),
+                createTree: vi.fn(),
                 updateTree: global.__mockPromise(mockTree),
             };
 
@@ -204,11 +204,11 @@ describe('treeDomain', () => {
         test('Should throw if validation fails', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 createTree: global.__mockPromise(mockTree),
-                updateTree: jest.fn(),
+                updateTree: vi.fn(),
             };
 
             const failingDataValidationHelper: Mockify<ITreeDataValidationHelper> = {
-                validate: jest.fn().mockImplementation(() => {
+                validate: vi.fn().mockImplementation(() => {
                     throw new ValidationError<ITree>({
                         id: 'Invalid ID',
                     });
@@ -230,7 +230,7 @@ describe('treeDomain', () => {
 
         test('Should not save behavior on existing tree', async () => {
             const treeRepo = {
-                createTree: jest.fn(),
+                createTree: vi.fn(),
                 updateTree: global.__mockPromise(mockTree),
             } satisfies Mockify<ITreeRepo>;
 
@@ -346,7 +346,7 @@ describe('treeDomain', () => {
                 deleteTree: global.__mockPromise(treeData),
             };
 
-            const mockGetEntityByIdHelperSystemTree = jest.fn().mockReturnValue(treeData);
+            const mockGetEntityByIdHelperSystemTree = vi.fn().mockReturnValue(treeData);
 
             const domain = treeDomain({
                 ...depsBase,
@@ -550,7 +550,7 @@ describe('treeDomain', () => {
 
         test('On files tree, throw if adding an element under a file', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
-                addElement: jest.fn(),
+                addElement: vi.fn(),
                 getTrees: global.__mockPromise({list: [mockFilesTree], totalCount: 1}),
                 isNodePresent: global.__mockPromise(true),
                 isRecordPresent: global.__mockPromise(false),
@@ -622,7 +622,7 @@ describe('treeDomain', () => {
                 }),
             };
 
-            const mockGetEntityByIdHelperWithLibsSettings = jest.fn().mockReturnValue({
+            const mockGetEntityByIdHelperWithLibsSettings = vi.fn().mockReturnValue({
                 ...mockTree,
                 libraries: {
                     lib1: {
@@ -774,7 +774,7 @@ describe('treeDomain', () => {
 
         test('On files tree, throw if moving an element under a file', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
-                addElement: jest.fn(),
+                addElement: vi.fn(),
                 getTrees: global.__mockPromise({list: [mockFilesTree], totalCount: 1}),
                 isNodePresent: global.__mockPromise(true),
                 getElementAncestors: global.__mockPromise([]),
@@ -1008,7 +1008,7 @@ describe('treeDomain', () => {
                 }),
             };
 
-            const mockGetEntityByIdHelperWithPermissions = jest.fn().mockReturnValue({
+            const mockGetEntityByIdHelperWithPermissions = vi.fn().mockReturnValue({
                 ...mockTree,
                 id: 'test_tree',
                 permissions_conf: {
@@ -1155,7 +1155,7 @@ describe('treeDomain', () => {
             } satisfies Mockify<ITreeRepo>;
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                find: jest.fn(),
+                find: vi.fn(),
             };
 
             const domain = treeDomain({

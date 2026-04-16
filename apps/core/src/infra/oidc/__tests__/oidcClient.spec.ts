@@ -4,8 +4,9 @@
 import {initOIDCClient} from '../oidcClient';
 import {type IConfig} from '../../../_types/config';
 import {Issuer} from 'openid-client';
+import {type Mock} from 'vitest';
 
-const clientMock = jest.fn();
+const clientMock = vi.fn();
 
 class ClientClassMock {
     public constructor(...args: any) {
@@ -13,16 +14,16 @@ class ClientClassMock {
     }
 }
 
-jest.mock('openid-client', () => ({
+vi.mock('openid-client', () => ({
     Issuer: {
-        discover: jest.fn(() => ({
+        discover: vi.fn(() => ({
             Client: ClientClassMock,
         })),
     },
 }));
 
 describe('initOIDCClient', () => {
-    const discoverMock = Issuer.discover as jest.Mock;
+    const discoverMock = Issuer.discover as Mock;
     beforeEach(() => {
         discoverMock.mockClear();
         clientMock.mockClear();

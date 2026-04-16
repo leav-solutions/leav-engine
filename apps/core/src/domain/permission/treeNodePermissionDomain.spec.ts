@@ -18,15 +18,15 @@ import {type ToAny} from '../../utils/utils';
 import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
 
 const depsBase: ToAny<ITreeNodePermissionDomainDeps> = {
-    'core.domain.permission.tree': jest.fn(),
-    'core.domain.permission.treeLibrary': jest.fn(),
-    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
-    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.infra.value': jest.fn(),
+    'core.domain.permission.tree': vi.fn(),
+    'core.domain.permission.treeLibrary': vi.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': vi.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.infra.value': vi.fn(),
 };
 
 describe('treeNodePermissionDomain', () => {
@@ -35,7 +35,7 @@ describe('treeNodePermissionDomain', () => {
         queryId: 'recordPermissionDomainTest',
     };
 
-    afterEach(() => jest.clearAllMocks());
+    afterEach(() => vi.clearAllMocks());
 
     describe('getTreeNodePermission', () => {
         const treeNode: ITreeElement = {
@@ -93,7 +93,7 @@ describe('treeNodePermissionDomain', () => {
         };
 
         const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation(({attribute, recordId}) => {
+            getValues: vi.fn().mockImplementation(({attribute, recordId}) => {
                 let val;
                 switch (attribute.id) {
                     case 'category':
@@ -137,7 +137,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
-                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockTree),
+                'core.domain.helpers.getCoreEntityById': vi.fn().mockReturnValue(mockTree),
             });
 
             const perm = await domain.getTreeNodePermission({
@@ -163,7 +163,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
-                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(treeWithPerms),
+                'core.domain.helpers.getCoreEntityById': vi.fn().mockReturnValue(treeWithPerms),
                 'core.infra.value': mockValueRepo as IValueRepo,
             });
 
@@ -180,7 +180,7 @@ describe('treeNodePermissionDomain', () => {
 
         test('If nothing defined on element, should return a permission defined on tree library', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
-                getTreeBasedPermission: jest.fn().mockImplementation((params: IGetTreeBasedPermissionParams) => {
+                getTreeBasedPermission: vi.fn().mockImplementation((params: IGetTreeBasedPermissionParams) => {
                     switch (params.treeValues.attr1[0]) {
                         case 'elementCategory':
                             return Promise.resolve(null);
@@ -198,7 +198,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper,
-                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockTree),
+                'core.domain.helpers.getCoreEntityById': vi.fn().mockReturnValue(mockTree),
                 'core.infra.value': mockValueRepo as IValueRepo,
             });
 

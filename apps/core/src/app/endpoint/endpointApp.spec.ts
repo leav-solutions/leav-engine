@@ -9,18 +9,18 @@ import {type IValueDomain} from '../../domain/value/valueDomain';
 import {type IConfig} from '../../_types/config';
 
 describe('endpointApp', () => {
-    const validateRequestTokenHelper = jest.fn();
-    const expressApp: Mockify<Express> = {get: jest.fn(), post: jest.fn()};
+    const validateRequestTokenHelper = vi.fn();
+    const expressApp: Mockify<Express> = {get: vi.fn(), post: vi.fn()};
 
     const mockRoute = {
         path: '/test',
-        handlers: [jest.fn()],
+        handlers: [vi.fn()],
         method: 'get',
         isProtected: true,
     } satisfies IPluginRoute;
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('Should expose an extensionPoints.registerRoutes', async () => {
@@ -38,8 +38,8 @@ describe('endpointApp', () => {
             'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
         });
         endpointApp.extensionPoints.registerRoutes([
-            ['/test', 'get', [jest.fn()]],
-            ['/mock', 'post', [jest.fn()]],
+            ['/test', 'get', [vi.fn()]],
+            ['/mock', 'post', [vi.fn()]],
         ]);
 
         endpointApp.registerRoute(expressApp as unknown as Express);
@@ -51,9 +51,9 @@ describe('endpointApp', () => {
     });
 
     describe('_initCtxHandler as the first handler', () => {
-        let mockInitQueryContext: jest.Mock;
+        const mockInitQueryContext = vi.fn();
         beforeEach(() => {
-            mockInitQueryContext = jest.fn().mockReturnValue({
+            mockInitQueryContext.mockReturnValue({
                 userId: null,
                 lang: 'fr',
                 queryId: 'requestId',
@@ -72,7 +72,7 @@ describe('endpointApp', () => {
             endpointApp.registerRoute(expressApp as unknown as Express);
             const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
-            const nextMock = jest.fn();
+            const nextMock = vi.fn();
             validateRequestTokenHelper.mockResolvedValue({groupsId: 'groupsId', userId: 'userId'});
 
             await _initCtxHandler(request, undefined, nextMock);
@@ -106,7 +106,7 @@ describe('endpointApp', () => {
             endpointApp.registerRoute(expressApp as unknown as Express);
             const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
-            const nextMock = jest.fn();
+            const nextMock = vi.fn();
             validateRequestTokenHelper.mockRejectedValue('error');
 
             await _initCtxHandler(request, undefined, nextMock);
@@ -158,7 +158,7 @@ describe('endpointApp', () => {
             endpointApp.registerRoute(expressApp as unknown as Express);
             const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
-            const nextMock = jest.fn();
+            const nextMock = vi.fn();
 
             await _initCtxHandler(request, undefined, nextMock);
 

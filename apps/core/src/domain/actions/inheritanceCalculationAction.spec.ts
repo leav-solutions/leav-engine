@@ -8,7 +8,7 @@ import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
 
 const mockCalculationsVariable = {
-    processVariableString: jest.fn(),
+    processVariableString: vi.fn(),
 };
 
 const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -22,7 +22,7 @@ const action = inheritanceCalculationAction({
 
 describe('inheritanceCalculationAction', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockCalculationsVariable.processVariableString.mockImplementation(
             async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
                 {

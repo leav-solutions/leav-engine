@@ -9,9 +9,9 @@ import {type ToAny} from '../../../utils/utils';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 
 const depsBase: ToAny<IGlobalPermissionDeps> = {
-    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
-    'core.domain.permission.helpers.defaultPermission': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': vi.fn(),
+    'core.domain.permission.helpers.defaultPermission': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
 };
 
 describe('globalPermissionsHelper', () => {

@@ -6,6 +6,8 @@ import {type Stats} from 'fs';
 import fs from 'fs/promises';
 import {type IDbUtils} from '../db/dbUtils';
 import path from 'path';
+
+vi.mock('fs/promises');
 import {type ILogger} from '@leav/logger';
 import {type IConfig} from '../../_types/config';
 import {mockApplication} from '../../__tests__/mocks/application';
@@ -65,8 +67,8 @@ describe('applicationRepo', () => {
 
             const mockCleanupRes = applicationData;
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAppData),
+                cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+                convertToDoc: vi.fn().mockReturnValue(docAppData),
             };
 
             const appRepo = applicationRepo({
@@ -94,8 +96,8 @@ describe('applicationRepo', () => {
 
             const mockCleanupRes = applicationData;
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docAppData),
+                cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+                convertToDoc: vi.fn().mockReturnValue(docAppData),
             };
 
             const appRepo = applicationRepo({
@@ -122,8 +124,8 @@ describe('applicationRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(applicationData),
-                convertToDoc: jest.fn().mockReturnValue(docAppData),
+                cleanup: vi.fn().mockReturnValue(applicationData),
+                convertToDoc: vi.fn().mockReturnValue(docAppData),
             };
 
             const appRepo = applicationRepo({
@@ -147,33 +149,25 @@ describe('applicationRepo', () => {
         };
 
         afterAll(() => {
-            jest.resetAllMocks();
+            vi.resetAllMocks();
         });
 
         test('Return modules found on directory', async () => {
-            const pathSpy = jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
-            const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['data-studio', 'admin'] as any[]);
-            const fsSpyStat = jest.spyOn(fs, 'stat').mockResolvedValue({} as Stats);
+            const pathSpy = vi.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
+            vi.mocked(fs.readdir).mockResolvedValueOnce(['data-studio', 'admin'] as any[]);
+            vi.mocked(fs.stat).mockResolvedValue({} as Stats);
 
-            jest.mock(
-                '/some/path/data-studio/manifest.json',
-                () => ({
-                    name: 'data-studio',
-                    description: 'data studio description',
-                    version: '42',
-                }),
-                {virtual: true},
-            );
+            vi.mock('/some/path/data-studio/manifest.json', () => ({
+                name: 'data-studio',
+                description: 'data studio description',
+                version: '42',
+            }));
 
-            jest.mock(
-                '/some/path/admin/manifest.json',
-                () => ({
-                    name: 'admin',
-                    description: 'admin description',
-                    version: '42',
-                }),
-                {virtual: true},
-            );
+            vi.mock('/some/path/admin/manifest.json', () => ({
+                name: 'admin',
+                description: 'admin description',
+                version: '42',
+            }));
 
             const repo = applicationRepo({config: mockConfig as IConfig});
 
@@ -185,32 +179,26 @@ describe('applicationRepo', () => {
             ]);
 
             pathSpy.mockRestore();
-            fsSpy.mockRestore();
-            fsSpyStat.mockRestore();
         });
 
         test('Ignore invalid folders', async () => {
-            const pathSpy = jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
-            const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['data-studio', 'invalid_module'] as any[]);
-            const fsSpyStat = jest.spyOn(fs, 'stat').mockImplementation(statPath => {
+            const pathSpy = vi.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
+            vi.mocked(fs.readdir).mockResolvedValueOnce(['data-studio', 'invalid_module'] as any[]);
+            vi.mocked(fs.stat).mockImplementation(statPath => {
                 if (String(statPath).match(/invalid_module/)) {
                     throw new Error('Invalid module');
                 }
                 return Promise.resolve({} as Stats);
             });
 
-            jest.mock(
-                '/some/path/data-studio/manifest.json',
-                () => ({
-                    name: 'data-studio',
-                    description: 'data studio description',
-                    version: '42',
-                }),
-                {virtual: true},
-            );
+            vi.mock('/some/path/data-studio/manifest.json', () => ({
+                name: 'data-studio',
+                description: 'data studio description',
+                version: '42',
+            }));
 
             const mockLogger: Mockify<ILogger> = {
-                warn: jest.fn(),
+                warn: vi.fn(),
             };
 
             const repo = applicationRepo({
@@ -223,8 +211,6 @@ describe('applicationRepo', () => {
             expect(modules).toEqual([{id: 'data-studio', description: 'data studio description', version: '42'}]);
 
             pathSpy.mockRestore();
-            fsSpy.mockRestore();
-            fsSpyStat.mockRestore();
         });
     });
 });

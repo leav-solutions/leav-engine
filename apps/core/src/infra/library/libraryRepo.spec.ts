@@ -65,8 +65,8 @@ describe('LibraryRepo', () => {
 
             const mockCleanupRes = libData;
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-                convertToDoc: jest.fn().mockReturnValue(docLibData),
+                cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+                convertToDoc: vi.fn().mockReturnValue(docLibData),
             };
 
             const libRepo = libraryRepo({
@@ -98,8 +98,8 @@ describe('LibraryRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(libData),
-                convertToDoc: jest.fn().mockReturnValue(docLibData),
+                cleanup: vi.fn().mockReturnValue(libData),
+                convertToDoc: vi.fn().mockReturnValue(docLibData),
             };
 
             const libRepo = libraryRepo({
@@ -150,8 +150,8 @@ describe('LibraryRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(libData),
-                convertToDoc: jest.fn().mockReturnValue(docLibData),
+                cleanup: vi.fn().mockReturnValue(libData),
+                convertToDoc: vi.fn().mockReturnValue(docLibData),
             };
 
             const libRepo = libraryRepo({
@@ -259,7 +259,7 @@ describe('LibraryRepo', () => {
         test('Should set full text attributes of a library and return full text attributes', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn(),
+                execute: vi.fn(),
             };
 
             const libRepo = libraryRepo({

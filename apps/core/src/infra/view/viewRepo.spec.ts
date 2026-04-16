@@ -19,8 +19,8 @@ describe('viewRepo', () => {
     };
 
     const mockDbUtils: Mockify<IDbUtils> = {
-        cleanup: jest.fn().mockReturnValue(mockView),
-        convertToDoc: jest.fn().mockReturnValue(docViewData),
+        cleanup: vi.fn().mockReturnValue(mockView),
+        convertToDoc: vi.fn().mockReturnValue(docViewData),
         findCoreEntity: global.__mockPromise({list: [{...mockView}]}),
     };
 
@@ -29,7 +29,7 @@ describe('viewRepo', () => {
         execute: global.__mockPromise([docViewData]),
     };
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     describe('createView', () => {
         test('Should create a new view', async () => {

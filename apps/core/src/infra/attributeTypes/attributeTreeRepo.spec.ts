@@ -51,7 +51,7 @@ describe('AttributeTreeRepo', () => {
     };
 
     const mockUtils: Mockify<IUtils> = {
-        decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'categories', id: '123456'}),
+        decomposeValueEdgeDestination: vi.fn().mockReturnValue({library: 'categories', id: '123456'}),
     };
 
     const ctx: IQueryInfos = {
@@ -77,7 +77,7 @@ describe('AttributeTreeRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     id: '123456',
                     library: 'categories',
                 }),
@@ -145,7 +145,7 @@ describe('AttributeTreeRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     id: '123456',
                     library: 'categories',
                 }),
@@ -204,7 +204,7 @@ describe('AttributeTreeRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     id: '123456',
                     library: 'categories',
                 }),
@@ -289,7 +289,7 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValueOnce({
+            const mockCleanupRes = vi.fn().mockReturnValueOnce({
                 id: 123456,
                 created_at: 88888,
                 modified_at: 88888,
@@ -416,7 +416,7 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest
+            const mockCleanupRes = vi
                 .fn()
                 .mockReturnValueOnce({
                     id: 123456,
@@ -517,7 +517,7 @@ describe('AttributeTreeRepo', () => {
                 execute: global.__mockPromise(traversalResWithVers),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
                 modified_at: 88888,
@@ -561,7 +561,7 @@ describe('AttributeTreeRepo', () => {
                 multiple_values: false,
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
                 modified_at: 88888,
@@ -612,7 +612,7 @@ describe('AttributeTreeRepo', () => {
                 multiple_values: false,
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
                 modified_at: 88888,
@@ -642,7 +642,7 @@ describe('AttributeTreeRepo', () => {
 
     describe('filterValueQueryPart', () => {
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isCountFilter: jest.fn().mockReturnValue(false),
+            isCountFilter: vi.fn().mockReturnValue(false),
         };
 
         test('Should return query to retrieve value to filter on', () => {
@@ -650,7 +650,7 @@ describe('AttributeTreeRepo', () => {
                 db: new Database(),
             };
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql``),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql``),
             };
 
             const attrRepo = attributeTreeRepo({
@@ -674,11 +674,11 @@ describe('AttributeTreeRepo', () => {
             };
 
             const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(true),
+                isCountFilter: vi.fn().mockReturnValue(true),
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeTreeRepo({

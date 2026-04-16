@@ -13,23 +13,19 @@ import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApiKey} from '../../__tests__/mocks/apiKey';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import apiKeyDomain, {type IApiKeyDomainDeps} from './apiKeyDomain';
-import {type Mockify} from '@leav/utils';
-import {IAuth, IConfig} from '../../_types/config';
-import * as Config from '../../_types/config';
-import {IAttributeDomainDeps} from '../attribute/attributeDomain';
 
 const depsBase: ToAny<IApiKeyDomainDeps> = {
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.apiKey': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.apiKey': vi.fn(),
+    'core.utils': vi.fn(),
     translator: {},
     config: {},
 };
 
 describe('apiKeyDomain', () => {
     const mockUtils: Mockify<IUtils> = {
-        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, '')),
+        generateExplicitValidationError: vi.fn().mockReturnValue(new ValidationError({}, '')),
     };
 
     const mockAdminPermissionDomain: Mockify<IAdminPermissionDomain> = {
@@ -45,7 +41,7 @@ describe('apiKeyDomain', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('getApiKeys', () => {
@@ -126,7 +122,7 @@ describe('apiKeyDomain', () => {
                 const mockRepo = {
                     getApiKeys: global.__mockPromise({totalCount: 0, list: []}),
                     createApiKey: global.__mockPromise({...mockApiKey}),
-                    updateApiKey: jest.fn(),
+                    updateApiKey: vi.fn(),
                 } satisfies Mockify<IApiKeyRepo>;
 
                 const domain = apiKeyDomain({
@@ -160,7 +156,7 @@ describe('apiKeyDomain', () => {
                 const mockRepo: Mockify<IApiKeyRepo> = {
                     getApiKeys: global.__mockPromise({totalCount: 0, list: []}),
                     createApiKey: global.__mockPromise({...mockApiKey}),
-                    updateApiKey: jest.fn(),
+                    updateApiKey: vi.fn(),
                 };
 
                 const domain = apiKeyDomain({
@@ -191,7 +187,7 @@ describe('apiKeyDomain', () => {
             test('Should update an existing key', async () => {
                 const mockRepo = {
                     getApiKeys: global.__mockPromise({totalCount: 1, list: [{...mockApiKey}]}),
-                    createApiKey: jest.fn(),
+                    createApiKey: vi.fn(),
                     updateApiKey: global.__mockPromise({...mockApiKey}),
                 } satisfies Mockify<IApiKeyRepo>;
 
@@ -236,7 +232,7 @@ describe('apiKeyDomain', () => {
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 });
-                domain.getApiKeyProperties = jest.fn().mockRejectedValue(new ValidationError({}));
+                domain.getApiKeyProperties = vi.fn().mockRejectedValue(new ValidationError({}));
 
                 await expect(async () => domain.saveApiKey({apiKey: {...mockApiKey}, ctx: mockCtx})).rejects.toThrow(
                     ValidationError,
@@ -246,7 +242,7 @@ describe('apiKeyDomain', () => {
             test('Should throw if not allowed', async () => {
                 const mockRepo: Mockify<IApiKeyRepo> = {
                     getApiKeys: global.__mockPromise({totalCount: 1, list: [{...mockApiKey}]}),
-                    createApiKey: jest.fn(),
+                    createApiKey: vi.fn(),
                     updateApiKey: global.__mockPromise({...mockApiKey}),
                 };
 
@@ -308,7 +304,7 @@ describe('apiKeyDomain', () => {
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
             });
-            domain.getApiKeyProperties = jest.fn().mockRejectedValue(new ValidationError({}));
+            domain.getApiKeyProperties = vi.fn().mockRejectedValue(new ValidationError({}));
 
             await expect(async () => domain.deleteApiKey({id: mockApiKey.id, ctx: mockCtx})).rejects.toThrow(
                 ValidationError,
@@ -340,7 +336,7 @@ describe('apiKeyDomain', () => {
 
     describe('getApiKeyByKey', () => {
         test('Return API key for given key', async () => {
-            const bcryptSpy = jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+            const bcryptSpy = vi.spyOn(bcrypt, 'compare').mockResolvedValue(true);
 
             const domain = apiKeyDomain(depsBase);
             domain.getApiKeyProperties = global.__mockPromise({...mockApiKey});

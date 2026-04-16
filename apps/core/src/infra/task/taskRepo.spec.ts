@@ -47,12 +47,12 @@ describe('TaskRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docTaskData),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+            convertToDoc: vi.fn().mockReturnValue(docTaskData),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1),
+            getUnixTime: vi.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
@@ -80,12 +80,12 @@ describe('TaskRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docTaskData),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+            convertToDoc: vi.fn().mockReturnValue(docTaskData),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1),
+            getUnixTime: vi.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
@@ -112,7 +112,7 @@ describe('TaskRepo', () => {
         } satisfies Mockify<IDbUtils>;
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1),
+            getUnixTime: vi.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
@@ -134,11 +134,11 @@ describe('TaskRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn().mockReturnValue(1),
+            getUnixTime: vi.fn().mockReturnValue(1),
         };
 
         const repo = taskRepo({
@@ -167,7 +167,7 @@ describe('TaskRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
         };
 
         const repo = taskRepo({

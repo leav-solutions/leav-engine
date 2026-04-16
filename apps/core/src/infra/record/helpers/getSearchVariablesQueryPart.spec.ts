@@ -11,21 +11,21 @@ import getSearchVariablesQueryPart from './getSearchVariablesQueryPart';
 describe('getSearchVariablesQueryPart', () => {
     test('Return list of unique variables for filters', async () => {
         const mockAttributeTypeRepo: Mockify<IAttributeTypeRepo> = {
-            filterValueQueryPart: jest.fn().mockReturnValue(aql``),
+            filterValueQueryPart: vi.fn().mockReturnValue(aql``),
         };
 
         const mockAttributeTypesRepo: Mockify<IAttributeTypesRepo> = {
-            getTypeRepo: jest.fn().mockReturnValue(mockAttributeTypeRepo),
+            getTypeRepo: vi.fn().mockReturnValue(mockAttributeTypeRepo),
         };
 
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isAttributeFilter: jest.fn().mockImplementation(filter => !!filter.attributes),
-            isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId),
+            isAttributeFilter: vi.fn().mockImplementation(filter => !!filter.attributes),
+            isClassifyingFilter: vi.fn().mockImplementation(filter => !!filter.treeId),
         };
 
-        const mockGetClassifyingFiltersVariableQueryPart = jest.fn().mockReturnValue(aql``);
+        const mockGetClassifyingFiltersVariableQueryPart = vi.fn().mockReturnValue(aql``);
 
-        const mockGetSearchVariableName = jest
+        const mockGetSearchVariableName = vi
             .fn()
             .mockImplementation(filter => `${filter.attributes?.[0].id}_filterVariableName`);
 

@@ -18,14 +18,14 @@ import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import versionProfileDomain, {type IVersionProfileDomainDeps} from './versionProfileDomain';
 
 const depsBase: ToAny<IVersionProfileDomainDeps> = {
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.versionProfile': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.infra.attribute': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.versionProfile': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.infra.attribute': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
+    'core.utils': vi.fn(),
 };
 
 describe('versionProfileDomain', () => {
@@ -53,23 +53,23 @@ describe('versionProfileDomain', () => {
     };
 
     const mockCachesService: Mockify<ICachesService> = {
-        getCache: jest.fn().mockReturnValue(mockCacheService),
+        getCache: vi.fn().mockReturnValue(mockCacheService),
     };
 
-    const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockVersionProfile);
-    const mockGetEntityByIdHelperNoProfile = jest.fn().mockReturnValue(null);
+    const mockGetEntityByIdHelper = vi.fn().mockReturnValue(mockVersionProfile);
+    const mockGetEntityByIdHelperNoProfile = vi.fn().mockReturnValue(null);
 
     const mockUtils: Mockify<IUtils> = {
-        isIdValid: jest.fn().mockReturnValue(true),
-        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, '')),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:versionProfile:42'),
+        isIdValid: vi.fn().mockReturnValue(true),
+        generateExplicitValidationError: vi.fn().mockReturnValue(new ValidationError({}, '')),
+        getCoreEntityCacheKey: vi.fn().mockReturnValue('coreEntity:versionProfile:42'),
     };
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendDatabaseEvent: global.__mockPromise(),
     };
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     describe('getVersionProfiles', () => {
         test('Should return a list of version profiles', async () => {
@@ -236,7 +236,7 @@ describe('versionProfileDomain', () => {
 
             const mockUtilsInvalidId: Mockify<IUtils> = {
                 ...mockUtils,
-                isIdValid: jest.fn().mockReturnValue(false),
+                isIdValid: vi.fn().mockReturnValue(false),
             };
 
             const domain = versionProfileDomain({

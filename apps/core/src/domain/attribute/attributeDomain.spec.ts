@@ -21,7 +21,6 @@ import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain, {type IAttributeDomainDeps} from './attributeDomain';
-import {type Mockify} from '@leav/utils';
 import {type IValidateHelper} from '../helpers/validate';
 
 const mockCacheService: Mockify<ICacheService> = {
@@ -31,8 +30,8 @@ const mockCacheService: Mockify<ICacheService> = {
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService),
-    memoize: jest.fn().mockImplementation(({func}) => func()),
+    getCache: vi.fn().mockReturnValue(mockCacheService),
+    memoize: vi.fn().mockImplementation(({func}) => func()),
 };
 
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -44,18 +43,18 @@ const mockValidateHelper: Mockify<IValidateHelper> = {
 
 const depsBase: ToAny<IAttributeDomainDeps> = {
     config: {},
-    'core.infra.attribute': jest.fn(),
-    'core.domain.actionsList': jest.fn(),
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.domain.versionProfile': jest.fn(),
+    'core.infra.attribute': vi.fn(),
+    'core.domain.actionsList': vi.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.domain.versionProfile': vi.fn(),
     'core.domain.helpers.validate': mockValidateHelper,
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.form': jest.fn(),
-    'core.infra.library': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.form': vi.fn(),
+    'core.infra.library': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
+    'core.utils': vi.fn(),
 };
 
 describe('attributeDomain', () => {
@@ -78,9 +77,9 @@ describe('attributeDomain', () => {
     };
 
     const mockUtils: Mockify<IUtils> = {
-        isIdValid: jest.fn().mockReturnValue(true),
-        mergeConcat: jest.fn().mockImplementation(o => o),
-        getDefaultActionsList: jest.fn().mockReturnValue({
+        isIdValid: vi.fn().mockReturnValue(true),
+        mergeConcat: vi.fn().mockImplementation(o => o),
+        getDefaultActionsList: vi.fn().mockReturnValue({
             [ActionsListEvents.SAVE_VALUE]: [
                 {
                     id: 'validateFormat',
@@ -89,15 +88,15 @@ describe('attributeDomain', () => {
                 },
             ],
         }),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:attribute:42'),
-        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({test: 'boom'})),
+        getCoreEntityCacheKey: vi.fn().mockReturnValue('coreEntity:attribute:42'),
+        generateExplicitValidationError: vi.fn().mockReturnValue(new ValidationError({test: 'boom'})),
     };
 
-    const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockAttrSimple);
-    const mockGetEntityByIdHelperNoResult = jest.fn().mockReturnValue(null);
+    const mockGetEntityByIdHelper = vi.fn().mockReturnValue(mockAttrSimple);
+    const mockGetEntityByIdHelperNoResult = vi.fn().mockReturnValue(null);
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('getAttributes', () => {
@@ -253,7 +252,7 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 ...depsBase,
-                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockLibrary),
+                'core.domain.helpers.getCoreEntityById': vi.fn().mockReturnValue(mockLibrary),
                 'core.infra.attribute': mockAttrRepo,
             } as ToAny<IAttributeDomainDeps>);
             const libAttrs = await attrDomain.getLibraryFullTextAttributes('test', ctx);
@@ -306,7 +305,7 @@ describe('attributeDomain', () => {
 
     describe('saveAttribute', () => {
         const mockALDomain: Mockify<IActionsListDomain> = {
-            getAvailableActions: jest.fn().mockReturnValue([
+            getAvailableActions: vi.fn().mockReturnValue([
                 {
                     id: 'validateFormat',
                     name: 'Validate Format',
@@ -325,14 +324,14 @@ describe('attributeDomain', () => {
             ]),
         };
 
-        const getLibrariesUsingAttributeMockWithoutResult = jest.fn().mockResolvedValue([]);
-        const getLibrariesUsingAttributeMockWithResult = jest.fn().mockResolvedValue(['library1', 'library2']);
+        const getLibrariesUsingAttributeMockWithoutResult = vi.fn().mockResolvedValue([]);
+        const getLibrariesUsingAttributeMockWithResult = vi.fn().mockResolvedValue(['library1', 'library2']);
 
         test('Should save a new attribute', async function () {
             const mockAttrRepo = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0}),
-                createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
-                updateAttribute: jest.fn(),
+                createAttribute: vi.fn().mockImplementation(attr => Promise.resolve(attr)),
+                updateAttribute: vi.fn(),
             } satisfies Mockify<IAttributeRepo>;
 
             const mockLibraryRepo: Mockify<ILibraryRepo> = {
@@ -384,8 +383,8 @@ describe('attributeDomain', () => {
 
         test('Should throw a validation error if the attribute:id is forbidden', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
-                updateAttribute: jest.fn(),
+                createAttribute: vi.fn().mockImplementation(attr => Promise.resolve(attr)),
+                updateAttribute: vi.fn(),
             };
 
             const attrDomain = attributeDomain({
@@ -428,7 +427,7 @@ describe('attributeDomain', () => {
 
         test('Should update an attribute', async function () {
             const mockAttrRepo = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false}),
             } satisfies Mockify<IAttributeRepo>;
 
@@ -474,7 +473,7 @@ describe('attributeDomain', () => {
 
         test('Should clear library attributes cache when updating an attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false}),
             };
 
@@ -517,7 +516,7 @@ describe('attributeDomain', () => {
             const attrData = {...mockAttrAdvVersionable};
 
             const mockAttrRepo = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise(attrData),
             } satisfies Mockify<IAttributeRepo>;
 
@@ -530,7 +529,7 @@ describe('attributeDomain', () => {
                 'core.infra.attribute': mockAttrRepo,
                 'core.domain.actionsList': mockALDomain,
                 'core.domain.permission.admin': mockAdminPermDomain,
-                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(attrData),
+                'core.domain.helpers.getCoreEntityById': vi.fn().mockReturnValue(attrData),
                 'core.domain.eventsManager': mockEventsManager,
                 'core.infra.cache.cacheService': mockCachesService,
                 'core.infra.library': mockLibraryRepo,
@@ -584,7 +583,7 @@ describe('attributeDomain', () => {
                     list: [attrData],
                     totalCount: 1,
                 }),
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise(attrData),
             } satisfies Mockify<IAttributeRepo>;
 
@@ -650,7 +649,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if actions list type is invalid', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false}),
             };
 
@@ -683,7 +682,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if invalid ID', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false}),
             };
 
@@ -711,7 +710,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if system action list is missing', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false}),
             };
 
@@ -740,7 +739,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if forbidden action', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn(),
+                createAttribute: vi.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false}),
             };
 
@@ -768,8 +767,8 @@ describe('attributeDomain', () => {
 
         test('Should throw if multiple values on simple or simple link attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                createAttribute: jest.fn(),
-                updateAttribute: jest.fn(),
+                createAttribute: vi.fn(),
+                updateAttribute: vi.fn(),
             };
 
             const attrDomain = attributeDomain({
@@ -804,16 +803,16 @@ describe('attributeDomain', () => {
 
         test('Should throw if using invalid profile on versions conf', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: jest.fn().mockImplementation(filters => {
+                getAttributes: vi.fn().mockImplementation(filters => {
                     const list = filters.type === AttributeTypes.TREE ? [mockAttrTree] : [];
                     return Promise.resolve({list, totalCount: list.length});
                 }),
-                createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
-                updateAttribute: jest.fn(),
+                createAttribute: vi.fn().mockImplementation(attr => Promise.resolve(attr)),
+                updateAttribute: vi.fn(),
             };
 
             const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
-                getVersionProfiles: jest.fn().mockImplementation(() => Promise.resolve({list: []})),
+                getVersionProfiles: vi.fn().mockImplementation(() => Promise.resolve({list: []})),
             };
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
@@ -927,7 +926,7 @@ describe('attributeDomain', () => {
 
             test('Should throw if invalid metadata attribute', async () => {
                 const mockAttrRepo: Mockify<IAttributeRepo> = {
-                    getAttributes: jest
+                    getAttributes: vi
                         .fn()
                         .mockImplementation(({params: {filters}}) =>
                             filters.id === 'metadata_attribute'
@@ -936,7 +935,7 @@ describe('attributeDomain', () => {
                         ),
                 };
 
-                const mockGetEntityByIdHelperForMetadata = jest
+                const mockGetEntityByIdHelperForMetadata = vi
                     .fn()
                     .mockImplementation((type, id) =>
                         id === 'metadata_attribute' ? {...mockAttrAdv, id: 'metadata_attribute'} : null,

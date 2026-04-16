@@ -12,10 +12,10 @@ import {type ToAny} from '../../utils/utils';
 import {type IAttributeWithRevLink} from './attributeTypesRepo';
 
 const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {
-    'core.infra.db.dbService': jest.fn(),
-    'core.infra.db.dbUtils': jest.fn(),
-    'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),
-    'core.infra.record.helpers.filterTypes': jest.fn(),
+    'core.infra.db.dbService': vi.fn(),
+    'core.infra.db.dbUtils': vi.fn(),
+    'core.infra.attributeTypes.helpers.getConditionPart': vi.fn(),
+    'core.infra.record.helpers.filterTypes': vi.fn(),
 };
 
 describe('AttributeStandardRepo', () => {
@@ -345,7 +345,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const mockDb = {
-                collection: jest.fn().mockReturnValueOnce(mockDbCollec).mockReturnValue(mockDbEdgeCollec),
+                collection: vi.fn().mockReturnValueOnce(mockDbCollec).mockReturnValue(mockDbEdgeCollec),
             };
 
             const mockDbServ = {db: mockDb as unknown as Database};
@@ -406,7 +406,7 @@ describe('AttributeStandardRepo', () => {
             const mockDbEdgeCollec = {};
 
             const mockDb = {
-                collection: jest.fn().mockReturnValueOnce(mockDbCollec).mockReturnValueOnce(mockDbEdgeCollec),
+                collection: vi.fn().mockReturnValueOnce(mockDbCollec).mockReturnValueOnce(mockDbEdgeCollec),
             };
 
             const mockDbServ = {
@@ -442,8 +442,8 @@ describe('AttributeStandardRepo', () => {
             const mockDbEdgeCollec = {};
 
             const mockDb = {
-                collection: jest.fn().mockReturnValue(mockDbCollec),
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec),
+                collection: vi.fn().mockReturnValue(mockDbCollec),
+                edgeCollection: vi.fn().mockReturnValue(mockDbEdgeCollec),
             };
 
             const mockDbServ = {
@@ -672,7 +672,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(false),
+                isCountFilter: vi.fn().mockReturnValue(false),
             };
 
             const attrRepo = attributeAdvancedRepo({

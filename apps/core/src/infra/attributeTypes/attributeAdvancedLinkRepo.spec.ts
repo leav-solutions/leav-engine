@@ -67,7 +67,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     };
 
     const mockUtils: Mockify<IUtils> = {
-        decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'test_linked_lib', id: '987654'}),
+        decomposeValueEdgeDestination: vi.fn().mockReturnValue({library: 'test_linked_lib', id: '987654'}),
     };
 
     const ctx: IQueryInfos = {
@@ -83,7 +83,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     library: 'test_linked_lib',
                     id: '987654',
                 }),
@@ -150,7 +150,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     library: 'test_linked_lib',
                     id: '987654',
                 }),
@@ -221,7 +221,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     library: 'test_linked_lib',
                     id: '987654',
                 }),
@@ -275,7 +275,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     library: 'test_linked_lib',
                     id: '987654',
                 }),
@@ -354,7 +354,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     library: 'test_linked_lib',
                     id: '987654',
                 }),
@@ -460,7 +460,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: '123456',
                 created_at: 88888,
                 modified_at: 88888,
@@ -511,7 +511,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([]),
             };
 
-            const mockCleanupRes = jest.fn();
+            const mockCleanupRes = vi.fn();
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes,
@@ -614,7 +614,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest
+            const mockCleanupRes = vi
                 .fn()
                 .mockReturnValueOnce({
                     id: '123456',
@@ -687,7 +687,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([]),
             };
 
-            const mockCleanupRes = jest.fn();
+            const mockCleanupRes = vi.fn();
 
             const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes,
@@ -771,7 +771,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise(traversalResWithVers),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: 123456,
                 created_at: 88888,
                 modified_at: 88888,
@@ -809,7 +809,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([traversalRes[0]]),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: '123456',
                 created_at: 88888,
                 modified_at: 88888,
@@ -864,7 +864,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest
+            const mockCleanupRes = vi
                 .fn()
                 .mockReturnValueOnce({
                     id: 123456,
@@ -906,7 +906,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
     describe('filterValueQueryPart', () => {
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isCountFilter: jest.fn().mockReturnValue(false),
+            isCountFilter: vi.fn().mockReturnValue(false),
         };
 
         test('Should return query to retrieve value to filter on', async () => {
@@ -915,7 +915,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
@@ -940,7 +940,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
@@ -970,7 +970,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
@@ -1001,11 +1001,11 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(true),
+                isCountFilter: vi.fn().mockReturnValue(true),
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
@@ -1033,11 +1033,11 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(true),
+                isCountFilter: vi.fn().mockReturnValue(true),
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
@@ -1066,11 +1066,11 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(true),
+                isCountFilter: vi.fn().mockReturnValue(true),
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeAdvancedLinkRepo({

@@ -8,8 +8,8 @@ import getSearchVariableName from './getSearchVariableName';
 
 describe('getSearchVariableName', () => {
     const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-        isAttributeFilter: jest.fn().mockImplementation(filter => !!filter.attributes),
-        isCountFilter: jest
+        isAttributeFilter: vi.fn().mockImplementation(filter => !!filter.attributes),
+        isCountFilter: vi
             .fn()
             .mockImplementation(filter =>
                 [
@@ -20,7 +20,7 @@ describe('getSearchVariableName', () => {
                     AttributeCondition.IS_NOT_EMPTY,
                 ].includes(filter.condition as AttributeCondition),
             ),
-        isClassifyingFilter: jest.fn().mockImplementation(filter => !!filter.treeId),
+        isClassifyingFilter: vi.fn().mockImplementation(filter => !!filter.treeId),
     };
 
     test('Return variable for standard filter (simple or advanced attribute)', async () => {
