@@ -27,6 +27,7 @@
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "IMMUTABLE_CORE_SYSTEM_ATTRIBUTE": "Attribute {{attribute}} is an immutable core system attribute and cannot be edited",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
+        "INVALID_ACTION_PARAMS": "Invalid action parameters: {{details}}",
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Attribute filter must have condition, field and value",
         "INVALID_ATTRIBUTE_FOR_LIBRARY": "Attribute {{attribute}} is not used by library {{library}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",

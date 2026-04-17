@@ -4,7 +4,7 @@
 import {z} from 'zod';
 import {type ILogger, logger} from '@leav/logger';
 import {AutomationRuleActions} from '../../../_types/automation';
-import {type IAutomationAction} from '../types';
+import {ActionExecutionResultStatus, type IAutomationAction} from '../types';
 
 const logActionParamsSchema = z.object({
     message: z.string().meta({
@@ -27,7 +27,13 @@ export default function (): IAutomationAction<LogActionParams> {
             const level: keyof ILogger = params.level || 'info';
             logger[level](
                 `Automation pipeline log action ${state.trigger.eventAction} for user ${ctx.userId}: ${params.message}`,
+                {previousResults: state.results},
             );
+
+            return {
+                status: ActionExecutionResultStatus.CONTINUE,
+                result: params.message,
+            };
         },
     };
 }

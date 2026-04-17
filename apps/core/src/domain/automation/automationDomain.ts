@@ -8,6 +8,7 @@ import {
     type IUpdateAutomationRule,
     type AutomationRulesEventTopic,
     type AutomationRuleEventAction,
+    type AutomationRuleTrigger,
 } from '../../_types/automation';
 import {SortOrder, type IList} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -109,6 +110,11 @@ export default function ({
         async triggerRules(event, synchronous, ctx): Promise<void> {
             try {
                 const rules = await _getRulesToTrigger(event, synchronous, ctx);
+                const trigger: AutomationRuleTrigger = {
+                    eventAction: event.action,
+                    eventTopic: event.topic,
+                    synchronous,
+                };
 
                 logger.verbose(
                     `Triggering ${rules.length} automation rules for event action ${event.action} and topic ${JSON.stringify(event.topic)}`,
@@ -119,19 +125,15 @@ export default function ({
                         try {
                             await pipelineExecutor.executePipeline(
                                 {
+                                    ...rule.pipeline,
                                     ruleId: rule.id,
-                                    steps: rule.pipeline.steps,
-                                    trigger: {
-                                        eventAction: event.action,
-                                        eventTopic: event.topic,
-                                        synchronous,
-                                    },
+                                    trigger,
                                 },
                                 ctx,
                             );
                         } catch (error) {
                             logger.error(
-                                `Error executing pipeline for rule ${rule.id} triggered by event action ${event.action}: ${error.stack}`,
+                                `Error executing pipeline for rule ${rule.id} triggered by event action ${trigger.eventAction}: ${error.stack}`,
                             );
                         }
                     }),
