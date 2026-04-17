@@ -78,7 +78,7 @@ export function envToBool(value?: string, defaultValue = false) {
 
 export const defaultLoggerConfig: ILoggerConfig & Required<Omit<ILoggerConfig, 'onErrorLog' | 'destinationFile'>> = {
     level: process.env.LOG_LEVEL || 'info',
-    silent: envToBool(process.env.LOG_SILENT, process.env.TS_JEST === '1'),
+    silent: envToBool(process.env.LOG_SILENT, process.env.TS_JEST === '1' || process.env.VITEST === 'true'),
     destinationFile: process.env.LOG_FILE,
     useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false),
     addTimestamp: envToBool(process.env.LOG_ADD_TIMESTAMP, false),
