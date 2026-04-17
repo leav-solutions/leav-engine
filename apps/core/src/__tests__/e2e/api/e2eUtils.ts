@@ -4,6 +4,7 @@
 // eslint-disable-next-line max-classes-per-file
 import WebSocket from 'ws';
 import {GraphQLClient} from 'graphql-request';
+import {inject} from 'vitest';
 import {type Client as GraphqlWsClient, createClient as createGraphqlWsClient} from 'graphql-ws';
 import axios, {type AxiosResponse} from 'axios';
 import FormData from 'form-data';
@@ -24,21 +25,12 @@ import {type ITreePermissionsDependentValuesConf} from '../../../_types/permissi
 import {AttributeCondition} from '../../../_types/record';
 import {type ISaveValue} from '../../../_types/value';
 
-// Share some global variables from global setup to tests
-export interface IGlobalThis {
-    guestUser: IE2EUserParams;
-    nonAdminUser: IE2EUserParams;
-    nonAdminGroupId: string;
-    graphqlUrl: string;
-}
-declare const globalThis: IGlobalThis;
-
 export interface IE2EUser {
     userId: string;
     getAuthToken: () => Promise<string>;
 }
 
-interface IE2EUserParams {
+export interface IE2EUserParams {
     userId: string;
     groupsId: string[];
 }
@@ -64,13 +56,13 @@ const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
 
 export const e2eAdminUser = (): IE2EUser => e2eUser({userId: adminUserId, groupsId: [adminsGroupId]});
 
-export const e2eGuestUser = (): IE2EUser => e2eUser(globalThis.guestUser);
+export const e2eGuestUser = (): IE2EUser => e2eUser(inject('guestUser'));
 
-export const e2eNonAdminUser = (): IE2EUser => e2eUser(globalThis.nonAdminUser);
+export const e2eNonAdminUser = (): IE2EUser => e2eUser(inject('nonAdminUser'));
 
-export const e2eNonAdminGroupId = (): string => globalThis.nonAdminGroupId;
+export const e2eNonAdminGroupId = (): string => inject('nonAdminGroupId');
 
-export const getGraphQLUrl = () => globalThis.graphqlUrl;
+export const getGraphQLUrl = () => inject('graphqlUrl');
 
 export class E2EGraphQLError extends Error {
     public constructor(
@@ -88,7 +80,7 @@ export interface IMakeGraphQlCallOptions {
 
 export const getSdkWithUser = (user: IE2EUser): ReturnType<typeof getSdk> =>
     getSdk(
-        new GraphQLClient(globalThis.graphqlUrl, {
+        new GraphQLClient(getGraphQLUrl(), {
             requestMiddleware: async request => {
                 const token = await user.getAuthToken();
 
