@@ -219,6 +219,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                         <KitButton
                             aria-label={closeButtonLabel}
                             key="close"
+                            size="m"
                             icon={<FontAwesomeIcon icon={faXmark} />}
                             onClick={_handleClose}
                         >
