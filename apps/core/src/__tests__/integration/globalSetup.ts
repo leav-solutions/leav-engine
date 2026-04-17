@@ -8,10 +8,11 @@ import {initDI} from '../../depsManager';
 import {initDb} from '../../infra/db/db';
 import {type IDbUtils} from '../../infra/db/dbUtils';
 import {initRedis} from '../../infra/cache';
+import {type IDbService} from '../../infra/db/dbService';
 import {type ITasksManagerInterface} from '../../interface/tasksManager';
-import {type IGlobalThis} from './integrationTestUtils';
+import {type IRedis} from '../../infra/cache/redis';
 
-declare const globalThis: IGlobalThis;
+let taskManagerMasterTimer: NodeJS.Timeout;
 
 export async function setup() {
     try {
@@ -32,7 +33,6 @@ export async function setup() {
         });
 
         const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
-        const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
 
         await dbUtils.clearDatabase();
         await dbUtils.migrate(coreContainer);
@@ -40,10 +40,38 @@ export async function setup() {
         // reset worker queue
         await amqp.consumer.channel.deleteQueue(conf.tasksManager.queues.execOrders);
 
-        globalThis.taskManagerMasterTimer = await tasksManager.initMaster();
-        await tasksManager.initWorker();
+        const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
+
+        taskManagerMasterTimer = await tasksManager.initMaster();
 
         globalThis.coreContainer = coreContainer;
+    } catch (e) {
+        console.error(e);
+        console.error(e.stack);
+    }
+}
+
+export async function teardown() {
+    try {
+        // TODO improve master and worker stop, remove rabbitmq consumers ...
+        clearInterval(taskManagerMasterTimer);
+
+        const dbService: IDbService = globalThis.coreContainer?.cradle['core.infra.db.dbService'];
+        if (dbService?.db) {
+            dbService.db.close();
+        }
+
+        // Try to gracefully close Redis if we created it
+        const redis = globalThis.coreContainer?.cradle['core.infra.redis'] as IRedis;
+
+        // Try to gracefully close Redis if we created it
+        if (redis?.cache && typeof redis.cache?.quit === 'function') {
+            await redis.cache.quit();
+        }
+
+        if (redis?.session && typeof redis.session.quit === 'function') {
+            await redis.session.quit();
+        }
     } catch (e) {
         console.error(e);
         console.error(e.stack);

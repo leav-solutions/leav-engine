@@ -5,7 +5,6 @@ import {type AwilixContainer} from 'awilix';
 
 export interface IGlobalThis {
     coreContainer: AwilixContainer;
-    taskManagerMasterTimer: NodeJS.Timeout;
 }
 
 declare const globalThis: IGlobalThis;
