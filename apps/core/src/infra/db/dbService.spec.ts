@@ -7,8 +7,8 @@ import {type IConfig} from '../../_types/config';
 import dbService, {type IDbServiceDeps} from './dbService';
 
 const depsBase: ToAny<IDbServiceDeps> = {
-    'core.infra.db': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.infra.db': vi.fn(),
+    'core.utils': vi.fn(),
     config: {},
 };
 
@@ -27,7 +27,7 @@ describe('dbService', () => {
     describe('collectionExists', () => {
         test('Should check if a collection already exists', async () => {
             const mockDb = new Database();
-            mockDb.listCollections = jest.fn().mockReturnValue(Promise.resolve([{name: 'test'}]));
+            mockDb.listCollections = vi.fn().mockReturnValue(Promise.resolve([{name: 'test'}]));
 
             const dbServ = dbService({...depsBase, 'core.infra.db': mockDb, config: mockConfig as IConfig});
 
@@ -37,19 +37,19 @@ describe('dbService', () => {
     });
     describe('execute', () => {
         const mockDbCursor = {
-            all: jest.fn(),
+            all: vi.fn(),
         };
 
         test('Should run query', async () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw e;
-                }),
+                }) as never,
             };
 
-            mockDb.query = global.__mockPromise({all: jest.fn()});
+            mockDb.query = global.__mockPromise({all: vi.fn()});
 
             const dbServ = dbService({
                 'core.infra.db': mockDb,
@@ -69,13 +69,13 @@ describe('dbService', () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw e;
-                }),
+                }) as never,
             };
 
             /* eslint-disable no-throw-literal */
-            mockDb.query = jest
+            mockDb.query = vi
                 .fn()
                 .mockImplementationOnce(q => {
                     throw {isArangoError: true, errorNum: 1200};
@@ -103,12 +103,12 @@ describe('dbService', () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(e => {
                     throw new Error();
-                }),
+                }) as never,
             };
 
-            mockDb.query = jest.fn().mockImplementation(q => {
+            mockDb.query = vi.fn().mockImplementation(q => {
                 throw {isArangoError: true, errorNum: 1200};
             });
 

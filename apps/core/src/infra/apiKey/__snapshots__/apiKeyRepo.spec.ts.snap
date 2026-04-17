@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`apiKeyRepo Delete ApiKey Should delete a version key 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`apiKeyRepo > Delete ApiKey > Should delete a version key 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
-exports[`apiKeyRepo Delete ApiKey Should delete a version key 2`] = `
+exports[`apiKeyRepo > Delete ApiKey > Should delete a version key 2`] = `
 {
   "@value1": "core_api_keys",
   "value0": {
@@ -11,9 +11,9 @@ exports[`apiKeyRepo Delete ApiKey Should delete a version key 2`] = `
 }
 `;
 
-exports[`apiKeyRepo createApiKey Should create a new version key 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+exports[`apiKeyRepo > createApiKey > Should create a new version key 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
-exports[`apiKeyRepo createApiKey Should create a new version key 2`] = `
+exports[`apiKeyRepo > createApiKey > Should create a new version key 2`] = `
 {
   "@value1": "core_api_keys",
   "value0": {
@@ -29,9 +29,9 @@ exports[`apiKeyRepo createApiKey Should create a new version key 2`] = `
 }
 `;
 
-exports[`apiKeyRepo updateApiKey Should update an existing version key 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+exports[`apiKeyRepo > updateApiKey > Should update an existing version key 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
-exports[`apiKeyRepo updateApiKey Should update an existing version key 2`] = `
+exports[`apiKeyRepo > updateApiKey > Should update an existing version key 2`] = `
 {
   "@value1": "core_api_keys",
   "value0": {

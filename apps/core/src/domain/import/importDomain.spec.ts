@@ -36,22 +36,22 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const mockPermissionDomain: Mockify<IPermissionDomain> = {
-    isAdminOrSystemUser: jest.fn().mockReturnValue(true),
+    isAdminOrSystemUser: vi.fn().mockReturnValue(true),
 };
 
 const depsBase: ToAny<IImportDomainDeps> = {
-    'core.domain.library': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.value': jest.fn(),
-    'core.domain.tree': jest.fn(),
-    'core.domain.versionProfile': jest.fn(),
-    'core.domain.tasksManager': jest.fn(),
-    'core.domain.helpers.updateTaskProgress': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.library': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.value': vi.fn(),
+    'core.domain.tree': vi.fn(),
+    'core.domain.versionProfile': vi.fn(),
+    'core.domain.tasksManager': vi.fn(),
+    'core.domain.helpers.updateTaskProgress': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
+    'core.utils': vi.fn(),
     'core.domain.permission': mockPermissionDomain as IPermissionDomain,
     'core.depsManager': {},
     'core.infra.db.dbUtils': {},
@@ -77,7 +77,7 @@ describe('importDomain', () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterEach(async () => {
@@ -128,7 +128,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockLibDomain: Mockify<ILibraryDomain> = {
-                saveLibrary: jest.fn(),
+                saveLibrary: vi.fn(),
             };
 
             const imprtDomain = importDomain({
@@ -163,7 +163,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockLibDomain = {
-                saveLibrary: jest.fn(),
+                saveLibrary: vi.fn(),
             } satisfies Mockify<ILibraryDomain>;
 
             const imprtDomain = importDomain({
@@ -194,7 +194,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain = {
-                saveAttribute: jest.fn(),
+                saveAttribute: vi.fn(),
             } satisfies Mockify<IAttributeDomain>;
 
             const imprtDomain = importDomain({
@@ -225,7 +225,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain = {
-                saveTree: jest.fn(),
+                saveTree: vi.fn(),
             } satisfies Mockify<ITreeDomain>;
 
             const imprtDomain = importDomain({
@@ -256,7 +256,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain = {
-                saveTree: jest.fn(),
+                saveTree: vi.fn(),
             } satisfies Mockify<ITreeDomain>;
 
             const imprtDomain = importDomain({
@@ -354,7 +354,7 @@ describe('importDomain', () => {
             };
 
             const mockCacheService: Mockify<ICacheService> = {
-                getData: jest
+                getData: vi
                     .fn()
                     .mockReturnValue(
                         Promise.resolve([
@@ -393,7 +393,7 @@ describe('importDomain', () => {
             };
 
             const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue(mockCacheService),
+                getCache: vi.fn().mockReturnValue(mockCacheService),
             };
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
@@ -506,7 +506,7 @@ describe('importDomain', () => {
             };
 
             const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue(mockCacheService),
+                getCache: vi.fn().mockReturnValue(mockCacheService),
             };
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
@@ -584,7 +584,7 @@ describe('importDomain', () => {
             };
 
             const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue(mockCacheService),
+                getCache: vi.fn().mockReturnValue(mockCacheService),
             };
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
@@ -701,7 +701,7 @@ describe('importDomain', () => {
             } satisfies Mockify<IValidateHelper>;
 
             const mockCacheService: Mockify<ICacheService> = {
-                getData: jest.fn().mockReturnValue(
+                getData: vi.fn().mockReturnValue(
                     Promise.resolve([
                         // cache data object with version
                         JSON.stringify({
@@ -716,7 +716,7 @@ describe('importDomain', () => {
             };
 
             const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue(mockCacheService),
+                getCache: vi.fn().mockReturnValue(mockCacheService),
             };
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
@@ -798,7 +798,7 @@ describe('importDomain', () => {
             };
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                find: jest.fn().mockImplementation(({params}) => {
+                find: vi.fn().mockImplementation(({params}) => {
                     if (params.filters[0].value === 'existingId') {
                         return {totalCount: 1, list: [{id: 'existingId'}]};
                     } else {
@@ -816,7 +816,7 @@ describe('importDomain', () => {
                 deleteAll: global.__mockPromise(),
             };
 
-            const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
+            const mockCachesService: Mockify<ICachesService> = {getCache: vi.fn().mockReturnValue(mockCacheService)};
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
                 createTask: global.__mockPromise(),
@@ -878,7 +878,7 @@ describe('importDomain', () => {
             };
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                find: jest.fn().mockImplementation(({params}) => {
+                find: vi.fn().mockImplementation(({params}) => {
                     if (params.filters[0].value === 'existingId') {
                         return {totalCount: 1, list: [{id: 'existingId'}]};
                     } else {
@@ -896,7 +896,7 @@ describe('importDomain', () => {
                 deleteAll: global.__mockPromise(),
             };
 
-            const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
+            const mockCachesService: Mockify<ICachesService> = {getCache: vi.fn().mockReturnValue(mockCacheService)};
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
                 createTask: global.__mockPromise(),
@@ -958,7 +958,7 @@ describe('importDomain', () => {
             };
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                find: jest.fn().mockImplementation(({params}) => {
+                find: vi.fn().mockImplementation(({params}) => {
                     if (params.filters[0].value === 'existingId') {
                         return {totalCount: 1, list: [{id: 'existingId'}]};
                     } else {
@@ -976,7 +976,7 @@ describe('importDomain', () => {
                 deleteAll: global.__mockPromise(),
             };
 
-            const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
+            const mockCachesService: Mockify<ICachesService> = {getCache: vi.fn().mockReturnValue(mockCacheService)};
 
             const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
                 createTask: global.__mockPromise(),
@@ -987,7 +987,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const mockUtils: Mockify<IUtils> = {
-                translateError: jest.fn().mockReturnValue('error'),
+                translateError: vi.fn().mockReturnValue('error'),
             };
 
             const imprtDomain = importDomain({

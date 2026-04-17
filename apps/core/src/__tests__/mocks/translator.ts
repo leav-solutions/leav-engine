@@ -4,9 +4,9 @@
 import {type i18n} from 'i18next';
 
 export const mockTranslator: Mockify<i18n> = {
-    t: jest.fn(s => s),
+    t: vi.fn(s => s),
 };
 
 export const mockTranslatorWithOptions: Mockify<i18n> = {
-    t: jest.fn((key, options) => 'not implemented!'),
+    t: vi.fn((key, options) => 'not implemented!'),
 };

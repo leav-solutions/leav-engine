@@ -5,15 +5,17 @@ import cronTasksManagerDomain from './cronTasksManagerDomain';
 import {type RegisterCronTask} from '../../_types/cronTask';
 import {type ITasksManagerDomain} from './tasksManagerDomain';
 
-jest.mock('node-cron', () => ({
-    schedule: jest.fn().mockImplementation((schedule: string, task: () => void) => {
-        task();
-    }),
+vi.mock('node-cron', () => ({
+    default: {
+        schedule: vi.fn().mockImplementation((schedule: string, task: () => void) => {
+            task();
+        }),
+    },
 }));
 
 describe('cronTasksManagerDomain', () => {
-    const tasksManagerDomain: Mockify<ITasksManagerDomain> = {createTask: jest.fn()};
-    const getSystemQueryContext = jest.fn();
+    const tasksManagerDomain: Mockify<ITasksManagerDomain> = {createTask: vi.fn()};
+    const getSystemQueryContext = vi.fn();
 
     const domain = cronTasksManagerDomain({
         'core.domain.tasksManager': tasksManagerDomain as ITasksManagerDomain,
@@ -22,14 +24,14 @@ describe('cronTasksManagerDomain', () => {
     const fakeCtx = {ctx: true};
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         getSystemQueryContext.mockReturnValue(fakeCtx);
     });
 
     it('should register and schedule a cron task', async () => {
         const fakeTask = {foo: 'bar'};
         const fakeTaskId = 'task-id';
-        const createTask = jest.fn().mockResolvedValue(fakeTask);
+        const createTask = vi.fn().mockResolvedValue(fakeTask);
         tasksManagerDomain.createTask.mockResolvedValue(fakeTaskId);
 
         const registerCronTask: RegisterCronTask = {
@@ -46,7 +48,7 @@ describe('cronTasksManagerDomain', () => {
     });
 
     it('should not register and schedule a cron task with schedule "never"', async () => {
-        const createTask = jest.fn();
+        const createTask = vi.fn();
 
         const registerCronTask: RegisterCronTask = {
             schedule: 'never',

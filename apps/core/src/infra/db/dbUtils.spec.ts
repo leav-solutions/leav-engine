@@ -18,6 +18,12 @@ import {type IDbService} from './dbService';
 import dbUtils, {type IDbUtils} from './dbUtils';
 import loadMigrationFile from './helpers/loadMigrationFile';
 
+vi.mock('./helpers/loadMigrationFile');
+vi.mock('awilix', async () => {
+    const actual = await vi.importActual<typeof awilix>('awilix');
+    return {...actual, asFunction: vi.fn(m => m)};
+});
+
 describe('dbUtils', () => {
     const mockConf: Partial<IConfig> = {
         lang: {available: ['fr', 'en'], default: 'fr'},
@@ -29,7 +35,7 @@ describe('dbUtils', () => {
         queryId: '123456',
     };
     afterAll(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('cleanupSystemKeys', () => {
@@ -96,14 +102,14 @@ describe('dbUtils', () => {
                 'core.infra.db.dbService': mockDbServ,
                 config: mockConf as IConfig,
             });
-            testDbUtils.cleanup = jest.fn().mockReturnValue({
+            testDbUtils.cleanup = vi.fn().mockReturnValue({
                 id: 'categories',
                 system: false,
                 label: {
                     fr: 'Arbre des catégories',
                 },
             });
-            testDbUtils.convertToDoc = jest.fn().mockReturnValue({
+            testDbUtils.convertToDoc = vi.fn().mockReturnValue({
                 _key: 'categories',
                 system: false,
                 label: 'Arbre des catégories',
@@ -263,8 +269,8 @@ describe('dbUtils', () => {
                 'core.infra.db.dbService': mockDbServ,
                 config: mockConf as IConfig,
             });
-            testDbUtils.cleanup = jest.fn();
-            testDbUtils.convertToDoc = jest.fn();
+            testDbUtils.cleanup = vi.fn();
+            testDbUtils.convertToDoc = vi.fn();
 
             mockDbServ = {execute: global.__mockPromise([])};
             const res = await testDbUtils.findCoreEntity<ITree>({
@@ -294,12 +300,12 @@ describe('dbUtils', () => {
                 'core.infra.db.dbService': mockDbServCustom,
                 config: mockConf as IConfig,
             });
-            testDbUtils.cleanup = jest.fn();
-            testDbUtils.convertToDoc = jest.fn().mockReturnValue({
+            testDbUtils.cleanup = vi.fn();
+            testDbUtils.convertToDoc = vi.fn().mockReturnValue({
                 libraries: ['test'],
             });
 
-            const customFilter = jest.fn(() => aql`CUSTOM FILTER`);
+            const customFilter = vi.fn(() => aql`CUSTOM FILTER`);
             const filters: IAttributeFilterOptions = {libraries: ['test']};
             await testDbUtils.findCoreEntity({
                 collectionName: ATTRIB_COLLECTION_NAME,
@@ -315,36 +321,33 @@ describe('dbUtils', () => {
     describe('migrate', () => {
         test('Run core migrations', async () => {
             // Mock migration files
-            const mockRun1 = jest.fn();
+            const mockRun1 = vi.fn();
             const file1 = {
                 default: () => ({
                     run: mockRun1,
                 }),
             };
-            const mockRun2 = jest.fn();
+            const mockRun2 = vi.fn();
             const file2 = {
                 default: () => ({
                     run: mockRun2,
                 }),
             };
-            (loadMigrationFile as jest.FunctionLike) = global.__mockPromiseMultiple([file1, file2]);
+            vi.mocked(loadMigrationFile)
+                .mockResolvedValueOnce(file1 as any)
+                .mockResolvedValueOnce(file2 as any);
 
             // Mock migration files reading
-            (fs.promises.readdir as jest.FunctionLike) = jest.fn().mockReturnValue(['000.ts', '001.ts']);
-            (resolve as jest.FunctionLike) = jest
-                .fn()
-                .mockReturnValueOnce('/fakeDir/migrations')
-                .mockReturnValueOnce('/fakeDir/migrations/000.ts')
-                .mockReturnValueOnce('/fakeDir/migrations/001.ts');
+            vi.spyOn(fs.promises, 'readdir').mockResolvedValue(['000.ts', '001.ts'] as any);
 
             // Mock DB functions
-            const mockCollecSave = jest.fn();
+            const mockCollecSave = vi.fn();
             const mockDb = {
-                Database: jest.fn(),
+                Database: vi.fn(),
                 listCollections: global.__mockPromise([]),
                 collection: () =>
                     ({
-                        create: jest.fn(),
+                        create: vi.fn(),
                         save: mockCollecSave,
                     }) as unknown as DocumentCollection,
             };
@@ -354,20 +357,18 @@ describe('dbUtils', () => {
             };
 
             const mockCacheService: Mockify<ICachesService> = {
-                getCache: jest.fn(() => ({
-                    deleteAll: jest.fn(),
+                getCache: vi.fn(() => ({
+                    deleteAll: vi.fn(),
                 })),
             };
 
             const mockDepsManager = {
                 build: depDefault => depDefault(),
             };
-            Object.defineProperty(awilix, 'asFunction', {
-                value: m => m,
-            });
+            vi.mocked(awilix.asFunction).mockImplementation(m => m as any);
 
             const mockLogger: Mockify<ILogger> = {
-                info: jest.fn(),
+                info: vi.fn(),
             };
 
             const testDbUtils = dbUtils({

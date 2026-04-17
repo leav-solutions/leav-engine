@@ -31,7 +31,7 @@ const mockCacheService: Mockify<ICacheService> = {
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService),
+    getCache: vi.fn().mockReturnValue(mockCacheService),
 };
 
 const mockCtx: IQueryInfos = {
@@ -40,20 +40,20 @@ const mockCtx: IQueryInfos = {
 };
 
 const depsBase: ToAny<IPermissionDomainDeps> = {
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.permission.library': jest.fn(),
-    'core.domain.permission.record': jest.fn(),
-    'core.domain.permission.attributeDependentValues': jest.fn(),
-    'core.domain.permission.attribute': jest.fn(),
-    'core.domain.permission.recordAttribute': jest.fn(),
-    'core.domain.permission.tree': jest.fn(),
-    'core.domain.permission.treeNode': jest.fn(),
-    'core.domain.permission.treeLibrary': jest.fn(),
-    'core.domain.permission.application': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.permission': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
-    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.permission.library': vi.fn(),
+    'core.domain.permission.record': vi.fn(),
+    'core.domain.permission.attributeDependentValues': vi.fn(),
+    'core.domain.permission.attribute': vi.fn(),
+    'core.domain.permission.recordAttribute': vi.fn(),
+    'core.domain.permission.tree': vi.fn(),
+    'core.domain.permission.treeNode': vi.fn(),
+    'core.domain.permission.treeLibrary': vi.fn(),
+    'core.domain.permission.application': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.permission': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
+    'core.domain.permission.helpers.defaultPermission': vi.fn(),
     translator: {},
     config: {},
 };
@@ -73,7 +73,7 @@ describe('PermissionDomain', () => {
         sendDatabaseEvent: global.__mockPromise(),
     };
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     describe('savePermission', () => {
         test('Should save a new permission', async function () {

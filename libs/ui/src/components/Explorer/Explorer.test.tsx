@@ -10,7 +10,7 @@ import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
-import {type Mockify} from '@leav/utils';
+import {type Mockify} from '_ui/__mocks__/utils';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faStar, faCheck, faCog, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
 import * as gqlTypes from '_ui/_gqlTypes';

@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`versionProfileRepo Delete versionProfile Should delete a version profile 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`versionProfileRepo > Delete versionProfile > Should delete a version profile 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
-exports[`versionProfileRepo Delete versionProfile Should delete a version profile 2`] = `
+exports[`versionProfileRepo > Delete versionProfile > Should delete a version profile 2`] = `
 {
   "@value1": "core_version_profiles",
   "value0": {
@@ -11,9 +11,9 @@ exports[`versionProfileRepo Delete versionProfile Should delete a version profil
 }
 `;
 
-exports[`versionProfileRepo createVersionProfile Should create a new version profile 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+exports[`versionProfileRepo > createVersionProfile > Should create a new version profile 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
-exports[`versionProfileRepo createVersionProfile Should create a new version profile 2`] = `
+exports[`versionProfileRepo > createVersionProfile > Should create a new version profile 2`] = `
 {
   "@value1": "core_version_profiles",
   "value0": {
@@ -29,7 +29,7 @@ exports[`versionProfileRepo createVersionProfile Should create a new version pro
 }
 `;
 
-exports[`versionProfileRepo getAttributesUsingProfile Should return a list of attributes using a profile 1`] = `
+exports[`versionProfileRepo > getAttributesUsingProfile > Should return a list of attributes using a profile 1`] = `
 "
                     FOR attrib IN @@value0
                         FILTER attrib.versions_conf.profile == @value1
@@ -37,16 +37,16 @@ exports[`versionProfileRepo getAttributesUsingProfile Should return a list of at
                 "
 `;
 
-exports[`versionProfileRepo getAttributesUsingProfile Should return a list of attributes using a profile 2`] = `
+exports[`versionProfileRepo > getAttributesUsingProfile > Should return a list of attributes using a profile 2`] = `
 {
   "@value0": "core_attributes",
   "value1": "my_profile",
 }
 `;
 
-exports[`versionProfileRepo updateVersionProfile Should update an existing version profile 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+exports[`versionProfileRepo > updateVersionProfile > Should update an existing version profile 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
-exports[`versionProfileRepo updateVersionProfile Should update an existing version profile 2`] = `
+exports[`versionProfileRepo > updateVersionProfile > Should update an existing version profile 2`] = `
 {
   "@value1": "core_version_profiles",
   "value0": {

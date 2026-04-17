@@ -5,11 +5,11 @@ import {type ToAny} from '../../utils/utils';
 import coreApp, {type ICoreAppDeps} from './coreApp';
 
 const depsBase: ToAny<ICoreAppDeps> = {
-    'core.domain.core': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.app.graphql.customScalars.systemTranslation': jest.fn(),
-    'core.app.graphql.customScalars.dateTime': jest.fn(),
-    'core.app.graphql.customScalars.any': jest.fn(),
+    'core.domain.core': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.app.graphql.customScalars.systemTranslation': vi.fn(),
+    'core.app.graphql.customScalars.dateTime': vi.fn(),
+    'core.app.graphql.customScalars.any': vi.fn(),
     config: {},
     translator: {},
 };

@@ -20,17 +20,17 @@ import {mockTree} from '../../../__tests__/mocks/tree';
 import findRecordsHelper, {type IFindRecordsHelperDeps} from './findRecords';
 
 const depsBase: ToAny<IFindRecordsHelperDeps> = {
-    'core.infra.record': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.permission.library': jest.fn(),
-    'core.domain.permission.helpers.defaultPermission': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
-    'core.infra.library': jest.fn(),
-    'core.infra.tree': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.utils': jest.fn(),
-    'core.infra.permission': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
+    'core.infra.record': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.permission.library': vi.fn(),
+    'core.domain.permission.helpers.defaultPermission': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
+    'core.infra.library': vi.fn(),
+    'core.infra.tree': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
+    'core.utils': vi.fn(),
+    'core.infra.permission': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
 };
 
 describe('findRecordsHelper', () => {
@@ -41,7 +41,7 @@ describe('findRecordsHelper', () => {
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn().mockImplementation(libraryId => ({
+        validateLibrary: vi.fn().mockImplementation(libraryId => ({
             ...mockLibrary,
             behavior: libraryId === 'files' ? LibraryBehavior.FILES : LibraryBehavior.STANDARD,
             recordIdentityConf: {
@@ -54,17 +54,17 @@ describe('findRecordsHelper', () => {
     };
 
     const mockUtils: Mockify<IUtils> = {
-        translateError: jest.fn().mockReturnValue('mock error'),
-        getRecordsCacheKey: jest.fn().mockReturnValue('cache_key'),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('cache_key'),
-        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-        getPreviewUrl: jest.fn().mockImplementation(url => `/preview/${url}`),
-        isLinkAttribute: jest.fn().mockReturnValue(false),
-        isTreeAttribute: jest.fn().mockReturnValue(false),
+        translateError: vi.fn().mockReturnValue('mock error'),
+        getRecordsCacheKey: vi.fn().mockReturnValue('cache_key'),
+        getCoreEntityCacheKey: vi.fn().mockReturnValue('cache_key'),
+        getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+        getPreviewUrl: vi.fn().mockImplementation(url => `/preview/${url}`),
+        isLinkAttribute: vi.fn().mockReturnValue(false),
+        isTreeAttribute: vi.fn().mockReturnValue(false),
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('find', () => {
@@ -504,7 +504,7 @@ describe('findRecordsHelper', () => {
                 const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: jest.fn().mockImplementation(({params}) =>
+                    getLibraries: vi.fn().mockImplementation(({params}) =>
                         Promise.resolve(
                             params.filters.id === 'lib1'
                                 ? {

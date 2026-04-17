@@ -39,20 +39,20 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const depsBase: ToAny<IRecordDomainDeps> = {
-    'core.infra.record': jest.fn(),
-    'core.domain.record.helpers.getRecordIdentity': jest.fn(),
-    'core.domain.attribute': jest.fn(),
-    'core.domain.value': jest.fn(),
-    'core.domain.permission.record': jest.fn(),
-    'core.domain.record.helpers.createRecord': jest.fn(),
-    'core.domain.record.helpers.deleteRecord': jest.fn(),
-    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
+    'core.infra.record': vi.fn(),
+    'core.domain.record.helpers.getRecordIdentity': vi.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.value': vi.fn(),
+    'core.domain.permission.record': vi.fn(),
+    'core.domain.record.helpers.createRecord': vi.fn(),
+    'core.domain.record.helpers.deleteRecord': vi.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
     'core.utils.logger': mockLogger,
-    'core.utils': jest.fn(),
-    'core.infra.form': jest.fn(),
-    'core.domain.record.helpers.findRecords': jest.fn(),
+    'core.utils': vi.fn(),
+    'core.infra.form': vi.fn(),
+    'core.domain.record.helpers.findRecords': vi.fn(),
 };
 
 describe('RecordDomain', () => {
@@ -75,7 +75,7 @@ describe('RecordDomain', () => {
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn().mockImplementation(libraryId => ({
+        validateLibrary: vi.fn().mockImplementation(libraryId => ({
             ...mockLibrary,
             behavior: libraryId === 'files' ? LibraryBehavior.FILES : LibraryBehavior.STANDARD,
             recordIdentityConf: {
@@ -87,27 +87,27 @@ describe('RecordDomain', () => {
         })),
     };
 
-    const mockSendRecordUpdateEventHelper = jest.fn();
+    const mockSendRecordUpdateEventHelper = vi.fn();
 
     const mockUtils: Mockify<IUtils> = {
-        translateError: jest.fn().mockReturnValue('mock error'),
-        getRecordsCacheKey: jest.fn().mockReturnValue('cache_key'),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('cache_key'),
-        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-        getPreviewUrl: jest.fn().mockImplementation(url => `/preview/${url}`),
-        isLinkAttribute: jest.fn().mockReturnValue(false),
-        isTreeAttribute: jest.fn().mockReturnValue(false),
+        translateError: vi.fn().mockReturnValue('mock error'),
+        getRecordsCacheKey: vi.fn().mockReturnValue('cache_key'),
+        getCoreEntityCacheKey: vi.fn().mockReturnValue('cache_key'),
+        getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+        getPreviewUrl: vi.fn().mockImplementation(url => `/preview/${url}`),
+        isLinkAttribute: vi.fn().mockReturnValue(false),
+        isTreeAttribute: vi.fn().mockReturnValue(false),
     };
 
     const mockCacheService: Mockify<ICachesService> = {
-        memoize: jest.fn().mockImplementation(({func}) => func()),
-        getCache: jest.fn().mockReturnValue({
-            deleteData: jest.fn(),
+        memoize: vi.fn().mockImplementation(({func}) => func()),
+        getCache: vi.fn().mockReturnValue({
+            deleteData: vi.fn(),
         }),
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
     describe('createEmptyRecord', () => {
         test('Should create a new empty record', async function () {
@@ -233,7 +233,7 @@ describe('RecordDomain', () => {
 
             const mockValueDomain: Mockify<IValueDomain> = {
                 saveValue: global.__mockPromise([{payload: true}]),
-                getRecordFieldValue: jest.fn(),
+                getRecordFieldValue: vi.fn(),
             };
 
             const recDomain = recordDomain({
@@ -277,7 +277,7 @@ describe('RecordDomain', () => {
     });
     describe('createRecord', () => {
         beforeEach(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
         test('Should create a new record', async function () {
             const createdRecordData = {
@@ -323,7 +323,7 @@ describe('RecordDomain', () => {
                     'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
-            jest.spyOn(recDomain, 'activateNewRecord');
+            vi.spyOn(recDomain, 'activateNewRecord');
 
             const createdRecord = await recDomain.createRecord({library: 'test', ctx});
 
@@ -388,7 +388,7 @@ describe('RecordDomain', () => {
                 }),
                 'core.utils': mockUtils as IUtils,
             });
-            jest.spyOn(recDomain, 'activateNewRecord');
+            vi.spyOn(recDomain, 'activateNewRecord');
 
             const createdRecord = await recDomain.createRecord({
                 library: 'test',
@@ -452,8 +452,8 @@ describe('RecordDomain', () => {
                     'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
-            jest.spyOn(recDomain, 'activateNewRecord');
-            jest.spyOn(recDomain, 'deleteRecord');
+            vi.spyOn(recDomain, 'activateNewRecord');
+            vi.spyOn(recDomain, 'deleteRecord');
 
             const res = await recDomain.createRecord({
                 library: 'test',
@@ -526,8 +526,8 @@ describe('RecordDomain', () => {
                     'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 }),
             });
-            jest.spyOn(recDomain, 'activateNewRecord');
-            jest.spyOn(recDomain, 'deleteRecord');
+            vi.spyOn(recDomain, 'activateNewRecord');
+            vi.spyOn(recDomain, 'deleteRecord');
 
             const res = await recDomain.createRecord({
                 library: 'test',
@@ -711,8 +711,8 @@ describe('RecordDomain', () => {
                 'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
             });
 
-            domain.find = jest.fn();
-            domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
+            domain.find = vi.fn();
+            domain.deactivateRecord = vi.fn().mockImplementation(() => Promise.resolve(mockRecord));
 
             const records = await domain.deactivateRecordsBatch({
                 libraryId: 'test_lib',
@@ -733,12 +733,12 @@ describe('RecordDomain', () => {
             const domain = recordDomain({
                 ...depsBase,
                 'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
-                'core.domain.record.helpers.findRecords': jest
+                'core.domain.record.helpers.findRecords': vi
                     .fn()
                     .mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord, mockRecord]})),
             });
 
-            domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
+            domain.deactivateRecord = vi.fn().mockImplementation(() => Promise.resolve(mockRecord));
 
             const records = await domain.deactivateRecordsBatch({
                 libraryId: 'test_lib',
@@ -774,8 +774,8 @@ describe('RecordDomain', () => {
                 ...depsBase,
                 'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
             });
-            domain.find = jest.fn();
-            domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
+            domain.find = vi.fn();
+            domain.deactivateRecord = vi.fn().mockImplementation(() => Promise.resolve(mockRecord));
 
             const records = await domain.deactivateRecordsBatch({
                 libraryId: 'test_lib',
@@ -793,12 +793,12 @@ describe('RecordDomain', () => {
         test('Delete all inactive records', async () => {
             const domain = recordDomain({
                 ...depsBase,
-                'core.domain.record.helpers.findRecords': jest
+                'core.domain.record.helpers.findRecords': vi
                     .fn()
                     .mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord]})),
             });
 
-            domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
+            domain.deleteRecord = vi.fn().mockImplementation(() => Promise.resolve());
 
             await domain.purgeInactiveRecords({libraryId: 'test_lib', ctx: mockCtx});
 
@@ -810,7 +810,7 @@ describe('RecordDomain', () => {
         test('Purge a record if inactive', async () => {
             const mockRecRepo = {getRecord: global.__mockPromise({active: false})} satisfies Mockify<IRecordRepo>;
             const domain = recordDomain({...depsBase, 'core.infra.record': mockRecRepo as IRecordRepo});
-            domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
+            domain.deleteRecord = vi.fn().mockImplementation(() => Promise.resolve());
 
             await domain.purgeRecord({libraryId: 'test_lib', recordId: '12345', ctx: mockCtx});
 
@@ -820,7 +820,7 @@ describe('RecordDomain', () => {
         test('Do not purge a record if active', async () => {
             const mockRecRepo = {getRecord: global.__mockPromise({active: true})} satisfies Mockify<IRecordRepo>;
             const domain = recordDomain({...depsBase, 'core.infra.record': mockRecRepo as IRecordRepo});
-            domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
+            domain.deleteRecord = vi.fn().mockImplementation(() => Promise.resolve());
 
             await domain.purgeRecord({libraryId: 'test_lib', recordId: '12345', ctx: mockCtx});
 

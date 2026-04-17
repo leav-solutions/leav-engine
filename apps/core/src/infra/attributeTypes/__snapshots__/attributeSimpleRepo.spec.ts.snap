@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AttributeSimpleRepo clearAllValues Should delete field of given attribute 1`] = `undefined`;
+exports[`AttributeSimpleRepo > clearAllValues > Should delete field of given attribute 1`] = `undefined`;
 
-exports[`AttributeSimpleRepo clearAllValues Should delete field of given attribute 2`] = `undefined`;
+exports[`AttributeSimpleRepo > clearAllValues > Should delete field of given attribute 2`] = `undefined`;
 
-exports[`AttributeSimpleRepo createValue Should create a new index value 1`] = `
+exports[`AttributeSimpleRepo > createValue > Should create a new index value 1`] = `
 "
                 UPDATE @value0
                 WITH @value1
@@ -14,7 +14,7 @@ exports[`AttributeSimpleRepo createValue Should create a new index value 1`] = `
             "
 `;
 
-exports[`AttributeSimpleRepo createValue Should create a new index value 2`] = `
+exports[`AttributeSimpleRepo > createValue > Should create a new index value 2`] = `
 {
   "@value2": "test_lib",
   "value0": {
@@ -27,7 +27,7 @@ exports[`AttributeSimpleRepo createValue Should create a new index value 2`] = `
 }
 `;
 
-exports[`AttributeSimpleRepo deleteValue Should delete a value 1`] = `
+exports[`AttributeSimpleRepo > deleteValue > Should delete a value 1`] = `
 "
                 UPDATE @value0
                 WITH @value1
@@ -37,7 +37,7 @@ exports[`AttributeSimpleRepo deleteValue Should delete a value 1`] = `
             "
 `;
 
-exports[`AttributeSimpleRepo deleteValue Should delete a value 2`] = `
+exports[`AttributeSimpleRepo > deleteValue > Should delete a value 2`] = `
 {
   "@value2": "test_lib",
   "value0": {
@@ -50,7 +50,7 @@ exports[`AttributeSimpleRepo deleteValue Should delete a value 2`] = `
 }
 `;
 
-exports[`AttributeSimpleRepo filterValueQueryPart Should query to retrieve value to filter on 1`] = `
+exports[`AttributeSimpleRepo > filterValueQueryPart > Should query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -60,7 +60,7 @@ exports[`AttributeSimpleRepo filterValueQueryPart Should query to retrieve value
 }
 `;
 
-exports[`AttributeSimpleRepo filterValueQueryPart Should query to retrieve value to filter on, on extended format 1`] = `
+exports[`AttributeSimpleRepo > filterValueQueryPart > Should query to retrieve value to filter on, on extended format 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -71,7 +71,7 @@ exports[`AttributeSimpleRepo filterValueQueryPart Should query to retrieve value
 }
 `;
 
-exports[`AttributeSimpleRepo getValues Should return values for index attribute 1`] = `
+exports[`AttributeSimpleRepo > getValues > Should return values for index attribute 1`] = `
 "
                 FOR r IN @@value0
                     FILTER r._key == @value1
@@ -79,7 +79,7 @@ exports[`AttributeSimpleRepo getValues Should return values for index attribute 
             "
 `;
 
-exports[`AttributeSimpleRepo getValues Should return values for index attribute 2`] = `
+exports[`AttributeSimpleRepo > getValues > Should return values for index attribute 2`] = `
 {
   "@value0": "test_lib",
   "value1": "123456",
@@ -87,7 +87,7 @@ exports[`AttributeSimpleRepo getValues Should return values for index attribute 
 }
 `;
 
-exports[`AttributeSimpleRepo sortQueryPart Should return simple sort 1`] = `
+exports[`AttributeSimpleRepo > sortQueryPart > Should return simple sort 1`] = `
 {
   "_source": [Function],
   "bindVars": {

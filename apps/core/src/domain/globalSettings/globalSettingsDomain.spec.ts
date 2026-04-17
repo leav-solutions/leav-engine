@@ -9,17 +9,16 @@ import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {default as globalSettingsDomain, type IGlobalSettingsDomainDeps} from './globalSettingsDomain';
 import {type ToAny, type IUtils} from '../../utils/utils';
-import {type Mockify} from '@leav/utils';
 import {mockCachesService, mockCacheService} from '../../__tests__/mocks/cache';
 
 const mockUtils: Mockify<IUtils> = {
-    getGlobalSettingsCacheKey: jest.fn(() => 'globalSettingsCacheKey'),
+    getGlobalSettingsCacheKey: vi.fn(() => 'globalSettingsCacheKey'),
 };
 
 const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.globalSettings': jest.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.globalSettings': vi.fn(),
     'core.infra.cache.cacheService': mockCachesService,
     'core.utils': mockUtils,
 };
@@ -36,7 +35,7 @@ describe('getSettingsRepo', () => {
         };
 
         beforeEach(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         test('Should save settings', async () => {

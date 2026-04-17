@@ -8,11 +8,11 @@ import calculationsVariableFunctions from './calculationsVariableFunctions';
 import {TypeGuards} from '../../../utils';
 
 const mockRecordDomain = {
-    getRecordFieldValue: jest.fn(),
+    getRecordFieldValue: vi.fn(),
 } satisfies Mockify<IRecordDomain>;
 
 const mockAttributeDomain = {
-    getAttributeProperties: jest.fn(),
+    getAttributeProperties: vi.fn(),
 } satisfies Mockify<IAttributeDomain>;
 
 describe('calculationsVariableFunctions', () => {
@@ -64,7 +64,7 @@ describe('calculationsVariableFunctions', () => {
             mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'payload', raw_payload: 'rawPayload'}]);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({});
 
-            jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
+            vi.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
 
             const res = await calculationFunctions.getValue.run(
                 ctx,
@@ -89,7 +89,7 @@ describe('calculationsVariableFunctions', () => {
             mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'payload', raw_payload: 'rawPayload'}]);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({});
 
-            jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
+            vi.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
 
             const res = await calculationFunctions.getValue.run(
                 ctx,

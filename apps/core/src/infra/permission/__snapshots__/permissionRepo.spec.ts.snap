@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
+exports[`PermissionRepo > GetPermissions > Should return a permission 1`] = `
 "
                 FOR p IN @@value0
                 FILTER p.type == @value1
@@ -12,7 +12,7 @@ exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
             "
 `;
 
-exports[`PermissionRepo GetPermissions Should return a permission 2`] = `
+exports[`PermissionRepo > GetPermissions > Should return a permission 2`] = `
 {
   "@value0": "core_permissions",
   "value1": "record",
@@ -25,7 +25,7 @@ exports[`PermissionRepo GetPermissions Should return a permission 2`] = `
 }
 `;
 
-exports[`PermissionRepo SavePermission Should save permission 1`] = `
+exports[`PermissionRepo > SavePermission > Should save permission 1`] = `
 "
                     UPSERT @value0
                     INSERT @value1
@@ -35,7 +35,7 @@ exports[`PermissionRepo SavePermission Should save permission 1`] = `
                 "
 `;
 
-exports[`PermissionRepo SavePermission Should save permission 2`] = `
+exports[`PermissionRepo > SavePermission > Should save permission 2`] = `
 {
   "@value2": "core_permissions",
   "value0": {

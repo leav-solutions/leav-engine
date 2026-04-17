@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`valueRepo deleteAllValuesByRecord Delete all values linked to record 1`] = `
+exports[`valueRepo > deleteAllValuesByRecord > Delete all values linked to record 1`] = `
 "
                     FOR l IN @@value0
                         FILTER l._from == @value1 OR l._to == @value1
@@ -8,7 +8,7 @@ exports[`valueRepo deleteAllValuesByRecord Delete all values linked to record 1`
                 "
 `;
 
-exports[`valueRepo deleteAllValuesByRecord Delete all values linked to record 2`] = `
+exports[`valueRepo > deleteAllValuesByRecord > Delete all values linked to record 2`] = `
 {
   "@value0": "core_edge_values_links",
   "value1": "products/222763208",

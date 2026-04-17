@@ -35,24 +35,24 @@ const ctx: IQueryInfos = {
 };
 
 const mockUtils: Mockify<IUtils> = {
-    translateError: jest.fn().mockReturnValue('mock error'),
-    getRecordsCacheKey: jest.fn().mockReturnValue('cache_key'),
-    getCoreEntityCacheKey: jest.fn().mockReturnValue('cache_key'),
-    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-    getPreviewUrl: jest.fn().mockImplementation(url => `/preview/${url}`),
-    isLinkAttribute: jest.fn().mockReturnValue(false),
-    isTreeAttribute: jest.fn().mockReturnValue(false),
+    translateError: vi.fn().mockReturnValue('mock error'),
+    getRecordsCacheKey: vi.fn().mockReturnValue('cache_key'),
+    getCoreEntityCacheKey: vi.fn().mockReturnValue('cache_key'),
+    getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+    getPreviewUrl: vi.fn().mockImplementation(url => `/preview/${url}`),
+    isLinkAttribute: vi.fn().mockReturnValue(false),
+    isTreeAttribute: vi.fn().mockReturnValue(false),
 };
 
 const mockCacheService: Mockify<ICachesService> = {
-    memoize: jest.fn().mockImplementation(({func}) => func()),
-    getCache: jest.fn().mockReturnValue({
-        deleteData: jest.fn(),
+    memoize: vi.fn().mockImplementation(({func}) => func()),
+    getCache: vi.fn().mockReturnValue({
+        deleteData: vi.fn(),
     }),
 };
 
 const mockValidateHelper: Mockify<IValidateHelper> = {
-    validateLibrary: jest.fn().mockImplementation(libraryId => ({
+    validateLibrary: vi.fn().mockImplementation(libraryId => ({
         id: libraryId,
         behavior: libraryId === 'files' ? LibraryBehavior.FILES : LibraryBehavior.STANDARD,
         recordIdentityConf: {
@@ -65,7 +65,7 @@ const mockValidateHelper: Mockify<IValidateHelper> = {
 };
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 });
 
 const makeHelper = (
@@ -73,12 +73,12 @@ const makeHelper = (
 ): GetRecordIdentityHelper =>
     getRecordIdentityFactory({
         config: {} as Config.IConfig,
-        'core.domain.attribute': jest.fn() as unknown as IAttributeDomain,
-        'core.domain.value.helpers.getRecordFieldValue': jest.fn() as unknown as GetRecordFieldValueHelper,
-        'core.domain.helpers.validate': jest.fn() as unknown as IValidateHelper,
-        'core.domain.helpers.getCoreEntityById': jest.fn(),
-        'core.domain.tree.helpers.elementAncestors': jest.fn() as any,
-        'core.domain.record.helpers.findRecords': jest.fn() as any,
+        'core.domain.attribute': vi.fn() as unknown as IAttributeDomain,
+        'core.domain.value.helpers.getRecordFieldValue': vi.fn() as unknown as GetRecordFieldValueHelper,
+        'core.domain.helpers.validate': vi.fn() as unknown as IValidateHelper,
+        'core.domain.helpers.getCoreEntityById': vi.fn(),
+        'core.domain.tree.helpers.elementAncestors': vi.fn() as any,
+        'core.domain.record.helpers.findRecords': vi.fn() as any,
         'core.infra.cache.cacheService': mockCacheService as ICachesService,
         'core.utils': mockUtils as IUtils,
         translator: {} as i18n,
@@ -113,61 +113,59 @@ describe('getRecordIdentity', () => {
             },
         };
 
-        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
-            .fn()
-            .mockImplementation(({attributeId}) => {
-                if (attributeId === 'label_attr') {
-                    return Promise.resolve([{payload: 'Label Value'}]);
-                }
-                if (attributeId === 'color_attr') {
-                    return Promise.resolve([{payload: '#123456'}]);
-                }
-                if (attributeId === 'preview_attr') {
-                    return Promise.resolve([
-                        {
-                            ...mockStandardValue,
-                            payload: {
-                                ...mockRecord,
-                                previews: {
-                                    small: 'small_fake-image',
-                                    medium: 'medium_fake-image',
-                                    big: 'big_fake-image',
-                                },
-                            },
-                        },
-                    ]);
-                }
-                if (attributeId === 'previews') {
-                    return Promise.resolve([
-                        {
-                            raw_payload: {
+        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(({attributeId}) => {
+            if (attributeId === 'label_attr') {
+                return Promise.resolve([{payload: 'Label Value'}]);
+            }
+            if (attributeId === 'color_attr') {
+                return Promise.resolve([{payload: '#123456'}]);
+            }
+            if (attributeId === 'preview_attr') {
+                return Promise.resolve([
+                    {
+                        ...mockStandardValue,
+                        payload: {
+                            ...mockRecord,
+                            previews: {
                                 small: 'small_fake-image',
                                 medium: 'medium_fake-image',
                                 big: 'big_fake-image',
                             },
                         },
-                    ]);
-                }
-                return Promise.resolve([]);
-            });
+                    },
+                ]);
+            }
+            if (attributeId === 'previews') {
+                return Promise.resolve([
+                    {
+                        raw_payload: {
+                            small: 'small_fake-image',
+                            medium: 'medium_fake-image',
+                            big: 'big_fake-image',
+                        },
+                    },
+                ]);
+            }
+            return Promise.resolve([]);
+        });
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest
+            getAttributeProperties: vi
                 .fn()
                 .mockImplementation(({id}) => (id === 'preview_attr' ? {linked_library: 'files'} : mockAttrSimple)),
         };
 
-        const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+        const mockGetEntityByIdHelper = vi.fn().mockReturnValue(libData);
 
         const mockUtilsRecordIdentity: Mockify<IUtils> = {
             ...mockUtils,
-            getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-            isLinkAttribute: jest.fn().mockReturnValue(false),
-            isTreeAttribute: jest.fn().mockReturnValue(false),
+            getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+            isLinkAttribute: vi.fn().mockReturnValue(false),
+            isTreeAttribute: vi.fn().mockReturnValue(false),
         };
 
         const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-            validateLibrary: jest.fn().mockImplementation(libraryId => {
+            validateLibrary: vi.fn().mockImplementation(libraryId => {
                 if (libraryId === 'test_lib') {
                     return libData;
                 }
@@ -234,8 +232,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'label_attr') {
                         return Promise.resolve([
                             {payload: null},
@@ -247,7 +245,7 @@ describe('getRecordIdentity', () => {
             );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -287,8 +285,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'label_attr') {
                         return Promise.resolve([
                             {payload: 'Override Label Value', isInherited: false},
@@ -300,7 +298,7 @@ describe('getRecordIdentity', () => {
             );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -342,8 +340,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'subLabel_attr') {
                         return Promise.resolve([
                             {payload: null},
@@ -355,7 +353,7 @@ describe('getRecordIdentity', () => {
             );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -395,8 +393,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'subLabel_attr') {
                         return Promise.resolve([
                             {payload: 'Override SubLabel Value', isInherited: false},
@@ -408,7 +406,7 @@ describe('getRecordIdentity', () => {
             );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -445,10 +443,10 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(jest.fn());
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(vi.fn());
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const helper = makeHelper({
@@ -484,8 +482,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'color_attr') {
                         return Promise.resolve([{payload: null}, {payload: '#ff0000', isInherited: true}]);
                     }
@@ -494,7 +492,7 @@ describe('getRecordIdentity', () => {
             );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -534,8 +532,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'color_attr') {
                         return Promise.resolve([
                             {payload: '#ffff00', isInherited: false},
@@ -547,7 +545,7 @@ describe('getRecordIdentity', () => {
             );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -592,7 +590,7 @@ describe('getRecordIdentity', () => {
             };
 
             beforeEach(() => {
-                mockGetCoreEntityById = jest.fn().mockReturnValue(libData);
+                mockGetCoreEntityById = vi.fn().mockReturnValue(libData);
 
                 mockAttributeDomain = {
                     getAttributeProperties: global.__mockPromise(dateRangeAttributeMock),
@@ -600,7 +598,7 @@ describe('getRecordIdentity', () => {
             });
 
             it('should return a string when date range attribute is present and not null', async () => {
-                const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+                const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                     .fn()
                     .mockImplementation(({attributeId}) => {
                         if (attributeId === 'unused_content') {
@@ -614,7 +612,7 @@ describe('getRecordIdentity', () => {
                     });
 
                 const mockValidateHelperDateRange: Mockify<IValidateHelper> = {
-                    validateLibrary: jest.fn().mockReturnValue(libData),
+                    validateLibrary: vi.fn().mockReturnValue(libData),
                 };
 
                 const helper = makeHelper({
@@ -641,7 +639,7 @@ describe('getRecordIdentity', () => {
             });
 
             it('should return null when date range attribute is present but null', async () => {
-                const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+                const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                     .fn()
                     .mockImplementation(({attributeId}) => {
                         if (attributeId === 'unused_content') {
@@ -700,10 +698,10 @@ describe('getRecordIdentity', () => {
             id: 'test_lib',
         };
 
-        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn();
+        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn();
 
         const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-            validateLibrary: jest.fn().mockReturnValue(libData),
+            validateLibrary: vi.fn().mockReturnValue(libData),
         };
 
         const helper = makeHelper({
@@ -739,7 +737,7 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                 .fn()
                 .mockImplementation(({attributeId}) =>
                     // Simulates ACCESS_ATTRIBUTE denied — returns empty array silently
@@ -747,7 +745,7 @@ describe('getRecordIdentity', () => {
                 );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -799,8 +797,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -811,7 +809,7 @@ describe('getRecordIdentity', () => {
                 }),
             );
 
-            const mockGetEntityByIdHelper = jest.fn().mockImplementation((_type, id) => {
+            const mockGetEntityByIdHelper = vi.fn().mockImplementation((_type, id) => {
                 if (id === 'test_lib') {
                     return libData;
                 }
@@ -822,7 +820,7 @@ describe('getRecordIdentity', () => {
             });
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockImplementation(libraryId => {
+                validateLibrary: vi.fn().mockImplementation(libraryId => {
                     if (libraryId === 'test_lib') {
                         return libData;
                     }
@@ -896,8 +894,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({library, attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({library, attributeId}) => {
                     if (library === 'child_lib' && attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -914,7 +912,7 @@ describe('getRecordIdentity', () => {
                 }),
             );
 
-            const mockGetEntityByIdHelper = jest.fn().mockImplementation((_type, id) => {
+            const mockGetEntityByIdHelper = vi.fn().mockImplementation((_type, id) => {
                 if (id === 'child_lib') {
                     return childLibData;
                 }
@@ -928,7 +926,7 @@ describe('getRecordIdentity', () => {
             });
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockImplementation(libraryId => {
+                validateLibrary: vi.fn().mockImplementation(libraryId => {
                     if (libraryId === 'child_lib') {
                         return childLibData;
                     }
@@ -982,10 +980,10 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn();
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn();
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const helper = makeHelper({
@@ -1013,14 +1011,14 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                 .fn()
-                .mockImplementation(jest.fn().mockResolvedValue([]));
+                .mockImplementation(vi.fn().mockResolvedValue([]));
 
-            const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+            const mockGetEntityByIdHelper = vi.fn().mockReturnValue(libData);
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockReturnValue(libData),
+                validateLibrary: vi.fn().mockReturnValue(libData),
             };
 
             const helper = makeHelper({
@@ -1063,8 +1061,8 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = jest.fn().mockImplementation(
-                jest.fn().mockImplementation(({attributeId}) => {
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
+                vi.fn().mockImplementation(({attributeId}) => {
                     if (attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -1075,7 +1073,7 @@ describe('getRecordIdentity', () => {
                 }),
             );
 
-            const mockGetEntityByIdHelper = jest.fn().mockImplementation((_type, id) => {
+            const mockGetEntityByIdHelper = vi.fn().mockImplementation((_type, id) => {
                 if (id === 'test_lib') {
                     return libData;
                 }
@@ -1086,7 +1084,7 @@ describe('getRecordIdentity', () => {
             });
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn().mockImplementation(libraryId => {
+                validateLibrary: vi.fn().mockImplementation(libraryId => {
                     if (libraryId === 'test_lib') {
                         return libData;
                     }

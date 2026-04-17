@@ -10,14 +10,14 @@ import viewDomain, {type IViewDomainDeps} from './viewDomain';
 import {type ToAny} from '../../utils/utils';
 
 const depsBase: ToAny<IViewDomainDeps> = {
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.tree': jest.fn(),
-    'core.infra.view': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.tree': vi.fn(),
+    'core.infra.view': vi.fn(),
+    'core.utils': vi.fn(),
 };
 
 describe('viewDomain', () => {
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     const mockViewRepo = {
         updateView: global.__mockPromise({...mockView}),
@@ -31,11 +31,11 @@ describe('viewDomain', () => {
     };
 
     const mockValidationHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn(),
+        validateLibrary: vi.fn(),
     };
 
     const mockValidationHelperInvalid: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn().mockImplementation(() => {
+        validateLibrary: vi.fn().mockImplementation(() => {
             throw new ValidationError({validation: 'Invalid'});
         }),
     };

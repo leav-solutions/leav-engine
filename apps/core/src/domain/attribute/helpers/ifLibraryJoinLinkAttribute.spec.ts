@@ -8,16 +8,16 @@ import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 
 const depsBase: ToAny<IIfLibraryJoinLinkDeps> = {
-    'core.domain.attribute': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.helpers.getCoreEntityById': vi.fn(),
 };
 describe('ifLibraryJoinLinkAttribute', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const _ifLibraryJoinLinkAttribute = ifLibraryJoinLinkAttribute(depsBase);
     const ctx: IQueryInfos = {userId: 'testUser'};
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('[-] should not call callback if attributeProps type is not link', async () => {
@@ -115,7 +115,7 @@ describe('ifLibraryJoinLinkAttribute', () => {
             behavior: LibraryBehavior.JOIN,
             mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
-        depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
+        depsBase['core.domain.attribute'].getAttributeProperties = vi.fn().mockResolvedValue(joinAttributeProps);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
@@ -139,7 +139,7 @@ describe('ifLibraryJoinLinkAttribute', () => {
             behavior: LibraryBehavior.JOIN,
             mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
-        depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
+        depsBase['core.domain.attribute'].getAttributeProperties = vi.fn().mockResolvedValue(joinAttributeProps);
         await expect(
             _ifLibraryJoinLinkAttribute(
                 {
@@ -163,7 +163,7 @@ describe('ifLibraryJoinLinkAttribute', () => {
             behavior: LibraryBehavior.JOIN,
             mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
-        depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
+        depsBase['core.domain.attribute'].getAttributeProperties = vi.fn().mockResolvedValue(joinAttributeProps);
         callback.mockResolvedValue(42);
         await expect(
             _ifLibraryJoinLinkAttribute(
@@ -190,7 +190,7 @@ describe('ifLibraryJoinLinkAttribute', () => {
             behavior: LibraryBehavior.JOIN,
             mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
-        depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
+        depsBase['core.domain.attribute'].getAttributeProperties = vi.fn().mockResolvedValue(joinAttributeProps);
         callback.mockResolvedValue({some: 'values'});
         await expect(
             _ifLibraryJoinLinkAttribute(
@@ -217,7 +217,7 @@ describe('ifLibraryJoinLinkAttribute', () => {
             behavior: LibraryBehavior.JOIN,
             mandatoryAttribute: joinAttributeProps.id,
         } as ILibrary);
-        depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
+        depsBase['core.domain.attribute'].getAttributeProperties = vi.fn().mockResolvedValue(joinAttributeProps);
         callback.mockResolvedValue({some: 'values'});
         await expect(
             _ifLibraryJoinLinkAttribute(

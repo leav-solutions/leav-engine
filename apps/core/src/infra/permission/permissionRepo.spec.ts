@@ -50,7 +50,7 @@ describe('PermissionRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permDataClean),
+                cleanup: vi.fn().mockReturnValue(permDataClean),
             };
 
             const permRepo = permissionRepo({
@@ -105,7 +105,7 @@ describe('PermissionRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permDataClean),
+                cleanup: vi.fn().mockReturnValue(permDataClean),
             };
 
             const permRepo = permissionRepo({
@@ -159,7 +159,7 @@ describe('PermissionRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(permDataClean),
+                cleanup: vi.fn().mockReturnValue(permDataClean),
             };
 
             const permRepo = permissionRepo({

@@ -13,10 +13,10 @@ import type * as Config from '../../../_types/config';
 import {systemUserId} from '../../../_constants/users';
 
 const depsBase: ToAny<IPermissionByUserGroupsHelperDeps> = {
-    'core.domain.permission.helpers.simplePermission': jest.fn(),
-    'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
-    'core.domain.permission.helpers.defaultPermission': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
+    'core.domain.permission.helpers.simplePermission': vi.fn(),
+    'core.domain.permission.helpers.reducePermissionsArray': vi.fn(),
+    'core.domain.permission.helpers.defaultPermission': vi.fn(),
+    'core.infra.cache.cacheService': vi.fn(),
     config: {},
 };
 
@@ -58,20 +58,20 @@ describe('getPermissionByUserGroups', () => {
     ];
 
     const mockReducePermissionsArrayHelper: IReducePermissionsArrayHelper = {
-        reducePermissionsArray: jest.fn().mockReturnValue(true),
+        reducePermissionsArray: vi.fn().mockReturnValue(true),
     };
 
     const mockReducePermissionsArrayHelperFalse: IReducePermissionsArrayHelper = {
-        reducePermissionsArray: jest.fn().mockReturnValue(false),
+        reducePermissionsArray: vi.fn().mockReturnValue(false),
     };
 
     const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
-        getDefaultPermission: jest.fn().mockReturnValue(true),
+        getDefaultPermission: vi.fn().mockReturnValue(true),
     };
 
     const mockCacheService: Mockify<ICachesService> = {
-        memoize: jest.fn().mockImplementation(({func}) => func()),
-        getCache: jest.fn(),
+        memoize: vi.fn().mockImplementation(({func}) => func()),
+        getCache: vi.fn(),
     };
 
     const mockPermissionsConfig: Mockify<Config.IPermissions> = {
@@ -84,7 +84,7 @@ describe('getPermissionByUserGroups', () => {
 
     test('Retrieve first "allowed" permission', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn().mockImplementation(({usersGroupId}) => {
+            getSimplePermission: vi.fn().mockImplementation(({usersGroupId}) => {
                 if (usersGroupId === '1') {
                     return Promise.resolve(true);
                 } else if (usersGroupId === '0') {
@@ -116,7 +116,7 @@ describe('getPermissionByUserGroups', () => {
 
     test('Return "forbidden" if no "allowed" found', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn().mockImplementation(({usersGroupNodeId}) => {
+            getSimplePermission: vi.fn().mockImplementation(({usersGroupNodeId}) => {
                 if (usersGroupNodeId === '0') {
                     return Promise.resolve(false);
                 } else {
@@ -150,7 +150,7 @@ describe('getPermissionByUserGroups', () => {
 
     test('Return root permission if nothing found on tree', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest
+            getSimplePermission: vi
                 .fn()
                 .mockImplementation(({usersGroupNodeId}) => Promise.resolve(usersGroupNodeId === null ? false : null)),
         };
@@ -177,7 +177,7 @@ describe('getPermissionByUserGroups', () => {
 
     test('If user has no group, return root permission', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest
+            getSimplePermission: vi
                 .fn()
                 .mockImplementation(({usersGroupId}) => Promise.resolve(usersGroupId === null ? false : null)),
         };
@@ -233,7 +233,7 @@ describe('getPermissionByUserGroups', () => {
 
     test('Return true if user is system', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn(),
+            getSimplePermission: vi.fn(),
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper(depsBase);

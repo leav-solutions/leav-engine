@@ -14,7 +14,7 @@ describe('getClassifyingFiltersVariableQueryPart', () => {
         };
 
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isClassifyingFilter: jest.fn().mockReturnValue(true),
+            isClassifyingFilter: vi.fn().mockReturnValue(true),
         };
 
         const func = getClassifyingFiltersVariableQueryPart({

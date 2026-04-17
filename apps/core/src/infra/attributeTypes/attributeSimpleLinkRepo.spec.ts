@@ -48,7 +48,7 @@ describe('AttributeSimpleLinkRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockRecord),
+                cleanup: vi.fn().mockReturnValue(mockRecord),
             };
 
             const updatedValueData: ISaveLinkValue = {
@@ -175,7 +175,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 execute: global.__mockPromise(queryRes),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: 987654,
                 created_at: 1521475225,
                 modified_at: 1521475225,
@@ -218,18 +218,18 @@ describe('AttributeSimpleLinkRepo', () => {
 
     describe('filterValueQueryPart', () => {
         const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-            isCountFilter: jest.fn().mockReturnValue(false),
+            isCountFilter: vi.fn().mockReturnValue(false),
         };
 
         test('Should return query to retrieve value to filter on', () => {
             const mockDb = {
-                collection: jest.fn().mockReturnValue({} as DocumentCollection),
+                collection: vi.fn().mockReturnValue({} as DocumentCollection),
             };
 
             const mockDbServ = {db: mockDb as unknown as Database};
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql``),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql``),
             };
 
             const attrRepo = attributeSimpleLinkRepo({
@@ -250,13 +250,13 @@ describe('AttributeSimpleLinkRepo', () => {
 
         test('Should return query to retrieve value to filter on for reverse link', async () => {
             const mockDb = {
-                collection: jest.fn().mockReturnValue({} as DocumentCollection),
+                collection: vi.fn().mockReturnValue({} as DocumentCollection),
             };
 
             const mockDbServ = {db: mockDb as unknown as Database};
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeSimpleLinkRepo({
@@ -286,11 +286,11 @@ describe('AttributeSimpleLinkRepo', () => {
             };
 
             const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(true),
+                isCountFilter: vi.fn().mockReturnValue(true),
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
+                filterValueQueryPart: vi.fn().mockReturnValue(aql`<VALUE QUERY PART>`),
             };
 
             const attrRepo = attributeSimpleLinkRepo({
@@ -316,7 +316,7 @@ describe('AttributeSimpleLinkRepo', () => {
     describe('sortQueryPart', () => {
         test('Should return simple link sort', () => {
             const mockDb = {
-                collection: jest.fn().mockReturnValue({} as DocumentCollection),
+                collection: vi.fn().mockReturnValue({} as DocumentCollection),
             };
 
             const mockDbServ = {db: mockDb as unknown as Database};

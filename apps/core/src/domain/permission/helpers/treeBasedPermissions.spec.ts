@@ -19,15 +19,15 @@ const mockCacheService: Mockify<ICacheService> = {
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService),
+    getCache: vi.fn().mockReturnValue(mockCacheService),
 };
 
 const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
-    'core.domain.attribute': jest.fn(),
-    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
-    'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.infra.permission': jest.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': vi.fn(),
+    'core.domain.permission.helpers.reducePermissionsArray': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
+    'core.infra.permission': vi.fn(),
 };
 
 describe('TreeBasedPermissionDomain', () => {
@@ -37,7 +37,7 @@ describe('TreeBasedPermissionDomain', () => {
         groupsId: ['1'],
     };
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     describe('getTreePermission', () => {
         const mockAttrProps = {
@@ -53,7 +53,7 @@ describe('TreeBasedPermissionDomain', () => {
             },
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id])),
+            getAttributeProperties: vi.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id])),
         };
 
         const defaultPerm = false;
@@ -128,8 +128,8 @@ describe('TreeBasedPermissionDomain', () => {
         };
 
         const mockElementAncestorsHelper = {
-            getCachedElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId])),
-            clearElementAncestorsCache: jest.fn(),
+            getCachedElementAncestors: vi.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId])),
+            clearElementAncestorsCache: vi.fn(),
         } satisfies Mockify<IElementAncestorsHelper>;
 
         const attributesProps = {
@@ -150,7 +150,7 @@ describe('TreeBasedPermissionDomain', () => {
             },
         };
         const mockAttrMultipleDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(attributesProps[id])),
+            getAttributeProperties: vi.fn().mockImplementation(({id}) => Promise.resolve(attributesProps[id])),
         };
 
         const values = {
@@ -189,15 +189,15 @@ describe('TreeBasedPermissionDomain', () => {
         };
 
         const mockReducePermissionsArrayHelper: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: jest.fn().mockReturnValue(true),
+            reducePermissionsArray: vi.fn().mockReturnValue(true),
         };
 
         const mockReducePermissionsArrayHelperFalse: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: jest.fn().mockReturnValue(false),
+            reducePermissionsArray: vi.fn().mockReturnValue(false),
         };
 
         const mockReducePermissionsArrayHelperNull: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: jest.fn().mockReturnValue(null),
+            reducePermissionsArray: vi.fn().mockReturnValue(null),
         };
 
         const params: IGetTreeBasedPermissionParams = {
@@ -208,10 +208,10 @@ describe('TreeBasedPermissionDomain', () => {
                 category: ['321654'],
             },
             permissions_conf: mockPermConf,
-            getDefaultPermission: jest.fn().mockReturnValue(defaultPerm),
+            getDefaultPermission: vi.fn().mockReturnValue(defaultPerm),
         };
 
-        beforeEach(() => jest.clearAllMocks());
+        beforeEach(() => vi.clearAllMocks());
 
         test('1 tree / 1 user group with heritage', async () => {
             const mockPermByUserGroupsHelper = {
@@ -294,7 +294,7 @@ describe('TreeBasedPermissionDomain', () => {
         // TODO: move to permissionByUserGroups tests (next ticket)
         // test('n permissions trees with AND', async () => {
         //     const mockPermByUserGroupsHelper = {
-        //         getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
+        //         getPermissionByUserGroups: vi.fn().mockImplementation(({permissionTreeTarget}) => {
         //             if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
         //                 return Promise.resolve(true);
         //             } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
@@ -338,7 +338,7 @@ describe('TreeBasedPermissionDomain', () => {
         // TODO: move to permissionByUserGroups tests (next ticket)
         // test('n permissions trees with OR', async () => {
         //     const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-        //         getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
+        //         getPermissionByUserGroups: vi.fn().mockImplementation(({permissionTreeTarget}) => {
         //             if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
         //                 return Promise.resolve(true);
         //             } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {

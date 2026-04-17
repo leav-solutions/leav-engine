@@ -19,11 +19,11 @@ describe('getDefaultElementId', () => {
         };
 
         const mockCacheService: Mockify<ICachesService> = {
-            memoize: jest.fn().mockImplementation(({func}) => func()),
+            memoize: vi.fn().mockImplementation(({func}) => func()),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getCoreEntityCacheKey: jest.fn().mockReturnValue('cacheKey'),
+            getCoreEntityCacheKey: vi.fn().mockReturnValue('cacheKey'),
         };
 
         const helper = getDefaultElement({

@@ -19,15 +19,15 @@ import * as fileUtilsHelpers from '../handleFileUtilsHelper';
 import * as handlePreview from '../handlePreview';
 import handleFileSystemEvent, {type IFileSystemEventDeps} from './handleFileSystemEvent';
 
-jest.mock('../getRootPathByKey', () => ({getRootPathByKey: jest.fn().mockReturnValue('/path/to/root')}));
+vi.mock('../getRootPathByKey', () => ({getRootPathByKey: vi.fn().mockReturnValue('/path/to/root')}));
 
 describe('handleFileSystemEvent', () => {
     const mockUtils: Mockify<IUtils> = {
-        getLibraryTreeId: jest.fn().mockReturnValue('libraryTreeId'),
-        getDirectoriesLibraryId: jest.fn().mockReturnValue('directoryLibraryId'),
-        getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previewsStatus'),
-        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-        previewsSettingsToVersions: jest.fn().mockReturnValue({}),
+        getLibraryTreeId: vi.fn().mockReturnValue('libraryTreeId'),
+        getDirectoriesLibraryId: vi.fn().mockReturnValue('directoryLibraryId'),
+        getPreviewsStatusAttributeName: vi.fn().mockReturnValue('previewsStatus'),
+        getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+        previewsSettingsToVersions: vi.fn().mockReturnValue({}),
     };
 
     const mockLibraryDomain: Mockify<ILibraryDomain> = {
@@ -35,12 +35,12 @@ describe('handleFileSystemEvent', () => {
     };
 
     const mockRecordDomain: Mockify<IRecordDomain> = {
-        activateRecord: jest.fn(),
-        deactivateRecord: jest.fn(),
+        activateRecord: vi.fn(),
+        deactivateRecord: vi.fn(),
     };
 
     const mockTreeDomain: Mockify<ITreeDomain> = {
-        moveElement: jest.fn(),
+        moveElement: vi.fn(),
         getNodesByRecord: global.__mockPromise(['123465798']),
     };
 
@@ -55,13 +55,13 @@ describe('handleFileSystemEvent', () => {
     };
 
     const mockLogger = {
-        warn: jest.fn(),
-        error: jest.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
     } satisfies Mockify<ILogger>;
 
     const mockRecordRepo = {
-        updateRecord: jest.fn(),
-        createRecord: jest.fn(),
+        updateRecord: vi.fn(),
+        createRecord: vi.fn(),
     } satisfies Mockify<IRecordRepo>;
 
     const mockConfig: Partial<IConfig> = {
@@ -85,34 +85,34 @@ describe('handleFileSystemEvent', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const depsBase: ToAny<IFileSystemEventDeps> = {
-        'core.domain.library': jest.fn(),
-        'core.domain.record': jest.fn(),
-        'core.domain.value': jest.fn(),
-        'core.domain.tree': jest.fn(),
-        'core.domain.helpers.updateRecordLastModif': jest.fn(),
-        'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
-        'core.infra.record': jest.fn(),
-        'core.infra.amqpService': jest.fn(),
-        'core.infra.filesManager': jest.fn(),
-        'core.utils.logger': jest.fn(),
-        'core.utils': jest.fn(),
+        'core.domain.library': vi.fn(),
+        'core.domain.record': vi.fn(),
+        'core.domain.value': vi.fn(),
+        'core.domain.tree': vi.fn(),
+        'core.domain.helpers.updateRecordLastModif': vi.fn(),
+        'core.domain.record.helpers.sendRecordUpdateEvent': vi.fn(),
+        'core.infra.record': vi.fn(),
+        'core.infra.amqpService': vi.fn(),
+        'core.infra.filesManager': vi.fn(),
+        'core.utils.logger': vi.fn(),
+        'core.utils': vi.fn(),
         config: {},
     };
 
     describe('Update', () => {
-        const mockExtractFileMetadata = jest.fn().mockResolvedValue(mockFileMetadata);
-        jest.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
+        const mockExtractFileMetadata = vi.fn().mockResolvedValue(mockFileMetadata);
+        vi.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
 
         test('Update file record', async () => {
-            const mockRequestPreviewGeneration = jest.fn();
-            jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
+            const mockRequestPreviewGeneration = vi.fn();
+            vi.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
-            const mockUpdatedLastRecordModif = jest.fn();
-            const mockSendRecordUpdate = jest.fn();
+            const mockUpdatedLastRecordModif = vi.fn();
+            const mockSendRecordUpdate = vi.fn();
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -166,8 +166,8 @@ describe('handleFileSystemEvent', () => {
         });
 
         test('Should throw if record not found', async () => {
-            const mockRequestPreviewGeneration = jest.fn();
-            jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
+            const mockRequestPreviewGeneration = vi.fn();
+            vi.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -203,18 +203,18 @@ describe('handleFileSystemEvent', () => {
 
     describe('Create', () => {
         test('If file doest not exist in DB, create file record', async () => {
-            const mockExtractFileMetadata = jest.fn().mockResolvedValue(mockFileMetadata);
-            jest.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
+            const mockExtractFileMetadata = vi.fn().mockResolvedValue(mockFileMetadata);
+            vi.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
 
-            const mockRequestPreviewGeneration = jest.fn();
-            jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
+            const mockRequestPreviewGeneration = vi.fn();
+            vi.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
-            const mockCreateFileTreeElement = jest.fn();
-            const mockCreateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
-            jest.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
-            jest.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
+            const mockCreateFileTreeElement = vi.fn();
+            const mockCreateRecordFile = vi.fn().mockResolvedValue(mockFileRecord);
+            vi.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
+            vi.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -264,22 +264,22 @@ describe('handleFileSystemEvent', () => {
         });
 
         test('If file already exist in DB, just activate the record', async () => {
-            const mockExtractFileMetadata = jest.fn().mockResolvedValue(mockFileMetadata);
-            jest.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
+            const mockExtractFileMetadata = vi.fn().mockResolvedValue(mockFileMetadata);
+            vi.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
 
-            const mockRequestPreviewGeneration = jest.fn();
-            jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
+            const mockRequestPreviewGeneration = vi.fn();
+            vi.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
-            const mockCreateFileTreeElement = jest.fn();
-            const mockCreateRecordFile = jest.fn();
-            const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
-            jest.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
-            jest.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() =>
+            const mockCreateFileTreeElement = vi.fn();
+            const mockCreateRecordFile = vi.fn();
+            const mockUpdateRecordFile = vi.fn().mockResolvedValue(mockFileRecord);
+            vi.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
+            vi.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() =>
                 Promise.resolve({...mockFileRecord, active: false}),
             );
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -334,20 +334,20 @@ describe('handleFileSystemEvent', () => {
         });
 
         test('If creating a directory, does not call previews generation', async () => {
-            const mockExtractFileMetadata = jest.fn().mockResolvedValue(mockFileMetadata);
-            jest.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
+            const mockExtractFileMetadata = vi.fn().mockResolvedValue(mockFileMetadata);
+            vi.spyOn(extractFileMetadata, 'extractFileMetadata').mockImplementation(mockExtractFileMetadata);
 
-            const mockRequestPreviewGeneration = jest.fn();
-            jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
+            const mockRequestPreviewGeneration = vi.fn();
+            vi.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
-            const mockCreateFileTreeElement = jest.fn();
-            const mockCreateRecordFile = jest.fn();
-            const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
-            jest.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
-            jest.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
+            const mockCreateFileTreeElement = vi.fn();
+            const mockCreateRecordFile = vi.fn();
+            const mockUpdateRecordFile = vi.fn().mockResolvedValue(mockFileRecord);
+            vi.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
+            vi.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -386,10 +386,10 @@ describe('handleFileSystemEvent', () => {
 
     describe('Remove', () => {
         test('Deactivate the record and remove it from the tree', async () => {
-            const mockDeleteFileTreeElement = jest.fn();
-            jest.spyOn(fileUtilsHelpers, 'deleteFilesTreeElement').mockImplementation(mockDeleteFileTreeElement);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
+            const mockDeleteFileTreeElement = vi.fn();
+            vi.spyOn(fileUtilsHelpers, 'deleteFilesTreeElement').mockImplementation(mockDeleteFileTreeElement);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -425,10 +425,10 @@ describe('handleFileSystemEvent', () => {
         });
 
         test('Should throw if record not found', async () => {
-            const mockDeleteFileTreeElement = jest.fn();
-            jest.spyOn(fileUtilsHelpers, 'deleteFilesTreeElement').mockImplementation(mockDeleteFileTreeElement);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
+            const mockDeleteFileTreeElement = vi.fn();
+            vi.spyOn(fileUtilsHelpers, 'deleteFilesTreeElement').mockImplementation(mockDeleteFileTreeElement);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -466,10 +466,10 @@ describe('handleFileSystemEvent', () => {
 
     describe('Move', () => {
         test('Move the record in the tree and update path on the record', async () => {
-            const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
-            jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
+            const mockUpdateRecordFile = vi.fn().mockResolvedValue(mockFileRecord);
+            vi.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -511,10 +511,10 @@ describe('handleFileSystemEvent', () => {
         });
 
         test('Should throw if record not found', async () => {
-            const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
-            jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
+            const mockUpdateRecordFile = vi.fn().mockResolvedValue(mockFileRecord);
+            vi.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
 
             const func = handleFileSystemEvent({
                 ...depsBase,
@@ -550,10 +550,10 @@ describe('handleFileSystemEvent', () => {
         });
 
         test('Should throw if destination record not found', async () => {
-            const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
-            jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
+            const mockUpdateRecordFile = vi.fn().mockResolvedValue(mockFileRecord);
+            vi.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
+            vi.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
+            vi.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
                 ...depsBase,

@@ -11,7 +11,7 @@ import {type FunctionComponent, useReducer} from 'react';
 import dayjs from 'dayjs';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import userEvent from '@testing-library/user-event';
-import {type Mockify} from '@leav/utils';
+import {type Mockify} from '_ui/__mocks__/utils';
 import {filtersReducer as filtersReducerBase, type IUIFiltersState} from '../context/filtersReducer';
 import {FiltersContext} from '../context/filtersContext';
 import {useFiltersContext} from '../useFiltersContext';

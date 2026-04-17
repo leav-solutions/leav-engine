@@ -311,7 +311,7 @@ describe('Utils', () => {
 
     describe('translateError', () => {
         const mockTranslator: Mockify<i18n> = {
-            t: jest.fn().mockImplementation((str, options) => `${str}_${JSON.stringify(options)}`),
+            t: vi.fn().mockImplementation((str, options) => `${str}_${JSON.stringify(options)}`),
         };
         test('Translate error by code', async () => {
             const utilsModule = utils({translator: mockTranslator as i18n});
@@ -344,7 +344,7 @@ describe('Utils', () => {
     describe('generateExplicitValidationError', () => {
         test('Generate a validation error with explicit message', async () => {
             const mockTranslator: Mockify<i18n> = {
-                t: jest.fn().mockImplementation((str, options) => `[TRANSLATED] ${str}_${JSON.stringify(options)}`),
+                t: vi.fn().mockImplementation((str, options) => `[TRANSLATED] ${str}_${JSON.stringify(options)}`),
             };
 
             const utilsModule = utils({translator: mockTranslator as i18n});

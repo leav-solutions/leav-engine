@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AttributeRepo createAttribute Should create a new attribute 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+exports[`AttributeRepo > createAttribute > Should create a new attribute 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
-exports[`AttributeRepo createAttribute Should create a new attribute 2`] = `
+exports[`AttributeRepo > createAttribute > Should create a new attribute 2`] = `
 {
   "@value1": "core_attributes",
   "value0": {
@@ -18,7 +18,7 @@ exports[`AttributeRepo createAttribute Should create a new attribute 2`] = `
 }
 `;
 
-exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 1`] = `
+exports[`AttributeRepo > deleteAttribute > Should delete an attribute and return deleted attribute 1`] = `
 "
                     FOR e IN @@value0
                         FILTER e._to == @value1
@@ -26,16 +26,16 @@ exports[`AttributeRepo deleteAttribute Should delete an attribute and return del
                     "
 `;
 
-exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 2`] = `
+exports[`AttributeRepo > deleteAttribute > Should delete an attribute and return deleted attribute 2`] = `
 {
   "@value0": "core_edge_libraries_attributes",
   "value1": "core_attributes/test_attribute",
 }
 `;
 
-exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 3`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`AttributeRepo > deleteAttribute > Should delete an attribute and return deleted attribute 3`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
-exports[`AttributeRepo deleteAttribute Should delete an attribute and return deleted attribute 4`] = `
+exports[`AttributeRepo > deleteAttribute > Should delete an attribute and return deleted attribute 4`] = `
 {
   "@value1": "core_attributes",
   "value0": {
@@ -44,7 +44,7 @@ exports[`AttributeRepo deleteAttribute Should delete an attribute and return del
 }
 `;
 
-exports[`AttributeRepo getAttributeLibraries Should get libraries linked to attribute through graph query 1`] = `
+exports[`AttributeRepo > getAttributeLibraries > Should get libraries linked to attribute through graph query 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -59,7 +59,7 @@ exports[`AttributeRepo getAttributeLibraries Should get libraries linked to attr
 }
 `;
 
-exports[`AttributeRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
+exports[`AttributeRepo > getLibraryAttributes > Should get library attributes through graph query 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -75,7 +75,7 @@ exports[`AttributeRepo getLibraryAttributes Should get library attributes throug
 }
 `;
 
-exports[`AttributeRepo getLibraryFullTextAttributes Should get library full text attributes through graph query 1`] = `
+exports[`AttributeRepo > getLibraryFullTextAttributes > Should get library full text attributes through graph query 1`] = `
 "LET fullTextAttrs = (
                             FOR e IN @@value0
                                 FILTER e._from == @value1
@@ -88,9 +88,9 @@ exports[`AttributeRepo getLibraryFullTextAttributes Should get library full text
                     "
 `;
 
-exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
+exports[`AttributeRepo > updateAttribute > Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
-exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `
+exports[`AttributeRepo > updateAttribute > Should update an existing attribute 2`] = `
 {
   "@value1": "core_attributes",
   "value0": {

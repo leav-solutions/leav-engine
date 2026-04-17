@@ -18,15 +18,15 @@ import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {type IQueryInfos} from '../../_types/queryInfos';
 
 const depsBase: ToAny<IRecordRepoDeps> = {
-    'core.infra.db.dbService': jest.fn(),
-    'core.infra.db.dbUtils': jest.fn(),
-    'core.infra.attributeTypes': jest.fn(),
-    'core.infra.attribute': jest.fn(),
-    'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),
-    'core.infra.record.helpers.getSearchVariablesQueryPart': jest.fn(),
-    'core.infra.record.helpers.getSearchVariableName': jest.fn(),
-    'core.infra.record.helpers.filterTypes': jest.fn(),
-    'core.infra.indexation.helpers.getSearchQuery': jest.fn(),
+    'core.infra.db.dbService': vi.fn(),
+    'core.infra.db.dbUtils': vi.fn(),
+    'core.infra.attributeTypes': vi.fn(),
+    'core.infra.attribute': vi.fn(),
+    'core.infra.attributeTypes.helpers.getConditionPart': vi.fn(),
+    'core.infra.record.helpers.getSearchVariablesQueryPart': vi.fn(),
+    'core.infra.record.helpers.getSearchVariableName': vi.fn(),
+    'core.infra.record.helpers.filterTypes': vi.fn(),
+    'core.infra.indexation.helpers.getSearchQuery': vi.fn(),
 };
 
 describe('RecordRepo', () => {
@@ -58,12 +58,12 @@ describe('RecordRepo', () => {
             };
 
             const mockDb = new Database();
-            mockDb.collection = jest.fn().mockReturnValue(mockDbCollec);
+            mockDb.collection = vi.fn().mockReturnValue(mockDbCollec);
 
             const mockDbServ = {db: mockDb};
 
             const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData),
+                cleanup: vi.fn().mockReturnValue(cleanCreatedRecordData),
             } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
@@ -107,7 +107,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbUtils = {
-                cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData),
+                cleanup: vi.fn().mockReturnValue(cleanUpdatedRecordData),
             } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
@@ -170,9 +170,9 @@ describe('RecordRepo', () => {
                     },
                 ]),
             };
-            mockDbServ.db.collection = jest.fn().mockReturnValue(mockDbCollec);
+            mockDbServ.db.collection = vi.fn().mockReturnValue(mockDbCollec);
 
-            const mockDbUtils = {cleanup: jest.fn().mockReturnValue(recordData)} satisfies Mockify<IDbUtils>;
+            const mockDbUtils = {cleanup: vi.fn().mockReturnValue(recordData)} satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
                 ...depsBase,
@@ -238,7 +238,7 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const recRepo = recordRepo({
@@ -311,7 +311,7 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const recRepo = recordRepo({
@@ -378,7 +378,7 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const recRepo = recordRepo({
@@ -425,7 +425,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockCleanupRes),
+                cleanup: vi.fn().mockReturnValue(mockCleanupRes),
             };
 
             const recRepo = recordRepo({
@@ -434,7 +434,7 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
             });
 
-            beforeEach(() => jest.clearAllMocks());
+            beforeEach(() => vi.clearAllMocks());
 
             test('Should not retrieve inactive records', async () => {
                 await recRepo.find({
@@ -507,14 +507,14 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
+                cleanup: vi.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1]),
             };
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getLibraryFullTextAttributes: global.__mockPromise(['id', 'label']),
             };
 
-            const mockGetSearchQuery: Mockify<GetSearchQuery> = jest.fn(() => 'fulltextSearchQuery');
+            const mockGetSearchQuery: Mockify<GetSearchQuery> = vi.fn(() => 'fulltextSearchQuery');
 
             const recRepo = recordRepo({
                 ...depsBase,
@@ -551,15 +551,15 @@ describe('RecordRepo', () => {
             };
 
             const mockAttributeTypes: Mockify<IAttributeTypesRepo> = {
-                getTypeRepo: jest.fn(() => ({
-                    sortQueryPart: jest.fn(() => ({
+                getTypeRepo: vi.fn(() => ({
+                    sortQueryPart: vi.fn(() => ({
                         query: 'sortQueryPart',
                     })),
                 })),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn(),
+                cleanup: vi.fn(),
             };
 
             const recRepo = recordRepo({
@@ -633,7 +633,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue({
+                cleanup: vi.fn().mockReturnValue({
                     id: '222536515',
                     created_at: 1520931427,
                     modified_at: 1520931427,
@@ -644,16 +644,16 @@ describe('RecordRepo', () => {
             const mockAttrSimpleRepo: Mockify<IAttributeTypeRepo> = {};
 
             const mockAttrRepo: Mockify<IAttributeTypesRepo> = {
-                getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo),
+                getTypeRepo: vi.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo),
             };
 
-            const mockGetSearchVariablesQueryPart = jest.fn().mockReturnValue(aql`<Variables>`);
-            const mockGetSearchVariableName = jest.fn().mockReturnValue(aql`variableName`);
-            const mockGetConditionPart = jest.fn().mockReturnValue(aql`<Condition>`);
+            const mockGetSearchVariablesQueryPart = vi.fn().mockReturnValue(aql`<Variables>`);
+            const mockGetSearchVariableName = vi.fn().mockReturnValue(aql`variableName`);
+            const mockGetConditionPart = vi.fn().mockReturnValue(aql`<Condition>`);
 
             const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
-                isCountFilter: jest.fn().mockReturnValue(false),
-                isAttributeFilter: jest.fn().mockReturnValue(true),
+                isCountFilter: vi.fn().mockReturnValue(false),
+                isAttributeFilter: vi.fn().mockReturnValue(true),
             };
 
             const recRepo = recordRepo({
@@ -721,11 +721,11 @@ describe('RecordRepo', () => {
         test('Should return records in same order', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockResolvedValue([mockRecord1, mockRecord2]),
+                execute: vi.fn().mockResolvedValue([mockRecord1, mockRecord2]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockImplementation(record => ({
+                cleanup: vi.fn().mockImplementation(record => ({
                     ...record,
                     cleanedUp: true,
                 })),
@@ -757,11 +757,11 @@ describe('RecordRepo', () => {
         test('Should return null for unknown record', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: jest.fn().mockResolvedValue([mockRecord1, null, mockRecord2]),
+                execute: vi.fn().mockResolvedValue([mockRecord1, null, mockRecord2]),
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockImplementation(record => ({
+                cleanup: vi.fn().mockImplementation(record => ({
                     ...record,
                     cleanedUp: true,
                 })),

@@ -46,9 +46,9 @@ const mockRecordAttributePermissionDomain: Mockify<IRecordAttributePermissionDom
 
 const mockGetValuesHelper: Mockify<GetValuesHelper> = global.__mockPromise([]);
 
-const mockRunActionsListHelper: RunActionsListHelper = jest.fn(async ({values}) => values);
+const mockRunActionsListHelper: RunActionsListHelper = vi.fn(async ({values}) => values);
 
-const mockFormatValueHelper: FormatValueHelper = jest.fn(async ({attribute, value}) => ({
+const mockFormatValueHelper: FormatValueHelper = vi.fn(async ({attribute, value}) => ({
     ...value,
     attribute: attribute.id,
     payload:
@@ -62,12 +62,12 @@ const mockRecordRepo: Mockify<IRecordRepo> = {
 };
 
 const mockLogger: Mockify<ILogger> = {
-    warn: jest.fn(),
-    error: jest.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
 };
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 });
 
 const makeHelper = (overrides: Partial<ToAny<Parameters<typeof getRecordFieldValueFactory>[0]>> = {}) =>
@@ -191,7 +191,7 @@ describe('getRecordFieldValue', () => {
             getRecord: global.__mockPromise(linkedRecord),
         };
 
-        const mockLinkFormatValue: FormatValueHelper = jest.fn(async ({attribute, value}) => ({
+        const mockLinkFormatValue: FormatValueHelper = vi.fn(async ({attribute, value}) => ({
             ...value,
             attribute: attribute.id,
             payload: {...(value.payload as object), library: attribute.linked_library},
@@ -256,7 +256,7 @@ describe('getRecordFieldValue', () => {
             }),
         };
 
-        const mockRunActionsListWithResult: RunActionsListHelper = jest
+        const mockRunActionsListWithResult: RunActionsListHelper = vi
             .fn()
             .mockResolvedValue([{payload: 'formatted_value', raw_payload: 'raw'}]);
 

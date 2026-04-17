@@ -19,8 +19,8 @@ describe('handleGraphqlError', () => {
     };
 
     const mockLogger: Mockify<ILogger> = {
-        warn: jest.fn(),
-        error: jest.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
     };
 
     const _makeError: (
@@ -42,7 +42,7 @@ describe('handleGraphqlError', () => {
     });
 
     const mockUtils: Mockify<IUtils> = {
-        translateError: jest.fn().mockImplementation(err => err.msg + ' TRANSLATED'),
+        translateError: vi.fn().mockImplementation(err => err.msg + ' TRANSLATED'),
     };
 
     describe('VALIDATION_ERROR', () => {

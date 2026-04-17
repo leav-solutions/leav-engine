@@ -11,7 +11,7 @@ import logRepo from './logRepo';
 describe('logRepo', () => {
     describe('getLogs', () => {
         beforeEach(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         const mockESService: Mockify<IElasticsearchService> = {

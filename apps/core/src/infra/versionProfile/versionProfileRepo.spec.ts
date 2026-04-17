@@ -21,8 +21,8 @@ describe('versionProfileRepo', () => {
     };
 
     const mockDbUtils = {
-        cleanup: jest.fn().mockReturnValue(profileData),
-        convertToDoc: jest.fn().mockReturnValue(docProfileData),
+        cleanup: vi.fn().mockReturnValue(profileData),
+        convertToDoc: vi.fn().mockReturnValue(docProfileData),
         findCoreEntity: global.__mockPromise([profileData]),
     } satisfies Mockify<IDbUtils>;
 
@@ -120,7 +120,7 @@ describe('versionProfileRepo', () => {
             };
 
             const mockDbUtilsAttribute: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(mockAttrAdvVersionable),
+                cleanup: vi.fn().mockReturnValue(mockAttrAdvVersionable),
             };
 
             const repo = versionProfileRepo({

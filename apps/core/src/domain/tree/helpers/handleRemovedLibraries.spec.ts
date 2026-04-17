@@ -8,12 +8,12 @@ import handleRemovedLibraries from './handleRemovedLibraries';
 
 describe('handleRemovedLibraries', () => {
     const mockTreeRepo: Mockify<ITreeRepo> = {
-        deleteElement: jest.fn(),
+        deleteElement: vi.fn(),
         getNodesByLibrary: global.__mockPromise(['123456', '987654']),
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('Detach elements for all removed libraries', async () => {

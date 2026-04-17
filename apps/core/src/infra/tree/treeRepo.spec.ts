@@ -12,8 +12,8 @@ import {type IConfig} from '../../_types/config';
 
 const config = {} as IConfig;
 const depsBase: ToAny<ITreeRepoDeps> = {
-    'core.infra.db.dbService': jest.fn(),
-    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.db.dbService': vi.fn(),
+    'core.infra.db.dbUtils': vi.fn(),
     config,
 };
 
@@ -38,12 +38,12 @@ describe('TreeRepo', () => {
     };
     describe('createTree', () => {
         test('Should create a tree', async function () {
-            const mockEnsureIndex = jest.fn();
+            const mockEnsureIndex = vi.fn();
             const mockCollection = new Database().collection(TREES_COLLECTION_NAME);
             mockCollection.ensureIndex = mockEnsureIndex;
 
             const mockDb = new Database();
-            mockDb.collection = jest.fn().mockReturnValue(mockCollection);
+            mockDb.collection = vi.fn().mockReturnValue(mockCollection);
 
             const mockDbServ = {
                 db: mockDb,
@@ -52,8 +52,8 @@ describe('TreeRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(treeData),
-                convertToDoc: jest.fn().mockReturnValue(docTreeData),
+                cleanup: vi.fn().mockReturnValue(treeData),
+                convertToDoc: vi.fn().mockReturnValue(docTreeData),
             };
 
             const repo = treeRepo({
@@ -87,8 +87,8 @@ describe('TreeRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(treeData),
-                convertToDoc: jest.fn().mockReturnValue(docTreeData),
+                cleanup: vi.fn().mockReturnValue(treeData),
+                convertToDoc: vi.fn().mockReturnValue(docTreeData),
             };
 
             const repo = treeRepo({
@@ -157,8 +157,8 @@ describe('TreeRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValue(treeData),
-                convertToDoc: jest.fn().mockReturnValue(docTreeData),
+                cleanup: vi.fn().mockReturnValue(treeData),
+                convertToDoc: vi.fn().mockReturnValue(docTreeData),
             };
 
             const repo = treeRepo({
@@ -735,7 +735,7 @@ describe('TreeRepo', () => {
             };
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn(),
+                cleanup: vi.fn(),
             };
 
             const repo = treeRepo({
@@ -783,7 +783,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest
+            const mockCleanupRes = vi
                 .fn()
                 .mockReturnValueOnce({
                     id: '19611984',
@@ -869,7 +869,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest
+            const mockCleanupRes = vi
                 .fn()
                 .mockReturnValueOnce({
                     id: '19610667',
@@ -953,7 +953,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest
+            const mockCleanupRes = vi
                 .fn()
                 .mockReturnValueOnce({
                     id: '123456',
@@ -1032,7 +1032,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise(traversalRes),
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValue({
+            const mockCleanupRes = vi.fn().mockReturnValue({
                 id: '123456',
                 library: 'mylib',
                 label: 'my record',

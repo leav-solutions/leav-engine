@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FormRepo Create form 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+exports[`FormRepo > Create form 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
-exports[`FormRepo Create form 2`] = `
+exports[`FormRepo > Create form 2`] = `
 {
   "@value1": "core_forms",
   "value0": {
@@ -46,9 +46,9 @@ exports[`FormRepo Create form 2`] = `
 }
 `;
 
-exports[`FormRepo Delete form 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`FormRepo > Delete form 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
-exports[`FormRepo Delete form 2`] = `
+exports[`FormRepo > Delete form 2`] = `
 {
   "@value1": "core_forms",
   "value0": {
@@ -92,9 +92,9 @@ exports[`FormRepo Delete form 2`] = `
 }
 `;
 
-exports[`FormRepo Update form 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+exports[`FormRepo > Update form 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
-exports[`FormRepo Update form 2`] = `
+exports[`FormRepo > Update form 2`] = `
 {
   "@value1": "core_forms",
   "value0": {

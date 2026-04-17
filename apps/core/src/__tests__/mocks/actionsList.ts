@@ -11,7 +11,7 @@ const mockActionBase: IActionsListFunction = {
     compute: false,
     input_types: Object.values(ActionsListIOTypes),
     output_types: Object.values(ActionsListIOTypes),
-    action: jest.fn(),
+    action: vi.fn(),
 };
 
 export const mockActionStringOutput = {

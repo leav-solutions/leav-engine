@@ -1,10 +1,10 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["jest", "node"],
+        "types": ["vitest/globals", "vitest/node", "jest", "node"],
         "outDir": "dist",
         "isolatedModules": false,
-        "typeRoots": ["./src/_types", "../../node_modules/@types", "node_modules/@types"],
+        "typeRoots": ["./src/_types", "../../node_modules/@types", "node_modules/@types", "../../node_modules"],
         "noImplicitReturns": true
         // "strictNullChecks": true
     },

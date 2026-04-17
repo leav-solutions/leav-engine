@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AttributeStandardRepo createValue Should create a new advanced value 1`] = `
+exports[`AttributeStandardRepo > createValue > Should create a new advanced value 1`] = `
 "
                     INSERT @value0
                     IN @@value1
                     RETURN NEW"
 `;
 
-exports[`AttributeStandardRepo createValue Should create a new advanced value 2`] = `
+exports[`AttributeStandardRepo > createValue > Should create a new advanced value 2`] = `
 {
   "@value1": "core_values",
   "value0": {
@@ -16,14 +16,14 @@ exports[`AttributeStandardRepo createValue Should create a new advanced value 2`
 }
 `;
 
-exports[`AttributeStandardRepo createValue Should create a new advanced value 3`] = `
+exports[`AttributeStandardRepo > createValue > Should create a new advanced value 3`] = `
 "
                     INSERT @value0
                     IN @@value1
                     RETURN NEW"
 `;
 
-exports[`AttributeStandardRepo createValue Should create a new advanced value 4`] = `
+exports[`AttributeStandardRepo > createValue > Should create a new advanced value 4`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": {
@@ -42,14 +42,14 @@ exports[`AttributeStandardRepo createValue Should create a new advanced value 4`
 }
 `;
 
-exports[`AttributeStandardRepo createValue Should save version on value 1`] = `
+exports[`AttributeStandardRepo > createValue > Should save version on value 1`] = `
 "
                     INSERT @value0
                     IN @@value1
                     RETURN NEW"
 `;
 
-exports[`AttributeStandardRepo createValue Should save version on value 2`] = `
+exports[`AttributeStandardRepo > createValue > Should save version on value 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": {
@@ -67,7 +67,7 @@ exports[`AttributeStandardRepo createValue Should save version on value 2`] = `
 }
 `;
 
-exports[`AttributeStandardRepo filterValueQueryPart Should return queyr to retrieve value to filter on 1`] = `
+exports[`AttributeStandardRepo > filterValueQueryPart > Should return queyr to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -83,7 +83,7 @@ exports[`AttributeStandardRepo filterValueQueryPart Should return queyr to retri
 }
 `;
 
-exports[`AttributeStandardRepo getValues Should return all values if forced 1`] = `
+exports[`AttributeStandardRepo > getValues > Should return all values if forced 1`] = `
 "
                 FOR value, edge
                 IN 1 OUTBOUND @value0
@@ -95,7 +95,7 @@ exports[`AttributeStandardRepo getValues Should return all values if forced 1`] 
             "
 `;
 
-exports[`AttributeStandardRepo getValues Should return values filtered by version 1`] = `
+exports[`AttributeStandardRepo > getValues > Should return values filtered by version 1`] = `
 "
                 FOR value, edge
                 IN 1 OUTBOUND @value0
@@ -107,7 +107,7 @@ exports[`AttributeStandardRepo getValues Should return values filtered by versio
             "
 `;
 
-exports[`AttributeStandardRepo getValues Should return values for advanced attribute 1`] = `
+exports[`AttributeStandardRepo > getValues > Should return values for advanced attribute 1`] = `
 "
                 FOR value, edge
                 IN 1 OUTBOUND @value0
@@ -119,7 +119,7 @@ exports[`AttributeStandardRepo getValues Should return values for advanced attri
             "
 `;
 
-exports[`AttributeStandardRepo getValues Should return values for advanced attribute 2`] = `
+exports[`AttributeStandardRepo > getValues > Should return values for advanced attribute 2`] = `
 {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
@@ -127,7 +127,7 @@ exports[`AttributeStandardRepo getValues Should return values for advanced attri
 }
 `;
 
-exports[`AttributeStandardRepo sortQueryPart Should return advanced filter 1`] = `
+exports[`AttributeStandardRepo > sortQueryPart > Should return advanced filter 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -143,7 +143,7 @@ exports[`AttributeStandardRepo sortQueryPart Should return advanced filter 1`] =
 }
 `;
 
-exports[`AttributeStandardRepo updateValue Should update an advanced value 1`] = `
+exports[`AttributeStandardRepo > updateValue > Should update an advanced value 1`] = `
 "
                     UPDATE @value0
                     WITH @value1
@@ -152,7 +152,7 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 1`] =
                     RETURN NEW"
 `;
 
-exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] = `
+exports[`AttributeStandardRepo > updateValue > Should update an advanced value 2`] = `
 {
   "@value2": "core_values",
   "value0": {
@@ -165,7 +165,7 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] =
 }
 `;
 
-exports[`AttributeStandardRepo updateValue Should update an advanced value 3`] = `
+exports[`AttributeStandardRepo > updateValue > Should update an advanced value 3`] = `
 "
                     FOR e IN @@value0
                     FILTER e._from == @value1 AND e._to == @value2
@@ -175,7 +175,7 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 3`] =
                     RETURN NEW"
 `;
 
-exports[`AttributeStandardRepo updateValue Should update an advanced value 4`] = `
+exports[`AttributeStandardRepo > updateValue > Should update an advanced value 4`] = `
 {
   "@value0": "core_edge_values_links",
   "value1": "test_lib/12345",

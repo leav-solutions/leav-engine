@@ -7,7 +7,17 @@ import {type Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
 
-jest.mock('jsonwebtoken');
+vi.mock('jsonwebtoken', () => {
+    const verify = vi.fn();
+    const sign = vi.fn();
+    const decode = vi.fn();
+    return {
+        default: {verify, sign, decode},
+        verify,
+        sign,
+        decode,
+    };
+});
 
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -15,34 +25,34 @@ import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {type IValueDomain} from '../../../domain/value/valueDomain';
 import {type IConfig} from '../../../_types/config';
 import {type DeepPartial} from '../../../_types/utils';
-import {type Mockify} from '@leav/utils';
 import {type ToAny} from '../../../utils/utils';
 import {adminsGroupId} from '../../../_constants/users';
 import {mockCtx, mockSystemQueryContext} from '../../../__tests__/mocks/shared';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 import {type IUserDomain} from '../../../domain/user/userDomain';
+import AuthenticationError from '../../../errors/AuthenticationError';
 
 const depsBase: ToAny<IAuthAppDeps> = {
-    'core.domain.value': jest.fn(),
-    'core.infra.record': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.domain.apiKey': jest.fn(),
-    'core.domain.user': jest.fn(),
-    'core.infra.session': jest.fn(),
+    'core.domain.value': vi.fn(),
+    'core.infra.record': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.apiKey': vi.fn(),
+    'core.domain.user': vi.fn(),
+    'core.infra.session': vi.fn(),
     'core.utils.logger': {
-        info: jest.fn(),
-        error: jest.fn(),
+        info: vi.fn(),
+        error: vi.fn(),
     },
-    'core.infra.oidc.oidcClientService': jest.fn(),
-    'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
-    'core.app.helpers.convertOIDCIdentifier': jest.fn(),
-    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
+    'core.infra.oidc.oidcClientService': vi.fn(),
+    'core.app.helpers.initQueryContext': vi.fn(() => mockCtx),
+    'core.app.helpers.convertOIDCIdentifier': vi.fn(),
+    'core.utils.getSystemQueryContext': vi.fn(() => mockSystemQueryContext),
     config: {},
 };
 
 describe('authApp', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('auth/authenticate', () => {
@@ -97,17 +107,17 @@ describe('authApp', () => {
             });
 
             const response = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
             const expressMock = {
-                get: jest.fn(),
-                post: jest.fn(),
+                get: vi.fn(),
+                post: vi.fn(),
             } satisfies Mockify<Express>;
 
-            const nextMock = jest.fn();
+            const nextMock = vi.fn();
 
-            const mockedVerify = jest.spyOn(jwt, 'verify');
+            const mockedVerify = vi.spyOn(jwt, 'verify');
 
             mockedVerify.mockImplementation(() => ({
                 userId: '1',
@@ -115,13 +125,13 @@ describe('authApp', () => {
                 agent: 'test',
             }));
 
-            const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+            const mockedSign = vi.spyOn(jwt, 'sign');
 
             mockedSign
                 .mockImplementationOnce(() => 'new_mocked_access_token')
                 .mockImplementationOnce(() => 'new_mocked_refresh_token');
 
-            jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+            vi.spyOn(bcrypt, 'compare').mockResolvedValue(true);
 
             const request = {
                 cookies: {
@@ -183,7 +193,7 @@ describe('authApp', () => {
             });
             const request: any = {};
             const response: any = {
-                status: jest.fn(() => 'statusReturn'),
+                status: vi.fn(() => 'statusReturn'),
             };
 
             const result = await authApp.authenticateWithOIDCService(request, response);
@@ -195,8 +205,8 @@ describe('authApp', () => {
 
         it('Should redirect to auth url with payload', async () => {
             const oidcClientServiceMock = {
-                getAuthorizationUrl: jest.fn(),
-                saveOriginalUrl: jest.fn(),
+                getAuthorizationUrl: vi.fn(),
+                saveOriginalUrl: vi.fn(),
             } satisfies Mockify<IOIDCClientService>;
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -222,7 +232,7 @@ describe('authApp', () => {
                 },
             };
             const response: any = {
-                redirect: jest.fn(() => 'redirectReturn'),
+                redirect: vi.fn(() => 'redirectReturn'),
             };
 
             const result = await authApp.authenticateWithOIDCService(request, response);
@@ -246,7 +256,7 @@ describe('authApp', () => {
     describe('auth/logout', () => {
         it('Should clear access cookie and return empty json when no oidc service configure', async () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {
-                getLogoutUrl: jest.fn(),
+                getLogoutUrl: vi.fn(),
             };
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -266,8 +276,8 @@ describe('authApp', () => {
                 config: mockConfig as IConfig,
             });
             const expressMock = {
-                get: jest.fn(),
-                post: jest.fn(),
+                get: vi.fn(),
+                post: vi.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
@@ -275,11 +285,11 @@ describe('authApp', () => {
                 headers: {
                     host: 'host',
                 },
-                cookies: jest.fn().mockReturnValue({access_token: 'access_token'}),
+                cookies: vi.fn().mockReturnValue({access_token: 'access_token'}),
             };
             const response = {
-                cookie: jest.fn(),
-                status: jest.fn().mockReturnValueOnce({
+                cookie: vi.fn(),
+                status: vi.fn().mockReturnValueOnce({
                     json: identity,
                 }),
             };
@@ -311,7 +321,7 @@ describe('authApp', () => {
 
         it('Should clear access cookie and return logoutUrl inside redirectUrl when oidc service configure', async () => {
             const oidcClientServiceMock = {
-                getLogoutUrl: jest.fn(),
+                getLogoutUrl: vi.fn(),
             } satisfies Mockify<IOIDCClientService>;
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -331,8 +341,8 @@ describe('authApp', () => {
                 config: mockConfig as IConfig,
             });
             const expressMock = {
-                get: jest.fn(),
-                post: jest.fn(),
+                get: vi.fn(),
+                post: vi.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
@@ -340,11 +350,11 @@ describe('authApp', () => {
                 headers: {
                     host: 'host',
                 },
-                cookies: jest.fn().mockReturnValue({access_token: 'access_token'}),
+                cookies: vi.fn().mockReturnValue({access_token: 'access_token'}),
             };
             const response = {
-                cookie: jest.fn(),
-                status: jest.fn().mockReturnValueOnce({
+                cookie: vi.fn(),
+                status: vi.fn().mockReturnValueOnce({
                     json: identity,
                 }),
             };
@@ -397,8 +407,8 @@ describe('authApp', () => {
                 config: mockConfig as IConfig,
             });
             const expressMock = {
-                get: jest.fn(),
-                post: jest.fn(),
+                get: vi.fn(),
+                post: vi.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
@@ -412,11 +422,11 @@ describe('authApp', () => {
                 body: {},
             };
             const response = {
-                status: jest.fn().mockReturnValueOnce({
+                status: vi.fn().mockReturnValueOnce({
                     send: identity,
                 }),
             };
-            const nextMock = jest.fn();
+            const nextMock = vi.fn();
 
             const result = await refreshHandler(request, response, nextMock);
 
@@ -470,24 +480,24 @@ describe('authApp', () => {
             });
 
             const response = {
-                cookie: jest.fn(),
+                cookie: vi.fn(),
             };
 
             const expressMock = {
-                get: jest.fn(),
-                post: jest.fn(),
+                get: vi.fn(),
+                post: vi.fn(),
             } satisfies Mockify<Express>;
 
-            const nextMock = jest.fn();
+            const nextMock = vi.fn();
 
-            const mockedVerify = jest.spyOn(jwt, 'verify');
+            const mockedVerify = vi.spyOn(jwt, 'verify');
             mockedVerify.mockImplementation(() => ({
                 userId: '1',
                 ip: '1',
                 agent: 'test',
             }));
 
-            const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+            const mockedSign = vi.spyOn(jwt, 'sign');
 
             mockedSign
                 .mockImplementationOnce(() => 'new_mocked_access_token')
@@ -537,7 +547,7 @@ describe('authApp', () => {
     });
 
     describe('auth/oidc/verify/*', () => {
-        const postOidcLoginCallback = jest.fn();
+        const postOidcLoginCallback = vi.fn();
 
         it('Should respond 401 when oidc not enable', async () => {
             const mockConfig: DeepPartial<IConfig> = {
@@ -552,8 +562,8 @@ describe('authApp', () => {
             });
             authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
             const expressMock = {
-                get: jest.fn(),
-                post: jest.fn(),
+                get: vi.fn(),
+                post: vi.fn(),
             } satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
@@ -561,7 +571,7 @@ describe('authApp', () => {
             )[1];
             const request = {};
             const response = {
-                status: jest.fn(identity),
+                status: vi.fn(identity),
             };
 
             const result = await verifyHandler(request, response);
@@ -585,12 +595,12 @@ describe('authApp', () => {
             };
 
             const mockRecordDomain = {
-                find: jest.fn().mockResolvedValue({
+                find: vi.fn().mockResolvedValue({
                     list: [{id: 'existing-user-id', email: 'user@example.com'}],
                     cursor: {},
                     totalCount: 1,
                 }),
-                createRecord: jest.fn(),
+                createRecord: vi.fn(),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
@@ -598,17 +608,17 @@ describe('authApp', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: jest.fn(),
-                getValues: jest.fn().mockResolvedValue([]),
+                saveValue: vi.fn(),
+                getValues: vi.fn().mockResolvedValue([]),
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
-                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
-                saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
+                getTokensFromCodes: vi.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: vi.fn(),
+                getOriginalUrl: vi.fn().mockResolvedValue('redirectUrl'),
             };
 
-            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+            const mockConvert = {decodeIdentifierFromBase64Url: vi.fn().mockReturnValue('queryId')};
 
             const authApp = createAuthApp({
                 ...depsBase,
@@ -621,7 +631,7 @@ describe('authApp', () => {
             });
             authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
 
-            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            const expressMock = {get: vi.fn(), post: vi.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
@@ -629,7 +639,7 @@ describe('authApp', () => {
 
             // Mock jwt.decode calls for id_token then access_token
             const decodedAccessToken = {resource_access: {client: {roles: []}}};
-            const decodeSpy = jest.spyOn(jwt, 'decode');
+            const decodeSpy = vi.spyOn(jwt, 'decode');
             decodeSpy
                 .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
                 .mockImplementationOnce(() => decodedAccessToken as any);
@@ -641,12 +651,12 @@ describe('authApp', () => {
                 headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
-                cookie: jest.fn(),
-                redirect: jest.fn(),
+                cookie: vi.fn(),
+                redirect: vi.fn(),
             };
 
             // Act
-            await verifyHandler(request, response, jest.fn());
+            await verifyHandler(request, response, vi.fn());
 
             // Assert
             expect(mockRecordDomain.createRecord).not.toHaveBeenCalled();
@@ -672,16 +682,16 @@ describe('authApp', () => {
             };
 
             const mockRecordDomain = {
-                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
+                find: vi.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockOidcService: Mockify<IOIDCClientService> = {
-                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
-                saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
+                getTokensFromCodes: vi.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: vi.fn(),
+                getOriginalUrl: vi.fn().mockResolvedValue('redirectUrl'),
             };
 
-            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+            const mockConvert = {decodeIdentifierFromBase64Url: vi.fn().mockReturnValue('queryId')};
 
             const authApp = createAuthApp({
                 ...depsBase,
@@ -693,12 +703,12 @@ describe('authApp', () => {
             authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
 
             // Mock jwt.decode calls for id_token then access_token
-            const decodeSpy = jest.spyOn(jwt, 'decode');
+            const decodeSpy = vi.spyOn(jwt, 'decode');
             decodeSpy
                 .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
                 .mockImplementationOnce(() => ({resource_access: {client: {roles: []}}}) as any);
 
-            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            const expressMock = {get: vi.fn(), post: vi.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
@@ -711,14 +721,14 @@ describe('authApp', () => {
                 headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
-                cookie: jest.fn(),
-                redirect: jest.fn(),
-                status: jest.fn(identity),
+                cookie: vi.fn(),
+                redirect: vi.fn(),
+                status: vi.fn(identity),
             };
 
             // Act
             const resultReqPromise = new Promise((resolve, reject) => verifyHandler(request, response, reject));
-            await expect(resultReqPromise).rejects.toEqual(new Error('Invalid user'));
+            await expect(resultReqPromise).rejects.toEqual(new AuthenticationError('Invalid user'));
             expect(postOidcLoginCallback).not.toHaveBeenCalled();
         });
 
@@ -737,13 +747,13 @@ describe('authApp', () => {
             };
 
             const mockRecordDomain = {
-                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
-                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}}),
+                find: vi.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
+                createRecord: vi.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}}),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: jest.fn(),
-                getValues: jest.fn().mockResolvedValue([]),
+                saveValue: vi.fn(),
+                getValues: vi.fn().mockResolvedValue([]),
             };
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
@@ -751,12 +761,12 @@ describe('authApp', () => {
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
-                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
-                saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
+                getTokensFromCodes: vi.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: vi.fn(),
+                getOriginalUrl: vi.fn().mockResolvedValue('redirectUrl'),
             };
 
-            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+            const mockConvert = {decodeIdentifierFromBase64Url: vi.fn().mockReturnValue('queryId')};
 
             const authApp = createAuthApp({
                 ...depsBase,
@@ -769,7 +779,7 @@ describe('authApp', () => {
             });
             authApp.extensionPoints.registerAuthPostOidcLoginCallback(postOidcLoginCallback);
 
-            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            const expressMock = {get: vi.fn(), post: vi.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
@@ -777,7 +787,7 @@ describe('authApp', () => {
 
             // Mock jwt.decode calls for id_token then access_token
             const decodedAccessToken = {resource_access: {client: {roles: []}}};
-            const decodeSpy = jest.spyOn(jwt, 'decode');
+            const decodeSpy = vi.spyOn(jwt, 'decode');
             decodeSpy
                 .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
                 .mockImplementationOnce(() => decodedAccessToken as any);
@@ -789,12 +799,12 @@ describe('authApp', () => {
                 headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
-                cookie: jest.fn(),
-                redirect: jest.fn(),
+                cookie: vi.fn(),
+                redirect: vi.fn(),
             };
 
             // Act
-            await verifyHandler(request, response, jest.fn());
+            await verifyHandler(request, response, vi.fn());
 
             // Assert
             expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
@@ -831,13 +841,13 @@ describe('authApp', () => {
             };
 
             const mockRecordDomain = {
-                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
-                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}}),
+                find: vi.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
+                createRecord: vi.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}}),
             } as unknown as Mockify<IRecordDomain>;
 
             const mockValueDomain = {
-                saveValue: jest.fn(),
-                getValues: jest.fn().mockResolvedValue([]),
+                saveValue: vi.fn(),
+                getValues: vi.fn().mockResolvedValue([]),
             } as unknown as Mockify<IValueDomain>;
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
@@ -845,12 +855,12 @@ describe('authApp', () => {
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
-                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
-                saveOIDCTokens: jest.fn(),
-                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl'),
+                getTokensFromCodes: vi.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: vi.fn(),
+                getOriginalUrl: vi.fn().mockResolvedValue('redirectUrl'),
             };
 
-            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+            const mockConvert = {decodeIdentifierFromBase64Url: vi.fn().mockReturnValue('queryId')};
 
             const authApp = createAuthApp({
                 ...depsBase,
@@ -862,14 +872,14 @@ describe('authApp', () => {
                 config: mockConfig as IConfig,
             });
 
-            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            const expressMock = {get: vi.fn(), post: vi.fn()} satisfies Mockify<Express>;
             authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
 
             // Mock jwt.decode calls for id_token then access_token with admin role
-            const decodeSpy = jest.spyOn(jwt, 'decode');
+            const decodeSpy = vi.spyOn(jwt, 'decode');
             decodeSpy
                 .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
                 .mockImplementationOnce(() => ({resource_access: {client: {roles: ['admin']}}}) as any);
@@ -881,12 +891,12 @@ describe('authApp', () => {
                 headers: {host: 'host', 'user-agent': 'jest'},
             };
             const response: any = {
-                cookie: jest.fn(),
-                redirect: jest.fn(),
+                cookie: vi.fn(),
+                redirect: vi.fn(),
             };
 
             // Act
-            await verifyHandler(request, response, jest.fn());
+            await verifyHandler(request, response, vi.fn());
 
             // Assert admin group assignment
             expect(mockValueDomain.saveValue).toHaveBeenCalledWith(

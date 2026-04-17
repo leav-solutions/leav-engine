@@ -17,14 +17,14 @@ import userDataDomain, {type IUserDomainDeps, UserCoreDataKeys} from './userDoma
 
 const depsBase: ToAny<IUserDomainDeps> = {
     config: {},
-    'core.domain.permissions': jest.fn(),
-    'core.infra.userData': jest.fn(),
-    'core.domain.permission': jest.fn(),
-    'core.infra.mailer.mailerService': jest.fn(),
-    'core.domain.globalSettings': jest.fn(),
-    'core.domain.value': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.permissions': vi.fn(),
+    'core.infra.userData': vi.fn(),
+    'core.domain.permission': vi.fn(),
+    'core.infra.mailer.mailerService': vi.fn(),
+    'core.domain.globalSettings': vi.fn(),
+    'core.domain.value': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.utils': vi.fn(),
     translator: {},
 };
 
@@ -35,7 +35,7 @@ describe('UserDomain', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('save user data', () => {
@@ -182,7 +182,7 @@ describe('UserDomain', () => {
 
         test('should send a reset password email', async function () {
             const mockUtils: Mockify<IUtils> = {
-                getFullApplicationEndpoint: jest.fn().mockReturnValue('endpoint'),
+                getFullApplicationEndpoint: vi.fn().mockReturnValue('endpoint'),
             };
 
             const mockMailerService = {

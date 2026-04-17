@@ -17,16 +17,16 @@ import {type IValidateHelper} from '../../helpers/validate';
 import getValuesFactory, {type IGetValuesHelperDeps} from './getValues';
 import {AttributeTypes} from '../../../_types/attribute';
 
-const mockRunActionsList = jest.fn().mockImplementation(async ({values}) => values);
+const mockRunActionsList = vi.fn().mockImplementation(async ({values}) => values);
 
 const depsBase: ToAny<IGetValuesHelperDeps> = {
-    'core.domain.attribute': jest.fn(),
-    'core.domain.helpers.validate': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
-    'core.domain.versionProfile': jest.fn(),
+    'core.domain.attribute': vi.fn(),
+    'core.domain.helpers.validate': vi.fn(),
+    'core.domain.tree.helpers.elementAncestors': vi.fn(),
+    'core.domain.tree.helpers.getDefaultElement': vi.fn(),
+    'core.domain.versionProfile': vi.fn(),
     'core.domain.value.helpers.runActionsList': mockRunActionsList,
-    'core.infra.value': jest.fn(),
+    'core.infra.value': vi.fn(),
 };
 
 describe('getValues', () => {
@@ -62,7 +62,7 @@ describe('getValues', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('Should return values', async function () {
@@ -344,7 +344,7 @@ describe('getValues', () => {
 
         const mockElementAncestorsHelperMultipleTrees = {
             ...mockElementAncestorsHelper,
-            getCachedElementAncestors: jest.fn().mockImplementation(({treeId}) => {
+            getCachedElementAncestors: vi.fn().mockImplementation(({treeId}) => {
                 let parents;
                 switch (treeId) {
                     case 'my_tree':
@@ -462,7 +462,7 @@ describe('getValues', () => {
 
     test('Should throw if unknown attribute', async function () {
         const mockAttrDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: jest.fn().mockImplementationOnce(() => {
+            getAttributeProperties: vi.fn().mockImplementationOnce(() => {
                 throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
             }),
         };
@@ -484,7 +484,7 @@ describe('getValues', () => {
 
     test('Should throw if unknown library', async function () {
         const mockValidHelper: Mockify<IValidateHelper> = {
-            validateLibrary: jest.fn().mockImplementation(() => {
+            validateLibrary: vi.fn().mockImplementation(() => {
                 throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
             }),
             validateRecord: global.__mockPromise(true),
@@ -508,7 +508,7 @@ describe('getValues', () => {
 
     test('Should throw if unknown record', async function () {
         const mockValidHelper: Mockify<IValidateHelper> = {
-            validateRecord: jest.fn().mockImplementation(() => {
+            validateRecord: vi.fn().mockImplementation(() => {
                 throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
             }),
             validateLibrary: global.__mockPromise(true),

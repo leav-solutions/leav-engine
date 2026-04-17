@@ -11,23 +11,22 @@ import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
 import {mockCtx, mockSystemQueryContext} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
 import tasksManager, {type ITasksManagerDomainDeps} from './tasksManagerDomain';
-import {type Mockify} from '@leav/utils';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: jest.fn(),
-    checkExchange: jest.fn(),
-    assertQueue: jest.fn(),
-    bindQueue: jest.fn(),
-    consume: jest.fn(),
-    publish: jest.fn(),
-    waitForConfirms: jest.fn(),
-    prefetch: jest.fn(),
+    assertExchange: vi.fn(),
+    checkExchange: vi.fn(),
+    assertQueue: vi.fn(),
+    bindQueue: vi.fn(),
+    consume: vi.fn(),
+    publish: vi.fn(),
+    waitForConfirms: vi.fn(),
+    prefetch: vi.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
+    close: vi.fn(),
+    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
 };
 
 const mockAdminPermissionDomain = {
@@ -36,19 +35,19 @@ const mockAdminPermissionDomain = {
 
 const depsBase: ToAny<ITasksManagerDomainDeps> = {
     config: {},
-    'core.infra.amqpService': jest.fn(),
-    'core.infra.task': jest.fn(),
-    'core.depsManager': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.domain.permission.admin': jest.fn(),
-    'core.utils.logger': jest.fn(),
-    'core.utils': jest.fn(),
-    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
+    'core.infra.amqpService': vi.fn(),
+    'core.infra.task': vi.fn(),
+    'core.depsManager': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.utils': vi.fn(),
+    'core.utils.getSystemQueryContext': vi.fn(() => mockSystemQueryContext),
 };
 
 describe('Tasks Manager', () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const conf = {
@@ -150,7 +149,7 @@ describe('Tasks Manager', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
+            getUnixTime: vi.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -211,15 +210,15 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Master / Task to execute', async () => {
-        jest.setTimeout(conf.tasksManager.checkingInterval + 500);
+        vi.setConfig({testTimeout: conf.tasksManager.checkingInterval + 500});
 
         const mockAmqpService = {
-            consume: jest.fn(),
+            consume: vi.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
                 channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn(),
+            publish: vi.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
@@ -231,7 +230,7 @@ describe('Tasks Manager', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
+            getUnixTime: vi.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -266,15 +265,15 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Master / Task to cancel', async () => {
-        jest.setTimeout(conf.tasksManager.checkingInterval + 500);
+        vi.setConfig({testTimeout: conf.tasksManager.checkingInterval + 500});
 
         const mockAmqpService = {
-            consume: jest.fn(),
+            consume: vi.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
                 channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn(),
+            publish: vi.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
@@ -284,7 +283,7 @@ describe('Tasks Manager', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
+            getUnixTime: vi.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -309,15 +308,15 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Master / Pending callback', async () => {
-        jest.setTimeout(conf.tasksManager.checkingInterval + 500);
+        vi.setConfig({testTimeout: conf.tasksManager.checkingInterval + 500});
 
         const mockAmqpService = {
-            consume: jest.fn(),
+            consume: vi.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
                 channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn(),
+            publish: vi.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
@@ -332,7 +331,7 @@ describe('Tasks Manager', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getUnixTime: jest.fn(() => Math.floor(Date.now() / 1000)),
+            getUnixTime: vi.fn(() => Math.floor(Date.now() / 1000)),
         };
 
         const tm = tasksManager({
@@ -365,12 +364,12 @@ describe('Tasks Manager', () => {
 
     test('Init Worker', async () => {
         const mockAmqpService = {
-            consume: jest.fn(),
+            consume: vi.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.ChannelModel,
                 channel: mockAmqpChannel as amqp.ConfirmChannel,
             },
-            publish: jest.fn(),
+            publish: vi.fn(),
         } satisfies Mockify<IAmqpService>;
 
         const tm = tasksManager({

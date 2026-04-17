@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`viewRepo createView Should create a new view 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+exports[`viewRepo > createView > Should create a new view 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
-exports[`viewRepo createView Should create a new view 2`] = `
+exports[`viewRepo > createView > Should create a new view 2`] = `
 {
   "@value1": "core_views",
   "value0": {
@@ -44,9 +44,9 @@ exports[`viewRepo createView Should create a new view 2`] = `
 }
 `;
 
-exports[`viewRepo deleteView Should delete view 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+exports[`viewRepo > deleteView > Should delete view 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
-exports[`viewRepo deleteView Should delete view 2`] = `
+exports[`viewRepo > deleteView > Should delete view 2`] = `
 {
   "@value1": "core_views",
   "value0": {
@@ -55,14 +55,14 @@ exports[`viewRepo deleteView Should delete view 2`] = `
 }
 `;
 
-exports[`viewRepo updateView Should update an existing view 1`] = `
+exports[`viewRepo > updateView > Should update an existing view 1`] = `
 "
                     UPDATE @value0 IN @@value1
                     OPTIONS {mergeObjects: false, keepNull: false}
                     RETURN NEW"
 `;
 
-exports[`viewRepo updateView Should update an existing view 2`] = `
+exports[`viewRepo > updateView > Should update an existing view 2`] = `
 {
   "@value1": "core_views",
   "value0": {

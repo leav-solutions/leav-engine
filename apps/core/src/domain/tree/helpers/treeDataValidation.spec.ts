@@ -17,7 +17,7 @@ describe('TreeDataValidation', () => {
         };
 
         const mockUtils: Mockify<IUtils> = {
-            isIdValid: jest.fn().mockReturnValue(true),
+            isIdValid: vi.fn().mockReturnValue(true),
         };
 
         const mockLibRepo: Mockify<ILibraryRepo> = {
@@ -31,7 +31,7 @@ describe('TreeDataValidation', () => {
 
         test('Should throw if ID is invalid', async () => {
             const mockUtilsInvalidId: Mockify<IUtils> = {
-                isIdValid: jest.fn().mockReturnValue(false),
+                isIdValid: vi.fn().mockReturnValue(false),
             };
 
             const validationHelper = treeDataValidation({

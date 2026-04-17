@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`getClassifyingFiltersVariableQueryPart Return variable query part for classifying filters 1`] = `
+exports[`getClassifyingFiltersVariableQueryPart > Return variable query part for classifying filters 1`] = `
 {
   "_source": [Function],
   "bindVars": {

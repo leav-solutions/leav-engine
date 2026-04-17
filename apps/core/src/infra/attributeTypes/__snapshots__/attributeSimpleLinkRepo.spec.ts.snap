@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 1`] = `
+exports[`AttributeSimpleLinkRepo > createValue > Should create a simple link value 1`] = `
 "
                     LET linkedRecord = DOCUMENT(@value0, @value1)
                     UPDATE @value2 WITH @value3 IN @@value4
@@ -8,7 +8,7 @@ exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 1
                     RETURN {doc: NEW, linkedRecord}"
 `;
 
-exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 2`] = `
+exports[`AttributeSimpleLinkRepo > createValue > Should create a simple link value 2`] = `
 {
   "@value4": "test_lib",
   "value0": "test_linked_lib",
@@ -22,7 +22,7 @@ exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 2
 }
 `;
 
-exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
+exports[`AttributeSimpleLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -37,7 +37,7 @@ exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to ret
 }
 `;
 
-exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter 1`] = `
+exports[`AttributeSimpleLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for "count" filter 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -47,7 +47,7 @@ exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to ret
 }
 `;
 
-exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link 1`] = `
+exports[`AttributeSimpleLinkRepo > filterValueQueryPart > Should return query to retrieve value to filter on for reverse link 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -62,7 +62,7 @@ exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to ret
 }
 `;
 
-exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 1`] = `
+exports[`AttributeSimpleLinkRepo > getValues > Should return values for simple link attribute 1`] = `
 {
   "_source": [Function],
   "bindVars": {
@@ -81,9 +81,9 @@ exports[`AttributeSimpleLinkRepo getValues Should return values for simple link 
 }
 `;
 
-exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 2`] = `undefined`;
+exports[`AttributeSimpleLinkRepo > getValues > Should return values for simple link attribute 2`] = `undefined`;
 
-exports[`AttributeSimpleLinkRepo sortQueryPart Should return simple link sort 1`] = `
+exports[`AttributeSimpleLinkRepo > sortQueryPart > Should return simple link sort 1`] = `
 {
   "_source": [Function],
   "bindVars": {

@@ -13,34 +13,34 @@ import {type IConfig} from '../../../_types/config';
 
 const depsBase: ToAny<IApplicationAppDeps> = {
     config: {},
-    'core.app.graphql': jest.fn(),
-    'core.app.auth': jest.fn(),
-    'core.app.helpers.initQueryContext': jest.fn(),
-    'core.app.helpers.validateRequestToken': jest.fn(),
-    'core.app.core.subscriptionsHelper': jest.fn(),
-    'core.domain.application': jest.fn(),
-    'core.domain.permission': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.domain.globalSettings': jest.fn(),
-    'core.domain.application.appStudio': jest.fn(),
-    'core.utils.logger': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.app.graphql': vi.fn(),
+    'core.app.auth': vi.fn(),
+    'core.app.helpers.initQueryContext': vi.fn(),
+    'core.app.helpers.validateRequestToken': vi.fn(),
+    'core.app.core.subscriptionsHelper': vi.fn(),
+    'core.domain.application': vi.fn(),
+    'core.domain.permission': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.domain.globalSettings': vi.fn(),
+    'core.domain.application.appStudio': vi.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.utils': vi.fn(),
 };
 
 describe('ApplicationApp', () => {
     const utilsMock: Mockify<IUtils> = {
-        getFullApplicationEndpoint: jest.fn().mockReturnValueOnce('getFullApplicationEndpoint'),
+        getFullApplicationEndpoint: vi.fn().mockReturnValueOnce('getFullApplicationEndpoint'),
     };
 
     describe('when token is invalid', () => {
         it('Should authenticate on OIDC Service', async () => {
             const authAppMock: Mockify<IAuthApp> = {
-                authenticateWithOIDCService: jest.fn(),
+                authenticateWithOIDCService: vi.fn(),
             };
-            const validateRequestTokenHelper = jest.fn();
+            const validateRequestTokenHelper = vi.fn();
             const applicationDomainMock: Mockify<IApplicationDomain> = {
-                getApplications: jest.fn().mockResolvedValueOnce({
+                getApplications: vi.fn().mockResolvedValueOnce({
                     list: [
                         {
                             id: 'applicationId',
@@ -68,7 +68,7 @@ describe('ApplicationApp', () => {
             validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
             const expressInstance: any = {
-                get: jest.fn(),
+                get: vi.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -82,9 +82,9 @@ describe('ApplicationApp', () => {
                 body: {requestId: 'requestId'},
             };
             const res = {
-                redirect: jest.fn(),
+                redirect: vi.fn(),
             };
-            const next = jest.fn();
+            const next = vi.fn();
             await authHandler(req, res, next);
 
             expect(res.redirect).not.toHaveBeenCalled();
@@ -94,9 +94,9 @@ describe('ApplicationApp', () => {
         });
 
         it('Should redirect to login app with eventual server base path', async () => {
-            const validateRequestTokenHelper = jest.fn();
+            const validateRequestTokenHelper = vi.fn();
             const applicationDomainMock: Mockify<IApplicationDomain> = {
-                getApplications: jest.fn().mockResolvedValueOnce({
+                getApplications: vi.fn().mockResolvedValueOnce({
                     list: [
                         {
                             id: 'applicationId',
@@ -123,7 +123,7 @@ describe('ApplicationApp', () => {
             validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
             const expressInstance: any = {
-                get: jest.fn(),
+                get: vi.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -138,9 +138,9 @@ describe('ApplicationApp', () => {
                 body: {requestId: 'requestId'},
             };
             const res = {
-                redirect: jest.fn(),
+                redirect: vi.fn(),
             };
-            const next = jest.fn();
+            const next = vi.fn();
             await authHandler(req, res, next);
 
             expect(next).not.toHaveBeenCalled();
@@ -154,7 +154,7 @@ describe('ApplicationApp', () => {
     describe('when login is asked', () => {
         it('Should redirect to default app if oidc service enable because we cannot log directly to leav', async () => {
             const globalSettingsMock: Mockify<IGlobalSettingsDomain> = {
-                getSettings: jest.fn().mockResolvedValueOnce({
+                getSettings: vi.fn().mockResolvedValueOnce({
                     name: 'My App',
                     icon: null,
                     defaultApp: 'admin',
@@ -174,7 +174,7 @@ describe('ApplicationApp', () => {
             });
 
             const expressInstance: any = {
-                get: jest.fn(),
+                get: vi.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -188,9 +188,9 @@ describe('ApplicationApp', () => {
                 body: {requestId: 'requestId'},
             };
             const res = {
-                redirect: jest.fn(),
+                redirect: vi.fn(),
             };
-            const next = jest.fn();
+            const next = vi.fn();
             await authHandler(req, res, next);
 
             expect(next).not.toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe('ApplicationApp', () => {
         });
 
         it('Should not verify token and continue handlers, login is public when oidc not enable', async () => {
-            const validateRequestTokenHelper = jest.fn();
+            const validateRequestTokenHelper = vi.fn();
             const applicationApp = createApplicationApp({
                 ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
@@ -214,7 +214,7 @@ describe('ApplicationApp', () => {
                 } as IConfig,
             });
             const expressInstance: any = {
-                get: jest.fn(),
+                get: vi.fn(),
             };
             applicationApp.registerRoute(expressInstance);
             const getAppsUrl = expressInstance.get.mock.calls[0];
@@ -229,9 +229,9 @@ describe('ApplicationApp', () => {
                 path: '/app/login',
             };
             const res = {
-                redirect: jest.fn(),
+                redirect: vi.fn(),
             };
-            const next = jest.fn();
+            const next = vi.fn();
             await authHandler(req, res, next);
 
             expect(next).toHaveBeenCalledTimes(1);

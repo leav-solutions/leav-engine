@@ -21,17 +21,17 @@ const mockAppStudioDomain = {
 
 const depsBase: ToAny<IApplicationDomainDeps> = {
     config: {},
-    'core.domain.permission.admin': jest.fn(),
-    'core.domain.user': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
-    'core.infra.application': jest.fn(),
-    'core.utils': jest.fn(),
+    'core.domain.permission.admin': vi.fn(),
+    'core.domain.user': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
+    'core.infra.application': vi.fn(),
+    'core.utils': vi.fn(),
     'core.domain.application.appStudio': mockAppStudioDomain,
     translator: {},
 };
 
 describe('applicationDomain', () => {
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     const mockAdminPermissionDomain: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(true),
@@ -103,8 +103,8 @@ describe('applicationDomain', () => {
 
     describe('saveApplication', () => {
         const mockUtils: Mockify<IUtils> = {
-            isIdValid: jest.fn().mockReturnValue(true),
-            isEndpointValid: jest.fn().mockReturnValue(true),
+            isIdValid: vi.fn().mockReturnValue(true),
+            isEndpointValid: vi.fn().mockReturnValue(true),
         };
 
         describe('Creation', () => {
@@ -218,7 +218,7 @@ describe('applicationDomain', () => {
             test('Throws if ID is not valid', async () => {
                 const mockUtilsInvalidID: Mockify<IUtils> = {
                     ...mockUtils,
-                    isIdValid: jest.fn().mockReturnValue(false),
+                    isIdValid: vi.fn().mockReturnValue(false),
                 };
 
                 const appDomain = applicationDomain({
@@ -239,7 +239,7 @@ describe('applicationDomain', () => {
             test('Throws if endpoint is not valid', async () => {
                 const mockUtilsInvalidEndpoint: Mockify<IUtils> = {
                     ...mockUtils,
-                    isEndpointValid: jest.fn().mockReturnValue(false),
+                    isEndpointValid: vi.fn().mockReturnValue(false),
                 };
                 const appDomain = applicationDomain({
                     ...depsBase,
@@ -365,7 +365,7 @@ describe('applicationDomain', () => {
         test('Save consulted app to history', async () => {
             const mockUserDomain = {
                 getUserData: global.__mockPromise({data: {[CONSULTED_APPS_KEY]: []}}),
-                saveUserData: jest.fn(),
+                saveUserData: vi.fn(),
             } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
@@ -395,7 +395,7 @@ describe('applicationDomain', () => {
                         [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app'],
                     },
                 }),
-                saveUserData: jest.fn(),
+                saveUserData: vi.fn(),
             } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
@@ -425,7 +425,7 @@ describe('applicationDomain', () => {
                         [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i),
                     },
                 }),
-                saveUserData: jest.fn(),
+                saveUserData: vi.fn(),
             } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({

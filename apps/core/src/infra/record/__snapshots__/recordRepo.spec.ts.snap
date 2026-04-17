@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`RecordRepo find Handle fulltext search result 1`] = `
+exports[`RecordRepo > find > Handle fulltext search result 1`] = `
 {
   "ctx": {
     "userId": "0",
@@ -19,7 +19,7 @@ RETURN MERGE(r, {library: @value1})",
 }
 `;
 
-exports[`RecordRepo find Should aggregate sorts 1`] = `
+exports[`RecordRepo > find > Should aggregate sorts 1`] = `
 {
   "ctx": {
     "userId": "0",
@@ -46,7 +46,7 @@ RETURN MERGE(r, {library: @value3})",
 }
 `;
 
-exports[`RecordRepo find Should find records 1`] = `
+exports[`RecordRepo > find > Should find records 1`] = `
 {
   "ctx": {
     "userId": "0",
@@ -66,7 +66,7 @@ RETURN MERGE(r, {library: @value1})",
 }
 `;
 
-exports[`RecordRepo find with filters Should filter records - simple 1`] = `
+exports[`RecordRepo > find with filters > Should filter records - simple 1`] = `
 {
   "ctx": {
     "userId": "0",
@@ -92,7 +92,7 @@ RETURN MERGE(r, {library: @value1})",
 }
 `;
 
-exports[`RecordRepo getRecord Should return records in same order 1`] = `
+exports[`RecordRepo > getRecord > Should return records in same order 1`] = `
 {
   "query": {
     "_source": [Function],
@@ -110,7 +110,7 @@ exports[`RecordRepo getRecord Should return records in same order 1`] = `
 }
 `;
 
-exports[`RecordRepo updateRecord Should update a record 1`] = `
+exports[`RecordRepo > updateRecord > Should update a record 1`] = `
 "
                     UPDATE @value0 WITH @value1 IN @@value2
                     OPTIONS { keepNull: false }
@@ -118,7 +118,7 @@ exports[`RecordRepo updateRecord Should update a record 1`] = `
                 "
 `;
 
-exports[`RecordRepo updateRecord Should update a record 2`] = `
+exports[`RecordRepo > updateRecord > Should update a record 2`] = `
 {
   "@value2": "test",
   "value0": {

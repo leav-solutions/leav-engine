@@ -58,54 +58,54 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: jest.fn(),
-    checkExchange: jest.fn(),
-    assertQueue: jest.fn(),
-    bindQueue: jest.fn(),
-    consume: jest.fn(),
-    publish: jest.fn(),
-    waitForConfirms: jest.fn(),
-    prefetch: jest.fn(),
+    assertExchange: vi.fn(),
+    checkExchange: vi.fn(),
+    assertQueue: vi.fn(),
+    bindQueue: vi.fn(),
+    consume: vi.fn(),
+    publish: vi.fn(),
+    waitForConfirms: vi.fn(),
+    prefetch: vi.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
+    close: vi.fn(),
+    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
 };
 
-jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection),
+vi.mock('amqplib', () => ({
+    connect: vi.fn().mockImplementation(() => mockAmqpConnection),
 }));
 
 const logger: Mockify<ILogger> = {
-    info: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    warn: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    info: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    error: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    warn: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
 };
 
-jest.mock('./helpers/handlePreview', () => ({
-    requestPreviewGeneration: jest.fn(),
+vi.mock('./helpers/handlePreview', () => ({
+    requestPreviewGeneration: vi.fn(),
 }));
 
 const depsBase: ToAny<IFilesManagerDomainDeps> = {
     config: {},
-    'core.utils': jest.fn(),
-    'core.infra.amqpService': jest.fn(),
-    'core.utils.logger': jest.fn(),
-    'core.domain.record': jest.fn(),
-    'core.domain.value': jest.fn(),
-    'core.domain.tree': jest.fn(),
-    'core.domain.permission.library': jest.fn(),
-    'core.domain.filesManager.helpers.messagesHandler': jest.fn(),
-    'core.domain.library': jest.fn(),
-    'core.domain.helpers.updateRecordLastModif': jest.fn(),
-    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
-    'core.domain.helpers.storeUploadFile': jest.fn(),
-    'core.domain.helpers.createDirectory': jest.fn(),
-    'core.infra.record': jest.fn(),
-    'core.domain.eventsManager': jest.fn(),
+    'core.utils': vi.fn(),
+    'core.infra.amqpService': vi.fn(),
+    'core.utils.logger': vi.fn(),
+    'core.domain.record': vi.fn(),
+    'core.domain.value': vi.fn(),
+    'core.domain.tree': vi.fn(),
+    'core.domain.permission.library': vi.fn(),
+    'core.domain.filesManager.helpers.messagesHandler': vi.fn(),
+    'core.domain.library': vi.fn(),
+    'core.domain.helpers.updateRecordLastModif': vi.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': vi.fn(),
+    'core.domain.helpers.storeUploadFile': vi.fn(),
+    'core.domain.helpers.createDirectory': vi.fn(),
+    'core.infra.record': vi.fn(),
+    'core.domain.eventsManager': vi.fn(),
     translator: {},
-    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
+    'core.utils.getSystemQueryContext': vi.fn(() => mockSystemQueryContext),
 };
 
 describe('FilesManager', () => {
@@ -119,12 +119,12 @@ describe('FilesManager', () => {
     };
 
     const mockLibraryPermissionDomain = {
-        getLibraryPermission: jest.fn().mockReturnValue(true),
-        getInheritedLibraryPermission: jest.fn().mockReturnValue(true),
+        getLibraryPermission: vi.fn().mockReturnValue(true),
+        getInheritedLibraryPermission: vi.fn().mockReturnValue(true),
     } satisfies Mockify<ILibraryPermissionDomain>;
 
     const mockAmqpService = {
-        consume: jest.fn(),
+        consume: vi.fn(),
         consumer: {
             connection: mockAmqpConnection as amqp.ChannelModel,
             channel: mockAmqpChannel as amqp.ConfirmChannel,
@@ -132,11 +132,11 @@ describe('FilesManager', () => {
     } satisfies Mockify<IAmqpService>;
 
     const mockTreeDomain: Mockify<ITreeDomain> = {
-        getNodesByRecord: jest.fn(),
+        getNodesByRecord: vi.fn(),
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('Init', async () => {
@@ -157,18 +157,18 @@ describe('FilesManager', () => {
 
     describe('forcePreviewsGeneration', () => {
         const mockRecordRepo: Mockify<IRecordRepo> = {
-            updateRecord: jest.fn(),
+            updateRecord: vi.fn(),
         };
 
         const mockUtils: Mockify<IUtils> = {
-            getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-            getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previews_status'),
-            getPreviewAttributesSettings: jest.fn().mockReturnValue(systemPreviewsSettings),
-            previewsSettingsToVersions: jest.fn().mockReturnValue(systemPreviewsSettings),
+            getPreviewsAttributeName: vi.fn().mockReturnValue('previews'),
+            getPreviewsStatusAttributeName: vi.fn().mockReturnValue('previews_status'),
+            getPreviewAttributesSettings: vi.fn().mockReturnValue(systemPreviewsSettings),
+            previewsSettingsToVersions: vi.fn().mockReturnValue(systemPreviewsSettings),
         };
 
-        const mockUpdateLastRecordModif = jest.fn();
-        const mockSendRecordUpdate = jest.fn();
+        const mockUpdateLastRecordModif = vi.fn();
+        const mockSendRecordUpdate = vi.fn();
 
         test('Force preview generation one file', async () => {
             const mockRecordDomain = {
@@ -296,7 +296,7 @@ describe('FilesManager', () => {
             };
 
             const mockLibraryDomainForDirectories: Mockify<ILibraryDomain> = {
-                getLibraryProperties: jest.fn(id =>
+                getLibraryProperties: vi.fn(id =>
                     id === 'lib2'
                         ? {...mockLibraryFiles, id}
                         : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES},
@@ -550,7 +550,7 @@ describe('FilesManager', () => {
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
             });
-            files.getRootPathByKey = jest.fn(() => '/rootPath');
+            files.getRootPathByKey = vi.fn(() => '/rootPath');
 
             const originalPath = await files.getOriginalPath({ctx, libraryId: 'libraryId', fileId: '123456'});
 
@@ -570,7 +570,7 @@ describe('FilesManager', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 translator: mockTranslator as i18n,
             });
-            files.getRootPathByKey = jest.fn(() => '/rootPath');
+            files.getRootPathByKey = vi.fn(() => '/rootPath');
 
             await expect(files.getOriginalPath({ctx, libraryId: 'libraryId', fileId: '123456'})).rejects.toThrow(
                 ValidationError,
@@ -601,7 +601,7 @@ describe('FilesManager', () => {
             const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
 
             const mockUtils: Mockify<IUtils> = {
-                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id),
+                getFilesLibraryId: vi.fn(() => mockLibraryFiles.id),
             };
 
             const files = filesManager({
@@ -648,10 +648,10 @@ describe('FilesManager', () => {
             const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
 
             const mockUtils: Mockify<IUtils> = {
-                generateExplicitValidationError: jest.fn(() => {
+                generateExplicitValidationError: vi.fn(() => {
                     throw new ValidationError({});
                 }),
-                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id),
+                getFilesLibraryId: vi.fn(() => mockLibraryFiles.id),
             };
 
             const files = filesManager({
@@ -702,10 +702,10 @@ describe('FilesManager', () => {
         const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
 
         const mockUtils: Mockify<IUtils> = {
-            generateExplicitValidationError: jest.fn(() => {
+            generateExplicitValidationError: vi.fn(() => {
                 throw new ValidationError({});
             }),
-            getFilesLibraryId: jest.fn(() => mockLibraryFiles.id),
+            getFilesLibraryId: vi.fn(() => mockLibraryFiles.id),
         };
 
         const filesToUpload: IStoreFilesParams = {
@@ -717,7 +717,7 @@ describe('FilesManager', () => {
                         filename: 'my_file.jpg',
                         mimetype: 'image/jpeg',
                         encoding: '7bit',
-                        createReadStream: jest.fn(),
+                        createReadStream: vi.fn(),
                     },
                     uid: '123456789',
                     size: 42,
@@ -726,7 +726,7 @@ describe('FilesManager', () => {
             ],
         };
 
-        const mockStoreUploadFile = jest.fn();
+        const mockStoreUploadFile = vi.fn();
 
         test('Write file to disk', async () => {
             const filesManagerDomain = filesManager({

@@ -11,8 +11,8 @@ import {IGetAdminPermissionParams} from '../permission/_types';
 
 describe('PluginsDomain', () => {
     const mockPluginsRepo: Mockify<IPluginsRepo> = {
-        registerPlugin: jest.fn().mockImplementation((path, infos) => ({path, infos})),
-        getRegisteredPlugins: jest.fn().mockReturnValue([{path: '/fake/path', infos: {...mockPlugin}}]),
+        registerPlugin: vi.fn().mockImplementation((path, infos) => ({path, infos})),
+        getRegisteredPlugins: vi.fn().mockReturnValue([{path: '/fake/path', infos: {...mockPlugin}}]),
     };
 
     const mockAdminPermissionDomain: Mockify<IAdminPermissionDomain> = {

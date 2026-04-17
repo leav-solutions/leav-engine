@@ -62,8 +62,8 @@ describe('FormRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docFormData),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+            convertToDoc: vi.fn().mockReturnValue(docFormData),
         };
 
         const repo = formRepo({
@@ -88,8 +88,8 @@ describe('FormRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docFormData),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+            convertToDoc: vi.fn().mockReturnValue(docFormData),
         };
 
         const repo = formRepo({
@@ -114,8 +114,8 @@ describe('FormRepo', () => {
         };
 
         const mockDbUtils: Mockify<IDbUtils> = {
-            cleanup: jest.fn().mockReturnValue(mockCleanupRes),
-            convertToDoc: jest.fn().mockReturnValue(docFormData),
+            cleanup: vi.fn().mockReturnValue(mockCleanupRes),
+            convertToDoc: vi.fn().mockReturnValue(docFormData),
         };
 
         const repo = formRepo({

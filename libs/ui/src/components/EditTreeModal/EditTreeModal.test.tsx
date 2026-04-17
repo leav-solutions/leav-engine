@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type QueryResult} from '@apollo/client';
-import {type Mockify} from '@leav/utils';
+import {type Mockify} from '_ui/__mocks__/utils';
 import userEvent from '@testing-library/user-event';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockTreeWithDetails} from '_ui/__mocks__/common/tree';
