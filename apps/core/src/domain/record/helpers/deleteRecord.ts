@@ -154,6 +154,7 @@ export default function ({
             {
                 action: EventAction.RECORD_DELETE,
                 topic: {
+                    library: deletedRecord.library,
                     record: {
                         libraryId: deletedRecord.library,
                         id: deletedRecord.id,
