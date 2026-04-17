@@ -13,11 +13,18 @@ import {
 } from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {
+    AutomationTriggerDefSynchronicity,
+    AutomationTriggerDefTopics,
+    type AutomationTriggerDef,
+    type IAutomationTriggers,
+} from '../../domain/automation/automationTriggers';
 
 export type ICoreImportApp = IGraphqlAppModule;
 
 interface IAutomationAppDeps {
     'core.domain.automation': IAutomationDomain;
+    'core.domain.automation.triggers': IAutomationTriggers;
     'core.domain.eventsManager': IEventsManagerDomain;
 }
 
@@ -34,6 +41,7 @@ export interface IGetAutomationRulesArgs {
 
 export default function ({
     'core.domain.automation': automationDomain,
+    'core.domain.automation.triggers': automationTriggers,
     'core.domain.eventsManager': eventsManagerDomain,
 }: IAutomationAppDeps): ICoreImportApp {
     return {
@@ -44,7 +52,19 @@ export default function ({
                         ${Object.values(SyncAutomationRuleEventAction).join(' ')}
                         ${eventsManagerDomain.getActions().join('\n')}
                     }
+                    enum AutomationTriggerDefSynchronicity {
+                        ${Object.values(AutomationTriggerDefSynchronicity).join('\n')}
+                    }
+                    enum AutomationTriggerDefTopics {
+                        ${Object.values(AutomationTriggerDefTopics).join('\n')}
+                    }
                 
+                    type AutomationTriggerDef {
+                        eventAction: AutomationRuleEventAction!,
+                        topics: [AutomationTriggerDefTopics!]!,
+                        synchronicity: AutomationTriggerDefSynchronicity!,
+                    }
+
                     type AutomationRuleTrigger {
                         synchronous: Boolean!,
                         eventAction: AutomationRuleEventAction!,
@@ -117,6 +137,7 @@ export default function ({
                             pagination: Pagination,
                             sort: AutomationRulesSortInput
                         ): AutomationRulesList!
+                        automationTriggersDef: [AutomationTriggerDef!]!
                     }
 
                     extend type Mutation {
@@ -140,6 +161,9 @@ export default function ({
                                 },
                                 ctx,
                             });
+                        },
+                        automationTriggersDef(parent, args, ctx: IQueryInfos): AutomationTriggerDef[] {
+                            return automationTriggers.getAutomationTriggers({ctx});
                         },
                     },
                     Mutation: {
