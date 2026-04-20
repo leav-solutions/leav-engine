@@ -25,20 +25,9 @@ import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {USERS_GROUPS_LIBRARY, USERS_LIBRARY} from '../../../_types/library';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
 import {type ITreeDomain} from '../../../domain/tree/treeDomain';
-import {type IE2EUserParams} from './e2eUtils';
 import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
 import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 import {type TestProject} from 'vitest/node';
-
-declare module 'vitest' {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    export interface ProvidedContext {
-        guestUser: IE2EUserParams;
-        nonAdminUser: IE2EUserParams;
-        nonAdminGroupId: string;
-        graphqlUrl: string;
-    }
-}
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder

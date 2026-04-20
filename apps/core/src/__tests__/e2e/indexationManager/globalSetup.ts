@@ -15,18 +15,7 @@ import {type IServer} from '../../../interface/server';
 import {type ITasksManagerInterface} from '../../../interface/tasksManager';
 import {type IIndexationManagerInterface} from '../../../interface/indexationManager';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
-import {type IE2EUserParams} from '../api/e2eUtils';
 import {type TestProject} from 'vitest/node';
-
-declare module 'vitest' {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    export interface ProvidedContext {
-        guestUser: IE2EUserParams;
-        nonAdminUser: IE2EUserParams;
-        nonAdminGroupId: string;
-        graphqlUrl: string;
-    }
-}
 
 export async function setup(project: TestProject) {
     try {

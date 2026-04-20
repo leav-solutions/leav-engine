@@ -10,18 +10,7 @@ import {initDb} from '../../../infra/db/db';
 import {initRedis} from '../../../infra/cache';
 import {initMailer} from '../../../infra/mailer';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
-import {type IE2EUserParams} from '../api/e2eUtils';
 import {type TestProject} from 'vitest/node';
-
-declare module 'vitest' {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    export interface ProvidedContext {
-        guestUser: IE2EUserParams;
-        nonAdminUser: IE2EUserParams;
-        nonAdminGroupId: string;
-        graphqlUrl: string;
-    }
-}
 
 export async function setup(project: TestProject) {
     try {
