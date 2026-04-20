@@ -23,6 +23,8 @@ import {
 } from '../../_constants/discussions';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, Operator, type IRecord} from '../../_types/record';
+import {type IPubSubRecordNewCommentData, TriggerNames} from '../../_types/eventsManager';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 
 export interface IDiscussionDomain {
     postDiscussionComment(params: {
@@ -36,6 +38,7 @@ export interface IDiscussionDomainDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.value': IValueDomain;
     'core.domain.user': IUserDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
     translator: i18n;
     config: IConfig;
 }
@@ -45,6 +48,7 @@ export default function ({
     'core.domain.record': recordDomain,
     'core.domain.value': valueDomain,
     'core.domain.user': userDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
     translator,
     config,
 }: IDiscussionDomainDeps): IDiscussionDomain {
@@ -177,6 +181,19 @@ export default function ({
                 },
                 ctx,
             });
+
+            await eventsManagerDomain.sendPubSubEvent(
+                {
+                    triggerName: TriggerNames.RECORD_NEW_COMMENT,
+                    data: {
+                        recordNewComment: {
+                            record: {id: targetRecord.id, library: targetRecord.library},
+                            comment: {id: result.record.id, library: DISCUSSION_COMMENTS_LIBRARY_ID},
+                        },
+                    } satisfies IPubSubRecordNewCommentData,
+                },
+                ctx,
+            );
 
             logger.debug(`Discussion comment created recordId=${result.record.id} threadId=${params.threadId}`);
 

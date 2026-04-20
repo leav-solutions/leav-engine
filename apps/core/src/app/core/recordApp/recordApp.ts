@@ -19,11 +19,12 @@ import {type ITree} from '../../../_types/tree';
 import {type IPreview} from '../../../_types/preview';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors, ErrorTypes} from '../../../_types/errors';
-import {TriggerNames} from '../../../_types/eventsManager';
+import {type IPubSubRecordNewCommentData, TriggerNames} from '../../../_types/eventsManager';
 import {type AttributePermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {
     AttributeCondition,
     type IRecord,
+    type IRecordCommentEventFilters,
     type IRecordFilterLight,
     type IRecordIdentity,
     type IRecordUpdateEvent,
@@ -94,6 +95,19 @@ export default function ({
             ctx.errors = [...(ctx.errors ?? []), leavErr];
             return [];
         }
+    };
+
+    const _filterRecordSubscribeEvents = (filters: IRecordUpdateEventFilters, record?: IRecord) => {
+        let mustReturn = true;
+        if (filters?.records?.length) {
+            mustReturn = filters?.records.includes(record?.id);
+        }
+
+        if (mustReturn && filters?.libraries?.length) {
+            mustReturn = filters?.libraries.includes(record?.library);
+        }
+
+        return mustReturn;
     };
 
     return {
@@ -228,12 +242,23 @@ export default function ({
                         updatedValues: [RecordUpdatedValues!]!
                     }
 
+                    type RecordNewCommentEvent {
+                        record: Record!
+                        comment: Record!
+                    }
+
                     type RecordUpdatedValues {
                         attribute: String!,
                         value: GenericValue!
                     }
 
                     input RecordUpdateFilterInput {
+                        libraries: [ID!],
+                        records: [ID!],
+                        ignoreOwnEvents: Boolean
+                    }
+
+                    input RecordNewCommentFilterInput {
                         libraries: [ID!],
                         records: [ID!],
                         ignoreOwnEvents: Boolean
@@ -278,6 +303,7 @@ export default function ({
 
                     extend type Subscription {
                         recordUpdate(filters: RecordUpdateFilterInput): RecordUpdateEvent!
+                        recordNewComment(filters: RecordNewCommentFilterInput): RecordNewCommentEvent!
                     }
                 `,
                 resolvers: {
@@ -418,17 +444,23 @@ export default function ({
                                         return false;
                                     }
 
-                                    const {recordUpdate} = event;
-                                    let mustReturn = true;
-                                    if (filters?.records?.length) {
-                                        mustReturn = filters?.records.includes(recordUpdate?.record.id);
+                                    return _filterRecordSubscribeEvents(filters, event.recordUpdate?.record);
+                                },
+                            ),
+                        },
+                        recordNewComment: {
+                            subscribe: withFilter(
+                                () => eventsManagerDomain.subscribe([TriggerNames.RECORD_NEW_COMMENT]),
+                                (
+                                    event: PublishedEvent<IPubSubRecordNewCommentData>,
+                                    {filters}: {filters: ICommonSubscriptionFilters & IRecordCommentEventFilters},
+                                    ctx: IQueryInfos,
+                                ) => {
+                                    if (filters?.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
+                                        return false;
                                     }
 
-                                    if (mustReturn && filters?.libraries?.length) {
-                                        mustReturn = filters?.libraries.includes(recordUpdate?.record.library);
-                                    }
-
-                                    return mustReturn;
+                                    return _filterRecordSubscribeEvents(filters, event.recordNewComment?.record);
                                 },
                             ),
                         },
