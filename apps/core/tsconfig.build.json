@@ -11,8 +11,10 @@
         "composite": false,
         "resolveJsonModule": true,
         "noImplicitReturns": true,
+        // temporary while plugins still develop/test/build in leav src
         "paths": {
-            "@leav/core/*": ["./src/*"]
+            "@leav/core/*": ["./src/*"],
+            "@leav/*": ["../../libs/*/src"]
         }
     },
     "references": [

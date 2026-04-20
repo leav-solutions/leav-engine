@@ -19,6 +19,10 @@ export default defineConfig({
     resolve: {
         alias: [
             {
+                find: /^@leav\/core\/(.+)/,
+                replacement: `${path.resolve(__dirname, './src')}/$1`,
+            },
+            {
                 find: /^@leav\/(.+)/,
                 replacement: `${path.resolve(__dirname, '../../libs')}/$1/src`,
             },
