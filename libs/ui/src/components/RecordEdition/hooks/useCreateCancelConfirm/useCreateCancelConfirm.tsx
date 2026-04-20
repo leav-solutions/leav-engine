@@ -1,13 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitModal, KitSpace, KitTypography} from 'aristid-ds';
+import {KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal';
 
 export type UseCreateCancelConfirmHook = (onConfirm: () => void) => () => void;
 
 export const useCreateCancelConfirm: UseCreateCancelConfirmHook = onConfirm => {
     const {t} = useSharedTranslation();
+    const {openConfirmModal} = useConfirmModal();
 
     const confirmContent = (
         <KitSpace direction="vertical">
@@ -17,16 +19,10 @@ export const useCreateCancelConfirm: UseCreateCancelConfirmHook = onConfirm => {
     );
 
     return () => {
-        KitModal.confirm({
+        openConfirmModal({
             title: t('record_edition.cancel_confirm_modal_title'),
             content: confirmContent,
-            icon: false,
-            showSecondaryCta: true,
-            showCloseIcon: false,
             dangerConfirm: true,
-            type: 'confirm',
-            okText: t('global.confirm'),
-            cancelText: t('global.cancel'),
             onOk: onConfirm,
         });
     };

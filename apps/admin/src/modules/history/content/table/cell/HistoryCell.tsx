@@ -4,7 +4,7 @@
 import {KitTooltip} from 'aristid-ds';
 import {useRef, useState} from 'react';
 import {historyCellContainer} from './historyCell.module.css';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
+import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 
 type HistoryCellProps = {
     value: string;

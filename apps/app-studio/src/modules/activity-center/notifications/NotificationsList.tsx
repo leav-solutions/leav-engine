@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton, KitEmpty, KitLoader, KitModal, KitNotification, KitSpace} from 'aristid-ds';
+import {KitButton, KitEmpty, KitLoader, KitNotification, KitSpace} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {
     activityCenterTabEmptyContent,
@@ -10,12 +10,11 @@ import {
 } from '../activityCenter.module.css';
 import {useGetUserNotifications} from './get-user-notifications/useGetUserNotifications';
 import {getNotificationDisplayData} from './getNotificationDisplayData';
-import {useLang} from '_ui/hooks';
-import {BREAK_TWO_LINES} from '_ui/components/Explorer/_constants';
+import {useConfirmModal, useLang} from '_ui/hooks';
 import {type Notification} from './types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
-import {ERROR_NOTIFICATION_DURATION} from '_ui/constants';
+import {ERROR_NOTIFICATION_DURATION, BREAK_TWO_LINES} from '_ui/constants';
 import {useDeleteUserNotifications} from './delete-user-notifications/useDeleteUserNotifications';
 
 export const NotificationsList = () => {
@@ -24,7 +23,7 @@ export const NotificationsList = () => {
 
     const {t} = useTranslation();
     const {lang} = useLang();
-
+    const {openConfirmModal} = useConfirmModal();
     const userHasNotifications = userNotifications?.length > 0;
     const userHasMultipleNotifications = userNotifications?.length > 1;
 
@@ -58,18 +57,12 @@ export const NotificationsList = () => {
     }
 
     const onArchiveUserNotifications = async (notifications: Notification[]) => {
-        KitModal.confirm({
-            width: '100%',
-            style: {content: {width: '90vw', maxWidth: '656px'}},
-            type: 'confirm',
-            icon: false,
+        openConfirmModal({
             title: t('activity_center.notifications.delete_notification', {count: notifications?.length}),
             content:
                 t('activity_center.notifications.delete_notification_description', {count: notifications?.length}) +
                 BREAK_TWO_LINES +
                 t('global.are_you_sure'),
-            okText: t('global.confirm'),
-            cancelText: t('global.cancel'),
             onOk: async () => {
                 try {
                     await deleteUserNotifications(notifications);

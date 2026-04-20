@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AntForm, KitButton, KitGrid, KitIdCard, KitModal, KitSpace} from 'aristid-ds';
+import {AntForm, KitButton, KitGrid, KitIdCard, KitSpace} from 'aristid-ds';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BackButton} from '../../ui/button/BackButton';
@@ -9,9 +9,11 @@ import {PageContainer} from '../../ui/page/PageContainer';
 import {PageHeader} from '../../ui/page/PageHeader';
 import {type AutomationFormType, type AutomationFormValues} from './types';
 import {AutomationInfoSection} from './section/AutomationInfoSection';
-import {BREAK_TWO_LINES, COL_RESPONSIVE_CONFIG} from './constants';
+import {COL_RESPONSIVE_CONFIG} from './constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faSave} from '@fortawesome/free-solid-svg-icons';
+import {BREAK_TWO_LINES} from '_ui/constants';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal';
 
 type AutomationFormProps = {
     initialValues: AutomationFormValues;
@@ -25,7 +27,7 @@ export const AutomationForm = ({initialValues, loading, formType, onSubmit, onCa
     const {t} = useTranslation();
     const [form] = AntForm.useForm<AutomationFormValues>();
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
+    const {openConfirmModal} = useConfirmModal();
     const isCreationForm = formType === 'creation';
 
     const title = isCreationForm ? t('automation.form.create.title') : t('automation.form.edit.title');
@@ -43,15 +45,9 @@ export const AutomationForm = ({initialValues, loading, formType, onSubmit, onCa
             return;
         }
 
-        KitModal.confirm({
-            width: '100%',
-            style: {content: {width: '90vw', maxWidth: '656px'}},
-            type: 'confirm',
-            icon: false,
+        openConfirmModal({
             title: t('automation.form.unsaved_changes.title'),
             content: t('automation.form.unsaved_changes.content') + BREAK_TWO_LINES + t('admin.are_you_sure'),
-            okText: t('admin.confirm') ?? undefined,
-            cancelText: t('admin.cancel') ?? undefined,
             onOk: onCancel,
         });
     };

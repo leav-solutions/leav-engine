@@ -23,3 +23,4 @@ export {creationPanelSchema} from './useIFrameMessenger/schema';
 export {useIFrameMessengerHandlers} from './useIFrameMessenger/useIFrameMessengerHandlers';
 export {IFrameMessengerProvider} from './useIFrameMessenger/useIFrameMessengerContext';
 export {useGetRecordIdCard} from './useGetRecordIdCard';
+export {useConfirmModal} from './useConfirmModal';

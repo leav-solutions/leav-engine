@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitButton, KitModal} from 'aristid-ds';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {KitButton} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 
 interface IDeleteAllValuesButtonProps {
@@ -17,18 +18,13 @@ export const DeleteAllValuesButton: FunctionComponent<IDeleteAllValuesButtonProp
     danger,
 }) => {
     const {t} = useSharedTranslation();
+    const {openConfirmModal} = useConfirmModal();
 
     const _confirmDeleteAllValues = () => {
-        KitModal.confirm({
+        openConfirmModal({
             title: t('record_edition.delete_all_values'),
             content: t('record_edition.delete_all_values_confirm'),
-            icon: false,
-            showSecondaryCta: true,
-            showCloseIcon: false,
             dangerConfirm: true,
-            type: 'confirm',
-            okText: t('global.confirm'),
-            cancelText: t('global.cancel'),
             onOk: handleDelete,
         });
     };

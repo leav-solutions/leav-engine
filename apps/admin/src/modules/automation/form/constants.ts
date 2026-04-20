@@ -23,5 +23,3 @@ export const COL_RESPONSIVE_CONFIG = {
         push: 2,
     },
 };
-
-export const BREAK_TWO_LINES = '\n\n';
