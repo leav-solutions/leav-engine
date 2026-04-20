@@ -8,5 +8,5 @@
         "declaration": true,
         "typeRoots": ["./src/_types", "./node_modules/@types", "../../node_modules/@types"]
     },
-    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist"]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist", "src/plugins"]
 }
