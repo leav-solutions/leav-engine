@@ -1,5 +1,4 @@
 ##### Common properties #####
-x-node-image: &node_image node:24.14.1-alpine3.23
 x-message-broker-image: &message_broker_image "rabbitmq:3.13-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.11.31"
 x-redis-image: &redis_image "redis:7.4-alpine3.21"
@@ -188,7 +187,8 @@ services:
     environment:
       <<: [*env-core, *env-amqp, *env-logger]
       CORE_MODE: server
-    volumes: # We must load every volume for installation
+    volumes:
+      # We must load every volume for installation
       - *mount_point-repo
       - *mount_point-files
       - *mount_point-previews
@@ -344,10 +344,11 @@ services:
     command: [sh, -c, "yarn run start:logsCollector"]
 
   admin:
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     labels:
       - traefik.enable=true
-      - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/admin`)) || Host(`admin.leav.localhost`)
+      - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/admin`)) || Host(`admin.leav.localhost`)
       - traefik.http.services.admin.loadbalancer.server.port=3000
       - traefik.http.routers.admin.entrypoints=web
     environment:
@@ -370,11 +371,12 @@ services:
     command: [sh, -c, "yarn run start"]
 
   data-studio:
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/data-studio`)) || Host(`data-studio.leav.localhost`)
+      - traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/data-studio`)) || Host(`data-studio.leav.localhost`)
       - traefik.http.services.data-studio.loadbalancer.server.port=3000
       - traefik.http.routers.data-studio.entrypoints=web
     environment:
@@ -399,11 +401,13 @@ services:
     command: [sh, -c, "yarn run start"]
 
   app-studio:
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) && (PathPrefix(`/app/app-studio`) || PathPrefix(`/app/explorer-studio`) || PathPrefix(`/app/home`))) || Host(`app-studio.leav.localhost`)
+      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) &&
+        (PathPrefix(`/app/app-studio`) || PathPrefix(`/app/explorer-studio`) ||
+        PathPrefix(`/app/home`))) || Host(`app-studio.leav.localhost`)
       - traefik.http.services.app-studio.loadbalancer.server.port=3000
       - traefik.http.routers.app-studio.entrypoints=web
     environment:
@@ -428,11 +432,12 @@ services:
     command: [sh, -c, "yarn run start"]
 
   login:
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.login.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/login`)) || Host(`login.leav.localhost`)
+      - traefik.http.routers.login.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/login`)) || Host(`login.leav.localhost`)
       - traefik.http.services.login.loadbalancer.server.port=3000
       - traefik.http.routers.login.entrypoints=web
     environment:
@@ -457,11 +462,12 @@ services:
     command: [sh, -c, "yarn run start"]
 
   portal:
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.portal.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/portal`)) || Host(`portal.leav.localhost`)
+      - traefik.http.routers.portal.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/portal`)) || Host(`portal.leav.localhost`)
       - traefik.http.services.portal.loadbalancer.server.port=3000
       - traefik.http.routers.portal.entrypoints=web
       - traefik.backend=portal
@@ -489,7 +495,7 @@ services:
 
   automate-scan:
     profiles: ["automate"]
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     restart: always
     environment:
       <<: [*env-logger, *env-automate-scan, *env-amqp]
@@ -578,7 +584,7 @@ services:
   # You need to have a GRAPHQL_API_KEY defined as environment variables (eg. in a .env file)
   sync-scan:
     profiles: ["automate"]
-    image: *node_image
+    image: node:24.14.1-alpine3.23
     labels:
       - traefik.enable=true
     environment:
