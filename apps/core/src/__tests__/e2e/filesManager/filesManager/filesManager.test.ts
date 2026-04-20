@@ -7,8 +7,6 @@ import {FilesAttributes} from '../../../../_types/filesManager';
 import {Operator} from '../../../../_types/record';
 import {makeGraphQlCall} from '../../api/e2eUtils';
 
-jest.setTimeout(30000);
-
 const library = 'files';
 
 const rand = Math.random().toString().substring(2);

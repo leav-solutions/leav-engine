@@ -4,8 +4,6 @@
 import {setTimeout} from 'timers/promises';
 import {makeGraphQlCall} from '../api/e2eUtils';
 
-jest.setTimeout(20000);
-
 describe('Indexation', () => {
     const testLibName = 'indexation_library_test';
     const attrId = 'indexation_attribute_test';
