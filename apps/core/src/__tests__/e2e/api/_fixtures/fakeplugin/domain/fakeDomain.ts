@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {type IQueryInfos} from '../../../../../../_types/queryInfos';
+import {type IQueryInfos} from '@leav/core/_types/queryInfos';
 import {FakePluginActions} from '..';
-import {type IEventsManagerDomain} from '../../../../../../domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from '@leav/core/domain/eventsManager/eventsManagerDomain';
 
 export interface IFakeDomain {
     execWorker({fromTask, ctx}: {fromTask: string; ctx: IQueryInfos}): Promise<void>;

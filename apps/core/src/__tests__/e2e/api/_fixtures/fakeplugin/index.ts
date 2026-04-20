@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type i18n} from 'i18next';
-import {type IPluginInitModule} from '../../../../../_types/plugin';
-import {PermissionTypes} from '../../../../../_types/permissions';
-import {ActionsListIOTypes} from '../../../../../_types/actionsList';
-import {type IValueRepo} from '../../../../../infra/value/valueRepo';
-import {type IAttributeDomain} from '../../../../../domain/attribute/attributeDomain';
-import {type IAttribute} from '../../../../../_types/attribute';
-import {type ITasksManagerDomain} from '../../../../../domain/tasksManager/tasksManagerDomain';
+import {type IPluginInitModule} from '@leav/core/_types/plugin';
+import {PermissionTypes} from '@leav/core/_types/permissions';
+import {ActionsListIOTypes} from '@leav/core/_types/actionsList';
+import {type IValueRepo} from '@leav/core/infra/value/valueRepo';
+import {type IAttributeDomain} from '@leav/core/domain/attribute/attributeDomain';
+import {type IAttribute} from '@leav/core/_types/attribute';
+import {type ITasksManagerDomain} from '@leav/core/domain/tasksManager/tasksManagerDomain';
 import {FakePluginTaskType} from './_types/_types';
 import {type IFakeDomain} from './domain/fakeDomain';
-import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';
-import {TaskPriority} from '../../../../../_types/tasksManager';
+import {type INotificationDomain} from '@leav/core/domain/notification/notificationDomain';
+import {TaskPriority} from '@leav/core/_types/tasksManager';
 
 interface IDeps {
     translator: i18n;

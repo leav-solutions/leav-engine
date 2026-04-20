@@ -11,8 +11,11 @@
             "../../node_modules/@types",
             "../../node_modules"
         ],
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
         // "strictNullChecks": true
+        "paths": {
+            "@leav/core/*": ["./src/*"]
+        }
     },
     "exclude": ["applications"]
 }

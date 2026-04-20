@@ -10,7 +10,10 @@
         "sourceMap": true,
         "composite": false,
         "resolveJsonModule": true,
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
+        "paths": {
+            "@leav/core/*": ["./src/*"]
+        }
     },
     "references": [
         {
