@@ -6,7 +6,7 @@ import {faCopy} from '@fortawesome/free-solid-svg-icons';
 import {KitAlert, KitButton, KitTooltip} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {type MouseEventHandler} from 'react';
-import {SUCCESS_ALERT_DURATION, TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
+import {SUCCESS_ALERT_DURATION, TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 
 type CopyButtonProps = {
     title: string;

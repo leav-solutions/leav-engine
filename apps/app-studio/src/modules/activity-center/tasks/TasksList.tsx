@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton, KitEmpty, KitLoader, KitModal, KitNotification, KitSpace} from 'aristid-ds';
+import {KitButton, KitEmpty, KitLoader, KitNotification, KitSpace} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {useGetUserTasks} from './get-user-tasks/useGetUserTasks';
 import {useArchiveUserTasks} from './archive-user-tasks/useArchiveUserTasks';
@@ -11,14 +11,13 @@ import {
     activityCenterTabFooter,
 } from '../activityCenter.module.css';
 import {taskFooter} from './tasks.module.css';
-import {useLang, useUser} from '_ui/hooks';
+import {useConfirmModal, useLang, useUser} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 import {getTaskDisplayData} from './getTaskDisplayData';
 import {type Task} from './types';
-import {ERROR_NOTIFICATION_DURATION} from '_ui/constants';
+import {ERROR_NOTIFICATION_DURATION, BREAK_TWO_LINES} from '_ui/constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
-import {BREAK_TWO_LINES} from '_ui/components/Explorer/_constants';
 
 export const TasksList = () => {
     const {userData: me} = useUser();
@@ -26,7 +25,7 @@ export const TasksList = () => {
     const {archiveUserTasks} = useArchiveUserTasks();
     const {lang} = useLang();
     const {t} = useTranslation();
-
+    const {openConfirmModal} = useConfirmModal();
     const userHasTasks = userTasks?.length > 0;
     const userHasMultipleTasks = userTasks?.length > 1;
 
@@ -60,18 +59,12 @@ export const TasksList = () => {
     }
 
     const onArchiveUserTasks = async (tasks: Task[]) => {
-        KitModal.confirm({
-            width: '100%',
-            style: {content: {width: '90vw', maxWidth: '656px'}},
-            type: 'confirm',
-            icon: false,
+        openConfirmModal({
             title: t('activity_center.tasks.delete_task', {count: tasks?.length}),
             content:
                 t('activity_center.tasks.delete_task_description', {count: tasks?.length}) +
                 BREAK_TWO_LINES +
                 t('global.are_you_sure'),
-            okText: t('global.confirm'),
-            cancelText: t('global.cancel'),
             onOk: async () => {
                 try {
                     await archiveUserTasks(tasks);

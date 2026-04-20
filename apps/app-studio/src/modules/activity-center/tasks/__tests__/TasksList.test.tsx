@@ -19,16 +19,12 @@ jest.mock('../archive-user-tasks/useArchiveUserTasks', () => ({
     useArchiveUserTasks: () => ({archiveUserTasks: mockUseArchiveUserTasks}),
 }));
 
+const mockOpenConfirmModal = jest.fn(({onOk}) => onOk?.());
+
 jest.mock('_ui/hooks', () => ({
     useUser: () => ({userData: {userId: 'test-user-id'}}),
     useLang: () => ({lang: ['fr']}),
-}));
-
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
-    KitModal: {
-        confirm: jest.fn(({onOk}) => onOk?.()),
-    },
+    useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
 }));
 
 describe('TasksList', () => {

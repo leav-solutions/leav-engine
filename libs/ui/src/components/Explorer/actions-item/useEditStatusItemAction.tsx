@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Dispatch, useMemo} from 'react';
-import {KitModal} from 'aristid-ds';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal';
 import {
     type ActivateRecordsMutation,
     type DeactivateRecordsMutation,
@@ -14,7 +14,8 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {type FeatureHook, type Entrypoint, type IEntrypointLink, type IItemAction, type IItemData} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
+import {MASS_SELECTION_ALL} from '../_constants';
+import {BREAK_TWO_LINES} from '_ui/constants';
 import {type FetchResult} from '@apollo/client';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash, faTrashRestore} from '@fortawesome/free-solid-svg-icons';
@@ -47,6 +48,7 @@ export const useEditStatusItemAction = ({
     entrypoint: Entrypoint;
 }>) => {
     const {t} = useSharedTranslation();
+    const {openConfirmModal} = useConfirmModal();
     const updateValuesCache = useValuesCacheUpdate();
 
     const [deactivateRecordsMutation] = useDeactivateRecordsMutation({
@@ -170,15 +172,9 @@ export const useEditStatusItemAction = ({
                             : t('explorer.activate_item_description_one')
                         : t('explorer.delete_link_description_one');
 
-                KitModal.confirm({
-                    width: '100%',
-                    style: {content: {width: '90vw', maxWidth: '656px'}},
-                    type: 'confirm',
-                    icon: false,
+                openConfirmModal({
                     title,
                     content: content + BREAK_TWO_LINES + t('global.are_you_sure'),
-                    okText: t('global.confirm') ?? undefined,
-                    cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {
                         switch (entrypoint.type) {
                             case 'library':

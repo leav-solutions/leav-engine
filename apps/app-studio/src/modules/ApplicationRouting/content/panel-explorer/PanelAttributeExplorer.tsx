@@ -6,6 +6,7 @@ import {useNavigate} from 'react-router-dom';
 import {
     Explorer,
     ThroughConditionFilter,
+    useConfirmModal,
     useExecuteSaveValueBatchMutation,
     useLang,
     useValuesCacheUpdate,
@@ -20,8 +21,7 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type IItemData} from '_ui/components/Explorer/_types';
 import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
-import {KitModal} from 'aristid-ds';
-import {BREAK_TWO_LINES} from '_ui/components/Explorer/_constants';
+import {BREAK_TWO_LINES} from '_ui/constants';
 import {useTranslation} from 'react-i18next';
 
 interface IPanelExplorerProps {
@@ -83,6 +83,8 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         },
     });
 
+    const {openConfirmModal} = useConfirmModal();
+
     const commonExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId: libraryIdSource});
 
@@ -93,15 +95,9 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         isDanger: true,
         useItemDeletePermission: true,
         callback: (item: IItemData) => {
-            KitModal.confirm({
-                width: '100%',
-                style: {content: {width: '90vw', maxWidth: '656px'}},
-                type: 'confirm',
-                icon: false,
+            openConfirmModal({
                 title: t('explorer.delete_link'),
                 content: t('explorer.delete_link_description') + BREAK_TWO_LINES + t('global.are_you_sure'),
-                okText: t('global.confirm') ?? undefined,
-                cancelText: t('global.cancel') ?? undefined,
                 onOk: async () => {
                     await deleteRecordLinkMutation({
                         variables: {

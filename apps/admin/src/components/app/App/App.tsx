@@ -16,6 +16,7 @@ import {ErrorDisplayTypes} from '../../../_types/errors';
 import {APP_ENDPOINT} from '../../../constants';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import LangContext from '../../shared/LangContext';
+import {LangContext as LeavUILangContext} from '_ui/contexts';
 import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
 import {type IUserContext} from '../../shared/UserContext/UserContext';
@@ -159,14 +160,23 @@ const App = (): JSX.Element => {
                     setLang,
                 }}
             >
-                <UserContext.Provider value={userData}>
-                    <ApplicationContext.Provider value={applicationContextData}>
-                        <div className="App height100">
-                            <MessagesDisplay />
-                            <Home />
-                        </div>
-                    </ApplicationContext.Provider>
-                </UserContext.Provider>
+                <LeavUILangContext.Provider
+                    value={{
+                        lang,
+                        availableLangs: availableLangs.langs,
+                        defaultLang: appLang,
+                        setLang: (newLang: string) => setLang([newLang as AvailableLanguage]),
+                    }}
+                >
+                    <UserContext.Provider value={userData}>
+                        <ApplicationContext.Provider value={applicationContextData}>
+                            <div className="App height100">
+                                <MessagesDisplay />
+                                <Home />
+                            </div>
+                        </ApplicationContext.Provider>
+                    </UserContext.Provider>
+                </LeavUILangContext.Provider>
             </LangContext.Provider>
         </DndProvider>
     );

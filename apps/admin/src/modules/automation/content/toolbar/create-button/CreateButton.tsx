@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
+import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {AdminUnreachablePaths} from '../../../../routes/paths';
 

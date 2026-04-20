@@ -79,3 +79,5 @@ export const TREE_FIELD_ID_PREFIX = 'treefield-';
 
 export const SUBMIT_BUTTONS_PORTAL = 'submit_buttons_portal';
 export const NEW_RECORD_ID = 'newRecord';
+
+export const BREAK_TWO_LINES = '\n\n';
