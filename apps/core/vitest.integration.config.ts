@@ -13,6 +13,7 @@ export default defineConfig({
         globalSetup: './src/__tests__/integration/globalSetup.ts',
         typecheck: {tsconfig: './tsconfig.spec.json'},
         testTimeout: 30000,
+        hookTimeout: 30000,
         teardownTimeout: 1000, // no proper teardown implemented yet
         maxWorkers: 2,
     },

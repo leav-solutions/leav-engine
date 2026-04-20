@@ -12,6 +12,7 @@ export default defineConfig({
         globalSetup: './src/__tests__/e2e/filesManager/globalSetup.ts',
         typecheck: {tsconfig: './tsconfig.spec.json'},
         testTimeout: 30000,
+        hookTimeout: 30000,
         teardownTimeout: 1000, // no proper teardown implemented yet
         maxWorkers: 2,
     },
