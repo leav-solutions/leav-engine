@@ -20,8 +20,7 @@
             "matchPackageNames": ["node"],
             "matchManagers": ["dockerfile", "docker-compose", "gitlabci"],
             "groupName": "nodejs docker images",
-            "enabled": true,
-            "matchUpdateTypes": ["minor", "patch"]
+            "enabled": true
         },
         {
             "description": "Enable npm detection",
@@ -29,9 +28,10 @@
             "matchManagers": ["npm"]
         },
         {
-            "description": "Group all patch updates into one PR",
+            "description": "Group all npm patch updates into one PR",
             "matchUpdateTypes": ["patch"],
-            "groupName": "all patch updates"
+            "groupName": "all npm patch updates",
+            "matchManagers": ["npm"]
         },
         {
             "description": "Ignore aristid-ds dependencies",
