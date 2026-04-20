@@ -72,6 +72,7 @@ export default function ({
             {
                 action: EventAction.RECORD_SAVE,
                 topic: {
+                    library: newRecord.library,
                     record: {
                         id: newRecord.id,
                         libraryId: newRecord.library,
