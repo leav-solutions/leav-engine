@@ -10,25 +10,27 @@ import {initDb} from '../../../infra/db/db';
 import {initRedis} from '../../../infra/cache';
 import {initMailer} from '../../../infra/mailer';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
+import {type TestProject} from 'vitest/node';
 
-export async function setup() {
+export async function setup(project: TestProject) {
     try {
         const conf = await getConfig();
         // Export it here to avoid await in e2eUtils before creating the graphql client
-        globalThis.graphqlUrl = `http://${conf.server.host}:${conf.server.port}/graphql`;
+        project.provide('graphqlUrl', `http://${conf.server.host}:${conf.server.port}/graphql`);
 
         // Fake user to avoid e2eUtils loading error
         // Not used in filesManager e2e tests, but required for global setup to work
         // May be merge those tests in api tests
         // But those ones are not working for now
-        globalThis.guestUser = {
+        project.provide('guestUser', {
             userId: '',
             groupsId: [],
-        };
-        globalThis.nonAdminUser = {
+        });
+        project.provide('nonAdminUser', {
             userId: '',
             groupsId: [],
-        };
+        });
+        project.provide('nonAdminGroupId', '');
 
         await initDb(conf);
 

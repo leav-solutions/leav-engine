@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GraphQLClient} from 'graphql-request';
 import {getSdk} from '../../_gqlTypes';
-import {adminUserSdk} from '../e2eUtils';
+import {adminUserSdk, getGraphQLUrl} from '../e2eUtils';
 
 describe('ApiKeys', () => {
     const createSdKWithApiKey = (apiKey: string): ReturnType<typeof getSdk> =>
-        getSdk(new GraphQLClient(globalThis.graphqlUrl + `?key=${apiKey}`, {}));
+        getSdk(new GraphQLClient(getGraphQLUrl() + `?key=${apiKey}`, {}));
 
     test('CRUD', async () => {
         // Create key

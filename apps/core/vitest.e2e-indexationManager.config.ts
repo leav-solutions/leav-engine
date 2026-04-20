@@ -8,9 +8,8 @@ export default defineConfig({
     test: {
         environment: 'node',
         globals: true,
-        include: ['src/__tests__/integration/**/*.test.ts'],
-        setupFiles: ['src/__tests__/integration/setup.ts'],
-        globalSetup: './src/__tests__/integration/globalSetup.ts',
+        include: ['src/__tests__/e2e/indexationManager/**/*.test.ts'],
+        globalSetup: './src/__tests__/e2e/indexationManager/globalSetup.ts',
         typecheck: {tsconfig: './tsconfig.spec.json'},
         testTimeout: 30000,
         hookTimeout: 30000,
