@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {describe} from 'vitest';
 import {type ITasksManagerDomain} from '../../../domain/tasksManager/tasksManagerDomain';
 import {getCoreContainer, getCoreDep} from '../integrationTestUtils';
 import {asValue} from 'awilix';
@@ -8,13 +9,10 @@ import {type ITask, TaskPriority, TaskStatus} from '../../../_types/tasksManager
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {systemUserId} from '../../../_constants/users';
 
-describe('tasksManagerDomain', () => {
-    jest.setTimeout(20_000);
-    jest.retryTimes(2);
-
+describe('tasksManagerDomain', {retry: 2}, () => {
     let taskManagerDomain: ITasksManagerDomain;
     const ctx: IQueryInfos = {userId: systemUserId};
-    const fakeWorkerFn = jest.fn();
+    const fakeWorkerFn = vi.fn();
     beforeAll(async () => {
         taskManagerDomain = getCoreDep<ITasksManagerDomain>('core.domain.tasksManager');
         getCoreContainer().register(
@@ -23,6 +21,8 @@ describe('tasksManagerDomain', () => {
                 execWorker: fakeWorkerFn,
             }),
         );
+
+        await taskManagerDomain.initWorker();
     });
 
     beforeEach(async () => {
