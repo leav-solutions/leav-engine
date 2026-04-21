@@ -6,7 +6,12 @@
         "isolatedModules": false,
         "emitDeclarationOnly": true,
         "declaration": true,
-        "typeRoots": ["./src/_types", "./node_modules/@types", "../../node_modules/@types"]
+        "typeRoots": ["./src/_types", "./node_modules/@types", "../../node_modules/@types"],
+        // temporary while plugins still develop/test/build in leav src
+        "paths": {
+            "@leav/core/*": ["./src/*"],
+            "@leav/*": ["../../libs/*/src"]
+        }
     },
     "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist", "src/plugins"]
 }
