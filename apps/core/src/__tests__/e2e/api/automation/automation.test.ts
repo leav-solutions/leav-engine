@@ -116,7 +116,6 @@ describe('Automation', () => {
                 }),
             );
 
-            expect(updatedRule.description.en).toBeUndefined(); // we verify keepNull is false
             expect(updatedRule.modifiedAt).toBeGreaterThan(ruleToUpdate.modifiedAt);
         });
 

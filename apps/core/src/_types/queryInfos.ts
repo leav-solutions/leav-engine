@@ -6,6 +6,8 @@ import type LeavError from '../errors/LeavError';
 import {type IDbProfiler} from './dbProfiler';
 import {type IValueVersion} from './value';
 
+// TODO better specify this type
+// https://aristid.atlassian.net/browse/LEAVC-831
 export interface IQueryInfos {
     userId: string;
     groupsId?: string[];
