@@ -25,7 +25,7 @@ export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
 export type CustomFilterConditionsFunc = (
     filterKey: string,
-    filterVal: string | boolean | string[],
+    filterVal: string | boolean | string[] | Record<string, unknown>,
     strictFilters: boolean,
 ) => GeneratedAqlQuery;
 
@@ -94,9 +94,8 @@ export default function ({
      */
     function _getFilterCondition(
         filterKey: string,
-        filterVal: string | boolean | string[],
+        filterVal: string | boolean | string[] | Record<string, unknown>,
         strictFilters: boolean,
-        nonStrictFields?: string[],
     ): GeneratedAqlQuery {
         const queryParts = [];
 
@@ -104,9 +103,7 @@ export default function ({
         // we call this function recursively on array and join filters with an OR
         if (Array.isArray(filterVal)) {
             if (filterVal.length) {
-                const valParts = filterVal.map(val =>
-                    _getFilterCondition(filterKey, val, strictFilters, nonStrictFields),
-                );
+                const valParts = filterVal.map(val => _getFilterCondition(filterKey, val, strictFilters));
                 queryParts.push(join(valParts, ' OR '));
             }
         } else {
@@ -116,9 +113,8 @@ export default function ({
                 valParts.push(aql`LIKE(el.label, ${filterVal}, true)`); // In case label is not translated
                 queryParts.push(join(valParts, ' OR '));
             } else {
-                // Filter with a "like" on ID or exact value in other fields
                 queryParts.push(
-                    (nonStrictFields ?? []).includes(filterKey) && !strictFilters
+                    !strictFilters
                         ? aql`LIKE(el.${filterKey}, ${filterVal}, true)`
                         : aql`el.${filterKey} == ${filterVal}`,
                 );
@@ -266,11 +262,12 @@ export default function ({
                     // Caller can define some custom functions to generate filter condition (like looking on edges to
                     // filter on libraries linked to an attribute). So, if a custom function is define for this filter,
                     // we use it, otherwise we use the standard filters
+                    const strictFilter = strictFilters || !(nonStrictFields ?? []).includes(filterKey);
                     const filterCondsFunc =
                         typeof customFilterConditions[filterKey] !== 'undefined'
                             ? customFilterConditions[filterKey]
                             : _getFilterCondition;
-                    const conds = filterCondsFunc(filterKey, filterVal, strictFilters, nonStrictFields);
+                    const conds = filterCondsFunc(filterKey, filterVal, strictFilter);
 
                     if (conds?.query) {
                         queryParts.push(aql`FILTER`, conds);
