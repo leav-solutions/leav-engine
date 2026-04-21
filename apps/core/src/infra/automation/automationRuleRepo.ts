@@ -132,7 +132,7 @@ export default function ({
             const {partialMatchOnEventTopic, ...findCoreEntityParams} = {...defaultParams, ...params};
 
             const customFilterConditions =
-                partialMatchOnEventTopic && params.filters?.trigger?.eventTopic !== undefined
+                params.filters?.trigger !== undefined
                     ? {
                           trigger: (
                               _filterKey: string,
@@ -146,7 +146,7 @@ export default function ({
                                                     ([eventTopicSubKey, eventTopicSubVal]) =>
                                                         aql`el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal}`,
                                                 ),
-                                                ' OR ',
+                                                partialMatchOnEventTopic ? ' OR ' : ' AND ',
                                             )
                                           : aql`el.trigger.${subKey} == ${subVal}`,
                               );
