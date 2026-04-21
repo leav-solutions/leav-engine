@@ -529,12 +529,10 @@ __metadata:
     "@leav/utils": "workspace:libs/utils"
     "@types/amqplib": "npm:0.10.8"
     "@types/express": "npm:5.0.6"
-    "@types/jest": "npm:29.5.14"
     amqplib: "npm:0.10.9"
     arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
     i18next: "npm:24.2.3"
-    jest: "npm:29.7.0"
   languageName: unknown
   linkType: soft
 
