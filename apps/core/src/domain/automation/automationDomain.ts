@@ -35,6 +35,13 @@ export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     };
 }
 
+interface ITriggerRulesParams {
+    event: {action: IAutomationRule['trigger']['eventAction']; topic?: IAutomationRule['trigger']['eventTopic']};
+    synchronous: boolean;
+    partialMatchOnEventTopic?: boolean;
+    ctx: IQueryInfos;
+}
+
 export interface IAutomationDomain {
     getAutomationRules({
         params,
@@ -45,11 +52,7 @@ export interface IAutomationDomain {
     }): Promise<IList<IAutomationRule>>;
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
-    triggerRules(
-        event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
-        synchronous: boolean,
-        ctx: IQueryInfos,
-    ): Promise<void>;
+    triggerRules(params: ITriggerRulesParams): Promise<void>;
 }
 
 export interface IAutomationDomainDeps {
@@ -85,10 +88,12 @@ export default function ({
         event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
+        partialMatchOnEventTopic: boolean = false,
     ): Promise<IAutomationRule[]> => {
         if (TRIGGER_FAKER_RULES_FOR_DEV) {
             return buildFakeRulesToTrigger(event, synchronous, ctx);
         }
+
         const rules = await automationRuleRepo.getAutomationRules(
             {
                 filters: {
@@ -99,6 +104,7 @@ export default function ({
                         eventTopic: event.topic,
                     },
                 },
+                partialMatchOnEventTopic,
             },
             ctx,
         );
@@ -107,9 +113,11 @@ export default function ({
     };
 
     return {
-        async triggerRules(event, synchronous, ctx): Promise<void> {
+        async triggerRules(params): Promise<void> {
+            const {event, synchronous, partialMatchOnEventTopic = false, ctx} = params;
+
             try {
-                const rules = await _getRulesToTrigger(event, synchronous, ctx);
+                const rules = await _getRulesToTrigger(event, synchronous, ctx, partialMatchOnEventTopic);
                 const trigger: AutomationRuleTrigger = {
                     eventAction: event.action,
                     eventTopic: event.topic,
@@ -220,7 +228,7 @@ function automationDisabled(): IAutomationDomain {
             return null;
         },
         async updateAutomationRule(): Promise<IAutomationRule> {
-            logger.silly('Automation system is disabled. Skipping automation rule updatre.');
+            logger.silly('Automation system is disabled. Skipping automation rule update.');
             return null;
         },
         async triggerRules(): Promise<void> {

@@ -26,7 +26,7 @@ export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 export type CustomFilterConditionsFunc = (
     filterKey: string,
     filterVal: string | boolean | string[] | Record<string, unknown>,
-    strictFilters: boolean,
+    strictFilter: boolean,
 ) => GeneratedAqlQuery;
 
 export interface IFindCoreEntityParams<T extends ICoreEntity, DbDocument extends IDbDocument = IDbDocument> {
@@ -95,7 +95,7 @@ export default function ({
     function _getFilterCondition(
         filterKey: string,
         filterVal: string | boolean | string[] | Record<string, unknown>,
-        strictFilters: boolean,
+        strictFilter: boolean,
     ): GeneratedAqlQuery {
         const queryParts = [];
 
@@ -103,7 +103,7 @@ export default function ({
         // we call this function recursively on array and join filters with an OR
         if (Array.isArray(filterVal)) {
             if (filterVal.length) {
-                const valParts = filterVal.map(val => _getFilterCondition(filterKey, val, strictFilters));
+                const valParts = filterVal.map(val => _getFilterCondition(filterKey, val, strictFilter));
                 queryParts.push(join(valParts, ' OR '));
             }
         } else {
@@ -114,7 +114,7 @@ export default function ({
                 queryParts.push(join(valParts, ' OR '));
             } else {
                 queryParts.push(
-                    !strictFilters
+                    !strictFilter
                         ? aql`LIKE(el.${filterKey}, ${filterVal}, true)`
                         : aql`el.${filterKey} == ${filterVal}`,
                 );

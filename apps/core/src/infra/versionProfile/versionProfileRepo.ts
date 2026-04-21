@@ -35,7 +35,10 @@ export default function ({
 }: IDeps = {}): IVersionProfileRepo {
     return {
         async getVersionProfiles({params, ctx}) {
-            const _generateTreesFilterConds = (filterKey: string, filterVal: string | boolean | string[]) => {
+            const _generateTreesFilterConds = (
+                filterKey: string,
+                filterVal: string | boolean | string[] | Record<string, unknown>,
+            ) => {
                 if (typeof filterVal !== 'string') {
                     return aql``;
                 }

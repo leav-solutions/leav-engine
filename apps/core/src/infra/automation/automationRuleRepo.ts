@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
+import {join, type GeneratedAqlQuery} from 'arangojs/aql';
 import {
     type ICreateAutomationRule,
     type IAutomationRule,
@@ -51,6 +52,7 @@ export type IAutomationRuleFilterOptionsInRepo = ICoreEntityFilterOptions & {
 
 export type IGetAutomationRulesParams = IGetCoreEntitiesParams & {
     filters?: IAutomationRuleFilterOptionsInRepo;
+    partialMatchOnEventTopic?: boolean; // if true, only one field of eventTopic has to match the filter
 };
 
 export interface IAutomationRuleRepo {
@@ -93,7 +95,7 @@ export default function ({
     });
 
     return {
-        async createAutomationRule(rule: ICreateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule> {
+        async createAutomationRule(rule, ctx): Promise<IAutomationRule> {
             const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
             const docToInsert = createDocumentFromAutomationRule(rule, ctx);
 
@@ -104,7 +106,7 @@ export default function ({
 
             return automationRuleFromDbDocument(newAutomationRule[0]);
         },
-        async updateAutomationRule(rule: IUpdateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule> {
+        async updateAutomationRule(rule, ctx): Promise<IAutomationRule> {
             const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
             const docToUpdate = updateDocumentFromAutomationRule(rule, ctx);
 
@@ -118,7 +120,7 @@ export default function ({
 
             return automationRuleFromDbDocument(updatedAutomationRule[0]);
         },
-        async getAutomationRules(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<IAutomationRule>> {
+        async getAutomationRules(params, ctx): Promise<IList<IAutomationRule>> {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -126,14 +128,38 @@ export default function ({
                 pagination: null,
                 sort: null,
             };
-            const initializedParams = {...defaultParams, ...params};
+
+            const {partialMatchOnEventTopic, ...findCoreEntityParams} = {...defaultParams, ...params};
+
+            const customFilterConditions =
+                partialMatchOnEventTopic && params.filters?.trigger?.eventTopic !== undefined
+                    ? {
+                          trigger: (
+                              _filterKey: string,
+                              filterVal: string | boolean | string[] | Record<string, unknown>,
+                          ): GeneratedAqlQuery => {
+                              const parts = Object.entries(filterVal as Record<string, unknown>).map(
+                                  ([subKey, subVal]) =>
+                                      subKey === 'eventTopic'
+                                          ? join(
+                                                Object.entries(subVal as Record<string, unknown>).map(
+                                                    ([eventTopicSubKey, eventTopicSubVal]) =>
+                                                        aql`el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal}`,
+                                                ),
+                                                ' OR ',
+                                            )
+                                          : aql`el.trigger.${subKey} == ${subVal}`,
+                              );
+
+                              return parts.length ? join(parts, ' AND ') : join([]);
+                          },
+                      }
+                    : {};
 
             return dbUtils.findCoreEntity<IAutomationRule, IAutomationRuleDbDocument>({
-                ...initializedParams,
+                ...findCoreEntityParams,
                 collectionName: AUTOMATION_RULES_COLLECTION_NAME,
-                customFilterConditions: {
-                    userId: (filterKey, filterVal) => aql`el.${filterKey} == ${filterVal}`,
-                },
+                customFilterConditions,
                 mapFromDbDocument: automationRuleFromDbDocument,
                 ctx,
             });
