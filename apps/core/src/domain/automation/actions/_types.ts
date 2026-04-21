@@ -9,6 +9,7 @@ export enum AutomationRuleActions {
     LOG = 'log',
     CONDITION = 'condition',
     ERROR = 'error',
+    JEXL_CALCULATION = 'jexlCalculation',
 }
 
 // Contract that every pipeline action must implement

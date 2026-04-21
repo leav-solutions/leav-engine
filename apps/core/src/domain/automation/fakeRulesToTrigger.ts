@@ -10,6 +10,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {AutomationRuleActions} from './actions/_types';
 import {type ConditionActionParams} from './actions/conditionAction';
 import {type ErrorActionParams} from './actions/errorAction';
+import {type JexlCalculationActionParams} from './actions/jexlCalculationAutomationAction';
 import {type LogActionParams} from './actions/logAction';
 
 // Temporary shortcut to avoid creating, updating and retrieving real rules from the database while the system is being developed and tested.
@@ -39,11 +40,18 @@ export const buildFakeRulesToTrigger = async (
                     } satisfies ConditionActionParams,
                 },
                 {
-                    type: AutomationRuleActions.LOG,
+                    type: AutomationRuleActions.JEXL_CALCULATION,
+                    name: 'hello-world',
                     params: {
-                        message: 'Un message',
-                        level: 'verbose',
-                    } satisfies LogActionParams,
+                        formula: '"Hello " + "world! (" + results[0] + ")"',
+                    } satisfies JexlCalculationActionParams,
+                },
+                {
+                    type: AutomationRuleActions.JEXL_CALCULATION,
+                    name: 'use previous results',
+                    params: {
+                        formula: '(results[1] | uppercase) + " | " + (results["hello-world"] | length)',
+                    } satisfies JexlCalculationActionParams,
                 },
                 {
                     type: AutomationRuleActions.LOG,
@@ -79,6 +87,13 @@ export const buildFakeRulesToTrigger = async (
                 // {
                 //     type: 'not exists' as AutomationRuleActions.LOG,
                 //     params: {},
+                // },
+                // {
+                //     type: AutomationRuleActions.JEXL_CALCULATION,
+                //     name: 'wrong expression',
+                //     params: {
+                //         formula: '"Hello " +',
+                //     } satisfies JexlCalculationActionParams,
                 // },
                 // {
                 //     type: AutomationRuleActions.LOG,

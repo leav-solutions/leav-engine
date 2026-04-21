@@ -292,6 +292,36 @@ describe('jexlDomain', () => {
         });
     });
 
+    describe('validate', () => {
+        test('should resolve for a valid arithmetic expression', async () => {
+            await expect(domain.validate('1 + 2')).resolves.toBeUndefined();
+        });
+
+        test('should resolve for a valid ternary expression', async () => {
+            await expect(domain.validate('a > 0 ? "yes" : "no"')).resolves.toBeUndefined();
+        });
+
+        test('should resolve for a valid transform chain', async () => {
+            await expect(domain.validate('[1, 2, 3] | map("value * 2") | first')).resolves.toBeUndefined();
+        });
+
+        test('should resolve for a valid getValues expression', async () => {
+            await expect(domain.validate('currentRecord | getValues("label") | first')).resolves.toBeUndefined();
+        });
+
+        test('should reject for an expression truncated after an operator', async () => {
+            await expect(domain.validate('1 +')).rejects.toThrow('Unexpected end of expression');
+        });
+
+        test('should reject for an unmatched opening parenthesis', async () => {
+            await expect(domain.validate('foo(')).rejects.toThrow('Unexpected end of expression');
+        });
+
+        test('should reject for an invalid expression token', async () => {
+            await expect(domain.validate('2 & 2')).rejects.toThrow('Invalid expression token');
+        });
+    });
+
     describe('README examples', () => {
         test('recopy label: prefix + uppercase first value', async () => {
             mockValueDomain.getValues.mockResolvedValue([{...mockStandardValue, payload: 'hello'}]);

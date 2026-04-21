@@ -17,6 +17,8 @@ import {
     type JexlUserContext,
     type JexlValueContext,
 } from './types';
+import {Errors} from '../../_types/errors';
+import ValidationError from '../../errors/ValidationError';
 
 interface IDeps {
     'core.domain.value': IValueDomain;
@@ -24,6 +26,7 @@ interface IDeps {
 
 export interface IJexlDomain {
     eval<Ctx extends JexlContext>(expression: string, context?: Ctx): Promise<any>;
+    validate(expression: string): Promise<void>;
 
     // Functions to prepare contexts for Jexl evaluation
     buildRootContext: <T>(contextData: T, ctx: IQueryInfos) => JexlRootContext<T>;
@@ -120,6 +123,23 @@ export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain
         eval: (expression, context) =>
             // Maybe introduce caching of compiled expressions if performance is an issue
             jexl.eval(expression, context),
+        validate: async expression => {
+            try {
+                await jexl.compile(expression);
+            } catch (error) {
+                throw new ValidationError(
+                    {
+                        formula: {
+                            msg: Errors.INVALID_JEXL_EXPRESSION,
+                            vars: {
+                                error: error.message,
+                            },
+                        },
+                    },
+                    error.message,
+                );
+            }
+        },
 
         buildRecordContext,
         buildTreeNodeContext,
