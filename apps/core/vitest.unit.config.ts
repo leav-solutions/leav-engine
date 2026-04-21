@@ -29,6 +29,11 @@ export default defineConfig({
                 replacement: path.resolve(__dirname, '../../node_modules/exceljs/dist/exceljs.js'),
             },
             {
+                // temporary while plugins still develop/test/build in leav src
+                find: /^@leav\/core\/(.+)/,
+                replacement: `${path.resolve(__dirname, './src')}/$1`,
+            },
+            {
                 find: /^@leav\/(.+)/,
                 replacement: `${path.resolve(__dirname, '../../libs')}/$1/src`,
             },
