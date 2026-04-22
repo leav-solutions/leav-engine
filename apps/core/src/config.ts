@@ -59,6 +59,7 @@ export const validateConfig = (conf: IConfig) => {
             uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
             supportEmail: Joi.string().required(),
             allowIntrospection: Joi.boolean().required(),
+            trpc: Joi.object({ssePingIntervalMs: Joi.number().required()}),
             admin: {
                 login: Joi.string().required(),
                 password: Joi.string().required(),

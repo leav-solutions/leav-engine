@@ -7,6 +7,7 @@ import {type PermissionTypes} from './permissions';
 import {type PluginRegisterRoute} from './endpoint';
 import {type AuthPostOidcLoginCallback} from './auth';
 import {type RegisterCronTask} from './cronTask';
+import {type ITRPCRouterFactory} from '../app/trpc/trpcApp';
 
 export interface IExtensionPoints {
     [name: string]: (...args: any[]) => void;
@@ -21,6 +22,7 @@ export interface IExtensionPointsFunctions extends IExtensionPoints {
      * @param {IAppGraphQLSchema} schemaPart
      */
     registerGraphQLSchema: (schemaPart: IAppGraphQLSchema) => void;
+    registerTRPCRouter: (initRouter: ITRPCRouterFactory) => void;
     registerTranslations: (path: string) => Promise<void>;
     registerPermissionActions: (type: PermissionTypes, actions: string[], applyOn?: string[]) => void;
     registerEventActions: (actions: string[], prefix: string) => void;

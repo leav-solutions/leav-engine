@@ -20,6 +20,9 @@ module.exports = {
          */
         uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb',
         supportEmail: process.env.SERVER_SUPPORT_EMAIL,
+        trpc: {
+            ssePingIntervalMs: process.env.SERVER_TRPC_SSE_PING_INTERVAL_MS || 5_000,
+        },
         admin: {
             login: process.env.SERVER_ADMIN_LOGIN,
             password: process.env.SERVER_ADMIN_PASSWORD,

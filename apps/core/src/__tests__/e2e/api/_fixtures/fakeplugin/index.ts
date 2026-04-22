@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type i18n} from 'i18next';
+import {z} from 'zod';
 import {type IPluginInitModule} from '@leav/core/_types/plugin';
 import {PermissionTypes} from '@leav/core/_types/permissions';
 import {ActionsListIOTypes} from '@leav/core/_types/actionsList';
@@ -13,6 +14,8 @@ import {FakePluginTaskType} from './_types/_types';
 import {type IFakeDomain} from './domain/fakeDomain';
 import {type INotificationDomain} from '@leav/core/domain/notification/notificationDomain';
 import {TaskPriority} from '@leav/core/_types/tasksManager';
+import {type TTrpc} from '@leav/core/app/trpc/trpcApp';
+import {type IEventsManagerDomain} from '@leav/core/domain/eventsManager/eventsManagerDomain';
 
 interface IDeps {
     translator: i18n;
@@ -20,6 +23,7 @@ interface IDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tasksManager': ITasksManagerDomain;
     'core.domain.notification': INotificationDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
     'fakeplugin.domain': IFakeDomain;
 }
 
@@ -28,12 +32,48 @@ export enum FakePluginActions {
     FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2',
 }
 
+const STATUS_UPDATE_EVENT = 'fakeplugin.status.update';
+
+const toAsyncIterable = <T>(asyncIterator: AsyncIterator<T>): AsyncIterable<T> => ({
+    [Symbol.asyncIterator]: () => asyncIterator,
+});
+
+function createTrpcRouter(t: TTrpc, eventsManagerDomain: IEventsManagerDomain) {
+    return t.router({
+        getStatus: t.procedure.input(z.string()).query(({input, ctx}) => ({input, ctx})),
+        updateStatus: t.procedure
+            .input(
+                z.object({
+                    campaignId: z.string(),
+                    status: z.enum(['pending', 'in_progress', 'done']),
+                }),
+            )
+            .mutation(({input, ctx}) => {
+                const data = {
+                    ...input,
+                    updatedAt: new Date().toISOString(),
+                };
+                eventsManagerDomain.sendPubSubEvent({triggerName: STATUS_UPDATE_EVENT, data}, ctx);
+                return data;
+            }),
+        onStatusChange: t.procedure.subscription(async function* () {
+            const iterable = toAsyncIterable(eventsManagerDomain.subscribe([STATUS_UPDATE_EVENT]));
+            for await (const value of iterable) {
+                yield value;
+            }
+        }),
+    });
+}
+
+export type FakePluginRouter = ReturnType<typeof createTrpcRouter>;
+
 export default function ({
     translator,
     'core.infra.value': valueRepo,
     'core.domain.attribute': attributeDomain,
     'core.domain.tasksManager': tasksManagerDomain,
     'core.domain.notification': notificationDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
     'fakeplugin.domain': fakeDomain,
 }: IDeps): IPluginInitModule {
     const _fakeReplaceValueAction = {
@@ -72,6 +112,7 @@ export default function ({
     return {
         async init(extensionPoints) {
             await extensionPoints.registerTranslations(__dirname + '/locales');
+            extensionPoints.registerTRPCRouter(t => createTrpcRouter(t, eventsManagerDomain));
             extensionPoints.registerGraphQLSchema({
                 typeDefs: `
                     extend type Query {
