@@ -453,10 +453,10 @@ export default function ({
                                     return {
                                         _isUnknown: true,
                                         id: topic.automationRule,
-                                        label: toSystemTranslation(
-                                            'logs.unknown_automation_rule',
-                                            topic.automationRule,
-                                        ),
+                                        label: translator.t('logs.unknown_automation_rule', {
+                                            lng: ctx.lang,
+                                            id: topic.automationRule,
+                                        }),
                                     };
                                 }
                                 return result.list[0];
@@ -464,7 +464,10 @@ export default function ({
                                 return {
                                     _isUnknown: true,
                                     id: topic.automationRule,
-                                    label: toSystemTranslation('logs.unknown_automation_rule', topic.automationRule),
+                                    label: translator.t('logs.unknown_automation_rule', {
+                                        lng: ctx.lang,
+                                        id: topic.automationRule,
+                                    }),
                                 };
                             }
                         },

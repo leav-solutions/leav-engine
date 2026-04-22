@@ -20,7 +20,7 @@ export default function (): IAutomationAction<ConditionActionParams> {
         paramsSchema: conditionActionParamsSchema,
         async execute(params): Promise<IActionExecutionResult> {
             if (params.result) {
-                return {status: ActionExecutionResultStatus.CONTINUE};
+                return {status: ActionExecutionResultStatus.CONTINUE, result: true};
             }
             return {status: ActionExecutionResultStatus.STOP, reason: 'condition returned false'};
         },

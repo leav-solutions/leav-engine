@@ -27,6 +27,7 @@
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "IMMUTABLE_CORE_SYSTEM_ATTRIBUTE": "L'attribute {{attribute}} est un attribut système natif et ne peut pas être édité",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
+        "INVALID_ACTION_PARAMS": "Paramètres d’action invalides: {{details}}",
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Un filtre sur un attribut doit avoir une condition, un champ et une valeur",
         "INVALID_ATTRIBUTE_FOR_LIBRARY": "L'attribut {{attribute}} n'est pas utilisé par la bibliothèque {{library}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",

@@ -33,6 +33,19 @@ export const buildFakeRulesToTrigger = async (
         pipeline: {
             steps: [
                 {
+                    type: AutomationRuleActions.CONDITION,
+                    params: {
+                        result: true,
+                    } satisfies ConditionActionParams,
+                },
+                {
+                    type: AutomationRuleActions.LOG,
+                    params: {
+                        message: 'Un message',
+                        level: 'verbose',
+                    } satisfies LogActionParams,
+                },
+                {
                     type: AutomationRuleActions.LOG,
                     params: {
                         message: `Triggered by event action ${event.action} and topic ${JSON.stringify(event.topic)}`,
@@ -63,6 +76,12 @@ export const buildFakeRulesToTrigger = async (
                         result: true,
                     } satisfies ConditionActionParams,
                 },
+                // {
+                //     type: AutomationRuleActions.LOG,
+                //     params: {
+                //         result: true, // wrong param to trigger validation error
+                //     } satisfies ConditionActionParams,
+                // },
                 {
                     type: AutomationRuleActions.ERROR,
                     params: {
@@ -78,6 +97,7 @@ export const buildFakeRulesToTrigger = async (
     };
     return [
         fakeRuleIdLog,
-        // fakeRuleIdConditionError
+        // comment next rule to avoid error logs
+        // fakeRuleIdConditionError,
     ];
 };
