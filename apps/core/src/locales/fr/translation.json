@@ -6,6 +6,10 @@
     "errors": {
         "APP_STUDIO_WORKSPACE_LIBRARY_ID_REQUIRED": "L'ID de la bibliothèque est requis pour le workspace {{workspaceId}}",
         "APP_STUDIO_WORKSPACE_RECORD_ID_REQUIRED": "L'ID de l'élément est requis pour le workspace {{workspaceId}}",
+        "AUTOMATION_UNKNOWN_TRIGGER_EVENT_ACTION": "Action de déclenchement inconnue: {{action}}",
+        "AUTOMATION_INVALID_TRIGGER_EVENT_TOPIC": "Sujet de déclenchement {{topic}} invalide: {{details}}",
+        "AUTOMATION_INVALID_TRIGGER_ONLY_SYNC": "Le déclencheur pour l’action {{action}} est uniquement disponible pour une exécution synchrone",
+        "AUTOMATION_INVALID_TRIGGER_ONLY_ASYNC": "Le déclencheur pour l’action {{action}} est uniquement disponible pour une exécution asynchrone",
         "ATTRIBUTE_USED_BY_LIBRARY": "Cet attribut est utilisé par les bibliothèques suivantes : {{libraries}}",
         "ATTRIBUTE_USED_IN_METADATA": "Cet attribut est utilisé dans les métadonnées des attributs suivants: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Impossible de sauvegarder des métadonnées sur un attribut simple",

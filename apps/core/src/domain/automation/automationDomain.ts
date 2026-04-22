@@ -25,6 +25,7 @@ import {type ArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
 import {type IPipelineExecutor} from './pipelineExecutor';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
+import {type IAutomationTriggers} from './automationTriggers';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -55,6 +56,7 @@ export interface IAutomationDomain {
 }
 
 export interface IAutomationDomainDeps {
+    'core.domain.automation.triggers': IAutomationTriggers;
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.automation.pipelineExecutor': IPipelineExecutor;
@@ -63,6 +65,7 @@ export interface IAutomationDomainDeps {
 }
 
 export default function ({
+    'core.domain.automation.triggers': automationTriggers,
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.automation.pipelineExecutor': pipelineExecutor,
@@ -160,6 +163,7 @@ export default function ({
         },
         async createAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
+            await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
 
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 
@@ -180,6 +184,9 @@ export default function ({
         },
         async updateAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
+            if (rule.trigger) {
+                await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
+            }
 
             const updatedAutomationRule = await automationRuleRepo
                 .updateAutomationRule(rule, ctx)

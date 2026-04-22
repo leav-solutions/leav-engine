@@ -13,7 +13,7 @@ describe('Automation', () => {
             expect(rules.automationRules.list).toBeInstanceOf(Array);
         });
 
-        test('cannot list rules', async () => {
+        test('non-admin user cannot list rules', async () => {
             await expect(nonAdminUserSdk.GetAutomationRules()).rejects.toThrow('Action forbidden');
         });
     });
@@ -26,10 +26,10 @@ describe('Automation', () => {
                         label: 'Test rule',
                         description: 'This is a test rule',
                         trigger: {
-                            synchronous: false,
+                            synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
                             eventTopic: {
-                                library: 'test',
+                                library: 'users',
                             },
                         },
                     },
@@ -63,18 +63,88 @@ describe('Automation', () => {
             ]);
         });
 
-        test('cannot create a rule', async () => {
+        test('non-admin user cannot create a rule', async () => {
             await expect(
                 nonAdminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
                         trigger: {
-                            synchronous: false,
+                            synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
                         },
                     },
                 }),
             ).rejects.toThrow('Action forbidden');
+        });
+
+        test('cannot create a rule with wrong synchronicity', async () => {
+            await expect(
+                adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Test rule',
+                        trigger: {
+                            synchronous: false,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Trigger for event action RECORD_INIT is only available for synchronous execution');
+        });
+
+        test('cannot create a rule with wrong event topic, library not exists', async () => {
+            await expect(
+                adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Test rule',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'library-no-exists',
+                            },
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Invalid trigger library topic: Library with id "library-no-exists" does not exist');
+        });
+
+        test('cannot create a rule with wrong event topic, missing library topic', async () => {
+            await expect(
+                adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Test rule',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {},
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Invalid trigger library topic: Invalid input: expected string, received undefined');
+        });
+
+        test('cannot create a rule with wrong event topic, unexpected attribute topic', async () => {
+            await expect(
+                adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Test rule',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                                attribute: 'attribute-no-expected',
+                            },
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Invalid trigger attribute topic: Unrecognized key: "attribute"');
         });
     });
 
@@ -88,8 +158,11 @@ describe('Automation', () => {
                         label: 'Test rule',
                         description: 'This is a test rule',
                         trigger: {
-                            synchronous: false,
+                            synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
                         },
                     },
                 })
@@ -119,7 +192,7 @@ describe('Automation', () => {
             expect(updatedRule.modifiedAt).toBeGreaterThan(ruleToUpdate.modifiedAt);
         });
 
-        test('cannot update a rule', async () => {
+        test('non admin cannot update a rule', async () => {
             await expect(
                 nonAdminUserSdk.UpdateAutomationRule({
                     rule: {
@@ -128,6 +201,40 @@ describe('Automation', () => {
                     },
                 }),
             ).rejects.toThrow('Action forbidden');
+        });
+
+        test('cannot update a rule with wrong synchronicity', async () => {
+            await expect(
+                adminUserSdk.UpdateAutomationRule({
+                    rule: {
+                        id: ruleToUpdate.id,
+                        trigger: {
+                            synchronous: false,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Trigger for event action RECORD_INIT is only available for synchronous execution');
+        });
+
+        test('cannot create a rule with wrong event topic, library not exists', async () => {
+            await expect(
+                adminUserSdk.UpdateAutomationRule({
+                    rule: {
+                        id: ruleToUpdate.id,
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'library-no-exists',
+                            },
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Invalid trigger library topic: Library with id "library-no-exists" does not exist');
         });
 
         test('update unknown rule throws UNKNOWN_AUTOMATION_RULE', async () => {

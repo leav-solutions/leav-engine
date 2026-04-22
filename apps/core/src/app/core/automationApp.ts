@@ -128,7 +128,7 @@ export default function ({
                         label: String,
                         description: String,
                         active: Boolean,
-                        trigger: PartialAutomationRuleTriggerInput
+                        trigger: AutomationRuleTriggerInput
                     }
                     
                     extend type Query {
