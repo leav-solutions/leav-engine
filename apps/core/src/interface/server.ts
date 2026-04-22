@@ -12,7 +12,7 @@ import {type AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, {type NextFunction, type Response, type Express} from 'express';
+import express, {type NextFunction, type Response, type Request} from 'express';
 import fs from 'fs';
 import {GraphQLError} from 'graphql';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
@@ -35,6 +35,7 @@ import {type InitQueryContextFunc} from '../app/helpers/initQueryContext';
 import {type IAppModule} from '../_types/shared';
 import {apolloTracerPlugin} from './plugins/apolloTracerPlugin';
 import ApplicationError from '../errors/ApplicationError';
+import {type ITRPCApp} from '../app/trpc/trpcApp';
 
 export interface IServer {
     init(): Promise<void>;
@@ -56,6 +57,7 @@ interface IDeps {
     config?: IConfig;
     'core.interface.helpers.handleGraphqlError'?: HandleGraphqlErrorFunc;
     'core.app.graphql'?: IGraphqlApp;
+    'core.app.trpc'?: ITRPCApp;
     'core.app.auth'?: IAuthApp;
     'core.app.application'?: IApplicationApp;
     'core.app.core'?: ICoreApp;
@@ -70,6 +72,7 @@ export default function ({
     config: config = null,
     'core.interface.helpers.handleGraphqlError': handleGraphqlError = null,
     'core.app.graphql': graphqlApp = null,
+    'core.app.trpc': trpcApp = null,
     'core.app.auth': authApp = null,
     'core.app.application': applicationApp = null,
     'core.app.core': coreApp = null,
@@ -339,22 +342,24 @@ export default function ({
                 });
 
                 await server.start();
+                const initContext = async ({req, res}: {req: Request; res: Response}): Promise<IQueryInfos> => {
+                    const payload = await validateRequestToken(req, res);
 
+                    const ctx: IQueryInfos = {
+                        ...initQueryContext(req),
+                        userId: payload.userId,
+                        groupsId: payload.groupsId,
+                    };
+
+                    return ctx;
+                };
                 baseRouter.use(
                     '/graphql',
                     express.json(),
                     expressMiddleware(server, {
                         context: async ({req, res}): Promise<IQueryInfos> => {
                             try {
-                                const payload = await validateRequestToken(req, res);
-
-                                const ctx: IQueryInfos = {
-                                    ...initQueryContext(req),
-                                    userId: payload.userId,
-                                    groupsId: payload.groupsId,
-                                };
-
-                                return ctx;
+                                return await initContext({req, res});
                             } catch (e) {
                                 throw new GraphQLError(e.message ?? 'You must be logged in', {
                                     extensions: {
@@ -366,6 +371,8 @@ export default function ({
                         },
                     }),
                 );
+
+                baseRouter.use('/trpc', trpcApp.createExpressHandler(initContext));
 
                 applicationApp.registerRoute(baseRouter);
 

@@ -79,6 +79,9 @@ export interface IServer {
     allowIntrospection: boolean;
     uploadLimit: number | string;
     supportEmail: string;
+    trpc: {
+        ssePingIntervalMs: number;
+    };
     admin: {
         login: string;
         password: string;
