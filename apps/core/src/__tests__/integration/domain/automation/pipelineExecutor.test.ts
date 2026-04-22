@@ -18,21 +18,6 @@ describe('pipelineExecutor', () => {
         pipelineExecutor = getCoreDep<IPipelineExecutor>('core.domain.automation.pipelineExecutor');
     });
 
-    describe('getAvailableActions', () => {
-        it('should list available actions', async () => {
-            const availableActions = pipelineExecutor.getAvailableActions();
-            expect(availableActions).toBeDefined();
-            expect(availableActions.length).toBeGreaterThanOrEqual(3);
-            expect(availableActions).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({type: AutomationRuleActions.CONDITION}),
-                    expect.objectContaining({type: AutomationRuleActions.LOG}), // tmp
-                    expect.objectContaining({type: AutomationRuleActions.ERROR}), // tmp
-                ]),
-            );
-        });
-    });
-
     describe('execute', () => {
         const createPipelineToExecute = (actions: AutomationRulePipelineStep[]): AutomationPipelineToExecute => ({
             ruleId: 'testRuleId',

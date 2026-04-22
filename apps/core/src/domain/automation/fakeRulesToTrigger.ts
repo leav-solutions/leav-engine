@@ -77,6 +77,10 @@ export const buildFakeRulesToTrigger = async (
                     } satisfies ConditionActionParams,
                 },
                 // {
+                //     type: 'not exists' as AutomationRuleActions.LOG,
+                //     params: {},
+                // },
+                // {
                 //     type: AutomationRuleActions.LOG,
                 //     params: {
                 //         result: true, // wrong param to trigger validation error

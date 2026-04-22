@@ -12,7 +12,6 @@ import {
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {
     ActionExecutionResultStatus,
-    type IAutomationPipelineExecutionResults,
     type IActionExecutionResult,
     type IAutomationAction,
     type IAutomationPipelineExecutionState,
@@ -20,6 +19,7 @@ import {
 import {type IQueryInfos} from '../../_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
+import {type IAutomationActionsRegistry} from './automationActionsRegistry';
 
 export type AutomationPipelineToExecute = AutomationRulePipeline & {
     ruleId: string;
@@ -27,34 +27,19 @@ export type AutomationPipelineToExecute = AutomationRulePipeline & {
 };
 
 export interface IPipelineExecutor {
-    getAvailableActions(): IAutomationAction[];
-
     // returns true if pipeline executed fully, false if it was stopped by an action, for testing purpose for now
     executePipeline(pipelineExec: AutomationPipelineToExecute, ctx: IQueryInfos): Promise<boolean>;
 }
 
 export interface IPipelineExecutorDeps {
-    'core.depsManager': AwilixContainer;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
 }
 
 export default function ({
-    'core.depsManager': depsManager,
     'core.domain.eventsManager': eventsManager,
+    'core.domain.automation.actionsRegistry': actionsRegistry,
 }: IPipelineExecutorDeps): IPipelineExecutor {
-    const loadedActionRegistry: Map<string, IAutomationAction> = new Map();
-    const _loadActionsOnDemand = (): Map<string, IAutomationAction> => {
-        if (loadedActionRegistry.size === 0) {
-            const coreActions: IAutomationAction[] = Object.keys(depsManager.registrations)
-                .filter(modName => modName.match(/^core\.domain\.automation\.actions\./))
-                .map(modName => depsManager.cradle[modName]);
-
-            logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
-            coreActions.forEach(action => loadedActionRegistry.set(action.type, action));
-        }
-        return loadedActionRegistry;
-    };
-
     // move that validation in pipeline edition latter to avoid doing it at each execution
     const _validateActionParams = async (action: IAutomationAction, params: Record<string, unknown>): Promise<void> => {
         const paramsValidation = action.paramsSchema.safeParse(params);
@@ -152,26 +137,15 @@ export default function ({
     });
 
     return {
-        getAvailableActions() {
-            return [..._loadActionsOnDemand().values()];
-        },
         async executePipeline(pipelineExec, ctx) {
             const state = _initializePipelineState(pipelineExec);
-            const actionsRegistry = _loadActionsOnDemand();
 
             let stepIndex = 0;
             for (const step of pipelineExec.steps) {
-                const action = actionsRegistry.get(step.type);
                 const stepIdentifier = step.name ?? `${stepIndex}`;
 
-                if (!action) {
-                    logger.warn(
-                        `No action implementation found for type "${step.type}" at step "${stepIdentifier}" in pipeline for rules ${pipelineExec.ruleId}, skipping`,
-                    );
-                    continue;
-                }
-
                 try {
+                    const action = actionsRegistry.getAction(step.type);
                     const stepResult = await _executeStep(action, step, state, ctx);
                     if (stepResult.status === ActionExecutionResultStatus.STOP) {
                         logger.debug(

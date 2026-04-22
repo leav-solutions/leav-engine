@@ -14,44 +14,42 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import createPipelineExecutor, {type IPipelineExecutor, type AutomationPipelineToExecute} from './pipelineExecutor';
 import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from './types';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+import {type IAutomationActionsRegistry} from './automationActionsRegistry';
 
 const eventManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: vi.fn(),
 };
-
-const depsManager: Mockify<AwilixContainer> = {
-    registrations: {},
-    cradle: {},
+const actionsRegistry: Mockify<IAutomationActionsRegistry> = {
+    getAction: vi.fn(),
 };
 
 describe('pipelineExecutor', () => {
-    let executor: IPipelineExecutor;
-
     const makeMockAction = (type: string, executeResult?: IActionExecutionResult): IAutomationAction => ({
         type,
         paramsSchema: z.object({}), // permissive schema — param validation is not the focus here
         execute: vi.fn().mockResolvedValue(executeResult),
     });
 
-    const makeDepsManager = (actions: IAutomationAction[]): AwilixContainer => {
-        const entries = actions.map(a => [`core.domain.automation.actions.${a.type}`, a] as const);
-        return {
-            registrations: Object.fromEntries(entries.map(([k]) => [k, {}])),
-            cradle: Object.fromEntries(entries),
-        } as unknown as AwilixContainer;
-    };
+    const mockGetAction =
+        (actions: IAutomationAction[]) =>
+        (type: string): IAutomationAction => {
+            const action = actions.find(a => a.type === type);
+            if (action) {
+                return action;
+            }
+            throw new Error(`Action ${type} not found in registry`);
+        };
 
     const actionA = makeMockAction('A');
     const actionB = makeMockAction('B');
     const actionC = makeMockAction('C');
-
+    const executor = createPipelineExecutor({
+        'core.domain.automation.actionsRegistry': actionsRegistry as IAutomationActionsRegistry,
+        'core.domain.eventsManager': eventManager as IEventsManagerDomain,
+    });
     beforeEach(() => {
         vi.resetAllMocks();
-        // create new instance of pipelineExecutor before each test to reset the loaded actions registry
-        executor = createPipelineExecutor({
-            'core.depsManager': makeDepsManager([actionA, actionB, actionC]) as AwilixContainer,
-            'core.domain.eventsManager': eventManager as IEventsManagerDomain,
-        });
+        actionsRegistry.getAction.mockImplementation(mockGetAction([actionA, actionB, actionC]));
     });
 
     describe('execute', () => {
@@ -106,10 +104,10 @@ describe('pipelineExecutor', () => {
                     createPipelineToExecute([makeStep('A'), makeStep('UNKNOWN'), makeStep('B')]),
                     mockCtx,
                 ),
-            ).resolves.toBeTruthy();
+            ).resolves.toBeFalsy();
 
             expect(actionA.execute).toHaveBeenCalledTimes(1);
-            expect(actionB.execute).toHaveBeenCalledTimes(1);
+            expect(actionB.execute).not.toHaveBeenCalled();
         });
 
         it('(temporary here for now) interrupts pipeline when params validation fails, without rethrowing', async () => {
@@ -118,10 +116,7 @@ describe('pipelineExecutor', () => {
                 paramsSchema: z.object({x: z.string()}), // requires x: string
                 execute: vi.fn(),
             };
-            executor = createPipelineExecutor({
-                'core.depsManager': makeDepsManager([actionMissingParams, actionB]) as AwilixContainer,
-                'core.domain.eventsManager': eventManager as IEventsManagerDomain,
-            });
+            actionsRegistry.getAction.mockImplementation(mockGetAction([actionMissingParams, actionB]));
 
             // Passing empty params — fails the schema
             await expect(
@@ -140,10 +135,7 @@ describe('pipelineExecutor', () => {
                 validateParams,
                 execute: vi.fn(),
             };
-            executor = createPipelineExecutor({
-                'core.depsManager': makeDepsManager([action]) as AwilixContainer,
-                'core.domain.eventsManager': eventManager as IEventsManagerDomain,
-            });
+            actionsRegistry.getAction.mockImplementation(mockGetAction([action]));
 
             await expect(
                 executor.executePipeline(createPipelineToExecute([makeStep('A')]), mockCtx),
@@ -233,10 +225,7 @@ describe('pipelineExecutor', () => {
                     paramsSchema: z.object({x: z.string()}),
                     execute: vi.fn(),
                 };
-                executor = createPipelineExecutor({
-                    'core.depsManager': makeDepsManager([strictAction]) as AwilixContainer,
-                    'core.domain.eventsManager': eventManager as IEventsManagerDomain,
-                });
+                actionsRegistry.getAction.mockImplementation(mockGetAction([strictAction]));
 
                 await executor.executePipeline(createPipelineToExecute([makeStep('A', {})]), mockCtx);
 
@@ -294,15 +283,6 @@ describe('pipelineExecutor', () => {
                 expect(payload.after.results).toEqual({0: 'resultA'});
                 expect(Object.keys(payload.after.results)).not.toContain('myStep');
             });
-        });
-    });
-
-    describe('getAvailableActions', () => {
-        it('returns all actions registered in depsManager', () => {
-            const available = executor.getAvailableActions();
-
-            expect(available).toHaveLength(3);
-            expect(available.map(a => a.type)).toEqual(expect.arrayContaining(['A', 'B', 'C']));
         });
     });
 });
