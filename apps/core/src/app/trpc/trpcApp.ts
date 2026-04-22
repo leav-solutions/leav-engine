@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type IAppModule} from '@leav/core/_types/shared';
+import {type IAppModule} from '../../_types/shared';
 import {initTRPC, TRPCError} from '@trpc/server';
-import {type IQueryInfos} from '@leav/core/_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {type CreateExpressContextOptions, createExpressMiddleware} from '@trpc/server/adapters/express';
 import {type Handler} from 'express';
-import {type IConfig} from '@leav/core/_types/config';
+import {type IConfig} from '../../_types/config';
 import {type ILogger} from '@leav/logger';
 
 export interface ITRPCApp extends IAppModule {
