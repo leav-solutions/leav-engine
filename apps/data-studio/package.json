@@ -25,7 +25,7 @@
         "@leav/utils": "workspace:libs/utils",
         "@reduxjs/toolkit": "1.9.7",
         "apollo-upload-client": "14.1.3",
-        "aristid-ds": "15.3.1-886678",
+        "aristid-ds": "15.3.1-05878d4",
         "dayjs": "1.11.20",
         "graphql": "16.13.2",
         "graphql-ws": "5.16.2",

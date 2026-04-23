@@ -1,26 +1,24 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    type AttributeDetailsFragment,
-    AttributeType,
-    type RecordFilterInput,
-    useSaveValueBulkMutation,
-} from '_ui/_gqlTypes';
+import {useEffect, useState} from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import {KitAlert, KitEmpty, KitNotification, KitSelect, KitSpace, KitTypography} from 'aristid-ds';
+import {localizedTranslation} from '@leav/utils';
+import {type RecordFilterInput, type SaveValueBulkMappingInput, useSaveValueBulkMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useEffect, useMemo, useState} from 'react';
+import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
+import {useLang} from '_ui/hooks';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {type FeatureHook, type IMassActions} from '../_types';
+import {type FeatureHook} from '../_types';
 import {type IViewSettingsState} from '../manage-view-settings';
 import {EditTreeAttributeValuesMapping} from './edit-attribute/EditTreeAttributeValuesMapping';
 import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassActionModal';
-import {useListEditableAttributeHook} from './edit-attribute/useListEditableAttributeHook';
-import {useCountValuesOccurrencesHook} from './edit-attribute/useCountValuesOccurrencesHook';
-import {KitAlert, KitNotification} from 'aristid-ds';
-import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
-import {Loading} from '_ui/components/Loading';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import {useMassEditableAttributes} from './edit-attribute/useMassEditableAttributes';
+import {type MassEditableAttribute} from './edit-attribute/_types';
+
+const EDITION_MAPPING_DEFAULT_VALUES = {count: 0, mapping: []};
 
 export const useEditAttributeMassAction = ({
     isEnabled,
@@ -32,93 +30,47 @@ export const useEditAttributeMassAction = ({
     };
     totalCount: number;
 }>) => {
-    if (!isEnabled) {
-        return {
-            editAttributeMassAction: null,
-            editAttributeMassActionModal: null,
-        };
-    }
-
+    const {lang: availableLanguages} = useLang();
     const {t} = useSharedTranslation();
 
-    const [selectedAttribute, setSelectedAttribute] = useState<AttributeDetailsFragment | undefined>(undefined);
-    const [massSelectionFilter, setMassSelectionFilter] = useState<RecordFilterInput[]>([]);
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [editionMapping, setEditionMapping] = useState<
-        Array<{values: Array<{before: string | null; after: string | null}>}>
-    >([]);
+    const [openModal, setOpenModal] = useState(false);
 
-    const editableAttributes = useListEditableAttributeHook({libraryId: view.libraryId});
-    const valuesOccurrences = useCountValuesOccurrencesHook({
-        attributeId: selectedAttribute?.id,
-        libraryId: view.libraryId,
-        recordFilters: massSelectionFilter,
-    });
+    // Represent the current selection, used to apply modifications to correct records
+    const [massSelectionFilters, setMassSelectionFilters] = useState<RecordFilterInput[]>([]);
 
+    const editableAttributes = useMassEditableAttributes({libraryId: view.libraryId});
+
+    const [selectedAttribute, setSelectedAttribute] = useState<MassEditableAttribute | null>(null);
     const [executeSaveValueBulk] = useSaveValueBulkMutation();
-
+    const [editionMapping, setEditionMapping] = useState<{count: number; mapping: SaveValueBulkMappingInput[]}>(
+        EDITION_MAPPING_DEFAULT_VALUES,
+    );
     useEffect(() => {
-        setEditionMapping([]);
+        setEditionMapping(EDITION_MAPPING_DEFAULT_VALUES);
     }, [selectedAttribute]);
 
-    const _editAttributeMassAction: IMassActions = useMemo(
-        () => ({
-            label: t('explorer.massAction.editAttribute'),
-            icon: <FontAwesomeIcon icon={faEdit} />,
-            deselectAll: false,
-            callback: _massSelectionFilter => {
-                setMassSelectionFilter(_massSelectionFilter);
-                setEditionMapping([]);
-                setOpenModal(true);
-            },
-        }),
-        [t, view.massSelection],
-    );
-
-    const closeModal = () => {
+    const _closeModal = () => {
         setOpenModal(false);
-        setMassSelectionFilter([]);
-        setSelectedAttribute(undefined);
-        setEditionMapping([]);
+        setMassSelectionFilters([]);
+        setSelectedAttribute(null);
+        setEditionMapping(EDITION_MAPPING_DEFAULT_VALUES);
     };
 
-    const isMappingCompleted = useMemo(() => {
-        const editionMappingValuesLength = editionMapping.reduce((acc, curr) => acc + curr.values.length, 0);
+    const bulkCount = view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
 
-        return valuesOccurrences.noValueCount === 0
-            ? editionMappingValuesLength === valuesOccurrences.occurrences.length
-            : editionMappingValuesLength + 1; // for undefined values
-    }, [editionMapping, valuesOccurrences]);
-
-    const bulkCounter = useMemo(
-        () => (view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length),
-        [view.massSelection, totalCount],
-    );
-
-    const onOkButtonClick = async () => {
-        if (!selectedAttribute || !isMappingCompleted) {
+    const _saveEditionMapping = () => {
+        if (!selectedAttribute || editionMapping.count === 0) {
             return;
         }
-        try {
-            await executeSaveValueBulk({
-                variables: {
-                    libraryId: view.libraryId,
-                    recordsFilters: massSelectionFilter,
-                    attributeId: selectedAttribute.id,
-                    mapping: editionMapping,
-                },
-            });
 
-            closeModal();
-            KitNotification.info({
-                message: t('explorer.massAction.editAttribute_submit_notification_title'),
-                description: t('explorer.massAction.editAttribute_submit_notification_description', {
-                    counter: bulkCounter,
-                }),
-                duration: INFO_NOTIFICATION_DURATION,
-                closable: true,
-            });
-        } catch (error) {
+        executeSaveValueBulk({
+            variables: {
+                libraryId: view.libraryId,
+                recordsFilters: massSelectionFilters,
+                attributeId: selectedAttribute.id,
+                mapping: editionMapping.mapping,
+            },
+        }).catch(() => {
             KitAlert.error({
                 showIcon: true,
                 duration: ERROR_ALERT_DURATION,
@@ -126,10 +78,23 @@ export const useEditAttributeMassAction = ({
                 description: t('explorer.massAction.editAttribute_submit_error'),
                 closable: true,
             });
-        }
+        });
+
+        _closeModal();
+
+        KitNotification.info({
+            message: t('explorer.massAction.editAttribute_submit_notification_title'),
+            description:
+                t('explorer.massAction.editAttribute_submit_notification_description', {
+                    count: editionMapping.count,
+                }) ?? undefined,
+            duration: INFO_NOTIFICATION_DURATION,
+            closable: true,
+        });
     };
 
-    if (editableAttributes.length === 0) {
+    // TODO: https://aristid.atlassian.net/browse/LEAVC-830
+    if (!isEnabled || editableAttributes.length === 0) {
         return {
             editAttributeMassAction: null,
             editAttributeMassActionModal: null,
@@ -137,34 +102,108 @@ export const useEditAttributeMassAction = ({
     }
 
     return {
-        editAttributeMassAction: _editAttributeMassAction,
+        editAttributeMassAction: {
+            label: t('explorer.massAction.editAttribute'),
+            icon: <FontAwesomeIcon icon={faEdit} />,
+            deselectAll: false,
+            callback: (_massSelectionFilter: RecordFilterInput[]) => {
+                setMassSelectionFilters(_massSelectionFilter);
+                setSelectedAttribute(null);
+                setEditionMapping(EDITION_MAPPING_DEFAULT_VALUES);
+                setOpenModal(true);
+            },
+        },
         editAttributeMassActionModal: (
             <EditAttributeMassActionModal
                 isOpen={openModal}
-                attributes={editableAttributes}
-                setSelectedAttribute={setSelectedAttribute}
-                massSelectionFilter={massSelectionFilter}
-                elementsCount={bulkCounter}
-                disableOkButton={!isMappingCompleted}
-                onOkButtonClick={onOkButtonClick}
-                onCancelButtonClick={closeModal}
+                bulkCount={bulkCount}
+                onOkButtonClick={_saveEditionMapping}
+                onCancelButtonClick={_closeModal}
             >
-                {selectedAttribute != null && valuesOccurrences.loading ? <Loading /> : null}
-                {selectedAttribute?.type === AttributeType.tree && (
-                    <EditTreeAttributeValuesMapping
-                        selectedAttribute={selectedAttribute}
-                        valuesOccurrences={valuesOccurrences}
-                        setAttributeMapping={(before, after) => {
-                            setEditionMapping([
-                                {
-                                    values: (editionMapping[0]?.values ?? [])
-                                        .filter(value => value.before !== before)
-                                        .concat([{before, after}]),
-                                },
-                            ]);
+                <KitSpace direction="vertical" size="xxs" style={{width: '100%'}}>
+                    <KitTypography.Text>
+                        {t('explorer.massAction.editAttribute_attribute_select_title')}
+                    </KitTypography.Text>
+                    <KitSelect
+                        size="large"
+                        allowClear={false}
+                        placeholder={t('explorer.massAction.editAttribute_attribute_select_placeholder')}
+                        options={editableAttributes.map(attribute => ({
+                            label: localizedTranslation(attribute.label, availableLanguages),
+                            value: attribute.id,
+                        }))}
+                        onChange={(attributeId: string) => {
+                            setSelectedAttribute(editableAttributes.find(attribute => attribute.id === attributeId)!);
                         }}
                     />
-                )}
+                </KitSpace>
+                {selectedAttribute != null &&
+                    (selectedAttribute.hasEmptyDependency ? (
+                        <EditTreeAttributeValuesMapping
+                            libraryId={view.libraryId}
+                            attribute={selectedAttribute}
+                            massSelectionFilters={massSelectionFilters}
+                            setAttributeMapping={({before, after, occurrenceCount}) => {
+                                setEditionMapping(
+                                    before === after
+                                        ? {
+                                              count: editionMapping.count - occurrenceCount,
+                                              mapping: [
+                                                  {
+                                                      values: (editionMapping.mapping[0]?.values ?? []).filter(
+                                                          value => value.before !== before,
+                                                      ),
+                                                  },
+                                              ],
+                                          }
+                                        : {
+                                              count: editionMapping.count + occurrenceCount,
+                                              mapping: [
+                                                  {
+                                                      values: (editionMapping.mapping[0]?.values ?? [])
+                                                          .filter(value => value.before !== before)
+                                                          .concat([{before, after}]),
+                                                  },
+                                              ],
+                                          },
+                                );
+                            }}
+                        />
+                    ) : selectedAttribute.isSimpleWorkflow ? (
+                        <EditTreeAttributeValuesMapping
+                            libraryId={view.libraryId}
+                            attribute={selectedAttribute}
+                            massSelectionFilters={massSelectionFilters}
+                            setAttributeMapping={({before, after, occurrenceCount}) => {
+                                setEditionMapping(
+                                    before === after
+                                        ? {
+                                              count: editionMapping.count - occurrenceCount,
+                                              mapping: [
+                                                  {
+                                                      values: (editionMapping.mapping[0]?.values ?? []).filter(
+                                                          value => value.before !== before,
+                                                      ),
+                                                  },
+                                              ],
+                                          }
+                                        : {
+                                              count: editionMapping.count + occurrenceCount,
+                                              mapping: [
+                                                  {
+                                                      values: (editionMapping.mapping[0]?.values ?? [])
+                                                          .filter(value => value.before !== before)
+                                                          .concat([{before, after}]),
+                                                  },
+                                              ],
+                                          },
+                                );
+                            }}
+                        />
+                    ) : selectedAttribute.isMonoDependencyWorkflow ? (
+                        /* TODO: */
+                        <KitEmpty description="WIP" />
+                    ) : null)}
             </EditAttributeMassActionModal>
         ),
     };

@@ -1,0 +1,11 @@
+# TODO: actuellement on demande sur l'attribut sélectionné il va falloir demander aussi sur les valeurs de l'attribut lié
+query ValuesOccurrences($libraryId: ID!, $attributeId: ID!, $recordFilters: [RecordFilterInput]!) {
+    listDistinctValues(library: $libraryId, attribute: $attributeId, recordFilters: $recordFilters) {
+        count
+        ... on TreeDistinctValues {
+            treeNode: value {
+                id
+            }
+        }
+    }
+}

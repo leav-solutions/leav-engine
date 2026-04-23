@@ -1,35 +1,28 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type ReactNode} from 'react';
 import {faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {type AttributeDetailsFragment, type RecordFilterInput} from '_ui/_gqlTypes';
+import {KitButton, KitModal, KitSpace, KitTypography} from 'aristid-ds';
+import {type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitButton, KitModal, KitSelect, KitSpace, KitTypography} from 'aristid-ds';
-import {type FunctionComponent, type ReactNode} from 'react';
 
 const MODAL_WIDTH = '90vw';
 const MODAL_MAX_WIDTH = '656px';
 
-export const EditAttributeMassActionModal: FunctionComponent<{
-    isOpen: boolean;
-    children: ReactNode;
-    attributes: AttributeDetailsFragment[];
-    setSelectedAttribute: (attr: AttributeDetailsFragment | undefined) => void;
-    massSelectionFilter: RecordFilterInput[];
-    elementsCount: number;
-    disableOkButton: boolean;
-    onOkButtonClick: () => void;
-    onCancelButtonClick: () => void;
-}> = ({
+export const EditAttributeMassActionModal = ({
     isOpen,
     children,
-    setSelectedAttribute,
-    attributes,
-    elementsCount,
-    disableOkButton,
+    bulkCount,
     onOkButtonClick,
     onCancelButtonClick,
+}: {
+    isOpen: boolean;
+    children: ReactNode;
+    bulkCount: number;
+    onOkButtonClick: () => void;
+    onCancelButtonClick: () => void;
 }) => {
     const {t} = useSharedTranslation();
 
@@ -45,7 +38,7 @@ export const EditAttributeMassActionModal: FunctionComponent<{
                 <KitSpace direction="vertical" size="none">
                     <KitTypography.Title level="h2">{t('explorer.massAction.editAttribute')}</KitTypography.Title>
                     <KitTypography.Text size="fontSize7">
-                        {t('explorer.massAction.editAttribute_description', {count: elementsCount})}
+                        {t('explorer.massAction.editAttribute_description', {count: bulkCount})}
                     </KitTypography.Text>
                 </KitSpace>
             }
@@ -56,7 +49,6 @@ export const EditAttributeMassActionModal: FunctionComponent<{
                     </KitButton>
                     <KitButton
                         type="primary"
-                        disabled={disableOkButton}
                         onClick={onOkButtonClick}
                         size="m"
                         icon={<FontAwesomeIcon icon={faCheck} />}
@@ -66,24 +58,7 @@ export const EditAttributeMassActionModal: FunctionComponent<{
                 </>
             }
         >
-            <KitSpace direction="vertical" size="m" style={{display: 'flex'}}>
-                <KitSpace direction="vertical" size="xxs" style={{display: 'flex'}}>
-                    <KitTypography.Text>
-                        {t('explorer.massAction.editAttribute_attribute_select_title')}
-                    </KitTypography.Text>
-                    <KitSelect
-                        options={attributes.map(attr => ({
-                            label: attr.label || attr.id,
-                            value: attr.id,
-                        }))}
-                        size="large"
-                        allowClear={false}
-                        onChange={value => {
-                            setSelectedAttribute(attributes.find(att => att.id === value));
-                        }}
-                        placeholder={t('explorer.massAction.editAttribute_attribute_select_placeholder')}
-                    />
-                </KitSpace>
+            <KitSpace direction="vertical" size="s" style={{display: 'flex'}}>
                 {children}
             </KitSpace>
         </KitModal>

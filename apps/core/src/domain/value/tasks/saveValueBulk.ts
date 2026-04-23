@@ -144,7 +144,6 @@ export default function ({
                         ctx,
                     });
 
-                    recordsNumber += records.list.length;
                     const valuesMap = new Map(values.map(({before, after}) => [before, after]));
 
                     await Promise.all(
@@ -160,9 +159,11 @@ export default function ({
                                 )[0] as ITreeValue;
 
                                 if (!valuesMap.has(value?.payload?.id ?? null)) {
-                                    treatedNumber++;
                                     return;
                                 }
+
+                                // If we have a value to save, we increment the records number
+                                recordsNumber++;
 
                                 const newValue = valuesMap.get(value?.payload?.id ?? null) as ITreeNode['id'];
 
@@ -202,6 +203,8 @@ export default function ({
                         operations.map(async operation => {
                             try {
                                 await operation();
+
+                                // If the operation is successful, we increment the treated number
                                 treatedNumber++;
                             } catch (error) {
                                 if (!(error instanceof PermissionError)) {

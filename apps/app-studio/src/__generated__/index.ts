@@ -375,6 +375,7 @@ export type AutomationRule = {
   label: Scalars['SystemTranslation']['output'];
   modifiedAt: Scalars['Int']['output'];
   modifiedBy: Scalars['String']['output'];
+  trigger: AutomationRuleTrigger;
 };
 
 
@@ -382,13 +383,62 @@ export type AutomationRuleLabelArgs = {
   lang?: InputMaybe<Array<AvailableLanguage>>;
 };
 
+export enum AutomationRuleEventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
 export enum AutomationRuleSortableFields {
   id = 'id'
 }
 
+export type AutomationRuleTrigger = {
+  eventAction: AutomationRuleEventAction;
+  eventTopic?: Maybe<EventTopic>;
+  synchronous: Scalars['Boolean']['output'];
+};
+
+export type AutomationRuleTriggerInput = {
+  eventAction: AutomationRuleEventAction;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous: Scalars['Boolean']['input'];
+};
+
 export type AutomationRulesFiltersInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type AutomationRulesList = {
@@ -406,28 +456,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignsFraming = {
-  computed?: Maybe<CampaignsFramingComputed>;
-  id: Scalars['String']['output'];
-};
-
-export type CampaignsFramingComputed = {
-  framing?: Maybe<Scalars['JSONObject']['output']>;
-  results?: Maybe<Scalars['JSONObject']['output']>;
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -437,6 +465,7 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 export type CreateAutomationRuleInput = {
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   label: Scalars['SystemTranslation']['input'];
+  trigger: AutomationRuleTriggerInput;
 };
 
 export type CreateRecordDataInput = {
@@ -502,6 +531,86 @@ export type EmbeddedAttributeInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   validation_regex?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
+export type EventTopic = {
+  apiKey?: Maybe<Scalars['String']['output']>;
+  application?: Maybe<Scalars['String']['output']>;
+  attribute?: Maybe<Scalars['String']['output']>;
+  automationRule?: Maybe<Scalars['String']['output']>;
+  filename?: Maybe<Scalars['String']['output']>;
+  library?: Maybe<Scalars['String']['output']>;
+  permission?: Maybe<EventTopicPermission>;
+  profile?: Maybe<Scalars['String']['output']>;
+  record?: Maybe<EventTopicRecord>;
+  tree?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventTopicInput = {
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  application?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  permission?: InputMaybe<EventTopicPermissionInput>;
+  profile?: InputMaybe<Scalars['String']['input']>;
+  record?: InputMaybe<EventTopicRecordInput>;
+  tree?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTopicPermission = {
+  applyTo?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+};
+
+export type EventTopicPermissionInput = {
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type EventTopicRecord = {
+  id: Scalars['String']['output'];
+  libraryId: Scalars['String']['output'];
+};
+
+export type EventTopicRecordInput = {
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type ExportProfile = {
@@ -1061,17 +1170,6 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
-export type MoveThematicResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  originalId: Scalars['ID']['output'];
-};
-
-export type MoveThematicsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematics?: Maybe<Array<MoveThematicResultThematic>>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1106,15 +1204,11 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
-  initRenewCampaigns: Scalars['String']['output'];
-  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
-  removeCampaigns: RemoveCampaignsResult;
-  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1135,7 +1229,6 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
-  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   upload: Array<UploadData>;
 };
@@ -1290,21 +1383,6 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationInitRenewCampaignsArgs = {
-  campaigns: Array<CampaignToRenew>;
-  fromPacId: Scalars['String']['input'];
-  redirectUrl: Scalars['String']['input'];
-  toPacId: Scalars['String']['input'];
-};
-
-
-export type MutationMoveOrCopyCampaignThematicsArgs = {
-  moveThematic: Scalars['Boolean']['input'];
-  thematics: Array<ThematicToRenew>;
-  toCampaignId: Scalars['String']['input'];
-};
-
-
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1323,16 +1401,6 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
-};
-
-
-export type MutationRemoveCampaignsArgs = {
-  campaignsIds: Array<Scalars['ID']['input']>;
-};
-
-
-export type MutationRemoveStructureItemsArgs = {
-  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1446,11 +1514,6 @@ export type MutationUpdateAutomationRuleArgs = {
 };
 
 
-export type MutationUpdateCampaignsDatesArgs = {
-  campaigns: Array<CampaignToUpdateDates>;
-};
-
-
 export type MutationUpdateViewArgs = {
   view: ViewInputPartial;
 };
@@ -1488,6 +1551,12 @@ export type NotificationsList = {
 export type Pagination = {
   limit: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
+};
+
+export type PartialAutomationRuleTriggerInput = {
+  eventAction?: InputMaybe<AutomationRuleEventAction>;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type Permission = {
@@ -1667,8 +1736,6 @@ export type Query = {
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
-  framingCampaigns: Array<CampaignsFraming>;
-  framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
@@ -1743,21 +1810,6 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
-};
-
-
-export type QueryFramingCampaignsArgs = {
-  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
-  pacID: Scalars['String']['input'];
-  searchFilter?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryFramingReportArgs = {
-  content?: InputMaybe<ReportFramingContentInput>;
-  pacID: Scalars['String']['input'];
-  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2102,41 +2154,6 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
-export type RenewCampaignResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  thematic_id: Scalars['ID']['output'];
-};
-
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID']['output'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -2359,23 +2376,16 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -2647,6 +2657,7 @@ export type UpdateAutomationRuleInput = {
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type UploadData = {
@@ -2876,16 +2887,6 @@ export type ViewValuesVersionInput = {
 export type ViewsList = {
   list: Array<View>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type RemoveCampaignsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
-export type RemoveStructureItemsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
 };
 
 export type SaveValueBatchResult = {

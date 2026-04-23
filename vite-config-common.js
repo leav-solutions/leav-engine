@@ -42,7 +42,16 @@ export const devIndexHtmlReplaceVarsPlugin = () => {
     };
 };
 
-const isWindowsWsl = () => {
+// Le polling est nécessaire quand les événements inotify (Linux) ne se propagent pas depuis le système hôte.
+// Cas concernés :
+//   - Windows/WSL : le filesystem virtuel entre Windows et la couche Linux ne remonte pas les événements.
+//   - Rancher Desktop (macOS) : selon la version et la config VirtioFS, les événements peuvent ne pas remonter
+//     dans la VM Linux, contrairement à Docker Desktop qui gère cela nativement depuis la v4.6 (VirtioFS par défaut).
+// Forcer le polling via VITE_USE_POLLING=true dans docker-compose.override.yml si nécessaire.
+const shouldUsePolling = () => {
+    if (process.env.VITE_USE_POLLING === 'true') {
+        return true;
+    }
     try {
         const osrelease = fs.readFileSync('/proc/sys/kernel/osrelease', 'utf8').toLowerCase();
         return osrelease.includes('microsoft');
@@ -68,7 +77,7 @@ export const commonConfig = rootPath => ({
     server: {
         port: 3000,
         host: true,
-        watch: isWindowsWsl()
+        watch: shouldUsePolling()
             ? {
                   usePolling: true,
                   interval: 100,
