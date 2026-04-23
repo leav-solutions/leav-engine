@@ -13,12 +13,12 @@ import {
 } from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {type IAutomationTriggers} from '../../domain/automation/triggers/automationTriggers';
 import {
     AutomationTriggerDefSynchronicity,
     AutomationTriggerDefTopics,
     type AutomationTriggerDef,
-    type IAutomationTriggers,
-} from '../../domain/automation/automationTriggers';
+} from '../../domain/automation/triggers/_types';
 
 export type ICoreImportApp = IGraphqlAppModule;
 
@@ -163,7 +163,7 @@ export default function ({
                             });
                         },
                         automationTriggersDef(parent, args, ctx: IQueryInfos): AutomationTriggerDef[] {
-                            return automationTriggers.getAutomationTriggers({ctx});
+                            return automationTriggers.getAutomationTriggersDef({ctx});
                         },
                     },
                     Mutation: {

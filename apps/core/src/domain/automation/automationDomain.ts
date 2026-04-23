@@ -25,7 +25,7 @@ import {type ArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
 import {type IPipelineExecutor} from './pipelineExecutor';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
-import {type IAutomationTriggers} from './automationTriggers';
+import {type IAutomationTriggers} from './triggers/automationTriggers';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
