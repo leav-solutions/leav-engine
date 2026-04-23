@@ -26,6 +26,7 @@ import {type IConfig} from '../../_types/config';
 import {type IPipelineExecutor} from './pipelineExecutor';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
+import {type AutomationTriggerDef} from './triggers/_types';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -53,6 +54,8 @@ export interface IAutomationDomain {
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     triggerRules(params: ITriggerRulesParams): Promise<void>;
+
+    listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]>;
 }
 
 export interface IAutomationDomainDeps {
@@ -151,6 +154,10 @@ export default function ({
                 logger.error(`Error while triggering ${event.action} rules with topic ${event.topic}: ${error.stack}`);
             }
         },
+        async listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]> {
+            await _hasManageAutomationPermissionOrThrow(ctx);
+            return automationTriggers.listAutomationTriggersDef({ctx});
+        },
         async getAutomationRules({params, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
@@ -238,6 +245,10 @@ function automationDisabled(): IAutomationDomain {
         },
         async triggerRules(): Promise<void> {
             logger.silly('Automation system is disabled. Skipping rules trigger.');
+        },
+        async listAutomationTriggersDef(): Promise<AutomationTriggerDef[]> {
+            logger.silly('Automation system is disabled. Skipping listing automation triggers definitions.');
+            return [];
         },
     };
 }

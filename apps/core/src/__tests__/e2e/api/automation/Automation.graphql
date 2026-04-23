@@ -51,3 +51,11 @@ mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
         }
     }
 }
+
+query ListAutomationTriggersDef {
+    automationTriggersDef {
+        eventAction
+        topics
+        synchronicity
+    }
+}

@@ -79,13 +79,13 @@ describe('automationTriggers', () => {
 
     describe('getAutomationTriggersDef', () => {
         it('returns one def per registered trigger', () => {
-            const defs = createTriggers().getAutomationTriggersDef({ctx: mockCtx});
+            const defs = createTriggers().listAutomationTriggersDef({ctx: mockCtx});
 
             expect(defs).toHaveLength(testTriggers.length);
         });
 
         it('preserves eventAction and synchronicity from the registry', () => {
-            const defs = createTriggers().getAutomationTriggersDef({ctx: mockCtx});
+            const defs = createTriggers().listAutomationTriggersDef({ctx: mockCtx});
             const def = defs.find(d => d.eventAction === TEST_ACTION_SYNC)!;
 
             expect(def.eventAction).toBe(TEST_ACTION_SYNC);
@@ -94,7 +94,7 @@ describe('automationTriggers', () => {
 
         it('derives topics [] from an empty object schema', () => {
             const def = createTriggers()
-                .getAutomationTriggersDef({ctx: mockCtx})
+                .listAutomationTriggersDef({ctx: mockCtx})
                 .find(d => d.eventAction === TEST_ACTION_SYNC)!;
 
             expect(def.topics).toEqual([]);
@@ -102,7 +102,7 @@ describe('automationTriggers', () => {
 
         it('derives topics [LIBRARY] from a library-only schema', () => {
             const def = createTriggers()
-                .getAutomationTriggersDef({ctx: mockCtx})
+                .listAutomationTriggersDef({ctx: mockCtx})
                 .find(d => d.eventAction === TEST_ACTION_LIB)!;
 
             expect(def.topics).toEqual([AutomationTriggerDefTopics.LIBRARY]);
@@ -110,7 +110,7 @@ describe('automationTriggers', () => {
 
         it('derives topics [LIBRARY, ATTRIBUTE] from a library+attribute schema', () => {
             const def = createTriggers()
-                .getAutomationTriggersDef({ctx: mockCtx})
+                .listAutomationTriggersDef({ctx: mockCtx})
                 .find(d => d.eventAction === TEST_ACTION_LIB_ATTR)!;
 
             expect(def.topics).toEqual(

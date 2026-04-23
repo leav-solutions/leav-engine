@@ -209,42 +209,9 @@ export enum AttributesSortableFields {
 }
 
 export enum AutomationRuleEventAction {
-  API_KEY_DELETE = 'API_KEY_DELETE',
-  API_KEY_SAVE = 'API_KEY_SAVE',
-  APP_DELETE = 'APP_DELETE',
-  APP_SAVE = 'APP_SAVE',
-  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
-  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
-  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
-  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
-  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
-  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
-  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
-  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
-  DATA_IMPORT_END = 'DATA_IMPORT_END',
-  DATA_IMPORT_START = 'DATA_IMPORT_START',
-  EXPORT_END = 'EXPORT_END',
-  EXPORT_START = 'EXPORT_START',
-  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
-  LIBRARY_DELETE = 'LIBRARY_DELETE',
-  LIBRARY_PURGE = 'LIBRARY_PURGE',
-  LIBRARY_SAVE = 'LIBRARY_SAVE',
-  PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
-  RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
-  TASKS_DELETE = 'TASKS_DELETE',
-  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
-  TREE_DELETE = 'TREE_DELETE',
-  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
-  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
-  TREE_SAVE = 'TREE_SAVE',
-  VALUE_DELETE = 'VALUE_DELETE',
-  VALUE_SAVE = 'VALUE_SAVE',
-  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
-  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+  VALUE_SAVE = 'VALUE_SAVE'
 }
 
 export enum AutomationRuleSortableFields {
@@ -1280,6 +1247,11 @@ export type UpdateAutomationRuleMutationVariables = Exact<{
 
 export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: string, description?: string | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
 
+export type ListAutomationTriggersDefQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListAutomationTriggersDefQuery = { automationTriggersDef: Array<{ eventAction: AutomationRuleEventAction, topics: Array<AutomationTriggerDefTopics>, synchronicity: AutomationTriggerDefSynchronicity }> };
+
 export type PostDiscussionCommentMutationVariables = Exact<{
   comment?: InputMaybe<DiscussionCommentInput>;
 }>;
@@ -1557,6 +1529,15 @@ export const UpdateAutomationRuleDocument = gql`
   }
 }
     `;
+export const ListAutomationTriggersDefDocument = gql`
+    query ListAutomationTriggersDef {
+  automationTriggersDef {
+    eventAction
+    topics
+    synchronicity
+  }
+}
+    `;
 export const PostDiscussionCommentDocument = gql`
     mutation PostDiscussionComment($comment: DiscussionCommentInput) {
   postDiscussionComment(comment: $comment) {
@@ -1783,6 +1764,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     UpdateAutomationRule(variables: UpdateAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<UpdateAutomationRuleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateAutomationRuleMutation>({ document: UpdateAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateAutomationRule', 'mutation', variables);
+    },
+    ListAutomationTriggersDef(variables?: ListAutomationTriggersDefQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ListAutomationTriggersDefQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ListAutomationTriggersDefQuery>({ document: ListAutomationTriggersDefDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ListAutomationTriggersDef', 'query', variables);
     },
     PostDiscussionComment(variables?: PostDiscussionCommentMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PostDiscussionCommentMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostDiscussionCommentMutation>({ document: PostDiscussionCommentDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PostDiscussionComment', 'mutation', variables);

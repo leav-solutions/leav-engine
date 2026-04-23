@@ -3,7 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {adminUserId} from '../../../../_constants/users';
 import {SyncAutomationRuleEventAction} from '../../../../_types/automation';
-import {AutomationRuleEventAction} from '../../_gqlTypes';
+import {
+    AutomationRuleEventAction,
+    AutomationTriggerDefSynchronicity,
+    AutomationTriggerDefTopics,
+} from '../../_gqlTypes';
 import {adminUserSdk, gqlCreateRecord, nonAdminUserSdk} from '../e2eUtils';
 
 describe('Automation', () => {
@@ -284,6 +288,27 @@ describe('Automation', () => {
             const recordId = await gqlCreateRecord(testLibraryId);
             expect(recordId).toBeTruthy();
             expect(typeof recordId).toBe('string');
+        });
+    });
+
+    describe('list automation triggers', () => {
+        test('should contains at least RECORD_INIT trigger', async () => {
+            const triggersDef = await adminUserSdk.ListAutomationTriggersDef();
+            expect(triggersDef.automationTriggersDef.length).toBeGreaterThanOrEqual(1);
+
+            expect(triggersDef.automationTriggersDef).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        eventAction: AutomationRuleEventAction.RECORD_INIT,
+                        topics: [AutomationTriggerDefTopics.LIBRARY],
+                        synchronicity: AutomationTriggerDefSynchronicity.SYNC,
+                    }),
+                ]),
+            );
+        });
+
+        test('non-admin user cannot list triggers', async () => {
+            await expect(nonAdminUserSdk.ListAutomationTriggersDef()).rejects.toThrow('Action forbidden');
         });
     });
 });

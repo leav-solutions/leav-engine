@@ -10,7 +10,7 @@ import {type IAutomationTriggersRegistry} from './automationTriggersRegistry';
 import {type AutomationTriggerDef, AutomationTriggerDefSynchronicity, AutomationTriggerDefTopics} from './_types';
 
 export interface IAutomationTriggers {
-    getAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): AutomationTriggerDef[];
+    listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): AutomationTriggerDef[];
     validateAutomationRuleTrigger(ruleTrigger: AutomationRuleTrigger, ctx: IQueryInfos): Promise<void>;
 }
 
@@ -38,7 +38,7 @@ export default function ({
     'core.domain.automation.triggers.registry': triggersRegistry,
 }: IAutomationTriggersDeps): IAutomationTriggers {
     return {
-        getAutomationTriggersDef: ({ctx}) =>
+        listAutomationTriggersDef: ({ctx}) =>
             triggersRegistry.listTriggers().map(({eventAction, topicSchema, synchronicity}) => ({
                 eventAction,
                 topics: _getTopicsFromSchema(topicSchema),
