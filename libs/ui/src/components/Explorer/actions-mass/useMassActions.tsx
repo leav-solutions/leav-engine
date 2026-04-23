@@ -14,6 +14,7 @@ import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReduce
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import {ResultsCount} from './ResultsCount';
+import {IKitDropdown} from 'aristid-ds/dist/Kit/Navigation/DropDown/types';
 
 /**
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)
@@ -156,19 +157,25 @@ export const useMassActions = ({
                                 onClick: () =>
                                     _setSelectedKeys([...new Set([...view.massSelection, ...allVisibleKeys])]),
                             },
-                    {
-                        key: 'toggle_all_selection',
-                        label: hasSelectedAllAvailableItems
-                            ? t('explorer.massAction.toggle_selection.deselect_all', {count: totalCountFiltered})
-                            : t('explorer.massAction.toggle_selection.select_all', {count: totalCountFiltered}),
-                        onClick: async () => {
-                            if (hasSelectedAllAvailableItems) {
-                                _setSelectedKeys([]);
-                            } else {
-                                _setSelectedKeys(MASS_SELECTION_ALL);
-                            }
-                        },
-                    },
+                    !hasSelectedAllAvailableItems
+                        ? {
+                              key: 'select_all_selection',
+                              label: t('explorer.massAction.toggle_selection.select_all', {count: totalCountFiltered}),
+                              onClick: async () => {
+                                  _setSelectedKeys(MASS_SELECTION_ALL);
+                              },
+                          }
+                        : null,
+                    hasSelectedAllAvailableItems ||
+                    (!hasSelectedAllAvailableItems && !hasSelectedAllVisibleItems && view.massSelection.length >= 2)
+                        ? {
+                              key: 'deselect_all_selection',
+                              label: t('explorer.massAction.toggle_selection.deselect_all'),
+                              onClick: async () => {
+                                  _setSelectedKeys([]);
+                              },
+                          }
+                        : null,
                 ],
             }}
         >
