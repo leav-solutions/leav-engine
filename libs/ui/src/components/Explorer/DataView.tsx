@@ -196,7 +196,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                         'row-clickable': itemActionToUseOnRowClick,
                     })}
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
-                    headerLineSize={useSmallHeaderSize ? 's' : undefined}
+                    headerLineSize={useSmallHeaderSize ? 's' : 'm'}
                     columns={[whoIAmColumn, ...columns]}
                     tableLayout="fixed"
                     scroll={{
