@@ -5,9 +5,9 @@ import {
     type AutomationRuleEventAction,
     type AutomationRulesEventTopic,
     type IAutomationRule,
-    AutomationRuleActions,
 } from '../../_types/automation';
 import {type IQueryInfos} from '../../_types/queryInfos';
+import {AutomationRuleActions} from './actions/_types';
 import {type ConditionActionParams} from './actions/conditionAction';
 import {type ErrorActionParams} from './actions/errorAction';
 import {type LogActionParams} from './actions/logAction';

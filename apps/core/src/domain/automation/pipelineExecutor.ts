@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
-import {type AwilixContainer} from 'awilix';
 import {EventAction} from '@leav/utils';
 import {
     type AutomationRuleTrigger,
@@ -13,13 +12,13 @@ import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {
     ActionExecutionResultStatus,
     type IActionExecutionResult,
-    type IAutomationAction,
     type IAutomationPipelineExecutionState,
 } from './types';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {type IAutomationActionsRegistry} from './automationActionsRegistry';
+import {type IAutomationAction} from './actions/_types';
 
 export type AutomationPipelineToExecute = AutomationRulePipeline & {
     ruleId: string;

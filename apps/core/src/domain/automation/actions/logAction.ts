@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
 import {type ILogger, logger} from '@leav/logger';
-import {AutomationRuleActions} from '../../../_types/automation';
-import {ActionExecutionResultStatus, type IAutomationAction} from '../types';
+import {AutomationRuleActions, type IAutomationAction} from './_types';
+import {ActionExecutionResultStatus} from '../types';
 
 const logActionParamsSchema = z.object({
     message: z.string().meta({

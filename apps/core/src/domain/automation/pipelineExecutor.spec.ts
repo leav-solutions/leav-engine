@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type AwilixContainer} from 'awilix';
 import {EventAction} from '@leav/utils';
 import {z} from 'zod';
 import {type Mock} from 'vitest';
@@ -11,10 +10,11 @@ import {
     type AutomationRuleTrigger,
 } from '../../_types/automation';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import createPipelineExecutor, {type IPipelineExecutor, type AutomationPipelineToExecute} from './pipelineExecutor';
-import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from './types';
+import createPipelineExecutor, {type AutomationPipelineToExecute} from './pipelineExecutor';
+import {ActionExecutionResultStatus, type IActionExecutionResult} from './types';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type IAutomationActionsRegistry} from './automationActionsRegistry';
+import {type IAutomationAction} from './actions/_types';
 
 const eventManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: vi.fn(),

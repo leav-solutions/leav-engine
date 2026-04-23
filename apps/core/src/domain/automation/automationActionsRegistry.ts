@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {type AwilixContainer} from 'awilix';
-import {type IAutomationAction} from './types';
+import {type IAutomationAction} from './actions/_types';
 
 export interface IAutomationActionsRegistry {
     getAction(type: string): IAutomationAction;
@@ -14,6 +14,8 @@ export interface IAutomationActionsRegistryDeps {
     'core.depsManager': AwilixContainer;
 }
 
+const ACTION_MODULE_DISCOVERY_REGEX = /^core\.domain\.automation\.actions\.[^.]+$/;
+
 export default function ({
     'core.depsManager': depsManager,
 }: IAutomationActionsRegistryDeps): IAutomationActionsRegistry {
@@ -21,7 +23,7 @@ export default function ({
     const _loadActionsOnDemand = (): Map<string, IAutomationAction> => {
         if (loadedActionRegistry.size === 0) {
             const coreActions: IAutomationAction[] = Object.keys(depsManager.registrations)
-                .filter(modName => modName.match(/^core\.domain\.automation\.actions\./))
+                .filter(modName => modName.match(ACTION_MODULE_DISCOVERY_REGEX))
                 .map(modName => depsManager.cradle[modName]);
 
             logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
