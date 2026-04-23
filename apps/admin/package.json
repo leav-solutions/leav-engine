@@ -25,7 +25,7 @@
         "@nosferatu500/react-sortable-tree": "4.4.0",
         "@reduxjs/toolkit": "1.9.7",
         "@uiw/react-json-view": "2.0.0-alpha.42",
-        "aristid-ds": "15.3.1-886678",
+        "aristid-ds": "15.3.1-05878d4",
         "cross-fetch": "3.2.0",
         "dayjs": "1.11.20",
         "fomantic-ui-less": "2.9.4",

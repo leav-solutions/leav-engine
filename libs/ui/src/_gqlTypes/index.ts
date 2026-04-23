@@ -208,13 +208,56 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleEventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
 export enum AutomationRuleSortableFields {
   id = 'id'
 }
 
+export type AutomationRuleTriggerInput = {
+  eventAction: AutomationRuleEventAction;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous: Scalars['Boolean']['input'];
+};
+
 export type AutomationRulesFiltersInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type AutomationRulesSortInput = {
@@ -222,22 +265,21 @@ export type AutomationRulesSortInput = {
   order?: InputMaybe<SortOrder>;
 };
 
+export enum AutomationTriggerDefSynchronicity {
+  ASYNC = 'ASYNC',
+  BOTH = 'BOTH',
+  SYNC = 'SYNC'
+}
+
+export enum AutomationTriggerDefTopics {
+  ATTRIBUTE = 'ATTRIBUTE',
+  LIBRARY = 'LIBRARY'
+}
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
-
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -246,8 +288,9 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 };
 
 export type CreateAutomationRuleInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
-  label: Scalars['SystemTranslation']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  trigger: AutomationRuleTriggerInput;
 };
 
 export type CreateRecordDataInput = {
@@ -290,6 +333,63 @@ export type EmbeddedAttributeInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   validation_regex?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
+export type EventTopicInput = {
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  application?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  permission?: InputMaybe<EventTopicPermissionInput>;
+  profile?: InputMaybe<Scalars['String']['input']>;
+  record?: InputMaybe<EventTopicRecordInput>;
+  tree?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTopicPermissionInput = {
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type EventTopicRecordInput = {
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type FileInput = {
@@ -544,6 +644,12 @@ export type Pagination = {
   offset: Scalars['Int']['input'];
 };
 
+export type PartialAutomationRuleTriggerInput = {
+  eventAction?: InputMaybe<AutomationRuleEventAction>;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type PermissionActionInput = {
   allowed?: InputMaybe<Scalars['Boolean']['input']>;
   name: PermissionsActions;
@@ -718,6 +824,12 @@ export type RecordInput = {
   library: Scalars['String']['input'];
 };
 
+export type RecordNewCommentFilterInput = {
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  libraries?: InputMaybe<Array<Scalars['ID']['input']>>;
+  records?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export enum RecordPermissionsActions {
   access_record = 'access_record',
   access_record_by_default = 'access_record_by_default',
@@ -741,29 +853,6 @@ export type RecordsPagination = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SaveValueBulkMappingInput = {
@@ -851,19 +940,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -939,9 +1021,10 @@ export enum TreesSortableFields {
 
 export type UpdateAutomationRuleInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
-  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
 };
 
 export type UploadFiltersInput = {
@@ -1893,18 +1976,6 @@ export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<
       | { label?: any | null, id: string, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } }
     > } | null };
 
-export type CountValuesOccurrencesQueryVariables = Exact<{
-  library: Scalars['ID']['input'];
-  attribute: Scalars['ID']['input'];
-  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
-}>;
-
-
-export type CountValuesOccurrencesQuery = { listDistinctValues?: Array<
-    | { count: number }
-    | { count: number, treeNode?: { id: string } | null }
-  > | null };
-
 export type ExplorerLibraryCountDataQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
@@ -1971,6 +2042,16 @@ export type LibraryExportProfilesQueryVariables = Exact<{
 
 export type LibraryExportProfilesQuery = { libraries?: { list: Array<{ id: string, exportProfiles?: { defaultProfile: string, profiles: Array<{ label: string, columns: Array<{ columnLabel: string, attribute: string }>, error?: { message: string } | null }> } | null }> } | null };
 
+export type MassEditableAttributesQueryVariables = Exact<{
+  libraryId: Scalars['String']['input'];
+}>;
+
+
+export type MassEditableAttributesQuery = { attributes?: { list: Array<
+      | { id: string, label?: any | null }
+      | { id: string, label?: any | null, tree_values?: Array<{ node?: { id: string, record: { id: string, whoAmI: { label?: string | null, color?: string | null } } } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string, label?: any | null }> } | null }
+    > } | null };
+
 export type ExplorerSelectionIdsQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
@@ -1990,6 +2071,18 @@ export type UpdateViewMutationVariables = Exact<{
 
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+
+export type ValuesOccurrencesQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  attributeId: Scalars['ID']['input'];
+  recordFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
+}>;
+
+
+export type ValuesOccurrencesQuery = { listDistinctValues?: Array<
+    | { count: number }
+    | { count: number, treeNode?: { id: string } | null }
+  > | null };
 
 export type TreeFiltersDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -5690,60 +5783,6 @@ export type ExplorerLinkAttributeQueryHookResult = ReturnType<typeof useExplorer
 export type ExplorerLinkAttributeLazyQueryHookResult = ReturnType<typeof useExplorerLinkAttributeLazyQuery>;
 export type ExplorerLinkAttributeSuspenseQueryHookResult = ReturnType<typeof useExplorerLinkAttributeSuspenseQuery>;
 export type ExplorerLinkAttributeQueryResult = Apollo.QueryResult<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>;
-export const CountValuesOccurrencesDocument = gql`
-    query CountValuesOccurrences($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
-  listDistinctValues(
-    library: $library
-    attribute: $attribute
-    recordFilters: $recordFilters
-  ) {
-    count
-    ... on TreeDistinctValues {
-      treeNode: value {
-        id
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useCountValuesOccurrencesQuery__
- *
- * To run a query within a React component, call `useCountValuesOccurrencesQuery` and pass it any options that fit your needs.
- * When your component renders, `useCountValuesOccurrencesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCountValuesOccurrencesQuery({
- *   variables: {
- *      library: // value for 'library'
- *      attribute: // value for 'attribute'
- *      recordFilters: // value for 'recordFilters'
- *   },
- * });
- */
-export function useCountValuesOccurrencesQuery(baseOptions: Apollo.QueryHookOptions<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables> & ({ variables: CountValuesOccurrencesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>(CountValuesOccurrencesDocument, options);
-      }
-export function useCountValuesOccurrencesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>(CountValuesOccurrencesDocument, options);
-        }
-// @ts-ignore
-export function useCountValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>): Apollo.UseSuspenseQueryResult<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>;
-export function useCountValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>): Apollo.UseSuspenseQueryResult<CountValuesOccurrencesQuery | undefined, CountValuesOccurrencesQueryVariables>;
-export function useCountValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>(CountValuesOccurrencesDocument, options);
-        }
-export type CountValuesOccurrencesQueryHookResult = ReturnType<typeof useCountValuesOccurrencesQuery>;
-export type CountValuesOccurrencesLazyQueryHookResult = ReturnType<typeof useCountValuesOccurrencesLazyQuery>;
-export type CountValuesOccurrencesSuspenseQueryHookResult = ReturnType<typeof useCountValuesOccurrencesSuspenseQuery>;
-export type CountValuesOccurrencesQueryResult = Apollo.QueryResult<CountValuesOccurrencesQuery, CountValuesOccurrencesQueryVariables>;
 export const ExplorerLibraryCountDataDocument = gql`
     query ExplorerLibraryCountData($libraryId: ID!, $filters: [RecordFilterInput]) {
   records(library: $libraryId, filters: $filters) {
@@ -6078,6 +6117,78 @@ export type LibraryExportProfilesQueryHookResult = ReturnType<typeof useLibraryE
 export type LibraryExportProfilesLazyQueryHookResult = ReturnType<typeof useLibraryExportProfilesLazyQuery>;
 export type LibraryExportProfilesSuspenseQueryHookResult = ReturnType<typeof useLibraryExportProfilesSuspenseQuery>;
 export type LibraryExportProfilesQueryResult = Apollo.QueryResult<LibraryExportProfilesQuery, LibraryExportProfilesQueryVariables>;
+export const MassEditableAttributesDocument = gql`
+    query MassEditableAttributes($libraryId: String!) {
+  attributes(
+    filters: {multiple_values: false, type: tree, libraries: [$libraryId]}
+  ) {
+    list {
+      id
+      label
+      ... on TreeAttribute {
+        id
+        tree_values {
+          node {
+            id
+            record {
+              id
+              whoAmI {
+                label
+                color
+              }
+            }
+          }
+          allowedDependentValues {
+            nodeId
+          }
+        }
+        permissions_conf_dependent_values {
+          dependenciesTreeAttributes {
+            id
+            label
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useMassEditableAttributesQuery__
+ *
+ * To run a query within a React component, call `useMassEditableAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMassEditableAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMassEditableAttributesQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useMassEditableAttributesQuery(baseOptions: Apollo.QueryHookOptions<MassEditableAttributesQuery, MassEditableAttributesQueryVariables> & ({ variables: MassEditableAttributesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>(MassEditableAttributesDocument, options);
+      }
+export function useMassEditableAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>(MassEditableAttributesDocument, options);
+        }
+// @ts-ignore
+export function useMassEditableAttributesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>): Apollo.UseSuspenseQueryResult<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>;
+export function useMassEditableAttributesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>): Apollo.UseSuspenseQueryResult<MassEditableAttributesQuery | undefined, MassEditableAttributesQueryVariables>;
+export function useMassEditableAttributesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>(MassEditableAttributesDocument, options);
+        }
+export type MassEditableAttributesQueryHookResult = ReturnType<typeof useMassEditableAttributesQuery>;
+export type MassEditableAttributesLazyQueryHookResult = ReturnType<typeof useMassEditableAttributesLazyQuery>;
+export type MassEditableAttributesSuspenseQueryHookResult = ReturnType<typeof useMassEditableAttributesSuspenseQuery>;
+export type MassEditableAttributesQueryResult = Apollo.QueryResult<MassEditableAttributesQuery, MassEditableAttributesQueryVariables>;
 export const ExplorerSelectionIdsDocument = gql`
     query ExplorerSelectionIds($libraryId: ID!, $filters: [RecordFilterInput]) {
   records(library: $libraryId, filters: $filters) {
@@ -6205,6 +6316,60 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
+export const ValuesOccurrencesDocument = gql`
+    query ValuesOccurrences($libraryId: ID!, $attributeId: ID!, $recordFilters: [RecordFilterInput]!) {
+  listDistinctValues(
+    library: $libraryId
+    attribute: $attributeId
+    recordFilters: $recordFilters
+  ) {
+    count
+    ... on TreeDistinctValues {
+      treeNode: value {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useValuesOccurrencesQuery__
+ *
+ * To run a query within a React component, call `useValuesOccurrencesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValuesOccurrencesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValuesOccurrencesQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      attributeId: // value for 'attributeId'
+ *      recordFilters: // value for 'recordFilters'
+ *   },
+ * });
+ */
+export function useValuesOccurrencesQuery(baseOptions: Apollo.QueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables> & ({ variables: ValuesOccurrencesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>(ValuesOccurrencesDocument, options);
+      }
+export function useValuesOccurrencesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>(ValuesOccurrencesDocument, options);
+        }
+// @ts-ignore
+export function useValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>): Apollo.UseSuspenseQueryResult<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>;
+export function useValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>): Apollo.UseSuspenseQueryResult<ValuesOccurrencesQuery | undefined, ValuesOccurrencesQueryVariables>;
+export function useValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>(ValuesOccurrencesDocument, options);
+        }
+export type ValuesOccurrencesQueryHookResult = ReturnType<typeof useValuesOccurrencesQuery>;
+export type ValuesOccurrencesLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesLazyQuery>;
+export type ValuesOccurrencesSuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesSuspenseQuery>;
+export type ValuesOccurrencesQueryResult = Apollo.QueryResult<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>;
 export const TreeFiltersDataQueryDocument = gql`
     query TreeFiltersDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
   treeContent(

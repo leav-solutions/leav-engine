@@ -191,6 +191,38 @@ const _handleSubmit = () => { /* Handle submit... */ };
 -   Use `getByTestId` only on last resort
 -   Don't use non-standard roles (e.g. `<div role="myOwnRole">...</div>`)
 -   Small integration tests, testing a whole feature, might make more sense than testing all presentational components individually
+-   Mock generated query hooks instead of using Apollo `MockedResponse` inside `render` or `renderHook`
+-   Use `jest.spyOn` on the `* as gqlTypes` namespace to mock generated hooks
+-   Do not mock `useSharedTranslation` — the test environment already returns translation keys as-is
+-   Do not add `jest.clearAllMocks()` in `beforeEach` unless a specific test requires it
+
+```ts
+// ✅ Good
+import * as gqlTypes from '_ui/_gqlTypes';
+
+jest.spyOn(gqlTypes, 'useMyQuery').mockReturnValue({
+    data: {...},
+    loading: false,
+} as gqlTypes.MyQueryResult);
+
+// ❌ Bad — passing MockedResponse to renderHook/render
+const mocks: MockedResponse[] = [{request: {...}, result: {...}}];
+renderHook(() => useMyHook(), {mocks});
+```
+
+-   Destructure `result` directly from `renderHook` to avoid repeating `result.current` in assertions
+
+```ts
+// ✅ Good
+const {
+    result: {current},
+} = renderHook(() => useMyHook());
+expect(current.value).toBe(42);
+
+// ❌ Verbose
+const {result} = renderHook(() => useMyHook());
+expect(result.current.value).toBe(42);
+```
 
 ## Folder structure
 

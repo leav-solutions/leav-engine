@@ -13,6 +13,8 @@ import {AttributeType} from './types/attributes';
 import {FileType} from './types/files';
 import {type IKeyValue} from './types/helpers';
 
+type SystemTranslation = Record<string, string | null>;
+
 const extensionsTyped = extensions as {
     [extension: string]: {
         mime: string;
@@ -37,7 +39,10 @@ export const isFileAllowed = (fsPath: string, allowList: string[], ignoreList: s
     return !isIgnored && isAllowed;
 };
 
-export const localizedTranslation = (translations: Record<string, string>, availableLanguages: string[]): string => {
+export const localizedTranslation = (
+    translations: SystemTranslation | undefined | null,
+    availableLanguages: string[],
+): string => {
     if (!translations) {
         return '';
     }
