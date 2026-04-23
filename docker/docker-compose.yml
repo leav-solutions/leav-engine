@@ -28,13 +28,13 @@ x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/ap
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
-x-volume-ui-modules: &volume-ui-modules node_modules_utils:/app/libs/ui/node_modules
+x-volume-ui-modules: &volume-ui-modules node_modules_ui:/app/libs/ui/node_modules
 x-volume-message_broker-modules: &volume-message_broker-modules node_modules_message-broker:/app/libs/message-broker/node_modules
 x-volume-monitoring_server-modules: &volume-monitoring_server-modules node_modules_monitoring-server:/app/libs/monitoring-server/node_modules
 x-volume-logger-modules: &volume-logger-modules node_modules_logger:/app/libs/logger/node_modules
 
 # Host path is relative to the docker folder
-x-mount_point-repo: &mount_point-repo ../:/app:delegated
+x-mount_point-repo: &mount_point-repo ../:/app
 x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
 x-mount_point-files: &mount_point-files ../files/:/files
 x-mount_point-previews: &mount_point-previews ../previews/:/results
@@ -153,15 +153,6 @@ x-env-build-core: &env-build-core
   context: ../apps/core
   dockerfile: ../../docker/DOCKERFILES/CORE/Dockerfile
 
-# Healthcheck for Vite dev server (front-end apps)
-x-healthcheck-vite: &healthcheck-vite
-  test: ["CMD-SHELL", "nc -z localhost 3000 || exit 1"]
-  start_period: 30s
-  start_interval: 3s
-  interval: 30s
-  timeout: 2s
-  retries: 30
-
 # Healthcheck with libs/monitoring-server module
 x-healthcheck-localhost-44444: &healthcheck-localhost-44444
   test: ["CMD-SHELL", "nc -z localhost 44444 || exit 1"]
@@ -179,11 +170,13 @@ services:
   core:
     build: *env-build-core
     stdin_open: true
+    tty: true
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.core.rule=Host(`core.leav.localhost`)
-      - traefik.http.services.core.loadbalancer.server.port=4001
-      - traefik.http.routers.core.entrypoints=web
+      - "traefik.enable=true"
+      - "traefik.http.routers.core.rule=Host(`core.leav.localhost`)"
+      - "traefik.http.services.core.loadbalancer.server.port=4001"
+      - "traefik.http.routers.core.entrypoints=web"
+      - "traefik.http.routers.core.priority=10"
     environment:
       <<: [*env-core, *env-amqp, *env-logger]
       CORE_MODE: server
@@ -216,7 +209,7 @@ services:
       - *mount_point-yarn_releases
     ports:
       - "9229:9229"
-      - "4001"
+      - "4001:4001"
     working_dir: *dir-core
     healthcheck: *healthcheck-localhost-44444
     depends_on:
@@ -229,6 +222,7 @@ services:
   indexation-manager:
     build: *env-build-core
     stdin_open: true
+    tty: true
     environment:
       <<: [*env-core, *env-amqp, *env-logger]
       CORE_MODE: indexationManager
@@ -257,6 +251,7 @@ services:
   tasks-manager-master:
     build: *env-build-core
     stdin_open: true
+    tty: true
     environment:
       <<: [*env-logger, *env-core, *env-amqp]
       CORE_MODE: tasksManager:master
@@ -318,6 +313,7 @@ services:
     profiles: ["logs"]
     build: *env-build-core
     stdin_open: true
+    tty: true
     environment:
       <<: [*env-logger, *env-core, *env-amqp]
       CORE_MODE: logsCollector
@@ -346,11 +342,12 @@ services:
   admin:
     image: node:24.14.1-alpine3.23
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) &&
-        PathPrefix(`/app/admin`)) || Host(`admin.leav.localhost`)
-      - traefik.http.services.admin.loadbalancer.server.port=3000
-      - traefik.http.routers.admin.entrypoints=web
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/admin`)) || Host(`admin.leav.localhost`)"
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
+      - "traefik.http.routers.admin.entrypoints=web"
+      - "traefik.http.routers.admin.priority=100"
     environment:
       <<: [*env-react, *env-admin]
       PUBLIC_URL: http://core.leav.localhost/app/admin
@@ -364,7 +361,6 @@ services:
       - *volume-shared-modules
       - *mount_point-yarn_releases
     working_dir: *dir-admin
-    healthcheck: *healthcheck-vite
     depends_on:
       core:
         condition: service_healthy
@@ -373,12 +369,14 @@ services:
   data-studio:
     image: node:24.14.1-alpine3.23
     stdin_open: true
+    tty: true
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) &&
-        PathPrefix(`/app/data-studio`)) || Host(`data-studio.leav.localhost`)
-      - traefik.http.services.data-studio.loadbalancer.server.port=3000
-      - traefik.http.routers.data-studio.entrypoints=web
+      - "traefik.enable=true"
+      - "traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/data-studio`)) || Host(`data-studio.leav.localhost`)"
+      - "traefik.http.services.data-studio.loadbalancer.server.port=3000"
+      - "traefik.http.routers.data-studio.entrypoints=web"
+      - "traefik.http.routers.data-studio.priority=100"
     environment:
       <<: [*env-react, *env-data-studio]
       PUBLIC_URL: http://core.leav.localhost/app/data-studio
@@ -392,24 +390,23 @@ services:
       - *volume-data_studio-modules
       - *mount_point-yarn_releases
     working_dir: *dir-data_studio
-    healthcheck: *healthcheck-vite
     depends_on:
       core:
-        condition: service_healthy
-      admin:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
   app-studio:
     image: node:24.14.1-alpine3.23
     stdin_open: true
+    tty: true
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) &&
+      - "traefik.enable=true"
+      - "traefik.http.routers.app-studio.rule=(Host(`core.leav.localhost`) &&
         (PathPrefix(`/app/app-studio`) || PathPrefix(`/app/explorer-studio`) ||
-        PathPrefix(`/app/home`))) || Host(`app-studio.leav.localhost`)
-      - traefik.http.services.app-studio.loadbalancer.server.port=3000
-      - traefik.http.routers.app-studio.entrypoints=web
+        PathPrefix(`/app/home`))) || Host(`app-studio.leav.localhost`)"
+      - "traefik.http.services.app-studio.loadbalancer.server.port=3000"
+      - "traefik.http.routers.app-studio.entrypoints=web"
+      - "traefik.http.routers.app-studio.priority=100"
     environment:
       <<: [*env-react]
       PUBLIC_URL: http://core.leav.localhost/app/app-studio
@@ -423,23 +420,22 @@ services:
       - *volume-app_studio-modules
       - *mount_point-yarn_releases
     working_dir: *dir-app_studio
-    healthcheck: *healthcheck-vite
     depends_on:
       core:
-        condition: service_healthy
-      data-studio:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
   login:
     image: node:24.14.1-alpine3.23
     stdin_open: true
+    tty: true
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.login.rule=(Host(`core.leav.localhost`) &&
-        PathPrefix(`/app/login`)) || Host(`login.leav.localhost`)
-      - traefik.http.services.login.loadbalancer.server.port=3000
-      - traefik.http.routers.login.entrypoints=web
+      - "traefik.enable=true"
+      - "traefik.http.routers.login.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/login`)) || Host(`login.leav.localhost`)"
+      - "traefik.http.services.login.loadbalancer.server.port=3000"
+      - "traefik.http.routers.login.entrypoints=web"
+      - "traefik.http.routers.login.priority=100"
     environment:
       <<: [*env-react, *env-login]
       PUBLIC_URL: http://core.leav.localhost/app/login
@@ -453,27 +449,22 @@ services:
       - *volume-login-modules
       - *mount_point-yarn_releases
     working_dir: *dir-login
-    healthcheck: *healthcheck-vite
     depends_on:
       core:
-        condition: service_healthy
-      app-studio:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
   portal:
     image: node:24.14.1-alpine3.23
     stdin_open: true
+    tty: true
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.portal.rule=(Host(`core.leav.localhost`) &&
-        PathPrefix(`/app/portal`)) || Host(`portal.leav.localhost`)
-      - traefik.http.services.portal.loadbalancer.server.port=3000
-      - traefik.http.routers.portal.entrypoints=web
-      - traefik.backend=portal
-      - traefik.port=3000
-      - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/app/portal
-      - traefik.ws.frontend.rule=Host:portal.leav.localhost
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal.rule=(Host(`core.leav.localhost`) &&
+        PathPrefix(`/app/portal`)) || Host(`portal.leav.localhost`)"
+      - "traefik.http.services.portal.loadbalancer.server.port=3000"
+      - "traefik.http.routers.portal.entrypoints=web"
+      - "traefik.http.routers.portal.priority=100"
     environment:
       <<: [*env-react, *env-portal]
       PUBLIC_URL: http://core.leav.localhost/app/portal
@@ -485,11 +476,8 @@ services:
       - *volume-portal-modules
       - *mount_point-yarn_releases
     working_dir: *dir-portal
-    healthcheck: *healthcheck-vite
     depends_on:
       core:
-        condition: service_healthy
-      login:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
 
@@ -608,14 +596,13 @@ services:
   traefik:
     image: *traefik_image
     command:
-      - "--api.insecure"
       - "--providers.docker=true"
+      - "--providers.docker.network=leav"
       - "--providers.docker.exposedbydefault=false"
       - "--api.dashboard=true"
       - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
-      - "8000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
@@ -623,6 +610,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.rule=Host(`traefik.leav.localhost`)"
       - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"
 
   arangodb:
     image: *arango_image
@@ -697,13 +685,13 @@ services:
       - traefik.enable=true
       - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)
       - traefik.http.services.redis-commander.loadbalancer.server.port=8081
-      - traefik.http.routers.rabbitmq.entrypoints=web
+      - traefik.http.routers.redis-commander.entrypoints=web
     depends_on:
       redis:
         condition: service_healthy
 
   elasticsearch:
-    profiles: ["logs"]
+    profiles: ["logs", "debug"]
     image: elasticsearch:8.10.2
     healthcheck:
       test: ["CMD-SHELL", "curl -s --fail http://elasticsearch:9200"]
@@ -738,8 +726,8 @@ services:
     image: axllent/mailpit:v1.27.10
     restart: always
     ports:
-      - "8025"
-      - "1025"
+      - "8025:8025"
+      - "1025:1025"
     environment:
       - MP_DATABASE=/data/mailpit.db
     labels:
