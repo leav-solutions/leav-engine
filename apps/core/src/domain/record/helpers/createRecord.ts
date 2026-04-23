@@ -65,7 +65,6 @@ export default function ({
                 },
             },
             synchronous: true,
-            partialMatchOnEventTopic: true,
             ctx,
         });
 

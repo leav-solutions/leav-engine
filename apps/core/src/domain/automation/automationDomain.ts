@@ -38,7 +38,6 @@ export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
 interface ITriggerRulesParams {
     event: {action: IAutomationRule['trigger']['eventAction']; topic?: IAutomationRule['trigger']['eventTopic']};
     synchronous: boolean;
-    partialMatchOnEventTopic?: boolean;
     ctx: IQueryInfos;
 }
 
@@ -88,7 +87,6 @@ export default function ({
         event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
-        partialMatchOnEventTopic: boolean = false,
     ): Promise<IAutomationRule[]> => {
         if (TRIGGER_FAKER_RULES_FOR_DEV) {
             return buildFakeRulesToTrigger(event, synchronous, ctx);
@@ -104,7 +102,7 @@ export default function ({
                         eventTopic: event.topic,
                     },
                 },
-                partialMatchOnEventTopic,
+                partialMatchOnEventTopic: true,
             },
             ctx,
         );
@@ -114,10 +112,10 @@ export default function ({
 
     return {
         async triggerRules(params): Promise<void> {
-            const {event, synchronous, partialMatchOnEventTopic = false, ctx} = params;
+            const {event, synchronous, ctx} = params;
 
             try {
-                const rules = await _getRulesToTrigger(event, synchronous, ctx, partialMatchOnEventTopic);
+                const rules = await _getRulesToTrigger(event, synchronous, ctx);
                 const trigger: AutomationRuleTrigger = {
                     eventAction: event.action,
                     eventTopic: event.topic,
