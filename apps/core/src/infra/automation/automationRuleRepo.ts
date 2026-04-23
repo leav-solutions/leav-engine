@@ -59,6 +59,7 @@ export interface IAutomationRuleRepo {
     createAutomationRule(rule: ICreateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule>;
     updateAutomationRule(rule: IUpdateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule>;
     getAutomationRules(params: IGetAutomationRulesParams, ctx: IQueryInfos): Promise<IList<IAutomationRule>>;
+    deleteAutomationRule(ruleId: string, ctx: IQueryInfos): Promise<IAutomationRule>;
 }
 
 export interface IAutomationRuleRepoDeps {
@@ -119,6 +120,19 @@ export default function ({
             });
 
             return automationRuleFromDbDocument(updatedAutomationRule[0]);
+        },
+        async deleteAutomationRule(ruleId: string, ctx: IQueryInfos): Promise<IAutomationRule> {
+            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+
+            const oldAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
+                query: aql`
+                    REMOVE { _key: ${ruleId} } IN ${collection} 
+                    RETURN OLD
+                `,
+                ctx,
+            });
+
+            return automationRuleFromDbDocument(oldAutomationRule[0]);
         },
         async getAutomationRules(params, ctx): Promise<IList<IAutomationRule>> {
             const defaultParams: IGetCoreEntitiesParams = {

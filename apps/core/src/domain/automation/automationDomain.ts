@@ -21,7 +21,7 @@ import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {EventAction} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {type ArangoError} from 'arangojs/error';
+import {isArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
 import {type IPipelineExecutor} from './pipelineExecutor';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
@@ -53,6 +53,7 @@ export interface IAutomationDomain {
     }): Promise<IList<IAutomationRule>>;
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
+    deleteAutomationRule({ruleId, ctx}: {ruleId: string; ctx: IQueryInfos}): Promise<IAutomationRule>;
     triggerRules(params: ITriggerRulesParams): Promise<void>;
 
     listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]>;
@@ -199,8 +200,8 @@ export default function ({
                 .updateAutomationRule(rule, ctx)
                 // TODO: This catch block should be removed once the repository handles ArangoError and throws DBError instead.
                 // Ticket: https://aristid.atlassian.net/browse/LEAVC-777
-                .catch((error: ArangoError) => {
-                    if (error.code === 404) {
+                .catch((error: unknown) => {
+                    if (isArangoError(error) && error.code === 404) {
                         throw new ValidationError<IAutomationRule>({
                             id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId: rule.id}},
                         });
@@ -224,6 +225,36 @@ export default function ({
 
             return updatedAutomationRule;
         },
+        async deleteAutomationRule({ruleId, ctx}) {
+            await _hasManageAutomationPermissionOrThrow(ctx);
+
+            const deletedAutomationRule = await automationRuleRepo
+                .deleteAutomationRule(ruleId, ctx) // TODO: This catch block should be removed once the repository handles ArangoError and throws DBError instead.
+                // Ticket: https://aristid.atlassian.net/browse/LEAVC-777
+                .catch((error: unknown) => {
+                    if (isArangoError(error) && error.code === 404) {
+                        throw new ValidationError<IAutomationRule>({
+                            id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId}},
+                        });
+                    }
+
+                    throw error;
+                });
+
+            logger.debug(`Deleted automation rule with id ${ruleId}`);
+
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_DELETE>(
+                {
+                    action: EventAction.AUTOMATION_RULE_DELETE,
+                    topic: {
+                        automationRule: deletedAutomationRule.id,
+                    },
+                },
+                ctx,
+            );
+
+            return deletedAutomationRule;
+        },
     };
 }
 
@@ -241,6 +272,10 @@ function automationDisabled(): IAutomationDomain {
         },
         async updateAutomationRule(): Promise<IAutomationRule> {
             logger.silly('Automation system is disabled. Skipping automation rule update.');
+            return null;
+        },
+        async deleteAutomationRule(): Promise<IAutomationRule> {
+            logger.silly('Automation system is disabled. Skipping automation rule deletion.');
             return null;
         },
         async triggerRules(): Promise<void> {

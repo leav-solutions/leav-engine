@@ -52,6 +52,12 @@ mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
     }
 }
 
+mutation DeleteAutomationRule($ruleId: ID!) {
+    deleteAutomationRule(ruleId: $ruleId) {
+        id
+    }
+}
+
 query ListAutomationTriggersDef {
     automationTriggersDef {
         eventAction

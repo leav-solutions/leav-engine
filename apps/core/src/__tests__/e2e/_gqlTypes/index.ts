@@ -252,18 +252,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -328,6 +316,7 @@ export enum EventAction {
   AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
   AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
   AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
@@ -340,8 +329,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -450,17 +437,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -549,6 +525,7 @@ export enum LogAction {
   AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
   AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
   AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
@@ -561,8 +538,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -857,30 +832,6 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -966,19 +917,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1246,6 +1190,13 @@ export type UpdateAutomationRuleMutationVariables = Exact<{
 
 
 export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: string, description?: string | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
+
+export type DeleteAutomationRuleMutationVariables = Exact<{
+  ruleId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteAutomationRuleMutation = { deleteAutomationRule: { id: string } };
 
 export type ListAutomationTriggersDefQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1529,6 +1480,13 @@ export const UpdateAutomationRuleDocument = gql`
   }
 }
     `;
+export const DeleteAutomationRuleDocument = gql`
+    mutation DeleteAutomationRule($ruleId: ID!) {
+  deleteAutomationRule(ruleId: $ruleId) {
+    id
+  }
+}
+    `;
 export const ListAutomationTriggersDefDocument = gql`
     query ListAutomationTriggersDef {
   automationTriggersDef {
@@ -1764,6 +1722,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     UpdateAutomationRule(variables: UpdateAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<UpdateAutomationRuleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateAutomationRuleMutation>({ document: UpdateAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateAutomationRule', 'mutation', variables);
+    },
+    DeleteAutomationRule(variables: DeleteAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAutomationRuleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteAutomationRuleMutation>({ document: DeleteAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAutomationRule', 'mutation', variables);
     },
     ListAutomationTriggersDef(variables?: ListAutomationTriggersDefQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ListAutomationTriggersDefQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ListAutomationTriggersDefQuery>({ document: ListAutomationTriggersDefDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ListAutomationTriggersDef', 'query', variables);
