@@ -16,6 +16,13 @@ query GetAutomationRules($filters: AutomationRulesFiltersInput) {
                     library
                 }
             }
+            pipeline {
+                steps {
+                    type
+                    name
+                    params
+                }
+            }
         }
     }
 }
@@ -30,6 +37,13 @@ mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
             eventAction
             eventTopic {
                 library
+            }
+        }
+        pipeline {
+            steps {
+                type
+                name
+                params
             }
         }
     }
@@ -47,6 +61,13 @@ mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
             eventAction
             eventTopic {
                 library
+            }
+        }
+        pipeline {
+            steps {
+                type
+                name
+                params
             }
         }
     }

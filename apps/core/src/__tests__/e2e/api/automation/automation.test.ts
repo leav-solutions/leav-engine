@@ -7,6 +7,7 @@ import {
     AutomationRuleEventAction,
     AutomationTriggerDefSynchronicity,
     AutomationTriggerDefTopics,
+    AutomationRuleActions,
 } from '../../_gqlTypes';
 import {adminUserSdk, gqlCreateRecord, nonAdminUserSdk} from '../e2eUtils';
 
@@ -36,6 +37,19 @@ describe('Automation', () => {
                                 library: 'users',
                             },
                         },
+                        pipeline: {
+                            steps: [
+                                {
+                                    type: AutomationRuleActions.log,
+                                    name: 'my-log',
+                                    params: {message: 'hello from pipeline'},
+                                },
+                                {
+                                    type: AutomationRuleActions.condition,
+                                    params: {result: true},
+                                },
+                            ],
+                        },
                     },
                 })
             ).createAutomationRule;
@@ -63,8 +77,47 @@ describe('Automation', () => {
                             library: expect.any(String),
                         },
                     },
+                    pipeline: {
+                        steps: [
+                            {
+                                type: AutomationRuleActions.log,
+                                name: 'my-log',
+                                params: {message: 'hello from pipeline'},
+                            },
+                            {
+                                type: AutomationRuleActions.condition,
+                                name: null,
+                                params: {result: true},
+                            },
+                        ],
+                    },
                 }),
             ]);
+        });
+
+        test('create a rule with invalid pipeline throw an error', async () => {
+            await expect(
+                adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Invalid params rule',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
+                        },
+                        pipeline: {
+                            steps: [
+                                {
+                                    type: AutomationRuleActions.log,
+                                    params: {}, // missing required 'message'
+                                },
+                            ],
+                        },
+                    },
+                }),
+            ).rejects.toThrow(/Invalid action parameters/);
         });
 
         test('non-admin user cannot create a rule', async () => {
@@ -79,6 +132,7 @@ describe('Automation', () => {
                                 library: 'users',
                             },
                         },
+                        pipeline: {steps: []},
                     },
                 }),
             ).rejects.toThrow('Action forbidden');
@@ -96,6 +150,7 @@ describe('Automation', () => {
                                 library: 'users',
                             },
                         },
+                        pipeline: {steps: []},
                     },
                 }),
             ).rejects.toThrow('Trigger for event action RECORD_INIT is only available for synchronous execution');
@@ -113,6 +168,7 @@ describe('Automation', () => {
                                 library: 'library-no-exists',
                             },
                         },
+                        pipeline: {steps: []},
                     },
                 }),
             ).rejects.toThrow('Invalid trigger library topic: Library with id "library-no-exists" does not exist');
@@ -128,6 +184,7 @@ describe('Automation', () => {
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
                             eventTopic: {},
                         },
+                        pipeline: {steps: []},
                     },
                 }),
             ).rejects.toThrow('Invalid trigger library topic: Invalid input: expected string, received undefined');
@@ -146,6 +203,7 @@ describe('Automation', () => {
                                 attribute: 'attribute-no-expected',
                             },
                         },
+                        pipeline: {steps: []},
                     },
                 }),
             ).rejects.toThrow('Invalid trigger attribute topic: Unrecognized key: "attribute"');
@@ -168,6 +226,7 @@ describe('Automation', () => {
                                 library: 'users',
                             },
                         },
+                        pipeline: {steps: []},
                     },
                 })
             ).createAutomationRule;
@@ -181,6 +240,14 @@ describe('Automation', () => {
                     rule: {
                         id: ruleToUpdate.id,
                         label: 'updated label',
+                        pipeline: {
+                            steps: [
+                                {
+                                    type: AutomationRuleActions.log,
+                                    params: {message: 'updated pipeline step'},
+                                },
+                            ],
+                        },
                     },
                 })
             ).updateAutomationRule;
@@ -190,10 +257,37 @@ describe('Automation', () => {
                     id: ruleToUpdate.id,
                     label: 'updated label',
                     description: 'This is a test rule', // we verify mergeObjects is true
+                    pipeline: {
+                        steps: [
+                            {
+                                type: AutomationRuleActions.log,
+                                name: null,
+                                params: {message: 'updated pipeline step'},
+                            },
+                        ],
+                    },
                 }),
             );
 
             expect(updatedRule.modifiedAt).toBeGreaterThan(ruleToUpdate.modifiedAt);
+        });
+
+        test('update a rule with invalid pipeline throw an error', async () => {
+            await expect(
+                adminUserSdk.UpdateAutomationRule({
+                    rule: {
+                        id: ruleToUpdate.id,
+                        pipeline: {
+                            steps: [
+                                {
+                                    type: AutomationRuleActions.log,
+                                    params: {}, // missing required 'message'
+                                },
+                            ],
+                        },
+                    },
+                }),
+            ).rejects.toThrow(/Invalid action parameters/);
         });
 
         test('non admin cannot update a rule', async () => {
@@ -269,6 +363,7 @@ describe('Automation', () => {
                                 library: 'users',
                             },
                         },
+                        pipeline: {steps: []},
                     },
                 })
             ).createAutomationRule;
@@ -324,6 +419,7 @@ describe('Automation', () => {
                                 SyncAutomationRuleEventAction.RECORD_INIT as unknown as AutomationRuleEventAction,
                             eventTopic: {library: testLibraryId},
                         },
+                        pipeline: {steps: []},
                     },
                 })
             ).createAutomationRule;

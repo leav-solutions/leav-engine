@@ -8,13 +8,13 @@ import {
     SyncAutomationRuleEventAction,
     type AutomationRulePipelineStep,
     type AutomationRuleTrigger,
-} from '../../_types/automation';
-import {type IQueryInfos} from '../../_types/queryInfos';
-import createPipelineExecutor, {type AutomationPipelineToExecute} from './pipelineExecutor';
-import {ActionExecutionResultStatus, type IActionExecutionResult} from './types';
-import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
-import {type IAutomationActionsRegistry} from './automationActionsRegistry';
-import {type IAutomationAction} from './actions/_types';
+} from '../../../_types/automation';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import createPipelineExecutor, {type AutomationPipelineToExecute} from './pipeline';
+import {type IAutomationAction} from '../actions/_types';
+import {ActionExecutionResultStatus, type IActionExecutionResult} from '../_types';
+import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
+import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
 
 const eventManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: vi.fn(),

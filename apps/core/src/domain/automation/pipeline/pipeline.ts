@@ -7,27 +7,28 @@ import {
     type AutomationRuleTrigger,
     type AutomationRulePipeline,
     type AutomationRulePipelineStep,
-} from '../../_types/automation';
-import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
+} from '../../../_types/automation';
+import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
 import {
     ActionExecutionResultStatus,
     type IActionExecutionResult,
     type IAutomationPipelineExecutionState,
-} from './types';
-import {type IQueryInfos} from '../../_types/queryInfos';
-import ValidationError from '../../errors/ValidationError';
-import {Errors} from '../../_types/errors';
-import {type IAutomationActionsRegistry} from './automationActionsRegistry';
-import {type IAutomationAction} from './actions/_types';
+} from '../_types';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import ValidationError from '../../../errors/ValidationError';
+import {Errors} from '../../../_types/errors';
+import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
+import {type IAutomationAction} from '../actions/_types';
 
 export type AutomationPipelineToExecute = AutomationRulePipeline & {
     ruleId: string;
     trigger: AutomationRuleTrigger;
 };
 
-export interface IPipelineExecutor {
+export interface IAutomationPipelineDomain {
     // returns true if pipeline executed fully, false if it was stopped by an action, for testing purpose for now
     executePipeline(pipelineExec: AutomationPipelineToExecute, ctx: IQueryInfos): Promise<boolean>;
+    validatePipeline(pipeline: AutomationRulePipeline): Promise<void>;
 }
 
 export interface IPipelineExecutorDeps {
@@ -38,16 +39,16 @@ export interface IPipelineExecutorDeps {
 export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.automation.actionsRegistry': actionsRegistry,
-}: IPipelineExecutorDeps): IPipelineExecutor {
-    // move that validation in pipeline edition latter to avoid doing it at each execution
+}: IPipelineExecutorDeps): IAutomationPipelineDomain {
     const _validateActionParams = async (action: IAutomationAction, params: Record<string, unknown>): Promise<void> => {
         const paramsValidation = action.paramsSchema.safeParse(params);
+
         if (!paramsValidation.success) {
             const details = paramsValidation.error.issues.reduce(
                 (acc, issue) => {
                     const path = issue.path.join('.');
                     acc[path] = {
-                        msg: Errors.INVALID_ACTION_PARAMS,
+                        msg: Errors.INVALID_AUTOMATION_ACTION_PARAMS,
                         vars: {
                             details: issue.message,
                         },
@@ -56,8 +57,10 @@ export default function ({
                 },
                 {} as Record<string, {msg: string; vars: Record<string, unknown>}>,
             );
+
             throw new ValidationError(details, `Invalid params for action "${action.type}"`);
         }
+
         await action.validateParams?.(params);
     };
 
@@ -67,8 +70,6 @@ export default function ({
         state: IAutomationPipelineExecutionState,
         ctx: IQueryInfos,
     ): Promise<IActionExecutionResult> => {
-        await _validateActionParams(action, step.params);
-
         const raw = await action.execute(step.params, state, ctx);
 
         // void/undefined is treated as CONTINUE
@@ -136,6 +137,22 @@ export default function ({
     });
 
     return {
+        async validatePipeline(pipeline): Promise<void> {
+            for (const step of pipeline.steps) {
+                const action = actionsRegistry.getAction(step.type);
+
+                if (!action) {
+                    throw new ValidationError({
+                        type: {
+                            msg: Errors.INVALID_AUTOMATION_ACTION_TYPE,
+                            vars: {type: step.type},
+                        },
+                    });
+                }
+
+                await _validateActionParams(action, step.params);
+            }
+        },
         async executePipeline(pipelineExec, ctx) {
             const state = _initializePipelineState(pipelineExec);
 

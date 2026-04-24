@@ -2,17 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type AutomationRulePipelineStep, SyncAutomationRuleEventAction} from '../../../../_types/automation';
-import {type AutomationPipelineToExecute, type IPipelineExecutor} from '../../../../domain/automation/pipelineExecutor';
+import {type AutomationPipelineToExecute} from '../../../../domain/automation/pipeline/_types';
 import {systemUserId} from '../../../../_constants/users';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {getCoreDep} from '../../integrationTestUtils';
 import {AutomationRuleActions} from '../../../../domain/automation/actions/_types';
+import {type IAutomationPipelineDomain} from '../../../../domain/automation/pipeline/pipeline';
 
-describe('pipelineExecutor', () => {
-    let pipelineExecutor: IPipelineExecutor;
+describe('automation pipeline', () => {
+    let pipelineDomain: IAutomationPipelineDomain;
+
     const ctx: IQueryInfos = {userId: systemUserId};
     beforeAll(async () => {
-        pipelineExecutor = getCoreDep<IPipelineExecutor>('core.domain.automation.pipelineExecutor');
+        pipelineDomain = getCoreDep<IAutomationPipelineDomain>('core.domain.automation.pipeline');
     });
 
     describe('execute', () => {
@@ -27,12 +29,12 @@ describe('pipelineExecutor', () => {
 
         it('should execute a simple pipeline with log action', async () => {
             await expect(
-                pipelineExecutor.executePipeline(
+                pipelineDomain.executePipeline(
                     createPipelineToExecute([
                         {
                             type: AutomationRuleActions.LOG,
                             params: {
-                                message: 'Test log from pipelineExecutor.spec.ts',
+                                message: 'Test log from automation pipeline.test.ts',
                                 level: 'info',
                             },
                         },
@@ -44,7 +46,7 @@ describe('pipelineExecutor', () => {
 
         it('should interrupt a pipeline with error action', async () => {
             await expect(
-                pipelineExecutor.executePipeline(
+                pipelineDomain.executePipeline(
                     createPipelineToExecute([
                         {
                             type: AutomationRuleActions.ERROR,
@@ -60,7 +62,7 @@ describe('pipelineExecutor', () => {
 
         it('should execute a pipeline with condition action that continues', async () => {
             await expect(
-                pipelineExecutor.executePipeline(
+                pipelineDomain.executePipeline(
                     createPipelineToExecute([
                         {
                             type: AutomationRuleActions.CONDITION,
@@ -82,7 +84,7 @@ describe('pipelineExecutor', () => {
 
         it('should execute a pipeline with condition action that stops', async () => {
             await expect(
-                pipelineExecutor.executePipeline(
+                pipelineDomain.executePipeline(
                     createPipelineToExecute([
                         {
                             type: AutomationRuleActions.CONDITION,

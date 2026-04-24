@@ -23,7 +23,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {isArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
-import {type IPipelineExecutor} from './pipelineExecutor';
+import {type IAutomationPipelineDomain} from './pipeline/pipeline';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationTriggerDef} from './triggers/_types';
@@ -63,7 +63,7 @@ export interface IAutomationDomainDeps {
     'core.domain.automation.triggers': IAutomationTriggers;
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
-    'core.domain.automation.pipelineExecutor': IPipelineExecutor;
+    'core.domain.automation.pipeline': IAutomationPipelineDomain;
     'core.infra.automation.rule': IAutomationRuleRepo;
     config: IConfig;
 }
@@ -72,7 +72,7 @@ export default function ({
     'core.domain.automation.triggers': automationTriggers,
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
-    'core.domain.automation.pipelineExecutor': pipelineExecutor,
+    'core.domain.automation.pipeline': pipelineDomain,
     'core.infra.automation.rule': automationRuleRepo,
     config,
 }: IAutomationDomainDeps): IAutomationDomain {
@@ -136,7 +136,7 @@ export default function ({
                 await Promise.all(
                     rules.map(async rule => {
                         try {
-                            await pipelineExecutor.executePipeline(
+                            await pipelineDomain.executePipeline(
                                 {
                                     ...rule.pipeline,
                                     ruleId: rule.id,
@@ -173,6 +173,8 @@ export default function ({
             await _hasManageAutomationPermissionOrThrow(ctx);
             await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
 
+            await pipelineDomain.validatePipeline(rule.pipeline);
+
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 
             logger.debug(`Created new automation rule with id ${newAutomationRule.id}`);
@@ -194,6 +196,10 @@ export default function ({
             await _hasManageAutomationPermissionOrThrow(ctx);
             if (rule.trigger) {
                 await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
+            }
+
+            if (rule.pipeline) {
+                await pipelineDomain.validatePipeline(rule.pipeline);
             }
 
             const updatedAutomationRule = await automationRuleRepo

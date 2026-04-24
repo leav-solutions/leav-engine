@@ -23,6 +23,7 @@ export type ICreateAutomationRule = {
     label: string;
     description?: string;
     trigger: AutomationRuleTrigger;
+    pipeline: AutomationRulePipeline;
 };
 
 export type IUpdateAutomationRule = {
@@ -31,6 +32,7 @@ export type IUpdateAutomationRule = {
     description?: string;
     active?: boolean;
     trigger?: AutomationRuleTrigger;
+    pipeline?: AutomationRulePipeline;
 };
 
 export enum SyncAutomationRuleEventAction {

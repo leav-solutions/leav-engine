@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
-import {ActionExecutionResultStatus, type IActionExecutionResult} from '../types';
-import {AutomationRuleActions, type IAutomationAction} from './_types';
+import {type IAutomationAction, AutomationRuleActions} from './_types';
+import {type IActionExecutionResult, ActionExecutionResultStatus} from '../_types';
 
 const conditionActionParamsSchema = z.object({
     result: z.boolean().meta({

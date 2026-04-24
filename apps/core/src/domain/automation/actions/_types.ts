@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ZodObject} from 'zod';
-import {type IActionExecutionResult, type IAutomationPipelineExecutionState} from '../types';
+import {type IActionExecutionResult, type IAutomationPipelineExecutionState} from '../_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 
 export enum AutomationRuleActions {
